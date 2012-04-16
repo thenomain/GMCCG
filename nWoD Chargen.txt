@@ -1274,6 +1274,15 @@ think u(cg/f.temp-output-checkstats, isolde)
 
 =--=-=-=-==-=-=--=-=-=-=-=-==--==-=-=-=--=-=-=-==-=-=-=--==--==--=-=-=--=-=-=
 
+################################################################################
+## IMPORTANT NOTE ##############################################################
+
+From here on is my attempt to make a better chargen for players, instead of using +set. These are experiments, and not to be taken as part of the system.
+
+The goal was to allow the player to simply type: <stat> <+-=> <value>, et al.  I feel there is still credit to this idea, but it may be safely skipped.
+
+--
+
 A FREEBIES LIST?
 
 &d.free.<template>.<item>: <stat path>:<amt that's free>
@@ -1318,13 +1327,6 @@ Becase mantle depends on court, I'm thinking about trying it this way:
 &d.free.thaumaturge.vodoun cg=merit.invocation_(ghosts):4
 
 
-
-################################################################################
-## IMPORTANT NOTE ##############################################################
-
-From here on is my attempt to make a better chargen for players, instead of using +set. These are experiments, and not to be taken as part of the system.
-
-The goal was to allow the player to simply type: <stat> <+-=> <value>, et al.  I feel there is still credit to this idea, but it may be safely skipped.
 
 
 @@ Adds <stat>, to 1 if no value given
