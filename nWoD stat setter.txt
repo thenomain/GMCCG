@@ -1,0 +1,861 @@
++stat
+
++stat/set <target>/<stat>[<+-=><value>|default] -- sets/erases permanent value 
++stat/offset <target>[<+-=><value>] -- sets offset
++stat/override <target>[<+-=><value>] -- overrides check, sets stat literally
+
+
++stat theno/str = 2 >> sets Strength to 2
++stat theno/str - 1 >> reduces Strength by 1
++stat theno/str + 3 >> increases Strength by 3
+
+
++stat/values [<flag(s)>/]<stat> -- what values are good for this stat?
+
++stat/template <target>=<template>
+
++stat/wipe <target> -- devoids them of stats
++stat/wipe <target>=yes -- checks to make sure!
+
+
+
+=============================================================================
+== THE BASICS ===============================================================
+
+&d.stat-funcs ss=#204
+&d.data-dictionary ss=#188
+&d.stat-reference #310=#382
+
+&f.find-sheet ss=u([u(d.stat-funcs)]/f.find-sheet, %0)
+
+---
+
+&c.stat ss=$+stat*:@pemit %#=
+@@ [setq(0, secure(%0))] << this kills stat (instance)
+[setq(0, %0)]
+[switch(
+	%q0, 
+@@ No Entry (+stat)
+	, u(f.stat-default), 
+@@ A Switch, with or without Argument (+money/<switch> [<arg>])
+	/*, u(f.stat-switch, after(first(%q0), /), rest(%q0)), 
+@@ Just Args (+stat <arg>)
+	%b*, u(f.stat-specific, trim(%q0)), 
+@@ Crapola (+statblablabla)
+	Error: Command is '+stat%[/<switch>%] %[<other stuff>%]'
+)]
+
+---
+
+&c.stat ss=$+stat*:@pemit %#=[setq(0, secure(%0))][switch(%q0, , u(f.stat-default), /*, u(f.stat-switch, after(first(%q0), /), rest(%q0)), %b*, u(f.stat-specific, trim(%q0)), Error: Command is '+stat%[/<switch>%] %[<other stuff>%]')]
+
+---
+
+&f.stat-switch ss=
+@@ q0: Partial-name-match the switch.  What the hell.
+
+@@ Do I know the switch?
+	ifelse(
+		setr(0, grab(lattr(me/f.stat/*), f.stat/%0*)), 
+@@ Yes, I know it, hit it
+		u(%q0, %1), 
+@@ No, I don't know it.  Waa. 
+		No such switch for +stat.  Valid switches are: 
+		[itemize(lcstr(iter(lattr(me/f.stat/*), after(##, /))))]
+	)
+
+---
+
+&f.stat-switch ss=ifelse(setr(0, grab(lattr(me/f.stat/*), f.stat/%0*)), u(%q0, %1), No such switch for +stat.  Valid switches are: [itemize(lcstr(iter(lattr(me/f.stat/*), after(##, /))))])
+
+------------------------------------------------------------------------------
+-- Filter: Stat Allowed For Template -----------------------------------------
+
+Filter for all items that have either passed template(s) in their tags, or none.
+
+&filter.stat-allowed-for-template ss=
+@@ 0: <statpath>
+@@ 1: template (Human, Changeling), or .-delimited list (human.thaumaturge)
+
+or(
+@@ .. tag matches template(s)?
+	u([u(d.stat-funcs)]/f.hastag?.workhorse, %0, %1), 
+@@ .. tag has no templates?
+	not(u(
+		[u(d.stat-funcs)]/f.hastag?.workhorse, 
+		rest(%0, .), 
+		get([u(d.data-dictionary)]/bio.template)
+	))
+)
+
+---
+
+&filter.stat-allowed-for-template ss=or(u([u(d.stat-funcs)]/f.hastag?.workhorse, rest(%0, .), %1), not(u([u(d.stat-funcs)]/f.hastag?.workhorse, rest(%0, .), get([u(d.data-dictionary)]/bio.template))))
+
+---
+
+@@ .. which "default" stats are ok for 
+
+think filter(ss/filter.stat-allowed-for-template, iter(lattr(dd/default.*), rest(%i0, .)), , , changeling)
+
+@@ .. unseen sense is a human-only stat
+
+think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , changeling)
+
+think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , human)
+
+
+=============================================================================
+== DEFAULT ================================================================
+
++Stat, alone, does nothing.
+
+&f.stat-default ss=Error: +stat alone does nothing  Try +stat <stat>
+
+
+=============================================================================
+== SPECIFIC ================================================================
+
+We're putting an alias down to +stat/v here to make the command more non-staff friendly.
+
+&f.stat-specific ss=u(f.stat/values, %0)
+
+
+=============================================================================
+== /SET ====================================================================
+
+think [setq(s, theno/str +3)]> [regmatch(%qs, (.*?)/(.*?)(\[+-=\])(.*), 9 0 1 2 3)] :: %q0 : %q1 : %q2 : %q3 %r> [pmatch(trim(%q0))] : [statname(trim(%q1))] : [case(trim(%q2), =, setstat%(%), -, shiftstat%(-%), +, shiftstat%(+%), unknown)] : [trim(%q3)]
+
+-- Splitting the /Set input --------------------------------------------------
+
+&d.regmatch-stat #310=
+@@ 0: The thing to match.  player/stat =+- value 
+@@ q0: Target
+@@ q1: Stat 
+@@ q2: Operator
+@@ q3: Value (allowed to be null)
+@@ returns: the above, through registers, 1 if all registers are full
+@@
+@@ I hate having to do it like this.  Wanted a regexp, didn't work.
+
+[setq(0, trim(first(%0, /)))]
+[setq(1, after(%0, /))]
+
+[setq(
+	2, 
+	case(
+		1, 
+		strmatch(%q1, *=*), 
+		=, 
+		strmatch(%q1, *+*), 
+		+, 
+		strmatch(%q1, *-*), 
+		-
+	)
+)]
+
+[setq(3, trim(rest(%q1, %q2)))]
+
+[setq(1, trim(first(%q1, %q2)))]
+
+[and(t(%q0), t(%q1), t(%q2))]
+
+---
+
+&d.regmatch-stat #310=[setq(0, trim(first(%0, /)))][setq(1, after(%0, /))][setq(2, case(1, strmatch(%q1, *=*), =, strmatch(%q1, *+*), +, strmatch(%q1, *-*), -))][setq(3, trim(rest(%q1, %q2)))][setq(1, trim(first(%q1, %q2)))][and(t(%q0), t(%q1), t(%q2))]
+
+
+-- /SET ------------------------------------------------------------------------
+
+&f.stat/set #310=
+@@ 0: target/stat +-= value
+@@ 1: <null> | offset | override, as passed by the other switches
+@@ 
+@@ q0: target
+@@ q1: stat
+@@ q2: +-=
+@@ q3: value
+@@ 
+@@ qp: player
+@@ qn: result from validate-name
+@@ qs: result from shift-/setstat
+@@ 
+@@ uses: pmatch+(), for 'me', setstat() and shiftstat().
+@@ (stat-setting functions find the sheet for us)
+
+case(
+	0, 
+	isstaff(%#), Staff Only., 
+@@ .. Something broke the match
+	t(u(d.regmatch-stat, %0)), 
+	I couldn't tell what you typed.  
+	The format is: +stat/set <player>/<stat> <operator> <value>, 
+@@ .. player not found
+	[t(setr(p, pmatch+(%q0)))], 
+	Error: Player not found., 
+@@ .. template not there
+	[t(getstat(%qp/template))], 
+	Error: No Template found., 
+@@ .. removed (no null stats, unless we're doing an /override or /offset)
+@@	or(strmatch(override, %1), strmatch(offset, %1), comp(%q3, )), 
+@@	Error: Must set a value., 
+@@ .. no multi-stat setting here
+	[setq(n, ulocal([u(d.stat-funcs)]/f.statpath-validate-name, %q1))]
+	[or(lte(words(%qn), 1), not(t(%qn)))], 
+	Error: Can only set one stat at a time., 
+@@ .. set that stat!
+@@ .. .. =, setstat
+	comp(%q2, =), 
+	if(
+		t(setr(s, setstat(%qp/%q1, %q3, %1))), 
+		%qs, 
+		Error from Setstat: %qs
+	), 
+@@ .. .. +/-, shiftstat
+	not(xor(comp(%q2, +), comp(%q2, -))), 
+	if(
+		t(setr(s, shiftstat(%qp/%q1, %q2%q3, %1))), 
+		%qs, 
+		Error from Shiftstat: %qs
+	), 
+@@ .. uncaught error (it happens)
+	I couldn't tell what you typed.  
+	The format is: +stat/set <player>/<stat> <operator> <value>
+)
+
+
+---
+
+&f.stat/set #310=case(0, isstaff(%#), Staff Only., t(u(d.regmatch-stat, %0)), I couldn't tell what you typed.  The format is: +stat/set <player>/<stat> <operator> <value>, [t(setr(p, pmatch+(%q0)))], Error: Player not found., [t(getstat(%qp/template))], Error: No Template found., [setq(n, ulocal([u(d.stat-funcs)]/f.statpath-validate-name, %q1))][or(lte(words(%qn), 1), not(t(%qn)))], Error: Can only set one stat at a time., comp(%q2, =), if(t(setr(s, setstat(%qp/%q1, %q3, %1))), %qs, Error from Setstat: %qs), not(xor(comp(%q2, +), comp(%q2, -))), if(t(setr(s, shiftstat(%qp/%q1, %q2%q3, %1))), %qs, Error from Shiftstat: %qs), I couldn't tell what you typed.  The format is: +stat/set <player>/<stat> <operator> <value>)
+
+
+&f.stat/set #310=case(0, isstaff(%#), Staff Only., t(u(d.regmatch-stat, %0)), I couldn't tell what you typed.  The format is: +stat/set <player>/<stat> <operator> <value>, [t(setr(p, pmatch+(%q0)))], Error: Player not found., [t(getstat(%qp/template))], Error: No Template found., [setq(n, ulocal([u(d.stat-funcs)]/f.statpath-validate-name, %q1))][or(lte(words(%qn), 1), not(t(%qn)))], Error: Can only set one stat at a time., comp(%q2, =), if(t(setr(s, setstat(%qp/%q1, %q3, %1))), %qs, Error from Setstat: %qs), not(xor(comp(%q2, +), comp(%q2, -))), if(t(setr(s, shiftstat(%qp/%q1, %q2%q3, %1))), %qs, Error from Shiftstat: %qs), I couldn't tell what you typed.  The format is: +stat/set <player>/<stat> <operator> <value>)
+
+
+=============================================================================
+== /OFFSET ==================================================================
+
+Stat-specific, but numerics only.
+
+&f.stat/offset ss=u(f.stat/set, %0, offset)
+
+
+=============================================================================
+== /OVERRIDE ================================================================
+
+Stat-specific, override everything
+
+&f.stat/override ss=u(f.stat/set, %0, override)
+
+
+=============================================================================
+== /TEMPLATE ================================================================
+
+Set an un-templated player up with a new template.
+
+Yes, it only checks to see if they have a template stat, so you can "+stat/override <player>/template=" then use this command, bypassing wiping their entire sheet.  It still does overwrite any stat with a default value in the data-dictionary.
+
++stat/template <player>=<template>
+
+&f.stat/template ss=
+@@ 0: Target=Template
+@@ 
+@@ q0: target
+@@ q1: template
+@@ 
+@@ qp: pmatch
+@@ qw: where is the sheet location
+@@ qv: validated template(s)
+@@ ql: list of stats to set
+@@
+@@ uses: pmatch+() - a pmatch that accepts "me"
+
+
+[if(
+	not(isstaff(%#)), 
+	Staff Only., 
+
+	[setq(0, before(%0, =))]
+	[setq(1, after(%0, =))]
+	[setq(p, pmatch+(%q0))]
+	[setq(w, u(f.find-sheet, %qp))]
+
+	[switch(
+		0, 
+		t(%qp), Player Not Found., 
+
+		not(hasattr(%qw, _bio.template)), Player already has a template. +stat/wipe %q0 to erase their stats., 
+
+@@ .. it's possible someone is setting up a major.minor template
+@@ .. like human.ghoul or human.thaumaturge
+		[setq(v, iter(%q1, statvalidate(template, %i0), ., .))]
+		[not(match(%qv, #-*, .))], 
+		One or more templates did not validate., 
+
+@@ .. okay, set 'er!
+@@ .. .. which default stats?
+@@ .. .. (defaults with no template or match the template passed)
+@@ .. .. (setunion because we'll be getting no-template defaults multiple times)
+		[setq(
+			l, 
+			setunion(
+				iter(
+					%qv, 
+					filter(
+						filter.stat-allowed-for-template, 
+						iter(lattr([u(d.data-dictionary)]/default.*), rest(%i0, .))
+						, , , %i0
+					), 
+					.
+				), 
+			)
+		)]
+
+@@ .. .. output and set
+		[header(Setup [name(%qp)] as a [edit(%qv, ., /)])] %r
+
+		%b [ansi(h, Sheet Location)]: %qs %r
+		%b [ansi(h, Template)]: %qv[null(set(%qw, _BIO.TEMPLATE:%qv))] %r
+		%b [iter(
+			%ql, 
+			[ansi(h, ulocal([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))]: [get([u(d.data-dictionary)]/default.%i0)]
+			[null(set(%qw, _%i0:[get([u(d.data-dictionary)]/default.%i0)]))], , %r %b
+		)] %r
+
+		[footer(+sheet [name(%qp)])]
+	)]
+)]
+
+---
+
+&f.stat/template #310=[if(not(isstaff(%#)), Staff Only., [setq(0, before(%0, =))][setq(1, after(%0, =))][setq(p, pmatch+(%q0))][setq(w, u(f.find-sheet, %qp))][switch(0, t(%qp), Player Not Found., not(hasattr(%qw, _bio.template)), Player already has a template. +stat/wipe %q0 to erase their stats., [setq(v, iter(%q1, statvalidate(template, %i0), ., .))][not(match(%qv, #-*, .))], One or more templates did not validate., [setq(l, setunion(iter(%qv, filter(filter.stat-allowed-for-template, iter(lattr([u(d.data-dictionary)]/default.*), rest(%i0, .)), , , %i0), .), ))][header(Setup [name(%qp)] as a [edit(%qv, ., /)])] %r%b [ansi(h, Sheet Location)]: %qs %r%b [ansi(h, Template)]: %qv[null(set(%qw, _BIO.TEMPLATE:%qv))] %r%b [iter(%ql, [ansi(h, ulocal([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))]: [get([u(d.data-dictionary)]/default.%i0)][null(set(%qw, _%i0:[get([u(d.data-dictionary)]/default.%i0)]))], , %r %b)] %r[footer(+sheet [name(%qp)])])])]
+
+---
+
++stat/template thenotest=ch
++stat/template thenotest=hum
++stat/wipe thenotest=YES
++stat/template thenotest=hum
++stat/wipe thenotest=YES
+
+
+
+=============================================================================
+== /WIPE ====================================================================
+
+No cheeky "unapprove" here; clear 'em out!
+
+&f.stat/wipe #310=
+@@ 0: <player>[=YES]
+@@ 
+@@ q0: <player>
+@@ q1: [YES]
+@@ 
+@@ qp: pmatch player
+@@ qw: where is the sheet?
+@@ ql: list of stats getting wiped, sorted
+
+
+[if(
+	not(isstaff(%#)), 
+	Staff Only., 
+
+	[setq(0, before(%0, =))]
+	[setq(1, after(%0, =))]
+	[case(
+		0, 
+
+		t(setr(p, pmatch+(%q0))), Player Not Found., 
+
+		hasattr(setr(w, u(f.find-sheet, %qp)), _bio.template), 
+		Template Not Found., 
+
+@@ wipe the sheet -- of only stats that are valid!
+		comp(%q1, YES), 
+		[setq(
+			l, 
+			edit(
+@@ .. get all possible types
+				iter(
+					[u([u(d.stat-funcs)]/d.type-search-order)] 
+					[u([u(d.stat-funcs)]/d.type-specials)], 
+@@ .. list all attributes matching those types, stripping leading _
+					iter(lattr(%qw/_%i0.*), rest(%i0, _))
+				), 
+@@ .. remove template from the list; we display that first
+				BIO.TEMPLATE, @@(null)
+			)
+		)]
+
+		[header(Wiping [name(%qp)]'s Sheet)] %r
+@@		%b [ansi(h, Template)]: [get(%qw/_BIO.TEMPLATE)]
+@@		[null(set(%qw, _BIO.TEMPLATE:))]%r
+		%b [iter(
+			BIO.TEMPLATE %ql, 
+			[ansi(h, u([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))]: 
+			[get(%qw/_%i0)] [null(set(%qw, _%i0:))], , %r %b
+		)] %r
+@@		%r CGStamp: [u(%qp/_CGSTAMP)]
+@@		[null(set(%qp, _CGSTAMP:))]%r
+		[footer(Sheet Wiped)], 
+
+@@ default: warning message
+		[ansi(g, >> Are you%b, hgu, absolutely sure, g, %byou want to wipe [name(%qp)]'s sheet? <<)] %rIf so%, type: [ansi(h, +stat/wipe [name(%qp)]=YES)]
+
+	)]
+
+)]
+
+---
+
+&f.stat/wipe #310=[if(not(isstaff(%#)), Staff Only., [setq(0, before(%0, =))][setq(1, after(%0, =))][case(0, t(setr(p, pmatch+(%q0))), Player Not Found., hasattr(setr(w, u(f.find-sheet, %qp)), _bio.template), Template Not Found., comp(%q1, YES), [setq(l, edit(iter([u([u(d.stat-funcs)]/d.type-search-order)] [u([u(d.stat-funcs)]/d.type-specials)], iter(lattr(%qw/_%i0.*), rest(%i0, _))), BIO.TEMPLATE, @@(null)))][header(Wiping [name(%qp)]'s Sheet)] %r%b [iter(BIO.TEMPLATE %ql, [ansi(h, u([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))]: [get(%qw/_%i0)] [null(set(%qw, _%i0:))], , %r %b)] %r[footer(Sheet Wiped)], [ansi(g, >> Are you%b, hgu, absolutely sure, g, %byou want to wipe [name(%qp)]'s sheet? <<)] %rIf so%, type: [ansi(h, +stat/wipe [name(%qp)]=YES)])])]
+
+---
+
++stat/wipe thenotest
++stat/template thenotest=c
++stat/wipe thenotest
++stat/wipe thenotest=yes
++stat/wipe thenotest=YES
+
+
+-----------------------------------------------------------------------------
+-- LIST STATS (ALL) ---------------------------------------------------------
+
+Not only does this list the stats in the search order, but those not as well.
+(folded this into the core system after creating it)
+
+&f.list-stats-all ss=u([u(d.stat-funcs)]/f.stat-list-selected, *)
+
+
+think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.unseen_sense_())
+think u(sfp/f.prereq-check-other, pmatch(dog), merit.mantle_(), spring)
+think u(sfp/f.prereq-check-other, pmatch(dog), bio.kith, , Cleareyes)
+
+
+=============================================================================
+== /VALUES  =================================================================
+
+Hey, what's valid for this stat!  (a basic lookup command)
+
++stat [<type(s) & flag(s)>/]<stat>
+
+&f.stat/values #310=
+@@ 0: Stat to look up (or <stat>* for list)
+@@ 
+@@ qa: type(s) to check for
+@@ qt: tag(s) to check for
+@@ qv: value(s) to check for - if an 'or' list, must be x.y.z
+@@ qw: what stat to check for
+@@ 
+@@ qf: "prerequisite" filter flag ("filter by prereqs for char")
+@@ qq: dbref of sheet
+@@ 
+@@ qp: Stat path without checking
+@@ qn: Prettified name
+@@ qs: Stat information
+@@ qd: Default for stat, if any
+@@ qr: Prerequisites, if any
+@@ 
+@@ qz: temp holder
+
+@@ What type(s) and tag(s) to look for
+[setq(a, )][setq(t, )][setq(v, )][setq(f, )]
+[if(
+	strmatch(%0, */*), 
+@@ >> search for type(s) and/or tag(s)
+@@ .. .. name-complete the types and templates, because we're just that nice
+	[iter(
+		before(%0, /), 
+		case(
+			1, 
+
+@@ >> Removing "prereq/*" ability because it kept hitting iteration limits
+@@ @@ .. >> "prerequisite": flag for the filter, only if player has sheet
+@@ 			and(
+@@ 				strmatch(%i0, pre*), 
+@@ 				t(setr(q, u([u(d.stat-funcs)]/f.find-sheet, %#)))
+@@ 			), 
+@@ 			setq(f, 1), 
+
+@@ .. >> "v*=*": value of stat is 'x'.
+			strmatch(%i0, v*=*), 
+			setq(v, edit(last(%i0, =), _, %b)), 
+
+@@ .. >> search matches type: look for stat types to search for (name complete)
+			t(setr(z, grab(u([u(d.stat-funcs)]/d.type-search-order), %i0*))), 
+			setq(a, %qa %qz), 
+
+@@ .. >> search matches template: filter on template-only (name complete)
+			t(setr(z, grab(u([u(d.data-dictionary)]/bio.template), %i0*, .))), 
+			setq(t, %qt.[edit(%qz, _, %b)]), 
+
+@@ .. >> search matches unknown, assume tag: no name completion
+			setq(t, %qt.[edit(%i0, _, %b)])
+
+		), , @@
+	)]
+	[setq(t, trim(%qt, b, .))]
+	[setq(w, rest(%0, /))], 
+
+@@ .. no types/tags
+	[setq(w, %0)]
+)]
+
+@@ Statpath without instance, then filter them as appropriate
+[setq(p, u([u(d.stat-funcs)]/f.statpath-validate-name, %qw))]
+
+@@ @@ >> "Prerequisite" flag (qf) was set -- removing functionality
+@@ [if(
+@@ 	t(%qf), 
+@@ 	setq(p, localize(filter(fil.prerequisites, %qp, , , %qq)))
+@@ )]
+
+@@ >> Stat Types (qa)
+[if(
+	t(%qa), 
+	setq(p, filter([u(d.stat-funcs)]/fil.list-stats-types, %qp, , , %qa))
+)]
+@@ >> Tags (qt)
+[if(
+	t(%qt), 
+	setq(p, filter([u(d.stat-funcs)]/fil.list-stats-tags, %qp, , , %qt, 1))
+)]
+@@ >> Values (qv)
+[if(
+	t(%qv), 
+	setq(p, filter([u(d.stat-funcs)]/fil.list-stats-values, %qp, , , %qv))
+)]
+
+
+@@ Stat name
+[setq(n, u([u(d.stat-funcs)]/f.statname.workhorse, rest(%qp, .)))]
+
+@@ Grab the stat(s)
+[setq(s, get([u(d.data-dictionary)]/%qp))]
+
+
+@@ >> Check a good stat was pulled
+[case(
+	1, 
+
+@@ >> Display One Match
+	and(t(%qp), eq(words(%qp), 1)), 
+	[u(f.stat.values.display.one)], 
+
+@@ >> Error if Too Many Matches
+@@ .. (had been sigsegv'ing us in the display portion on 2.7, was limited to 40)
+@@ .. (http://code.google.com/p/tinymux/issues/detail?id=637)
+	gt(words(%qp), 200), 
+	[alert(+stat)] Over two hundred matches. Please refine your search., 
+
+@@ >> Display Multiple Matches
+	and(t(%qp), gt(words(%qp), 1)), 
+	[u(f.stat.values.display.multiple)], 
+
+@@ >> Bad Stat
+	Stat Not Found.  Try <name>* to find a list of possible matches.
+)]
+
+--
+
+&f.stat/values #310=[setq(a, )][setq(t, )][setq(v, )][setq(f, )][if(strmatch(%0, */*), [iter(before(%0, /), case(1, strmatch(%i0, v*=*), setq(v, edit(last(%i0, =), _, %b)), t(setr(z, grab(u([u(d.stat-funcs)]/d.type-search-order), %i0*))), setq(a, %qa %qz), t(setr(z, grab(u([u(d.data-dictionary)]/bio.template), %i0*, .))), setq(t, %qt.[edit(%qz, _, %b)]), setq(t, %qt.[edit(%i0, _, %b)])), , @@)][setq(t, trim(%qt, b, .))][setq(w, rest(%0, /))], [setq(w, %0)])][setq(p, u([u(d.stat-funcs)]/f.statpath-validate-name, %qw))][if(t(%qa), setq(p, filter([u(d.stat-funcs)]/fil.list-stats-types, %qp, , , %qa)))][if(t(%qt), setq(p, filter([u(d.stat-funcs)]/fil.list-stats-tags, %qp, , , %qt, 1)))][if(t(%qv), setq(p, filter([u(d.stat-funcs)]/fil.list-stats-values, %qp, , , %qv)))][setq(n, u([u(d.stat-funcs)]/f.statname.workhorse, rest(%qp, .)))][setq(s, get([u(d.data-dictionary)]/%qp))][case(1, and(t(%qp), eq(words(%qp), 1)), [u(f.stat.values.display.one)], gt(words(%qp), 200), [alert(+stat)] Over two hundred matches. Please refine your search., and(t(%qp), gt(words(%qp), 1)), [u(f.stat.values.display.multiple)], Stat Not Found.  Try <name>* to find a list of possible matches.)]
+
+
+--------------------------------------------------------------------------------
+-- Display: Value List ---------------------------------------------------------
+
+@@ This just displays what kind of values are good
+@@ 0: value list from data dictionary
+
+&f.stat-valuelist #310=case(%0, *, Any, #, Numeric, if(strmatch(%0, %[*%]*), Formula, itemize(%0, ., if(t(%1), %1, and))))
+
+
+--------------------------------------------------------------------------------
+-- Display: Prereq List --------------------------------------------------------
+
+&f.stat-prereqlist #310=
+@@ 0: statpath (probably unchecked)
+@@ Returns: <templates>|<chargen-only>|<other prereqs>
+
+@@ .. template prerequisites
+	[filter(
+		filter.stat-prereqlist.template, 
+		u([u(d.data-dictionary)]/bio.template), ., ., %0
+	)]|
+@@ .. chargen-only prerequisite
+	[if(
+		u([u(d.stat-funcs)]/f.hastag?.workhorse, %0, chargen-only), 
+		Chargen-Only
+	)]|
+@@ .. coded/other prerequisites
+	[if(
+		hasattr(u(d.data-dictionary), prereq-text.%0), 
+		u([u(d.data-dictionary)]/prereq-text.%0)
+	)]
+
+
+--
+
+think ulocal(#310/f.stat-prereqlist, merit.dual_kith_())
+
+--
+
+&f.stat-prereqlist #310=[filter(filter.stat-prereqlist.template, u([u(d.data-dictionary)]/bio.template), ., ., %0)]|[if(u([u(d.stat-funcs)]/f.hastag?.workhorse, %0, chargen-only), Chargen-Only)]|[if(hasattr(u(d.data-dictionary), prereq-text.%0), u([u(d.data-dictionary)]/prereq-text.%0))]
+
+
+--------------------------------------------------------------------------------
+-- Filter: Preqlist for Templates ----------------------------------------------
+
+Returns Templates (%0) that match tags on Statpath (%1)
+
+&filter.stat-prereqlist.template #310=u([u(d.stat-funcs)]/f.hastag?.workhorse, %1, %0)
+
+
+--------------------------------------------------------------------------------
+-- Display: One Match ----------------------------------------------------------
+
+&f.stat.values.display.one #310=
+
+@@ Header: <name> (<type>)
+@@ .. add "<type>" if we see ()
+	[header(
+		[edit(%qn, %(%), %(<type>%))] 
+		%([ulocal([u(d.stat-funcs)]/f.statname.workhorse, first(%qp, .))]%)
+	)] %r
+
+	[vcolumns(
+@@ >> COLUMN 1, width 42: values, prerequisites
+		42:
+@@ .. Values, and Defaults if they exist
+
+			[ansi(g, Values)]: [u(f.stat-valuelist, first(%qs, |))]
+@@ Defaults?
+			[if(
+				hasattr(u(d.data-dictionary), default.%qp), 
+				`[ansi(g, Default)]: 
+					[if(
+						strmatch(
+							setr(d, get([u(d.data-dictionary)]/default.%qp)),
+							%[*%]
+						), 
+						Formula, 
+						%qd
+					)]
+			)]
+@@ .. Instances? (called "types" now)  Substats? (called "detail")
+			[case(
+				words(%qs, |), 
+@@ .. .. if 3 validation items, instance & substats
+				3, 
+				`[ansi(g, Type)]: 
+					[u(f.stat-valuelist, extract(%qs, 2, 1, |), or)]
+				`[ansi(g, Details)]: 
+					[u(f.stat-valuelist, last(%qs, |))], 
+@@ .. .. if 2, check if instance, else substats
+				2, 
+				`[if(
+					strmatch(%qp, *%(%)), 
+					[ansi(g, Type)]: [u(f.stat-valuelist, rest(%qs, |), or)], 
+					[ansi(g, Details)]: [u(f.stat-valuelist, rest(%qs, |))]
+				)]
+			)], 
+@@ >> COLUMN 2, width 30: book/page reference
+		30:
+		[iter(
+			u([u(d.stat-reference)]/page.%qp), 
+			[rest(
+				extract(
+					u([u(d.stat-reference)]/d.book-lookup), 
+					match(
+						u([u(d.stat-reference)]/d.book-lookup), 
+						[first(%i0, .)].*, 
+						|
+					), 
+					1, |
+				), 
+				.
+			)]: 
+			[rest(%i0, .)], 
+			,
+			`
+		)], 
+@@ >> vcolumn foo
+		`, %b[ansi(g, |)]%b, %b%b
+	)]%r
+
+@@ .. extra return if there's more information to come
+	[setq(r, ulocal(f.stat-prereqlist, %qp))]
+	[setq(n, ulocal([u(d.stat-reference)]/notes.%qp))]
+	[if(or(t(%qr), t(%qn)), %r)]
+
+@@ >> Prerequisites: <templates>.<chargen only>.<other>
+@@ .. First: Templates
+	[if(t(setr(x, first(%qr, |))), 
+		[wrap(
+			[ansi(g, Templates)]: [itemize(%qx, ., or)]%r, 
+			76, left, %b%b
+		)]%r
+	)]
+@@ .. Second: Chargen-Only
+	[if(t(setr(x, extract(%qr, 2, 1, |))), 
+		[wrap(
+			[ansi(g, Chargen)]: [itemize(%qx, .)]%r, 
+			76, left, %b%b
+		)]%r
+	)]
+
+@@ .. Third: Other prerequisites
+	[if(t(setr(x, last(%qr, |))), 
+		[wrap(
+			[ansi(g, Prerequisites)]: %qx%r, 
+			76, left, %b%b
+		)]%r
+	)]
+
+@@ >> Notes?
+	[if(t(%qn), 
+		[wrap(
+			[ansi(g, Notes)]: %qn, 
+			76, left, %b%b
+		)]%r
+	)]
+
+@@ THE END (report if chargen-only)
+	[footer(if(strmatch(get([u(d.data-dictionary)]/tags.%qp), *Chargen-Only*), Chargen Only))]
+
+--
+
+&f.stat.values.display.one #310=[header([edit(%qn, %(%), %(<type>%))] %([ulocal([u(d.stat-funcs)]/f.statname.workhorse, first(%qp, .))]%))] %r[vcolumns(42:[ansi(g, Values)]: [u(f.stat-valuelist, first(%qs, |))][if(hasattr(u(d.data-dictionary), default.%qp), `[ansi(g, Default)]: [if(strmatch(setr(d, get([u(d.data-dictionary)]/default.%qp)),%[*%]), Formula, %qd)])][case(words(%qs, |), 3, `[ansi(g, Type)]: [u(f.stat-valuelist, extract(%qs, 2, 1, |), or)]`[ansi(g, Details)]: [u(f.stat-valuelist, last(%qs, |))], 2, `[if(strmatch(%qp, *%(%)), [ansi(g, Type)]: [u(f.stat-valuelist, rest(%qs, |), or)], [ansi(g, Details)]: [u(f.stat-valuelist, rest(%qs, |))])])], 30:[iter(u([u(d.stat-reference)]/page.%qp), [rest(extract(u([u(d.stat-reference)]/d.book-lookup), match(u([u(d.stat-reference)]/d.book-lookup), [first(%i0, .)].*, |), 1, |), .)]: [rest(%i0, .)], ,`)], `, %b[ansi(g, |)]%b, %b%b)]%r[setq(r, ulocal(f.stat-prereqlist, %qp))][setq(n, ulocal([u(d.stat-reference)]/notes.%qp))][if(or(t(%qr), t(%qn)), %r)][if(t(setr(x, first(%qr, |))), [wrap([ansi(g, Templates)]: [itemize(%qx, ., or)]%r, 76, left, %b%b)]%r)][if(t(setr(x, extract(%qr, 2, 1, |))), [wrap([ansi(g, Chargen)]: [itemize(%qx, .)]%r, 76, left, %b%b)]%r)][if(t(setr(x, last(%qr, |))), [wrap([ansi(g, Prerequisites)]: %qx%r, 76, left, %b%b)]%r)][if(t(%qn), [wrap([ansi(g, Notes)]: %qn, 76, left, %b%b)]%r)][footer(if(strmatch(get([u(d.data-dictionary)]/tags.%qp), *Chargen-Only*), Chargen Only))]
+
+
+--------------------------------------------------------------------------------
+-- Display: Multiple Matches ---------------------------------------------------
+
+&f.stat.values.display.multiple #310=
+
+	[header(Matches for [if(t(rest(%0, /)), [first(%0, /)]/)]%qw)]%r
+	
+	[iter(
+		%qp, 
+		%b [ansi(h, u([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))] 
+		%([u([u(d.stat-funcs)]/f.statname.workhorse, first(%i0, .))]%), 
+
+		, %r
+	)]
+	
+	 %r
+	[footer([words(%qp)] Matches)]
+
+--
+
+&f.stat.values.display.multiple #310=[header(Matches for [if(t(rest(%0, /)), [first(%0, /)]/)]%qw)]%r[iter(%qp, %b [ansi(h, u([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))] %([u([u(d.stat-funcs)]/f.statname.workhorse, first(%i0, .))]%), , %r)] %r[footer([words(%qp)] Matches)]
+
+
+--------------------------------------------------------------------------------
+-- Filter: Prerequisites -------------------------------------------------------
+
+@@ Filter to check %1's "template" and "other" stats
+@@ think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.thing)
+@@ think u(sfp/f.prereq-check-other, pmatch(dog), merit.mantle_(), spring)
+@@ u([u(d.stat-funcs)]/f.prereq-check-template, %1, %0)
+
+&fil.prerequisites #310=
+	and(
+@@ >> template check
+		u([u(d.stat-funcs)]/f.prereq-check-template, %1, %0), 
+@@ >> other check
+@@ .. we need to check all instances on a stat, if they have any
+		if(
+			and(
+				strmatch(%0, *_()), 
+				not(member(extract(get([u(d.data-dictionary)]/%0), 2, 1, |), *))
+			), 
+			lor(
+				iter(
+					extract(get([u(d.data-dictionary)]/%0), 2, 1, |), 
+					u([u(d.stat-funcs)]/f.prereq-check-other, %1, %0, %i0), 
+					.
+				)
+			), 
+@@ .. not instsanced, or instance validation was * which is never checked
+			u([u(d.stat-funcs)]/f.prereq-check-other, %1, %0)
+		)
+	)
+
+--
+
+think filter(#310/fil.prerequisites, attribute.strength merit.unseen_sense_() merit.mantle_() skill.academics, , , pmatch(thenomain))
+
+--
+
+&fil.prerequisites #310=and(u([u(d.stat-funcs)]/f.prereq-check-template, %1, %0), if(and(strmatch(%0, *_()), not(member(extract(get([u(d.data-dictionary)]/%0), 2, 1, |), *))), lor(iter(extract(get([u(d.data-dictionary)]/%0), 2, 1, |), u([u(d.stat-funcs)]/f.prereq-check-other, %1, %0, %i0), .)), u([u(d.stat-funcs)]/f.prereq-check-other, %1, %0)))
+
+---
+
++stat/v cour
++stat/v court
++stat/v str
++stat/v ambi
++stat/v dfsfdsfds
++stat/v xp
+
++stat/v str*
+
++stat/v *stam*
+
++stat/v *st?m*
+
++stat/v cha merit/*
+
+
+-=-=-=-=-=-=-=-=--=-==--=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-==-
+
+
+C.+SET [#33]: $+Set/* */*=*:@pemit %#=[if(istaff(%#), [switch(%0, Attr*, [if(pmatch(%1), [if(statvalidate?(%2, %3), Set %1's %2 to %3. [set(pmatch(%1), _attribute.%2:%3)], That is not a valid value for that stat.)], Cannot find player.)], Skill*, [if(pmatch(%1), [if(statvalidate?(%2, %3), Set %1's %2 to %3. [set(pmatch(%1), _skill.%2:%3)], That is not a valid value for that stat.)], Cannot find player.)], Merit*, [if(pmatch(%1), [if(statvalidate?(%2, %3), Set %1's %2 to %3. [set(pmatch(%1), _merit.%2:%3)], That is not a valid value for that stat.)], Cannot find player.)], Cont*, [if(pmatch(%1), [if(statvalidate?(%2, %3), Set %1's %2 to %3. [set(pmatch(%1), _contract.%2:%3)], That is not a valid value for that stat.)], Cannot find player.)], Adv*, [if(pmatch(%1), Set %1's %2 to %3. [set(pmatch(%1), _advantage.%2:%3)], Cannot find player.)], Spec*, [if(pmatch(%1), Set %1's [extract(%2, 1, 1, .)] specialty in [extract(%2, 2, 1, .)]. [set(pmatch(%1), _skill.%2:%3)], Cannot find player.)], mnote*, [if(pmatch(%1), Set %1's [extract(%2, 1, 1, .)] specialty in [extract(%2, 2, 1, .)]. [set(pmatch(%1), _merit.%2:%3)], Cannot find player.)])])]
+
+C.+SET/SETUP [#33]: $+Set/setup *=*:@switch isstaff(%#)=1, {@pemit %#=[setq(p, pmatch(%0))][setq(r, switch(%1, h*, Human, c*, Changeling, Changeling))][setq(l, filter(filter.dd-has-TEMPLATE-or-none, lattr(#188/default.*), , , %qr))][header(Setup [name(%qp)] as a %qr)]%r*** This will erase all previous defaults ***%r-TEMPLATE: %qr[null(set(%qp, _BIO.TEMPLATE:%qr))]%r-[iter(%ql, [rest(rest(##, .), .)]: [get(#188/##)][null(set(%qp, _[rest(##, .)]:[get(#188/##)]))], , %r-)]%r%rType '+sheet [name(%qp)]' to make sure.%r[footer()]}, {@pemit %@=You don't have access to that command.}
+
+FILTER.DD-HAS-TEMPLATE-OR-NONE [#33]: or(hastag?(last(%0, .), %1), not(hastag?(last(%0, .), get(#188/bio.template), or)))
+
+
+-- HELP --------------------------------------------------------------------
+
+&HELP~STAT_TOPICS~+STAT #96=
+About Stats~
++stat is a multi-functional command that lists information about stats available on the game. It only lists stats available to the players, which not all stats on +sheet. (XP and health are notable exceptions.)
+
+[ansi(h, +stat <stat>)] : Detailed information about <stat>. 
+
+[ansi(h, +stat <stat>*)] : List of stats matching the wildcard and their stat category.
+
+[ansi(h, +stat <filter(s)>/<stat>*)]: Filters a stat list.
+
+Filters and examples on the next page.
+~
+[ansi(h, Useful Tags)]
+
+If you're interested in using the filter for +stat, here are a list of useful key words:
+
+* Templates: changeling, fae-touched, human, thaumaturge, psychic, werewolf
+* Stat Types: attribute, skill, merit, contract, goblin contract, gift
+* Stat Groups: physical, mental, social, power, finesse, reistance
+* Others:
+%b %b chargen-only: Stats I can (usually) only buy in chargen.
+%b %b value=<list>: Stat can be set to a <value>, a dot-delimited list.
+
+Examples:
+%b %b +stat str 
+%b %b +stat str* 
+%b %b +stat merit/str* 
+%b %b +stat chargen-only/*
+%b %b +stat psychic/*kine*
+%b %b +stat merit value=5/*
+%b %b +stat contract beast/*
+%b %b +stat psychic value=4.5/ps*
+
+
+----
+
+&HELP~STAT_TOPICS~+STAT #96=About Stats~+stat is a multi-functional command that lists information about stats available on the game. It only lists stats available to the players, which not all stats on +sheet. (XP and health are notable exceptions.)%r%r[ansi(h, +stat <stat>)] : Detailed information about <stat>. %r%r[ansi(h, +stat <stat>*)] : List of stats matching the wildcard and their stat category.%r%r[ansi(h, +stat <filter(s)>/<stat>*)]: Filters a stat list.%r%rFilters and examples on the next page.~[ansi(h, More About Filters)]%r%rIf you're interested in using the filter for +stat, here are a list of useful key words:%r%r* Templates: changeling, fae-touched, human, thaumaturge, psychic,%r[space(12)] werewolf%r* Stat Types: attribute, skill, merit, contract, goblin contract, gift%r* Stat Groups: physical, mental, social, power, finesse, reistance%r* Others:%r%b %b chargen-only: Stats I can (usually) only buy in chargen.%r%b %b value=<list>: Stat can be set to a <value>, a dot-delimited list.%r%rExamples:%r%b %b +stat str %r%b %b +stat str* %r%b %b +stat merit/str* %r%b %b +stat chargen-only/*%r%b %b +stat psychic/*kine*%r%b %b +stat merit value=5/*%r%b %b +stat contract beast/*%r%b %b +stat psychic value=4.5/ps*
+

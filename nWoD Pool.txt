@@ -1,0 +1,686 @@
+The +pool system lives on and extends "nWoD Stat Setter".
+
+
+================================================================================
+== +POOL =======================================================================
+
+Spend/regain system for the pooled stats.  This will likely be identical to the boost (buff) system, except it's limited to setting negative offsets only, or removing it entirely.
+
++pool/spend <stat>=<amt>[ for <reason>]
++pool/regain <stat>=(<method>|<amt>)[ for <reason>]
+
+Run code in this order:
+
+	&c.pool: +pool/* *=*: Checks everything
+		Passes Down:
+			0: dbref of player
+			1: stat path (validated for player)
+			2: <amt> or <method> or <dice pool> as passed by player
+			3: <reason> as passed by player
+
+		&f.poolstat.<stat>: If <stat> has different rules, run them here
+
+			&f.poolstat.<stat>/regain: Regain rules for <stat>
+			&f.poolstat.<stat>/spend: Spend rules for <stat>
+
+			(both require &f.pool.<stat> to call them)
+
+
+-----------------------------------------------------------------------------
+-- +POOL --------------------------------------------------------------------
+
++pool/<switches> <stat>=<method>[ for <reason>]
++pool/<switches> <stat>=<reason>
+
+<switches>
+	Other switches may be added (+roll switches, /court for glamour, etc) but the first switch must be either "spend" or "regain"
+
+<method>
+	Everything is passed on throught here.
+
+<reason>
+	"for <reason>" will add a note to the pool change; some methods create their own <reason>, but the user-defined will add to it
+
+&c.pool #310=$+pool/* *:@pemit %#=[u(f.pool-master, %#, %0, %1)]
+
+
+-----------------------------------------------------------------------------
+-- Pool: Master -------------------------------------------------------------
+
+For the aliasing.
+
+&f.pool-master #310=
+@@ 0: target player dbref
+@@ 1: /<switches>
+@@ 2: <stat>=<method>[ for <reason>]
+@@ 
+@@ a: action (spend or regain)
+@@ o: other switches
+@@ p: pool stat
+@@ t: attribute of f.poolstat.<stat>
+@@ m: method
+@@ r: reason
+@@ 
+@@ uses: alert(), a formatted error output, and getstat()
+
+	[setq(a, before(%1, /))]
+	[setq(o, /[rest(%1, /)])]
+	[setq(p, trim(first(%2, =)))]
+	[setq(m, trim(before(rest(%2, =), for)))]
+	[setq(r, trim(rest(%2, for)))]
+
+	[case(
+		0, 
+@@ .. errors and checks
+		t(getstat(%0/template)), 
+		[alert(Pool, alert)] No character sheet., 
+
+		t(setr(a, grab(/spend/regain, %qa*, /))), 
+		[alert(Pool, alert)] Must /spend or /regain., 
+
+		comp(%qp, ), 
+		[alert(Pool, alert)] Must provide a stat., 
+
+@@ .. if there is no f.poolstat.<stat>, call f.pool.default
+		t(setr(
+			t, 
+			grab(
+				sort(filter(fil.pool.cleanattr, lattr(%!/f.poolstat.*))), 
+				f.poolstat.%qp*
+			)
+		)), 
+		u(f.pool.default, %0, %qp, %qa, %qm, %qr, %qo), 
+@@ .. call f.poolstat.<stat>
+		u(%qt, %0, %qa, %qm, %qr, %qo)
+	)]
+
+--
+
+&f.pool-master #310=[setq(a, before(%1, /))][setq(o, /[rest(%1, /)])][setq(p, trim(first(%2, =)))][setq(m, trim(before(rest(%2, =), for)))][setq(r, trim(rest(%2, for)))][case(0, t(getstat(%0/template)), [alert(Pool)] No character sheet., t(setr(a, grab(/spend/regain, %qa*, /))), [alert(Pool)] Must /spend or /regain., comp(%qp, ), [alert(Pool)] Must provide a stat., t(setr(t, grab(sort(filter(fil.pool.cleanattr, lattr(%!/f.poolstat.*))), f.poolstat.%qp*))), u(f.pool.default, %0, %qp, %qa, %qm, %qr, %qo), u(%qt, %0, %qa, %qm, %qr, %qo))]
+
+
+-----------------------------------------------------------------------------
+-- Filter: Pool Attributes --------------------------------------------------
+
+f.poolstat.willpower is a valid match, f.poolstat.willpower/spend is not.  No cheating.
+
+&fil.pool.cleanattr #310=not(strmatch(%0, f.poolstat.*/*))
+
+
+-----------------------------------------------------------------------------
+-- Pool: Generic Checkers/Setters -------------------------------------------
+
+For all:
+	0: player (not sheet)
+	1: stat
+	2: amt
+
+>> can we change the stat by amt? if stat is !numeric, obviously not
+
+&f.pool.canchange? #310=
+	localize(
+		[setq(s, getstat(%0/%1, b))]
+		[setq(p, first(%qs, .))]
+		[setq(o, rest(%qs, .))]
+		[setq(t, ladd(%qs.%2, .))]
+
+		[and(
+@@ .. amt changed is a number
+			isint(%2), 
+@@ .. amt changed by isn't 0, which would be silly. shiftstat() also checks this
+			t(%2), 
+@@ .. perm part of stat is a number
+			isnum(%qp), 
+@@ .. total is >= 0
+			gte(%qt, 0), 
+@@ .. total is <= the permanent part of the stat (max value for a pool)
+			lte(%qt, %qp)
+		)]
+	)
+
+--
+
+&f.pool.canchange? #310=localize([setq(s, getstat(%0/%1, b))][setq(p, first(%qs, .))][setq(o, rest(%qs, .))][setq(t, ladd(%qs.%2, .))][and(isint(%2), t(%2), isnum(%qp), gte(%qt, 0), lte(%qt, %qp))])
+
+
+>> Called generically from all other systems, does the dirty deed
+
+&f.pool.changestat #310=shiftstat(%0/%1, %2, offset)
+
+
+-----------------------------------------------------------------------------
+-- Pool: Willpower ----------------------------------------------------------
+
+WILLPOWER
+	defaults to /spend
+
+&f.poolstat.willpower #310=
+@@ defaults to /spend, though we're expected to pass that
+@@ 0: player dbref
+@@ 1: action (spend/regain)
+@@ 2: method
+@@ 3: reason (if any)
+@@ 4: /other/switches (if any, not passed - ignored)
+
+	[if(
+		not(comp(%1, )), 
+		setq(a, spend), 
+		setq(a, %1)
+	)]
+	[u(f.poolstat.willpower/%qa, %0, %2, %3)]
+
+--
+
+&f.poolstat.willpower #310=[if(not(comp(%1, )), setq(a, spend), setq(a, %1))][u(f.poolstat.willpower/%qa, %0, %2, %3)]
+
+spend -  -  - /
+
+
+-----------------------------------------------------------------------------
+-- Willpower/Spend ----------------------------------------------------------
+
+	/SPEND <reason>
+		spends 1 willpower		
+
+&f.poolstat.willpower/spend #310=
+@@ 0: player dbref
+@@ 1: method (really is reason, since method = 1 spent, always)
+@@ 2: reason, as passed, but is completely ignored
+
+	case(
+		0, 
+
+		u(f.pool.canchange?, %0, willpower, -1), 
+		[alert(Willpower Spend, alert)] No Willpower left to spend., 
+
+		remit(
+			loc(%0), 
+			[u(f.pool.output.number, %0, willpower, spend, 1, , %1)]
+			[null(u(f.pool.changestat, %0, willpower, -1))]
+		)		
+	)
+
+--
+
+&f.poolstat.willpower/spend #310=case(0, u(f.pool.canchange?, %0, willpower, -1), [alert(Willpower Spend, alert)] No Willpower left to spend., remit(loc(%0), [u(f.pool.output.number, %0, willpower, spend, 1, , %1)][null(u(f.pool.changestat, %0, willpower, -1))]))
+
+
+-----------------------------------------------------------------------------
+-- Willpower/Regain ---------------------------------------------------------
+
+	/REGAIN <method>
+		<method>:
+			rest: Regain 1
+			vice: Regain 1, usually
+			virtue: Regain all
+			<num>: Regain <num>
+			all: Regain all
+
+&f.poolstat.willpower/regain #310=
+@@ 0: player dbref
+@@ 1: method
+@@ 2: reason
+@@ 
+@@ m: method (not always there)
+@@ a: amount
+@@ r: reason (may include method)
+@@ 
+@@ uses: getstat(), alert(), titlestr()
+	[setq(r, )]
+	[setq(m, 
+		switch(
+			%1, 
+@@ .. rest
+			r*, 
+			[@@(Rest)]
+			[setq(a, 1)]
+			[setq(r, Rest)], 
+@@ .. vice
+			vic*, 
+			[@@(Vice)]
+			[setq(a, 1)]
+			[setq(r, getstat(%0/vice))], 
+@@ .. virtue (reverse the stat's offset so it will set to 0)
+			vir*, 
+			[@@(Virtue)]
+			[setq(a, mul(getstat(%0/Willpower, o), -1))]
+			[setq(r, getstat(%0/virtue))], 
+@@ .. all (reverse the stat's offset so it will set to 0)
+			a*, All
+			[setq(a, mul(getstat(%0/Willpower, o), -1))], 
+@@ .. numeric gain
+			Numeric
+			[setq(a, trim(first(%1, =)))]
+		)
+	)]
+
+@@ For Willpower Regains, Reason is the Method
+	[setq(
+		r, 
+		case(
+			1, 
+			and(t(%2), t(%qr)), %qr: [titlestr(%2)], 
+			t(%qr), %qr, 
+			t(%2), titlestr(%2)
+		)
+	)]
+
+	[if(
+		u(f.pool.canchange?, %0, Willpower, %qa), 
+		remit(
+			loc(%0), 
+			[u(f.pool.output.number, %0, willpower, regain, %qa, %qm, %qr)]
+			[null(u(f.pool.changestat, %0, willpower, %qa))]
+		), 
+		[alert(Willpower Regain, alert)] Cannot regain by that amount.
+	)]
+
+--
+
+&f.poolstat.willpower/regain #310=[setq(r, )][setq(m, switch(%1, r*, [@@(Rest)][setq(a, 1)][setq(r, Rest)], vic*, [@@(Vice)][setq(a, 1)][setq(r, getstat(%0/vice))], vir*, [@@(Virtue)][setq(a, mul(getstat(%0/Willpower, o), -1))][setq(r, getstat(%0/virtue))], a*, All[setq(a, mul(getstat(%0/Willpower, o), -1))], Numeric[setq(a, trim(first(%1, =)))]))][setq(r, case(1, and(t(%2), t(%qr)), %qr: [titlestr(%2)], t(%qr), %qr, t(%2), titlestr(%2)))][if(u(f.pool.canchange?, %0, Willpower, %qa), remit(loc(%0), [u(f.pool.output.number, %0, willpower, regain, %qa, %qm, %qr)][null(u(f.pool.changestat, %0, willpower, %qa))]), [alert(Willpower Regain, alert)] Cannot regain by that amount.)]
+
+
+-----------------------------------------------------------------------------
+-- Pool: Glamour ------------------------------------------------------------
+
+GLAMOUR
+	does not default to anything
+
+&f.poolstat.glamour #310=
+@@ 0: player dbref
+@@ 1: action (spend/regain)
+@@ 2: method (amt)
+@@ 3: reason (if any)
+@@ 4: /other/switches (if any)
+	if(
+		isnum(getstat(%0/glamour, perm)), 
+		u(f.poolstat.glamour/%1, %0, %2, %3, %4), 
+		[alert(Glamour, alert)] You don't have a Glamour stat.
+	)
+
+
+--
+
+&f.poolstat.glamour #310=if(isnum(getstat(%0/glamour, perm)), u(f.poolstat.glamour/%1, %0, %2, %3, %4), [alert(Glamour, alert)] You don't have a Glamour stat.)
+
+
+-----------------------------------------------------------------------------
+-- Glamour/Spend ------------------------------------------------------------
+
+	/SPEND <amt>[=<reason>]
+		pretty straight-forward
+
+&f.poolstat.glamour/spend #310=
+@@ 0: player dbref
+@@ 1: method (always an amt)
+@@ 2: reason (if any)
+@@ 3: /other/switches (ignored)
+
+	case(
+		0, 
+
+		and(gte(%1, 0), isint(%1)), 
+		[alert(Glamour Spend, alert)] Must spend by a positive whole number., 
+
+		u(f.pool.canchange?, %0, glamour, -%1), 
+		[alert(Glamour Spend, alert)] Cannot spend that amount., 
+
+		[remit(
+			loc(%0), 
+			[u(f.pool.output.number, %0, glamour, spend, %1, , %2)]
+			[null(u(f.pool.changestat, %0, glamour, -%1))]
+		)]
+	)
+
+--
+
+&f.poolstat.glamour/spend #310=case(0, and(gte(%1, 0), isint(%1)), [alert(Glamour Spend, alert)] Must spend by a positive whole number., u(f.pool.canchange?, %0, glamour, -%1), [alert(Glamour Spend, alert)] Cannot spend that amount., [remit(loc(%0), [u(f.pool.output.number, %0, glamour, spend, %1, , %2)][null(u(f.pool.changestat, %0, glamour, -%1))])])
+
+
+-----------------------------------------------------------------------------
+-- Glamour/Regain -----------------------------------------------------------
+
+	/REGAIN <pool>[=<reason>]
+		/COURT: +1 success based on court
+		/All/Other/Roll/Switches/Here
+
+	<pool>
+		Roll if non-numeric, considering /court
+		Set if numeric
+
+&f.poolstat.glamour/regain #310=
+@@ 0: player dbref
+@@ 1: method (pool)
+@@ 2: reason (if any)
+@@ 3: /other/switches
+@@ 
+@@ a: additional points (if success and using /court)
+@@ c: court (if success and using /court)
+@@ p: position of /court switch, if it exists
+@@ s: other/switches (<null> if pool is numeric>)
+@@ r: roll result
+@@ n: number of successes  (<num> if pool is numeric)
+@@ w: what rolled/what errored ()
+@@ o: offset of players' glamour
+@@
+@@ uses: roll(), titlestr(), getstat()
+
+	[setq(s, trim(%3, b, /))]
+	[setq(o, getstat(%0/glamour, offset))]
+
+@@ >> check for numeric <pool>
+	[if(isnum(%1), 
+@@ .. numeric <pool>, validate the number: 1 < [amt] < 20
+		[case(0, 
+			gt(%1, 0), [setq(n, #-1)][setq(w, Amount must be positive)], 
+			lt(%1, 20), [setq(n, #-1)][setq(w, Don't be silly)], 
+			isint(%1), [setq(n, #-1)][setq(w, Amount must be a whole number)], 
+			t(%2), [setq(n, #-1)][setq(w, Numeric regains must have a reason)], 
+@@ .. .. result = amount, reason = Direct
+			[setq(n, trim(%1))][setq(w, Direct Setting)]
+			[setq(a, )][setq(c, )][setq(s, )]
+		)], 
+
+@@ .. non-numeric <pool>, result is a roll check
+		[if(
+			t(setr(p, match(%qs, court, /))), 
+			[setq(s, ldelete(%qs, %qp, /))]
+			[setq(a, 1)]
+			[setq(c, getstat(%0/court))], 
+@@ .. else
+			[setq(a, )][setq(c, )]
+		)]
+		[setq(r, roll(%1, %0, %qs))]
+		[setq(n, first(%qr, |))]
+		[setq(w, extract(%qr, 2, 1, |))]
+@@ .. .. add court stuff if it's there.
+		[if(
+			and(t(%qa), t(%qn)), 
+			[setq(n, add(%qn, %qa))]
+			[setq(w, %qw + %qa success %(%qc%))]
+		)]
+	)]
+
+@@ .. analyze output
+	[case(
+		1, 
+@@ .. see if they can even take more glamour
+		not(lt(%qo, 0)), 
+		[alert(Glamour Regain, alert)] No room for more Glamour., 
+
+@@ .. see if roll errored
+		strmatch(%qn, #-1), 
+		[alert(Glamour Regain, alert)] %qw, 
+
+@@ .. ok, so output and adjust
+		[setq(n, min(%qn, abs(%qo)))]
+		[remit(
+			loc(%0), 
+			u(f.pool.output.roll, %0, glamour, regain, %qw, %qn, %qs, %2)
+		)]
+		[null(u(f.pool.changestat, %0, glamour, %qn))]
+	)]
+
+
+---
+
+&f.poolstat.glamour/regain #310=[setq(s, trim(%3, b, /))][setq(o, getstat(%0/glamour, offset))][if(isnum(%1), [case(0, gt(%1, 0), [setq(n, #-1)][setq(w, Amount must be positive)], lt(%1, 20), [setq(n, #-1)][setq(w, Don't be silly)], isint(%1), [setq(n, #-1)][setq(w, Amount must be a whole number)], t(%2), [setq(n, #-1)][setq(w, Numeric regains must have a reason)], [setq(n, trim(%1))][setq(w, Direct Setting)][setq(a, )][setq(c, )][setq(s, )])], [if(t(setr(p, match(%qs, court, /))), [setq(s, ldelete(%qs, %qp, /))][setq(a, 1)][setq(c, getstat(%0/court))], [setq(a, )][setq(c, )])][setq(r, roll(%1, %0, %qs))][setq(n, first(%qr, |))][setq(w, extract(%qr, 2, 1, |))][if(and(t(%qa), t(%qn)), [setq(n, add(%qn, %qa))][setq(w, %qw + %qa success %(%qc%))])])][case(1, not(lt(%qo, 0)), [alert(Glamour Regain, alert)] No room for more Glamour., strmatch(%qn, #-1), [alert(Glamour Regain, alert)] %qw, [setq(n, min(%qn, abs(%qo)))][remit(loc(%0), u(f.pool.output.roll, %0, glamour, regain, %qw, %qn, %qs, %2))][null(u(f.pool.changestat, %0, glamour, %qn))])]
+
+
+-----------------------------------------------------------------------------
+-- Pool: Essence ------------------------------------------------------------
+
+ESSENCE (for werewolves/spirits/skinthieves)
+	defaults to /spend
+
+
+&f.poolstat.essence #310=
+@@ defaults to /spend, though we're expected to pass that
+@@ 0: player dbref
+@@ 1: action (spend/regain)
+@@ 2: method
+@@ 3: reason (if any)
+@@ 4: /other/switches (if any, not passed - ignored)
+
+	[if(
+		not(comp(%1, )), 
+		setq(a, spend), 
+		setq(a, %1)
+	)]
+
+	[if(
+		isnum(getstat(%0/essence, perm)), 
+		u(f.poolstat.essence/%qa, %0, %2, %3), 
+		[alert(Essence, alert)] You don't have an Essence stat.
+	)]
+
+--
+
+&f.poolstat.essence #310=[if(not(comp(%1, )), setq(a, spend), setq(a, %1))][if(isnum(getstat(%0/essence, perm)), u(f.poolstat.essence/%qa, %0, %2, %3), [alert(Essence, alert)] You don't have an Essence stat.)]
+
+
+-----------------------------------------------------------------------------
+-- Essence/Spend ------------------------------------------------------------
+
+	/SPEND <amt>[=<reason>]
+		pretty straight-forward
+
+&f.poolstat.essence/spend #310=
+@@ 0: player dbref
+@@ 1: method (always an amt)
+@@ 2: reason (if any)
+@@ 3: /other/switches (ignored)
+
+	case(
+		0, 
+
+		and(gte(%1, 0), isint(%1)), 
+		[alert(Essence Spend, alert)] Must spend by a positive whole number., 
+
+		u(f.pool.canchange?, %0, essence, -%1), 
+		[alert(Essence Spend, alert)] Cannot spend by that amount., 
+
+		[remit(
+			loc(%0), 
+			[u(f.pool.output.number, %0, essence, spend, %1, , %2)]
+			[null(u(f.pool.changestat, %0, essence, -%1))]
+		)]
+	)
+
+--
+
+&f.poolstat.essence/spend #310=case(0, and(gte(%1, 0), isint(%1)), [alert(Essence Spend, alert)] Must spend by a positive whole number., u(f.pool.canchange?, %0, essence, -%1), [alert(Essence Spend, alert)] Cannot spend by that amount., [remit(loc(%0), [u(f.pool.output.number, %0, essence, spend, %1, , %2)][null(u(f.pool.changestat, %0, essence, -%1))])])
+
+
+-----------------------------------------------------------------------------
+-- Essence/Regain -----------------------------------------------------------
+
+	/REGAIN <amt>[=<reason>]
+		like spending, but in reverse
+
+&f.poolstat.essence/regain #310=
+@@ 0: player dbref
+@@ 1: method (always an amt)
+@@ 2: reason (if any)
+@@ 3: /other/switches (ignored)
+@@
+@@ o: offset of players' essence
+
+	case(
+		0, 
+
+		and(gte(%1, 0), isint(%1)), 
+		[alert(Essence Regain, alert)] Must regain by a positive whole number., 
+
+		u(f.pool.canchange?, %0, essence, %1), 
+		[alert(Essence Regain, alert)] Cannot regain by that amount., 
+
+		[remit(
+			loc(%0), 
+			[u(f.pool.output.number, %0, essence, regain, %1, , %2)]
+			[null(u(f.pool.changestat, %0, essence, %1))]
+		)]
+	)
+
+--
+
+&f.poolstat.essence/regain #310=case(0, and(gte(%1, 0), isint(%1)), [alert(Essence Regain, alert)] Must regain by a positive whole number., u(f.pool.canchange?, %0, essence, %1), [alert(Essence Regain, alert)] Cannot regain by that amount., [remit(loc(%0), [u(f.pool.output.number, %0, essence, regain, %1, , %2)][null(u(f.pool.changestat, %0, essence, %1))])])
+
+
+-----------------------------------------------------------------------------
+-- Essence/Regain for Werewolves --------------------------------------------
+
+1: They get 1 essence for seeing their auspice moon, once a night that it is in the sky.
+2: They meditate at a locus *coded*.
+3: Getting it from a touchstone *ritual item, probably does not need coded.*
+4: Eating a wolf or a human. *Probably does not need to be coded.*”
+
+Moon Phase:
+	think last(u(#191/fn.getmoonphase))
+
+Aupsice Matches:
+	Gibbous:Cahalith Full:Rahu Half:Elodoth New:Irraka Crescent:Ithaeur
+
+So the Moon-View Check is:
+	rest(grab(xxx, [last(u(#191/fn.getmoonphase))]:*), :)
+
+Moon-View regain is always 1.
+
+Regain/Loci: Handled through the loci objects themselves. 
+
+
+	/REGAIN <method>
+		<method>:
+			<null>: Check for moon, regain 1
+			moon: Check for moon, regain 1
+			loci: Notify of loci system
+			meditation: Notify of loci system
+
+
+
+
+-----------------------------------------------------------------------------
+-- Pool: Other Stat ---------------------------------------------------------
+
+That is, a pool that's not covered by a specific attribute.
+
+STAT NOT OTHERWISE COVERED
+	number: spend/regain by a flat number
+	roll: spend/regain based on a roll
+
+&f.pool.default #310=[alert(Pool)] Please use one of these stats: [titlestr(itemize(iter(sort(filter(fil.pool.cleanattr, lattr(%!/f.poolstat.*))), lcstr(last(%i0, .))), , or))]
+
+
+>>> This project has been put on the back-burner for now <<<
+
+@@ 0: player dbref
+@@ 1: stat
+@@ 2: action (spend/regain)
+@@ 3: method
+@@ 4: reason (if any)
+@@ 5: /other/switches (if any)
+@@ 
+@@ a: action
+@@ m: method
+@@ n: number to adjust (-spend, +regain)
+@@ f: full stat
+
+	[case(
+		0, 
+@@ .. check spend/regain
+		t(setr(a, grab(/spend/regain, %2*, /))), 
+		[alert(Pool, alert)] Must spend or regain., 
+@@ .. check method
+		t(setr(a, grab(/number/roll, %3*, /))), 
+		[alert(Pool, alert)] Method must be number or roll., 
+@@ .. check the stat is numeric
+		gt(setr(f, getstat(%0/%1, perm)), 0), 
+		[alert(Pool, alert)] Stat must be one you have and numeric., 
+@@ .. ok, method: number
+		comp(%qm, number), 
+		Numeric Change, 
+@@ .. ok, method: roll
+		comp(%qm, roll), 
+		Roll Change, 
+@@ .. mysterious error
+		[alert(Poll, alert)] Mysterious Error! Neither Number nor Roll!
+	)]
+
+
+
+
+Default Pool! (%0/%1)
+
+
+-----------------------------------------------------------------------------
+-- Pool: Output -------------------------------------------------------------
+
+roll-based spend/gain:
+
+&f.pool.output.roll #310=
+@@ 0: player dbref
+@@ 1: stat
+@@ 2: "spend" or "regain"
+@@ 3: rolled items
+@@ 4: successes
+@@ 5: list/of/switches (optional)
+@@ 6: reason (optional)
+
+		[name(%0)] 
+		[if(
+			gte(%4, 0), 
+			%2s %4, 
+			critically fails %2ing
+		)] 
+		[capstr(%1)] 
+		by [titlestr(%3)]
+		[if(t(%5), %, using switches [itemize(%5, /, &)])]
+		[if(t(%6), %, for %6)].
+
+
+---
+
+&f.pool.output.number #310=
+@@ 0: player dbref
+@@ 1: stat
+@@ 2: "spend" or "regain"
+@@ 3: value
+@@ 4: method (optional)
+@@ 5: reason (optional)
+
+	[name(%0)] %2s 
+	[if(
+		t(%4), 
+		%4 %(%3%), 
+		%3
+	)] 
+	[capstr(%1)][if(t(%5), %, for %5)].
+
+
+-----------------------------------------------------------------------------
+-- Pool: Aliases ------------------------------------------------------------
+
++<stat>/(spend|regain) [<method>[ for <reason>]]
+
+&c.pool.willpower #310=$+willpower/*:@pemit %#=[u(f.pool-master, %#, trim(first(%0)), willpower=[trim(rest(%0))])]
+
+&c.pool.glamour #310=$+glamour/* *:@pemit %#=[u(f.pool-master, %#, %0, glamour=%1)]
+
+&c.pool.essence #310=$+essence/*:@pemit %#=[u(f.pool-master, %#, trim(first(%0)), essence=[trim(rest(%0))])]
+
+--
+
+&c.pool.spend #310=$+spend *:@pemit %#=[u(f.pool-master, %#, spend, %0)]
+&c.pool.regain/switch #310=$+spend/* *:@pemit %#=[u(f.pool-master, %#, spend/%0, %1)]
+
+
+&c.pool.regain #310=$+regain *:@pemit %#=[u(f.pool-master, %#, regain, %0)]
+
+&c.pool.regain/switch #310=$+regain/* *:@pemit %#=[u(f.pool-master, %#, regain/%0, %1)]
+
+
+
+-----------------------------------------------------------------------------
+-- Pool: Help ---------------------------------------------------------------
+
+&help~ic_commands~+pool #96=Managing Pool Stats~This stat comes in many different forms, but all of them are to increase or decrease the stats which increase and decrease as a pool value with a maximum.%b (The exception is health, which has its own system.) %r %r[ansi(h, +pool/spend willpower\[=<reason>\])]: Spends 1 Willpower, with an optional reason. %r %r[ansi(h, +pool/regain willpower=<method>\[ for <reason>\])]: Regains a number of Willpower depending on the method, with an optional reason. %r%b %b rest: Regain 1 Willpower after a good night's rest. %r%b %b vice: Regain 1 Willpower by using your vice. %r%b %b virtue: Regain all spent Willpower by using your virtue. %r%b %b all: Regain all spent Willpower for another reason. %r%b %b <amt>: Regain <amt> Willpower for another reason. %r %r[ansi(h, +pool/spend glamour=<amt>\[ for <reason>\])]: Spends <amt> Glamour, with an optional reason. %r %r[ansi(h, +pool/regain\[/court\]\[/roll_switches\] glamour=<dice to roll>\[ for <reason>\])]: Regains a number of Glamour based on the successes of a simple +roll.%b It can take any switch that +roll can, as well as the /court switch, which will add 1 success to the roll, as long as the roll had 1 success. %r %r[ansi(h, +pool/regain glamour=<amount> for <reason>)]: Regains <amount> glamour. This is only to be used with pledges, hedge fruit, and tokens where a straight amount is necessary. %r %r[ansi(h, +pool/spend|regain essence=<amt>\[ for <reason>\])]: Spends or regains Essence, if you have any.%b Reserved for skinthieves %r %rThe next page lists useful shortcuts and examples.~[ansi(h, Shortcuts)]: %r+spend\[/<switches>\] <stat>=<options>\[ for <reason>\] %r+regain\[/<switches>\] <stat>=<options>\[ for <reason>\] %r%b %b <stat>: the pool stat (willpower, glamour, or essence) %r %r+willpower/<action>\[/<switches>\] <method>\[ for <reason>\] %r+glamour/<action>\[/<switches>\] <amt or dice to roll>\[ for <reason>\] %r+essence/<action>\[/<switches>\] <amount>\[ for <reason>\] %r%b %b <action>: the action to take (spend or regain) %r %r[ansi(h, Examples)]: %r%b %b +spend willpower %r%b %b +willpower/regain vice for being mean %r%b %b +pool/spend glamour = 2 for Elements 3 %r%b %b +regain/court/again=9 glamour=wits + empathy for attending Woodstock %r%b %b +essence/regain 3 for killing poor innocent woodland animals %r %r[ansi(h, See Also)]: +help roll, +help damage

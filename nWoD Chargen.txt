@@ -1,0 +1,1669 @@
+nWoD Chargen.  God save us all.
+
+1) Set Template
+	Nothing can be done without setting the template.  This is done in a way identically to +stat/template <player>=<template(s)>.  Due to the way WoD works, removing a template requires clearing the entire sheet.
+
+2) Counters
+	I need a way to see how many points have been used for each system.  I like the way St Petersburg does this, instead of forcing you to list Primary/Secondary/Tertiary then going from there.
+	
+	This isn't as hard as it sounds, but is harder than it should be.
+
+================================================================================
+== DATA ========================================================================
+
+&d.data-dictionary cg=#188
+&d.stat-functions cg=#204
+
+
+--
+
+Note: We're cheating a bit, bypassing most of the stat functions themselves, but this is part of why we coded the stat functions object like we did.
+
+
+================================================================================
+== List of Stats Based on Tags =================================================
+
+Returns only the stats of a certain category (* for 'all') with a certain tag ('*' for 'don't filter', in which case don't use this function, use lattr(<sheet>/_<category>.*) and leave it at that).
+
+&f.list-stats-tags cg=
+@@ list of stats on a sheet, based on passed tags
+@@ 0: dbref of sheet
+@@ 1: category (may be *)
+@@ 2: tags.list (all required, if any, for 'mental', etc., * for 'all')
+@@ 3: 'or' for the default behavior of hastag? (defaults to 'and')
+@@ 
+@@ returns: character sheet statpaths
+
+	filter(
+		[u(d.stat-functions)]/fil.list-stats-tags, 
+@@ .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
+@@ .. so we can use the filter for non-sheet matches
+		rest(edit(lattr(%0/_%1.*), %b_, %b), _), 
+		, 
+		, 
+		%2, 
+		not(strmatch(%3, or))
+	)
+
+
+
+think u(cg/f.list-stats-tags, pmatch(thenomain), attribute, mental)
+think u(cg/f.list-stats-tags, pmatch(thenomain), attribute, resistance)
+think u(cg/f.list-stats-tags, pmatch(thenomain), attribute, resistance.mental)
+think u(cg/f.list-stats-tags, pmatch(thenomain), attribute, *)
+
+think u(cg/f.list-stats-tags, pmatch(thenomain), skill, physical.mental.social, or)
+
+think u(cg/f.list-stats-tags, pmatch(thenomain), merit, changeling)
+think u(cg/f.list-stats-tags, pmatch(thenomain), *, power level)
+think u(cg/f.list-stats-tags, pmatch(thenomain), *, energy)
+think u(cg/f.list-stats-tags, pmatch(thenomain), *, morality)
+
+
+
+================================================================================
+== List Total Points in a Category/Tags Combo ==================================
+
+5th Dot Rule: 5th dot is always +1 at chargen for attributes, skills, merits, and powers.
+
+&f.points.category cg=
+@@ 0: dbref of sheet
+@@ 1: category (attribute, skill, merit, etc)
+@@ 2: tags.list (all required, if any, for 'mental', etc., * for 'all')
+@@ 3: 1 (True) if you do NOT count 5 point traits as +1
+@@ 
+@@ l: list of statpaths (you can see where we're going with this)
+@@ s: sum of points in each category (primary stats only)
+@@ b: number
+
+[setq(l, u(f.list-stats-tags, %0, %1, %2))]
+[setr(
+	s, 
+	ladd(
+		iter(
+			%ql, 
+			[setr(b, first(u(%0/_%i0), .))] 
+			[if(and(gte(%qb, 5), not(t(%3))), 1)]
+		)
+	)
+)]
+
+---
+
+&f.points.category cg=[setq(l, u(f.list-stats-tags, %0, %1, %2))][setr(s, ladd(iter(%ql, [setr(b, first(u(%0/_%i0), .))] [if(and(gte(%qb, 5), not(t(%3))), 1)])))]
+
+---
+
+think u(cg/f.points.category, pmatch(thenomain), attribute, social)
+think u(cg/f.points.category, pmatch(thenomain), skill, social)
+think u(cg/f.points.category, pmatch(thenomain), merit, *)
+
+think u(cg/f.points.category, secondary character sheet, aspect, *)
+think u(cg/f.points.category, secondary character sheet, advantage, power level)
+
+think u(cg/f.points.category, pmatch(corgan), merit, psychic)
+
+@@ @@ Does not presently work for List stats
+
+
+================================================================================
+== Show Allocations In ... =====================================================
+
+The various WoD games do different things across this spectrum, so each section does (or may) have code to find and apply exception.  This is to be written in such a way that the exceptions themselves can be pulled as "allocated", even if it's a simple as "1 point of <Power Level> was given for free with this template."  We know this already, but this way more granular details can be pulled from within the system.
+
+
+--------------------------------------------------------------------------------
+-- Allocated Points in Attributes ----------------------------------------------
+
+This looks easy because we haven't added Mage.
+
+&f.allocated.attributes cg=
+@@ 0: dbref of sheet
+@@ output: <mental>/<physical>/<social>
+	iter(
+		mental physical social, 
+		sub(u(f.points.category, %0, attribute, %i0), 3), , /
+	)
+
+think u(cg/f.allocated.attributes, pmatch(thenomain))
+
+--------------------------------------------------------------------------------
+-- Allocated Points in Skills --------------------------------------------------
+
+&f.allocated.skills cg=
+@@ 0: dbref of sheet
+@@ output: <mental>/<physical>/<social>
+@@ Specialties are ignored because they don't have tags, so fail the filter.
+	iter(
+		mental physical social, 
+		u(f.points.category, %0, skill, %i0), , /
+	)
+
+
+think u(cg/f.allocated.skills, pmatch(thenomain))
+
+
+--------------------------------------------------------------------------------
+-- Allocated Specialties -------------------------------------------------------
+
+Returns full stat paths.  The first part of the list are specialties that are not allocated via bonuses to template, etc.  Minor templates are checked first, if appropriate.
+
+Merit: Wolf Blooded - grants a free specialty.  Because only humans may take Wolf Blooded, we will treat it as <sub-template>.
+
+&f.allocated.specialties cg=
+@@ 0: dbref of sheet
+@@ output: _stat.path.specs for <normal>`<template>`<sub-template>`<etc>
+@@ 
+@@ l: list of skills (just skills) player has
+@@ 		(I don't think we actually use this)
+@@ s: list specialties associated by those skills, eventually filtered
+@@ f: filter list, based on template: 
+@@ 		<list a>`<list b>`<list c>, each list may be composed of multiple items
+
+	[setq(l, ulocal(f.list-stats-tags, %0, skill, mental.physical.social, or))]
+	[setq(s, iter(%ql, lattr(%0/_%i0.*)))]
+@@ >> find each template's specalty skills
+	[iter(
+@@ .. do it from the most minor/specialied template first
+		revwords(u(%0/_bio.template), .), 
+@@ .. list for this template
+		[setq(f, u(f.allocated.specialties.%i0, %0, %qs))]
+@@ .. remove items from the filter list (item item`item`item item)
+		[iter(
+			%qf, 
+			iter(
+				%i0, 
+				setq(s, remove(%qs, %i0))
+			), 
+			`, 
+			@@
+		)], 
+		., 
+		@@
+	)]
+@@ >> return it
+	%qs[if(%qf, `%qf)]
+
+
+think u(cg/f.allocated.specialties, pmatch(thenomain))
+think u(cg/f.allocated.specialties, pmatch(dog))
+
+
+--------------------------------------------------------------------------------
+-- Allocated Specialties: Human ------------------------------------------------
+
+Humans themselves don't get additional specialties, but some merits give bonuses.
+
+&f.allocated.specialties.human cg=
+
+*** PROJECT ON HOLD: Wolf Blooded merit needs xxx specialty. ***
+
+
+--------------------------------------------------------------------------------
+-- Allocated Specialties: Changeling -------------------------------------------
+
+&f.allocated.specialties.changeling cg=
+@@ 0: dbref of sheet
+@@ 1: current list of specialties (_full.stat.path)
+@@ returns: changeling freebie`seeming freebie(s)`kith freebie(s)
+@@ 
+@@ l: ongoing list of specialties
+@@ k: kith free specialties
+@@ s: seeming free specialties
+@@ c: changeling free specialties
+
+localize(
+	[setq(l, %1)]
+
+@@ >> first remove kith freebies from the list
+@@ .. match kith specialties allocated
+	[setq(
+		k, 
+		iter(
+			u(%0/_bio.kith), 
+			u(f.allocated.specialties.changeling.%i0, %0, ), 
+			.
+		)
+	)]
+@@ .. and remove them
+	[iter(%qk, setq(l, remove(%ql, %i0)), , @@)]
+
+@@ >> then remove seeming freebies from the list
+@@ .. match seeming specialties allocated
+	[setq(
+		s, 
+		iter(
+			u(%0/_bio.seeming), 
+			u(f.allocated.specialties.changeling.%i0, %0, ), 
+			.
+		)
+	)]
+@@ .. and remove them
+	[iter(%qs, setq(l, remove(%ql, %i0)), , @@)]
+
+@@ >> pull from what's left
+	[setq(
+		c, 
+		first(
+			iter(
+				athletics brawl stealth, 
+				grab(%ql, _skill.%i0.*)
+			)
+		)
+	)]
+	%qc`%qs`%qk
+)
+
+
+think [setq(0, pmatch(dog))][u(cg/f.allocated.specialties.changeling, %q0, lattr(%q0/_skill.*.*))]
+
+think [setq(0, pmatch(thenomain))][u(cg/f.allocated.specialties.changeling, %q0, lattr(%q0/_skill.*.*))]
+
+
+--------------------------------------------------------------------------------
+-- Allocated Specialties: Seemings and Kiths -----------------------------------
+
+&f.allocated.specialties.changeling.beast cg=
+@@ seeming: beast
+@@ free animal_ken specialty
+	first(lattr(%0/_skill.animal_ken.*))
+
+think u(cg/f.allocated.specialties.changeling.beast, pmatch(dog))
+
+---
+
+&f.allocated.specialties.changeling.soldier cg=
+	first(lattr(%0/_skill.weaponry.blades))
+
+---
+
+&f.allocated.specialties.changeling.razorhand cg=
+	first(lattr(%0/_skill.weaponry.knives))
+
+---
+
+&f.allocated.specialties.changeling.riddleseeker cg=
+	first(lattr(%0/_skill.investigation.riddles))
+
+---
+
+&f.allocated.specialties.changeling.nightsinger cg=
+	first(lattr(%0/_skill.expression.*))
+
+---
+
+@@ house-ruled
+&f.allocated.specialties.changeling.telluric cg=
+	[first(lattr(%0/_skill.science.astronomy))] 
+	[first(lattr(%0/_skill.occult.astrology))]
+
+@@ &f.allocated.specialties.changeling.telluric cg=
+@@ 	[first(lattr(%0/_skill.academics.astronomy))] 
+@@	[first(lattr(%0/_skill.occult.astrology))]
+
+---
+
+&f.allocated.specialties.changeling.daitya cg=
+	first(lattr(%0/_skill.weaponry.*))
+
+
+--------------------------------------------------------------------------------
+-- Allocated Specialties: Werewolf ---------------------------------------------
+
+&f.allocated.specialties.werewolf cg=
+@@ 0: dbref of sheet
+@@ 1: current list of specialties (_full.stat.path)
+@@ returns: auspex freebie
+@@ 
+@@ l: ongoing list of specialties
+@@ a: auspex free specialties
+
+localize(
+	[setq(l, %1)]
+
+@@ >> first remove auspex freebies from the list
+@@ .. match auspice specialties allocated
+	[setq(a, 
+		u(f.allocated.specialties.werewolf.[u(%0/_bio.auspice)], %0, ), 
+	)]
+@@ .. and remove them (not using setdiff)
+	[iter(%qa, setq(l, remove(%ql, %i0)), , @@)]
+
+@@ >> (this may look dumb, but if we need to add Lodge later, it will be easier)
+@@ .. (see &f.allocated.specialties.changeling)
+	%qa
+)
+
+
+think [setq(0, pmatch(thenomain))][u(cg/f.allocated.specialties.werewolf, %q0, lattr(%q0/_skill.*.*))]
+
+
+--------------------------------------------------------------------------------
+-- Allocated Specialties: Auspices ---------------------------------------------
+
+&f.allocated.specialties.werewolf.rahu cg=
+		first(
+			iter(brawl intimidation survival, 
+				lattr(%0/_skill.%i0.*)
+			)
+		)
+
+&f.allocated.specialties.werewolf.cahalith cg=
+		first(
+			iter(crafts expression persuasion, 
+				lattr(%0/_skill.%i0.*)
+			)
+		)
+
+&f.allocated.specialties.werewolf.elodoth cg=
+		first(
+			iter(empathy investigation politics, 
+				lattr(%0/_skill.%i0.*)
+			)
+		)
+
+&f.allocated.specialties.werewolf.ithaeur cg=
+		first(
+			iter(animal_ken medicine occult, 
+				lattr(%0/_skill.%i0.*)
+			)
+		)
+
+&f.allocated.specialties.werewolf.irraka cg=
+		first(
+			iter(larceny stealth subterfuge, 
+				lattr(%0/_skill.%i0.*)
+			)
+		)
+
+
+--------------------------------------------------------------------------------
+-- Allocated Merits ------------------------------------------------------------
+
+&f.allocated.merits cg=
+@@ 0: dbref of sheet
+@@ output: points spent on <merits>/<advantage power level stat(s)>
+@@ (wyrd is tagged 'power level')
+@@ Unlike skills' substats (specialties), merit substats are a breakdown
+@@ of the main merit, option add-ons, or other.
+@@ (rites are bought with merit points; the free one is reversed later)
+
+		[ladd(
+			[ulocal(f.points.category, %0, merit, *)] 
+			[ulocal(f.points.category, %0, rite, *)] 
+@@ .. subtract points given free with kiths, seemings, and templates
+			[iter(
+				revwords(u(%0/_bio.template), .), 
+				ulocal(f.allocated.merits.%i0, %0), 
+				.
+			)] 
+@@ .. subtract points in merit substats
+			[iter(
+				lattr(%0/_merit.*.*), 
+				-[first(u(%0/%i0), .)]
+			)]
+		)]/
+@@ .. power stat items are 3 merits per dot over 1, which is free
+@@ .. max it with 0 so we don't return -3 for humans
+	[max(
+		0, 
+		mul(sub(ulocal(f.points.category, %0, advantage, power level), 1), 3)
+	)]
+
+think u(cg/f.allocated.merits, *thenomain)
+think ulocal(cg/f.points.category, *thenomain, merit, *)
+
+
+--------------------------------------------------------------------------------
+-- Allocated Merits: Seemings and Kiths ----------------------------------------
+
+&f.allocated.merits.changeling cg=
+@@ mantle (<court>) is free for 1 point
+	[if(
+		gte(first(u(%0/_merit.mantle_%([u(%0/_bio.court)]%)), .), 1), 
+		-1
+	)] 
+@@ check for kith and seeming merits
+	[iter(
+		[u(%0/_bio.kith)].[u(%0/_bio.seeming)], 
+		-[u(f.allocated.merits.changeling.%i0, %0)], 
+		.
+	)]
+
+---
+
+&f.allocated.merits.changeling.pamarindo cg=
+@@ this is a cultural kith that gets Iron Stomach for free
+	first(u(%0/_merit.iron_stomach), .)
+
+---
+
+&f.allocated.merits.changeling.succubus cg=
+@@ Striking Looks 2 for free
+	if(
+		t(first(u(%0/_merit.striking_looks), .)), 
+		2
+	)
+
+&f.allocated.merits.changeling.incubus cg=
+	u(f.allocated.merits.changeling.succubus, %0)
+
+
+--------------------------------------------------------------------------------
+-- Allocated Merits: Tradition (Thaumaturge) -----------------------------------
+
+@@ check for tradition
+&f.allocated.merits.thaumaturge cg=
+	-[u(f.allocated.merits.thaumaturge.[edit(u(%0/_bio.tradition), %b, _)], %0)] 
+
+@@ If someone has their freebie, ignore it.
+@@ Won't count if the stat is set to "2"
+@@ (That these merits begin "ritual" is a house rule)
+
+&f.allocated.merits.thaumaturge.apostle_of_the_dark_one cg=
+	mul(
+		4, 
+		eq(first(u(%0/_merit.ritual_communion), .), 4)
+	)
+
+&f.allocated.merits.thaumaturge.ceremonial_magician cg=
+	mul(
+		4, 
+		eq(first(u(%0/_merit.ritual_luck_magic), .), 4)
+	)
+
+&f.allocated.merits.thaumaturge.hedge_witch cg=
+	mul(
+		4, 
+		eq(first(u(%0/_merit.ritual_enchantment), .), 4)
+	)
+
+&f.allocated.merits.thaumaturge.shaman cg=
+	mul(
+		4, 
+		eq(first(u(%0/_merit.ritual_visionary_trances), .), 4)
+	)
+
+&f.allocated.merits.thaumaturge.taoist_alchemist cg=
+	mul(
+		4, 
+		eq(
+			max(
+				first(u(%0/_merit.ritual_alchemy_(internal)), .), 
+				first(u(%0/_merit.ritual_alchemy_(external)), .)
+			), 
+			4
+		)
+	)
+
+
+&f.allocated.merits.thaumaturge.vodoun cg=
+	mul(
+		4, 
+		eq(first(u(%0/_merit.ritual_invocation_(ghosts)), .), 4)
+	)
+
+--
+
+think u(cg/f.allocated.merits, pmatch(ashworth))
+think u(cg/f.allocated.merits.thaumaturge, pmatch(ashworth))
+think u(cg/f.allocated.merits.thaumaturge.shaman, pmatch(ashworth))
+
+think u(cg/f.allocated.merits, pmatch(cassia))
+think u(cg/f.allocated.merits.thaumaturge, pmatch(cassia))
+think u(cg/f.allocated.merits.thaumaturge.hedge_witch, pmatch(cassia))
+
+think u(cg/f.allocated.merits, pmatch(legrasse))
+think u(cg/f.allocated.merits.thaumaturge, pmatch(legrasse))
+think u(cg/f.allocated.merits.thaumaturge.apostle_of_the_dark_one, pmatch(legrasse))
+
+
+--------------------------------------------------------------------------------
+-- Allocated Merits: Psychic ---------------------------------------------------
+
+As a house-rule for Darkwater, Psychics are given 4 free points for psychic merits, bringing them in line with the by-the-book Thaumaturges.
+
+Add all the psychic merits, subtract that number or 4, whichever is lower.
+
+---
+
+&f.allocated.merits.psychic cg=-[min(u(f.points.category, %0, merit, psychic), 4)]
+
+---
+
+think ulocal(cg/f.list-stats-tags, pmatch(corgan), merit, psychic)
+think u(cg/f.points.category, pmatch(corgan), merit, psychic)
+
+think iter(ulocal(cg/f.list-stats-tags, pmatch(corgan), merit, psychic), %i0:[u(pmatch(corgan)/_%i0)])
+
+think -[min(u(cg/f.points.category, pmatch(corgan), merit, psychic), 4)]
+
+think u(cg/f.allocated.merits, pmatch(corgan))
+think u(cg/f.allocated.merits.psychic, pmatch(corgan))
+
+
+
+--------------------------------------------------------------------------------
+-- Allocated Merits: Werewolf --------------------------------------------------
+
+For the sake of chargen, the "Rituals" merit is considered a Gift, so exempt it here.  The free Rite it gives is also exempted here (if a bit oddly)
+
+@@ &f.allocated.merits.werewolf cg=[first(get(%0/_merit.rituals), .)]
+
+&f.allocated.merits.werewolf cg=-[ladd([first(get(%0/_merit.rituals), .)] [iter(lnum(first(get(%0/_merit.rituals), .)), inc(%i0))])]
+
+--------------------------------------------------------------------------------
+-- Allocated Contracts ---------------------------------------------------------
+
+Fortunately, at least fortunately for now, all contracts and goblin contracts are simply bought.
+
+&f.allocated.contracts cg=add(
+	u(f.points.category, %0, contract, *), 
+	u(f.points.category, %0, goblin_contract, *)
+)
+
+-- -- -- --
+
+think u(cg/f.allocated.attributes, pmatch(thenomain))
+think u(cg/f.allocated.skills, pmatch(thenomain))
+think u(cg/f.allocated.specialties, pmatch(thenomain))
+think u(cg/f.allocated.merits, pmatch(thenomain))
+think u(cg/f.allocated.contracts, pmatch(thenomain))
+
+@dolist attributes skills specialties merits contracts={think [titlestr(##)]: [u(#394/f.allocated.##, pmatch(dog))]}
+
+
+--------------------------------------------------------------------------------
+-- Allocated Aspects -----------------------------------------------------------
+
+Most aspects for skinthieves are in the "aspect" type, but two are in the Bio type, requiring us to count them up separately.
+
+&f.allocated.aspects cg=
+	[case(u(%0/_bio.talisman_aspect), 
+		Bound Totem, 0, 
+		Talisman, 0, 
+		No Talisman, 4, 
+		Permanent Talisman, 1
+	)]/
+	[case(u(%0/_bio.thieving_aspect), 
+		Humane Harvest, 2, 
+		Hunter Killer, 0, 
+		Vicious Skintaker, -1
+	)]/
+	[u(f.points.category, %0, aspect, *, don't double-point 5s)]
+
+-- -- -- --
+
+&f.allocated.aspects cg=[case(u(%0/_bio.talisman_aspect), Bound Totem, 0, Talisman, 0, No Talisman, 4, Permanent Talisman, 1)]/[case(u(%0/_bio.thieving_aspect), Humane Harvest, 2, Hunter Killer, 0, Vicious Skintaker, -1)]/[u(f.points.category, %0, aspect, *, don't double-point 5s)]
+
+
+think u(cg/f.allocated.aspects, secondary character sheet)
+
+
+
+--------------------------------------------------------------------------------
+-- Allocated Renown ------------------------------------------------------------
+
+total: auspice/tribe/neither
+
+Like Gifts, there are situations where the primary renown is both Auspice and Tribe, so we need to compare totals as well as explain where the numbers are coming from.
+
+e: every renown
+t: primary tribe renown
+a: primary auspice renown
+o: other renown
+
+
+&f.allocated.renown cg=
+localize(
+	[setq(e, u(f.list-stats-tags, %0, renown, *))]
+	[setq(a, u(f.list-stats-tags, %0, renown, get(%0/_bio.auspice)))]
+	[setq(t, u(f.list-stats-tags, %0, renown, get(%0/_bio.tribe)))]
+	[setq(o, setdiff(%qe, %qa %qt))]
+
+@@ .. how many spent? (messy but works)
+	[setq(e, ladd(iter(%qe, ladd(u(%0/_%i0), .))))]
+	[setq(t, ladd(iter(%qt, ladd(u(%0/_%i0), .))))]
+	[setq(a, ladd(iter(%qa, ladd(u(%0/_%i0), .))))]
+	[setq(o, ladd(iter(%qo, ladd(u(%0/_%i0), .))))]
+
+	%qe (Auspice: %qa - Tribe: %qt - Other: %qo)
+)
+
+
+--
+
+&f.allocated.renown cg=localize([setq(e, u(f.list-stats-tags, %0, renown, *))][setq(a, u(f.list-stats-tags, %0, renown, get(%0/_bio.auspice)))][setq(t, u(f.list-stats-tags, %0, renown, get(%0/_bio.tribe)))][setq(o, setdiff(%qe, %qa %qt))][setq(e, ladd(iter(%qe, ladd(u(%0/_%i0), .))))][setq(t, ladd(iter(%qt, ladd(u(%0/_%i0), .))))][setq(a, ladd(iter(%qa, ladd(u(%0/_%i0), .))))][setq(o, ladd(iter(%qo, ladd(u(%0/_%i0), .))))]%qe (Auspice: %qa - Tribe: %qt - Other: %qo))
+
+
+--------------------------------------------------------------------------------
+-- Allocated Gifts -------------------------------------------------------------
+
+total: auspice/tribe/neither/rituals
+
+Gifts, according to the first column on page 64, work like this:
+	3 gifts - value is irrelevant (mostly: see below)
+	1 gift from the auspice gift list
+	1 gift from the tribe gift list (ghost wolves don't get this)
+	1 gift to any gift list, or to the "rituals" merit
+	gift lists bought in chargen must be in order. 1 -> 2 -> 3
+
+
+
+e: every gift
+t: tribe
+a: auspice
+o: other
+r: "rituals" merit
+
+g: a gift list's current value(s), space-delimited
+i: are all the gifts in order? (true/false)
+
+
+	
+
+&f.allocated.gifts cg=localize(
+
+@@ >> get lists of gifts
+	[setq(e, u(f.list-stats-tags, %0, gift, *))]
+	[setq(t, u(f.list-stats-tags, %0, gift, get(%0/_bio.tribe)))]
+	[setq(a, u(f.list-stats-tags, %0, gift, get(%0/_bio.auspice)))]
+	[setq(o, setdiff(%qe, %qa %qt))]
+	[setq(r, first(udefault(%0/_merit.rituals, 0), .))]
+
+@@ >> verify all gifts are in order! (1 -> 2 -> 3), 1 or 0
+	[setq(i, 
+		land(
+@@ .. for each gift
+			iter(%qe, 
+@@ .. .. g: levels of current gift (1 2 3)
+				[setq(g, edit(get(%0/_%i0), ., %b))]
+@@ .. >> for lvl x, total of gifts must be ladd(lnum(1, x))
+				[eq(ladd(%qg), ladd(lnum(1, last(sort(%qg)))))]
+			)
+		)
+	)]
+
+@@ >> how many gifts are there? (messy but works)
+	[setq(e, ladd([iter(%qe, words(u(%0/_%i0), .))] %qr))]
+	[setq(t, ladd(iter(%qt, words(u(%0/_%i0), .))))]
+	[setq(a, ladd(iter(%qa, words(u(%0/_%i0), .))))]
+	[setq(o, ladd(iter(%qo, words(u(%0/_%i0), .))))]
+
+	%qe (Auspice: %qa - Tribe: %qt - Other: %qo - Rituals: %qr)%, Ordered: [if(t(%qi), Yes, No)] 
+
+)
+
+
+
+
++sheet/check gordon
+
+
+--
+
+&f.allocated.gifts cg=localize([setq(e, u(f.list-stats-tags, %0, gift, *))][setq(t, u(f.list-stats-tags, %0, gift, get(%0/_bio.tribe)))][setq(a, u(f.list-stats-tags, %0, gift, get(%0/_bio.auspice)))][setq(o, setdiff(%qe, %qa %qt))][setq(r, first(udefault(%0/_merit.rituals, 0), .))][setq(i, land(iter(%qe, [setq(g, edit(get(%0/_%i0), ., %b))][eq(ladd(%qg), ladd(lnum(1, last(sort(%qg)))))])))][setq(e, ladd([iter(%qe, words(u(%0/_%i0), .))] %qr))][setq(t, ladd(iter(%qt, words(u(%0/_%i0), .))))][setq(a, ladd(iter(%qa, words(u(%0/_%i0), .))))][setq(o, ladd(iter(%qo, words(u(%0/_%i0), .))))]%qe (Auspice: %qa - Tribe: %qt - Other: %qo - Rituals: %qr)%, Ordered: [if(t(%qi), Yes, No)] )
+
+--
+
+think u(cg/f.allocated.gifts cg, num(werewolf test))
+think u(cg/f.allocated.gifts, #1264)
+
+
+--------------------------------------------------------------------------------
+-- Allocated Rites -------------------------------------------------------------
+
+
+&f.allocated.rites cg=[words(u(f.list-stats-tags, %0, rite, *))] (min [udefault(%0/_merit.rituals, 0)])
+
+
+================================================================================
+== Were Points Spent Correctly? ================================================
+
+This is our generic checker, returning boolean 1/0 (true/false) if the category adds up correctly.
+
+It does NOT check that points were spent correctly, only if they were spent!  For instance, it won't check if 2-point Goblin Contracts were spent.
+
+
+&f.pts-valid?.attributes cg=
+@@ 3/4/5 points
+@@ 0: dbref of sheet
+	[setq(a, sort(u(f.allocated.attributes, %0), n, /))]
+	[and(
+		[eq(first(%qa, /), 3)], 
+		[eq(extract(%qa, 2, 1, /), 4)], 
+		[eq(last(%qa, /), 5)]
+	)]
+	
+&f.pts-valid?.skills cg=
+@@ 4/7/11 points
+@@ 0: dbref of sheet
+	[setq(a, sort(u(f.allocated.skills, %0), n, /))]
+	[and(
+		[eq(first(%qa, /), 4)], 
+		[eq(extract(%qa, 2, 1, /), 7)], 
+		[eq(last(%qa, /), 11)]
+	)]
+
+-
+
+&f.pts-valid?.specialties cg=
+@@ <standard>`<template>`<specialty>`<sub-specialty>
+@@ 0: sheet dbref
+	localize(
+		[setq(s, u(f.allocated.specialties, %0))]
+		[land(
+			[eq(words(first(%qs, `)), 3)] 
+			[iter(
+				u(%0/_bio.template), 
+				udefault(f.pts-valid?.specialties.%i0, 1, %0, %qs), 
+				.
+			)]
+		)]
+	)
+
+&f.pts-valid?.specialties.changeling cg=
+@@ 0: sheet dbref
+@@ 1: <standard>`<template>`<specialty>`<sub-specialty>
+	land(
+		[eq(words(extract(%1, 2, 1, `)), 1)] 
+		[iter(
+			[u(%0/_bio.seeming)].[u(%0/_bio.kith)], 
+			udefault(f.pts-valid?.specialties.changeling.%i0, 1, %1), 
+			.
+		)]
+	)
+
+For all of these: 0: <standard>`<template>`<seeming>`<kith>
+
+&f.pts-valid?.specialties.changeling.beast cg=eq(words(extract(%0, 3, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.soldier cg=eq(words(extract(%0, 4, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.telluric cg=eq(words(extract(%0, 4, 1, `)), 2)
+&f.pts-valid?.specialties.changeling.razorhand cg=eq(words(extract(%0, 4, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.riddleseeker cg=eq(words(extract(%0, 4, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.nightsinger cg=eq(words(extract(%0, 4, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.daitya cg=eq(words(extract(%0, 4, 1, `)), 1)
+
+
+@@ Werewolf:
+@@ 0: sheet dbref
+@@ 1: <standard>`<auspice>`<lodge> (lodge isn't in yet)
+
+&f.pts-valid?.specialties.werewolf cg=eq(words(extract(%1, 2, 1, `)), 1)
+
+	
+-
+
+&f.pts-valid?.merits cg=[eq(ladd(u(f.allocated.merits, %0), /), 7)]
+
+&f.pts-valid?.contracts cg=[eq(u(f.allocated.contracts, %0), 5)]
+
+&f.pts-valid?.aspects cg=[eq(ladd(u(f.allocated.aspects, %0), /), 9)]
+
+-
+
+@@ <total> (Auspice: a - Tribe: t - Other: o)
+
+&f.pts-valid?.renown cg=
+localize(
+	[setq(r, u(f.allocated.renown, %0))]
+	[setq(g, strmatch(get(%0/bio.tribe), Ghost Wolves))]
+	[setq(e, first(%qr))]
+	[setq(a, extract(%qr, 3, 1))]
+	[setq(t, extract(%qr, 6, 1))]
+
+	[and(
+@@ Total = 3, except Tribe: Ghost Wolves, then 2
+		eq(%qe, if(%qg, 2, 3)), 
+@@ At least 1 point in Auspice
+		gte(%qa, 1), 
+@@ At least 1 point in Tribe, except Tribe: Ghost Wolves, then 0
+		gte(%qt, if(%qg, 0, 1))
+	)]
+)
+
+-
+
+@@ <total> (Auspice: a - Tribe: t - Other: o - Rituals: r), Ordered: y
+
+&f.pts-valid?.gifts cg=
+localize(
+	[setq(n, u(f.allocated.gifts, %0))]
+	[setq(g, strmatch(get(%0/bio.tribe), Ghost Wolves))]
+
+	[setq(e, first(%qn))]
+	[setq(a, extract(%qn, 3, 1))]
+	[setq(t, extract(%qn, 6, 1))]
+	[setq(o, extract(%qn, 9, 1))]
+	[setq(r, extract(%qn, 12, 1))]
+	[setq(y, extract(%qn, 14, 1))]
+
+	[and(
+		eq(%qe, 3), 
+		gte(%qa, 1), 
+		gte(%qt, if(%qg, 0, 1)), 
+		lte(add(%qo, %qr), 1), 
+		strmatch(%qy, Yes)
+	)]
+)
+
+
+---
+
+think u(cg/f.pts-valid?.attributes, pmatch(thenomain))
+think u(cg/f.pts-valid?.skills, pmatch(thenomain))
+think u(cg/f.pts-valid?.specialties, pmatch(thenomain))
+think u(cg/f.pts-valid?.merits, pmatch(thenomain))
+think u(cg/f.pts-valid?.contracts, pmatch(thenomain))
+
+think u(cg/f.pts-valid?.aspects, secondary character sheet)
+
+
+think u(cg/f.pts-valid?.attributes, pmatch(dog))
+think u(cg/f.pts-valid?.skills, pmatch(dog))
+think u(cg/f.pts-valid?.specialties, pmatch(dog))
+think u(cg/f.pts-valid?.merits, pmatch(dog))
+think u(cg/f.pts-valid?.contracts, pmatch(dog))
+
+
+================================================================================
+== Check Prerequisites =========================================================
+
+Stat prerequisites come in several forms:
+
+	Character Generation Only: via the tag "cgen-only"
+	Template Only: via a tag matching one of the character's templates
+	Stats/Others: via &prerequisite.<statpath> on the data dictionary
+		(reasons for errors on this are stored on &prereq-text.<statpath>)
+
+	The cg-only prereq is a red herring for cg, but not for xp-spends.
+
+
+--------------------------------------------------------------------------------
+-- Prereq Check: CG-Only -------------------------------------------------------
+
+&f.prerequsite.cg-only cg=
+@@ 0: player dbref
+@@ 1: stat (without instance)
+@@ returns: 1 if ok, #-1 <reason> if not
+
+	if(
+		not(and(
+			hastag?(rest(%1, .), chargen-only), 
+			isapproved(%0)
+		)), 
+		1, 
+		#-1 CHARGEN ONLY STATS CANNOT BE GAINED AFTER APPROVAL
+	)
+
+&f.prerequsite.cg-only cg=if(not(and(hastag?(rest(%1, .), chargen-only), isapproved(%0))), 1, #-1 CHARGEN ONLY STATS CANNOT BE GAINED AFTER APPROVAL)
+
+ c & !a = true
+ c &  a = false
+!c & !a = true
+!c &  a = true
+
+think u(cg/f.prerequsite.cg-only, pmatch(thenomain), merit.mantle_%(%))
+
+
+
+--------------------------------------------------------------------------------
+-- Prereq Check: Template ------------------------------------------------------
+
+Similar code also exists on +stat/template and +stat/view, but I'm not re-writing them all together right now.  It will probably also end up in the XP spend system.
+
+&f.prerequsite.template cg=
+@@ 0: sheet dbref
+@@ 1: _sheet.statpath_(possibly_instanced)
+@@ returns: 1 if ok, #-1 <reason> if not
+@@ 
+@@ i: instance (if exists)
+@@ s: _sheet.statpath_without_instance_()
+@@ t: templates for this stat
+
+localize(
+	[setq(s, ulocal([u(d.stat-functions)]/f.statpath-without-instance, %1))]
+
+@@ .. pull which templates are on this stat
+	[setq(
+		t, 
+		setinter(
+			lcstr(u([u(d.data-dictionary)]/bio.template)), 
+			lcstr(u([u(d.data-dictionary)]/tags.[rest(%qs, _)])), 
+			.
+		)
+	)]
+
+@@ .. are there any? then compare to character's template(s), 
+	[if(
+		t(%qt), 
+		if(
+			t(setinter(lcstr(u(%0/_bio.template)), lcstr(%qt), .)), 
+			1, 
+			#-1 Character Template Not Allowed For This Stat
+		), 
+@@ .. else return "1" because it passes all template checks
+		1
+	)]
+)
+
+---
+
+think u(cg/f.prerequsite.template, pmatch(thenomain), _merit.mantle_%(spring%))
+
+think u(cg/f.prerequsite.template, pmatch(thenomain), _advantage.glamour)
+
+think u(cg/f.prerequsite.template, pmatch(thenomain), _merit.fleet_of_foot)
+
+think u(cg/f.prerequsite.template, pmatch(thenomain), _merit.unseen_sense_(wyrd))
+
+
+--------------------------------------------------------------------------------
+-- Prereq Check: Other ---------------------------------------------------------
+
+&f.prerequsite.other cg=
+@@ 0: sheet dbref
+@@ 1: _sheet.statpath_(possibly_instanced)
+@@ 2: value to raise by
+@@ returns: 1 if ok, #-1 <reason> if not
+@@ 
+@@ i: instance (if exists)
+@@ s: _sheet.statpath_without_instance_()
+@@ p: return for &prerequisite.<statpath>
+
+
+localize(
+	[setq(i, before(rest(%1, %(), %)))]
+	[setq(s, ulocal([u(d.stat-functions)]/f.statpath-without-instance, %1))]
+	[setq(
+		p, 
+		ulocal([u(d.data-dictionary)]/prerequisite.[rest(%qs, _)], %0, %qi, %2)
+	)]
+
+@@ .. if null was returned, that's a 1, else check in more detail
+	[case(
+		0, 
+		comp(%qp, ), 1, 
+		%qp, #-1 [u([u(d.data-dictionary)]/prereq-text.[rest(%qs, _)])], 
+		1
+	)]
+)
+
+---
+
+think u(cg/f.prerequsite.other, pmatch(dog), _merit.mantle_(spring))
+think u(cg/f.prerequsite.other, pmatch(dog), _merit.court_goodwill_(spring))
+
+think u(cg/f.prerequsite.other, pmatch(gwen), _merit.mantle_(spring))
+think u(cg/f.prerequsite.other, pmatch(gwen), _merit.court_goodwill_(spring))
+
+think u(cg/f.prerequsite.other, pmatch(dog), _merit.dual_kith_(water_dweller), 3)
+
+
+================================================================================
+== CHECK STATS =================================================================
+
+Let's check someone's entire sheet to see if there are any prerequisite inconsistencies.  Also is THE ONLY PLACE WE VALIDATE SPECIALTY VALUE.  (Due to the data dictionary structure not being done to do this.)
+
+Without %2: Validates the existing sheet item.
+With %2: Validates a "new" value.
+
+We no longer check cg-only here, as it's only meaningful for +xp/spend.
+
+&f.statcheck cg=
+@@ 0: sheet dbref
+@@ 1: _sheet.statpath
+@@ 2: value to raise by/add to list (otherwise null, a sheet-only check)
+@@ returns: validation for: <stat value>.<cg-only>.<template>.<prereq>
+@@ 
+@@ s: dd.statpath (without instance)
+@@ c: stat's class
+@@ v: current perm value for stat if numeric, full stat otherwise
+@@ t: temp validation results, used here and there
+@@ 
+
+localize(
+	[setq(s, ulocal([u(d.stat-functions)]/f.statpath-without-instance, rest(%1, _)))]
+	[setq(c, udefault([u(d.data-dictionary)]/class.%qs, numeric))]
+	[setq(v, case(%qc, numeric, first(u(%0/%1), .), u(%0/%1)))]
+
+@@ >> check stat value
+	[setq(
+		t, 
+		case(1, 
+@@ .. substat: _*.*.*: base item must be at least 1
+			strmatch(%1, _*.*.*), 
+			u(f.statcheck.substat, %0, %1, %2), 
+@@ .. derived: dd value matches [*]: check the sheet value is integer
+			strmatch(get([u(d.data-dictionary)]/%qs), %[*%]*), 
+			u(f.statcheck.derived, %0, %1), 
+@@ .. list: stat with class of "list"
+			strmatch(%qc, list), 
+			u(f.statcheck.list, %qs, %qv, %2), 
+@@ .. normal: anything else: validate stat as usual (name then value)
+			u(f.statcheck.normal, %1, %qs, %qv, %2)
+		)
+	)]
+	[if(t(%qt), 1, %qt)].
+
+@@ >> check prereqs
+	[iter(
+		cg-only template other, 
+@@		template other, 
+		u(f.prerequsite.%i0, %0, %1, %2), , .
+	)]
+)
+
+--
+
+&f.statcheck cg=localize([setq(s, ulocal([u(d.stat-functions)]/f.statpath-without-instance, rest(%1, _)))][setq(c, udefault([u(d.data-dictionary)]/class.%qs, numeric))][setq(v, case(%qc, numeric, first(u(%0/%1), .), u(%0/%1)))][setq(t, case(1, strmatch(%1, _*.*.*), u(f.statcheck.substat, %0, %1, %2), strmatch(get([u(d.data-dictionary)]/%qs), %[*%]*), u(f.statcheck.derived, %0, %1), strmatch(%qc, list), u(f.statcheck.list, %qs, %qv, %2), u(f.statcheck.normal, %1, %qs, %qv, %2)))][if(t(%qt), 1, %qt)].[iter(cg-only template other, u(f.prerequsite.%i0, %0, %1, %2), , .)])
+
+--
+
+think u(cg/f.statcheck, pmatch(dog), _merit.mantle_(spring))
+think u(cg/f.statcheck, pmatch(dog), _merit.mantle_(winter))
+
+think u(cg/f.statcheck, pmatch(dog), _merit.mantle_(dusk))
+think u(cg/f.statcheck, pmatch(dog), _merit.unseen_sense_(wyrd))
+think u(cg/f.statcheck, pmatch(dog), _merit.unseen_sense_(wyrd), 3)
+
+think u(cg/f.statcheck, pmatch(thenomain), _merit.status_(freehold))
+think u(cg/f.statcheck, pmatch(thenomain), _skill.flubber)
+
+think u(cg/f.statcheck, pmatch(isolde), _merit.harvest_(hedge_bounty))
+
+think u(cg/f.statcheck, pmatch(dog), _merit.dual_kith_(water_dweller))
+think u(cg/f.statcheck, pmatch(dog), _merit.dual_kith_(water_dweller), 3)
+
+think u(cg/f.statcheck, num(sheet: eric), _gift.half_moon)
+think u(cg/f.statcheck, num(sheet: eric), _gift.half_moon, 3)
+
+think u(cg/f.statcheck, pmatch(thenomain), _gift.rage)
+
+
+---
+
+&f.statcheck.normal cg=
+@@ normal: anything else: validate stat as usual (name then value)
+@@ 0: _sheet.statpath (with instance)
+@@ 1: dd.statpath (without instance)
+@@ 2: sheet value
+@@ 3: value to raise by (otherwise 0/null)
+@@ 
+@@ t: temp whatsit
+@@ i: instance
+@@ d: dd's instance list
+@@ v: value to check (if %3, then do a dance for num/non-num)
+
+localize(
+
+@@ >> see if the stat's even on the DD
+	[setq(t, 
+		if(
+			hasattr([u(d.data-dictionary)], %1), 1, #-1 Stat not found
+		)
+	)]
+
+@@ >> grab the instance (if any) and check it against the dd.
+@@ .. (shouldn't something like this be on the stat lookup? no?)
+	[setq(t, 
+		if(
+			and(t(%qt), strmatch(%0, _*.*_(*))), 
+@@ .. instance is there: process
+			[setq(i, edit(strip(rest(%0, %(), %)), _, %b))]
+			[setq(d, extract(get([u(d.data-dictionary)]/%1), 2, 1, |))]
+			[case(
+				1, 
+				t(member(%qd, *)), 1, 
+				and(member(%qd, #), isint(%qi)), 1, 
+				t(match(%qd, %qi, .)), 1, 
+				#-1 Instance is not valid %(%qi%)
+			)], 
+@@ .. instance is not there: pass %qt it on
+			%qt
+		)
+	)]
+
+@@ >> now we did THAT dance, let's find the value we're checking
+	[setq(v, 
+		case(1, 
+@@ .. if sheet value is numeric and there's a new value, add them
+			and(isnum(%2), t(%3)), add(%2, %3), 
+@@ .. if sheet value is NOT numeric and there's a new value, use the new value
+			t(%3), %3, 
+@@ .. else use sheet value
+			%2
+		)
+	)]
+
+@@ >> if instance was valid, check stat value
+	[if(
+		t(%qt), 
+@@ .. if statpath is ok, validate the value
+		ulocal([u(d.stat-functions)]/f.statvalidate.workhorse, %1, %qv), 
+@@ .. if statpath is not ok, pass its error
+		%qt
+	)]
+)
+
+
+think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, 9)
+think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, 1)
+think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, -2)
+
+think u(cg/f.statcheck.normal, _gift.rage, gift.rage, 1.3.4, 4)
+
+
+---
+
+&f.statcheck.derived cg=
+@@ derived: dd value matches [*]: check the sheet value is integer
+@@ .. unless stat class is explicitly 'string'
+@@ 0: sheet dbref
+@@ 1: _sheet.statpath_(full)
+
+	if(
+		or(
+			isint(first(u(%0/%1), .)), 
+@@ I'm sure there was a simpler way to do this. "Is stat class: string?"
+			strmatch(lcstr(get([u(d.data-dictionary)]/class.[rest(ulocal([u(d.stat-functions)]/f.statpath-without-instance, %1), _)])), string)
+		), 
+		1, 
+		#-1 Derived stat is non-numeric
+	)
+
+---
+
+&f.statcheck.substat cg=
+@@ .. substat: _*.*.*: base item must be at least 1/integer
+@@ .. If _skill.*.*, item itself may only be 1.
+@@ 0: sheet dbref
+@@ 1: _sheet.statpath_(full).substat
+@@ 2: value to raise by (otherwise null, a sheet-only check)
+@@ 
+@@ t: temp whatsit
+localize(
+	case(1, 
+
+		and(
+			isint(setr(t, first(u(%0/[extract(%1, 1, 2, .)]), .))), 
+			gt(%qt, 0)
+		), 
+		#-1 Substat cannot be set if main stat is non-numeric, 
+
+		and(
+			strmatch(%1, _skill.*), 
+			gt(add(u(%0/%1), %2), 1)
+		), 
+		#-1 Specialty substats value are 1
+	)
+)
+
+
+---
+
+&f.statcheck.list cg=
+@@ Class:List stats are checked similarly to other types, but each element
+@@ .. '1.2' + '3 5' -> '1.2.3.5'
+@@ 0: dd.statpath (without instance)
+@@ 1: sheet value
+@@ 2: value to add (otherwise 0/null)
+
+localize(
+	[setq(l, 
+		setinter(
+@@ .. valid stats vs.
+			first(get([u(d.data-dictionary)]/%0), |), 
+			setunion(
+@@ .. .. sheet stats +
+				%1, 
+@@ .. .. stat to add
+				edit(%2, %b, .), 
+				.
+			), 
+			.
+		)
+	)]
+
+@@ Any matches?
+	[if(
+		gte(words(%ql, .), 1), 
+		%ql, 
+		#-1 NO LIST ITEMS VALID
+	)]
+)
+
+---
+
+&f.badstat? cg=
+@@ 0: sheet dbref
+@@ 1: _sheet.statpath
+	not(land(u(f.statcheck, %1, %0), .))
+
+---
+
+&f.badstats cg=
+@@ 0: sheet dbref
+@@ output: All invalid stats on the sheet
+	iter(
+		u([u(d.stat-functions)]/d.type-search-order), 
+		filter(cg/f.badstat?, lattr(%0/_%i0.*), , , %0)
+	)
+
+
+--- --- ---
+
+
+&f.temp-output-checkstats cg=[setq(0, pmatch+(%0))][setq(b, u(f.badstats, %q0))][iter(%qb, >> [u([u(d.stat-functions)]/f.statname-workhorse, rest(%i0, .))]: [itemize(trim(iter(u(cg/f.statcheck, %q0, %i0), if(not(%i0), [titlestr(rest(%i0))]|), ., @@), b, |), |)], , %r)]
+
+think u(cg/f.temp-output-checkstats, thenomain)
+think u(cg/f.temp-output-checkstats, gwen)
+think u(cg/f.temp-output-checkstats, dog)
+think u(cg/f.temp-output-checkstats, coffee)
+
+think u(cg/f.temp-output-checkstats, isolde)
+
+
+>>> think u(cg/f.temp-output-checkstats, scissors)
+
+>>> think u(cg/f.temp-output-checkstats, cassia)
+
+
+@dolist [search(eplayer=and(isapproved(##), t(u(#394/f.temp-output-checkstats, ##))))]=think [header([name(##)])]%r[u(#394/f.temp-output-checkstats, ##)]%r[footer()]%r
+
+
+=--=-=-=-==-=-=--=-=-=-=-=-==--==-=-=-=--=-=-=-==-=-=-=--==--==--=-=-=--=-=-=
+
+A FREEBIES LIST?
+
+&d.free.<template>.<item>: <stat path>:<amt that's free>
+
+The * wildcard indicates "any", since we're probably matching, especially with specialties.
+
+The prerequisites on free things are waived.
+(Code this in the overall prereq check.  Don't fold this into the core check.)
+
+Becase mantle depends on court, I'm thinking about trying it this way:
+
+- changeling: court -
+&d.free.changeling.spring cg=merit.mantle_(spring):1
+&d.free.changeling.summer cg=merit.mantle_(summer):1
+&d.free.changeling.autumn cg=merit.mantle_(autumn):1
+&d.free.changeling.winter cg=merit.mantle_(winter):1
+
+- changeling: seeming -
+
+&d.free.changeling.beast cg=skill.animal_ken.*:1
+
+- changeling: kith -
+
+@@ &d.free.changeling.telluric cg=skill.academics.astronomy:1 skill.occult.astrology:1
+&d.free.changeling.telluric cg=skill.science.astronomy:1 skill.occult.astrology:1
+&d.free.changeling.daitya cg=skill.weaponry.*:1
+&d.free.changeling.solider cg=skill.weaponry.*:1
+&d.free.changeling.razorhand cg=skill.weaponry.knives:1
+&d.free.changeling.riddleseeker cg=skill.investigation.riddles:1
+&d.free.changeling.nightsinger cg=skill.expression.*:1
+&d.free.changeling.pamarindo cg=merit.iron_stomach:2
+&d.free.changeling.succubus cg=merit.striking_looks:2
+&d.free.changeling.incubus cg=merit.striking_looks:2
+
+---
+
+&d.free.thaumaturge.apostle_of_the_dark_one cg=merit.communion:4
+&d.free.thaumaturge.ceremonial_magician cg=merit.luck_magic:4
+&d.free.thaumaturge.hedge_witch cg=merit.enchantment:4
+&d.free.thaumaturge.shaman cg=merit.visionary_trances:4
+&d.free.thaumaturge.taoist_alchemist cg=merit.alchemy_(*):4
+&d.free.thaumaturge.vodoun cg=merit.invocation_(ghosts):4
+
+
+
+-=-=-=-=-=-=-=-=-=
+
+
+@@ Adds <stat>, to 1 if no value given
+`<stat>[(=|+|-)<value>]
+set <stat>[(=|+|-)<value>]
+
+
+@@ Removes <stat> contents and any substats.
+`!<stat>
+set !<stat>
+unset <stat>
+
+Or just:
+
+<stat>[=<thing>]
+!<stat>
+
+
+================================================================================
+== SET =========================================================================
+
+Here we use regular expressions to catch text and only text, and only in the CG area, to assume some kind of "+stat/set".
+
+Valid formats will be:
+	<stat>=<value>
+	<stat> + <value>
+	<stat> (but only for substats and items with only one value, like Barfly)
+	<stat>.<substat>[ =+- <value>]
+
+	!<stat>, removes a stat or substat completely, resets it to default if it has one
+
+
+** We may have to make a tag or change to determine
+** what kind of substat something is.
+** 
+** specialty: substat values are 1, not totaled
+** simple: substat values are 1, total to main stat's primary value
+** summed: substat values are anything, total to main stat's primary value
+** single: can select one and only one substat, not totaled
+
+
+&c.test.set cg=
+@@ 0: regexp match (unused)
+@@ 1: <stat>
+@@ 2: <operator><spaces><value> (unused)
+@@ 3: <operator>
+@@ 4: <value>
+@@ 
+@@ s: statpath
+@@ n: statname
+@@ e: error message or return message from setstat/shiftstat()
+@@ v: value(s) portion statpath
+@@ 
+@@ uses: statpath(), setstat(), shiftstat(), statname(), titlestr()
+
+@@ Starting with a character
+@@ .. continuing with any number of letters, spaces, or parens
+@@ .. possibly a .
+@@ .. any more letters, but must end in a letter
+@@ .. followed by any number of spaces (optional)
+@@ .. an operator, more spaces (optional), then text
+
+$^([a-zA-Z][a-zA-Z\s\(\)]*\.?[a-zA-Z\s]*[a-zA-Z])\s*(([\+-=])\s*(.*))?$:
+
+@@pemit %#=Set :: <stat>: %1 // <operator>: %3 // <value>: %4; 
+
+@pemit %#=
+
+@@ Statpath & Statname, because we might need it
+@@ .. (substats, single-value stats)
+	[setq(
+		s, 
+		u(
+			[u(d.stat-functions)]/f.statpath-without-instance, 
+			if(
+				t(setr(s, statpath(%#/%1))), 
+				%qs, 
+				statpath(%1)
+			)
+		)
+	)]
+	[setq(n, statname(rest(%qs, .)))]
+
+@@ Validate
+	[setq(
+		e, 
+		case(
+			1, 
+@@ .. make sure the player doesn't have an approval stamp
+			isapproved(%#), 
+			#-1 You're already approved., 
+@@ .. make sure the character has a template set
+			not(hasattr(%#, _bio.template)), 
+			#-1 You don't have a sheet set up., 
+@@ .. avoid problems setting text with + or -
+			and(match(+ -, %3), not(isnum(%4))), 
+			#-1 Cannot Set Text with + or -, 
+@@ >> Change/Set Exception Rules
+@@ .. Template (bio.template) : must be set in main room
+@@ .. Morality Stat (hastag?(<stat>, morality) : +5xp per pt lower than 7
+@@ .. Kith (bio.kith) : =<set>, +<add>
+@@ .. Freebie (from list) : set without checking prereq (#-3 is prereq error)
+
+@@ .. Check to see if substat and stat type is represented here
+			and(
+				strmatch(%qs, *.*.*), 
+				hasattr(%!, f.set.substat.[first(%qs, .)])
+			), 
+			u(f.set.substat.[first(%qs, .)], %#, %1, %qn, %3, %4), 
+@@ .. Normal Sets
+@@ .. + or - means shiftstat()
+			t(match(+ -, %3)), 
+			objeval(#13, shiftstat(%#/%1, %3%4)), 
+@@ .. if value is null and the stat only has one value, set that
+			and(
+				not(comp(%4, )), 
+				eq(
+					words(
+						setr(v, first(u([u(d.data-dictionary)]/%qs), |)), 
+						.
+					), 
+					1
+				)
+			), 
+			objeval(#13, setstat(%#/%1, %qv)), 
+@@ .. else, set the stat normally
+			objeval(#13, setstat(%#/%1, %4))
+		)
+	)]
+	
+@@ Evaluate the Results:
+	[if(
+		t(%qe), 
+		Confirmed: %qe, 
+		Error: [titlestr(rest(%qe))]
+	)]
+
+
+
+@set cg/c.test.set=regexp
+
+
+---
+
+The internal problem I'm having with the below is that these are filling at least partially the role of "prerequisite checking" for setting of substats.
+
+
+--------------------------------------------------------------------------------
+-- SET.SUBSTAT.SKILL -----------------------------------------------------------
+
+The substat being set is on a skill
+
+Right now we don't do anything but pass it through as a specialty.
+
+&f.set.substat.skill=u(f.set.substat.specialty, %0, %1, %2) 
+
+
+--------------------------------------------------------------------------------
+-- SET.SUBSTAT.MERIT -----------------------------------------------------------
+
+The substat being set is on a merit.
+
+Psychic merit substats are called "options", otherwise it's "summed"
+
+&f.set.substat.merit cg=
+@@ 0: dbref of character
+@@ 1: statpath to set
+@@ 2: stat name
+@@ 3: operator
+@@ 4: value
+
+	case(
+		1, 
+@@ .. psychic merits have options, (ignore operator & value)
+		hastag?(first(%2, .), psychic), 
+		u(f.set.substat.option, %0, %1, %2), 
+@@ .. location merits must have the value to set as numeric
+		not(and(hastag?(first(%2, .), location), isint(%4))),
+		#-1 Traits of Location Merits Must Be Explicitly Numeric, 
+@@ .. all other merit traits are summed 
+		u(f.set.substat.summed, %0, %1, %2, %3, %4)
+	)
+
+
+--------------------------------------------------------------------------------
+-- SET.SUBSTAT.SPECIALTY -------------------------------------------------------
+
+The "specialty" substat is:
+	always value 1
+	total is not limited by primary stat
+
+&f.set.substat.specialty cg=
+@@ 0: dbref of character
+@@ 1: statpath (validated)
+@@ 2: stat name (validated)
+	localize(if(
+		t(setr(e, objeval(%!, setstat(%0/%1, 1)))), 
+		Set specialty of [rest(%2, .)] for [first(%2, .)], 
+		%qe
+	))
+
+
+--------------------------------------------------------------------------------
+-- SET.SUBSTAT.SUMMED ----------------------------------------------------------
+
+The "summed" substat is:
+	value of 1+ or 1 if Text (passed from the calling function)
+	total of all "summed" substats may not be > than the primary stat
+
+&f.set.substat.summed cg=
+@@ 0: dbref of character
+@@ 1: statpath (validated)
+@@ 2: stat name (validated)
+@@ 3: operator (+-=)
+@@ 4: value to set (validated)
+@@ 
+@@ b: basic stat's statpath
+@@ v: primary stat value (must be numeric)
+@@ t: total substat value, minus the stat to set (non-numerics = 1)
+@@ n: new value for statpath
+@@ e: error message, if any
+
+localize(
+	[setq(b, extract(%1, 1, 2, .))]
+	[setq(v, objeval(%!, getstat(%0/first(%2, .))))]
+	[setq(
+		t, 
+		ladd(
+			iter(
+@@ .. don't count the "this stat" at all
+				setdiff(lattr(%0/_%qb.*), %1), 
+@@ .. text = 1 for this discussion, so all stats are counted
+				if(
+					isnum(setr(t, first(u(%0/%i0), .))), 
+					%qt, 
+					1
+				), 
+				, 
+				.
+			), 
+			.
+		)
+	)]
+
+@@ >> check new value for stat if + or - is used and it's a number
+	[setq(
+		n, 
+		if(
+			and(match(+ -, %3), isnum(%4)), 
+			add(getstat(%0/%2), %3%4), 
+			%4
+		)
+	)]
+
+@@ >> final error check
+	[case(
+		1, 
+@@ .. sum check
+		gt(add(%qt, if(isnum(%qn), %qn, 1)), %qv), 
+		#-1 Trait(s) More Than Main Stat, 
+@@ .. ok, try to set (throw/catch)
+		[setq(e, objeval(%!, setstat(%0/%1, %qn)))]
+		[if(
+			t(%qe), 
+			Set type of [rest(%2, .)] for [first(%2, .)]%, value %qn, 
+			%qe
+		)]
+	)]
+)
+
+
+--------------------------------------------------------------------------------
+-- SET.SUBSTAT.OPTION ----------------------------------------------------------
+
+The "option" substat is:
+	a value depending on things I don't yet know about
+	only one option is allowed for the substat
+	we set the value based on splatbook nonsense
+	(basically set as a flag)
+
+&f.set.substat.option cg=
+@@ 0: dbref of character
+@@ 1: statpath (validated)
+@@ 2: stat name (validated)
+@@ 
+@@ v: value to set (1 unless otherwise noted)
+@@ e: error if any (throw/catch)
+
+	localize(if(
+		<already has an option>, 
+		#-1 Option Already Set, 
+@@ .. check for d.value.<option>
+		[setq(
+			v, 
+			if(
+				hasattr(%!, d.value.[rest(%2, .)]), 
+				u(d.value.[rest(%2, .)]), 
+				1
+			)
+		)]
+		[setq(e, objeval(%!, setstat(%0/%2, %qv)))]
+		[if(
+			t(%qe), 
+			Set option of [rest(%2, .)] for [first(%2, .)], 
+			%qe
+		)]
+	))
+
+---
+
+&d.value.emotional_thermokinesis cg=2
+
+
+
+
+
+
+================================================================================
+== UNSET =======================================================================
+
+Returns a stat to null or to its default value.  Unsetting a stat that relies upon it should trigger a warning.
+
+&c.test.unset cg=$^!([a-zA-Z][a-zA-Z\s\(\)]*\.?[a-zA-Z\s]*[a-zA-Z])?$:@pemit %#=Unset :: <stat>: %1
+
+
+&c.test.unset cg=$^!
+
+([a-zA-Z][a-zA-Z\s\(\)]*\.?[a-zA-Z\s]*[a-zA-Z])\s*(([\+-=])\s*(.*))
+
+?$:@pemit %#=Unset :: <stat>: %1 // <operator>: %3 // <value>: %4
+
+
+TESTING: 
+
+
+
+
+@set cg/c.test.unset=regexp
+
+
+	[a-zA-Z]
+	[a-zA-Z\s\(\)\.]*?
+	[a-zA-Z]
+	[a-zA-Z\s]*
+	[a-zA-Z]
+
+

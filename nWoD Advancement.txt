@@ -1,0 +1,1657 @@
+=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=--=-=-=-=-=-=-==-=--==--==-=-=-=--=
+
+HERE IS THE ACTUAL CODE SO FAR
+
++xp: a report about how much XP you have
++xp/add <player>=<amt> : Staff can give a player some xp.
++xp/spend [<player>/]<stat>[=<new value>] : Spends xp on a stat
++xp/unspend <player>/<stat>[=<new value>]
+
++xp/log [<player>] : Check xp log(s) as we have them
+
+
+The XP command.  It's a specific kind of stat-setting.  XP is a Special type, so it can't be done with the commands above.
+
+The automated XP system stores things on the XP Database (#349) in this format:
+
+	log.<timestamp>: <dbref>|<old _special.xp>|<new _special.xp>
+
++xp/add: <log not implemented>
+	add.<player dbref>.<timestamp>: <old _special.xp>|<new _special.xp>|<reason>
+
++xp/spend: <log not implemented>
+	spend.<player dbref>.<timestamp>: <old _special.xp>|<new _special.xp>|<reason>
+
+Spend logs are cleared out after 2 months.  (Stored on a variable.)  Some people would like the logs to be stored for a certain number (last 5 per player), but I'd like something that will time out so I don't have to also code a dead-player detector.
+
+I could instead store the log on the player, but this would require a complex search() to pull any relevant information.
+
+
+-----------------------------------------------------------------------------
+-- THE BASICS ---------------------------------------------------------------
+
+&c.xp ss=$+xp*:@pemit %#=
+@@ Was [setq(0, secure(%0))], but this was interfering with (instance)
+[setq(0, %0)]
+[switch(
+	%q0, 
+@@ No Entry (+xp)
+	, u(f.xp-default), 
+@@ A Switch, with or without Argument (+xp/<switch> [<arg>])
+	/*, u(f.xp-switch, after(first(%q0), /), rest(%q0)), 
+@@ Just Args (+xp <arg>)
+	%b*, u(f.xp-specific, trim(%q0)), 
+@@ Crapola (+xpblablabla)
+	Error: Command is '+xp%[/<switch>%] %[<other stuff>%]'
+)]
+
+---
+
+&c.xp ss=$+xp*:@pemit %#=[setq(0, %0)][switch(%q0, , u(f.xp-default), /*, u(f.xp-switch, after(first(%q0), /), rest(%q0)), %b*, u(f.xp-specific, trim(%q0)), Error: Command is '+xp%[/<switch>%] %[<other stuff>%]')]
+
+---
+
+&f.xp-switch ss=
+@@ q0: Partial-name-match the switch.  What the hell.
+
+@@ Do I know the switch?
+	ifelse(
+		setr(0, grab(lattr(me/f.xp/*), f.xp/%0*)), 
+@@ Yes, I know it, hit it
+		u(%q0, %1), 
+@@ No, I don't know it.  Waa. 
+		No such switch for +xp.  Valid switches are: 
+		[itemize(lcstr(iter(lattr(me/f.xp/*), after(##, /))))]
+	)
+
+---
+
+&f.xp-switch ss=ifelse(setr(0, grab(lattr(me/f.xp/*), f.xp/%0*)), u(%q0, %1), No such switch for +xp.  Valid switches are: [itemize(lcstr(iter(lattr(me/f.xp/*), after(##, /))))])
+
+
+-----------------------------------------------------------------------------
+-- DATA, ETC. ---------------------------------------------------------------
+
+&d.xp-costs #310=#388
+&d.chargen #310=#394
+&d.xp-report #310=#349
+&d.xp-gain-system #310=#350
+
+@@ uses logtext() format: timestamp[.num]|used|target|stat name|from|to|xp spent
+&d.xp-log #310=#2646
+
+
+-----------------------------------------------------------------------------
+-- DEFAULT ------------------------------------------------------------------
+
++xp shows someone's XP.  Wow.  It's the same as Specific, so we toss it there.
+
+&f.xp-default ss=[u(f.xp-specific, %#)]
+
+
+-----------------------------------------------------------------------------
+-- SPECIFIC -----------------------------------------------------------------
+
++xp <player> shows their XP.  Have to be a bit careful since we're also calling it from Default.
+
+0: 
+qp: Player (pmatch'd)
+qs: Sheet (we know it's the player, but still)
+
+uses: pmatch+(), for the 'me'
+
+--
+
+&f.xp-specific ss=
+
+	[setq(p, pmatch+(%0))]
+	[setq(s, u([u(d.stat-funcs)]/f.find-sheet, %qp))]
+	[setq(x, get(%qs/_special.xp))]
+
+	[case(
+		0, 
+@@ .. must either be looking up your own XP or staff.
+		or(not(comp(%#, %qp)), isstaff(%#)), 
+		Error: Must be staff to look at someone else's XP., 
+@@ .. player doesn't exist
+		t(%qp), Error: Player does not exist., 
+@@ .. player has no sheet
+		t(%qs), Error: Player has no sheet., 
+@@ .. sheet has no XP stat -- probably hasn't been built
+		comp(%qx, ), Error: Couldn't find any XP., 
+@@ .. show it .. that was exciting!
+		[header(XP for [name(%qp)])]%r
+		%b [ansi(h, Total XP)]: [ladd(%qx, .)]%r
+		%b  - Earned: [first(%qx, .)] %r
+		%b  - Spent:%b [abs(rest(%qx, .))] %r
+		[footer([ladd(%qx, .)] of [first(%qx, .)])]
+	)]
+
+---
+
+&f.xp-specific ss=[setq(p, pmatch+(%0))][setq(s, u([u(d.stat-funcs)]/f.find-sheet, %qp))][setq(x, get(%qs/_special.xp))][case(0, or(not(comp(%#, %qp)), isstaff(%#)), Error: Must be staff to look at someone else's XP., t(%qp), Error: Player does not exist., t(%qs), Error: Player has no sheet., comp(%qx, ), Error: Couldn't find any XP., [header(XP for [name(%qp)])]%r%b [ansi(h, Total XP)]: [ladd(%qx, .)]%r%b  - Earned: [first(%qx, .)] %r%b  - Spent:%b [abs(rest(%qx, .))] %r[footer([ladd(%qx, .)] of [first(%qx, .)])])]
+
+
+-----------------------------------------------------------------------------
+-- /ADD ---------------------------------------------------------------------
+
+Staff-only Add To Someone's XP command.  This is a statshift to the primary stat.  You can add negative if you want to remove permanent XP.
+
+0: <player>=<amt>
+qp: pmatch of <player>
+qs: sheet location
+qa: <amt>
+qm: shiftstat message
+
+uses: pmatch+(), for the 'me'
+
+--
+
+&f.xp/add ss=
+	[setq(p, pmatch+(first(%0, =)))]
+	[setq(s, u([u(d.stat-funcs)]/f.find-sheet, %qp))]
+	[setq(a, rest(%0, =))]
+
+	[case(
+		0, 
+		isstaff(%#), Error: Staff-Only., 
+		t(%qp), Error: Player does not exist., 
+		t(%qs), Error: Player has no sheet., 
+		t(isint(%qa)), Error: Amount is not an intiger., 
+		hasattr(%qs, _special.xp), Error: Couldn't find any XP., 
+@@ .. go for it, report errors
+		[setq(m, u([u(d.stat-funcs)]/f.shiftstat.workhorse, %qs, special.xp, %qa))]
+		[t(%qm)], Error: XP could not be changed for some reason and I don't know why. I saw: %qm, 
+		Total XP changed by %qa to [last(%qm)].
+	)]
+
+---
+
+&f.xp/add ss=[setq(p, pmatch+(first(%0, =)))][setq(s, u([u(d.stat-funcs)]/f.find-sheet, %qp))][setq(a, rest(%0, =))][case(0, isstaff(%#), Error: Staff-Only., t(%qp), Error: Player does not exist., t(%qs), Error: Player has no sheet., t(isint(%qa)), Error: Amount is not an intiger., hasattr(%qs, _special.xp), Error: Couldn't find any XP., [setq(m, u([u(d.stat-funcs)]/f.shiftstat.workhorse, %qs, special.xp, %qa))][t(%qm)], Error: XP could not be changed for some reason and I don't know why. I saw: %qm, Total XP changed by %qa to [last(%qm)].)]
+
+
+-----------------------------------------------------------------------------
+-- /SUB ---------------------------------------------------------------------
+
+This will see the most change in the future.  For now, it "spends" someone's XP for them, a negative add that will delete XP up until their permanent value.  Remember, we consider XP to be a pool, with spent XP as the offset.
+
+Staff-only for now.
+
+0: <player>=<amt>
+qp: pmatch of <player>
+qs: sheet location
+qa: <amt>, -<amt> right before setting
+qx: xp from sheet
+qm: shiftstat message
+
+--
+
+&f.xp/sub ss=
+	[setq(p, pmatch(first(%0, =)))]
+	[setq(s, u([u(d.stat-funcs)]/f.find-sheet, %qp))]
+	[setq(a, rest(%0, =))]
+	[setq(x, u(%qs/_special.xp))]
+
+	[case(
+		0, 
+		isstaff(%#), Error: Staff-Only., 
+		t(%qp), Error: Player does not exist., 
+		t(%qs), Error: Player has no sheet., 
+		t(isint(%qa)), Error: Amount is not an intiger., 
+		hasattr(%qs, _special.xp), Error: Couldn't find any XP., 
+		[setq(a, mul(%qa, -1))]
+@@ .. can't spend too much
+		[gte(ladd(%qx.%qa, .), 0)], Error: Only [ladd(%qx, .)] XP can be spent., 
+@@ .. can't negative-spend too much (this is only here for staff!)
+		[lte(add(rest(%qx, .), %qa), 0)], Error: Can only un-spend [mul(rest(%qx, .), -1)] XP., 
+@@ .. go for it, report errors
+		[setq(m, u([u(d.stat-funcs)]/f.shiftstat.workhorse, %qs, special.xp, %qa, of))]
+		[t(%qm)], Error: XP could not be changed for some reason and I don't know why. I saw: %qm, 
+		Spent XP changed by [mul(%qa, -1)] to [mul(last(%qm), -1)]. 
+		[ladd(%qx.%qa, .)] XP remains.
+	)]
+
+---
+
+&f.xp/sub ss=[setq(p, pmatch(first(%0, =)))][setq(s, u([u(d.stat-funcs)]/f.find-sheet, %qp))][setq(a, rest(%0, =))][setq(x, u(%qs/_special.xp))][case(0, isstaff(%#), Error: Staff-Only., t(%qp), Error: Player does not exist., t(%qs), Error: Player has no sheet., t(isint(%qa)), Error: Amount is not an intiger., hasattr(%qs, _special.xp), Error: Couldn't find any XP., [setq(a, mul(%qa, -1))][gte(ladd(%qx.%qa, .), 0)], Error: Only [ladd(%qx, .)] XP can be spent., [lte(add(rest(%qx, .), %qa), 0)], Error: Can only un-spend [mul(rest(%qx, .), -1)] XP., [setq(m, u([u(d.stat-funcs)]/f.shiftstat.workhorse, %qs, special.xp, %qa, of))][t(%qm)], Error: XP could not be changed for some reason and I don't know why. I saw: %qm, Spent XP changed by [mul(%qa, -1)] to [mul(last(%qm), -1)]. [ladd(%qx.%qa, .)] XP remains.)]
+
+
+================================================================================
+== /REPORT =====================================================================
+
+Report of some useful (possibly critical?) weekly xp add information.
+
+&f.xp/report ss=if(isstaff(%#), [header(+xp/report %([u(d.xp-report)]%))]%r[u([u(d.xp-gain-system)]/f.log)]%r[footer()], [alert(+xp/report)] [u([u(d.xp-gain-system)]/f.log.short)])
+
+
+================================================================================
+== /LOG ========================================================================
+
+0: [<player>]
+
+qp: player dbref
+qm: list of matches: <seconds>|<text>:: ...
+ql: log dbref
+
+qr: record for this attribute
+qs: seconds (timestamp) for this record
+qx: random temporary storage
+
+uses: logtext(), isstaff()
+
+--
+
+&f.xp/log #310=
+	[setq(p, if(t(%0), pmatch(%0), %#))]
+
+	[case(0, 
+		or(isstaff(%#), strmatch(%qp, %#)), 
+		[alert(+xp/log)] Can only look up your own xp/log., 
+
+		[setq(m, logtext(search, xp_spend, |%qp|))]
+		[setq(l, rest(logtext(list, xp_spend), :))]
+
+		[header(+xp/log for [name(%qp)])]%r
+
+		[if(eq(words(%qm, ::), 0), 
+@@ .. no entries
+			%b [ansi(h, No Entries Found)], 
+@@ .. iter through entries in order
+			iter(revwords(extract(revwords(%qm, ::), 1, 10, ::, ::), ::), 
+				[setq(s, first(%i0, |))]
+@@ .. .. one line: <dd Mon> <stat name> <from> -> <to> (<xp> xp)
+				%b [timefmt($d $b '$g, %qs)]%b %b 
+				[ljust(extract(%i0, 4, 1, |), 20)] 
+
+				[ljust(
+					[if(t(setr(x, extract(%i0, 5, 1, |))), %qx, 0)] 
+					-> 
+					[if(t(setr(x, extract(%i0, 6, 1, |))), %qx, 0)], 
+					12
+				)] 
+				[setq(x, extract(%i0, 7, 1, |))]
+				[rjust(abs(%qx), 3)] xp [if(gte(%qx, 0), spent, refunded)], 
+				::, %r
+			)
+		)]%r
+
+		[footer([words(%qm, ::)] entries total)]
+	)]
+
+--
+
+&f.xp/log ss=[setq(p, if(t(%0), pmatch(%0), %#))][case(0, or(isstaff(%#), strmatch(%qp, %#)), [alert(+xp/log)] Can only look up your own xp/log., [setq(m, logtext(search, xp_spend, |%qp|))][setq(l, rest(logtext(list, xp_spend), :))][header(+xp/log for [name(%qp)])]%r[if(eq(words(%qm, ::), 0), %b [ansi(h, No Entries Found)], iter(revwords(extract(revwords(%qm, ::), 1, 10, ::, ::), ::), [setq(s, first(%i0, |))]%b [timefmt($d $b '$g, %qs)]%b %b [ljust(extract(%i0, 4, 1, |), 20)] [ljust([if(t(setr(x, extract(%i0, 5, 1, |))), %qx, 0)] -> [if(t(setr(x, extract(%i0, 6, 1, |))), %qx, 0)], 12)] [setq(x, extract(%i0, 7, 1, |))][rjust(abs(%qx), 3)] xp [if(gte(%qx, 0), spent, refunded)], ::, %r))]%r[footer([words(%qm, ::)] entries total)])]
+
+
+================================================================================
+== /HISTORY ====================================================================
+
+The staff-only last-10-spends-period log.
+
+0: [<num records to show>]
+
+qn: number of records to show (defaults 10)
+qm: tail %qn: <seconds>|<text>:: ...
+ql: log dbref
+
+qr: record for this attribute
+qs: seconds (timestamp) for this record
+qx: random temporary storage
+
+uses: logtext()
+
+--
+
+&f.xp/history ss=
+	[setq(n, if(t(%0), %0, 10))]
+
+	[case(0, 
+		isstaff(%#), 
+		[alert(+xp/log)] Staff only., 
+
+		and(isint(%qn), gt(%qn, 0)), 
+		[alert(+xp/log)] Number of entries must be a positive integer., 
+
+		lte(%qn, 20), 
+		[alert(+xp/log)] Number of entries must 20 or fewer., 
+
+@@ >> OK: Display
+		[setq(m, logtext(tail, xp_spend, %qn))]
+		[setq(l, rest(logtext(list, xp_spend), :))]
+
+		[header(+xp/history)]%r
+
+		[if(eq(words(%qm, ::), 0), 
+@@ .. no entries
+			%b [ansi(h, No Entries Found)], 
+@@ .. iter through entries in order
+			iter(%qm, 
+				[setq(s, first(%i0, |))]
+@@ .. .. one line: <dd Mon> <player name> <stat name> <from> -> <to> (<xp> xp)
+				%b [timefmt($d $b '$g, %qs)]%b %b 
+
+				[ljust(name(extract(%i0, 3, 1, |)), 18)] 
+
+				[ljust(extract(%i0, 4, 1, |), 20)] 
+
+				[ljust(
+					[if(t(setr(x, extract(%i0, 5, 1, |))), %qx, 0)] 
+					-> 
+					[if(t(setr(x, extract(%i0, 6, 1, |))), %qx, 0)], 
+					7
+				)] 
+				[setq(x, extract(%i0, 7, 1, |))]
+				[rjust(abs(%qx), 3)] xp [if(gte(%qx, 0), spent, refunded)], 
+				::, %r
+			)
+		)]%r
+
+		[footer()]
+	)]
+
+--
+
+&f.xp/history ss=[setq(n, if(t(%0), %0, 10))][case(0, isstaff(%#), [alert(+xp/log)] Staff only., and(isint(%qn), gt(%qn, 0)), [alert(+xp/log)] Number of entries must be a positive integer., lte(%qn, 20), [alert(+xp/log)] Number of entries must 20 or fewer., [setq(m, logtext(tail, xp_spend, %qn))][setq(l, rest(logtext(list, xp_spend), :))][header(+xp/history)]%r[if(eq(words(%qm, ::), 0), %b [ansi(h, No Entries Found)], iter(%qm, [setq(s, first(%i0, |))]%b [timefmt($d $b '$g, %qs)]%b %b [ljust(name(extract(%i0, 3, 1, |)), 18)] [ljust(extract(%i0, 4, 1, |), 20)] [ljust([if(t(setr(x, extract(%i0, 5, 1, |))), %qx, 0)] -> [if(t(setr(x, extract(%i0, 6, 1, |))), %qx, 0)], 7)] [setq(x, extract(%i0, 7, 1, |))][rjust(abs(%qx), 3)] xp [if(gte(%qx, 0), spent, refunded)], ::, %r))]%r[footer()])]
+
+
+================================================================================
+== /COST =======================================================================
+
+Cost (and therefore Spend) does a cheat I use in other places: Its support functions pull directly from the set registers, instead of passing them.  This may cause problems in the future.
+
+0: [<player>/]<stat>[=<value>]
+qp: player dbref
+qn: stat name
+qv: value (new)
+
+qw: where's the sheet
+qs: stat path
+qt: trait's value (current, from the sheet)
+qc: cost
+
+qe: error message, if any
+qx: current xp
+
+uses: the rest of the stat system
+
+--
+
+&f.xp/cost ss=
+
+@@ Break 0 down into p, n, v
+	[u(f.registers.player-name-value, %0)]
+
+@@ .. sheet location
+	[setq(w, u([u(d.stat-funcs)]/f.find-sheet, %qp))]
+
+@@ .. put the statpath in s
+	[u(f.registers.statpath, %qp, %qn)]
+
+
+@@ If no v, try to get "next rank" for statpath.
+	[if(
+		not(t(%qv)), 
+		setq(v, ulocal(f.xp.next.stat.rank, %qw, _%qs))
+	)]
+
+@@ .. current value in %qt
+	[setq(t, getstat(%qp/%qn, permanent))]
+
+@@ .. put the cost in %qc
+	[setq(c, ulocal(f.xp.cost.calculator, %qw, %qt, %qv, %qs))]
+
+@@ .. put current xp in %qx
+	[setq(x, get(%qw/_special.xp))]
+
+@@ .. error check
+	[case(1, 
+		t(setr(e, ulocal(f.validate.player, 1))), %qe, 
+		t(setr(e, ulocal(f.validate.stat))), %qe, 
+		t(setr(e, ulocal(f.validate.cost))), %qe, 
+		t(setr(e, ulocal(f.validate.value))), %qe, 
+
+@@ .. else: check stat's class, output differently for "list"
+		The cost 
+		[if(t(comp(%#, %qp)), for [name(%qp)]%b[setq(n, %qp/%qn)])]
+
+		[case(u([u(d.stat-funcs)]/f.get-class, %qs), 
+			list, 
+			to add %qv 
+			([u([u(d.data-dictionary)]/_class_translate_list, %qs, %qv)]) 
+			to [statname(%qn)], 
+
+			to raise [statname(%qn)] 
+			from [if(t(%qt), %qt, 0)] 
+			to %qv
+		)] 
+
+		is %qc xp.
+@@ .. can't afford?
+		[if(setr(e, u(f.validate.spend)), %b(%qe))]
+		[if(t(setr(e, u(f.validate.restricted))), %b(%qe))]
+	)]
+
+
+--
+
+&f.xp/cost ss=[u(f.registers.player-name-value, %0)][setq(w, u([u(d.stat-funcs)]/f.find-sheet, %qp))][u(f.registers.statpath, %qp, %qn)][if(not(t(%qv)), setq(v, ulocal(f.xp.next.stat.rank, %qw, _%qs)))][setq(t, getstat(%qp/%qn, permanent))][setq(c, ulocal(f.xp.cost.calculator, %qw, %qt, %qv, %qs))][setq(x, get(%qw/_special.xp))][case(1, t(setr(e, ulocal(f.validate.player, 1))), %qe, t(setr(e, ulocal(f.validate.stat))), %qe, t(setr(e, ulocal(f.validate.cost))), %qe, t(setr(e, ulocal(f.validate.value))), %qe, The cost [if(t(comp(%#, %qp)), for [name(%qp)]%b[setq(n, %qp/%qn)])][case(u([u(d.stat-funcs)]/f.get-class, %qs), list, to add %qv ([u([u(d.data-dictionary)]/_class_translate_list, %qs, %qv)]) to [statname(%qn)], to raise [statname(%qn)] from [if(t(%qt), %qt, 0)] to %qv)] is %qc xp.[if(setr(e, u(f.validate.spend)), %b(%qe))][if(t(setr(e, u(f.validate.restricted))), %b(%qe))])]
+
+
+
+--
+
+think [u(#310/f.xp/cost, dog/str=4)]
+
+think [u(#310/f.xp/cost, dog/elem (fire)=1)] - %qs
+
+
+--------------------------------------------------------------------------------
+-- Registers: Player-Stat-Value ------------------------------------------------
+
+Breaks [<player>/]<stat>[=<value>] intp %qp, %qn, %qv, as appropriate.
+To be used for multiple functions.
+
+Passes back nothing; acts as an include.
+
+&f.registers.player-name-value #310=
+
+@@ 0: [<player>/]<stat>[=<value>]
+@@ p: <player>'s dbref or %#, n: <stat>, v: <value> or null
+@@ returns: nothing
+
+@@ .. if /<stat>[=<blah>] exists, <player> is the first part
+@@ .. else, <player> = %# and <stat> is the whole thing
+	[setq(p, 
+		if(
+			t(setr(n, rest(%0, /))), 
+			pmatch+(first(%0, /)), 
+			%#[setq(n, %0)]
+		)
+	)]
+
+@@ .. at this point %qs is <stat>[=<value>], so break it apart
+	[setq(v, rest(%qn, =))]
+	[setq(n, first(%qn, =))]
+
+--
+
+&f.registers.player-name-value #310=[setq(p, if(t(setr(n, rest(%0, /))), pmatch+(first(%0, /)), %#[setq(n, %0)]))][setq(v, rest(%qn, =))][setq(n, first(%qn, =))]
+
+--
+
+think [u(#310/f.registers.player-name-value, str=2)]%qp - %qn - %qv
+think [u(#310/f.registers.player-name-value, dog/str=2)]%qp - %qn - %qv
+
+think [u(#310/f.registers.player-name-value, dog/str=)]%qp - %qn - %qv
+think [u(#310/f.registers.player-name-value, dog/str)]%qp - %qn - %qv
+
+
+
+
+--------------------------------------------------------------------------------
+-- Registers: Statpath ---------------------------------------------------------
+
+This is a bit of a kludge; I'd expect statpath() to use the sheet then dd version, but it doesn't.  rather than fix this in statpath, I'll add logic here for now.
+
+@@ 0: player dbref, 1: stat name (incomplete), s: statpath
+
+@@ &f.registers.statpath #310=
+@@ 	setq(s, 
+@@ 		if(
+@@ 			t(setr(s, statpath(%0/%1))), 
+@@ 			%qs, 
+@@ 			statpath(%1)
+@@ 		)
+@@ 	)
+
+@@ statpath() to be behaving now, will check sheet then dd if player is passed
+
+&f.registers.statpath #310=setq(s, statpath(%0/%1))
+
+--
+
+@@ &f.registers.statpath #310=setq(s, if(t(setr(s, statpath(%0/%1))), %qs, statpath(%1)))
+
+
+--------------------------------------------------------------------------------
+-- Validate: Player ------------------------------------------------------------
+
+Everything there is to validate about a player.  Sheet, approved, staff status, etc.  Staff can check or set non-approved players.
+
+0: 1 if we're just checking; allow unapproved players to check
+
+&f.validate.player #310=
+@@ using the calling registers; this is just an Include.
+
+	case(0, 
+		or(isstaff(%#), match(%qp, %#)), 
+		Error: Yourself only., 
+
+		t(%qw), 
+		Error: Could not find a sheet., 
+
+		or(isstaff(%#), isapproved(%qp, approved), %0), 
+		Error: Must be approved for play to spend xp.
+	)
+
+--
+
+&f.validate.player #310=case(0, or(isstaff(%#), match(%qp, %#)), Error: Yourself only., t(%qw), Error: Could not find a sheet., or(isstaff(%#), isapproved(%qp, approved), %0), Error: Must be approved for play to spend xp.)
+
+--
+
+think [setr(p, pmatch+(davis davis))]>[setr(w, %qp)]>[u(#310/f.validate.player)]
+
+think [setq(0, str=2)][u(#310/f.registers.player-name-value, %q0)][setq(w, pmatch+(%qp))][u(#310/f.validate.player)]
+
+think [setq(0, flibble/str=2)][u(#310/f.registers.player-name-value, %q0)][setq(w, pmatch+(%qp))][u(#310/f.validate.player)]
+
+--------------------------------------------------------------------------------
+-- Validate: Value -------------------------------------------------------------
+
+&f.validate.value #310=
+	[setq(c, u([u(d.stat-funcs)]/f.get-class, %qs))]
+	[case(%qc, 
+		list, 
+		case(0, 
+			t(%qv), Error: [titlestr(rest(%qv))], 
+			isint(%qv), Error: Raise must be numeric., 
+			not(match(%qt, %qv, .)), Error: You already have the stat at that level.
+		), 
+
+		numeric, 
+		case(0, 
+			t(%qv), Error: [titlestr(rest(%qv))], 
+			isint(%qv), Error: Raise must be numeric., 
+			gt(%qv, %qt), Error: Stat must be raised.
+		), 
+
+		Error: Cannot raise string stats.
+	)]
+
+
+--
+
+&f.validate.value #310=case(0, t(%qv), Value Error: [titlestr(rest(%qv))], isint(%qv), Error: Raise must be numeric., gt(%qv, %qt), Error: Stat must be raised., not(match(%qt, %qv, .)), Error: You already have the stat at that level.)
+
+&f.validate.value #310=[setq(c, u([u(d.stat-funcs)]/f.get-class, %qs))][case(%qc, list, case(0, t(%qv), Error: [titlestr(rest(%qv))], isint(%qv), Error: Raise must be numeric., not(match(%qt, %qv, .)), Error: You already have the stat at that level.), numeric, case(0, t(%qv), Error: [titlestr(rest(%qv))], isint(%qv), Error: Raise must be numeric., gt(%qv, %qt), Error: Stat must be raised.), Error: Cannot raise string stats.)]
+
+
+-- Validating a decreased value is slightly different --
+
+&f.validate.value.decrease #310=
+	case(0, 
+		or(t(%qv), strmatch(%qv, )), Value Error: [titlestr(rest(%qv))] - %qv, 
+
+		or(isint(%qv), strmatch(%qv, )), Error: Stat must be numeric or null., 
+
+		gt(%qt, %qv), Error: Stat must be lowered.
+
+@@ .. unlike increase, don't worry about class:list stats
+	)
+
+
+&f.validate.value.decrease #310=
+	[setq(c, u([u(d.stat-funcs)]/f.get-class, %qs))]
+	[case(%qc, 
+		list, 
+		case(0, 
+			not(strmatch(%qv, )), Error: Must remove an existing list item., 
+			t(%qv), Error: [titlestr(rest(%qv))], 
+			isint(%qv), Error: Lower must be numeric., 
+		), 
+
+		numeric, 
+		case(0, 
+			or(t(%qv), strmatch(%qv, )), Error: [titlestr(rest(%qv))], 
+			or(isint(%qv), strmatch(%qv, )), Error: Lower must be numeric or null., 
+			gt(%qt, %qv), Error: Stat must be lowered.
+		), 
+
+		Error: Cannot lower string stats.
+	)]
+
+--
+
+&f.validate.value.decrease #310=[setq(c, u([u(d.stat-funcs)]/f.get-class, %qs))][case(%qc, list, case(0, not(strmatch(%qv, )), Error: Must remove an existing list item., t(%qv), Error: [titlestr(rest(%qv))], isint(%qv), Error: Lower must be numeric., ), numeric, case(0, or(t(%qv), strmatch(%qv, )), Error: [titlestr(rest(%qv))], or(isint(%qv), strmatch(%qv, )), Error: Lower must be numeric or null., gt(%qt, %qv), Error: Stat must be lowered.), Error: Cannot lower string stats.)]
+
+
+--------------------------------------------------------------------------------
+-- Validate: Stat --------------------------------------------------------------
+
+This one should be easy enough with cg/f.statcheck, which does a huge amount of checking for us.  This, however, does not check specialties.  We'll get f.statcheck to do this.
+
+<stat name & value>.<cgen-only>.<template check>.<other prereq check>
+
+IMPORTANT: cg/f.statcheck expects VALUE TO RAISE BY
+
+
+&f.validate.stat #310=
+localize(
+
+@@ .. do the Cgen Statcheck dance.
+	[setq(t, case(u([v(d.stat-funcs)]/f.get-class, %qs), numeric, sub(%qv, %qt), %qv))]
+	[setq(k, u([u(d.chargen)]/f.statcheck, %qw, _%qs, %qt))]
+
+@@ .. look for errors
+	[case(0, 
+		t(%qs), Error: Could not find stat., 
+
+		not(strmatch(%qv, #-*)), Error: [titlestr(rest(%qv))], 
+
+@@ .. 'null' is a valid value, but f.statcheck-workhorse needs to reject 'null'
+		or(t(first(%qk, .)), strmatch(%qv, )), 
+		Error: [titlestr(rest(first(%qk, .)))]., 
+
+		t(extract(%qk, 2, 1, .)), 
+		Error: Can't set the stat outside character generation., 
+
+		t(extract(%qk, 3, 1, .)), 
+		Error: Stat cannot be taken by your template., 
+
+		t(last(%qk, .)), 
+		Error: [titlestr(rest(last(%qk, .)))].
+	)]
+)
+
+--
+
+&f.validate.stat #310=localize([setq(k, u([u(d.chargen)]/f.statcheck, %qw, _%qs, case(u([v(d.stat-funcs)]/f.get-class, %qs), numeric, sub(%qv, %qt), %qv)))][case(0, t(%qs), Error: Could not find stat., t(first(%qk, .)), Error: [titlestr(rest(first(%qk, .)))]., t(extract(%qk, 2, 1, .)), Error: Can't set the stat outside character generation., t(extract(%qk, 3, 1, .)), Error: Stat cannot be taken by your template., t(last(%qk, .)), Error: [titlestr(rest(last(%qk, .)))].)])
+
+--> NEW (passes through stats set to 'null')
+
+&f.validate.stat #310=localize([setq(t, case(u([v(d.stat-funcs)]/f.get-class, %qs), numeric, sub(%qv, %qt), %qv))][setq(k, u([u(d.chargen)]/f.statcheck, %qw, _%qs, %qt))][case(0, t(%qs), Error: Could not find stat., not(strmatch(%qv, #-*)), Error: [titlestr(rest(%qv))], or(t(first(%qk, .)), strmatch(%qv, )), Error: [titlestr(rest(first(%qk, .)))]., t(extract(%qk, 2, 1, .)), Error: Can't set the stat outside character generation., t(extract(%qk, 3, 1, .)), Error: Stat cannot be taken by your template., t(last(%qk, .)), Error: [titlestr(rest(last(%qk, .)))].)])
+
+--
+
+think [setq(p, pmatch+(dog))][setq(w, %qp)][setq(s, merit.unseen_sense_(wyrd))][setq(v, 3)][u(#310/f.validate.stat)] - [u(cg/f.statcheck, %qw, _%qs, %qv)]
+
+think [setq(p, pmatch+(dog))][setq(w, %qp)][setq(s, attribute.strength)][setq(v, 2)][u(#310/f.validate.stat)] - [u(cg/f.statcheck, %qw, _%qs, %qv)]
+
+think [setq(p, pmatch+(dog))][setq(w, %qp)][setq(s, attribute.strength)][setq(v, )][u(#310/f.validate.stat)] - [u(cg/f.statcheck, %qw, _%qs, %qv)]
+
+>> think u(cg/f.statcheck, pmatch(dog), _merit.unseen_sense_(wyrd), 3)
+
+
+--------------------------------------------------------------------------------
+-- Validate: Cost --------------------------------------------------------------
+
+&f.validate.cost #310=
+localize(
+	case(1, 
+		and(isstaff(%#), not(t(%qc))), 
+		Error: This stat has no xp cost. It must be set using +stat., 
+
+		not(t(%qc)), 
+		Error: This stat has no xp cost. It must be set by a staffer.
+	)
+)
+
+--
+
+
+&f.validate.cost #310=localize(case(1, and(isstaff(%#), not(t(%qc))), Error: This stat has no xp cost. It must be set using +stat., not(t(%qc)), Error: This stat has no xp cost. It must be set by a staffer.))
+
+--
+
+think p:[setr(p, pmatch+(dog))] - n:[setr(n, smoke)] - w:[setr(w, %qp)] - s:[setr(s, statpath(%qp/%qn))] - v:[setr(v, 3)] - getstat:[getstat(%qp/%qn)] - c:[setr(c, u(#310/f.xp.cost.calculator, %qp, getstat(%qp/%qn), %qv, %qs))] - [u(#310/f.validate.cost)]
+
+think p:[setr(p, pmatch+(dog))] - n:[setr(n, eternal sp)] - w:[setr(w, %qp)] - s:[setr(s, statpath(%qp/%qn))] - v:[setr(v, 2)] - getstat:[getstat(%qp/%qn)] -  c:[setr(c, u(#310/f.xp.cost.calculator, %qp, getstat(%qp/%qn), %qv, %qs))] - [u(#310/f.validate.cost)]
+
+
+--------------------------------------------------------------------------------
+-- Validate: Restricted --------------------------------------------------------
+
+Returns error if stat is "restricted", meaning that only staff may buy it for someone.
+
+&f.validate.restricted #310=
+localize(
+	case(1, 
+		isstaff(%#), @@(ignore entirely), 
+
+		t(match(u(d.xp.restricted-types), first(%qs, .))), 
+		Stats of this type may only be set by a staffer., 
+
+		t(match(u(d.xp.restricted-stats), %qs)), 
+		This stat may only be set by a staffer.
+	)
+)
+
+--
+
+&f.validate.restricted #310=localize(case(1, isstaff(%#), @@(ignore entirely), t(match(u(d.xp.restricted-types), first(%qs, .))), Stats of this type may only be set by a staffer., t(match(u(d.xp.restricted-stats), %qs)), This stat may only be set by a staffer.))
+
+
+--------------------------------------------------------------------------------
+-- Validate: Spend -------------------------------------------------------------
+
+After we've validated everything else, can the person afford it?
+
+&f.validate.spend #310=
+	if(
+		gt(%qc, ladd(%qx, .)), Not enough xp.
+	)
+
+--
+
+think [setq(c, 15)][setq(p, pmatch(thenomain))][u(#310/f.validate.spend)]
+
+--------------------------------------------------------------------------------
+-- Validate: No Dependent Stats ------------------------------------------------
+
+If new value is '0' or 'null' and there are substats, deny the lowering
+
+&f.validate.no-sub-stats #310=
+	if(
+		and(
+			or(eq(%qv, 0), strmatch(%qv, )), 
+			t(lattr(%qw/_%qs.*))
+		), 
+		Error: Stat cannot be removed while it has sub-stats such as specialties.
+	)
+
+--
+
+&f.validate.no-sub-stats #310=if(and(or(eq(%qv, 0), strmatch(%qv, )), t(lattr(%qw/_%qs.*))), Error: Stat cannot be removed while it has sub-stats such as specialties.)
+
+--
+
+think [setq(w, pmatch(dog))][setq(v, 0)][setq(s, skill.animal_ken)].. [u(#310/f.validate.no-sub-stats)]
+
+think [setq(w, pmatch(dog))][setq(v, 0)][setq(s, merit.contacts)].. [u(#310/f.validate.no-sub-stats)]
+
+think [setq(w, pmatch(dog))][setq(v, 0)][setq(s, skill.brawl)].. [u(#310/f.validate.no-sub-stats)]
+
+
+--------------------------------------------------------------------------------
+-- Restricted Types ------------------------------------------------------------
+
+These types may only be purchased via a staffer.  Some of these (bio) shouldn't be set at all.
+
+These lists are pulled also by Help, so are made Visual.
+
+&d.xp.restricted-types #310=merit bio goblin_contract aspect gift rite renown
+
+&d.xp.restricted-stats #310=advantage.morality advantage.clarity advantage.harmony advantage.willpower
+
+@set #310/d.xp.restricted-types=visual
+@set #310/d.xp.restricted-stats=visual
+
+--------------------------------------------------------------------------------
+-- XP Formula Finder -----------------------------------------------------------
+
+This code is meant to find out which of the xp.<blah> function to look up for any given statpath.  It only finds the name.
+
+>>> XP FORMULAS ARE STORED ON #388 <<<
+
+@@ Below is the ?.?.? finder test.
+
+think [setq(t, setr(s, skill.academics.history))][setq(n, lnum(words(%qs, .), 2))][setr(n, iter(%qn, setr(t, replace(%qt, %i0, ?, .))))] - [first(filter(#388/fil.xp.formula.finder, %qn))]
+
+
+@@ 0: dd.statpath_(without instance)
+@@ qs: temp statpaths for the ? wildcard
+@@ qt: temp statpaths for the degrading search
+
+
+&f.xp.formula.finder #310=
+[setq(t, setr(s, %0))]
+
+[case(1, 
+
+@@ .. xp.<statpath>
+	t(filter(fil.xp.formula.finder, %0)), 
+	xp.%0, 
+
+@@ .. xp.<type>.?
+	t(setr(s, 
+		filter(fil.xp.formula.finder, 
+			iter(
+				lnum(words(%0, .), 2), 
+				setr(s, replace(%qs, %i0, ?, .))
+			)
+		)
+	)), 
+	xp.[first(%qs)], 
+
+@@ .. xp.<type>, like above but without the ? involved
+@@ .. (have to reset %qt)
+	t(setr(t, 
+		filter(fil.xp.formula.finder, 
+			iter(
+				lnum(words(%0, .), 1), 
+				setr(t, ldelete(%qt, %i0, .))
+			)
+		)
+	)), 
+	xp.[first(%qt)], 
+
+@@ .. else: error
+	#-1 No XP Costs Found
+)]
+
+--
+
+&fil.xp.formula.finder #310=hasattr(u(d.xp-costs), xp.%0)
+
+--
+
+&f.xp.formula.finder #310=[setq(t, setr(s, %0))][case(1, t(filter(fil.xp.formula.finder, %0)), xp.%0, t(setr(s, filter(fil.xp.formula.finder, iter(lnum(words(%0, .), 2), setr(s, replace(%qs, %i0, ?, .)))))), xp.[first(%qs)], t(setr(t, filter(fil.xp.formula.finder, iter(lnum(words(%0, .), 1), setr(t, ldelete(%qt, %i0, .)))))), xp.[first(%qt)], #-1 No XP Costs Found)]
+
+--
+
+think u(#310/f.xp.formula.finder, statpath(smoke))
+think u(#310/f.xp.formula.finder, statpath(str))
+think u(#310/f.xp.formula.finder, statpath(elemen ()))
+think u(#310/f.xp.formula.finder, statpath(academics.history))
+think u(#310/f.xp.formula.finder, statpath(elemental))
+
+
+--------------------------------------------------------------------------------
+-- XP Cost Calculator ----------------------------------------------------------
+
+We'll bring the formulas (below) and the formula finder (above) together.
+
+@@ 0: dbref of sheet
+@@ 1: stat-from (Even if it's not used)
+@@ 2: stat-to
+@@ 3: statpath
+
+&f.xp.cost.calculator #310=
+[setq(3, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%3, l, _)))]
+[if(
+	t(setr(t, u(f.xp.formula.finder, %q3))), 
+	u([u(d.xp-costs)]/%qt, %0, %1, %2, last(%q3, .)), 
+
+@@ .. error
+	%qt
+)]
+
+--
+
+&f.xp.cost.calculator #310=[setq(3, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%3, l, _)))][if(t(setr(t, u(f.xp.formula.finder, %q3))), u([u(d.xp-costs)]/%qt, %0, %1, %2, last(%q3, .)), %qt)]
+
+--
+
+think u(#310/f.xp.cost.calculator, pmatch(dog), 0, 1, statpath(smoke))
+think u(#310/f.xp.cost.calculator, pmatch(nat), 0, 1, statpath(element (air)))
+
+think u(#310/f.xp.cost.calculator, pmatch(dog), 0, 5, statpath(element (air)))
+think u(#310/f.xp.cost.calculator, pmatch(orson), 0, 5, statpath(element (air)))
+
+think u(#310/f.xp.cost.calculator, pmatch(orson), 0, 1, statpath(element (air)))
+think u(#310/f.xp.cost.calculator, pmatch(dog), 2, 3, statpath(str))
+
+think u(#310/f.xp.cost.calculator, pmatch(gavin), 1, 1.2, statpath(elemental))
+
+
+--------------------------------------------------------------------------------
+-- XP Next Stat Rank -----------------------------------------------------------
+
+For our next trick, we'll take <sheet> and <stat> and return the next logical value for that stat.  For instance, a skill from 0 to 1, Stunning Looks from 2 to 4.  It will return #-1 should the person be at the top of the list, as well as other errors.
+
+If a stat whose value set is # can always be raised.
+
+Needs to handle specialties properly.  The XP cost calculator does, too.
+
+@@ 0: sheet dbref
+@@ 1: sheet.statpath_(with_instance)
+@@ 
+@@ d: dd statpath, without instance
+@@ s: value of stat on sheet
+@@ v: valid values
+@@ n: next rank, if applicable
+
+&f.xp.next.stat.rank #310=
+[setq(d, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%1, l, _)))]
+[setq(s, first(udefault(%0/%1, 0), .))]
+[setq(v, first(u([u(d.data-dictionary)]/%qd), |))]
+[setq(n, extract(%qv, inc(match(%qv, %qs, .)), 1, .))]
+
+[case(1, 
+	strmatch(%qv, #), inc(%qs), 
+	strmatch(%1, _skill.*.*), inc(%qs), 
+	not(t(%qn)), #-1 That stat can't go any higher, 
+	gt(%qs, last(%qv, .)),  #-1 Stat Already Above Max Level, 
+	%qn
+)]
+
+--
+
+&f.xp.next.stat.rank #310=[setq(d, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%1, l, _)))][setq(s, first(udefault(%0/%1, 0), .))][setq(v, first(u([u(d.data-dictionary)]/%qd), |))][setq(n, extract(%qv, inc(match(%qv, %qs, .)), 1, .))][case(1, strmatch(%qv, #), inc(%qs), strmatch(%1, _skill.*.*), inc(%qs), not(t(%qn)), #-1 That stat can't go any higher, gt(%qs, last(%qv, .)),  #-1 Stat Already Above Max Level, %qn)]
+
+--
+
+think u(#310/f.xp.next.stat.rank, pmatch(dog), _attribute.intelligence)
+think u(#310/f.xp.next.stat.rank, pmatch(dog), _skill.survival)
+think u(#310/f.xp.next.stat.rank, pmatch(dog), _skill.survival.hunting)
+think u(#310/f.xp.next.stat.rank, pmatch(dog), _skill.survival.hedge)
+
+think u(#310/f.xp.next.stat.rank, pmatch(libby), _merit.token)
+think u(#310/f.xp.next.stat.rank, pmatch(ashworth), _merit.ritual_see_spirits)
+
+
+
+think [setq(s, 2)][setq(1, merit.striking_looks)][setq(v, first(u(dd/%q1), |))][setq(n, extract(%qv, inc(match(%qv, %qs, .)), 1, .))][case(0, t(%qn), #-1 Max Level Reached, lte(%qs, last(%qv, .)),  #-1 Stat Already Above Max Level, %qn)]
+
+--------------------------------------------------------------------------------
+-- XP Previous Stat Rank -------------------------------------------------------
+
+And finally, let's go backwards.  It will return #-1 should the stat not be able to be reduced any further, such as being set to 'null' or below 'default.<statpath>.
+
+May return 0.  Up to the calling function to unset the value.
+
+@@ 0: sheet dbref
+@@ 1: sheet.statpath_(with_instance)
+@@ 
+@@ d: dd statpath, without instance
+@@ s: value of stat on sheet
+@@ v: valid values
+@@ p: previous rank, if applicable
+@@ l: lowest rank ('default.<statpath>' or 0)
+@@ 
+@@ n: new value, for more error checking
+
+&f.xp.prev.stat.rank #310=
+[setq(d, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%1, l, _)))]
+[setq(s, first(udefault(%0/%1, 0), .))]
+[setq(v, first(udefault([u(d.data-dictionary)]/%qd, 0), |))]
+[setq(p, extract(%qv, dec(match(%qv, %qs, .)), 1, .))]
+[setq(l, udefault([u(d.data-dictionary)]/default.%qd, 0, %0))]
+
+[setq(n,
+	case(1, 
+		strmatch(%qv, #), dec(%qs), 
+		strmatch(%1, _skill.*.*), dec(%qs), 
+		%qp
+	)
+)]
+
+[case(0, 
+	comp(%qs, ), #-1 Stat Already At Min Level, 
+	gte(%qs, first(%qv, .)),  #-1 Stat Already At Min Level, 
+	gte(%qn, %ql), #-1 Stat Already At Min Level, 
+	%qn
+)]
+
+
+--
+
+&f.xp.prev.stat.rank #310=[setq(d, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%1, l, _)))][setq(s, first(udefault(%0/%1, 0), .))][setq(v, first(u([u(d.data-dictionary)]/%qd), |))][setq(p, extract(%qv, dec(match(%qv, %qs, .)), 1, .))][setq(l, udefault([u(d.data-dictionary)]/default.%qd, 0, %0))][setq(n,case(1, strmatch(%qv, #), dec(%qs), strmatch(%1, _skill.*.*), dec(%qs), %qp))][case(0, comp(%qs, ), #-1 Stat Already At Min Level, gte(%qs, first(%qv, .)),  #-1 Stat Already At Min Level, gte(%qn, %ql), #-1 Stat Already At Min Level, %qn)]
+
+--
+
+think u(#310/f.xp.prev.stat.rank, pmatch(dog), _attribute.intelligence)
+think u(#310/f.xp.prev.stat.rank, pmatch(dog), _skill.survival)
+think u(#310/f.xp.prev.stat.rank, pmatch(dog), _skill.survival.hunting)
+think u(#310/f.xp.prev.stat.rank, pmatch(dog), _skill.survival.hedge)
+
+think u(#310/f.xp.prev.stat.rank, pmatch(libby), _merit.token)
+think u(#310/f.xp.prev.stat.rank, pmatch(ashworth), _merit.ritual_see_spirits)
+
+
+================================================================================
+== /SPEND ======================================================================
+
++xp/spend [<player>/]<stat>[=<value>]
+
+Spend is Cost, only it does more.
+
+- In case of restricted stats, still return the cost.
+- In the case of success, spend the XP and raise the stat.
+- For the first month of use, log EVERYTHING.
+
+
+
+&f.xp/spend #310=
+@@ 0: [<player>/]<stat>[=<value>]
+@@ p: player dbref
+@@ w: where's the sheet
+@@ n: stat name
+@@ s: stat.path_(instanced)
+@@ v: value (new)
+@@ t: trait value (current)
+@@ c: cost
+@@ 
+@@ e: error message, if any
+@@ x: xp stat of person
+@@ g: current value of (_stat.path)
+
+@@ -- Same As /Cost --
+@@ Break 0 down into p, n, v
+	[u(f.registers.player-name-value, %0)]
+
+@@ .. sheet location
+	[setq(w, u([u(d.stat-funcs)]/f.find-sheet, %qp))]
+
+@@ .. put the statpath in s
+	[u(f.registers.statpath, %qp, %qn)]
+
+@@ If no v, try to get "next rank" for statpath.
+	[if(
+		not(t(%qv)), 
+		setq(v, ulocal(f.xp.next.stat.rank, %qw, _%qs))
+	)]
+
+@@ .. current value in %qt
+	[setq(t, getstat(%qp/%qn, permanent))]
+
+@@ .. put the cost in %qc
+	[setq(c, ulocal(f.xp.cost.calculator, %qw, %qt, %qv, %qs))]
+
+@@ .. put current xp in %qx
+	[setq(x, get(%qw/_special.xp))]
+
+@@ .. error check
+	[case(1, 
+		t(setr(e, ulocal(f.validate.player))), %qe, 
+		t(setr(e, ulocal(f.validate.stat))), %qe, 
+		t(setr(e, ulocal(f.validate.cost))), %qe, 
+		t(setr(e, ulocal(f.validate.value))), %qe, 
+
+@@ >> report costs, possibly set
+@@ .. report cost
+
+		Spending %qc xp[if(t(comp(%#, %qp)), %, for [name(%qp)]%,%b[setq(n, %qp/%qn)], %b)]
+
+		[case(u([u(d.stat-funcs)]/f.get-class, %qs), 
+			list, 
+			to add %qv 
+			([u([u(d.data-dictionary)]/_class_translate_list, %qs, %qv)]) 
+			to [statname(%qn)], 
+
+			to raise [statname(%qn)] 
+			from [if(t(%qt), %qt, 0)] 
+			to %qv
+		)]. 
+
+@@ .. check xp cost/restricted stat
+		[case(1, 
+@@ .. >> not enough xp
+			t(ulocal(f.validate.spend)), 
+			%bHowever%, [if(comp(%#, %qp), [name(%qp)] has, you have)] only [ladd(%qx, .)] xp and can't afford it., 
+
+@@ .. >> restricted stat
+			t(setr(e, u(f.validate.restricted))), 
+			%bHowever%, this stat is restricted.  To ask for the raise%, type:%r%t+request XP Spend - [statname(%qn)]=%qc xp. <reason for the spend>, 
+
+@@ .. >> ok
+
+@@ .. .. spend the xp
+			[setq(e, set(%qp, _special.xp:[first(%qx, .)].[sub(rest(%qx, .), %qc)]))]
+			[if(t(%qe), 
+				%r[alert(ERROR, alert)] While trying to spend xp: %qe, 
+
+@@ .. .. raise the stat
+				[setq(g, get(%qw/_%qs))]
+@@ .. .. (list stat complicates matters)
+				[setq(e, 
+					if(
+						ulocal([v(d.stat-funcs)]/f.isclass?, %qs, list), 
+						set(%qw, _%qs:[setunion(%qg, %qv, .)]), 
+						set(%qw, _%qs:%qv.[rest(%qg, .)])
+					)
+				)]
+
+				[if(t(%qe), 
+					%r[alert(ERROR, alert)] After xp was spent%, while trying to change the stat: %qe
+				)]
+			)]
+
+@@ .. .. announce to the room, if not OOC and not spending for someone else
+			[if(
+				and(
+					not(strmatch(zone(loc(%#)), #68)), 
+					strmatch(%#, %qp)
+				), 
+				remit(
+					loc(%#), 
+					[alert(+xp/spend)] [name(%#)] spends some xp.
+				)
+			)]
+
+@@ .. .. throw at the xp-spend log which throws it at the "monitor" channel
+			[logtext(add, xp_spend, %#|%qp|[statname(%qn)]%qt|%qv|%qc)]
+		)]
+
+	)]
+
+---
+
+&f.xp/spend #310=[u(f.registers.player-name-value, %0)][setq(w, u([u(d.stat-funcs)]/f.find-sheet, %qp))][u(f.registers.statpath, %qp, %qn)][if(not(t(%qv)), setq(v, ulocal(f.xp.next.stat.rank, %qw, _%qs)))][setq(t, getstat(%qp/%qn, permanent))][setq(c, ulocal(f.xp.cost.calculator, %qw, %qt, %qv, %qs))][setq(x, get(%qw/_special.xp))][case(1, t(setr(e, ulocal(f.validate.player))), %qe, t(setr(e, ulocal(f.validate.stat))), %qe, t(setr(e, ulocal(f.validate.cost))), %qe, t(setr(e, ulocal(f.validate.value))), %qe, Spending %qc xp[if(t(comp(%#, %qp)), %, for [name(%qp)]%,%b[setq(n, %qp/%qn)], %b)][case(u([u(d.stat-funcs)]/f.get-class, %qs), list, to add %qv ([u([u(d.data-dictionary)]/_class_translate_list, %qs, %qv)]) to [statname(%qn)], to raise [statname(%qn)] from [if(t(%qt), %qt, 0)] to %qv)]. [case(1, t(ulocal(f.validate.spend)), %bHowever%, [if(comp(%#, %qp), [name(%qp)] has, you have)] only [ladd(%qx, .)] xp and can't afford it., t(setr(e, u(f.validate.restricted))), %bHowever%, this stat is restricted.  To ask for the raise%, type:%r%t+request XP Spend - [statname(%qn)]=%qc xp. <reason for the spend>, [setq(e, set(%qp, _special.xp:[first(%qx, .)].[sub(rest(%qx, .), %qc)]))][if(t(%qe), %r[alert(ERROR, alert)] While trying to spend xp: %qe, [setq(g, get(%qw/_%qs))][setq(e, if(ulocal([v(d.stat-funcs)]/f.isclass?, %qs, list), set(%qw, _%qs:[setunion(%qg, %qv, .)]), set(%qw, _%qs:%qv.[rest(%qg, .)])))][if(t(%qe), %r[alert(ERROR, alert)] After xp was spent%, while trying to change the stat: %qe)])][if(and(not(strmatch(zone(loc(%#)), #68)), strmatch(%#, %qp)), remit(loc(%#), [alert(+xp/spend)] [name(%#)] spends some xp.))][logtext(add, xp_spend, %#|%qp|[statname(%qn)]|%qt|%qv|%qc)])])]
+
+
+================================================================================
+== /UNSPEND ====================================================================
+
+	+xp/unspend <player>/<stat>[=<new level>]
+
+Staff-only.  Drops one level if none is included.  This will be tricky.
+
+0: [<player>/]<stat>[=<value>]
+
+qp: player dbref
+qw: where's the sheet
+qn: stat name
+qs: stat.path_(instanced)
+qv: value (new)
+qt: trait value (current)
+qc: amount rebate (a negative value)
+
+qe: error message, if any
+qx: xp stat of person
+qg: current value of (_stat.path)
+
+--
+
+&f.xp/unspend #310=
+@@ Same as /cost and /spend: Break 0 down into p, n, v
+	[u(f.registers.player-name-value, %0)]
+
+@@ sheet location
+	[setq(w, u([u(d.stat-funcs)]/f.find-sheet, %qp))]
+
+@@ put the statpath in 'qs'
+	[u(f.registers.statpath, %qp, %qn)]
+
+@@ if no 'qv', try to get "previous rank" for statpath.
+	[if(
+		not(t(%qv)), 
+		setq(v, ulocal(f.xp.prev.stat.rank, %qw, _%qs))
+	)]
+
+@@ .. current value in %qt
+	[setq(t, getstat(%qp/%qn, permanent))]
+
+@@ .. put the rebate (as a negative) in %qc
+@@ >> We swap %qv and %qt from spends, above, which works for numeric stats
+@@ >> but NOT list stats
+@@ >> e.g.: think u(#388/xp.gift, pmatch(gavin), 1, 1.2, Elemental)
+	[setq(c, -[ulocal(f.xp.cost.calculator, %qw, %qv, %qt, %qs)])]
+
+@@ .. put current xp in %qx
+	[setq(x, get(%qw/_special.xp))]
+
+@@ .. error check
+	[case(1, 
+		not(isstaff(%#)), [alert(+xp/unspend)] Staff Only, 
+		t(setr(e, ulocal(f.validate.player))), %qe, 
+@@ .. .. (allow chargen-only stats to be unspent) .. ..
+@@		t(setr(e, ulocal(f.validate.stat))), %qe, 
+		... t(setr(e, ulocal(f.validate.stat))), %qe, 
+		t(setr(e, ulocal(f.validate.cost))), %qe, 
+		t(setr(e, ulocal(f.validate.value.decrease))), %qe, 
+		t(setr(e, ulocal(f.validate.no-sub-stats))), %qe, 
+
+
+@@ >> report costs, possibly set
+@@ .. report cost
+		[setq(n, %qp/%qn)]
+
+		Refunding [abs(%qc)] xp to [name(%qp)]%, 
+
+		[case(u([u(d.stat-funcs)]/f.get-class, %qs), 
+			list, 
+			to remove %qv 
+			([u([u(d.data-dictionary)]/_class_translate_list, %qs, %qv)]) 
+			from [statname(%qn)], 
+
+			to lower [statname(%qn)] 
+			from %qt 
+			to [if(t(%qv), %qv, nothing)]
+		)]. 
+
+@@ .. restricted stat? -- staff-only anyway, so not an issue
+
+		[case(0, 
+@@ .. >> not enough spent xp to refund (if -amt spent - -refund > 0)
+			lte(sub(rest(%qx, .), %qc), 0), 
+			%bHowever%, [name(%qp)] has only [abs(rest(%qx, .))] xp spent and can't refund more., 
+
+@@ .. >> OK: unspend the xp
+			[setq(e, set(%qp, _special.xp:[first(%qx, .)].[sub(rest(%qx, .), %qc)]))]
+			[if(t(%qe), 
+				%r[alert(ERROR, alert)] While trying to refund xp: %qe, 
+
+@@ .. .. lower the stat
+				[setq(g, get(%qw/_%qs))]
+@@ .. .. (list stat complicates matters)
+				[setq(e, 
+					if(
+						ulocal([v(d.stat-funcs)]/f.isclass?, %qs, list), 
+						set(%qw, _%qs:[setdiff(%qg, %qv, .)]), 
+						set(%qw, _%qs:%qv[if(t(rest(%qg, .)), .[rest(%qg, .)])])
+					)
+				)]
+
+				[if(t(%qe), 
+				%r[alert(ERROR, alert)] After xp was spent%, while trying to	 change the stat: %qe
+				)]
+			)]
+
+@@ .. .. throw at the xp-spend log which throws it at the "monitor" channel
+			[logtext(add, xp_spend, 
+				%#|%qp|[statname(%qn)]|%qt|%qv|%qc
+			)]
+		)]
+
+	)]
+
+--
+
+&f.xp/unspend #310=[u(f.registers.player-name-value, %0)][setq(w, u([u(d.stat-funcs)]/f.find-sheet, %qp))][u(f.registers.statpath, %qp, %qn)][if(not(t(%qv)), setq(v, ulocal(f.xp.prev.stat.rank, %qw, _%qs)))][setq(t, getstat(%qp/%qn, permanent))][setq(c, -[ulocal(f.xp.cost.calculator, %qw, %qv, %qt, %qs)])][setq(x, get(%qw/_special.xp))][case(1, not(isstaff(%#)), [alert(+xp/unspend)] Staff Only., t(setr(e, ulocal(f.validate.player))), %qe, t(setr(e, ulocal(f.validate.stat))), %qe, t(setr(e, ulocal(f.validate.cost))), %qe, t(setr(e, ulocal(f.validate.value.decrease))), %qe, t(setr(e, ulocal(f.validate.no-sub-stats))), %qe, [setq(n, %qp/%qn)]Refunding [abs(%qc)] xp to [name(%qp)]%, [case(u([u(d.stat-funcs)]/f.get-class, %qs), list, to remove %qv ([u([u(d.data-dictionary)]/_class_translate_list, %qs, %qv)]) from [statname(%qn)], to lower [statname(%qn)] from %qt to [if(t(%qv), %qv, nothing)])]. [case(0, lte(sub(rest(%qx, .), %qc), 0), %bHowever%, [name(%qp)] has only [abs(rest(%qx, .))] xp spent and can't refund more., [setq(e, set(%qp, _special.xp:[first(%qx, .)].[sub(rest(%qx, .), %qc)]))][if(t(%qe), %r[alert(ERROR, alert)] While trying to refund xp: %qe, [setq(g, get(%qw/_%qs))][setq(e, if(ulocal([v(d.stat-funcs)]/f.isclass?, %qs, list), set(%qw, _%qs:[setdiff(%qg, %qv, .)]), set(%qw, _%qs:%qv[if(t(rest(%qg, .)), .[rest(%qg, .)])])))][if(t(%qe), %r[alert(ERROR, alert)] After xp was spent%, while trying to change the stat: %qe)])][logtext(add, xp_spend, %#|%qp|[statname(%qn)]|%qt|%qv|%qc)])])]
+
+
+=--=-=-=-=-=-==--=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-
+
+
+================================================================================
+== XP COST DATABASE ============================================================
+
+xp.<approximate stat path>
+xp.<specific stat path>
+If there's no general or no specific, it cannot be bought.
+If the XP path's value is set to 0, it cannot be bought.
+
+Buying XP must also follow Prerequeisites.
+
+	%0: dbref of sheet
+	%1: from
+	%2: to
+	%3: name of stat, sans instance
+
+XP Cost Databse <xpcd>: #388 
+
+--------------------------------------------------------------------------------
+-- Set-Up Work -----------------------------------------------------------------
+
+These mimic the functions on the DD.
+
+&f._value #388=first(u(%0/_%1), .)
+&f._at_least #388=gte(add(u(f._value, %0, %1), %3), %2)
+&f._is #388=strmatch(%2, u(f._value, %0, %1))
+
+
+--------------------------------------------------------------------------------
+-- nWoD Standard XP Cost -------------------------------------------------------
+
+think [setq(f, 0)][setq(t, 4)][setq(x, 2)][ladd(iter(lnum(inc(%qf), %qt), mul(%i0, %qx)))]
+
+@@ %0: xp cost, %1: from, %2: to
+
+&f.cost.standard #388=ladd(iter(lnum(inc(%1), %2), mul(%i0, %0)))
+
+
+--------------------------------------------------------------------------------
+-- nWoD Direct-Level XP Cost ---------------------------------------------------
+
+think [setq(t, 4)][setq(x, 2)][mul(%qt, %qx)]
+
+@@ %0: xp cost, %1: to
+
+&f.cost.direct #388=mul(%1, %0)
+
+
+--------------------------------------------------------------------------------
+-- nWoD Single-Cost XP Cost ----------------------------------------------------
+
+think [setq(f, 4)][setq(t, 5)][setq(x, 8)][mul(%qx, sub(%qt, %qf))]
+
+@@ %0: xp cost, %1: from, %2: t0
+
+&f.cost.single #388=mul(%0, sub(%2, %1))
+
+
+--------------------------------------------------------------------------------
+-- Costs -----------------------------------------------------------------------
+
+-- Simple Costs ----------------------------------------------------------------
+
+&xp.attribute #388=u(f.cost.standard, 5, %1, %2)
+
+From Winter Masques, p.107
+>> Coyote: if the character possesses the Vice of Gluttony, Greed 
+>> or Lust, the character may then buy Manipulation dots at a reduced
+>> experience point rate (new dots x 4).
+>> NOTE: House Rule has negated this benefit.
+
+&xp.skill #388=u(f.cost.standard, 3, %1, %2)
+&xp.skill.?.? #388=3
+
+@@ Certain Lodges: New Dots x 2 instead of x 3
+&xp.skill.brawl #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.weaponry #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.athletics #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.persuasion #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+
+&xp.skill.intimidation #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.streetwise #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.survival #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+
+
+
+From Skinchangers, p. 33:
+>> Other Aspects cost five experience points per
+>> point. Increasing an Aspect with variable levels
+>> is increased in the manner of other Merits
+&xp.aspect #388=u(f.cost.standard, 5, %1, %2)
+
+&xp.aspect.imitate_gift.? #388=0
+
+
+-- Advantage Costs -------------------------------------------------------------
+
+&xp.advantage.willpower #388=u(f.cost.single, 8, %1, %2)
+
+--
+
+@@ &xp.advantage.morality #388=u(f.cost.standard, 3, %1, %2)
+
+&xp.advantage.morality #388=
+case(1, 
+	u(f._is, %0, bio.tradition, Apostle of the Dark One), 
+	u(f.cost.standard, 4, %1, %2), 
+
+	u(f.cost.standard, 3, %1, %2)	
+)
+
+From Second Sight, p. 83
+>> Regaining lost Morality is challenging for apostles. Experience points
+>> required to raise Morality equal new dots x 4 rather than the usual three
+>> multiplier.
+
+--
+
+&xp.advantage.clarity #388=u(f.cost.standard, 3, %1, %2)
+
+&xp.advantage.wyrd #388=u(f.cost.standard, 8, %1, %2)
+
+--
+
+&xp.advantage.harmony #388=u(f.cost.standard, 3, %1, %2)
+
+&xp.advantage.primal_urge #388=u(f.cost.standard, 8, %1, %2)
+
+
+-- Merit Costs -----------------------------------------------------------------
+
+&xp.merit #388=u(f.cost.standard, 2, %1, %2)
+
+--
+
+@@ spring mantle 3+ has a discount on contacts 
+
+&xp.merit.contacts #388=
+	case(1, 
+		u(f._at_least, %0, merit.mantle_(spring), 3), 
+		u(f.cost.standard, 1, %1, %2), 
+		u(f.cost.standard, 2, %1, %2)
+	)
+
+&xp.merit.allies_() #388=
+	case(1, 
+		u(f._at_least, %0, merit.mantle_(spring), 3), 
+		u(f.cost.standard, 1, %1, %2), 
+		u(f.cost.standard, 2, %1, %2)
+	)
+
+--
+
+@@ Milestone Merits cannot be bought, so setting their xp to 0
+
+&xp.merit.milestone #388=0
+
+--
+
+From Lords of Summer, p. 45
+>> Bodhisattvas of the Broken Cage: Because of the entitlement’s reputation as
+>> flighty, gaining Court Goodwill with other Courts is difficult for the
+>> Bodhisattvas. Court Goodwill gained after joining the Bodhisattvas of the
+>> Broken Cage costs 3 experience points per new dot level rather than two.
+>> NOTE: This Entitlement is not yet in.
+
+--
+
+&xp.merit.pack_totem_() #388=u(f.cost.single, 3, %1, %2)
+
+--
+
+@@ x5 for most, x4 for Ithaeur (an auspice)
+&xp.merit.rituals #388=u(f.cost.standard, if(u(f._is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
+
+--
+
+@@ Wyrd Evolution is Dual Kith post-chargen
+@@ 1st new kith is 10 xp, 2nd new kith is 15 xp
+
+&xp.merit.wyrd_evolution #388=ladd(iter(lnum(inc(%1), %2), add(5, mul(%i0, 5))))
+
+
+
+-- Contract Costs --------------------------------------------------------------
+
+&xp.goblin_contract #388=u(f.cost.direct, 3, %2)
+
+--
+
+@@ seeming/general/court = affinity
+@@ kith = semi-affinity (a house-rule based on Manikin and Shadowsoul)
+@@ otherwise = non-affinity
+
+&xp.contract #388=
+	case(1, 
+@@ .. affinity: seeming, general (universal), or court mantle
+		or(
+			hastag?(%3, [u(f._value, %0, bio.seeming)].general), 
+			hastag?(%3, u(f._value, %0, bio.court))
+		), 
+		u(f.cost.standard, 4, %1, %2), 
+
+@@ .. "out of sync" affinity: kiths that allow access to a contract
+		hastag?(%3, getstat(%0/kith)), 
+		u(f.cost.standard, 5, %1, %2), 
+
+@@ .. non-affinity: everything else
+		u(f.cost.standard, 6, %1, %2)
+	)
+
+--
+
+@@ "semi-affinity" on the half-price rule rounds up
+@@ this only works 1 dot at a time, so we need to hit it a number of times
+@@ We concentrate on the 'to' numbers.  1 -> 3 would look at 2 then 3.
+
+&xp.contract.elements_() #388=
+ladd(iter(
+	lnum(inc(%1), %2), 
+	case(1, 
+		lte(%i0, 
+			u(f.lmax, 
+				iter(lattr(%0/_contract.elements_(*)), first(u(%0/%i0), .))
+			)
+		), 
+		ceil(fdiv(u(xp.contract, %0, dec(%i0), %i0, %3), 2)), 
+		u(xp.contract, %0, dec(%i0), %i0, %3)
+	)
+))
+
+
+&xp.contract.fang_and_talon_() #388=
+ladd(iter(
+	lnum(inc(%1), %2), 
+	case(1, 
+		lte(%i0, 
+			u(f.lmax, 
+				iter(
+					lattr(%0/_contract.fang_and_talon_(*)), 
+					first(u(%0/%i0), .)
+				)
+			)
+		), 
+		ceil(fdiv(u(xp.contract, %0, dec(%i0), %i0, %3), 2)), 
+		u(xp.contract, %0, dec(%i0), %i0, %3)
+	)
+))
+
+&xp.contract.communion_() #388=
+ladd(iter(
+	lnum(inc(%1), %2), 
+	case(1, 
+		lte(%i0, 
+			u(f.lmax, 
+				iter(lattr(%0/_contract.communion_(*)), first(u(%0/%i0), .))
+			)
+		), 
+		ceil(fdiv(u(xp.contract, %0, dec(%i0), %i0, %3), 2)), 
+		u(xp.contract, %0, dec(%i0), %i0, %3)
+	)
+))
+
+
+@@ maybe we can do this as: xp.contract.?_(), but we'll see
+
+
+
+-- Rite Costs ------------------------------------------------------------------
+
+@@ 'Ithaeur' auspice (crescent-moon) gets rites for 1 instead of 2
+
+&xp.rite #388=u(f.cost.direct, if(u(f._is, %0, bio.auspice, ithaeur), 1, 2), %2)
+
+
+-- Renown Costs ----------------------------------------------------------------
+
+@@ Affinity: Tribe or Auspice
+@@ Semi-Affinity: Some Lodges
+@@ Non-Affinity: All others
+
+&xp.renown #388=
+	case(1, 
+@@ .. affinity: tribe, auspice, or general (universal)
+		hastag?(%3, 
+			[u(f._value, %0, bio.tribe)].
+			[u(f._value, %0, bio.auspice)].
+			general
+		), 
+		u(f.cost.standard, 6, %1, %2), 
+
+@@ .. "out of sync" affinity: lodges that allow access
+		hastag?(%3, getstat(%0/lodge)), 
+		u(f.cost.standard, 7, %1, %2), 
+
+@@ .. non-affinity: everything else
+		u(f.cost.standard, 8, %1, %2)
+	)
+
+
+-- Gift Costs ------------------------------------------------------------------
+
+@@ Gift levels can be purchased directly.
+@@ Affinity: Tribe or Auspice
+@@ Semi-Affinity: Some Lodges
+@@ Non-Affinity: All others
+
+0: (player ?) dbref
+1: level from (used for determining 'out of order')
+2: level bought
+3: stat name to find tags for
+
+&xp.gift #388=
+	add(
+		case(1, 
+@@ .. affinity: tribe, auspice, lodge, or general (universal)
+			or(
+				hastag?(%3, [u(f._value, %0, bio.auspice)].general), 
+				hastag?(%3, u(f._value, %0, bio.tribe)), 
+				hastag?(%3, u(f._value, %0, bio.lodge)), 
+			), 
+			u(f.cost.direct, 5, %2), 
+
+@@ .. "out of sync" affinity: lodges that allow access
+			hastag?(%3, getstat(%0/lodge)), 
+			u(f.cost.direct, 6, %2), 
+
+@@ .. non-affinity: everything else
+			u(f.cost.direct, 7, %2)
+		), 
+@@ >> + skipped levels
+		mul(3, words(setdiff(lnum(1, %2), [edit(%1, ., %b)] %2)))
+	)
+
+
+--
+
+Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
+
+&xp.gift.insight #388=
+	sub(
+		u(xp.gift, %0, %1, %2, %3), 
+		if(
+			and(
+				strmatch(u(f._value, %0, bio.lodge), Prophecy), 
+				eq(%2, 5)
+			), 
+			5, 
+			0
+		)
+	)
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+This version of lmax/lmin would need wiz-privileged, and I don't feel like exposing it to side-effect functions
+
+&f.lmax #388=fold(f.lmax.fold, %0)
+&f.lmax.fold #388=max(%0, %1)
+
+&f.lmin #388=fold(f.lmin.fold, %0)
+&f.lmin.fold #388=min(%0, %1)
+
+
+-==--=-=-=-=-==-=-=--==--=
+
+Here's the ad-hoc method:
+
++xp/cost [<player>/]<stat>[=<value>]
++xp/spend [<player>/]<stat>[=<value>]
+
+Where <value> is the final value for valued stats, or ignored for stats with only one value (some merits, specialties)
+
+1. Validate player
+2. Validate sheet
+3. Validate template (isapproved)
+4. Validate stat name
+5. Validate stat prerequisites
+5a. if stat type is restricted, user must be staff
+6. Validate value
+7. Calculate cost
+8. Validate cost against remaining XP
+9. Apply XP spend
+10. Apply stat set/gain
+
+
+
+=--=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-==--=--=-=-=-=-=-=-=-==-
+
+*** Can someone use a buffed stat to cover a prerequisite? ***
+Books Suggest "No".
+CobaltCode says, “+bbread 1/25, no it has to be your natural stat.”
+
+*** Extended Actions ***
+Core Book (p. 128): A character’s inherent capabilities could be a limit, too. The Storyteller can rule that a maximum number of rolls can be made in an extended action equal to a character’s pertinent Attribute + Skill.
+
+Changeling Pledges (p. 180): The oathsworn gains a +1 bonus to all rolls involving a single Skill (defined by the pledge) while he benefits from this boon.
+
+I would like either all stat modifiers to apply or none.
+
+CobaltCode says, “I would see it be your -natural- attribute + skill + specialty”
+
+
+==--=-=-=-=-=-=-=-=-=-=-=-==-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-==-
+
+
+&HELP~STAT_TOPICS~+XP #96=Experience Points~[ansi(h, +xp)]: Check your current experience points.%r%r[ansi(h, +xp/cost <stat>=<new value>)]: Check to see how much it would cost to raise <stat> to <new value>%r%r[ansi(h, +xp/cost <stat>)]: Check to see how much it would cost to raise <stat> to its next valid value. Also reports problems that might arise with purchasing this stat. %r%r[ansi(h, +xp/spend <stat>%[=<new value>%])]: Raises <stat> to <new value> and spends the experience points required. Just like +xp/cost, if you don't type <new value>, it will set the stat to the next highest value.%r%rSpends done anywhere but the ooc rooms will announce to the room that you have.%r%rWarning: We may not un-spend xp for you in a timely fashion. Please use +xp/cost first!%r%r[ansi(h, +xp/log)]: Check up to your last 10 spends or unspends, if they still exist in our log. (The total log size is limited by internal Mux values.)%r%r[ansi(h, See Also)]: news xp, news xp costs
+
+
+&shelp~stat_commands~+xp #102=Experience Points~[ansi(h, +xp <player>)] : See <player>'s XP.%r[ansi(h, +xp/add <player>=<amt>)] : Add <amt> to <player>'s total XP.%r[ansi(h, +xp/add <player>=-<amt>)] : Subtract <amt> from <player>'s total XP.%r%r[ansi(h, +xp/sub <player>=<amt>)] : "Subtract" <amt> of <player>'s XP, spending it without setting a stat.  You may +xp/sub a negative number (i.e., +xp/sub player=-3) to return spent xp to them.%r%r[ansi(h, +xp/cost <player>/<stat>%[=<new value>%])]: Just as in +help xp, only checks a specific player and won't give you errors for restricted stats.%r%r[ansi(h, +xp/spend <player>/<stat>%[=<new value>%])]: Just as in +help xp, only checks a specific player and won't give you errors for restricted stats.  If you mess this up, you'll have to change the values with other commands.%r%r[ansi(h, +xp/unspend <player>/<stat>\[=<new value>\])]: Unspends (refunds) <stat> to the next lower value or to <new value>. It will not let you unspend stats below their default value.  It will not let you unspend a stat to '0' if there are substats (specialties) still associated with it.%r%r** For Now, Do Not /Unspend Werewolf Gifts as They Return Incorrect XP **%r%r[ansi(h, +xp/log <player>)]: Get the xp/log for <player>, up to their last 10 spends or unspends.%r%r[ansi(h, +xp/history \[<num>\])]: Get the <num> spends made on the game. Defaults to 10, may not be higher than 20.%r%r[ansi(h, See Also)]: +help xp, news xp, +shelp stat

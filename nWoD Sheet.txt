@@ -1,0 +1,1993 @@
+
+SHEET:
+
+- Bio
+- Attributes
+- Stats (Specialties)
+- Merits
+
+=-=--=-==--==--==--=-==-=-=-=--=-=-=-=-==--=-==-=--==-=--=-==-=-=--==--=-==--=-
+-= SHEET =-=-=-=-=--=-==--=-=-=-=-==--==-=--=-==-=-=--==-=--==--==-=-=--==-=--==
+
+This is the very basic sheet.
+
+
+================================================================================
+== STARTING COMMANDS ===========================================================
+
+&c.sheet-default nuSheet=
+	$+sheet: @pemit %#=
+		[u(f.display-whole-sheet, u(f.fake-find-sheet, %#))]
+
+&c.sheet-specific #345=
+	$+sheet *: @pemit %#=
+		[case(0, 
+			isstaff(%#), Error: +sheet <player> is staff-only., 
+			t(pmatch(%0)), Error: Cound not find player., 
+			[u(f.display-whole-sheet, u(f.fake-find-sheet, pmatch(%0)))]
+			[logtext(add, sheet_access, %N pulls up [name(pmatch(%0))]'s +sheet.)]
+		)]
+
+@@ *** TEMPORARY: BIO SHEET ***
+&c.sheet/bio #345=$+sheet/bio *:@pemit %#=
+		[setq(0, pmatch+(%0))]
+		[case(0, 
+			isstaff(%#), Error: +sheet <player> is staff-only., 
+			t(%q0), Error: Cound not find player., 
+			[header(+sheet/bio for [name(%q0)])]%r
+			[u(sec.bio, %q0)]%r
+			[footer()]
+			[logtext(add, sheet_access, %N pulls up [name(%q0)]'s +sheet/bio.)]
+		)]
+
+@@ *** TEMPORARY: ATTRIBUTES SHEET ***
+&c.sheet/attributes #345=$+sheet/attr* *:@pemit %#=
+		[setq(0, pmatch+(%1))]
+		[case(0, 
+			isstaff(%#), Error: +sheet <player> is staff-only., 
+			t(%q0), Error: Cound not find player., 
+			[header(+sheet/attributes for [name(%q0)])]%r
+			[u(sec.attributes, %q0)]%r
+			[footer()]
+			[logtext(add, sheet_access, %N pulls up 's +sheet/attributes.)]
+		)]
+
+---
+
+&f.display-whole-sheet nuSheet=
+		[header([ulocal(f.fake-getstat, %0, full name)] %([[edit(ulocal(f.fake-getstat, %0, template), ., /)]]%))]%r
+
+		[ulocal(f.sheet-bio, %0)]%r
+		[ulocal(f.sheet-attributes, %0)]%r
+		[ulocal(f.sheet-main, %0)]%r
+
+		[footer([ulocal(f.fake-getstat, %0, full name)] %([[edit(ulocal(f.fake-getstat, %0, template), ., /)]]%))]
+
+================================================================================
+== THE HOLY GRAIL ==============================================================
+
+This code takes the list that is passed for a particular column and outputs the proper row element for that column
+
+&f.sheet-one-item nuSheet=
+@@ 0: list`of`that`column`items, 1: row we're on, 2: width of row
+	if(
+		setr(0, extract(%0, %1, 1, `)), 
+		wrap(%q0, %2), 
+		space(%2)
+	)
+
+
+================================================================================
+== SORTBY: STAT VALUE ==========================================================
+
+Upon request, calling this with a sortby() will sort a column`prepared`list of stats in the '<name> :<value>' format.
+
+Call with: sortby(f.sort.stat-value, <list>, `, `)
+
+&f.sort.stat-value #345=comp(before(last(%0, :), %(), before(last(%1, :), %())
+
+
+================================================================================
+== SECTION: BIO ================================================================
+
+&f.sheet-bio nuSheet=
+@@ 0: character
+	[switch(
+		u(%0/_bio.template), 
+		Changeling*, u(f.sheet-bio-changeling, %0), 
+		*.Skinthief, u(f.sheet-bio-human-skinthief, %0), 
+		Human*, u(f.sheet-bio-human, %0), 
+		@@(else do nothing)
+	)]
+
+
+---
+
+&f.sheet-bio-changeling nuSheet=
+	[setq(x, 
+		iter(
+			Birthdate Virtue Vice, 
+			u(f.format-stat-text, %0, %i0, 12), 
+			, `
+		)
+	)]
+	[setq(y, 
+		iter(
+			Court Seeming Kith[if(hasattr(%0, _bio.entitlement), %bEntitlement)], 
+			u(f.format-stat-text, %0, %i0, 12), 
+			, `
+		)
+	)]
+	[setq(n, max(words(%qx, `), words(%qy, `), words(%qz, `)))]
+	[iter(
+		lnum(1, %qn), 
+		[u(f.sheet-one-item, %qx, %i0, 38, 12)] 
+		[u(f.sheet-one-item, %qy, %i0, 38, 12)], 
+		, %r
+	)]
+
+---
+
+&f.sheet-bio-human nuSheet=
+	[setq(x, 
+		iter(
+			Birthdate
+			[switch(u(%0/_bio.template), 
+				*.Thaumaturge, %bTradition
+			)]
+			[if(
+				u([u(d.data-dictionary)]/_has, %0, merit.fae_seeming), 
+				%bSeeming
+			)], 
+			u(f.format-stat-text, %0, %i0, 12), 
+			, `
+		)
+	)]
+	[setq(y, 
+		iter(
+			Virtue Vice, 
+			u(f.format-stat-text, %0, %i0, 7), 
+			, `
+		)
+	)]
+	[setq(n, max(words(%qx, `), words(%qy, `), words(%qz, `)))]
+	[iter(
+		lnum(1, %qn), 
+		[u(f.sheet-one-item, %qx, %i0, 38, 12)] 
+		[u(f.sheet-one-item, %qy, %i0, 38, 7)], 
+		, %r
+	)]
+
+
+---
+
+&f.sheet-bio-human-skinthief #345=
+	[setq(x, 
+		iter(
+			Birthdate Virtue Vice, 
+			u(f.format-stat-text, %0, %i0, 12), 
+			, `
+		)
+	)]
+	[setq(y, 
+		iter(
+			Totem_Animal Talisman_Aspect Thieving_Aspect, 
+			u(f.format-stat-text, %0, %i0, 15), 
+			, `
+		)
+	)]
+	[setq(n, max(words(%qx, `), words(%qy, `), words(%qz, `)))]
+	[iter(
+		lnum(1, %qn), 
+		[u(f.sheet-one-item, %qx, %i0, 38, 12)] 
+		[u(f.sheet-one-item, %qy, %i0, 38, 15)], 
+		, %r
+	)]
+
+
+
+&f.sheet-bio-human-skinthief #345=[setq(x, iter(Birthdate Virtue Vice, u(f.format-stat-text, %0, %i0, 12), , `))][setq(y, iter(Totem_Animal Talisman_Aspect Thieving_Aspect, u(f.format-stat-text, %0, %i0, 15), , `))][setq(n, max(words(%qx, `), words(%qy, `), words(%qz, `)))][iter(lnum(1, %qn), [u(f.sheet-one-item, %qx, %i0, 38, 12)] [u(f.sheet-one-item, %qy, %i0, 38, 15)], , %r)]
+
+
+
+================================================================================
+== SECTION: ATTRIBUTES =========================================================
+
+&f.sheet-attributes nuSheet=
+@@ 0: character
+	[setq(x, u(d.column-mental, %0, 25, 14))]
+	[setq(y, u(d.column-physical, %0, 25, 14))]
+	[setq(z, u(d.column-social, %0, 25, 14))]
+	[setq(n, max(words(%qx, `), words(%qy, `), words(%qz, `)))]
+	[iter(
+		lnum(1, %qn), 
+		[u(f.sheet-one-item, %qx, %i0, 25, 14)] 
+		[u(f.sheet-one-item, %qy, %i0, 25, 14)] 
+		[u(f.sheet-one-item, %qz, %i0, 25, 14)], 
+		, %r
+	)]
+
+---
+
+&d.column-mental nuSheet=
+@@ 0: character, 1: total width, 2: name width
+	[u(f.format-subheader, Mental, %1)]`
+	[iter(Intelligence Wits Resolve, u(f.format-stat, %0, %i0, %2), , `)]
+
+---
+
+&d.column-physical nuSheet=
+	[u(f.format-subheader, Physical, %1)]`
+	[iter(Strength Dexterity Stamina, u(f.format-stat, %0, %i0, %2), , `)]
+
+---
+
+&d.column-social nuSheet=
+	[u(f.format-subheader, Social, %1)]`
+	[iter(Presence Manipulation Composure, u(f.format-stat, %0, %i0, %2), , `)]
+
+
+
+&d.attributes-mental nuSheet=
+@@ 0: character, 1: total width, 2: name width
+	[u(f.format-subheader, Mental, %1)]`
+	[iter(Intelligence Wits Resolve, u(f.format-stat, %0, %i0, %2), , `)]
+
+---
+
+&d.attributes-physical nuSheet=
+	[u(f.format-subheader, Physical, %1)]`
+	[iter(Strength Dexterity Stamina, u(f.format-stat, %0, %i0, %2), , `)]
+
+---
+
+&d.attributes-social nuSheet=
+	[u(f.format-subheader, Social, %1)]`
+	[iter(Presence Manipulation Composure, u(f.format-stat, %0, %i0, %2), , `)]
+
+
+
+================================================================================
+== SECTION: EVERYTHING ELSE ====================================================
+
+&f.sheet-main nuSheet=
+@@ 0: sheet dbref, 1: column width, 2: name width
+	[setq(x, u(d.column-one, %0, 25, 14))]
+	[setq(y, u(d.column-two, %0, 52, 41))]
+	[setq(n, max(words(%qx, `), words(%qy, `)))]
+	[iter(
+		lnum(1, %qn), 
+		[u(f.sheet-one-item, %qx, %i0, 25, 14)] 
+		[u(f.sheet-one-item, %qy, %i0, 52, 41)], 
+		, %r
+	)]
+
+
+================================================================================
+== COLUMN ONE ==================================================================
+
+Column One in our case holds all the skills.
+
+
+&d.column-one nuSheet=
+@@ 0: sheet dbref, 1: column width, 2: name width
+	[u(d.skills-mental, %0, %1, %2)]`
+	[u(d.skills-physical, %0, %1, %2)]`
+	[u(d.skills-social, %0, %1, %2)]
+
+---
+
+&d.skills-mental nuSheet=
+	[u(f.format-subheader, Mental, %1)]`
+	[iter(
+		Academics Computer Crafts Investigation Medicine Occult Politics Science, 
+		u(d.skills-and-specialties, %0, %i0, %1, %2), , `
+	)]
+
+---
+
+&d.skills-physical nuSheet=
+	[u(f.format-subheader, Physical, %1)]`
+	[iter(
+		Athletics Brawl Drive Firearms Larceny Stealth Survival Weaponry, 
+		u(d.skills-and-specialties, %0, %i0, %1, %2), , `
+	)]
+
+---
+
+&d.skills-social nuSheet=
+	[u(f.format-subheader, Social, %1)]`
+	[iter(
+		Animal_Ken Empathy Expression Intimidation Persuasion Socialize Streetwise Subterfuge, 
+		u(d.skills-and-specialties, %0, %i0, %1, %2), , `
+	)]
+
+
+================================================================================
+== SKILLS AND SPECIALTIES ======================================================
+
+Passed a skill, returns massaged specialty after it.
+
+&d.skills-and-specialties nuSheet=
+@@ 0: sheet dbref, 1: skill, 2: total width, 3:name width
+	[u(f.format-stat, %0, %1, %3)]
+	[if(
+		t(setr(y, lattr([u(f.fake-find-sheet, %0)]/_skill.%1.*))), 
+		`[iter(
+			%qy, 
+			u(f.format-substat, %1.%i0, %2, %3), 
+			, `
+		)]
+	)]
+
+
+================================================================================
+== COLUMN TWO ==================================================================
+
+Column two is a wider column with a lot of other things
+
+@@ 0: sheet dbref, 1: column width, 2: name width
+
+&d.column-two nuSheet=
+	[u(d.merits-all, %0, %1, %2)]`
+	[switch(
+		u(%0/_bio.template), 
+		Changeling*, [u(d.contracts-all, %0, %1, %2)]`, 
+		*.Skinthief, [u(d.aspects-all, %0, %1, %2)]`
+	)]
+	[u(d.traits-all, %0, %1, %2)]`
+	[u(d.others-all, %0, %1, %2)]`
+	[u(d.traits-health, %0, %1, %2)]
+
+---
+
+&d.merits-all nuSheet=
+	[u(f.format-subheader, Merits, %1)]`
+	[iter(
+@@		u(f.edit-for-instances, sort(lattr(%0/_merit.*))), 
+		sort(lattr(%0/_merit.*)), 
+@@ I have to comment this...
+		case(
+			1, 
+@@ instance (possibly with substat)
+@@			strmatch(%i0, _merit.*_%(*), 
+@@			u(f.format-instances, %0, rest(%i0, .), %1, %2), 
+@@ substat
+			strmatch(%i0, _merit.*.*), 
+			u(f.format-substat, %i0, %1, %2), 
+@@ else normal
+			u(f.format-stat, %0, rest(%i0, .), %2)
+		), 
+		, `
+	)]
+
+---
+
+&d.contracts-all nuSheet=
+	[u(f.format-subheader, Contracts, %1)]`
+	[iter(
+		sort(lattr(%0/_contract.*)), 
+		u(f.format-stat, %0, rest(%i0, .), %2), 
+		, `
+	)]
+
+---
+
+@@ Aspects are initially for Skinthieves
+&d.aspects-all #345=
+	[u(f.format-subheader, Aspects, %1)]`
+	[iter(
+		[sort(lattr(%0/_aspect.*))], 
+		u(f.format-stat, %0, rest(%i0, .), %2), 
+		, `
+	)]
+
+---
+
+&d.traits-all nuSheet=
+	[u(f.format-subheader, Traits, %1)]`
+	[switch(
+		u(%0/_bio.template), 
+		Changeling*, 
+		[u(f.format-pool, %0, Wyrd, add(%2, 3))]`
+		[u(f.format-pool, %0, Glamour, add(%2, 3))]`, 
+		*.Fae-Touched, 
+		[u(f.format-pool, %0, Glamour, add(%2, 3))]`, 
+		*.Skinthief, 
+		[u(f.format-pool, %0, Supernatural Tolerance, add(%2, 3))]`
+		[u(f.format-pool, %0, Essence, add(%2, 3))]`
+	)]
+	[u(f.format-pool, %0, Willpower, add(%2, 3))]`
+	[u(f.format-morality, %0, %1, %2)]
+
+---
+
+&d.traits-health nuSheet=
+@@ 0: sheet dbref
+	[setq(
+		b, 
+		if(
+			abs(u(%0/_health.penalty)), 
+			%b[ansi(xh, %([u(%0/_health.penalty)]%))]
+		)
+	)]
+
+	[u(f.format-subheader, Health%qb, %1)]`
+	%b 
+	[u(	
+		[u(d.health-frob)]/f.display-health-bar, 
+		iter(
+			bashing lethal aggravated, 
+			u(%0/_health.%i0)
+		), 
+		u(%0/_health.maximum)
+	)]
+
+---
+
+&d.others-all nuSheet=
+	[u(f.format-subheader, Other, %1)]`
+	[u(f.format-stat, %0, Size, %2)]`
+	[u(f.format-stat, %0, Speed, %2)]`
+	[u(f.format-stat, %0, Defense, %2)]`
+	[u(f.format-stat, %0, Initiative, %2)]`
+	[u(f.format-xp, %0, %2)]
+
+
+================================================================================
+== FORMATTING ==================================================================
+
+&f.format-subheader nuSheet=
+@@ 0: name, 1: total width
+	ljust(%xh| %0 |%xn, %1, %xg-%xn)
+
+---
+
+&f.format-stat nuSheet=
+@@ 0: sheet dbref, 1: name, 2: name width, 3: prefix for name (use sparingly!)
+	[if(t(%3), %3, %b)] [ljust([u(f.format-name, %1)], %2)]: [u(f.format-numbers, %0, %1)]
+
+---
+
+&f.format-stat-text nuSheet=
+@@ 0: sheet dbref, 1: name, 2: name width, 3: prefix for name (use sparingly!)
+	[if(t(%3), %3, %b)] [ljust([u(f.format-name, %1)], %2)]: [u(f.format-text, %0, %1)]
+
+---
+
+&f.format-substat nuSheet=
+@@ 0: name.substat, 1: total width, 2: name width
+	ljust(%b %b [last(u(f.format-name, rest(%0, .), %2), .)], dec(%1))
+
+---
+
+&f.format-stat-list #345=
+@@ 0: sheet dbref, 1: statpath, 2: width, 3: prefix for name (use sparingly!)
+	[if(t(%3), %3, %b)] [ljust([u(f.format-name, rest(%1, .))], %2)]%r
+@@ .. for each item in the list, translate its code to 'name (code)'
+	[iter(get(%0/_%1), 
+		%b %b 
+		[ljust(%b %b [u([u(d.data-dictionary)]/_class_translate_list, %1, %i0)] 
+		[ansi(xh, (%i0))], %2)], 
+		., %r
+	)]
+
+
+&f.format-stat-list #345=[if(t(%3), %3, %b)] [ljust([u(f.format-name, rest(%1, .))], %2)]%r[iter(get(%0/_%1), %b %b [ljust(%b %b [u([u(d.data-dictionary)]/_class_translate_list, %1, %i0)] [ansi(xh, (%i0))], %2)], ., %r)]
+
+
+---
+
+&f.format-pool nuSheet=
+@@ 0: sheet dbref, 1: stat name, 2: name width
+	%b [ljust(
+		[ansi(
+			n, %1: [ladd(setr(g, u(f.fake-getstat, %0, %1)), .)], 
+			xh, 
+				[if(t(rest(%qg, .)), %b%([first(%qg, .)]%))]
+		)], 
+		sub(dec(%2), first(%qg, .))
+	)] 
+	[u(f.format-dots, %0, %1)]
+
+---
+
+&f.format-morality nuSheet=
+@@ 0: sheet dbref, 1: name width, 2: total width
+@@ basically substats, may streamline this some day
+	[setq(
+		q, 
+		switch(
+			u(%0/_bio.template), 
+			*Changeling*, Clarity, 
+			*Vampire*, Humanity, 
+			*Werewolf*, Harmony, 
+			Morality
+		)
+	)]
+
+	%b %qq: [ladd(setr(g, u(%0/_advantage.%qq)), .)]
+	[if(
+		t(setr(d, lattr(%0/_advantage.%qq.*))), 
+		`%b [iter(%qd, %b ([last(%i0, .)]) [u(%0/%i0)], , `)]
+	)]
+
+---
+
+&f.format-xp nuSheet= 
+@@ 0: sheet dbref, 1: width
+	%b [ljust(Experience, %1)]: [setq(9, get(%0/_special.xp))]
+	[ladd(%q9, .)]/[first(%q9, .)]
+
+---
+
+&f.edit-for-instances nuSheet=
+@@ 0: List of possible stat_(instance) stat_(instance)
+	setunion(
+		iter(
+			%0, 
+			if(
+				strmatch(%i0, _*_%(*), 
+				[first(%i0, %()]%(%), 
+				%i0)
+			), 
+	)
+
+---
+
+&f.format-instances nuSheet=
+@@ 0: sheet location, 1: stat.substat_(instance), 2: total width, 3: name width
+	%b[left(
+		u(f.format-name, setr(n, trim(before(%1, %(), r, _))), 
+		dec(%2)
+	)]`
+	%b[iter(
+		lattr(%0/_*.%qn_%(*%)*), 
+		[ljust(
+			if(
+				gt(
+					strlen(setr(n, %b%([u(f.format-name, before(rest(rest(%i0, .), %(), %)))]%))), 
+					%3
+				), 
+				[left(%qn, sub(%3, 4))]...%), 
+				%qn
+			), 
+			%3
+		)]: 
+		[u(f.format-numbers, %0, rest(%i0, .))], 
+	, `%b
+	)]
+
+---
+
+&f.format-name nuSheet=iter(edit(%0, _, %b), titlestr(%i0), ., .)
+@@ 0: name
+
+---
+
+&f.format-numbers nuSheet=
+@@ 0: sheet dbref, 1: stat name, s: statpath, p: value or - if 0, o: offset
+	[setq(s, u(f.fake-getstat, %0, %1))]
+	[setq(p, first(%qs, .))]
+	[setq(p, if(t(%qp), %qp, -))]
+	[setq(o, rest(%qs, .))]
+	[if(
+		comp(%qo, ), 
+		[ladd(%qp.%qo, .)] [ansi(xh, %(%qp%))], 
+		if(t(%qp), %qp, ansi(xh, -))
+	)]
+
+---
+
+&f.format-dots nuSheet=
+@@ 0: sheet dbref, 1: stat
+	[setq(s, u(f.fake-getstat, %0, %1))]
+	[setq(p, first(%qs, .))]
+	[setq(o, rest(%qs, .))]
+	[case(
+		1, 
+		and(t(%1), gte(%qo, 0)), 
+		ansi(w, [repeat(o, %qp)], h, [repeat(*, %qo)]), 
+		and(t(%1), lt(%qo, 0)), 
+		ansi(
+		w, [repeat(o, add(%qp, %qo))], 
+		hx, [repeat(., min(abs(%qo), %qp))]
+		)
+	)]
+
+---
+
+&f.format-text nuSheet=
+@@ 0: sheet dbref, 1: stat
+	[setq(s, u(f.fake-getstat, %0, %1))]
+	[edit(%qs, ., /)]
+
+
+================================================================================
+== FAKE STAT FUNCTIONS =========================================================
+
+Not including health, for some reason.
+
+
+&d.data-dictionary #345=#188
+&d.stat-setter nuSheet=#204
+&d.health-frob nuSheet=#205
+&d.chargen #345=#394
+
+---
+
+&f.fake-find-sheet #345=u([u(d.stat-setter)]/f.find-sheet, %0)
+
+---
+
+@@ 0: full stat path (without instance), 1: tag.or.tag
+
+&f.fake-hastag? #345=t(setinter(u([u(d.data-dictionary)]/tags.%0), %1, .))
+
+---
+
+Return the pure DD-version of the stat, sans instance/substats
+@@ 0: stat to clean up
+
+&f.fake-corestat #345=if(strmatch(%0, *%(*%)*), [before(%0, %()](), extract(%0, 1, 2, .))
+
+---
+
+&f.fake-getstat nuSheet=
+@@ 0: character dbref, 1: stat name
+	u([u(f.fake-find-sheet, %0)]/[u(f.fake-statpath, %0, %1)])
+
+---
+
+Tried this with a call to f.statpath-lookup-sheet, +sheet lagged for about a half second.  Trying it more directly with f.statpath-validate-name was only a little faster.
+
+An ongoing problem: It's matching things like _skill.stealth.darkness before _contract.darkness, as "skill" sorts before "contract".  This also happens with "_merit.hollow_(xxx).size" over "_advantage.size".
+
+Solution: Filter out any "substat" matches: *.*.*
+
+
+&f.fake-statpath #345=
+@@ grabs only choice if it exists, grabs first sorted choice if more than one
+@@ 0: sheet dbref, 1: stat name, s: stats found
+
+@@ .. stats found = everything but substats, exact matches
+	[setq(s, setr(s, filter(fil.no-substats, lattr(%0/_*.[edit(%1, %b, _)]))))]
+
+	[case(1, 
+@@ .. more than one matched statpath, sortby and filter and grab the first
+		gt(words(%qs), 1), 
+		_[first(
+			sortby(
+				[u(d.stat-setter)]/sortby.types, 
+				filter(
+					[u(d.stat-setter)]/filter.search-types, 
+					iter(%qs, rest(%i0, _))
+				)
+			)
+		)], 
+
+@@ .. null or single match
+		%qs
+	)]
+
+
+---
+
+&fil.no-substats #345=not(strmatch(%0, *.*.*))
+
+--
+
+&f.fake-statpath #345=[setq(s, setr(s, filter(fil.no-substats, lattr(%0/_*.[edit(%1, %b, _)]))))][case(1, gt(words(%qs), 1), _[first(sortby([u(d.stat-setter)]/sortby.types, filter([u(d.stat-setter)]/filter.search-types, iter(%qs, rest(%i0, _)))))], %qs)]
+
+================================================================================
+== +SHEET/SKIN =================================================================
+
+This changes, or reports, which sheet someone is using.
+
+
+&c.sheet/skin nuSheet=
+@@ +sheet/skin[ [<player>=]<sheetloc>]
+@@ change your skin (which object your sheet is on), or see what it's set to
+@@ 
+@@ q0: input
+@@ qf: first part of x=y
+@@ qr: rest of x=y
+@@ qp: player we're checking
+@@ qw: where sheet is, or is going to be
+
+	$+sheet/skin*: @pemit %#=
+
+		[setq(0, trim(%0))]
+		[setq(p, trim(first(%q0, =)))]
+		[setq(r, trim(rest(%q0, =)))]
+@@ >> look for the player to check
+		[setq(
+			p, 
+			case(
+				1, 
+@@ .. .. +sheet/skin ("me")
+				not(comp(%q0, )), 
+				%#, 
+@@ .. .. players can check themselves
+				and(not(isstaff(%#)), comp(pmatch+(%qp), %#)), 
+				#-1 Staff Only, 
+@@ .. .. +sheet/skin <player>|me[=...]
+				t(setr(p, pmatch+(%qp))), 
+				%qp, 
+@@ .. .. neither: save an error
+				#-1 Can Only Check Players
+			)
+		)]
+
+@@ >> check/set
+		[case(
+			0, 
+@@ .. error when matching the player to check
+			t(%qp), Error: [rest(%qp)], 
+@@ .. +sheet/skin [<player>] (that is, no =<thing>)
+			strmatch(%q0, *=*), 
+			[alert(+Sheet/Skin)] [name(%qp)] is set as 
+			[if(
+				comp(setr(w, ulocal(f.fake-find-sheet, %qp)), %qp), 
+				[lcstr(type(%qw))]: [name(%qw)] %(%qw%), 
+				capstr([obj(%qp)]self)
+			)], 
+@@ .. (stop non-staff from setting themselves)
+			isstaff(%#), 
+			Error: Only staff can change people's skins, 
+@@ .. else: +sheet/skin <player>=<sheet>
+			[setq(
+				w, 
+				case(
+					1, 
+					t(setr(w, pmatch(%qr))), 
+					%qw, 
+					t(setr(w, locate(%#, %qr, aimnpP))), 
+					%qw, 
+					@@(else set to null - including "me")
+				)
+			)]
+			[null(set(%qp, _special.sheet_location:%qw))]
+
+			[alert(+Sheet/Skin)] [name(%qp)] is now set as 
+			[if(
+				comp(setr(w, ulocal(f.fake-find-sheet, %qp)), %qp), 
+				[lcstr(type(%qw))]: [name(%qw)] %(%qw%), 
+				capstr([obj(%qp)]self)
+			)]
+		)]
+
+---
+
+&c.sheet/skin #345=$+sheet/skin*: @pemit %#=[setq(0, trim(%0))][setq(p, trim(first(%q0, =)))][setq(r, trim(rest(%q0, =)))][setq(p, case(1, not(comp(%q0, )), %#, and(not(isstaff(%#)), comp(pmatch+(%qp), %#)), #-1 Staff Only, t(setr(p, pmatch+(%qp))), %qp, #-1 Can Only Check Players))][case(0, t(%qp), Error: [rest(%qp)], strmatch(%q0, *=*), [alert(+Sheet/Skin)] [name(%qp)] is set as [if(comp(setr(w, ulocal(f.fake-find-sheet, %qp)), %qp), [lcstr(type(%qw))]: [name(%qw)] %(%qw%), capstr([obj(%qp)]self))], isstaff(%#), Error: Only staff can change people's skins, [setq(w, case(1, t(setr(w, pmatch(%qr))), %qw, t(setr(w, locate(%#, %qr, aimnpP))), %qw, @@(else set to null - including "me")))][null(set(%qp, _special.sheet_location:%qw))][alert(+Sheet/Skin)] [name(%qp)] is now set as [if(comp(setr(w, ulocal(f.fake-find-sheet, %qp)), %qp), [lcstr(type(%qw))]: [name(%qw)] %(%qw%), capstr([obj(%qp)]self))])]
+
+
+================================================================================
+== THE HELP FILE ===============================================================
+
+&help~stat_topics~+sheet #96=Character Sheets~[ansi(h, +sheet)]: See your character sheet, if you have one. %r %r[ansi(h, +sheet/skin \[me\])]: See which skin you're wearing. %r %r[ansi(h, +sheet/show <target>)]: Show your sheet to someone else. %r %rSkins are where the system is told to look for a character sheet.  Though everyone with a sheet has a main skin, staff can give any player a different sheet, on a different object, through this command. %r%r[ansi(h, +sheet/check \[me\])]: Check that your sheet is valid.  If you haven't been approved for play, it will also total up points spent.  Note that it won't check that the points were spent correctly, just that they were spent.%r %r[ansi(h, See Also)]: +help stat~Staff +Sheet Commands: %r %r[ansi(h, +sheet <player>)]: See <player>'s character sheet. %r %r[ansi(h, +sheet/skin <player>)]: See which skin <player> is wearing. %r %r[ansi(h, +sheet/skin <player>=<skin>)]: Set <player>'s skin to <skin>.  The skin can be an object or another player.  WARNING: Players may treat their skin as their own.  Setting one players' skin as another's gives them the same levels of control over it. %r %r[ansi(h, +sheet/skin <player>=)]: Reset <player>'s skin to the primary. %r %r[ansi(h, +sheet/check <player>)]: Check <player>'s sheet stats for validity.  If <player> has not been approved, it will also tally points spent in various sections.  For this reason, we suggest you set chargen stats before helping a player spend extra xp.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--==--=-=-==--==-
+=--==-=-=-=--==--==-=--==--=-=-==--==-=--==--=-==-=-=-=-=-=-=--==-=-=-=-=-=--==
+-=-=-==-=--==--==-=-=--==--=-=-==--=-==--=-==-=-=--=-=-=-=-=-=-=-==-=--=-==--=-
+
+think [setq(l, 79)][left(iter(lnum(ceil(fdiv(%ql, 2))), if(rand(2), -=, =-), , @@), %ql)]
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--==--=-=-==--==-
+=--==-=-=-=--==--==-=--==--=-=-==--==-=--==--=-==-=-=-=-=-=-=--==-=-=-=-=-=--==
+-=-=-==-=--==--==-=-=--==--=-=-==--=-==--=-==-=-=--=-=-=-=-=-=-=-==-=--=-==--=-
+
+
+
+-=-=-=-=-==--=-=-=-=-=-=-=-=-=--=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-==
+
+Let's see if we can do a sheet as two different-sized columns:
+
+>> Commands
+
+
+
+
+
+---
+
+
+---
+
+---
+
+---
+
+---
+
+
+
+
+---
+
+
+---
+
+Column 2, Other, Width 53, NameWidth ??: 
+
+
+&D.SHEET-COLUMN-THREE +Sheet Thinger=[u(d.sheet-column-traits, %0)]`[u(d.sheet-column-specialties, %0)]`[u(d.sheet-column-others, %0)]
+
+
+
+----------------------------------------------
+
+&f.stat:
+@@ 0: dbref of stats
+@@ 1: stat path
+@@ 2: display length
+ljust(udefault(%0/_%1, #-1 NOT FOUND), %2)
+
+----------------------------------------------
+
+&sheet.bio-human:
+         1         2         3         4         5         6         7         8
+123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|
+ Full Name: 						Birthdate: 
+ 									Age: 
+
+%bFull Name: [u(f.stat, %0, bio.full_name, 22)]%b Birthdate: [u(f.stat, %0, bio.birthdate, 22)]
+
+---
+
+&sheet.bio-changeling:
+         1         2         3         4         5         6         7         8
+123456789|123456789|123456789|123456789|123456789|123456789|123456789|123456789|
+ Full Name: 						Seeming: 
+ Birthdate: 						Kith: 
+ Apparent Age:						Court: 
+
+
+
+
+&bio.full_name DD=*
+&bio.birthdate DD=*
+&bio.apparent_birthdate DD=*
+
+&bio.race DD=Human
+&bio.race DD=[u(dd/bio.race)].Changeling
+&bio.seeming DD=Beast.Darkling.Elemental.Fairest.Ogre.Wizened
+
+&tags.bio.seeming DD=changeling
+
+&bio.kith DD=*|*
+&tags.bio.kith DD=changeling
+
+&bio.kith.beast DD=Broadback.Hunterheart.Runnerswift.Skitterskulk.Steepscambler.Swimmerskin.Venombite.Kithless
+
+&bio.kith.darkling DD=Antiquarian.Gravewright.Leechfinger.Mirrorskin.Tunnelgrub.Kithless
+
+&bio.kith.elemental DD=Airtouched.Fireheart.Manikin.Snowskin.Waterborn.Woodblood.Kithless
+
+&bio.kith.fairest DD=Bright One.Dancer.Draconic.Flowering.Muse.Kithless
+
+&bio.kith.ogre DD=Cyclopean.Farwalker.Gargantuan.Gristlegrinder.Stonebones.Water Dweller.Kithless
+
+&bio.kith.wizened DD=Artist.Chatelaine.Chirurgeon.Oracle.Smith.Soldier.Kithless
+
+&bio.court DD=Spring.Summer.Autumn.Winter.Courtless
+&tags.bio.court DD=changeling
+&bio.kith.beast DD=[setunion(u(dd/bio.kith.beast), Cleareyes.Coldscale.Roteater.Truefriend.Windwing, .)]
+&bio.kith.darkling DD=[setunion(u(dd/bio.kith.darkling), Lurkglider.Moonborn.Nightsinger.Palewraith.Razorhand.Whisperwisp, .)]
+&bio.kith.darkling DD=[setunion(u(dd/bio.kith.darkling), Lurkglider.Moonborn.Nightsinger.Palewraith.Razorhand.Whisperwisp, .)]
+&bio.kith.fairest DD=[setunion(u(dd/bio.kith.fairest), Flamesiren.Polychromatic.Shadowsoul.Telluric.Treasured, .)]
+&bio.kith.ogre DD=[setunion(u(dd/bio.kith.ogre), Corpsegrinder.Render.Witchtooth, .)]
+&bio.kith.wizened DD=[setunion(u(dd/bio.kith.wizened), Author.Brewer.Drudge.Gameplayer.Kithless.Miner.Woodwalker, .)]
+
+
+=--=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=--=-=-=-=-=-==-=-==-
+
+&c.sheet-default nuSheet=$`sheet: @pemit %#=[header(u(f.fake-getstat, %#, full name))]%r[u(f.sheet-attributes, %#)]%r[u(f.sheet-main, %#)]%r[footer(u(f.fake-getstat, %#, full name))]
+
+&c.sheet-specific nuSheet=$`sheet *: @pemit %#=[setq(0, pmatch(%0))][header(ulocal(f.fake-getstat, %q0, full name))] %r[ulocal(f.sheet-attributes, %q0)]%r[ulocal(f.sheet-main, %q0)]%r[footer(ulocal(f.fake-getstat, %q0, full name))]
+
+&f.sheet-attributes #345=[setq(x, u(d.column-mental, %0, 25, 14))][setq(y, u(d.column-physical, %0, 25, 14))][setq(z, u(d.column-social, %0, 25, 14))][setq(n, max(words(%qx, `), words(%qy, `), words(%qz, `)))][iter(lnum(1, %qn), %b[u(f.sheet-one-item, %qx, %i0, 25, 14)] [u(f.sheet-one-item, %qy, %i0, 25, 14)] [u(f.sheet-one-item, %qz, %i0, 25, 14)], , %r)]
+
+--------
+
+&f.sheet-main #345=[setq(x, u(d.column-one, %0, 25, 14))][setq(y, u(d.column-two, %0, 51, 40))][setq(n, max(words(%qx, `), words(%qy, `)))][iter(lnum(1, %qn), %b[u(f.sheet-one-item, %qx, %i0, 25, 14)] [u(f.sheet-one-item, %qy, %i0, 51, 40)], , %r)]
+
+--------
+
+&f.sheet-one-item nuSheet=if(setr(0, extract(%0, %1, 1, `)), wrap(%q0, %2), space(%2))
+
+&d.column-mental nuSheet=[u(f.format-subheader, Mental, %1)]`[iter(Intelligence Wits Resolve, u(f.format-stat, %0, %i0, %2), , `)]
+
+&d.column-physical nuSheet=[u(f.format-subheader, Physical, %1)]`[iter(Strength Dexterity Stamina, u(f.format-stat, %0, %i0, %2), , `)]
+
+&d.column-social nuSheet=[u(f.format-subheader, Social, %1)]`[iter(Presence Manipulation Composure, u(f.format-stat, %0, %i0, %2), , `)]
+
+--------
+
+&d.column-one nuSheet=[u(d.skills-mental, %0, %1, %2)]`[u(d.skills-physical, %0, %1, %2)]`[u(d.skills-social, %0, %1, %2)]
+
+--------
+
+&d.skills-mental nuSheet=[u(f.format-subheader, Mental, %1)]`[iter(Academics Computer Crafts Investigation Medicine Occult Politics Science, u(d.skills-and-specialties, %0, %i0, %1, %2), , `)]
+
+&d.skills-physical nuSheet=[u(f.format-subheader, Physical, %1)]`[iter(Athletics Brawl Drive Firearms Larceny Stealth Survival Weaponry, u(d.skills-and-specialties, %0, %i0, %1, %2), , `)]
+
+&d.skills-social nuSheet=[u(f.format-subheader, Social, %1)]`[iter(Animal_Ken Empathy Expression Intimidation Persuasion Socialize Streetwise Subterfuge, u(d.skills-and-specialties, %0, %i0, %1, %2), , `)]
+
+--------
+
+
+&d.column-two #345=[u(d.merits-all, %0, %1, %2)]`[switch(u(%0/_bio.template), *Changeling*, [u(d.contracts-all, %0, %1, %2)]`)][u(d.traits-all, %0, %1, %2)]`[u(d.others-all, %0, %1, %2)]`[u(d.traits-health, %0, %1, %2)]
+
+
+--------
+
+@@ >> Instances on their own line (currently depreciated)
+&d.merits-all #345=[u(f.format-subheader, Merits, %1)]`[iter(sort(lattr(%0/_merit.*)), case(1, strmatch(%i0, _merit.*_%(*), u(f.format-instances, %0, rest(%i0, .), %1, %2), strmatch(%i0, _merit.*.*), u(f.format-substat, %i0, %1, %2), u(f.format-stat, %0, rest(%i0, .), %2)), , `)]
+
+@@ >> Instances per line (compressed)
+&d.merits-all #345=[u(f.format-subheader, Merits, %1)]`[iter(sort(lattr(%0/_merit.*)), case(1, strmatch(%i0, _merit.*.*), u(f.format-substat, %i0, %1, %2), u(f.format-stat, %0, rest(%i0, .), %2)), , `)]
+
+&d.contracts-all nuSheet=[u(f.format-subheader, Contracts, %1)]`[iter(sort(lattr(%0/_contract.*)), u(f.format-stat, %0, rest(%i0, .), %2), , `)]
+
+&f.format-subheader nuSheet=ljust(%xh| %0 |%xn, %1, %xg-%xn)
+
+&f.format-stat #345=[if(t(%q3), %q3, %b)] [ljust([u(f.format-name, %1)], %2)]: [u(f.format-numbers, %0, %1)]
+
+&f.format-substat nuSheet=%b [ljust(%b [last(u(f.format-name, rest(%0, .), %2), .)], dec(%1))]
+
+&f.edit-for-instances nuSheet=setunion(iter(%0, if(strmatch(%i0, _*_%(*), [first(%i0, %()]%(%), %i0)), )
+
+&f.format-instances nuSheet=%b [left(u(f.format-name, setr(n, trim(before(%1, %(), r, _))), dec(%2))]`%b[iter(lattr(%0/_*.%qn_%(*%)*), [ljust(if(gt(strlen(setr(n, %b%([u(f.format-name, before(rest(rest(%i0, .), %(), %)))]%))), %3), [left(%qn, sub(%3, 4))]...%), %qn), %3)]: [u(f.format-numbers, %0, rest(%i0, .))], , `%b)]
+
+&f.format-name nuSheet=iter(edit(%0, _, %b), titlestr(%i0), ., .)
+
+&f.format-numbers nuSheet=[setq(s, u(f.fake-getstat, %0, %1))][setq(p, first(%qs, .))][setq(o, rest(%qs, .))][if(comp(%qo, ), [ladd(%qp.%qo, .)] [ansi(xh, %(%qp%))], if(t(%qp), %qp, ansi(xh, -)))]
+
+&f.format-dots nuSheet=[setq(s, u(f.fake-getstat, %0, %1))][setq(p, first(%qs, .))][setq(o, rest(%qs, .))][case(1, and(t(%1), gte(%qo, 0)), ansi(w, [repeat(o, %qp)], h, [repeat(*, %qo)]), and(t(%1), lt(%qo, 0)), ansi(w, [repeat(o, add(%qp, %qo))], hx, [repeat(., min(abs(%qo), %qp))]))]
+
+&f.fake-getstat nuSheet=u([u(#204/f.find-sheet, %0)]/[u(f.fake-statpath, %0, %1)])
+
+&f.fake-statpath nuSheet=if(gt(words(setr(s, lattr([u(#204/f.find-sheet, %0)]/_*.[edit(%1, %b, _)]))), 1), _[first(sortby(#204/sortby.types, filter(#204/filter.search-types, iter(%qs, rest(%i0, _)))))], %qs)
+
+&f.format-substat nuSheet=ljust(%b- [last(u(f.format-name, rest(%0, .), %2), .)], dec(%1))
+
+&f.format-pool #345=%b [ljust([ansi(n, [if(strlen(%3), ljust(edit(%1, _, %b), %3), edit(%1, _, %b))]: [ladd(setr(g, u(f.fake-getstat, %0, %1)), .)], xh, [if(t(rest(%qg, .)), %b%([first(%qg, .)]%))])], sub(dec(%2), first(%qg, .)))] [u(f.format-dots, %0, %1)]
+
+--------
+
+&d.traits-all #345=[u(f.format-subheader, Traits, %1)]`[switch(u(%0/_bio.template), *Changeling*, [u(f.format-pool, %0, Wyrd, add(%2, 3))]`[u(f.format-pool, %0, Glamour, add(%2, 3))]`)][u(f.format-pool, %0, Willpower, add(%2, 3))]`[u(f.format-morality, %0, %1, %2)]
+
+--------
+
+&d.skills-and-specialties nuSheet=[u(f.format-stat, %0, %1, %3)][if(t(setr(y, lattr(%0/_skill.%1.*))), `[iter(%qy, u(f.format-substat, %1.%i0, %2, %3), , `)])]
+
+&f.format-morality nuSheet=[setq(q, switch(u(%0/_bio.template), *Changeling*, Clarity, *Vampire*, Humanity, Morality))]%b %qq: [ladd(setr(g, u(%0/_advantage.%qq)), .)][if(t(setr(d, lattr(%0/_advantage.%qq.*))), `%b [iter(%qd, %b ([last(%i0, .)]) [u(%0/%i0)], , `)])]
+
+--------
+
+&d.others-all nuSheet=[u(f.format-subheader, Other, %1)]`[u(f.format-stat, %0, Size, %2)]`[u(f.format-stat, %0, Speed, %2)]`[u(f.format-stat, %0, Defense, %2)]`[u(f.format-stat, %0, Initiative, %2)]`[u(f.format-xp, %0, %2)]
+
+&f.format-xp nuSheet=%b [ljust(Experience, %1)]: [setq(9, get(%0/_special.xp))][ladd(%q9, .)]/[first(%q9, .)]
+
+--------
+
+&d.traits-health nuSheet=[setq(b, if(abs(u(%0/_health.penalty)), %b[ansi(xh, %([u(%0/_health.penalty)]%))]))][u(f.format-subheader, Health%qb, %1)]`%b [u(#205/f.display-health-bar, iter(bashing lethal aggravated, u(%0/_health.%i0)), u(%0/_health.maximum))]
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-=-=-=-=-=-=-=-=-=-=-=
+
+
+
+
+
+----->>>  START HERE <<<-----
+
+
+
+
+================================================================================
+== +SHEET VERSION 3 ============================================================
+
+This version of sheet uses the vcolumns() function provided elsewhere.  This is done to resolve issues with parsing and wrapping that crop up in the previous version, as well as (hopefully) immproving legibility of code.
+
+The sheet layout is to remain the same, broken up in a similar manner.  Our special character for this will be `, a character that's denied through the main stat system anyhow.
+
+<< Header >>
+< bio >
+< attributes >
+<skill column> <merits, contracts, traits, other, health column>
+
+Let's also put some more structure to this while we're doing it:
+	&sec.<section>
+	&col.<section>.<column>
+
+Simple.
+
+I hope.
+
+================================================================================
+== SUPPORT FUNCTIONS ===========================================================
+
+Most:
+@@ 0: sheet loc
+@@ 1: list of stat_names
+@@ 2: width of stat name ("name width")
+
+For "names-only":
+@@ 0: list of stat_names
+@@ 1: width of stat name ("name width")
+
+--
+
+&f.column-names-and-text #345=iter(%1, u(f.format-stat-text, %0, %i0, 12), , `)
+
+&f.column-text-only #345=iter(%1, ulocal(f.format-text, %0, %i0), , `)
+
+&f.column-names-only #345=iter(%0, [ljust(ulocal(f.format-name, %i0), %1)]:, , `)
+
+&f.column-names-and-value #345=iter(%1, ulocal(f.format-stat, %0, %i0, %2), , `)
+
+&f.column-skills-and-specialties #345=iter(%1, ulocal(f.item-skill-and-substats, %0, %i0, %2), , `)
+
+
+--------------------------------------------------------------------------------
+-- Skill and Specialties -------------------------------------------------------
+
+Always lists the skills passed to it, whether or not there's a value.  Will list substats beneath it.
+
+@@ 0: sheet dbref, 1: skill, 2:name width
+
+&f.item-skill-and-substats #345=
+	[u(f.format-stat, %0, %1, %2)]
+	[if(
+		t(setr(y, lattr(%0/_skill.%1.*))), 
+		`[iter(
+			%qy, 
+			u(f.item-substat, %1.%i0, %2), 
+			, `
+		)]
+	)]
+
+&f.item-skill-and-substats #345=[u(f.format-stat, %0, %1, %2)][if(t(setr(y, lattr(%0/_skill.%1.*))), `[iter(%qy, u(f.item-substat, %1.%i0, %2), , `)])]
+
+
+--------------------------------------------------------------------------------
+-- Item: Substat ---------------------------------------------------------------
+
+Unfortunately I forgot that some substats, mainly LOCATION and ITEM MERITS, are "bought" by summed points.  We show the point value for a substat here based upon that.
+
+@@ 0: stat.substat, 1: column width, 2: dbref of sheet (in case we need it)
+
+&f.item-substat #345=
+	%b %b [last(u(f.format-name, rest(%0, .), %1), .)]
+@@ .. show values for location and item merits.
+	[if(
+		u(f.fake-hastag?, 
+			u(f.fake-corestat, rest(%0, _)), 
+			location.item.psychic
+		), 
+		%b([u(%2/%0)])
+	)]
+
+&f.item-substat #345=%b %b [last(u(f.format-name, rest(%0, .), %1), .)][if(u(f.fake-hastag?, u(f.fake-corestat, rest(%0, _)), location.item.psychic), %b([u(%2/%0)]))]
+
+
+think u(#345/f.item-substat, _merit.hollow_(studio).size, 15, pmatch(emberly))
+
+think u(#345/f.item-substat, _merit.clairvoyance.uncontrolled, 15, pmatch(minarou))
+
+
+think u(#345/f.item-skill-and-substats, pmatch+(me), Expression, 14)
+think u(#345/f.column-skills-and-specialties, pmatch+(me), Expression Animal_Ken Streetwise, 14)
+
+
+--------------------------------------------------------------------------------
+-- Stats and Substats ----------------------------------------------------------
+
+Determines if a list of items coming in is a main stat (displays) or a substat (displays indented).
+
+>> Some substats need their values shown, such as Hollow substats.  We need to come up with a way to determine this.
+
+@@ 0: sheet dbref, 1: list of statpaths, 2: column width, 3: name width
+
+&f.column-stats-and-substats #345=
+	[iter(
+		%1, 
+@@ I have to comment this...
+		case(1, 
+@@ .. substat
+			strmatch(%i0, _*.*.*), 
+			u(f.item-substat, %i0, %2, %0), 
+@@ .. "list" class of stat
+			strmatch(u([u(d.data-dictionary)]/_class, rest(%i0, _)), list), 
+			u(f.format-stat-list, %0, rest(%i0, _), %3), 
+@@ .. else normal
+			u(f.format-stat, %0, rest(%i0, .), %3)
+		), , `
+	)]
+
+
+&f.column-stats-and-substats #345=[iter(%1, case(1, strmatch(%i0, _*.*.*), u(f.item-substat, %i0, %2, %0), strmatch(u([u(d.data-dictionary)]/_class, rest(%i0, _)), list), u(f.format-stat-list, %0, rest(%i0, _), %3), u(f.format-stat, %0, rest(%i0, .), %3)), , `)]
+
+
+
+think u(#345/f.column-stats-and-substats, pmatch+(me), sort(lattr(pmatch+(me)/_merit.*)), 51, 40)
+think u(#345/f.column-stats-and-substats, pmatch+(me), sort(lattr(pmatch+(me)/_contract.*)), 51, 40)
+
+
+================================================================================
+== SECTION: BIO ================================================================
+
+&sec.bio #345=[u(sec.bio.[get(%0/_bio.template)], %0)]
+
+--
+
+think u(#345/sec.bio, pmatch+(me))
+think u(#345/sec.bio, pmatch+(lolth))
+think u(#345/sec.bio, pmatch+(cassia))
+
+think u(#345/sec.bio, pmatch+(scissors))
+
+--------------------------------------------------------------------------------
+-- Section: Bio Changeling -----------------------------------------------------
+
+&sec.bio.changeling #345=
+	[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Virtue Vice[if(hasattr(%0, _bio.entitlement), %bEntitlement)], 12))]
+
+	[setq(b, ulocal(f.column-names-only, Court Seeming Kith[if(t(u(%0/_bio.motley, %0)), %bMotley)], 12))]
+
+	[setq(c, ulocal(f.column-text-only, %0, Court Seeming Kith[if(t(u(%0/_bio.motley, %0)), %bMotley)]))]
+	[vcolumns(39:%qa, 13:%qb, 23:%qc, `, %b, %b)]
+
+--
+
+&sec.bio.changeling #345=[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Virtue Vice[if(hasattr(%0, _bio.entitlement), %bEntitlement)], 12))][setq(b, ulocal(f.column-names-only, Court Seeming Kith[if(t(u(%0/_bio.motley, %0)), %bMotley)], 12))][setq(c, ulocal(f.column-text-only, %0, Court Seeming Kith[if(t(u(%0/_bio.motley, %0)), %bMotley)]))][vcolumns(39:%qa, 13:%qb, 23:%qc, `, %b, %b)]
+
+--
+
+think u(#345/sec.bio.changeling, pmatch+(me))
+
+
+--------------------------------------------------------------------------------
+-- Section: Bio Werewolf -------------------------------------------------------
+
+&sec.bio.werewolf #345=
+	[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Virtue Vice[if(hasattr(%0, _bio.Lodge), %bLodge)], 12))]
+
+	[setq(b, ulocal(f.column-names-only, Deed_Name Tribe Auspice[if(t(u(%0/_bio.pack, %0)), %bPack)], 12))]
+
+	[setq(c, ulocal(f.column-text-only, %0, Deed_Name Tribe Auspice[if(t(u(%0/_bio.pack, %0)), %bPack)]))]
+	[vcolumns(39:%qa, 13:%qb, 23:%qc, `, %b, %b)]
+
+--
+
+&sec.bio.werewolf #345=[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Virtue Vice[if(hasattr(%0, _bio.Lodge), %bLodge)], 12))][setq(b, ulocal(f.column-names-only, Deed_Name Tribe Auspice[if(t(u(%0/_bio.pack, %0)), %bPack)], 12))][setq(c, ulocal(f.column-text-only, %0, Deed_Name Tribe Auspice[if(t(u(%0/_bio.pack, %0)), %bPack)]))][vcolumns(39:%qa, 13:%qb, 23:%qc, `, %b, %b)]
+
+--
+
+think u(#345/sec.bio.werewolf, pmatch+(me))
+
+
+--------------------------------------------------------------------------------
+-- Section: Bio Human ----------------------------------------------------------
+
+&sec.bio.human #345=[setq(a, ulocal(f.column-names-and-text, %0, Birthdate[if(t(u(%0/_bio.pack, %0)), %bPack)], 12))][setq(b, ulocal(f.column-names-and-text, %0, Virtue Vice, 12))][vcolumns(39:%qa, 36:%qb, `, %b, %b)]
+
+--
+
+think u(#345/sec.bio.human, pmatch+(lolth))
+
+
+--------------------------------------------------------------------------------
+-- Section: Bio Human.Psionic --------------------------------------------------
+
+&sec.bio.human.psychic #345=[u(sec.bio.human, %0)]
+
+--
+
+think u(#345/sec.bio.human.psychic, pmatch+(lolth))
+
+
+--------------------------------------------------------------------------------
+-- Section: Bio Human.Thaumaturge ----------------------------------------------
+
+&sec.bio.human.thaumaturge #345=[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Tradition[if(t(u(%0/_bio.pack, %0)), %bPack)], 12))][setq(b, ulocal(f.column-names-and-text, %0, Virtue Vice, 12))][vcolumns(39:%qa, 36:%qb, `, %b, %b)]
+
+--
+
+think u(#345/sec.bio.human.thaumaturge, pmatch+(cassia))
+
+
+--------------------------------------------------------------------------------
+-- Section: Bio Human.Fae-Touched ----------------------------------------------
+
+@@ &sec.bio.human.fae-touched #345=[u(sec.bio.human, %0)]
+
+@@ Adjustment for fae seeming (<seeming>) merit.
+&sec.bio.human.fae-touched #345=[setq(a, ulocal(f.column-names-and-text, %0, Birthdate[if(hasattr(%0, _bio.seeming), %bSeeming)][if(t(u(%0/_bio.motley, %0)), %bMotley)][if(t(u(%0/_bio.pack, %0)), %bPack)], 12))][setq(b, ulocal(f.column-names-and-text, %0, Virtue Vice, 12))][vcolumns(39:%qa, 36:%qb, `, %b, %b)]
+
+
+--
+
+think u(#345/sec.bio.human.fae-touched, pmatch+(tyla))
+
+
+--------------------------------------------------------------------------------
+-- Section: Bio Human.Skinthief ------------------------------------------------
+
+&sec.bio.human.skinthief #345=
+	[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Virtue Vice[if(t(u(%0/_bio.pack, %0)), %bPack)], 12))]
+
+	[setq(b, ulocal(f.column-names-only, Totem_Animal Talisman_Aspect Thieving_Aspect, 15))]
+
+	[setq(c, ulocal(f.column-text-only, %0, Totem_Animal Talisman_Aspect Thieving_Aspect))]
+	[vcolumns(39:%qa, 16:%qb, 20:%qc, `, %b, %b)]
+
+--
+
+&sec.bio.human.skinthief #345=[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Virtue Vice[if(t(u(%0/_bio.pack, %0)), %bPack)], 12))][setq(b, ulocal(f.column-names-only, Totem_Animal Talisman_Aspect Thieving_Aspect, 15))][setq(c, ulocal(f.column-text-only, %0, Totem_Animal Talisman_Aspect Thieving_Aspect))][vcolumns(39:%qa, 16:%qb, 20:%qc, `, %b, %b)]
+
+
+================================================================================
+== SECTION: ATTRIBUTES =========================================================
+
+0: sheet loc, 1: column width, 2: name field width
+
+&sec.attributes #345=
+	[setq(w, 25)]
+	[setq(t, 14)]
+	[vcolumns(
+		%qw:[u(block.attributes.mental, %0, %qw, %qt)], 
+		%qw:[u(block.attributes.physical, %0, %qw, %qt)], 
+		%qw:[u(block.attributes.social, %0, %qw, %qt)], 
+		`, %b, %b
+	)]
+	
+--
+
+&sec.attributes #345=[setq(w, 25)][setq(t, 14)][vcolumns(%qw:[u(block.attributes.mental, %0, %qw, %qt)], %qw:[u(block.attributes.physical, %0, %qw, %qt)], %qw:[u(block.attributes.social, %0, %qw, %qt)], `, %b, %b)]
+
+--
+
+think u(#345/sec.attributes, pmatch+(me))
+
+
+--------------------------------------------------------------------------------
+-- Blocks: Attributes.Mental/Social/Physical -----------------------------------
+
+&block.attributes.mental #345=[u(f.format-subheader, Mental, %1)]`[u(f.column-names-and-value, %0, Intelligence Wits Resolve, %2)]
+
+&block.attributes.physical #345=[u(f.format-subheader, Physical, %1)]`[u(f.column-names-and-value, %0, Strength Dexterity Stamina, %2)]
+
+&block.attributes.social #345=[u(f.format-subheader, Social, %1)]`[u(f.column-names-and-value, %0, Presence Manipulation Composure, %2)]
+
+--
+
+think u(#345/block.attributes.mental, pmatch+(me), 25, 12)
+
+
+================================================================================
+== SECTION: OTHER ==============================================================
+
+Here we have two major columns, Stats and Other.  The Stats column is broken down into Mental/Physical/Social, the Other column depends on the major or minor template.
+
+&sec.other #345=
+	[setq(a, ulocal(col.other.skills, %0, 25, 14))]
+	[setq(b, ulocal(col.other.other, %0, 51, 40))]
+	[vcolumns(25:%qa, 51:%qb, `, %b, %b)]
+
+think u(#345/sec.other, pmatch+(me))
+
+
+--------------------------------------------------------------------------------
+-- Column: Other.Skills --------------------------------------------------------
+
+&col.other.skills #345=
+	[ulocal(block.skills.mental, %0, %1, %2)]`
+	[ulocal(block.skills.physical, %0, %1, %2)]`
+	[ulocal(block.skills.social, %0, %1, %2)]
+	[switch(u(%0/_bio.template), 
+		*Werewolf*, `[ulocal(block.renown, %0, %1, %2)]
+	)] 
+
+-- 
+
+&block.skills.mental #345=
+	[u(f.format-subheader, Mental, %1)]`
+	[u(f.column-skills-and-specialties, %0, Academics Computer Crafts Investigation Medicine Occult Politics Science, %2)]
+
+&block.skills.physical #345=
+	[u(f.format-subheader, Physical, %1)]`
+	[u(f.column-skills-and-specialties, %0, Athletics Brawl Drive Firearms Larceny Stealth Survival Weaponry, %2)]
+
+&block.skills.social #345=
+	[u(f.format-subheader, Social, %1)]`
+	[u(f.column-skills-and-specialties, %0, Animal_Ken Empathy Expression Intimidation Persuasion Socialize Streetwise Subterfuge, %2)]
+
+--
+
+think u(#345/col.other.skills, pmatch+(me), 25, 14)
+
+--------------------------------------------------------------------------------
+-- Column: Other.Other ---------------------------------------------------------
+
+Yeah, I really did type that.
+
+Like above: 0: dbref of sheet, 1: column width, 2: name width
+
+&col.other.other #345=
+	iter(
+		merits 
+		[switch(u(%0/_bio.template), 
+			*Changeling*, contracts, 
+			*Skinthief*, aspects, 
+			*Werewolf*, gifts rites,
+		)] 
+		traits others health, 
+		u(block.%i0, %0, %1, %2), , `
+	)
+
+&col.other.other #345=iter(merits [switch(u(%0/_bio.template), *Changeling*, contracts, *Skinthief*, aspects, *Werewolf*, gifts rites,)] traits others health, u(block.%i0, %0, %1, %2), , `)
+
+
+think u(#345/col.other.other, pmatch+(me), 51, 40)
+
+
+--------------------------------------------------------------------------------
+-- Block: Merits ---------------------------------------------------------------
+
+&block.merits #345=
+	[u(f.format-subheader, Merits, %1)]`
+	[u(f.column-stats-and-substats, %0, sort(lattr(%0/_merit.*)), %1, %2)]
+
+think u(#345/block.merits, pmatch+(me), 51, 40)
+
+
+--------------------------------------------------------------------------------
+-- Block: Contracts ------------------------------------------------------------
+
+&block.contracts #345=
+	[u(f.format-subheader, Contracts, %1)]`
+	[u(f.column-stats-and-substats, %0, sort(lattr(%0/_contract.*)), %1, %2)]
+	[if(t(words(lattr(%0/_goblin_contract.*))), `[u(f.format-subheader, Goblin Contracts, %1)]`[u(f.column-stats-and-substats, %0, sort(lattr(%0/_goblin_contract.*)), %1, %2)])]
+
+think u(#345/block.contracts, pmatch+(me), 51, 40)
+
+
+
+--------------------------------------------------------------------------------
+-- Block: Renown ---------------------------------------------------------------
+
+&block.renown #345=
+	[u(f.format-subheader, Renown, %1)]`
+	[edit(
+		iter(
+			Purity Glory Honor Wisdom Cunning, 
+			u(f.format-stat, 
+				%0, %i0, %2, 
+@@ .. if Primary Stat (tagged auspice or tribe), prefix name with '>'
+				if(
+					ulocal([v(d.stat-setter)]/f.hastag?.workhorse, renown.%i0, [get(%0/_bio.auspice)].[get(%0/_bio.tribe)]), 
+					ansi(xh, >)
+				)
+			), 
+			, `
+		), 
+		%b0, 
+		ansi(xh, %b-)
+	)]`
+	%b [ansi(g, repeat(-, dec(%2)))]`
+	[u(f.format-stat, %0, Honorary Rank, %2)]
+	
+
+
+&block.renown #345=[u(f.format-subheader, Renown, %1)]`[edit(iter(Purity Glory Honor Wisdom Cunning, u(f.format-stat, %0, %i0, %2), , `), %b0, ansi(xh, %b-))]`%b [ansi(g, repeat(-, dec(%2)))]`[u(f.format-stat, %0, Honorary Rank, %2)]
+
+
+
+&block.renown #345=[u(f.format-subheader, Renown, %1)]`[edit(iter(Purity Glory Honor Wisdom Cunning, u(f.format-stat, %0, %i0, %2, if(ulocal([v(d.stat-setter)]/f.hastag?.workhorse, renown.%i0, [get(%0/_bio.auspice)].[get(%0/_bio.tribe)]), ansi(xh, >))), , `), %b0, ansi(xh, %b-))]`%b [ansi(g, repeat(-, dec(%2)))]`[u(f.format-stat, %0, Honorary Rank, %2)]
+
+
+
+think u(#345/block.renown, pmatch+(me), 51, 40)
+
+
+think iter(purity glory honor wisdom cunning, %i0: [ulocal(sfp/f.hastag?.workhorse, renown.%i0, irraka.hunters in darkness)], , %r)
+
+
+--------------------------------------------------------------------------------
+-- Block: Gifts ----------------------------------------------------------------
+
+&block.gifts #345=
+	[u(f.format-subheader, Gifts, %1)]`
+	[iter(lattr(%0/_gift.*), 
+		%b [titlestr(edit(rest(%i0, .), _, %b))]:`
+@@ .. grab the names portion of the stat and translate numbers to names
+		[setq(n, rest(get([u(d.data-dictionary)]/[rest(%i0, _)]), |))]
+		[iter(get(%0/%i0), %b %b [extract(%qn, %i0, 1, .)] (%i0), ., `)], 
+		, 
+		`
+	)]
+
+
+&block.gifts #345=[u(f.format-subheader, Gifts, %1)]`[iter(lattr(%0/_gift.*), %b [titlestr(edit(rest(%i0, .), _, %b))]:`[setq(n, rest(get([u(d.data-dictionary)]/[rest(%i0, _)]), |))][iter(get(%0/%i0), %b %b [extract(%qn, %i0, 1, .)] (%i0), ., `)], , `)]
+
+
+
+think u(#345/block.gifts, pmatch+(me), 51, 40)
+
+
+--------------------------------------------------------------------------------
+-- Block: Rites ----------------------------------------------------------------
+
+&block.rites #345=
+	[u(f.format-subheader, Rites, %1)]`
+	[sortby(
+		f.sort.stat-value, 
+		u(f.column-stats-and-substats, %0, sort(lattr(%0/_rite.*)), %1, %2), 
+		`, `
+	)]
+
+
+think u(#345/block.rites, pmatch+(me), 51, 40)
+
+--------------------------------------------------------------------------------
+-- Block: Aspects --------------------------------------------------------------
+(for skinthief minor template and spirits)
+
+&block.aspects #345=
+	[u(f.format-subheader, Aspects, %1)]`
+	[u(f.column-stats-and-substats, %0, sort(lattr(%0/_aspect.*)), %1, %2)]
+
+
+--------------------------------------------------------------------------------
+-- Block: Traits ---------------------------------------------------------------
+
+&block.traits #345=
+	[u(f.format-subheader, Traits, %1)]`
+	[iter(
+		[switch(
+			u(%0/_bio.template), 
+			*Changeling*, Wyrd Glamour, 
+			*Fae-Touched*, Glamour, 
+			*Skinthief*, Supernatural_Tolerance Essence, 
+			*Werewolf*, Primal_Urge Essence
+		)] 
+		Willpower, 
+		u(f.format-pool, %0, %i0, add(%2, 3)), 
+		, `
+	)]`
+	[u(f.format-morality, %0, %1, %2)]
+
+--
+
+&block.traits #345=[u(f.format-subheader, Traits, %1)]`[iter([switch(u(%0/_bio.template), *Changeling*, Wyrd Glamour, *Fae-Touched*, Glamour, *Skinthief*, Supernatural_Tolerance Essence, *Werewolf*, Primal_Urge Essence)] Willpower, u(f.format-pool, %0, %i0, add(%2, 3)), , `)]`[u(f.format-morality, %0, %1, %2)]
+
+--
+
+think u(#345/block.traits, pmatch+(me), 51, 40)
+
+
+--------------------------------------------------------------------------------
+-- Block: Others ---------------------------------------------------------------
+
+&block.others #345=
+	[u(f.format-subheader, Other, %1)]`
+	[iter(Size Speed Defense Initiative, u(f.format-stat, %0, %i0, %2), , `)]`
+	[u(f.format-xp, %0, %2)]
+
+think u(#345/block.others, pmatch+(me), 51, 40)
+
+
+--------------------------------------------------------------------------------
+-- Block: Health ---------------------------------------------------------------
+
+&block.health #345=
+	[setq(
+		b, 
+		if(
+			abs(u(%0/_health.penalty)), 
+			%b[ansi(xh, %([u(%0/_health.penalty)]%))]
+		)
+	)]
+	[u(f.format-subheader, Health%qb, %1)]`
+	%b 
+	[u(	
+		[u(d.health-frob)]/f.display-health-bar, 
+		iter(
+			bashing lethal aggravated, 
+			u(%0/_health.%i0)
+		), 
+		u(%0/_health.maximum)
+	)]
+
+
+--
+
+&block.health #345=[setq(b, if(abs(u(%0/_health.penalty)), %b[ansi(xh, %([u(%0/_health.penalty)]%))]))][u(f.format-subheader, Health%qb, %1)]`%b [u([u(d.health-frob)]/f.display-health-bar, iter(bashing lethal aggravated, u(%0/_health.%i0)), u(%0/_health.maximum))]
+
+--
+
+think u(#345/block.health, pmatch+(me), 51, 40)
+
+
+================================================================================
+== NEW "DISPLAY WHOLE SHEET" ===================================================
+
+&f.display-whole-sheet #345=
+	[header(
+		[udefault(%0/_bio.full_name, <no full name set>)] 
+
+
+@@ .. "same" is a placeholder for true name to represent that it's set, 
+@@ .. but that it's the same as Full Name
+		[case(0, t(u(%0/_bio.true_name)), %b%(<no true name set>%), strmatch(u(%0/_bio.true_name), same), %b%([u(%0/_bio.true_name)]%))]
+
+		%([edit(u(%0/_bio.template), ., /)]%)
+	)]%r
+	[ulocal(sec.bio, %0)]%r
+	[ulocal(sec.attributes, %0)]%r
+	[ulocal(sec.other, %0)]%r
+
+	[footer(
+		[udefault(%0/_bio.full_name, <no full name set>)] 
+		%([edit(u(%0/_bio.template), ., /)]%)
+	)]
+
+--
+
+&f.display-whole-sheet #345=[header([udefault(%0/_bio.full_name, <no full name set>)][case(0, t(u(%0/_bio.true_name)), %b%(<no true name set>%), strmatch(u(%0/_bio.true_name), same), %b%([u(%0/_bio.true_name)]%))] %([edit(u(%0/_bio.template), ., /)]%))]%r[ulocal(sec.bio, %0)]%r[ulocal(sec.attributes, %0)]%r[ulocal(sec.other, %0)]%r[footer([udefault(%0/_bio.full_name, <no full name set>)] %([edit(u(%0/_bio.template), ., /)]%))]
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=
+-=-=-=-=-=-=-=-=-==-=--=--=-=-==-==---=-===--=-=-==-=--=-=-=-=-=-=--==--==-=--
+
++SHEET/CHECK
+
+This switch is really a part of chargen.  That is, this system goes through a sheet validation.  For people who are not yet approved, it will check the cgen point values.  For everyone it will check all stat validations except cgen, which is mostly for the cgen and xp-spend systems.
+
+
+&c.sheet/check #345=$+sheet/check*:@pemit %#=
+@@ 0: person to check
+@@ p: dbref of person to check
+@@ s: sheet dbref
+@@ t: template for sheet
+@@ b: badstat list
+
+@@ convert input to value, lack of input is "me"
+	[setq(p, if(t(strlen(%0)), pmatch+(trim(%0)), %#))]
+	[setq(s, u([u(d.stat-setter)]/f.find-sheet, %qp))]
+	[setq(t, u(%qs/_bio.template))]
+
+@@ error-checking
+	[case(
+		0, 
+		t(%qp), Error: Player cannot be found., 
+		or(isstaff(%#), not(comp(%qp, %#))), Error: Must be staff or checking yourself., 
+		t(%qs), Error: Can't find the sheet., 
+		t(%qt), Error: No template set up yet., 
+
+@@ Chargen-level check, only pre-approval
+		[header(Checking [name(%qp)]'s +Sheet)]%r
+		[if(
+			not(isapproved(%qp)), 
+			[ulocal(f.check.bio, %qp, %qs, %qt)]%r
+			[ulocal(f.check.chargen, %qs, %qt)], 
+			%b Chargen Approval Stamp: 
+				[setq(z, u(%qp/_cgstamp))]
+				[elements(rest(%qz, |), 2 3 5)] by 
+				[rest(first(%qz, |), Approved by%b)]%r
+		)]
+
+@@ Valid stats check
+		[ulocal(f.check.validation, %qs)]
+
+		[footer()]
+	)]
+
+--
+
+&c.sheet/check #345=$+sheet/check*:@pemit %#=[setq(p, if(t(strlen(%0)), pmatch+(trim(%0)), %#))][setq(s, u([u(d.stat-setter)]/f.find-sheet, %qp))][setq(t, u(%qs/_bio.template))][case(0, t(%qp), Error: Player cannot be found., or(isstaff(%#), not(comp(%qp, %#))), Error: Must be staff or checking yourself., t(%qs), Error: Can't find the sheet., t(%qt), Error: No template set up yet., [header(Checking [name(%qp)]'s +Sheet)]%r[if(not(isapproved(%qp)), [ulocal(f.check.bio, %qp, %qs, %qt)]%r[ulocal(f.check.chargen, %qs, %qt)], %b Chargen Approval Stamp: [setq(z, u(%qp/_cgstamp))][elements(rest(%qz, |), 2 3 5)] by [rest(first(%qz, |), Approved by%b)]%r)][ulocal(f.check.validation, %qs)][footer()])]
+
+
+--------------------------------------------------------------------------------
+-- Chargen-Level Bio &c. Check -------------------------------------------------
+
+&f.check.bio #345=
+@@ 0: dbref of player
+@@ 1: dbref of sheet
+@@ 2: template(s) of sheet
+@@
+@@ q1: column`1`list
+@@ q2: column`2`list
+@@ i: item from sheet
+@@ 
+@@ uses: vcolumns(), our vertical-column system
+
+	[footer(Biography Check)]%r
+@@ >> build lists for vcolumns()
+@@ .. list 1
+	[setq(1, 
+		Gender: 
+			[setr(g, get(%0/sex))] 
+			[if(t(match(f m, strtrunc(%qg, 1))), %[[ansi(g, OK)]%], %[[ansi(r, no)]%])]`
+		Concept: 
+			[if(hasattr(%0, FINGER-CONCEPT), ansi(g, exists), ansi(r, blank))]`
+
+		True Name: 
+			[if( 
+				t(setr(i, u(%1/_bio.true_name))), %qi %[[ansi(g, OK)]%], 
+				ansi(xh, %(full name%, default%))
+			)]`
+
+		[iter(
+			full_name birthdate, 
+			[titlestr(edit(%i0, _, %b))]: 
+			[setr(i, u(%1/_bio.%i0))] 
+			[if(comp(%qi, ), %[[ansi(g, OK)]%], %[[ansi(r, no)]%])], 
+			, `
+		)]
+	)]
+@@ .. list 2
+	[setq(b, 
+		iter(
+			iter(%2, u(d.check.bio.%i0), .), 
+			[titlestr(edit(%i0, _, %b))]: 
+			[setr(i, u(%1/_bio.%i0))] 
+			[if(comp(%qi, ), %[[ansi(g, OK)]%], %[[ansi(r, no)]%])], 
+			, `
+		)
+	)]
+	[setq(a, 
+		iter(virtue vice, 
+			[titlestr(edit(%i0, _, %b))]: 
+			[setr(i, u(%1/_advantage.%i0))] 
+			[if(comp(%qi, ), %[[ansi(g, OK)]%], %[[ansi(r, no)]%])], 
+			, `
+		)
+	)]
+	[setq(2, if(t(strlen(%qa)), %qa`%qb, %qa))]
+@@ >> display vcolumns
+	[vcolumns(38:%q1, 37:%q2, `, %b, %b%b)]
+
+--
+
+&f.check.bio #345=[footer(Biography Check)]%r[setq(1, Gender: [setr(g, get(%0/sex))] [if(t(match(f m, strtrunc(%qg, 1))), %[[ansi(g, OK)]%], %[[ansi(r, no)]%])]`Concept: [if(hasattr(%0, FINGER-CONCEPT), ansi(g, exists), ansi(r, blank))]`True Name: [if( t(setr(i, u(%1/_bio.true_name))), %qi %[[ansi(g, OK)]%], ansi(xh, %(full name%, default%)))]`[iter(full_name birthdate, [titlestr(edit(%i0, _, %b))]: [setr(i, u(%1/_bio.%i0))] [if(comp(%qi, ), %[[ansi(g, OK)]%], %[[ansi(r, no)]%])], , `)])][setq(b, iter(iter(%2, u(d.check.bio.%i0), .), [titlestr(edit(%i0, _, %b))]: [setr(i, u(%1/_bio.%i0))] [if(comp(%qi, ), %[[ansi(g, OK)]%], %[[ansi(r, no)]%])], , `))][setq(a, iter(virtue vice, [titlestr(edit(%i0, _, %b))]: [setr(i, u(%1/_advantage.%i0))] [if(comp(%qi, ), %[[ansi(g, OK)]%], %[[ansi(r, no)]%])], , `))][setq(2, if(t(strlen(%qa)), %qa`%qb, %qa))][vcolumns(38:%q1, 37:%q2, `, %b, %b%b)]
+
+
+--------------------------------------------------------------------------------
+-- Chargen-Level Bio List for Changelings --------------------------------------
+
+&d.check.bio.changeling #345=seeming kith court
+
+
+--------------------------------------------------------------------------------
+-- Chargen-Level Bio List for Thaumaturges -------------------------------------
+
+&d.check.bio.thaumaturge #345=tradition
+
+--------------------------------------------------------------------------------
+-- Chargen-Level Bio List for Thaumaturges -------------------------------------
+
+&d.check.bio.skinthief #345=totem_animal talisman_aspect thieving_aspect
+
+--------------------------------------------------------------------------------
+-- Chargen-Level Bio List for Werewolves ---------------------------------------
+
+&d.check.bio.werewolf #345=deed_name auspice tribe
+
+--------------------------------------------------------------------------------
+-- Chargen-Level Check ---------------------------------------------------------
+
+&f.check.chargen #345=
+@@ 0: dbref of sheet
+@@ 1: template contents
+
+	[footer(Chargen Levels)]%r
+	%b Attributes: 
+		[u([u(d.chargen)]/f.allocated.attributes, %0)] 
+		[u(f.check.stats.okay?, %0, attributes)]%r
+	%b Skills: 
+		[u([u(d.chargen)]/f.allocated.skills, %0)] 
+		[u(f.check.stats.okay?, %0, skills)]%r
+
+	[ulocal(check.chargen.specialties, %0, %1)]%r
+
+	%b Merits (main/power stat): 
+		[u([u(d.chargen)]/f.allocated.merits, %0)] 
+		[u(f.check.stats.okay?, %0, merits)]%r
+
+@@ Template Stat-Value Counters (iter against the template list, use subattrs)
+	[iter(%1, u(f.check.chargen.%i0, %0), ., @@)]
+
+--
+
+&f.check.chargen #345=[footer(Chargen Levels)]%r%b Attributes: [u([u(d.chargen)]/f.allocated.attributes, %0)] [u(f.check.stats.okay?, %0, attributes)]%r%b Skills: [u([u(d.chargen)]/f.allocated.skills, %0)] [u(f.check.stats.okay?, %0, skills)]%r[trim(wrap(Specialties: [iter(edit(u([u(d.chargen)]/f.allocated.specialties, %0), `, %b), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)] [u(f.check.stats.okay?, %0, specialties)], 75, left, %b%b, , 2), r)]%r%b Merits (main/power stat): [u([u(d.chargen)]/f.allocated.merits, %0)] [u(f.check.stats.okay?, %0, merits)]%r[iter(%1, u(f.check.chargen.%i0, %0), ., @@)]
+
+
+&f.check.chargen #345=[footer(Chargen Levels)]%r%b Attributes: [u([u(d.chargen)]/f.allocated.attributes, %0)] [u(f.check.stats.okay?, %0, attributes)]%r%b Skills: [u([u(d.chargen)]/f.allocated.skills, %0)] [u(f.check.stats.okay?, %0, skills)]%r[ulocal(check.chargen.specialties, %0, %1)]%r%b Merits (main/power stat): [u([u(d.chargen)]/f.allocated.merits, %0)] [u(f.check.stats.okay?, %0, merits)]%r[iter(%1, u(f.check.chargen.%i0, %0), ., @@)]
+
+
+--------------------------------------------------------------------------------
+-- Check.Chargen.Specialties ---------------------------------------------------
+
+0: dbref of sheet
+1: _bio.template contents
+
+a: all specialties
+s: standard specialties
+r: template-specific specialties
+
+t: template specs, formatted
+
+&check.chargen.specialties #345=
+
+	[setq(a, ulocal([u(d.chargen)]/f.allocated.specialties, %0))]
+	[setq(s, first(%qa, `))]
+	[setq(r, rest(%qa, `))]
+
+	[trim(wrap(
+		Specialties: 
+			[iter(
+				%qs, 
+				u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b
+			)]
+
+			[case(%1, 
+				Changeling, %r[u(list.specialties.changeling, %qr)], 
+				Werewolf, %r[u(list.specialties.werewolf, %qr)]
+			)]
+
+			%r%b Final Check - [u(f.check.stats.okay?, %0, specialties)], 
+		75, left, %b%b, , 2
+	), r)]
+
+--
+
+&check.chargen.specialties #345=[setq(a, ulocal([u(d.chargen)]/f.allocated.specialties, %0))][setq(s, first(%qa, `))][setq(r, rest(%qa, `))][trim(wrap(Specialties: [iter(%qs, u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)][case(%1, Changeling, %r[u(list.specialties.changeling, %qr)], Werewolf, %r[u(list.specialties.werewolf, %qr)])]%r%b Final Check - [u(f.check.stats.okay?, %0, specialties)], 75, left, %b%b, , 2), r)]
+
+
+
+
+--------------------------------------------------------------------------------
+-- List.Specialties.Werewolf ---------------------------------------------------
+
+Prettifies the output for the Werewolf specialties.
+
+0: <auspice>`<lodge>`
+
+&list.specialties.werewolf #345=
+@@ .. always auspice
+	%b Auspice - [iter(first(%0, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)]
+@@ .. lodge?
+	[if(t(extract(%0, 2, 1, `)), %r%b Lodge - [iter(extract(%0, 2, 1, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)])]
+
+--
+
+&list.specialties.werewolf #345=%b Auspice - [iter(first(%0, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)][if(t(extract(%0, 2, 1, `)), %r%b Lodge - [iter(extract(%0, 2, 1, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)])]
+
+
+
+
+--------------------------------------------------------------------------------
+-- List.Specialties.Changeling -------------------------------------------------
+
+Prettifies the output for the Werewolf specialties.
+
+0: <changeling>`<seeming>`<kith(s)>
+
+&list.specialties.changeling #345=
+@@ .. always changeling
+	%b Changeling - [iter(first(%0, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)]
+@@ .. seeming?
+	[if(t(extract(%0, 2, 1, `)), %r%b Seeming - [iter(extract(%0, 2, 1, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)])]
+@@ .. kiths?
+	[if(t(extract(%0, 3, 1, `)), %r%b Kith - [iter(extract(%0, 3, 1, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)])]
+
+--
+
+&list.specialties.changeling #345=%b Changeling - [iter(first(%0, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)][if(t(extract(%0, 2, 1, `)), %r%b Seeming - [iter(extract(%0, 2, 1, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)])][if(t(extract(%0, 3, 1, `)), %r%b Kith - [iter(extract(%0, 3, 1, `), u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .)), , %,%b)])]
+
+
+
+ 
+&f.pts-valid?.specialties.changeling.beast cg=eq(words(extract(%0, 3, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.soldier cg=eq(words(extract(%0, 4, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.telluric cg=eq(words(extract(%0, 4, 1, `)), 2)
+&f.pts-valid?.specialties.changeling.razorhand cg=eq(words(extract(%0, 4, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.riddleseeker cg=eq(words(extract(%0, 4, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.nightsinger cg=eq(words(extract(%0, 4, 1, `)), 1)
+&f.pts-valid?.specialties.changeling.daitya cg=eq(words(extract(%0, 4, 1, `)), 1)
+
+
+--------------------------------------------------------------------------------
+-- Check.Chargen.Changeling ----------------------------------------------------
+
+&f.check.chargen.changeling #345=
+@@ 0: dbref of sheet to check
+
+	%b Contracts: 
+		[u([u(d.chargen)]/f.allocated.contracts, %0)] 
+		[u(f.check.stats.okay?, %0, contracts)]%r
+
+--
+
+&f.check.chargen.changeling #345=%b Contracts: [u([u(d.chargen)]/f.allocated.contracts, %0)] [u(f.check.stats.okay?, %0, contracts)]%r
+
+
+--------------------------------------------------------------------------------
+-- Check.Chargen.Skinthief -----------------------------------------------------
+
+&f.check.chargen.skinthief #345=
+@@ 0: dbref of sheet to check
+
+	%b Aspects (totem/thieving/others): 
+		[u([u(d.chargen)]/f.allocated.aspects, %0)] 
+		([ladd(u([u(d.chargen)]/f.allocated.aspects, %0), /)]) 
+		[u(f.check.stats.okay?, %0, aspects)]%r
+	%b Morality: 
+		[setr(q, get(%0/_advantage.morality))] 
+		%[[if(lte(%qq, 6), ansi(g, OK), ansi(r, must start at 6))]%]%r
+
+--
+
+&f.check.chargen.skinthief #345=%b Aspects (talisman/thieving/others): [u([u(d.chargen)]/f.allocated.aspects, %0)] ([ladd(u([u(d.chargen)]/f.allocated.aspects, %0), /)]) [u(f.check.stats.okay?, %0, aspects)]%r%b Morality: [setr(q, get(%0/_advantage.morality))] %[[if(lte(%qq, 6), ansi(g, OK), ansi(r, must start at 6))]%]%r
+
+
+--------------------------------------------------------------------------------
+-- Check.Chargen.Werewolf ------------------------------------------------------
+
+
+&f.check.chargen.werewolf #345=
+@@ 0: dbref of sheet to check
+
+	%b Renown: 
+		[u([u(d.chargen)]/f.allocated.renown, %0)] 
+		[u(f.check.stats.okay?, %0, renown)]%r
+	%b Gifts: 
+		[u([u(d.chargen)]/f.allocated.gifts, %0)] 
+		[u(f.check.stats.okay?, %0, gifts)]%r
+	%b Rites: 
+		[u([u(d.chargen)]/f.allocated.rites, %0)] 
+		[u(f.check.stats.okay?, %0, rites)]%r
+
+--
+
+&f.check.chargen.werewolf #345=%b Renown: [u([u(d.chargen)]/f.allocated.renown, %0)] [u(f.check.stats.okay?, %0, renown)]%r%b Gifts: [u([u(d.chargen)]/f.allocated.gifts, %0)] [u(f.check.stats.okay?, %0, gifts)]%r%b Rites: [u([u(d.chargen)]/f.allocated.rites, %0)] [u(f.check.stats.okay?, %0, rites)]%r
+
+
+--------------------------------------------------------------------------------
+-- Stat Chargen Check: Points OK? ----------------------------------------------
+
+&f.check.stats.okay? #345=
+@@ 0: dbref of sheet
+@@ 1: category to check
+@@ output: Ob. yes/no in full prismatic color
+
+	%[[if(
+		u([u(d.chargen)]/f.pts-valid?.%1, %0),
+		ansi(g, OK), 
+		ansi(r, no)
+	)]%]
+
+--
+
+&f.check.stats.okay? #345=%[[if(u([u(d.chargen)]/f.pts-valid?.%1, %0), ansi(g, OK), ansi(r, no))]%]
+
+
+--------------------------------------------------------------------------------
+-- Stat Validation Check -------------------------------------------------------
+
+@@ >> Stat Validation Check
+
+&f.check.validation #345=
+	[footer(Invalid Stats)]%r
+	[setq(p, u([u(d.chargen)]/f.badstats, %0))]
+@@ .. (cheat copiously)
+	[setq(i, 
+		iter(%qp, [u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .))]: [itemize(trim(iter(u([u(d.chargen)]/f.statcheck, %0, %i0), if(not(%i0), [titlestr(rest(%i0))]|), ., @@), b, |), |)], , %r)
+	)]
+	[if(t(%qi), trim(wrap(%qi, 75, left, %b%b), r), %b All Stats Valid)]%r
+
+--
+
+&f.check.validation #345=[footer(Invalid Stats)]%r[setq(p, u([u(d.chargen)]/f.badstats, %0))][setq(i, iter(%qp, [u([u(d.stat-setter)]/f.statname-workhorse, rest(%i0, .))]: [itemize(trim(iter(u([u(d.chargen)]/f.statcheck, %0, %i0), if(not(%i0), [titlestr(rest(%i0))]|), ., @@), b, |), |)], , %r))][if(t(%qi), trim(wrap(%qi, 75, left, %b%b), r), %b All Stats Valid)]%r
+
+
+-=-=-=-==-=--==-=-=--=
+
+================================================================================
+=== SHEET/SHOW =================================================================
+
+Because I Can.
+
+TO DO: +sheet/show [<section>=]<target>
+
+&C.SHEET/SHOW #345=$+sheet/show *: @pemit %#=
+@@ t: target (later: target dbref)
+@@ s: section
+@@ m: matched section (block.<section(s)>)
+
+	[setq(t, if(strmatch(%0, *=*), rest(%0, =), %0))]
+	[setq(s, if(strmatch(%0, *=*), first(%0, =), all))]
+
+	[case(0, 
+		t(setr(t, pmatch+(%qt))), 
+		[alert(+sheet/show)] Who?, 
+
+		hasattr(%#/_bio.template), 
+		[alert(+sheet/show)] You don't have a sheet to show., 
+
+		or(strmatch(%qs, all), t(setr(m, lattr(%!/block.%qs*)))), 
+		[alert(+sheet/show)] I don't know that section.,
+
+		not(t(%qm)), 
+		[alert(+sheet/show)] I would show [name(%qt)] the sections [iter(%qm, lcstr(rest(%i0, .)))]%, but I'm not that advanced yet., 
+
+		You show your +sheet to [name(%qt)]. Please be kind with spam.
+		[pemit(
+			%qt, 
+			[center(
+				ansi(g, %(%b, nh, incoming +sheet from [lcstr(name(%#))] , g, %b%)), 
+				79, %xg%xh=%xn
+			)]%r
+			[u(f.display-whole-sheet, u(f.fake-find-sheet, pmatch(%#)))]%r
+			[center(ansi(g, %(%b, n, done , g, %b%)), 79, %xg%xh=%xn)]
+		)]
+
+	)]
+
+
+
+&C.SHEET/SHOW #345=$+sheet/show *: @pemit %#=[setq(t, if(strmatch(%0, *=*), rest(%0, =), %0))][setq(s, if(strmatch(%0, *=*), first(%0, =), all))][case(0, t(setr(t, pmatch+(%qt))), [alert(+sheet/show)] Who?, hasattr(%#/_bio.template), [alert(+sheet/show)] You don't have a sheet to show., or(strmatch(%qs, all), t(setr(m, lattr(%!/block.%qs*)))), [alert(+sheet/show)] I don't know that section.,not(t(%qm)), [alert(+sheet/show)] I would show [name(%qt)] the sections [iter(%qm, lcstr(rest(%i0, .)))]%, but I'm not that advanced yet., You show your +sheet to [name(%qt)]. Please be kind with spam.[pemit(%qt, [center(ansi(g, %(%b, nh, incoming +sheet from [lcstr(name(%#))] , g, %b%)), 79, %xg%xh=%xn)]%r[u(f.display-whole-sheet, u(f.fake-find-sheet, pmatch(%#)))]%r[center(ansi(g, %(%b, n, done , g, %b%)), 79, %xg%xh=%xn)])])]
+
+
+
+
+
+--
+
+Let's give that another shot
+
+
+TO DO: +sheet/show <target>/<section|stat>
+
+So what's a section?
+

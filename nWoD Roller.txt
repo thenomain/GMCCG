@@ -1,0 +1,1200 @@
+A VERY, VERY TEMPORARY WOD ROLLING SYSTEM BASED ON SOME BASIC PREVIOUS WORKS
+
++roll[/weakness|again=<x>] <dice>
+
+$+roll *
+$+roll/w*
+$+roll/a*
+
+>> THIS STUFF NEEDS ADDED TO THE EXISTING SYSTEM
+
+&ROLLER.NWOD-WEAKNESS #41=[if(gt(%0, 0), [setr(d, u(fnc.roller, %0, %1))] = [u(fnc.successes-weakness, %qd, 8)] successes, [setr(d, u(fnc.roller, 1, %1))] = [u(fnc.successes-chance-weakness, %qd, 10)] successes)]
+
+&FNC.SUCCESSES-CHANCE-WEAKNESS #41=if(eq(%0, 1), -1, u(fnc.successes-weakness, %0, %1))
+
+----------------------------------------
+
++ROLL *
+
+&tmp-c.roll #41=
+@@ 0: What + to - roll
+@@ qd: Num dice to roll
+@@ qr: Result of roll
+@@ qt: Type of roll (chance, standard)
+
+$+roll *:@pemit/contents loc(%#)=
+[setq(0, squish(edit(%0, %(, %b%()))]
+[setq(d, ulocal(tmp-f.what_to_roll, %q0))]
+[setq(r, ulocal(roller.nwod-standard, %qd, 10))]
+[setq(t, if(lte(%qd, 0), Chance, Standard))]
+
+[u(tmp-f.roll_output, %N, %q0, %qd, %qt, %qr)]
+
+----------------------------------------
+
++ROLL/W*
+
+&tmp-c.roll-weakness #41=
+@@ 0: Input
+@@ q0: What + to - roll
+@@ qd: Num dice to roll
+@@ qr: Result of roll
+@@ qt: Type of roll (chance, standard)
+
+$+roll/w*:@pemit/contents loc(%#)=
+[setq(0, squish(edit(rest(%0), %(, %b%()))]
+[setq(d, ulocal(tmp-f.what_to_roll, %q0))]
+[setq(r, ulocal(roller.nwod-weakness, %qd, 10))]
+[setq(t, Weakness[if(lte(%qd, 0), %bChance)])]
+
+[u(tmp-f.roll_output, %N, %q0, %qd, %qt, %qr)]
+
+----------------------------------------
+
++ROLL/A*
+
+&tmp-c.roll-again #41=
+@@ 0: Input
+@@ q0: What + to - roll
+@@ qa: N-Again
+@@ qd: Num dice to roll
+@@ qr: Result of roll
+@@ qt: Type of roll (chance, standard)
+
+$+roll/a* *:@pemit/contents loc(%#)=
+[setq(0, squish(edit(%1, %(, %b%()))]
+[setq(a, if(isnum(setr(a, rest(%0, =))), %qa, 11))]
+[setq(d, ulocal(tmp-f.what_to_roll, %q0))]
+[setq(r, ulocal(roller.nwod-standard, %qd, %qa))]
+[setq(t, [if(lte(%qd, 0), Chance%b)][if(lte(%qa, 10), %qa, No)]-Again)]
+
+[u(tmp-f.roll_output, %N, %q0, %qd, %qt, %qr)]
+
+----------------------------------------
+
+&tmp-f.what_to_roll #41=
+@@ 0: Things to roll
+@@ Output: Total dice to roll
+
+ladd(
+	[iter(
+		edit(edit(%0, -%b, -), -, +-), 
+		ifelse(
+			isnum(##), 
+			##, 
+			u(tmp-f.check-for-stat, %#, ##)
+		), 
+		+
+	)] 
+	[u(%#/_health.penalty)]
+)
+
+----------------------------------------
+
+&tmp-f.check-for-stat #41=
+	localize(
+		if(
+			t(setr(s, getstat(%0/%1))), 
+			%qs, 
+			switch(
+				1, 
+				hastag?(%1, physical.social, or), -1, 
+				hastag?(%1, mental), -3, 
+				0
+			)
+		)
+	)
+
+----------------------------------------
+
+&tmp-f.roll_output #41=
+@@ 0: Who rolled (%N)
+@@ 1: What's rolled
+@@ 2: Num dice rolled
+@@ 3: Type of roll (weak, standard, etc)
+@@ 4: Roll/Successes Output
+
+[header(%0 Rolls %2 Dice - %3)]%r
+%b Rolling: %1
+	[if(t(setr(p, u(%#/_health.penalty))), %b- [abs(%qp)] %(wounds%))]%r
+%b Roll: %4 %r
+[setq(s, rest(before(%4, successes), =))]
+[setq(s, switch(1, lt(%qs, 0), dramatic failure, eq(%qs, 0), failure, gte(%qs, 5), exceptional success! %(%qs%), success %(%qs%)))]
+[footer(%qs)]
+
+
+&tmp-f.roll_output #41=[header(%0 Rolls %2 Dice - %3)]%r%b Rolling: %1[if(t(setr(p, u(%#/_health.penalty))), %b- [abs(%qp)] %(wounds%))]%r%b Roll: %4 %r[setq(s, rest(before(%4, successes), =))][setq(s, switch(1, lt(%qs, 0), dramatic failure, eq(%qs, 0), failure, gte(%qs, 5), exceptional success! %(%qs%), success %(%qs%)))][footer(%qs)]
+
+----------------------------------------
+
+COMPILED
+
+&tmp-c.roll #41=$+roll *:@pemit/contents loc(%#)=[setq(0, squish(edit(%0, %(, %b%()))][setq(d, ulocal(tmp-f.what_to_roll, %q0))][setq(r, ulocal(roller.nwod-standard, %qd, 10))][setq(t, if(lte(%qd, 0), Chance, Standard))][u(tmp-f.roll_output, %N, %q0, %qd, %qt, %qr)]
+
+&tmp-c.roll-weakness #41=$+roll/w*:@pemit/contents loc(%#)=[setq(0, squish(edit(rest(%0), %(, %b%()))][setq(d, ulocal(tmp-f.what_to_roll, %q0))][setq(r, ulocal(roller.nwod-weakness, %qd, 10))][setq(t, Weakness[if(lte(%qd, 0), %bChance)])][u(tmp-f.roll_output, %N, %q0, %qd, %qt, %qr)]
+
+&tmp-c.roll-again #41=$+roll/a* *:@pemit/contents loc(%#)=[setq(0, squish(edit(%1, %(, %b%()))][setq(a, if(isnum(setr(a, rest(%0, =))), %qa, 11))][setq(d, ulocal(tmp-f.what_to_roll, %q0))][setq(r, ulocal(roller.nwod-standard, %qd, %qa))][setq(t, [if(lte(%qd, 0), Chance%b)][if(lte(%qa, 10), %qa, No)]-Again)][u(tmp-f.roll_output, %N, %q0, %qd, %qt, %qr)]
+
+&tmp-f.what_to_roll #41=ladd([iter(edit(edit(%0, -%b, -), -, +-), ifelse(isnum(##), ##, u(tmp-f.check-for-stat, %#, ##)), +)] [u(%#/_health.penalty)])
+
+&tmp-f.check-for-stat #41=localize(if(t(setr(s, getstat(%0/%1))), %qs, switch(1, hastag?(%1, physical.social, or), -1, hastag?(%1, mental), -3, 0)))
+
+&tmp-f.roll_output #41=[header(%0 Rolls %2 Dice - %3)]%r%b Rolling: %1[if(t(setr(p, u(%#/_health.penalty))), %b- [abs(%qp)] %(wounds%))]%r%b Roll: %4 %r[setq(s, rest(before(%4, successes), =))][setq(s, switch(1, lt(%qs, 0), critical failure, eq(%qs, 0), failure, gte(%qs, 5), exceptional success! %(%qs%), success %(%qs%)))][footer(%qs)]
+
+----------------------------------------
+
+EXISTING SYSTEM
+
+NWOD.ROLLER: $roller:@emit [setr(0, lrand(1,10,5,%b))]/%ch%cx[setr(1, graball(%q0,10,%b))]%cn/%cy[setr(2, words(%q1))]%cn/%ch%cy[lrand(1,10,%q2,%b)]
+FNC.ROLLER [#33]: localize([setr(0, sort(lrand(1, 10, %0), n))][if(setr(1, u(fnc.n-again-check, %q0, %1)), [ansi(c, %b[u(fnc.roller, %q1, %1)])])])
+FNC.N-AGAIN-CHECK: words(regraball(%0, \[^[lnum(1, [sub(%1, 1)])]\]))
+FNC.SUCCESSES [#33]: words(regraball(stripansi(%0), \[^[lnum(1, [sub(%1, 1)])]\]))
+FNC.SUCCESSES-CHANCE [#33]: if(eq(%0, 1), -1, u(fnc.successes, %0, %1))
+FNC.SUCCESSES-WEAKNESS [#33]: sub(u(fnc.successes, %0, %1), words(graball(stripansi(%0), 1)))
+ROLLER.NWOD-STANDARD [#33]: if(gt(%0, 0), [setr(d, u(fnc.roller, %0, %1))] = [u(fnc.successes, %qd, 8)] successes, [setr(d, u(fnc.roller, 1, %1))] = [u(fnc.successes-chance, %qd, 10)] successes)
+FNC.SUCCESSES-OWOD-REVISED [#33]: localize(switch(1, lte(setr(s, u(fnc.successes, %0, %1)), 0), sub(0, words(graball(stripansi(%0), 1))), lte(setr(x, add(%qs, -[words(graball(stripansi(%0), 1))], %2)), 0), 0, %qx))
+ROLLER.OWOD-REVISED [#33]: [setr(d, u(fnc.roller, %0, 11))] = [u(fnc.successes-owod-revised, %qd, %1)] successes
+ROLLER.OWOD-THRESHOLD [#33]: [setr(d, u(fnc.roller, %0, 11))] = [u(fnc.successes-owod-revised, %qd, if(gt(%1, 9), 9, %1), if(gt(%1, 9), sub(9, %1), 0))] successes
+ROLLER.OWOD-ORIGINAL [#33]: [setr(d, u(fnc.roller, %0, 11))] = [u(fnc.successes-weakness, %qd, %1)] successes [@@( think u(nco/roller.owod-original, <dice>, <t#>) )]
+FNC.SUCCESSES-EXALTED [#33]: add(u(fnc.successes, %0, %1), words(graball(stripansi(%0), 10)))
+ROLLER.EXALTED-ORIGINAL [#33]: [setr(d, u(fnc.roller, %0, 11))] = [u(fnc.successes-exalted, %qd, 7)] successes
+ROLLER.OWOD-REVISED-SPECIALTY [#33]: [setr(d, u(fnc.roller, %0, 10))] = [u(fnc.successes-owod-revised, %qd, %1)] successes
+ROLLER.OWOD-THRESHOLD-SPECIALTY [#33]: [setr(d, u(fnc.roller, %0, 10))] = [u(fnc.successes-owod-revised, %qd, if(gt(%1, 9), 9, %1), if(gt(%1, 9), sub(9, %1), 0))] successes
+ROLLER.OWOD-ORIGINAL-SPECIALTY [#33]: [setr(d, u(fnc.roller, %0, 10))] = [u(fnc.successes-weakness, %qd, %1)] successes [@@( think u(nco/roller.owod-original, <dice>, <t#>) )]
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+&help~ic_commands~+roll #96=Rolling Dice~
+[ansi(h, >> This system is still in development <<)]
+(Updated: 19/09/2009)
+
++roll <num dice>
++roll <stat-1> +|- <stat-2> \[... +|- <stat-n>\]
+
++roll/weakness <etc>
++roll/again=<n> <etc>
+
+> Everyone in the room can see your roll.  Don't spam.
+
+> Stats and Specialties will name-complete as best it can.  For now, it will silently fail if you typo.
+
+> Rolling skills you do not have will silently trigger the basic untrained penalty.  If you can ignore the penalties for any reason, offset those manually.
+
+> Damage penalties are included.  Please counter those manually if you must.  Merits that affect damage penalties are already included.
+
+> To roll a specialty, for now, you must include <stat> + <stat>.<spec>
+
+
+[ansi(h, See Also)]: +help action, +help damage, +help stat
+
+---
+
+&help~stat_topics~+roll #96=Rolling Dice~[ansi(h, >> This system is still in development <<)] %r(Updated: 19/09/2009) %r %r+roll <num dice> %r+roll <stat> +|- <stat> \[... +|- <stat-n>\] %r %r+roll/weakness <etc> %r+roll/again=<n> <etc> %r %r> Everyone in the room can see your roll.  Don't spam. %r %r> Stats and Specialties will name-complete as best it can.  For now, it will silently fail if you typo. %r %r> Rolling skills you do not have will silently trigger the basic untrained penalty.  If you can ignore the penalties for any reason, offset those manually. %r %r> Damage penalties are included.  Please counter those manually if you must.  Merits that affect damage penalties are already included. %r %r> To roll a specialty, for now, you must include <stat> + <stat>.<spec>%r%r[ansi(h, See Also)]: +help action, +help damage, +help stat
+
+
+
+
+
+
+
+
+
+
+
+
+
+=--=-=-=-=-=-=-==--=---=-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-==-=-
+-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=--=-==-=-=-
+
+ROLLER 3.0
+
+
+================================================================================
+== DATA ========================================================================
+
+&d.stat-setter #41=#204
+
+
+================================================================================
+== CORE ROLLER =================================================================
+
+The n-again checker does not care about any rules, it just sees how many are x or higher and returns that.  You know, to be honest, this is precisely the same as the plain success checker.
+
+&f.roller #41=
+@@ 0: number of dice to roll
+@@ 1: n-again
+@@ output: list of dice roll results
+	localize([setr(0, sort(lrand(1, 10, %0), n))][if(setr(1, u(f.n-again-check, %q0, %1)), [ansi(c, %b[u(f.roller, %q1, %1)])])])
+
+
+&f.n-again-check #41=u(f.n-or-higher, %0, %1)
+@@ placeholder for legibility, counts number of dice (%0) that are %1 or higher
+
+
+&f.n-or-higher #41=
+@@ counts standard successes or dice to re-roll
+@@ 0: list of dice roll results
+@@ 1: min value to check for
+@@ returns: number of dice that are %1 or higher
+	words(regraball(%0, \[^[lnum(1, [sub(%1, 1)])]\]))
+
+
+================================================================================
+== SUCCESS COUNTERS ============================================================
+
+&f.successes-standard #41=u(f.n-or-higher, stripansi(%0), %1)
+@@ placeholder for legibility, counts number of dice (%0) that are %1 or higher
+
+
+&f.successes-chance #41=
+@@ "chance" means 1 die rolled, but this system auto-detects that
+@@ 0: list of dice roll results
+@@ 1: min value to count as a success (in nWoD, chance dice is always T# 10)
+@@ qs: (global) type of roll this is
+@@    (for chance rolls, weakness rolls at most 1 die, so we don't switch here)
+@@ returns: number of successes, -1 or f.successes
+	if(eq(%0, 1), -1, u(f.successes-standard, %0, 10))
+
+
+&f.successes-weakness #41=
+@@ "weakness" is from nWoD Vampire, counting a 1 as a "negative success"
+@@ 0: list of dice roll results
+@@ 1: min value to count as a success (in nWoD, usually 8)
+@@ returns: number of successes
+	sub(u(f.successes, %0, %1), words(graball(stripansi(%0), 1)))
+
+
+================================================================================
+== ROLL PRIMER =================================================================
+
+The following registers are used across the entire system:
+	%qd: Number: Total number of dice to roll (default 0)
+		 0: Use chance roller
+		 1+: Use normal roller
+	%qa: Number: The "again" to roll (default 10, 11 = "No 10-again")
+	%qe: Text: Error.list (default empty)
+	%qo: Text: Things.to.add to skill-list output (default empty)
+	%qs: Text: Which success system to use. (default "Standard")
+		 "Standard": Use the standard system
+		 "Weakness": Use the weakness system
+	%qz: Text: /Full/on/switches
+	%qr: Text: Result of dice throw, <throw>|<throw> if extended/multiple throws
+
+	%qt: Times to roll (default 1 unless /extended switch is used)
+
+
+See "Roll Switches", below, for details about how to add and include switches to roll.
+
+
+--------------------------------------------------------------------------------
+-- Command: +Roll --------------------------------------------------------------
+
+Cutting corners for now.
+
+&c.roll #41=$+roll* *:
+@@ 0: /list/of/switches
+@@ 1: what to roll[= who to roll to]
+@@ uses: alert(), a formatting doodad
+@@ q0: what to roll, massaged
+@@ q9: target list (names or job #)
+
+	@pemit %#=
+@@ .. sanitize input and detach the instance
+		[setq(0, before(%1, =))]
+		[setq(0, squish(edit(strip(%q0, %%%,;<>%[%]), %(, %b%()))]
+@@ .. build the to-list
+		[setq(9, trim(rest(%1, =)))]
+		[setq(9, case(1, 
+			strmatch(%q9, job *), 
+			job|%q9, 
+
+			t(%q9), 
+			private|[setunion(iter(%# %q9, if(setr(9, pmatch+(%i0)), %q9)), )], 
+
+			public|[lcon(loc(%#), connect)]
+		))]
+@@ .. run the workhorse
+		[null(u(f.roll.workhorse, %q0, %#, %0))]
+@@ .. interpret and output
+		[if(
+			t(words(%qe, `)), 
+			[alert(+roll, alert)] [u(f.display-list, %qe)], 
+@@ Roll To ...
+			[u(f.display.roll-to-[first(%q9, |)], %#, rest(%q9, |))]
+		)]
+
+--
+
+&c.roll nro=$+roll* *:@pemit %#=[setq(0, before(%1, =))][setq(0, squish(edit(strip(%q0, %%%,;<>%[%]), %(, %b%()))][setq(9, trim(rest(%1, =)))][setq(9, case(1, strmatch(%q9, job *), job|%q9, t(%q9), private|[setunion(iter(%# %q9, if(setr(9, pmatch+(%i0)), %q9)), )], public|[lcon(loc(%#), connect)]))][null(u(f.roll.workhorse, %q0, %#, %0))][if(t(words(%qe, `)), [alert(+roll, alert)] [u(f.display-list, %qe)], [u(f.display.roll-to-[first(%q9, |)], %#, rest(%q9, |))])]
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll To Public -----------------------------------------------------
+
+&f.display.roll-to-public #41=pemit(%1, u(f.display-roll-output, %0, public))
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll To Private ----------------------------------------------------
+
+&f.display.roll-to-private #41=
+	pemit(%1, 
+		u(f.display-roll-output, %0, to [iter(%1, name(%i0), , %,%b)])
+	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll To Job --------------------------------------------------------
+
+For #15/trig_myadd: 
+ 0: dbref of job object (Job 6 -> #491)
+ 1: content, I think
+ 2: dbref of the person causing the change
+ 3: the act upon the object (CREate, ADD, NAMe, ASN-assign, MAIl, etc)
+
+For the following:
+ 0: enactor dbref (probably %#)
+ 1: Job <n>
+
+
+&f.display.roll-to-job #41=
+	[case(0, 
+@@ .. job access check failed
+		t(setr(9, ulocal(#15/f.has_job_access, rest(%1), %0))), 
+		[alert(+roll, alert)] You can't roll to that job because [titlestr(rest(%q9))], 
+
+@@ .. else, show enactor and add it to the job
+		[u(f.display-roll-output, %0, to %1)]
+		[trigger(#15/trig_myadd, 
+			locate(#15, %1, i), 
+			%r[u(f.display-roll-output, %0, to %1)], 
+			%0, 
+			ADD
+		)]
+@@ .. trigger the jobs system to inform people who can see the bucket
+		[trigger(#15/trig_broadcast, 
+			parent(locate(#15, %1, i)), 
+			+Roll added to [lcstr(%1)] by %N.
+		)]
+	)]
+
+
+--------------------------------------------------------------------------------
+-- Function: roll() ------------------------------------------------------------
+
+roll(<what to roll>, <who is rolling>[, <list/of/switches>])
+
+&f.roll #41=
+@@ 0: what to roll
+@@ 1: who is rolling
+@@ 2: list/of/switches
+@@ 
+@@ q0: sanitized what-to-roll
+@@ q1: Sheet of pmatch+(%1)
+@@ q2: /list/of/switches (we need this to properly match switches)
+@@ 
+@@ uses: 
+@@ pmatch+() - matches 'me' or does normal pmatch() behavior
+@@ isstaff() - is %# staff?
+
+@@ SOMEHOW, registers are being passed into this function set
+@@ (we are creating it @function/preserve/privileged)
+@@ so we clear out all the globals (and "p"?!) before we start
+@@ (no, iter didn't work)
+@@ "e" was adding to the error list, "p" was, I think, changing the player dbref
+
+	[setq(d, )][setq(a, )][setq(e, )][setq(o, )][setq(s, )][setq(z, )][setq(r, )][setq(p, )][setq(t, )]
+
+	[setq(0, squish(edit(strip(%0, %%%,;<>%[%]), %(, %b%()))]
+	[setq(1, u([u(d.stat-setter)]/f.find-sheet, pmatch+(%1)))]
+	[setq(2, if(words(trim(%2, l, /), /), /[trim(%2, l, /)]))]
+
+	[case(
+		0, 
+		t(words(%q0)), #-1 Nothing to Roll, 
+		t(%q1), %q1, 
+		or(isstaff(%#), strmatch(%#, %q1)), #-1 Staff Only, 
+		u(f.roll.workhorse, %q0, %q1, %q2)
+	)]
+
+--
+
+&f.roll #41=[setq(d, )][setq(a, )][setq(e, )][setq(o, )][setq(s, )][setq(z, )][setq(r, )][setq(p, )][setq(t, )][setq(0, squish(edit(strip(%0, %%%,;<>%[%]), %(, %b%()))][setq(1, u([u(d.stat-setter)]/f.find-sheet, pmatch+(%1)))][setq(2, if(words(trim(%2, l, /), /), /[trim(%2, l, /)]))][case(0, t(words(%q0)), #-1 Nothing to Roll, t(%q1), %q1, or(isstaff(%#), strmatch(%#, %q1)), #-1 Staff Only, u(f.roll.workhorse, %q0, %q1, %q2))]
+
+
+--------------------------------------------------------------------------------
+-- Roll Workhorse --------------------------------------------------------------
+
+&f.roll.workhorse #41=
+@@ 0: what to roll
+@@ 1: who is rolling
+@@ 2: /list/of/switches
+@@ 
+@@ q0: successes
+@@ q1: success interpreted
+@@ q2: die rolls
+@@
+@@ returns: <successes or #-1>|<pretty output or errors>|<die rolls>
+@@ may be ignored if internal: items kept in global registers!
+
+@@ .. set up global register defaults
+	[setq(z, %2)][setq(d, 0)][setq(a, 10)][setq(s, Standard)]
+@@ .. run the basic roller setup
+	[u(f.stat-check-stats, %1, %0)]
+
+@@ >> Active Adjustments
+@@ .. scan for and run "active" switches (just n-again for now)
+	[iter(
+		again extended, 
+		if(u(f.hasswitch?, %i0), u(f.roll/%i0, u(f.getswitch, %i0)))
+	)]
+@@ .. last, check for health penalty
+	[u(f.stat-check-health, %1)]
+
+@@ >> Roll
+	[if(
+		t(words(%qe, `)), 
+@@ .. error output
+		#-1|[u(f.display-roll-items, %qe)]|[@@(null)],
+@@ .. "weakness" is always no-again
+		[setq(a, 
+			case(1, 
+				strmatch(%qs, weakness), 11, 
+				strmatch(%qs, chance), 10, 
+				%qa
+			)
+		)]
+@@ .. set %qt one last time - how many times to roll? Default: 1
+		[setq(t, if(u(f.hasswitch?, extended), %qt, 1))]
+@@ .. roll %qt times! (if %qd = 0, roll 1 die -- it's chance)
+		[setq(r, 
+			iter(
+				lnum(%qt), 
+				ulocal(f.roller, if(lte(%qd, 0), 1, %qd), %qa), 
+				, |
+			)
+		)]
+
+@@ >> Rote
+@@ .. <may go here>
+
+@@ .. interpret successes -> <# succ>, "Success!", <what rolled>
+		[u(f.roll-success-interpreter)]
+@@ .. and output for the sake of the function 
+@@ .. .. <# succ>[ <# succ>], <what rolled>, <dice>[|<dice>]
+		%q0|
+		%q2|
+		%qr
+	)]
+
+--
+
+&f.roll.workhorse #41=[setq(z, %2)][setq(d, 0)][setq(a, 10)][setq(s, Standard)][u(f.stat-check-stats, %1, %0)][iter(again extended, if(u(f.hasswitch?, %i0), u(f.roll/%i0, u(f.getswitch, %i0))))][u(f.stat-check-health, %1)][if(t(words(%qe, `)), #-1|[u(f.display-roll-items, %qe)]|[@@(null)],[setq(a, case(1, strmatch(%qs, weakness), 11, strmatch(%qs, chance), 10, %qa))][setq(t, if(u(f.hasswitch?, extended), %qt, 1))][setq(r, iter(lnum(%qt), ulocal(f.roller, if(lte(%qd, 0), 1, %qd), %qa), , |))][u(f.roll-success-interpreter)]%q0|%q2|%qr)]
+
+--
+
+think u(nro/f.roll.workhorse, str+2, pmatch(thenomain), /again=8)
+think u(nro/f.roll, str+2, thenomain, /again=8)
+
+think roll(str+2, thenomain, /again=8/extended)
+
+think roll(str+2, thenomain, /again=8/extended=tyyt)
+
+
+--------------------------------------------------------------------------------
+-- Success Interpreter (breaks it down for us) ---------------------------------
+
+&f.roll-success-interpreter #41=
+@@ inputs: Those registers we've been throwing around
+@@ 
+@@ q0: space-delimed successes, may be <succ>, or <succ> <succ> for extended
+@@ q1: prettified success output ("success!")
+@@ q2: prettified display roll output (what rolled)
+@@ 
+@@ outputs: Nothing, use those 0/1/2 registers, I'm lazy
+
+@@ NOTE: If %qr is <rolls>|<rolls>|<rolls>, loop and return "extended" in %q1
+
+	[setq(x, if(lte(%qd, 0), chance, %qs))]
+@@ .. <succs> <succs> <succs>
+	[setq(0, iter(%qr, u(f.successes-%qx, %i0, 8), |))]
+@@ .. type of success, or "extended"
+	[setq(1, 
+		if(gt(words(%qr, |), 1), 
+			Extended, 
+			switch(
+				%q0, 
+				<0, Dramatic Failure, 
+				<1, Failure, 
+				<5, Success %(%q0%), 
+				Exceptional Success! %(%q0%)
+			)
+		)
+	)]
+@@ .. prettify the roll input
+	[setq(2, u(f.display-roll-items, %qo))]
+
+--
+
+&f.roll-success-interpreter #41=[setq(x, if(lte(%qd, 0), chance, %qs))][setq(0, iter(%qr, u(f.successes-%qx, %i0, 8), |))][setq(1, if(gt(words(%qr, |), 1), Extended, switch(%q0, <0, Dramatic Failure, <1, Failure, <5, Success %(%q0%), Exceptional Success! %(%q0%))))][setq(2, u(f.display-roll-items, %qo))]
+
+--
+
+think [setq(d, 3)][setq(s, Standard)][setq(r, 5 7 9|2 4 5)][setq(o, str + 1)][u(#41/f.roll-success-interpreter)]%q0 : %q1 : %q2
+
+
+================================================================================
+== REGISTERS ===================================================================
+
+Playing with the registers in a way where I know it will work properly.
+
+In all cases, %0 is what to add.  In all cases, no error checking is done.  In all cases, there is to be no output.
+
+
+&f.registers-output-add #41=
+@@ 0: stat name
+@@ 1: sign (+ if <null>)
+@@ 2: "nostat" if we want to error it
+	setq(
+		o, 
+		%qo`
+		[if(comp(%1, ), %1, +)] 
+		[if(strmatch(%2, nostat), ansi(xh, %[%0%]), %0)]
+	)
+
+
+&f.registers-dice-add #41=setq(d, add(%qd, %0))
+
+&f.registers-error-add #41=setq(e, %qe`%0)
+
+&f.registers-extendednum-add #41=setq(t, add(%qt, %0))
+
+
+================================================================================
+== ROLL STAT CHECKS ============================================================
+
+These functions build the basic what-to-roll list.  Stats, untrained penalties and wound penalties are all added here.
+
+
+--------------------------------------------------------------------------------
+-- Check for Stats -------------------------------------------------------------
+
+Build the what-to-roll list with the stats.  If the system can pull the stat, it will roll it.
+
+Doesn't deal with specialties at the same time as skills, yet, so:
+	+roll dex + fire + fire.pist
+
+
+>> here is where I would put in <player>:<stat>, if we would
+
+&f.stat-check-stats #41=
+@@ 0: Player
+@@ 1: Things to roll
+@@ Outputs: Null
+@@ q0: Current stat to check
+@@ q1: Current sign (+ or -)
+@@ q2: Current full stat name
+@@ q3: Current full stat path
+@@ q4: Current total stat value
+@@ q5: Current permanent stat value
+@@ q6: Class of current full stat path (%q3)
+@@ uses: operand(), turns any input to + or -, passes through errors
+
+	iter(
+		edit(edit(%1, -%b, -), -, +-), 
+		case(
+			1, 
+@@ >> it's a number
+			isint(%i0), 
+			[u(f.registers-dice-add, %i0)]
+			[u(f.registers-output-add, abs(%i0), operand(%i0))], 
+@@ >> it's possibly a stat
+@@ .. (extract the sign if -, y~ay)
+			[case(
+				setr(1, operand(%i0)), 
+				-, 
+				setq(0, trim(rest(%i0, -))), 
+				setq(0, trim(%i0))
+			)]
+@@ .. set up the functions
+			[setq(3, 
+				if(comp(%q0, ), 
+					ulocal([u(d.stat-setter)]/f.statpath.workhorse, %q0, %0), 
+					setq(0, %b)
+				)
+			)]
+			[setq(2, 
+				ulocal([u(d.stat-setter)]/f.statname.workhorse, rest(%q3, .))
+			)]
+@@ >> now check if the stat is valid
+			[t(%q3)], 
+
+			[setq(5, getstat(%0/[first(%q0, .)], both))]
+			[setq(6, ulocal([u(d.stat-setter)]/f.get-class, %q3))]
+			[case(1, 
+@@ .. >> class:list or class:string - do not roll
+				t(match(list string, %q6)), 
+				u(f.registers-output-add, %q2, %q1, nostat), 
+@@ .. >> if this is a <stat>.<specialty> then do both parts
+				strmatch(%q0, *.*), 
+@@ .. .. specialty, add the dice as one
+				[setq(4, add(getstat(%0/%q0), ladd(%q5, .)))]
+				[u(f.registers-dice-add, %q4)]
+@@ .. .. (add results)
+				[u(f.registers-extendednum-add, %q4)]
+				[u(f.registers-output-add, %q2, %q1)], 
+@@ .. >> normal, add the dice for that stat
+				[u(f.registers-dice-add, setr(4, ladd(%q5, .)))]
+@@ .. .. but wait, if it's a skill then check for untrained penalties
+@@ .. .. (this spits out output and I have no idea why, so I'm cheating)
+				[null(if(
+					strmatch(%q3, skill.*), 
+					u(f.stat-check-untrained, %0, %q0, first(%q5, .))
+				))]
+@@ .. .. (add results)
+				[u(f.registers-extendednum-add, %q4)]
+				[u(f.registers-output-add, %q2, %q1)]
+			)], 
+@@ >> stat is not valid/recognized
+			[u(f.registers-output-add, %q0, %q1, nostat)]
+		), 
+		+, 
+		@@
+	)
+
+--
+
+&f.stat-check-stats #41=iter(edit(edit(%1, -%b, -), -, +-), case(1, isint(%i0), [u(f.registers-dice-add, %i0)][u(f.registers-output-add, abs(%i0), operand(%i0))], [case(setr(1, operand(%i0)), -, setq(0, trim(rest(%i0, -))), setq(0, trim(%i0)))][setq(3, if(comp(%q0, ), ulocal([u(d.stat-setter)]/f.statpath.workhorse, %q0, %0), setq(0, %b)))][setq(2, ulocal([u(d.stat-setter)]/f.statname.workhorse, rest(%q3, .)))][t(%q3)], [setq(5, getstat(%0/[first(%q0, .)], both))][setq(6, ulocal([u(d.stat-setter)]/f.get-class, %q3))][case(1, t(match(list string, %q6)), u(f.registers-output-add, %q2, %q1, nostat), strmatch(%q0, *.*), [setq(4, add(getstat(%0/%q0), ladd(%q5, .)))][u(f.registers-dice-add, %q4)][u(f.registers-extendednum-add, %q4)][u(f.registers-output-add, %q2, %q1)], [u(f.registers-dice-add, setr(4, ladd(%q5, .)))][null(if(strmatch(%q3, skill.*), u(f.stat-check-untrained, %0, %q0, first(%q5, .))))][u(f.registers-extendednum-add, %q4)][u(f.registers-output-add, %q2, %q1)])], [u(f.registers-output-add, %q0, %q1, nostat)]), +, @@)
+
+
+--------------------------------------------------------------------------------
+-- Check for Untrained ---------------------------------------------------------
+
+&f.stat-check-untrained #41=
+@@ 0: dbref of sheet
+@@ 1: skill (full name is best, skills ONLY)
+@@ 2: value of skill
+@@ q0: full stat value
+
+@@ .. (messy)
+	if(
+		not(u(f.hasswitch?, tr)), 
+		if(
+			t(%2), 
+			%q0, 
+			case(
+				1, 
+@@ untrained physcal or social
+				hastag?(%1, physical.social, or), 
+				[u(f.registers-dice-add, -1)]
+				[u(f.registers-output-add, 1 %(untrained %1%), -)], 
+@@ untrained mental
+				hastag?(%1, mental), 
+				[u(f.registers-dice-add, -3)]
+				[u(f.registers-output-add, 3 %(untrained %1%), -)], 
+			)
+		)
+	)
+
+--
+
+&f.stat-check-untrained #41=if(not(u(f.hasswitch?, tr)), if(t(%2), %q0, case(1, hastag?(%1, physical.social, or), [u(f.registers-dice-add, -1)][u(f.registers-output-add, 1 %(untrained %1%), -)], hastag?(%1, mental), [u(f.registers-dice-add, -3)][u(f.registers-output-add, 3 %(untrained %1%), -)], )))
+
+
+--------------------------------------------------------------------------------
+-- Check for Specialty ---------------------------------------------------------
+
+So here we are, dealing with nWoD specialties.  In our system it's passed Skill.Specialty.  Specialties normally add just +1 to the roll (we pull the value from the sheet itself).
+
+Due to possible exceptions, I'll (try to) allow Skill.Specialty.Specialty.
+
+Like Untrained, this is Skills Only.
+
+Unlike Untrained, this is slapped onto the normal skill flow
+
+&f.stat-check-specalties #41=
+
+@@ >>>>>>> ALREADY DONE IN f.stat-check-stats <<<<<<<<<
+
+
+--------------------------------------------------------------------------------
+-- Check for Health Penalty ----------------------------------------------------
+
+Add (subtract) health penalty unless passive /nowound switch is included
+
+"now" is "nowounds" shortened
+
+&f.stat-check-health #41=
+@@ 0: sheet dbref
+	if(
+		and(
+			not(u(f.hasswitch?, now)), 
+			lt(setr(0, u(%0/_health.penalty)), 0)
+		), 
+		[u(f.registers-output-add, [abs(%q0)] %(wounds%), -)]
+		[u(f.registers-dice-add, %q0)]
+	)
+
+
+
+================================================================================
+== ROLL SWITCHES ===============================================================
+
+Multiple switches may be given (and, of course, taken out).  Each system adds to what's being rolled and will probably depend upon the dice-to-roll part of it being parsed first.
+
+Spaces may not be in any switch.  Name completion will do its best.
+
+Active Switches (do their own thing):
+	/again=<again type> - roll different types of n-again
+		/10-again
+		/no-again
+		/weakness
+	/willpower - spend a willpower for +3
+
+Passive Switches (used in other parts of the roller):
+	/tr[ained] - ignore untrained modifiers
+	/now[ound] - ignore wound penalties
+	/rote - roll as a rote (failures re-rolled once)
+		(how does this work with Weaknesses?)
+
+
+--------------------------------------------------------------------------------
+-- HasSwitch? ------------------------------------------------------------------
+
+Passive switches are used in other parts of the system, usually to stop them from working, or to cause them to work a little differnetly.  For them, the /whole/switch/list is passed, as well as the item to check.  Yeah, it's pretty simple.
+
+
+&f.getswitch #41=
+@@ 0: partial name of switch to check for
+@@ returns: the full item
+	regrabi(%qz, ^%0, /)
+
+
+CODE NOTE: The above works just like grab(%0, %1*, /).  The reason it works is because the list is <null>/item1/item2/item3, so searching for * returns the <null>.  This is VERY USEFUL.
+
+&f.hasswitch? #41=
+@@ 0: partial name of switch to check for
+@@ returns: 1 for true, 0 for false (null returns false)
+	t(u(f.getswitch, %0))
+
+
+--------------------------------------------------------------------------------
+-- /again ----------------------------------------------------------------------
+
+/again=10, 9, 8.  7 is 8 + 2 dice, 6 is 8 + 4 dice, and so on.
+/again=no, converts to 11.
+/again=weakness, rolls the weakness system.
+
+&f.roll/again #41=
+@@ 0: /again=xxx
+@@ q0: the "again" type
+
+	[setq(0, rest(%0, =))]
+	[case(
+		1, 
+@@ .. check an "again" type was actually passed
+		not(t(%q0)), 
+		u(f.registers-error-add, Again type not passed.), 
+@@ .. "w"eakness
+		strmatch(%q0, w*), 
+		[setq(a, 11)]
+		[setq(s, Weakness)], 
+@@ .. "n"o
+		strmatch(%q0, n*), 
+		setq(a, 11), 
+@@ .. must be at least 5 and integer
+		not(and(isint(%q0), gte(%q0, 7))), 
+		u(f.registers-error-add, Again type must be integer of 7 or higher.), 
+@@ .. if below 8, +2 dice per
+		lt(%q0, 8), 
+		[setq(1, mul(2, sub(8, %q0)))]
+		[u(f.registers-dice-add, %q1)]
+		[u(f.registers-output-add, %q1 %(%q0-again%), +)]
+		[setq(a, 8)], 
+@@ .. else just set
+		setq(a, %q0)
+	)]
+
+--
+
+&f.roll/again #41=[setq(0, rest(%0, =))][case(1, not(t(%q0)), u(f.registers-error-add, Again type not passed.), strmatch(%q0, w*), [setq(a, 11)][setq(s, Weakness)], strmatch(%q0, n*), setq(a, 11), not(and(isint(%q0), gte(%q0, 7))), u(f.registers-error-add, Again type must be integer of 7 or higher.), lt(%q0, 8), [setq(1, mul(2, sub(8, %q0)))][u(f.registers-dice-add, %q1)][u(f.registers-output-add, %q1 %(%q0-again%), +)][setq(a, 8)], setq(a, %q0))]
+
+
+--------------------------------------------------------------------------------
+-- /extended[=<num>] -----------------------------------------------------------
+
+@@ 0: /extended[=<num>]
+@@ q0: the "extended" value, if any
+@@ qt: a MAJOR REGISTER for number of times to roll
+
+&f.roll/extended #41=
+@@ .. if <num> is there, %q0 = <num>, else %q0 = %qt
+@@ .. this may be redundant, but allows us to check <num> and %qt 
+@@ .. with the same code
+	[setq(0, if(strmatch(%0, *=*), rest(%0, =), %qt))]
+
+	[case(0, 
+@@ .. checks if both %qt and %q0 fail
+		or(t(%qt), t(rest(%0, =))), 
+		u(f.registers-error-add, If no traits in the roll%, you must use /extended=<num>), 
+@@ .. <num> must be > 0 (catches "null")
+		gt(%q0, 0), 
+		u(f.registers-error-add, Extended roll must be a number of times), 
+@@ .. <num> must be int
+		isint(%q0), 
+		u(f.registers-error-add, Extended roll must be an integer), 
+@@ .. else, set %q0 into %qt
+		setq(t, %q0)
+	)]
+
+
+--
+
+&f.roll/extended #41=[setq(0, if(strmatch(%0, *=*), rest(%0, =), %qt))][case(0, or(t(%qt), t(rest(%0, =))), u(f.registers-error-add, If no traits in the roll%, you must use /extended=<num>), gt(%q0, 0), u(f.registers-error-add, Extended roll must be a number of times), isint(%q0), u(f.registers-error-add, Extended roll must be an integer), setq(t, %q0))]
+
+--
+
+think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
+think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended=2)] - errors: %qe - total rolls: %qt
+
+think %%qt: [setr(t, 0)] - [u(#41/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
+think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended=)] - errors: %qe - total rolls: %qt
+
+
+--------------------------------------------------------------------------------
+-- /list -----------------------------------------------------------------------
+
+Roll a list of numbers all at once, like /extended only different.  Ad-hoc system, works like this:
+
+/list=4,3,2 : takes list of numbers only, adds them as if extended
+
+
+
+================================================================================
+== DISPLAYS ====================================================================
+
+
+&f.display-list #41=
+@@ 0: .list.of.items.to.display, normally one of the global items
+@@ this may seem odd.  this is odd, but it's expandable
+	iter(rest(%0, .), %i0, ., .)
+
+---
+
+&f.display-roll-items #41=
+@@ 0: `+list`-of`+items (grabbed probably from %qo or %qe)
+@@ outputs: Something legible (i.e., "Error Error Error")
+	iter(
+		rest(trim(%0, l, `), +), 
+		%i0, 
+		`
+	)
+
+---
+
+&f.display-roll-output #41=
+@@ 0: dbref of roller
+@@ 1: "public" or "private" or "job <num>"
+@@ q0: counted successes -- from f.roll-success-interpreter
+@@ q1: prettified success output ("success!") -- from success-interpreter
+@@ q2: prettified display roll output (what rolled) -- from success-interpreter
+@@ 
+@@ relies upon global registers
+@@ uses: header(), footer()
+
+@@ .. interpret roll results
+	[u(f.roll-success-interpreter)]
+@@ .. massage the registers a bit; they're just for show now
+	[if(lte(%qd, 0), [setq(d, 0)][setq(s, setunion(%qs, Chance))])]
+	[if(gte(%qa, 11), setq(a, No))]
+
+@@ >> display!
+@@ .. header, don't display obvious defaults
+	[header(
+		[name(%#)] rolls %qd Dice
+		[if(strmatch(%qs, Standard), , %b- %qs)]
+		[if(strmatch(%qa, 10), , %b- %qa-Again)]
+	)]%r
+
+@@ .. what are we rolling?
+	%b Roll: 
+	[trim(wrap(%q2, 73, l, , , 8), r, %b)] %r
+
+@@ .. what are the results?
+@@ .. >> if there are more than one set in %qr, this was an extended roll!
+	[case(1, 
+@@ .. >> extended roll: <Total> %r%r <each roll>, and change %q1
+		gt(words(%qr, |), 1), 
+		%b Result: [setr(1, [ladd(%q0)] total successes)]%r%r
+		[iter(%qr, 
+			%b Successes: [setr(x, max(extract(%q0, inum(), 1), -1))] -- %i0
+@@ .. .. .. report dramatic failure only; exc. succ was confusing people
+@@			[switch(%qx, >4, %b%(exceptional%), -1, %b%(dramatic failure%))], 
+			[switch(%qx, -1, %b%(dramatic failure%))], 
+			|, %r
+		)], 
+@@ .. >> single roll: show "Result: <success?> -- <dice rolled>
+		%b Result: [trim(wrap(%q1 -- %qr, 68, l, , , 10), r, %b)]
+	)]%r
+
+@@ .. footer, reminds us success/failure, and whom to
+	[footer([trim(lcstr(before(%q1, %()))][if(t(%1), %b(%1))])]
+
+--
+
+&f.display-roll-output #41=[u(f.roll-success-interpreter)][if(lte(%qd, 0), [setq(d, 0)][setq(s, setunion(%qs, Chance))])][if(gte(%qa, 11), setq(a, No))][header([name(%#)] rolls %qd Dice[if(strmatch(%qs, Standard), , %b- %qs)][if(strmatch(%qa, 10), , %b- %qa-Again)])]%r%b Roll: [trim(wrap(%q2, 73, l, , , 8), r, %b)] %r[case(1, gt(words(%qr, |), 1), %b Result: [setr(1, [ladd(%q0)] total successes)]%r%r[iter(%qr, %b Successes: [setr(x, max(extract(%q0, inum(), 1), -1))] -- %i0[switch(%qx, -1, %b%(dramatic failure%))], |, %r)], %b Result: [trim(wrap(%q1 -- %qr, 68, l, , , 10), r, %b)])]%r[footer([trim(lcstr(before(%q1, %()))][if(t(%1), %b(%1))])]
+
+
+--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-===--=-=-=-=-=-=-=-==
+
+
+&help~stat_topics~+roll #96=Rolling Dice~+roll\[/<switches>] <num or stat> +|- <num or stat>\[ = <send to>] %r %rThe <send to> may be a list of players (including "me") or "Job <job number>"%r %r Switches (may use more than one): %r%b %b /again=<n> %b %b %b: <n> may be a number, "no" or "weakness" %r%b %b /trained %b %b %b %b: ignore untrained penalties %r%b %b /nowounds %b %b %b : ignore wound penalties %r%b %b /extended\[=<n>] : roll an extended, <n> times if there%r %rUntrained- and wound-penalties are applied to you unless you except them with the above switches. The "again" switch is to roll 9-, 8- or 7-again.  The "extended" switch allows you to roll as an extended action, up to <n> times or the sum of all traits used in the roll.%r %rYou may shorten stat names and switches (except for "again" and "extended"). %r %rUnrecognized stats are placed in [ansi(xh, %[brackets%])] and ignored. %r %rSample Roll: %r%b %b +roll/again=9/extended/tr str + bra-2 + nothing =me %r %rTo roll a specialty, just roll <stat>.<specialty>. e.g.: %r%b %b +roll int + invest.cover = me%r %r[ansi(h, See Also)]: +help action, +help damage, +help stat
+
+
+--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-===--=-=-=-=-=-=-=-==
+
+
+
+
+
+
+
+
+
+
+-- Various older roller v1 and v2 items below --
+
+
+
+================================================================================
+== ROLLERS =====================================================================
+== OLD ROLLERS =================================================================
+
+Each roller works for a slightly different White Wolf-inspired system.  In general, they take the number of dice to roll, the dice that count as successes, and the dice type to re-roll (n-again).  If we need the system not to re-roll any dice, we set that value to 11.
+
+In nWoD, n-again technically goes no lower than 8.  If it needs to, 7-again is 8-again + 2 extra dice.  6-again is 8-again + 4 extra dice.  And so on.
+
+
+--------------------------------------------------------------------------------
+-- "Good Enough" Rollers -------------------------------------------------------
+
+(These rollers are kind of weak.  They try to do everything at once, when we'll have to check for various aspects at various different times.)
+
+&f.roller.nwod-standard #41=if(gt(%0, 0), [setr(d, u(f.roller, %0, %1))] = [u(f.successes, %qd, 8)] successes, [setr(d, u(f.roller, 1, %1))] = [u(f.successes-chance, %qd, 10)] successes)
+
+&roller.nwod-weakness #41=[if(gt(%0, 0), [setr(d, u(f.roller, %0, %1))] = [u(f.successes-weakness, %qd, 8)] successes, [setr(d, u(f.roller, 1, %1))] = [u(f.successes-chance-weakness, %qd, 10)] successes)]
+
+
+--------------------------------------------------------------------------------
+-- "Good Enough" for Exalted ---------------------------------------------------
+
+&f.successes-exalted #41=add(u(f.successes, %0, %1), words(graball(stripansi(%0), 10)))
+
+&f.roller.exalted-original #41=[setr(d, u(f.roller, %0, 11))] = [u(f.successes-exalted, %qd, 7)] successes
+
+--------------------------------------------------------------------------------
+-- "Good Enough" for oWoD ------------------------------------------------------
+
+&f.successes-owod-revised #41=localize(switch(1, lte(setr(s, u(f.successes, %0, %1)), 0), sub(0, words(graball(stripansi(%0), 1))), lte(setr(x, add(%qs, -[words(graball(stripansi(%0), 1))], %2)), 0), 0, %qx))
+
+&f.roller.owod-revised #41=[setr(d, u(f.roller, %0, 11))] = [u(f.successes-owod-revised, %qd, %1)] successes
+
+&f.roller.owod-threshold #41=[setr(d, u(f.roller, %0, 11))] = [u(f.successes-owod-revised, %qd, if(gt(%1, 9), 9, %1), if(gt(%1, 9), sub(9, %1), 0))] successes
+
+&f.roller.owod-original #41=[setr(d, u(f.roller, %0, 11))] = [u(f.successes-weakness, %qd, %1)] successes [@@( think u(nco/f.roller.owod-original, <dice>, <t#>) )]
+
+&f.roller.owod-revised-specialty #41=[setr(d, u(f.roller, %0, 10))] = [u(f.successes-owod-revised, %qd, %1)] successes
+
+&f.roller.owod-threshold-specialty #41=[setr(d, u(f.roller, %0, 10))] = [u(f.successes-owod-revised, %qd, if(gt(%1, 9), 9, %1), if(gt(%1, 9), sub(9, %1), 0))] successes
+
+&f.roller.owod-original-specialty #41=[setr(d, u(f.roller, %0, 10))] = [u(f.successes-weakness, %qd, %1)] successes [@@( think u(nco/f.roller.owod-original, <dice>, <t#>) )]
+
+
+================================================================================
+== VALIDATE SOMEONE'S ACCESS TO A JOB ==========================================
+
+Don't have to find the bucket (parent(<job>)), the job is parented to the bucket
+
+THIS IS SET ON THE JOBS FUNCTIONS OBJECT
+
+IT MAY BE DUPLICATING SOMETHING ALREDY THERE - I DON'T KNOW
+
+&f.has_job_access #15=
+@@ 0: job number
+@@ 1: dbref of player adding to job
+@@ va: as in @va, the dbref of the job functions object
+@@ j: job object
+
+localize(
+@@ o: job object
+	[setq(j, locate(%va, Job %0, i))]
+	[case(0, 
+		t(%qj), #-1 NO SUCH JOB, 
+
+		or(
+@@ .. master access
+			u(%va/fn_accesscheck, %qj, %1), 
+@@ .. public and "yours"
+			and(
+				u(%va/IS_PUBLIC, %qj), 
+				match(get(%qj/opened_by), %1)
+			)
+		), 
+		#-1 NO ACCESS, 
+
+		not(u(%va/is_locked, %qj)), #-1 JOB LOCKED,
+
+		1
+	)]
+)
+
+--
+
+&f.has_job_access #15=localize([setq(j, locate(%va, Job %0, i))][case(0, t(%qj), #-1 NO SUCH JOB, or(u(%va/fn_accesscheck, %qj, %1), and(u(%va/IS_PUBLIC, %qj), match(get(%qj/opened_by), %1))), #-1 NO ACCESS, not(u(%va/is_locked, %qj)), #-1 JOB LOCKED,1)])
+
+--
+
+think u(#15/f.has_job_access, 6, pmatch(thenomain))
+think u(#15/f.has_job_access, 6, pmatch(dog))
+think u(#15/f.has_job_access, f, pmatch(thenomain))
+think u(#15/f.has_job_access, 54, pmatch(valentina))
+think u(#15/f.has_job_access, 15, pmatch(Nix))
+think u(#15/f.has_job_access, 15, pmatch(dog))
+
+
+=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-==--=
+  =--==-=--=-=-==-=--=-==--==--==-=--==-=-=
+=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-==--=
+
+
+================================================================================
+== ACTION: The "roll macro" system. ============================================
+
+The player sets the action on themselves.  e.g.:
+
+	&action.perception me=/again=9 wits + composure
+
+The system runs it through objeval(%#, u(action.<name>)).  This is done so the player can add code to their own actions and keep it secure.
+
+I'd like the system to be able to strip the final target, "=job 5" for instance, but /switches use = as well so we'd need to be careful.
+
+	+action[<add'l switches>] <action name>[ <additional roll items>][=<target list>]
+
+e.g.:
+
+	+action/rote perception + 3=thenomain
+
+Switches entered by hand should override switches in the macro.  For our system, this is as simple as making sure they're first.  (+roll/again=8/again=9 will roll 8-again.)
+
+Basic Logic:
+
+	1. Find and objeval() the attribtue.
+	2. Separate switches from the rest.
+	3. Drop any =<item> from the end.
+	4. @force player to +roll, switches from +Action first.
+
+Easy! Right?
+
+--------------------------------------------------------------------------------
+-- +action: priming command ----------------------------------------------------
+
+Let's do some error checking here, to get it out of the way.
+
+s: switches/entered/at/the/time
+r: everything after switches, then later not including the action name
+n: action name
+
+a: attribute - action.<action name>
+
+
+&c.action #41=$+action*:@pemit %#=
+	[setq(s, first(rest(%0, /)))]
+	[setq(r, if(t(%qs), rest(%0), trim(%0)))]
+	[setq(n, first(%qr))]
+	[setq(r, rest(%qr))]
+
+	[setq(a, grab(sort(lattr(%#/action.*)), action.%qn*))]
+
+	[case(0, 
+		t(%0), u(f.action.list, %#), 
+		t(%qn), [alert(Action)] Action_Name not entered., 
+		t(%qa), [alert(Action)] Action '%qn' not found., 
+		u(f.action, %#, %qa, %qs, %qr)
+	)]
+
+--
+
+&c.action #41=$+action*:@pemit %#=[setq(s, first(rest(%0, /)))][setq(r, if(t(%qs), rest(%0), trim(%0)))][setq(n, first(%qr))][setq(r, rest(%qr))][setq(a, grab(sort(lattr(%#/action.*)), action.%qn*))][case(0, t(%0), u(f.action.list, %#), t(%qn), [alert(Action)] Action_Name not entered., t(%qa), [alert(Action)] Action '%qn' not found., u(f.action, %#, %qa, %qs, %qr))]
+
+
+--------------------------------------------------------------------------------
+-- action: workhorse -----------------------------------------------------------
+
+0: dbref of enactor
+1: attribute of the macro (action.<name>)
+2: switches/from/+action
+3: "everything else" from +Action
+
+e: evaluated content of attribute
+s: switches on %qe, with / on because we've stripped it with rest(xx, /)
+r: rest of %qe, drop =target
+
+&f.action #41=
+
+@@ .. process the macro
+	[setq(e, objeval(%0, u(%0/%1)))]
+	[setq(s, first(rest(%qe, /)))]
+	[setq(r, trim(before(if(t(%qs), rest(%qe), %qe), =)))]
+	[if(t(%qs), setq(s, /%qs))]
+
+@@ .. add +action stuff to the macro
+	[setq(r, %qr %3)]
+	[setq(s, [if(t(%2), /%2)]%qs)]
+
+@@ .. error check and go
+	[case(0, 
+		t(%qe), [alert(Action)] Action has no content%, so use +roll., 
+@@ .. 'roll' uses %qe to report errors, so we need to clear it
+		[setq(e, )][trigger(tr.action, %0, %qr, %qs)]
+	)]
+
+--
+
+&f.action #41=[setq(e, objeval(%0, u(%0/%1)))][setq(s, first(rest(%qe, /)))][setq(r, trim(before(if(t(%qs), rest(%qe), %qe), =)))][if(t(%qs), setq(s, /%qs))][setq(r, %qr %3)][setq(s, [if(t(%2), /%2)]%qs)][case(0, t(%qe), [alert(Action)] Action has no content%, so use +roll., [setq(e, )][trigger(%!/tr.action, %0, %qr, %qs)])]
+
+
+--------------------------------------------------------------------------------
+-- trigger: the roll -----------------------------------------------------------
+
+Because we're doing everything with functions, we need a trigger for the eventual @force
+
+0: dbref of enactor
+1: what to roll
+2: switches
+
+&tr.action #41=@force %0={+roll%2 %1}
+
+
+--------------------------------------------------------------------------------
+-- action.list -----------------------------------------------------------------
+
+List all actions on %0
+
+&f.action.list #41=
+	[setq(a, lattr(%0/action.*))]
+	[if(t(%qa), 
+		[header(+Actions on [name(%0)])]%r
+		[iter(%qa, %b [ansi(h, capstr(lcstr(rest(%i0, .))))]: [get(%0/%i0)], , %r)]%r
+		[footer(words(%qa))], 
+		[alert(Action)] No +actions on [name(%0)]
+	)]
+
+--
+
+&f.action.list #41=[setq(a, lattr(%0/action.*))][if(t(%qa), [header(+Actions on [name(%0)])]%r[iter(%qa, %b [ansi(h, capstr(lcstr(rest(%i0, .))))]: [get(%0/%i0)], , %r)]%r[footer(words(%qa))], [alert(Action)] No +actions on [name(%0)])]
+
+
+--------------------------------------------------------------------------------
+-- Help: +Action ---------------------------------------------------------------
+
+&help~stat_topics~+action #96=Roll Macros~+action\[/<switches>] <action_name> \[+|- <more items>]\[ = <send to>]%r%rThis command allows you to set up and use your own often-used rolls by setting them on an attribute.  Any switches you use with +action will override any switches you set on the attribute.%r%rYou may shorten <action_name> to the closest unique name. Due to coding shortcuts, you must put a space after <action_name> if anything follows it.%r%r&action.<action_name> me=<+roll format>%r%re.g.: &action.perception me=/again=9 Wits + Composure%r%rYou may also add code to the attribute.  For instance, the perception rolls for werewolves depend upon their form.%r%re.g.: %r%b &form me=gauru%r%b &action.perception me=Wits + Composure + \[case(v(form), gauru, 3, ...)\]%r%r+action: Typed alone will list which action macros you've set.%r%r[ansi(h, See Also)]: +help roll

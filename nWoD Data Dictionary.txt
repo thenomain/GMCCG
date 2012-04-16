@@ -1,0 +1,4430 @@
+================================================================================
+== FUNCTIONS ===================================================================
+
+Data Dictionary Prerequisite Shortcut Functions
+
+We put these on _ for two reasons.  The main one is the DD is @set visual to let the derived stats call on this object from any dbref.  The second is to keep it out of the hands of any code which might troll the Data Dictionary (such as setting up templates).
+
+
+--------------------------------------------------------------------------------
+-- Class -----------------------------------------------------------------------
+
+What is the class of the stat?
+
+0: stat path
+
+&_class dd=udefault(class.%0, numeric)
+
+
+--------------------------------------------------------------------------------
+-- Value -----------------------------------------------------------------------
+
+The "value" directive just pulls the permanent part of a numeric stat (such as Strength) or the first item from a text list (such as Template, which can be Human.Psionic).
+
+&_Value dd=
+@@ Value of a primary stat, or the first item of a list
+@@ 0: sheet dbref
+@@ 1: stat.path
+	case(u(_class, %1), numeric, first(u(_value_full, %0, %1), .), u(_value_full, %0, %1))
+
+>> e.g.: u(_value, %0, attribute.strength)
+
+&_Value_Full dd=
+@@ Full text on a stat ("both" for numeric stats)
+@@ 0: sheet dbref
+@@ 1: stat.path
+	u(%0/_%1)
+
+>> e.g.: u(_value_full, %0, bio.template)
+
+--------------------------------------------------------------------------------
+-- At Least --------------------------------------------------------------------
+
+The "at" directives check that a stat is "at least" (equal to or greater than) another value.  Sometimes that other value is another stat.
+
+Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is "this" stat, aka the stat in <statpath>.  This is required to make cgen/xp spends to properly see if the new value of "this stat" meets prerequisites.
+
+--
+
+&_At_Least  dd=
+@@ Stat is no lower than a value
+@@ 0: sheet dbref
+@@ 1: stat.path
+@@ 2: min value
+@@ 3: add-offset (send "%2" when stat.path is self)
+
+	gte(add(u(_value, %0, %1), %3), %2)
+
+>> e.g.: u(_at_least, %0, skill.empathy, 2)
+
+--
+
+&_At_Least_All dd=
+@@ Stats passed are all no lower than values associated ("and _at_least")
+@@ 0: sheet dbref
+@@ 1: stat.path:value|stat.path:value
+@@ (cannot be used for "this stat" situations)
+
+	land(iter(%1, u(_at_least, %0, first(%i0, :), rest(%i0, :))))
+
+>> e.g.: u(_at_least_all, %0, attribute.dexterity:3 skill.athletics:2)
+
+--
+
+&_At_Least_One dd=
+@@ One stat passed is no lower than values associated ("or _at_least")
+@@ 0: sheet dbref
+@@ 1: stat.path:value|stat.path:value
+@@ (cannot be used for "this stat" situations)
+
+	lor(iter(%1, u(_at_least, %0, first(%i0, :), rest(%i0, :))))
+
+>> e.g.: u(_at_least_one, %0, skill.weaponry:2 skill.firearms:2)
+
+--
+
+&_At_Least_Stat dd=
+@@ This stat is no lower than another stat
+@@ 0: sheet dbref
+@@ 1: this.statpath
+@@ 2: that.statpath
+@@ 3: add-offset (send "%2" always, used in xp-spends)
+
+localize(
+@@ .. sloppy, but gets the job done
+	[setq(t, trim(first(edit(%2, -, +-), +)))]
+	[setq(a, iter(rest(edit(edit(%2, -%b, -), -, %b+-), +), %i0, +))]
+	[u(
+		_at_least, 
+		%0, 
+		%1, 
+		ladd(
+			[u(_value, %0, %qt)] 
+			%qa
+		), 
+		%3
+	)]
+)
+
+>> e.g.: u(_at_least_stat, %0, merit.fame, attribute.presence, %2)
+>> e.g.: u(_at_least_stat, %0, merit.hollow_(%1).size, advantage.wyrd + 2, %2)
+
+
+--------------------------------------------------------------------------------
+-- At Most ---------------------------------------------------------------------
+
+Same as "At Least", only checks that things are "at most" (equal to or less than) a value.
+
+Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is "this" stat, aka the stat in <statpath>.  This is required to make cgen/xp spends to properly see if the new value of "this stat" meets prerequisites.
+
+--
+
+&_At_Most dd=
+@@ Stat is no higher than a value
+@@ 0: sheet dbref
+@@ 1: stat.path
+@@ 2: value
+@@ 3: add-offset (send "%2" when stat.path is self, used in xp-spends)
+
+	lte(add(u(_value, %0, %1), %3), %2)
+
+>> e.g.: u(_at_most, %0, power.fubar, 3, %2)
+
+--
+
+&_At_Most_All dd=
+@@ Stats passed are all no higher than values associated ("and _at_most")
+@@ 0: sheet dbref
+@@ 1: stat.path:value stat.path:value
+@@ (cannot be used for "this stat" situations)
+
+	land(iter(%1, u(_at_most, %0, first(%i0, :), rest(%i0, :))))
+
+>> e.g.: u(_at_most_all, %0, attribute.strength:4 skill.athletics:1)
+
+--
+
+&_At_Most_One dd=
+@@ One stat passed is no higher than values associated ("or _at_most")
+@@ 0: sheet dbref
+@@ 1: stat.path:value|stat.path:value
+@@ (cannot be used for "this stat" situations)
+
+	lor(iter(%1, u(_at_most, %0, first(%i0, :), rest(%i0, :))))
+
+>> e.g.: u(_at_most_one, %0, merit.fame:3 attribute.presence:3)
+
+
+--
+
+&_At_Most_Stat dd=
+@@ This stat is no higher than another stat
+@@ 0: sheet dbref
+@@ 1: this.statpath
+@@ 2: that.statpath(+/-<value>)
+@@ 3: add-offset (send "%2" always, used in xp-spends)
+@@ 
+@@ t: that.statpath
+@@ a: add value(s)
+
+localize(
+@@ .. sloppy, but gets the job done
+	[setq(t, trim(first(edit(%2, -, +-), +)))]
+	[setq(a, iter(rest(edit(edit(%2, -%b, -), -, %b+-), +), %i0, +))]
+	[u(
+		_at_most, 
+		%0, 
+		%1, 
+		ladd(
+			[u(_value, %0, %qt)] 
+			%qa
+		), 
+		%3
+	)]
+)
+
+>> e.g.: u(_at_most_stat, %0, merit.hidden_life, advantage.wyrd, %2)
+>> e.g.: u(_at_most_stat, %0, skill.academics, advantage.wyrd+1, %2)
+
+
+--------------------------------------------------------------------------------
+-- Is --------------------------------------------------------------------------
+
+Intended for list stats, "is" compares the stat's primary (first) value to another or against a list.  Can be used with numeric stats as well if an exact match needs to be found, but it's discouraged.
+
+--
+
+&_Is dd=
+@@ Stat's "first" text value matches exactly
+@@ 0: sheet dbref
+@@ 1: stat.path
+@@ 2: value (text)
+@@ 3: stat being set (ignore sheet value if passed)
+
+	strmatch(%2, if(t(%3), %3, u(_value, %0, %1)))
+
+>> e.g.: u(_is, %0, bio.kith, shadowsoul)
+>> e.g.: u(_is_full, %0, bio.seeming, seemingless, %2)
+
+--
+
+&_Is_Full dd=
+@@ Stat's "full" value matches
+@@ 0: sheet dbref
+@@ 1: stat.path
+@@ 2: value (text)
+@@ 3: stat being set (ignore sheet value if passed)
+
+	strmatch(%2, if(t(%3), %3, u(_value_full, %0, %1)))
+
+>> e.g.: u(_is_full, %0, bio.template, human.fae-touched)
+>> e.g.: u(_is_full, %0, bio.template, changeling, %2)
+
+
+--
+
+&_Is_Not dd=
+@@ Stat's "first" text value doesn't match
+@@ 0: sheet dbref
+@@ 1: stat.path
+@@ 2: value (text)
+@@ 3: stat being set (ignore sheet value if passed)
+
+	not(u(_is, %0, %1, %2, %3))
+
+>> e.g.: u(_is_not, %0, advantage.vice, pride)
+>> e.g.: u(_is_not, %0, bio.seeming, seemingless, %2)
+
+--
+
+&_Is_One_Of dd=
+@@ Stat's "first" text item matches one from a list
+@@ 0: sheet dbref
+@@ 1: stat.path
+@@ 2: one.of.list
+
+	t(match(%2, first(u(%0/_%1), .), .))
+
+>> e.g.: u(_is_one_of, %0, bio.template, changeling.human)
+
+--
+
+&_Is_None_Of dd=
+@@ Stat's "first" text value matches none from a list
+@@ 0: sheet dbref
+@@ 1: stat.path
+@@ 2: one.of.list
+
+	not(u(_is_one_of, %0, %1, %2))
+
+>> e.g.: u(_is_none_of, %0, bio.kith, %1.Kithless)
+
+
+--------------------------------------------------------------------------------
+-- Has -------------------------------------------------------------------------
+
+The "has" directives check to see if a stat (or a list of stats) exists (or don't exist) on someone's sheet.
+
+--
+
+&_Has dd=
+@@ Sheet has a stat
+@@ 0: sheet dbref
+@@ 1: stat.path
+
+	t(u(_value, %0, %1))
+
+>> e.g.: u(_has, %0, skill.crafts)
+
+--
+
+&_Has_Not dd=
+@@ Sheet doesn't have a stat
+@@ 0: sheet dbref
+@@ 1: stat.path
+
+	not(u(_value, %0, %1))
+
+>> e.g.: u(_has_not, %0, merit.fame)
+
+--
+
+&_Has_One_Of dd=
+@@ Sheet has one of the stats from a list
+@@ 0: sheet dbref
+@@ 1: list.of stat.paths to.check
+
+	lor(iter(%1, u(_has, %0, %i0)))
+
+>> e.g.: u(_has_one_of, %0, merit.clairvoyance merit.channeling_(spirit))
+
+--
+
+&_Has_All_Of dd=
+@@ Sheet has all of the stats from a list
+@@ 0: sheet dbref
+@@ 1: list.of stat.paths to.check
+
+	land(iter(%1, u(_has, %0, %i0)))
+
+>> e.g.: u(_has_all_of, %0, merit.astral_projection merit.thought_projection)
+
+--
+
+&_Has_None_Of dd=
+@@ Sheet has none of the stats from a list
+@@ 0: sheet dbref
+@@ 1: list.of stat.paths to.check
+
+	not(u(_has_one_of, %0, %1))
+
+>> e.g.: u(_has_none_of, %0, merit.occlusion merit.hidden_life)
+
+
+--------------------------------------------------------------------------------
+-- Min Of/Max Of ---------------------------------------------------------------
+
+Returns the lowst or highest value of a list of stats.  We have to fold our own "lmin" and "lmax" for these, hurrah.
+
+&_Min_Of dd=
+@@ 0: sheet dbref
+@@ 1: list.of stat.paths to.check
+	min(
+		u(_value, %0, first(%1)), 
+		if(
+			dec(words(rest(%1))), 
+			u(_min_of, %0, rest(%1)), 
+			u(_value, %0, rest(%1))
+		)
+	)
+
+>> e.g. u(_min_of, %0, merit.occlusion merit.hidden_life))
+
+&_Max_Of dd=
+@@ 0: sheet dbref
+@@ 1: list.of stat.paths to.check
+	max(
+		u(_value, %0, first(%1)), 
+		if(
+			dec(words(rest(%1))), 
+			u(_max_of, %0, rest(%1)), 
+			u(_value, %0, rest(%1))
+		)
+	)
+
+>> e.g. u(_max_of, %0, merit.occlusion merit.hidden_life))
+
+
+--------------------------------------------------------------------------------
+-- List Has --------------------------------------------------------------------
+
+Takes a list stat (or, for that matter, any numeric stat) and returns 1 if the item exists in it, 0 if it doesn't.  
+
+List stats are stored: item.item.item
+
+Item name must be exact or contain its own wildcards.
+
+&_list_has dd=
+@@ 0: sheet dbref
+@@ 1: stat.path
+@@ 2: value
+	t(match(
+		first(u(%0/_%1), |), 
+		%2,
+		.
+	))
+
+>> e.g. u(_list_has, %0, bio.kith, runnerswift)
+
+
+--------------------------------------------------------------------------------
+-- Class: List -----------------------------------------------------------------
+
+Turns the number portion of a class:list statpath and returns the name portion.
+Looks up text in the value portion and, if match, returns the name portion.
+Else, assumes translating name->value
+
+(This is the first dd _function that does not use the sheet)
+
+&_class_translate_list dd=
+	case(1, 
+@@ .. number value -> name
+		isnum(%1), 
+		extract(rest(v(%0), |), %1, 1, .), 
+@@ .. text value -> name
+		t(match(first(v(%0), |), %1, .)), 
+		extract(rest(v(%0), |), match(first(v(%0), |), %1, .), 1, .), 
+@@ .. name -> value
+		extract(first(v(%0), |), match(rest(v(%0), |), %1*, .), 1, .)
+	)
+
+&_class_translate_list dd=case(1, isnum(%1), extract(rest(v(%0), |), %1, 1, .), t(match(first(v(%0), |), %1, .)), extract(rest(v(%0), |), match(first(v(%0), |), %1, .), 1, .), extract(first(v(%0), |), match(rest(v(%0), |), %1*, .), 1, .))
+
+
+--------------------------------------------------------------------------------
+-- Rites, Gifts, & Renown ------------------------------------------------------
+
+In Werewolf, all Rites need to be checked against the Rite merit.  So for each Rite, add this function to the prerequisite.
+
+0: sheet dbref
+1: value trying to raise to
+
+&_rites_check dd=lte(%1, u(_value, %0, merit.rituals))
+
+&_gifts_check dd=lte(%1, u(_max_of, %0, iter(lattr(%0/_renown.*), trim(%i0, b, _))))
+
+
+--
+
+@@ At no point may a character have more dots in another Renown than he does
+@@ in his highest primary Renown.
+
+0: sheet dbref
+1: stat.path of renown being raised
+2: add-offset (pass %2 in &prerequisite)
+
+a: auspice's primary renown
+t: tribe's primary renown
+m: max of these two renowns, + offset if we're raising one of those
+
+
+&_renown_check dd=
+localize(
+
+@@ .. grab auspice and tribe renown's 
+	[setq(a, rest(first(grepi(%!, tags.renown.*, u(_value, %0, bio.auspice))), .))]
+	[setq(t, rest(first(grepi(%!, tags.renown.*, u(_value, %0, bio.tribe))), .))]
+
+@@ .. max of tribe or auspice ("primary") renowns (can't use _max_of)
+	[setq(m, 
+		max(
+@@ .. .. if renown being raised is self, add amt it's being raised by
+			add(u(_value, %0, %qa), if(strmatch(%qa, %1), %2, 0)), 
+			add(u(_value, %0, %qt), if(strmatch(%qt, %1), %2, 0))
+		)
+	)]
+
+	[u(_at_most, %0, %1, %qm, %2)]
+)
+
+
+--
+
+think u(dd/_gifts_check, pmatch+(thenomain), 1)
+
+
+
+--------------------------------------------------------------------------------
+-- What's My Max Trait? --------------------------------------------------------
+
+The more supers we get, the more generalized we need to make some of these things.  It's important, therefore, to be able to simply ask for the "maximum trait" based on general power level
+
+
+&_max_trait dd=
+	max(
+		5, 
+		u(_value, 
+			%0, 
+			case(last(u(_value_full, %0, bio.template),
+				Changeling, advantage.wyrd, 
+				Werewolf, advantage.primal_urge, 
+@@ 				Vampire, advantage.blood_potency, 
+@@ 				Promethean, advantage.azoth, 
+@@ 				Mage, advantage.gnosis, 
+@@ 				Geist, advantage.psyche, 
+				Skinthief, advantage.supernatural_tolerance
+			)
+		)
+	)
+
+--
+
+
+think u(dd/_max_trait, num(eric russell))
+think u(dd/_max_trait, num(*thenomain))
+
+
+--------------------------------------------------------------------------------
+-- Trait Check -----------------------------------------------------------------
+
+Like Gift Check, but for power level -> attribute/skill.  We use this so often that we're making it its own thing.
+
+This is prefered to 'max trait' above and the above may be folded into this function, instead.
+
+@@ 0: dbref
+@@ 1: stat.path
+@@ 2: adding to stat, if any (pass %2 to this function, as there usually is)
+
+&_trait_check dd=u(_at_most, %0, %1, u(_max_trait, %0), %2)
+
+
+--
+
+think u(dd/_max_trait, num(eric russell))
+think u(dd/_max_trait, num(*thenomain))
+
+
+--------------------------------------------------------------------------------
+-- Compiled --------------------------------------------------------------------
+
+Everything together.
+
+&_value dd=first(u(%0/_%1), .)
+&_value_full dd=u(%0/_%1)
+&_at_least dd=gte(add(u(_value, %0, %1), %3), %2)
+&_at_least_all dd=land(iter(%1, u(_at_least, %0, first(%i0, :), rest(%i0, :))))
+&_at_least_one dd=lor(iter(%1, u(_at_least, %0, first(%i0, :), rest(%i0, :))))
+&_at_least_stat dd=localize([setq(t, trim(first(edit(%2, -, +-), +)))][setq(a, iter(rest(edit(edit(%2, -%b, -), -, %b+-), +), %i0, +))][u(_at_least, %0, %1, ladd([u(_value, %0, %qt)] %qa), %3)])
+&_at_most dd=lte(add(u(_value, %0, %1), %3), %2)
+&_at_most_all dd=land(iter(%1, u(_at_most, %0, first(%i0, :), rest(%i0, :))))
+&_at_most_one dd=lor(iter(%1, u(_at_most, %0, first(%i0, :), rest(%i0, :))))
+&_at_most_stat dd=localize([setq(t, trim(first(edit(%2, -, +-), +)))][setq(a, iter(rest(edit(edit(%2, -%b, -), -, %b+-), +), %i0, +))][u(_at_most, %0, %1, ladd([u(_value, %0, %qt)] %qa), %3)])
+&_is dd=strmatch(%2, u(_value, %0, %1))
+&_is_full dd=strmatch(%2, u(_value_full, %0, %1))
+&_is_not dd=not(u(_is, %0, %1, %2))
+&_is_one_of dd=t(match(%2, u(_value, %0, %1), .))
+&_is_none_of dd=not(u(_is_one_of, %0, %1, %2))
+&_has dd=t(u(_value, %0, %1))
+&_has_not dd=not(u(_value, %0, %1))
+&_has_one_of dd=lor(iter(%1, u(_has, %0, %i0)))
+&_has_all_of dd=land(iter(%1, u(_has, %0, %i0)))
+&_has_none_of dd=not(u(_has_one_of, %0, %1))
+&_min_of dd=min(u(_value, %0, first(%1)), if(dec(words(rest(%1))), u(_min_of, %0, rest(%1)), u(_value, %0, rest(%1))))
+&_max_of dd=max(u(_value, %0, first(%1)), if(dec(words(rest(%1))), u(_max_of, %0, rest(%1)), u(_value, %0, rest(%1))))
+&_rites_check dd=lt(%1, u(_value, %0, merit.rites))
+&_gifts_check dd=lte(%1, u(_max_of, %0, iter(lattr(%0/_renown.*), trim(%i0, b, _))))
+&_renown_check dd=localize([setq(a, rest(first(grepi(%!, tags.renown.*, u(_value, %0, bio.auspice))), .))][setq(t, rest(first(grepi(%!, tags.renown.*, u(_value, %0, bio.tribe))), .))][setq(m, max(add(u(_value, %0, %qa), if(strmatch(%qa, %1), %2, 0)), add(u(_value, %0, %qt), if(strmatch(%qt, %1), %2, 0))))][u(_at_most, %0, %1, %qm, %2)])
+&_max_trait dd=max(5, u(_value, %0, case(last(u(dd/_value_full, num(eric r), bio.template), .),Changeling, advantage.wyrd, Werewolf, advantage.primal_urge,  Vampire, advantage.blood_potency,  Promethean, advantage.azoth,  Mage, advantage.gnosis,  Geist, advantage.psyche, Skinthief, advantage.supernatural_tolerance)))
+&_trait_check dd=u(_at_most, %0, %1, u(_max_trait, %0), %2)
+
+
+@@ =============================================================================
+@@ == CORE WOD =================================================================
+
+@@ -- CORE ATTRIBUTES ----------------------------------------------------
+
+&attribute.intelligence DD=1.2.3.4.5.6.7.8.9.10
+&attribute.wits DD=1.2.3.4.5.6.7.8.9.10
+&attribute.resolve DD=1.2.3.4.5.6.7.8.9.10
+
+&attribute.strength DD=1.2.3.4.5.6.7.8.9.10
+&attribute.dexterity DD=1.2.3.4.5.6.7.8.9.10
+&attribute.stamina DD=1.2.3.4.5.6.7.8.9.10
+
+&attribute.presence DD=1.2.3.4.5.6.7.8.9.10
+&attribute.manipulation DD=1.2.3.4.5.6.7.8.9.10
+&attribute.composure DD=1.2.3.4.5.6.7.8.9.10
+
+@@ -- tags --
+
+&tags.attribute.intelligence DD=mental.power
+&tags.attribute.wits DD=mental.finesse
+&tags.attribute.resolve DD=mental.resistance
+
+&tags.attribute.strength DD=physical.power
+&tags.attribute.dexterity DD=physical.finesse
+&tags.attribute.stamina DD=physical.resistance
+
+&tags.attribute.presence DD=social.power
+&tags.attribute.manipulation DD=social.finesse
+&tags.attribute.composure DD=social.resistance
+
+
+@@ -- defaults --
+
+&default.attribute.intelligence DD=1
+&default.attribute.wits DD=1
+&default.attribute.resolve DD=1
+
+&default.attribute.strength DD=1
+&default.attribute.dexterity DD=1
+&default.attribute.stamina DD=1
+
+&default.attribute.presence DD=1
+&default.attribute.manipulation DD=1
+&default.attribute.composure DD=1
+
+
+@@ -- prereqs for power level --
+
+&prerequisite.attribute.intelligence DD=u(_trait_check, %0, attribute.intelligence, %2)
+&prereq-text.attribute.intelligence DD=Limited by power level stat
+
+&prerequisite.attribute.wits DD=u(_trait_check, %0, attribute.wits, %2)
+&prereq-text.attribute.wits DD=Limited by power level stat
+
+&prerequisite.attribute.resolve DD=u(_trait_check, %0, attribute.resolve, %2)
+&prereq-text.attribute.resolve DD=Limited by power level stat
+
+
+&prerequisite.attribute.strength DD=u(_trait_check, %0, attribute.strength, %2)
+&prereq-text.attribute.strength DD=Limited by power level stat
+
+&prerequisite.attribute.dexterity DD=u(_trait_check, %0, attribute.dexterity, %2)
+&prereq-text.attribute.dexterity DD=Limited by power level stat
+
+&prerequisite.attribute.stamina DD=u(_trait_check, %0, attribute.stamina, %2)
+&prereq-text.attribute.stamina DD=Limited by power level stat
+
+
+&prerequisite.attribute.presence DD=u(_trait_check, %0, attribute.presence, %2)
+&prereq-text.attribute.presence DD=Limited by power level stat
+
+&prerequisite.attribute.manipulation DD=u(_trait_check, %0, attribute.manipulation, %2)
+&prereq-text.attribute.manipulation DD=Limited by power level stat
+
+&prerequisite.attribute.composure DD=u(_trait_check, %0, attribute.composure, %2)
+&prereq-text.attribute.composure DD=Limited by power level stat
+
+
+
+@@ -- CORE SKILLS ----------------------------------------------------
+
+&skill.academics DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.computer DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.crafts DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.investigation DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.medicine DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.occult DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.politics DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.science DD=1.2.3.4.5.6.7.8.9.10|*
+
+&tags.skill.academics DD=mental
+&tags.skill.computer DD=mental
+&tags.skill.crafts DD=mental
+&tags.skill.investigation DD=mental
+&tags.skill.medicine DD=mental
+&tags.skill.occult DD=mental
+&tags.skill.politics DD=mental
+&tags.skill.science DD=mental
+
+&prerequisite.skill.academics DD=u(_trait_check, %0, skill.academics, %2)
+&prereq-text.skill.academics DD=Limited by power level stat
+&prerequisite.skill.computer DD=u(_trait_check, %0, skill.computer, %2)
+&prereq-text.skill.computer DD=Limited by power level stat
+&prerequisite.skill.crafts DD=u(_trait_check, %0, skill.crafts, %2)
+&prereq-text.skill.crafts DD=Limited by power level stat
+&prerequisite.skill.investigation DD=u(_trait_check, %0, skill.investigation, %2)
+&prereq-text.skill.investigation DD=Limited by power level stat
+&prerequisite.skill.medicine DD=u(_trait_check, %0, skill.medicine, %2)
+&prereq-text.skill.medicine DD=Limited by power level stat
+&prerequisite.skill.occult DD=u(_trait_check, %0, skill.occult, %2)
+&prereq-text.skill.occult DD=Limited by power level stat
+&prerequisite.skill.politics DD=u(_trait_check, %0, skill.politics, %2)
+&prereq-text.skill.politics DD=Limited by power level stat
+&prerequisite.skill.science DD=u(_trait_check, %0, skill.science, %2)
+&prereq-text.skill.science DD=Limited by power level stat
+
+
+&skill.athletics DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.brawl DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.drive DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.firearms DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.larceny DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.stealth DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.survival DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.weaponry DD=1.2.3.4.5.6.7.8.9.10|*
+
+&tags.skill.athletics DD=physical
+&tags.skill.brawl DD=physical
+&tags.skill.drive DD=physical
+&tags.skill.firearms DD=physical
+&tags.skill.larceny DD=physical
+&tags.skill.stealth DD=physical
+&tags.skill.survival DD=physical
+&tags.skill.weaponry DD=physical
+
+&prerequisite.skill.athletics DD=u(_trait_check, %0, skill.athletics, %2)
+&prereq-text.skill.athletics DD=Limited by power level stat
+&prerequisite.skill.brawl DD=u(_trait_check, %0, skill.brawl, %2)
+&prereq-text.skill.brawl DD=Limited by power level stat
+&prerequisite.skill.drive DD=u(_trait_check, %0, skill.drive, %2)
+&prereq-text.skill.drive DD=Limited by power level stat
+&prerequisite.skill.firearms DD=u(_trait_check, %0, skill.firearms, %2)
+&prereq-text.skill.firearms DD=Limited by power level stat
+&prerequisite.skill.larceny DD=u(_trait_check, %0, skill.larceny, %2)
+&prereq-text.skill.larceny DD=Limited by power level stat
+&prerequisite.skill.stealth DD=u(_trait_check, %0, skill.stealth, %2)
+&prereq-text.skill.stealth DD=Limited by power level stat
+&prerequisite.skill.survival DD=u(_trait_check, %0, skill.survival, %2)
+&prereq-text.skill.survival DD=Limited by power level stat
+&prerequisite.skill.weaponry DD=u(_trait_check, %0, skill.weaponry, %2)
+&prereq-text.skill.weaponry DD=Limited by power level stat
+
+
+&skill.animal_ken DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.empathy DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.expression DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.intimidation DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.persuasion DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.socialize DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.streetwise DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.subterfuge DD=1.2.3.4.5.6.7.8.9.10|*
+
+&tags.skill.animal_ken DD=social
+&tags.skill.empathy DD=social
+&tags.skill.expression DD=social
+&tags.skill.intimidation DD=social
+&tags.skill.persuasion DD=social
+&tags.skill.socialize DD=social
+&tags.skill.streetwise DD=social
+&tags.skill.subterfuge DD=social
+
+&prerequisite.skill.animal_ken DD=u(_trait_check, %0, skill.animal_ken, %2)
+&prereq-text.skill.animal_ken DD=Limited by power level stat
+&prerequisite.skill.empathy DD=u(_trait_check, %0, skill.empathy, %2)
+&prereq-text.skill.empathy DD=Limited by power level stat
+&prerequisite.skill.expression DD=u(_trait_check, %0, skill.expression, %2)
+&prereq-text.skill.expression DD=Limited by power level stat
+&prerequisite.skill.intimidation DD=u(_trait_check, %0, skill.intimidation, %2)
+&prereq-text.skill.intimidation DD=Limited by power level stat
+&prerequisite.skill.persuasion DD=u(_trait_check, %0, skill.persuasion, %2)
+&prereq-text.skill.persuasion DD=Limited by power level stat
+&prerequisite.skill.socialize DD=u(_trait_check, %0, skill.socialize, %2)
+&prereq-text.skill.socialize DD=Limited by power level stat
+&prerequisite.skill.streetwise DD=u(_trait_check, %0, skill.streetwise, %2)
+&prereq-text.skill.streetwise DD=Limited by power level stat
+&prerequisite.skill.subterfuge DD=u(_trait_check, %0, skill.subterfuge, %2)
+&prereq-text.skill.subterfuge DD=Limited by power level stat
+
+
+@@ -- CORE MERITS ----------------------------------------------------
+
+@@ -- Mental Merits --
+
+&merit.common_sense DD=4
+&tags.merit.common_sense DD=chargen-only.mental
+
+&merit.danger_sense DD=2
+&tags.merit.danger_sense DD=mental
+
+&merit.eidetic_memory DD=2
+&tags.merit.eidetic_memory DD=chargen-only.mental
+
+&merit.encyclopedic_knowledge DD=4
+&tags.merit.encyclopedic_knowledge DD=chargen-only.mental
+
+&merit.holistic_awareness DD=3
+&tags.merit.holistic_awareness DD=mental
+
+&merit.language_() DD=1|*
+&tags.merit.language_() DD=mental
+
+&merit.meditative_mind DD=1
+&tags.merit.meditative_mind DD=mental
+
+&merit.unseen_sense_() DD=3|Wyrd.Twilight.Essence
+&tags.merit.unseen_sense_() DD=human.mental
+&prerequisite.merit.unseen_sense_() dd=u(_at_least, %0, attribute.wits, 2)
+&prereq-text.merit.unseen_sense_() DD=Wits 2+
+
+
+@@ -- Physical Merits --
+
+&merit.ambidextrous DD=3
+&tags.merit.ambidextrous DD=chargen-only.physical
+
+&merit.brawling_dodge DD=1
+&tags.merit.brawling_dodge DD=physical
+&prerequisite.merit.brawling_dodge DD=u(_at_least_all, %0, attribute.strength:2 skill.brawl:1)
+&prereq-text.merit.brawling_dodge DD=Strength 2+, Brawl 1+
+
+&merit.direction_sense DD=1
+&tags.merit.direction_sense DD=physical
+
+@@ combat option: http://darkwater-mux.net/index.php/Combat_Options#Disarm
+@@ &merit.disarm DD=2
+@@ &tags.merit.disarm DD=physical
+@@ &prerequisite.merit.disarm DD=u(_at_least_all, %0, attribute.dexterity:3 skill.weaponry:2)
+@@ &prereq-text.merit.disarm DD=Dexterity 3+ & Weaponry 2+
+
+&merit.fast_reflexes DD=1.2
+&tags.merit.fast_reflexes DD=physical
+&prerequisite.merit.fast_reflexes DD=u(_at_least, %0, attribute.dexterity, 3)
+&prereq-text.merit.fast_reflexes DD=Dexterity 3+
+
+&merit.fighting_finesse_() DD=2|*
+&tags.merit.fighting_finesse_() DD=physical
+&prerequisite.merit.fighting_finesse_() DD=u(_at_least_all, %0, attribute.dexterity:3 skill.weaponry:2)
+&prereq-text.merit.fighting_finesse_() DD=Dexterity 3+ & Weaponry 2+
+
+&merit.fleet_of_foot DD=1.2.3.4
+&tags.merit.fleet_of_foot DD=physical
+&prerequisite.merit.fleet_of_foot DD=u(_at_least, %0, attribute.strength, 2)
+&prereq-text.merit.fleet_of_foot DD=Strength 2+
+
+&merit.fresh_start DD=1
+&tags.merit.fresh_start DD=physical
+&prerequisite.merit.fresh_start DD=u(_at_least, %0, merit.fast_reflexes, 2)
+&prereq-text.merit.fresh_start DD=Fast Reflexes 2+
+
+&merit.giant DD=4
+&tags.merit.giant DD=chargen-only.physical
+
+@@ Gunslinger allows multiple attacks so is being removed.
+@@ &merit.gunslinger DD=3
+@@ &tags.merit.gunslinger DD=physical
+@@ &prerequisite.merit.gunslinger DD=u(_at_least_all, %0, attribute.dexterity:3 skill.firearms:3)
+@@ &prereq-text.merit.gunslinger DD=Dexterity 3+ & Firearms 3+
+
+&merit.iron_stamina DD=1.2.3
+&tags.merit.iron_stamina DD=physical
+&prerequisite.merit.iron_stamina DD=u(_at_least_one, %0, attribute.stamina:3 attribute.resolve:3)
+&prereq-text.merit.iron_stamina DD=Stamina 3+ or Resolve 3+
+
+&merit.iron_stomach DD=2
+&tags.merit.iron_stomach DD=physical
+&prerequisite.merit.iron_stomach DD=u(_at_least, %0, attribute.stamina, 2)
+&prereq-text.merit.iron_stomach DD=Stamina 2+
+
+&merit.natural_immunity DD=1
+&tags.merit.natural_immunity DD=physical
+&prerequisite.merit.natural_immunity DD=u(_at_least, %0, attribute.stamina, 2)
+&prereq-text.merit.natural_immunity DD=Stamina 2+
+
+@@ House Rule: Propelled (all propelled weapons) & Thrown (aero size 1 or less)
+&merit.quick_draw_() DD=1|Weaponry.Firearms.Propelled.Thrown
+&tags.merit.quick_draw_() DD=physical
+&prerequisite.merit.quick_draw_() DD=u(_at_least, %0, attribute.dexterity, 3)
+&prereq-text.merit.quick_draw_() DD=Dexterity 3+
+&notes.merit.quick_draw_() sr=See 'news quick draw'
+
+&merit.quick_healer DD=4
+&tags.merit.quick_healer DD=physical
+&prerequisite.merit.quick_healer DD=u(_at_least, %0, attribute.stamina, 4)
+&prereq-text.merit.quick_healer DD=Stamina 4+
+
+&merit.strong_back DD=1
+&tags.merit.strong_back DD=physical
+&prerequisite.merit.strong_back DD=u(_at_least, %0, attribute.strength, 2)
+&prereq-text.merit.strong_back DD=Strength 2+
+
+&merit.strong_lungs DD=3
+&tags.merit.strong_lungs DD=physical
+&prerequisite.merit.strong_lungs DD=u(_at_least, %0, skill.athletics, 3)
+&prereq-text.merit.strong_lungs DD=Athletics 3+
+
+&merit.stunt_driver DD=3
+&tags.merit.stunt_driver DD=physical
+&prerequisite.merit.stunt_driver DD=u(_at_least, %0, attribute.dexterity, 3)
+&prereq-text.merit.stunt_driver DD=Dexterity 3+
+
+&merit.toxin_resistance DD=2
+&tags.merit.toxin_resistance DD=physical
+&prerequisite.merit.toxin_resistance DD=u(_at_least, %0, attribute.stamina, 3)
+&prereq-text.merit.toxin_resistance DD=Stamina 3+
+
+&merit.weaponry_dodge DD=1
+&tags.merit.weaponry_dodge DD=physical
+&prerequisite.merit.weaponry_dodge DD=u(_at_least_all, %0, attribute.strength:2 skill.weaponry:1)
+&prereq-text.merit.weaponry_dodge DD=Strength 2+ & Weaponry 1+
+
+
+@@ -- Social Merits --
+
+&merit.allies_() DD=1.2.3.4.5|*
+&tags.merit.allies_() DD=social
+
+&merit.barfly DD=1
+&tags.merit.barfly DD=social
+
+&merit.contacts DD=1.2.3.4.5|*
+&tags.merit.contacts DD=social
+
+&merit.fame DD=1.2.3
+&tags.merit.fame DD=social
+
+&merit.inspiring DD=4
+&tags.merit.inspiring DD=social
+
+&merit.mentor_() DD=1.2.3.4|*
+&tags.merit.mentor_() DD=social
+
+&merit.resources DD=1.2.3.4.5
+&tags.merit.resources DD=social
+
+&merit.retainer_() DD=1.2.3.4.5|*
+&tags.merit.retainer_() DD=social
+
+&merit.status_() DD=1.2.3.4.5|*
+&tags.merit.status_() DD=social
+
+&merit.striking_looks DD=2.4
+&tags.merit.striking_looks DD=social
+
+
+@@ -- CORE ADVANTAGES ---------------------------------------------------------
+
+@@ "morality" is the, er, morality stat for humans
+&advantage.morality DD=1.2.3.4.5.6.7.8.9.10|*
+&default.advantage.morality DD=7
+&tags.advantage.morality dd=morality.human
+
+&advantage.willpower DD=[ladd([u(%0/_attribute.resolve)]. [u(%0/_attribute.composure)], .)]
+&tags.advantage.willpower DD=derived.pool
+&default.advantage.willpower DD=[u(#data_dictionary/advantage.willpower, %!)]
+
+&advantage.defense DD=[min(ladd(u(%0/_attribute.wits), .), ladd(u(%0/_attribute.dexterity), .))]
+&tags.advantage.defense DD=derived
+&default.advantage.defense DD=[u(#data_dictionary/advantage.defense, %!)]
+
+&advantage.size DD=[add(ladd(u(%0/_special.size), .), t(ladd(u(%0/_merit.giant), .)))]
+&tags.advantage.size DD=derived
+&default.advantage.size DD=[u(#data_dictionary/advantage.size, %!)]
+
+&advantage.speed DD=[ladd([u(%0/_attribute.strength)]. [u(%0/_attribute.dexterity)]. [u(%0/_special.species_factor)].  [u(%0/_merit.fleet_of_foot)], .)]
+&tags.advantage.speed DD=derived
+&default.advantage.speed DD=[u(#data_dictionary/advantage.speed, %!)]
+
+&advantage.initiative DD=[ladd([u(%0/_attribute.dexterity)]. [u(%0/_attribute.composure)]. [u(%0/_merit.fast_reflexes)], .)]
+&tags.advantage.initiative DD=derived
+&default.advantage.initiative DD=[u(#data_dictionary/advantage.initiative, %!)]
+
+&advantage.virtue DD=Charity.Faith.Fortitude.Hope.Justice.Prudence.Temperance
+
+&advantage.vice DD=Envy.Gluttony.Greed.Lust.Pride.Sloth.Wrath
+
+&bio.full_name DD=*
+&class.bio.full_name DD=string
+
+&bio.birthdate DD=*
+&class.bio.birthdate DD=string
+
+@@ &bio.apparent_birthdate DD=*
+
+&bio.template DD=Human
+&class.bio.template DD=list
+
+@@ -- CORE SPECIAL TYPES ------------------------------------------------------
+
+&special.xp DD=#
+@@ &default.special.xp DD=0.0
+@@ &default.special.xp DD=35.0
+&default.special.xp DD=128.0
+
+&special.size DD=#
+&default.special.size dd=5
+
+&special.species_factor DD=#
+&default.special.species_factor dd=5
+
+@@ -- HEALTH (BELONGS IN HEALTH SYSTEM WRITEUP) -------------------------------
+
+&health.maximum DD=[add(u(%0/_attribute.stamina), u(%0/_advantage.size))]
+&tags.health.maximum DD=derived
+&default.health.maximum DD=[u(#data_dictionary/health.maximum, %!)]
+
+&health.types DD=bashing lethal aggravated
+&health.bashing DD=#
+&health.lethal DD=#
+&health.aggravated DD=#
+
+&default.health.bashing DD=0
+&default.health.lethal DD=0
+&default.health.aggravated DD=0
+
+&health.damage DD=[ladd(iter(u(health.types), u(%0/_health.##)))]
+&tags.health.damage DD=derived
+&default.health.damage DD=[u(#data_dictionary/health.damage, %!)]
+
+&health.penalty DD=[min(0, ladd([u(%0/_health.maximum)] -[u(%0/_health.damage)] -3))]
+&tags.health.penalty DD=derived
+&default.health.penalty DD=[u(#data_dictionary/health.penalty, %!)]
+
+
+@@ =============================================================================
+@@ == ARMORY ===================================================================
+@@ -- MERITS: ARMORY -----------------------------------------------------------
+
+@fo me=&d.book-lookup #382=[get(#382/d.book-lookup)]|Arm.Armory
+
+@@ &merit.eod dd=4
+@@ eratta'd to 2 points
+&merit.eod dd=2
+&tags.merit.eod dd=mental
+&prerequisite.merit.eod dd=and(u(_at_least_one, %0, attribute.wits:3|attribute.dexterity:3), u(_at_least, %0, skill.crafts, 3), u(_has, %0, skill.crafts.demolitions))
+
+&prereq-text.merit.eod dd=Wits or Dex 3+, Crafts 3+, Demolitions specialty in Crafts
+
+&page.merit.eod #382=Arm.208
+
+&merit.technophile_() dd=1.2|*
+&tags.merit.technophile_() dd=mental
+
+&page.merit.technophile_() #382=Arm.208
+
+
+@@ =============================================================================
+@@ == MIDNIGHT ROADS ===========================================================
+@@ -- MERITS: MIDNIGHT ROADS ---------------------------------------------------
+
+@fo me=&d.book-lookup sr=[remove(get(sr/d.book-lookup), HR.House Rule, |)]|MR.Midnight Roads|HR.House Rule
+
+&merit.driver's_charm_() dd=1.2.3.4.5|*
+&page.merit.driver's_charm_() sr=MR.56
+&notes.merit.driver's_charm_() sr=Must be attuned to a vehicle, one per vehicle
+
+@@ Forbidden:
+@@ &merit.driving_style dd=1.2.3.4
+@@ &prerequisitemerit.driving_style dd=<<dex 3+, resolve 2+, drive 2+>>
+@@ &prereq-text.driving_style dd=Dexterity 3+, Resolve 2+, Drive 2+
+@@ &page.merit.driving_style sr=MR.56-57
+
+@@ Fighting Style: Improvised Weaponry, absolutely forbidden
+
+@@ Ingratiating Wanderer: Forbidden
+
+&merit.outdoorsman dd=2
+&tags.merit.outdoorsman dd=physical
+&prerequisite.merit.outdoorsman dd=u(_at_least, %0, skill.survival, 3)
+&prereq-text.merit.outdoorsman dd=Survival 3+
+&page.merit.outdoorsman sr=MR.59
+
+&merit.steady_driver dd=1
+&tags.merit.steady_driver dd=physical
+&prerequisite.merit.steady_driver dd=u(_at_least, %0, skill.drive, 2)
+&prereq-text.merit.steady_driver dd=Drive 2+
+&page.merit.steady_driver sr=MR.59
+
+&merit.wheelman dd=2
+&tags.merit.wheelman dd=physical
+&prerequisite.merit.wheelman dd=u(_at_least_all, %0, attribute.dexterity:2 skill.drive:2)
+&prereq-text.merit.wheelman dd=Dexterity 2+, Drive 2+
+&page.merit.wheelman sr=MR.59
+
+
+@@ =============================================================================
+@@ == CHANGELING CORE ==========================================================
+@@ -- BIO: CHANGELING CORE -----------------------------------------------------
+
+@fo me=&bio.template DD=[u(dd/bio.template)].Changeling
+
+&bio.seeming DD=Beast.Darkling.Elemental.Fairest.Ogre.Wizened
+&tags.bio.seeming DD=changeling
+&class.bio.seeming DD=string
+
+@@ For kith, it must be <primary>.<secondary>
+&bio.kith DD=*
+&tags.bio.kith DD=changeling
+&class.bio.kith DD=string
+
+&prerequisite.bio.kith dd=
+@@ we are setting list stats as any text stat, so %2 is always the new value
+@@ if no new value, check the old
+	t(
+		match(
+			u(special.kith.[u(_value, %0, bio.seeming)]), 
+			if(t(%2), first(%2, .), u(_value, %0, bio.kith)), 
+			.
+		)
+	)
+
+&prerequisite.bio.kith dd=t(match(u(special.kith.[u(_value, %0, bio.seeming)]), if(t(%2), first(%2, .), u(_value, %0, bio.kith)), .))
+
+&prereq-text.bio.kith dd=Kith must be allowed for Seeming or match Dual Kith or Wyrd Evolution.
+
+&bio.court DD=Spring.Summer.Autumn.Winter.Courtless
+&tags.bio.court DD=changeling
+&class.bio.court DD=string
+
+@@ Simple "Motley" below
+@@ &bio.motley DD=*
+@@ &tags.bio.motley DD=changeling.fae-touched
+@@ &class.bio.motley DD=string
+
+@@ +Faction-based Motley here:
+&bio.motley dd=[u(#2883/f.player.factions-of-type.names, %0, motley)]
+&tags.bio.motley DD=derived
+&default.bio.motley DD=[u(#data_dictionary/bio.motley, %!)]
+&class.bio.motley DD=string
+
+&page.bio.motley Stat Reference=CtL.188
+
+
+@@ We are pulling Entitlements as they become unoccupied
+@@ &bio.entitlement DD=Bishopric of Blackbirds.College of Worms.Duchy of the Icebound Heart.Magistrates of the Wax Mask.Margravate of the Brim.Sacred Band of the Golden Standard.Satrapy of Pearls.The Scarecrow Ministry.The Tolltaker Knighthood
+@@ &tags.bio.entitlement DD=changeling
+@@ &class.bio.entitlement DD=string
+
+-- Kith Lists --
+
+&special.kith.beast DD=Broadback.Hunterheart.Runnerswift.Skitterskulk.Steepscrambler.Swimmerskin.Venombite.Windwing.Kithless
+
+&special.kith.darkling DD=Antiquarian.Gravewright.Leechfinger.Mirrorskin.Tunnelgrub.Kithless
+
+&special.kith.elemental DD=Airtouched.Fireheart.Manikin.Snowskin.Waterborn.Woodblood.Kithless
+
+&special.kith.fairest DD=Bright One.Dancer.Draconic.Flowering.Muse.Kithless
+
+&special.kith.ogre DD=Cyclopean.Farwalker.Gargantuan.Gristlegrinder.Stonebones.Water Dweller.Kithless
+
+&special.kith.wizened DD=Artist.Chatelaine.Chirurgeon.Oracle.Smith.Soldier.Kithless
+
+-- "About" information for +sheet enhancements --
+
+about.<sheet statpath>.<value>=<info>[|<more info>]
+
+&about.bio.kith.Kithless Stat Reference=No benefits.
+&page.bio.kith.kithless Stat Reference=CtL.73
+
+&about.bio.seeming.Beast Stat Reference=Benefit: Spend Glamour to add to dice pools involving Presence and Composure.|Curse: Ð4 dice untrained penalty for Mental skills.
+&page.bio.seeming.Beast Stat Reference=CtL.100-103
+
+&about.bio.kith.Broadback Stat Reference=Stoic Forbearance: Spend one point of Glamour to add two to all dice pools involving Stamina, for the rest of the scene.
+&page.bio.kith.Broadback Stat Reference=CtL.102
+
+&about.bio.kith.Hunterheart Stat Reference=Tooth and Claw: Inflict lethal damage instead of bashing damage when fighting unarmed.
+&page.bio.kith.Hunterheart Stat Reference=CtL.102
+
+&about.bio.kith.Runnerswift Stat Reference=Runs Like the Wind: +2 to Speed.
+&page.bio.kith.Runnerswift Stat Reference=CtL.102
+
+&about.bio.kith.Skitterskulk Stat Reference=Impossible Counterpoise: When Dodging, the character triples her Defense Trait rather than doubling it.
+&page.bio.kith.Skitterskulk Stat Reference=CtL.102
+
+&about.bio.kith.Steepscrambler Stat Reference=Gifted Climber: +3 dice pool bonus when trying to climb any surface, and may attempt to climb even surfaces as slick as wet glass if they will support her weight.
+&page.bio.kith.Steepscambler Stat Reference=CtL.102
+
+&about.bio.kith.Swimmerskin Stat Reference=Natural Swimmer: Can hold breath underwater for thirty minutes, as if Stamina of 7. May also swim at his full Speed, as if running.
+&page.bio.kith.Swimmerskin Stat Reference=CtL.102
+
+&about.bio.kith.Venombite Stat Reference=Poisonous Bite: Once per scene, spend a point of Glamour and roll a normal brawling attack (Strength + Brawl Ð Defense
++ Armor). The attack causes no damage, but does deliver a lethal poison with a Toxicity equal to the changelingÕs Wyrd (Core p. 180). The victim canÕt avoid taking the damage with Stamina + Resolve.
+&page.bio.kith.Venombite Stat Reference=CtL.102-103
+
+&about.bio.kith.Windwing Stat Reference=Gift of the Sky: Spend a point of
+Glamour to glide in the air for up to one minute per point of Wyrd; may move
+at normal Speed. Falling damage is 1 bashing per 15 yards, lethal at 150 yards.
+&page.bio.kith.Windwing Stat Reference=CtL.103
+
+
+
+&about.bio.seeming.Darkling Stat Reference=
+
+&about.bio.seeming.Elemental Stat Reference=
+&about.bio.seeming.Fairest Stat Reference=
+&about.bio.seeming.Ogre Stat Reference=
+&about.bio.seeming.Wizened Stat Reference=
+
+@@ NOTE: "about" isn't being used for anything yet. It was an idea.
+
+
+@@ -- ADVANTAGE: CHANGELING CORE ----------------------------------------------
+
+@@ "wyrd" is the changeling power level stat
+@@ "glamour" is its energy stat
+@@ "clarity" is its morality stat
+
+&advantage.wyrd DD=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.wyrd DD=power level.changeling
+&default.advantage.wyrd DD=1
+
+@@ We have house-ruled that fae-touched get Glamour equal their Composure
+@@ &advantage.glamour DD=[if(match(u(%0/_bio.template), fae-touched, .), 1, extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.wyrd), .), 1))]
+&tags.advantage.glamour DD=derived.energy.changeling.fae-touched
+&default.advantage.glamour DD=[u(#data_dictionary/advantage.glamour, %!)]
+
+&advantage.glamour DD=[if(match(u(%0/_bio.template), fae-touched, .), ladd(u(%0/_attribute.composure), .), extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.wyrd), .), 1))]
+
+&advantage.clarity DD=1.2.3.4.5.6.7.8.9.10|*
+&tags.advantage.clarity DD=morality.changeling
+&default.advantage.clarity DD=7
+
+@@ Changes to Advantage: Speed
+&advantage.speed DD=[ladd([u(%0/_attribute.strength)]. [u(%0/_attribute.dexterity)]. [u(%0/_special.species_factor)]. [u(%0/_merit.fleet_of_foot)]. [mul(2, u(_list_has, %0, bio.kith, runnerswift))], .)]
+
+
+@@ -- MERIT: CHANGELING CORE -------------------------------------------------
+
+&merit.court_goodwill_() DD=1.2.3.4.5|Spring.Summer.Autumn.Winter
+@@ &tags.merit.court_goodwill_() DD=changeling
+@@ house rule: allow fae-touched to court goodwill
+&tags.merit.court_goodwill_() DD=changeling.fae-touched
+&prerequisite.merit.court_goodwill_() dd=u(_is_not, %0, bio.court, %1)
+&prereq-text.merit.court_goodwill_() dd=Goodwill must be different than Court
+
+@@ house-ruled: fae-touched may use hedge bounty
+&merit.harvest_() DD=1.2.3.4.5|Emotions.Pledges.Dreams.Hedge Bounty
+&tags.merit.harvest_() DD=changeling.fae-touched
+&prerequisite.merit.harvest_() DD=or(u(_is, %0, bio.template, changeling), strmatch(%1, Hedge_Bounty))
+&prereq-text.merit.harvest_() DD=Fae-Touched may only take Hedge Bounty
+
+
+@@ "proper" hollow, one main stat bought up 1+ and "spent" anywhere.
+@@ (specific spending spots max at 5)
+@@ &merit.hollow DD=#|*
+
+@@ Ours is: You can buy specific hollows and spend them.
+@@ house rule: may be taken by fae-touched minor template
+&merit.hollow_() DD=#|*|Size.Amenities.Doors.Wards
+&tags.merit.hollow_() DD=changeling.fae-touched.location
+
+&merit.mantle_() DD=1.2.3.4.5|Spring.Summer.Autumn.Winter
+&tags.merit.mantle_() DD=changeling
+@@ .. passed instance matches bio.court
+&prerequisite.merit.mantle_() dd=u(_is, %0, bio.court, %1)
+&prereq-text.merit.mantle_() dd=Mantle must match Court
+							
+&merit.new_identity_() DD=1.2.4|*
+&tags.merit.new_identity_() DD=social
+
+@@ house ruled: fae-touched template may take
+&merit.token DD=#|*
+&tags.merit.token DD=chargen-only.changeling.fae-touched.item
+&notes.merit.token sr=May also be bought with xp when off-grid in the horrors of Arcadia.
+
+&merit.lucid_dreaming DD=2
+&tags.merit.lucid_dreaming DD=Human.mental
+&prerequisite.merit.lucid_dreaming dd=u(_at_least, %0, attribute.resolve, 3)
+&prereq-text.merit.lucid_dreaming dd=Resolve 3+
+
+--
+
+(Kind of faking milestone merits here, 0xp cost so cannot be bought)
+
+&merit.milestone DD=Broken Mirror
+&tags.merit.milestone dd=Changeling
+&class.merit.milestone dd=list
+
+&page.merit.milestone sr=CtL.259
+&notes.merit.milestone sr=(This stat is not yet ready to be set.)
+
+
+@@ -- CONTRACTS: CHANGELING CORE -----------------------------------------------
+
+&contract.dream DD=1.2.3.4.5
+&tags.contract.dream DD=changeling.general
+
+&contract.hearth DD=1.2.3.4.5
+&tags.contract.hearth DD=changeling.general
+
+&contract.mirror DD=1.2.3.4.5
+&tags.contract.mirror DD=changeling.general
+
+&contract.smoke DD=1.2.3.4.5
+&tags.contract.smoke DD=changeling.general
+
+&contract.artifice DD=1.2.3.4.5
+&tags.contract.artifice DD=changeling.seeming.wizened.manikin
+
+&contract.elements_() DD=1.2.3.4.5|*
+&tags.contract.elements_() DD=changeling.seeming.elemental
+
+&contract.fang_and_talon_() DD=1.2.3.4.5|*
+&tags.contract.fang_and_talon_() DD=changeling.seeming.beast
+
+&contract.stone DD=1.2.3.4.5
+&tags.contract.stone DD=changeling.seeming.ogre
+
+&contract.vainglory DD=1.2.3.4.5
+&tags.contract.vainglory DD=changeling.seeming.fairest
+
+---
+
+>> all court contracts: 
+>> lvl <= mantle + 1 or goodwill - 1
+
+-- Spring --
+
+&contract.fleeting_spring DD=1.2.3.4.5
+&tags.contract.fleeting_spring DD=changeling.court.spring
+&prerequisite.contract.fleeting_spring dd=or(u(_at_most_stat, %0, contract.fleeting_spring, merit.mantle_(spring)+1, %2), u(_at_most_stat, %0, contract.fleeting_spring, merit.court_goodwill_(spring)-1, %2))
+
+&prereq-text.contract.fleeting_spring dd=No greater than Mantle (Spring) + 1 or Court Goodwill (Spring) - 1; lvl 1 always ok
+
+-
+
+&contract.eternal_spring DD=1.2.3.4.5
+&tags.contract.eternal_spring DD=changeling.court.spring
+&prerequisite.contract.eternal_spring dd=or(u(_at_most_stat, %0, contract.eternal_spring, merit.mantle_(spring)+1, %2), u(_at_most_stat, %0, contract.eternal_spring, merit.court_goodwill_(spring)-1, %2))
+
+&prereq-text.contract.eternal_spring dd=No greater than Mantle (Spring) + 1 or Court Goodwill (Spring) - 1; lvl 1 always ok
+
+-- Summer --
+
+&contract.fleeting_summer DD=1.2.3.4.5
+&tags.contract.fleeting_summer DD=changeling.court.summer
+&prerequisite.contract.fleeting_summer dd=or(u(_at_most_stat, %0, contract.fleeting_summer, merit.mantle_(summer)+1, %2), u(_at_most_stat, %0, contract.fleeting_summer, merit.court_goodwill_(summer)-1, %2))
+
+&prereq-text.contract.fleeting_summer dd=No greater than Mantle (Summer) + 1 or Court Goodwill (Summer) - 1; lvl 1 always ok
+
+-
+
+&contract.eternal_summer DD=1.2.3.4.5
+&tags.contract.eternal_summer DD=changeling.court.summer
+&prerequisite.contract.eternal_summer dd=or(u(_at_most_stat, %0, contract.eternal_summer, merit.mantle_(summer)+1, %2), u(_at_most_stat, %0, contract.eternal_summer, merit.court_goodwill_(summer)-1, %2))
+
+&prereq-text.contract.eternal_summer dd=No greater than Mantle (Summer) + 1 or Court Goodwill (Summer) - 1; lvl 1 always ok
+
+-- Autumn --
+
+&contract.fleeting_autumn DD=1.2.3.4.5
+&tags.contract.fleeting_autumn DD=changeling.court.autumn
+&prerequisite.contract.fleeting_autumn dd=or(u(_at_most_stat, %0, contract.fleeting_autumn, merit.mantle_(autumn)+1, %2), u(_at_most_stat, %0, contract.fleeting_autumn, merit.court_goodwill_(autumn)-1, %2))
+
+&prereq-text.contract.fleeting_autumn dd=No greater than Mantle (Autumn) + 1 or Court Goodwill (Autumn) - 1; lvl 1 always ok
+
+-
+
+&contract.eternal_autumn DD=1.2.3.4.5
+&tags.contract.eternal_autumn DD=changeling.court.autumn
+
+&prerequisite.contract.eternal_autumn dd=or(u(_at_most_stat, %0, contract.eternal_autumn, merit.mantle_(autumn)+1, %2), u(_at_most_stat, %0, contract.eternal_autumn, merit.court_goodwill_(autumn)-1, %2))
+
+&prereq-text.contract.eternal_autumn dd=No greater than Mantle (Autumn) + 1 or Court Goodwill (Autumn) - 1; lvl 1 always ok
+
+-- Winter --
+
+&contract.fleeting_winter DD=1.2.3.4.5
+&tags.contract.fleeting_winter DD=changeling.court.winter
+
+&prerequisite.contract.fleeting_winter dd=or(u(_at_most_stat, %0, contract.fleeting_winter, merit.mantle_(winter)+1, %2), u(_at_most_stat, %0, contract.fleeting_winter, merit.court_goodwill_(winter)-1, %2))
+
+&prereq-text.contract.fleeting_winter dd=No greater than Mantle (Winter) + 1 or Court Goodwill (Winter) - 1; lvl 1 always ok
+
+-
+
+&contract.eternal_winter DD=1.2.3.4.5
+&tags.contract.eternal_winter DD=changeling.court.winter
+
+&prerequisite.contract.eternal_winter dd=or(u(_at_most_stat, %0, contract.eternal_winter, merit.mantle_(winter)+1, %2), u(_at_most_stat, %0, contract.eternal_winter, merit.court_goodwill_(winter)-1, %2))
+
+&prereq-text.contract.eternal_winter dd=No greater than Mantle (Winter) + 1 or Court Goodwill (Winter) - 1; lvl 1 always ok
+
+
+@@ -- GOBLIN CONTRACTS: CHANGELING CORE ----------------------------------------
+
+&goblin_contract.trading_luck_for_fate DD=1
+&tags.goblin_contract.trading_luck_for_fate DD=changeling.goblin
+
+&goblin_contract.shooter's_bargain DD=1
+&tags.goblin_contract.shooter's_bargain DD=changeling.goblin
+
+&goblin_contract.diviner's_madness DD=2
+&tags.goblin_contract.diviner's_madness DD=changeling.goblin
+
+&goblin_contract.fair_entrance DD=2
+&tags.goblin_contract.fair_entrance DD=changeling.goblin
+
+&goblin_contract.fool's_gold DD=2
+&tags.goblin_contract.fool's_gold DD=changeling.goblin
+
+&goblin_contract.burden_of_life DD=3
+&tags.goblin_contract.burden_of_life DD=changeling.goblin
+
+&goblin_contract.delayed_harm DD=3
+&tags.goblin_contract.delayed_harm DD=changeling.goblin
+
+&goblin_contract.good_and_bad_luck DD=4
+&tags.goblin_contract.good_and_bad_luck DD=changeling.goblin
+
+&goblin_contract.call_the_hunt DD=5
+&tags.goblin_contract.call_the_hunt DD=changeling.goblin
+
+
+@@ =============================================================================
+@@ == CHANGELING: WINTER MASQUES ===============================================
+@@ -- BIO: WINTER MASQUES ------------------------------------------------------
+
+@fo me=&special.kith.beast DD=[setunion(u(dd/special.kith.beast), Cleareyes.Coldscale.Roteater.Truefriend.Windwing, .)]
+
+@fo me=&special.kith.darkling DD=[setunion(u(dd/special.kith.darkling), Lurkglider.Moonborn.Nightsinger.Palewraith.Razorhand.Whisperwisp, .)]
+
+@@ Levinquick was removed because it was too similar to Airtouched
+@@ @fo me=&special.kith.elemental DD=[setunion(u(dd/special.kith.elemental), Blightbent.Earthbones.Levinquick.Metalflesh.Sandharrowed, .)]
+
+@fo me=&special.kith.elemental DD=[setunion(u(dd/special.kith.elemental), Blightbent.Earthbones.Metalflesh.Sandharrowed, .)]
+
+@fo me=&special.kith.fairest DD=[setunion(u(dd/special.kith.fairest), Flamesiren.Polychromatic.Shadowsoul.Telluric.Treasured, .)]
+
+@fo me=&special.kith.ogre DD=[setunion(u(dd/special.kith.ogre), Bloodbrute.Corpsegrinder.Render.Witchtooth, .)]
+
+@fo me=&special.kith.wizened DD=[setunion(u(dd/special.kith.wizened), Author.Brewer.Drudge.Gameplayer.Kithless.Miner.Woodwalker, .)]
+
+
+@@ -- CONTRACTS: WINTER MASQUES ----------------------------------------------
+
+&contract.animation DD=1.2.3.4.5
+&tags.contract.animation DD=changeling.seeming.wizened
+
+&contract.communion_() DD=1.2.3.4.5|*
+&tags.contract.communion_() DD=changeling.seeming.elemental
+
+&contract.darkness DD=1.2.3.4.5
+&tags.contract.darkness DD=changeling.seeming.darkling
+
+&contract.den DD=1.2.3.4.5
+&tags.contract.den DD=changeling.seeming.beast
+
+&contract.oath_and_punishment DD=1.2.3.4.5
+&tags.contract.oath_and_punishment DD=changeling.seeming.ogre
+
+&contract.separation DD=1.2.3.4.5
+&tags.contract.separation DD=changeling.seeming.fairest
+
+&contract.shade_and_spirit DD=1.2.3.4.5
+&tags.contract.shade_and_spirit DD=changeling.seeming.darkling
+
+
+@@ -- CONTRACT UPDATES: WINTER MASQUES ---------------------------------------
+
+@fo me=&tags.contract.darkness DD=[get(dd/tags.contract.darkness)].shadowsoul
+
+
+@@ -- BIO: CULTURAL KITHS ----------------------------------------------------
+@@ -- use this on a case-by-case basis.  just edit out the name you don't like
+
+@@ Chimera.Coyote.Nix -- denied: Nix
+@fo me=&special.kith.beast DD=[setunion(u(dd/special.kith.beast), Coyote, .)]
+
+@@ Illes.Pishacha.Skogsra -- none added yet
+@@ @fo me=&special.kith.darkling DD=[setunion(u(dd/special.kith.darkling), Illes.Pishacha.Skogsra, .)]
+
+@@ Apsaras.Ask-wee-da-eed.Di-cang
+@fo me=&special.kith.elemental DD=[setunion(u(dd/special.kith.elemental), Ask-wee-da-eed, .)]
+
+@@ Gandharva.Succubus.Incubus.Weisse Frau -- denied: Gandharva
+@fo me=&special.kith.fairest DD=[setunion(u(dd/special.kith.fairest), Succubus.Incubus.Weisse Frau, .)]
+
+@@ Daitya.Oni.Troll
+@fo me=&special.kith.ogre DD=[setunion(u(dd/special.kith.ogre), Daitya.Troll, .)]
+
+@@ Gremlin.Pamarindo.Thusser -- none aded yet
+@@ @fo me=&special.kith.wizened DD=[setunion(u(dd/special.kith.wizened), Gremlin.Pamarindo.Thusser, .)]
+
+&notes.bio.kith sr=Cultural kiths are approved on a character-by-character basis only. Denied kiths: Nix, Gandharva
+
+
+@@ =============================================================================
+@@ == CHANGELING: AUTUMN NIGHTMARES ============================================
+@@ -- MERITS: AUTUMN NIGHTMARES ------------------------------------------------
+
+&merit.hedge_beast_companion_() DD=1.2.3|*
+&tags.merit.hedge_beast_companion_() DD=changeling
+
+@@ -- MILESTONE MERITS: AUTUMN NIGHTMARES --------------------------------------
+
+@fo me=&merit.milestone dd=[setunion([get(dd/merit.milestone)], Bloodied Ground.Cuckoo's Egg.False Heart.Fetchbone.Shared Guilt, .)]
+
+@fo me=&page.merit.milestone sr=[get(sr/page.merit.milestone)] AN.103-104
+
+
+@@ -- TOKENS, FRUITS AND OTHERS: AUTUMN NIGHTMARES -----------------------------
+@@ These aren't stats, but I'm noting them here for now.
+@@ 
+@@ Token: Promise Stone (***) <p 13?>
+@@ Goblin Fruit: Hidefruit <p 59>
+@@ Token: Ashlight (***) <p 75>
+
+
+@@ =============================================================================
+@@ == CHANGELING: RITES OF SPRING ==============================================
+@@ -- BIO: RITES OF SPRING -----------------------------------------------------
+
+&bio.true_name DD=*
+&default.bio.true_name DD=same
+&type.bio.true_name DD=string
+
+&page.bio.true_name stat reference=RoS.22
+&notes.bio.true_name stat reference=If this is set to "same", the True Name is the same as the Full Name
+
+
+@@ -- MERITS: RITES OF SPRING --------------------------------------------------
+
+@@ &merit.arcadian_body_() DD=4|[iter(lattr(attribute.*), rest(itext(0), .), .)]
+@@ &tags.merit.arcadian_body_() DD=changeling.chargen-only
+@@ &prerequisite.merit.arcadian_body_() DD=gte(first(u(%0/_attribute.%1), .), 3)
+@@ &prerequisite.merit.arcadian_body_() DD=u(_at_least, %0, attribute.%1, 3)
+@@ &prereq-text.merit.arcadian_body_() dd=Attribute must be 3+
+
+@@ &merit.arcadian_metabolism DD=3
+@@ &tags.merit.arcadian_metabolism DD=changeling
+@@	doubles healing from goblin fruit or 1 agg, -1 to medicine on this person
+
+&merit.archive_() DD=1.2.3.4.5|*|*
+&tags.merit.archive_() DD=changeling.fae-touched
+&prerequisite.merit.archive_() DD=u(_at_least, %0, merit.hollow_%(%1%).size, 1)
+&prereq-text.merit.archive_() dd=Hollow's Size 1+
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.brownie's_boon DD=1
+&tags.merit.brownie's_boon DD=changeling.fae-touched
+@@ stacks with the drudge's kith blessing
+
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.charmed_life DD=2
+@@ &tags.merit.charmed_life DD=changeling
+&tags.merit.charmed_life DD=changeling.fae-touched
+
+
+&merit.dual_kith_() DD=2.3|*
+&tags.merit.dual_kith_() DD=changeling.chargen-only
+@@	Pre-Req: Chargen-Only, don't already have it.
+
+&prerequisite.merit.dual_kith_() DD=
+	and(
+@@ .. not Kithless, not the primary Kith
+		u(_is_none_of, %0, bio.kith, %1.Kithless), 
+
+@@ .. doesn't already have Dual Kith (of a different kith)
+		strmatch(
+			setdiff(
+				lattr(%0/_merit.dual_kith_(*)), 
+				ucstr(_merit.dual_kith_(%1))
+			), 
+		), 
+
+@@ .. points?
+		switch(
+			add(%2, u(_value, %0, merit.dual_kith_(%1))), 
+@@ .. .. "2-point" must match seeming
+			2, 
+			match(
+				u(special.kith.[u(_value, %0, bio.seeming)]), 
+				edit(%1, _, %b), 
+				.
+			), 
+@@ .. .. "3-point" must match anything else
+			3, 
+			match(
+				iter(
+					setdiff(
+						lattr(%!/special.kith.*), 
+						ucstr(special.kith.seemingless special.kith.[u(_value, %0, bio.seeming)])
+					), 
+					u(%i0), 
+					, .
+				), 
+				edit(%1, _, %b), 
+				.
+			), 
+@@ .. .. "sum equals current value" means they're trying to unset; allow this
+			u(_value, %0, merit.dual_kith_(%1)), 
+			1, 
+@@ .. .. "else": return 0 for false
+			0
+		)
+	)
+
+&prerequisite.merit.dual_kith_() DD=and(u(_is_none_of, %0, bio.kith, %1.Kithless), strmatch(setdiff(lattr(%0/_merit.dual_kith_(*)), ucstr(_merit.dual_kith_(%1))), ), switch(add(%2, u(_value, %0, merit.dual_kith_(%1))), 2, match(u(special.kith.[u(_value, %0, bio.seeming)]), edit(%1, _, %b), .), 3, match(iter(setdiff(lattr(%!/special.kith.*), ucstr(special.kith.seemingless special.kith.[u(_value, %0, bio.seeming)])), u(%i0), , .), edit(%1, _, %b), .), u(_value, %0, merit.dual_kith_(%1)), 1, 0))
+
+&prereq-text.merit.dual_kith_() DD=Different than main kith, 2-point version must be a Seeming kith, 3-point version may not be
+
+@@ We need to add to the bio.kith prerequisite, too.  Mostly re-adding it.
+
+&prerequisite.bio.kith dd=
+@@ (if no new value, check the old)
+	[setq(k, edit(if(t(%2), %2, u(_value_full, %0, bio.kith)), %b, _))]
+	[and(
+@@ we are setting list stats as any text stat, so %2 is always the new value
+		t(
+			match(
+				u(special.kith.[u(_value, %0, bio.seeming)]), 
+				first(%qk, .), 
+				.
+			)
+		), 
+@@ if there's a second, it /must/ match dual kith's instance
+		or(
+			not(strlen(rest(%qk, .))), 
+			u(_has, %0, merit.dual_kith_%([rest(%qk, .)]%))
+		)
+	)]
+
+&prerequisite.bio.kith dd=[setq(k, edit(if(t(%2), %2, u(_value_full, %0, bio.kith)), %b, _))][and(t(match(u(special.kith.[u(_value, %0, bio.seeming)]), first(%qk, .), .)), or(not(strlen(rest(%qk, .))), u(_has, %0, merit.dual_kith_%([rest(%qk, .)]%))))]
+
+@fo me=&prereq-text.bio.kith dd=[get(dd/prereq-text.bio.kith)], second kith must match Dual Kith.
+
+
+@@ Following code in case we need it:
+@@	2 points = In-Seeming
+@@	  [setdiff(u(special.kith.[u(%0/_bio.seeming)]), [u(%0/_special.kith)].Kithless, .)]
+@@	3 points = Out-of-Seeming
+@@	  [setdiff(
+@@		iter(lattr(special.kith.*), u(%i0), , .),
+@@		u(special.kith.[u(%0/_bio.seeming)]), 
+@@		.
+@@	  )]
+
+@@ -- HOUSE RULE(ish) --
+
+&merit.wyrd_evolution dd=1.2
+&tags.merit.wyrd_evolution dd=changeling
+
+&prerequisite.merit.wyrd_evolution dd=or(not(lattr(%0/_merit.dual_kith*)), case(add(%2, u(_value, %0, merit.wyrd_evolution)), 1, u(_at_least, %0, advantage.wyrd, 5), 2, u(_at_least, %0, advantage.wyrd, 9)))
+
+&prereq-text.merit.wyrd_evolution dd=No Dual Kith, 1-dot at Wyrd 5+, 2-dots at Wyrd 9+
+
+&page.merit.wyrd_evolution sr=wm.98
+&notes.merit.wyrd_evolution sr=Each level evolves the changeling with a new kith
+
+
+&merit.enchanting_performance DD=4
+&tags.merit.enchanting_performance DD=changeling
+&prerequisite.merit.enchanting_performance DD=u(_at_least, %0, skill.expression, 3)
+&prereq-text.merit.enchanting_performance dd=Expression 3+
+
+&merit.fae_mount DD=1.2.3.5
+&tags.merit.fae_mount DD=changeling
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.faerie_favor DD=3
+&tags.merit.faerie_favor DD=changeling.fae-touched
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.faerie_healing DD=2
+&tags.merit.faerie_healing DD=changeling.fae-touched
+
+@@ Fighting Styles
+
+&merit.gentrified_bearing DD=4
+&tags.merit.gentrified_bearing DD=changeling
+&prerequisite.merit.gentrified_bearing DD=u(_at_least, %0, advantage.wyrd, 3)
+&prereq-text.merit.gentrified_bearing dd=Wyrd 3+
+
+&merit.goblin_vow DD=1.2.3.4.5|*
+@@ &merit.goblin_vow DD=1.2.3.4.5|Darkness
+
+&tags.merit.goblin_vow DD=changeling
+@@ Pledges to specific things with +1 punishment, Page 38
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.hedge_gate_sense DD=1
+&tags.merit.hedge_gate_sense DD=changeling.fae-touched
+
+&merit.hidden_life DD=1.2.3
+&tags.merit.hidden_life DD=changeling
+&prerequisite.merit.hidden_life DD=and(u(_has_not, %0, merit.fame), u(_at_most_stat, %0, merit.hidden_life, advantage.wyrd, %2))
+&prereq-text.merit.hidden_life dd=No Fame & Hidden Life <= Wyrd
+@@ alter fame to match
+&prerequisite.merit.fame DD=u(_has_not, %0, merit.hidden_life)
+&prereq-text.merit.fame dd=No Hidden Life
+
+&merit.hob_kin DD=2
+&tags.merit.hob_kin DD=changeling
+&prerequisite.merit.hob_kin DD=t(lattr(%0/_merit.hollow_%(*%).size))
+&prereq-text.merit.hob_kin dd=Any Hollow Size 1+
+
+&merit.hobgoblin_trainer DD=2
+&tags.merit.hobgoblin_trainer DD=changeling
+
+&merit.lethal_mien DD=2
+&tags.merit.lethal_mien DD=changeling
+&prerequisite.merit.lethal_mien DD=u(_at_least, %0, advantage.wyrd, 3)
+&prereq-text.merit.lethal_mien dd=Wyrd 3+
+
+&merit.long_of_days DD=2
+&tags.merit.long_of_days DD=changeling
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.market_sense DD=1
+&tags.merit.market_sense DD=changeling.fae-touched
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.perfect_stillness DD=1
+&tags.merit.perfect_stillness DD=changeling.fae-touched
+&prerequisite.merit.perfect_stillness DD=u(_at_least, %0, skill.stealth, 1)
+&prereq-text.merit.perfect_stillness dd=Stealth 1+
+
+@@ &merit.pledgesmith DD=1.2.3
+@@ &tags.merit.pledgesmith DD=changeling
+
+&merit.prophet_circle DD=1.2.3.4.5
+&tags.merit.prophet_circle DD=changeling
+@@ >> subtracts from number of pledges possible, 
+@@ >> so can't be bought up above number of free pledges
+
+
+@@ house rule: may be taken by fae-touched minor template, w/fae_seeming
+&merit.rigid_mask DD=2
+&tags.merit.rigid_mask DD=changeling.fae-touched
+&prerequisite.merit.rigid_mask DD=and(u(_at_least, %0, skill.subterfuge, 2), or(not(u(_is_full, %0, bio.template, human.fae-touched)), u(_has, %0, merit.fae_seeming)))
+&prereq-text.merit.rigid_mask dd=Subterfuge 2+, if Fae-Touched must also have Fae Seeming
+
+&merit.ritual_doorway_() DD=3|*
+&tags.merit.ritual_doorway_() DD=changeling
+@@ >> Hollow (<place>).doors = 5+
+&prerequisite.merit.ritual_doorway_() DD=u(_at_least, %0, merit.hollow_%(%1%).doors, 5)
+&prereq-text.merit.ritual_doorway_() dd=Hollow's Doors 5
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.siren_song DD=3
+&tags.merit.siren_song DD=changeling.fae-touched
+
+&merit.soul_sense DD=2
+&tags.merit.soul_sense DD=changeling
+@@ >> A LIVING FETCH
+&prereq-text.merit.soul_sense dd=A living Fetch.
+
+&merit.visionary_dreams DD=2
+&tags.merit.visionary_dreams DD=changeling
+@@ >> Wyrd = 3+
+&prerequisite.merit.visionary_dreams DD=u(_at_least, %0, advantage.wyrd, 3)
+&prereq-text.merit.visionary_dreams dd=Wyrd 3+
+
+&merit.wisdom_of_dreams DD=3
+&tags.merit.wisdom_of_dreams DD=changeling
+@@ >> Wyrd = 2+
+&prerequisite.merit.wisdom_of_dreams DD=u(_at_least, %0, advantage.wyrd, 2)
+&prereq-text.merit.wisdom_of_dreams dd=Wyrd 2+
+
+@@ house rule: may be taken by fae-touched minor template
+&merit.workshop_() DD=1.2.3.4.5|*|*
+&tags.merit.workshop_() DD=changeling.fae-touched
+@@ >> Workshop (<place>) <= Hollow (<place>).size - after buying
+&prerequisite.merit.workshop_() DD=u(_at_most_stat, %0, merit.workshop_(%1), merit.hollow_(%1).size, %2)
+&prereq-text.merit.workshop_() dd=Workshop is <= its Size
+
+@@ On hold until we decide the difference between Tokens and Hedgespun
+@@ &merit.token_maker DD=2
+
+
+@@ -- CONTRACTS: RITES OF SPRING -----------------------------------------------
+
+&contract.forge DD=1.2.3.4.5
+&tags.contract.forge DD=changeling.seeming.wizened
+
+&contract.hours DD=1.2.3.4.5
+&tags.contract.hours DD=changeling.general
+
+&contract.moon DD=1.2.3.4.5
+&tags.contract.moon DD=changeling.general
+
+&contract.omen DD=1.2.3.4.5
+&tags.contract.omen DD=changeling.general
+
+&contract.wild DD=1.2.3.4.5
+&tags.contract.wild DD=changeling.seeming.beast.elemental
+
+
+@@ -- GOBLIN CONTRACTS: RITES OF SPRING ----------------------------------------
+
+&goblin_contract.sight_of_truth_and_lies DD=1
+&tags.goblin_contract.sight_of_truth_and_lies DD=changeling.goblin
+
+&goblin_contract.calling_the_guardian DD=2
+&tags.goblin_contract.calling_the_guardian DD=changeling.goblin
+
+&goblin_contract.the_blessing_of_forgetfulness DD=3
+&tags.goblin_contract.the_blessing_of_forgetfulness DD=changeling.goblin
+
+@@ &goblin_contract.goblin_oath DD=4
+@@ &tags.goblin_contract.goblin_oath DD=changeling.goblin
+
+&goblin_contract.bloodbinding DD=5
+&tags.goblin_contract.bloodbinding DD=changeling.goblin
+
+
+@@ -- Goblin Contracts of Sacrifice: Fortune
+
+&goblin_contract.fortune's_favor DD=1
+&tags.goblin_contract.fortune's_favor DD=changeling.goblin.sacrifice.fortune
+
+&goblin_contract.fortune's_swift_blessing DD=2
+&tags.goblin_contract.fortune's_swift_blessing DD=changeling.goblin.sacrifice.fortune
+
+&goblin_contract.fortune's_bane DD=3
+&tags.goblin_contract.fortune's_bane DD=changeling.goblin.sacrifice.fortune
+
+&goblin_contract.distracting_the_hounds DD=4
+&tags.goblin_contract.distracting_the_hounds DD=changeling.goblin.sacrifice.fortune
+
+&goblin_contract.recalling_the_lost DD=5
+&tags.goblin_contract.recalling_the_lost DD=changeling.goblin.sacrifice.fortune
+
+
+@@ -- Goblin Contracts of Sacrifice: Transformation
+
+&goblin_contract.healing_sacrifice DD=1
+&tags.goblin_contract.healing_sacrifice DD=changeling.goblin.sacrifice.transformation
+
+&goblin_contract.seven_year_gift DD=2
+&tags.goblin_contract.seven_year_gift DD=changeling.goblin.sacrifice.transformation
+
+@@ HR: Not using
+@@ &goblin_contract.trading_beauty_for_love DD=3
+@@ &tags.goblin_contract.trading_beauty_for_love DD=changeling.goblin.sacrifice.transformation
+
+&goblin_contract.changing_minds DD=4
+&tags.goblin_contract.changing_minds DD=changeling.goblin.sacrifice.transformation
+
+@@ HR: Not using
+@@ &goblin_contract.the_fatal_transformation DD=5
+@@ &tags.goblin_contract.the_fatal_transformation DD=changeling.goblin.sacrifice.transformation
+
+
+@@ -- GOBLIN FRUIT: RITES OF SPRING --------------------------------------------
+
+Just a note that these are on page 131.
+
+
+@@ =============================================================================
+@@ == CHANGELING: LORDS OF SUMMER ==============================================
+@@ -- BIO: LORDS OF SUMMER -----------------------------------------------------
+
+@@ We're pulling unused entitlements
+@@ @fo me=&bio.entitlement DD=setunion(u(dd/bio.entitlement), Bodhisattvas of the Broken Cage.The Hound Tribunal.Magi of the Gilded Thorn.Knighthood of Utmost Silence.Ancient and Accepted Order of Bridgemasons.The Barony of the Lesser Ones.Court of the Solstice.The Duchy of Truth and Loss.The Eternal Echoes.The Guild of Goldspinners.Guild of the Sacred Journey.Knights of the Knowledge of the Tongue.Legacy of the Black Apple.The Lord Sages of the Unknown Reaches.The Lost Pantheon.The Order of the Oneirophysics, .)
+
+@fo me=&bio.entitlement dd=setunion(u(dd/bio.entitlement), Legacy of the Black Apple, .)
+
+
+@@ =============================================================================
+@@ == CHANGELING: THE EQUINOX ROAD =============================================
+@@ -- BIO: THE EQUINOX ROAD ----------------------------------------------------
+
+@fo me=&bio.template DD=[get(dd/bio.template)].Fae-Touched
+
+@@ We're pulling unused entitlements
+@@ @fo me=&bio.entitlement DD=setunion(get(dd/bio.entitlement), The Charmed Circle.Knights of the Widow's Walk.The Parlament of Victors.The Office of Vizieral Counsel, .)
+
+@@ Charmed Circle: 'True' leaders, no Merit boost, Friend or Foe for 1 month at a time, Torc kept.
+@@ Widow's Walk: NPC-only for now, review for PCs at more appropriate time
+@@ Viziers: Good as-is
+
+@@ We're pulling unused entitlements
+@@ @fo me=&bio.entitlement DD=setunion(get(dd/bio.entitlement), The Charmed Circle.The Parlament of Victors.The Office of Vizieral Counsel, .)
+
+
+
+@@ -- MERITS: THE EQUINOX ROAD -------------------------------------------------
+
+&merit.devotee_() DD=1.2.3.4.5|*
+&tags.merit.devotee_() DD=changeling
+@@ >> Wyrd = 7+
+&prerequisite.merit.devotee_() DD=u(_at_least, %0, advantage.wyrd, 7)
+&prereq-text.merit.devotee_() dd=Wyrd 7+
+
+&page.merit.devotee_() stat reference=er.14
+
+
+&merit.manymask DD=1.2.3.4.5|*
+&tags.merit.manymask DD=changeling
+@@ >> Wyrd = 7+
+&prerequisite.merit.manymask DD=u(_at_least, %0, advantage.wyrd, 7)
+&prereq-text.merit.manymask dd=Wyrd 7+
+
+&page.merit.manymask stat reference=er.14
+
+
+&merit.sublime DD=5
+&tags.merit.sublime DD=changeling
+@@ >> Wyrd = 9+
+&prerequisite.merit.sublime DD=u(_at_least, %0, advantage.wyrd, 9)
+&prereq-text.merit.sublime dd=Wyrd 9+
+
+&page.merit.sublime stat reference=er.14
+
+
+@@ >> No Tokenmaster: Too easy
+@@ &merit.tokenmaster DD=3
+@@ &tags.merit.tokenmaster DD=changeling
+@@ >> Wyrd = 9+
+@@ &prerequisite.merit.tokenmaster DD=u(_at_least, %0, advantage.wyrd, 9)
+@@ &prereq-text.merit.tokenmaster dd=Wyrd 9+
+
+
+@@ >> No Wyrdskill: Why Bother?
+@@ &merit.wyrdskill DD=5
+@@ &tags.merit.wyrdskill DD=changeling
+@@ >> Wyrd = 6+
+@@ &prerequisite.merit.wyrdskill DD=u(_is, %0, advantage.wyrd, 6)
+@@ &prereq-text.merit.wyrdskill dd=Wyrd 6 only 
+
+&merit.enchanted_mortal DD=2
+&tags.merit.enchanted_mortal DD=human.chargen-only
+@@ >> Be mortal, lost if you gain a supernatural template
+@@ >> (the "human" tag assures they have that template)
+&prerequisite.merit.enchanted_mortal dd=eq(words(u(_value.full, %0, bio.template)), 1)
+&prereq-text.merit.enchanted_mortal dd=No minor template.
+
+
+@@ LOOK CAREFULLY AT THE NEXT TWO MERITS
+
+@@ >> NO SEEMING (for changelings)
+&merit.no_seeming DD=2
+&tags.merit.no_seeming DD=changeling.chargen-only
+
+@@ .. will need a "seemingless" seeming with a single kith of "kithless"
+@fo me=&bio.seeming DD=[get(dd/bio.seeming)].Seemingless
+&special.kith.seemingless DD=Kithless
+
+@@ .. and to make "seemingless" seeming rely on the merit
+@@ &prerequisite.bio.seeming DD=or(u(_is_not, %0, bio.seeming, seemingless, %2), u(_has, %0, merit.no_seeming))
+@@ &prereq-text.bio.seeming DD=Needs "No Seeming" merit if Seemingless
+
+@@ page number and notes
+&page.merit.no_seeming sr=ER.107
+&notes.merit.no_seeming sr=Allows a Changeling to take the Seemingless seeming (and Kithless kith), looking vaguely fae but of no particular type.
+
+
+@@ >> FAE SEEMING (for fae-touched)
+&merit.fae_seeming DD=3
+&tags.merit.fae_seeming DD=fae-touched.chargen-only
+&tags.bio.seeming DD=changeling.fae-touched
+
+@@ .. (edit out below if using Fae Seeming and not No Seeming)
+@@ &prerequisite.bio.seeming DD=or(u(_has_not, %0, bio.seeming), u(_has, %0, merit.fae_seeming))
+@@ &prereq-text.bio.seeming DD=Fae Seeming merit if Fae-Touched
+
+@@ page number and notes
+&page.merit.fae_seeming sr=ER.107
+&notes.merit.fae_seeming sr=Allows a Fae-Touched to have a Seeming, but no kith. (Renamed from "Seeming" in the book.)
+
+
+@@ >> seeming prereq changes with both no_seeming and fae_seeming !!
+
+@@ If changeling: !"seemingless" or no_seeming
+@@ If !changeling: !seeming or !"seemingless" & fae_seeming
+@@
+@@ 	if(
+@@		<template:changeling>, 
+@@		or(
+@@			<seeming:!seemingless>, 
+@@			<merit:no_seeming>
+@@		), 
+@@		or(
+@@			<seeming:null>, 
+@@			and(
+@@				<seeming:!seemingless>, 
+@@				<merit:fae_seeming>
+@@			)
+@@		)
+@@	)
+
+
+&prerequisite.bio.seeming DD=
+	if(
+		u(_is_full, %0, bio.template, changeling), 
+		or(
+			u(_is_not, %0, bio.seeming, seemingless, %2), 
+			u(_has, %0, merit.no_seeming)
+		), 
+		or(
+			u(_has_not, %0, bio.seeming), 
+			and(
+				u(_is_not, %0, bio.seeming, seemingless, %2), 
+				u(_has, %0, merit.fae_seeming)
+			)
+		)
+	)
+
+
+&prereq-text.bio.seeming DD=Changelings may be Seemingless with the No Seeming merit, Fae-Touched may have any seeming but Seemingless with the Fae Seeming merit
+
+
+
+@@ -- CONTRACTS: THE EQUINOX ROAD ----------------------------------------------
+
+&contract.reflection DD=1.2.3.4.5
+&tags.contract.reflection DD=changeling.non-affinity
+&prereq-text.contract.reflection DD=
+
+&page.contract.reflection stat reference=er.34-38
+&notes.contract.reflection stat reference=Non-Affinity to all, due to it being created in recent times
+
+
+@@ =============================================================================
+@@ == CHANGELING: GRIM FEARS ===================================================
+@@ -- MERITS: GRIM FEARS -------------------------------------------------------
+
+@@ >>> Grim Fears has not been reviewed, but the kiths have been added <<<
+
+&merit.age_reversal DD=1
+&tags.merit.age_reversal DD=changeling
+@@ >> Pre-Req: Wyrd = 4+
+&prerequisite.merit.age_reversal DD=u(_at_least, advantage.wyrd, 4)
+&prereq-text.merit.age_reversal dd=Wyrd 4+
+
+@@ FIGHTING STYLE (SOCIAL MANEUVERS) IS DEFINITELY N/A
+
+
+@@ -- BIO: GRIM FEARS ---------------------------------------------------------
+
+@fo me=&special.kith.fairest DD=[setunion(u(dd/special.kith.fairest), Minstrel.Romancer.Larcenist.Playmate, .)]
+
+@fo me=&special.kith.beast DD=[setunion(u(dd/special.kith.beast), Riddleseeker, .)]
+
+
+@@ -- GOBLIN CONTRACTS: GRIM FEARS ---------------------------------------------
+
+&goblin_contract.grace_falsely_shed DD=3
+&tags.goblin_contract.grace_falsely_shed DD=changeling.goblin
+
+
+
+@@ =============================================================================
+@@ == CHANGELING: DANCERS IN THE DUSK ==========================================
+@@ -- GOBLIN CONTRACTS: DANCERS IN THE DUSK ------------------------------------
+
+@@ >> NO GOBLIN CONTRACTS
+
+&goblin_contract.mantle_mask DD=1
+&tags.goblin_contract.mantle_mask DD=changeling.goblin.wyrd
+
+&goblin_contract.daunting_force DD=2
+&tags.goblin_contract.daunting_force DD=changeling.goblin.wyrd
+
+&goblin_contract.nothing_hidden DD=3
+&tags.goblin_contract.nothing_hidden DD=changeling.goblin.wyrd
+
+&goblin_contract.wyrd's_eye DD=4
+&tags.goblin_contract.wyrd's_eye DD=changeling.goblin.wyrd
+
+&goblin_contract.the_fatal_clause DD=5
+&tags.goblin_contract.the_fatal_clause DD=changeling.goblin.wyrd
+
+@@ &page.goblin_contract.mantle_mask stat reference=DitD.65-66
+@@ &page.goblin_contract.daunting_force stat reference=DitD.66
+@@ &page.goblin_contract.nothing_hidden stat reference=DitD.66-67
+@@ &page.goblin_contract.wyrd's_eye stat reference=DitD.67
+@@ &page.goblin_contract.the_fatal_clause stat reference=DitD.67-68
+
+
+@@ -- CONTRACTS: DANCERS IN THE DUSK -------------------------------------------
+
+&contract.lucidity DD=1.2.3.4.5
+&tags.contract.lucidity DD=changeling.general
+
+&page.contract.lucidity stat reference=DitD.69-71
+&notes.contract.lucidity stat reference=Remember that using this contract may trigger a Clarity break.
+
+
+@@ No Entropy: We don't support the court
+@@ &contract.entropy DD=1.2.3.4.5
+@@ &tags.contract.entropy DD=changeling.court.dusk
+
+
+@@ -- MERITS: DANCERS IN THE DUSK ----------------------------------------------
+
+@@ >> No Token Limb: Don't care for it
+@@ &merit.token_limb_() DD=1.2.3.4.5|*|*
+@@ &tags.merit.token_limb DD=changeling
+@@	Instance is the placement of the thing, specialty is the clause
+@@	i.e.:
+@@	_merit.token_limb_(hand): 3
+@@	_merit.token_limb_(hand).mask: Mask 3: Blah Blah Blah
+
+
+@@ =============================================================================
+@@ == CHANGELING: SWORDS AT DAWN ===============================================
+@@ -- GOBLIN CONTRACTS: SWORDS AT DAWN -----------------------------------------
+
+&goblin_contract.mirror_mirror DD=3
+&tags.goblin_contract.mirror_mirror DD=changeling.goblin
+&page.goblin_contract.mirror_mirror sr=SaD.53
+
+&goblin_contract.royal_oil DD=4
+&tags.goblin_contract.royal_oil DD=changeling.goblin
+&page.goblin_contract.royal_oil sr=SaD.54
+
+&goblin_contract.goblin_ward DD=5
+&tags.goblin_contract.goblin_ward DD=changeling.goblin
+&page.goblin_contract.goblin_ward sr=SaD.54-55
+
+@@ No dream goblin contracts.  Just no.
+
+@@ -- CONTRACTS: SWORDS AT DAWN -------------------------------------------
+
+&contract.board DD=1.2.3.4.5
+&tags.contract.board DD=changeling.general
+&page.contract.board sr=SaD.46-49
+
+&contract.thorns_and_brambles DD=1.2.3.4.5
+&tags.contract.thorns_and_brambles DD=changeling.general
+&page.contract.thorns_and_brambles sr=SaD.49-52
+&notes.contract.thorns_and_brambles sr=Works on natural and fae-conjured plants only, but may be used in the Hedge.
+
+@@ No Potential: We don't support the court
+@@ &contract.potential DD=1.2.3.4.5
+@@ &tags.contract.potential DD=changeling.court.dawn
+
+
+@@ -- MERITS: SWORDS AT DAWN ---------------------------------------------------
+
+&merit.kiss_of_life DD=4
+&tags.merit.kiss_of_life DD=changeling.leechfinger
+@@ >> Leechfinger Kith
+&prerequisite.merit.kiss_of_life DD=t(match(u(_value_full, %0, bio.kith), Leechfinger, .))
+&prereq-text.merit.kiss_of_life DD=Leechfinger Kith
+&page.merit.kiss_of_life SR=SaD.24
+
+&merit.subtle_liqueur DD=1
+&tags.merit.subtle_liqueur DD=changeling.brewer
+@@ >> Brewer Kith
+&prerequisite.merit.subtle_liqueur DD=t(match(u(_value_full, %0, bio.kith), Brewer, .))
+&prereq-text.merit.subtle_liqueur DD=Brewer Kith
+&page.merit.subtle_liqueur SR=SaD.29
+
+@@ Talecraft Merits: p 78
+
+&merit.narrative_master DD=3
+&tags.merit.narrative_master DD=changeling.talecrafting
+&prerequisite.merit.narrative_master DD=u(_at_least, %0, advantage.wyrd, 3)
+&prereq-text.merit.narrative_master DD=Wyrd 3+
+&page.merit.narrative_master SR=SaD.78
+&notes.merit.narrative_master SR=Only useful with Talecrafting
+
+&merit.talecraft_sense DD=3
+&tags.merit.talecraft_sense DD=changeling.talecrafting
+&prerequisite.merit.talecraft_sense DD=u(_at_least_all, %0, attribute.wits:3 skill.academics:2)
+&prereq-text.merit.talecraft_sense DD=Wyrd 3+
+&page.merit.talecraft_sense SR=SaD.78
+&notes.merit.talecraft_sense SR=Was "Unseen Sense, Talecrafting"
+
+
+@@ Fatebound Merits: pp 88-92
+@@ No.  Maybe: Can be used as hooks if addicted.
+
+@@ &merit.fatebound_bean_buyer DD=3
+@@ &tags.merit.fatebound_bean_buyer DD=changeling.fate
+@@ &prerequisite.merit.fatebound_bean_buyer DD=u(_at_least_all, %0, advantage.wyrd:3 skill.streetwise:3)
+@@ &prereq-text.merit.fatebound_bean_buyer DD=Wyrd 3+ & Streetwise 3+
+(SaD.89-90)
+
+@@ &merit.fatebound_cloistered_spinner DD=3
+@@ &tags.merit.fatebound_cloistered_spinner DD=changeling.fate
+@@ &prerequisite.merit.fatebound_cloistered_spinner DD=u(_at_least_all, %0, advantage.wyrd:3 skill.crafts:3)
+@@ &prereq-text.merit.fatebound_cloistered_spinner DD=Wyrd 3+ & Crafts 3+
+(SaD.90)
+
+@@ &merit.fatebound_cowherd_and_weaver DD=3
+@@ &tags.merit.fatebound_cowherd_and_weaver DD=changeling.fate
+@@ &prerequisite.merit.fatebound_cowherd_and_weaver DD=u(_at_least_all, %0, advantage.wyrd:3 attribute.resolve:3)
+@@ &prereq-text.merit.fatebound_cowherd_and_weaver DD=Wyrd 3+ & Resolve 3+
+(SaD.90)
+
+@@ &merit.fatebound_evil_stepsister DD=3
+@@ &tags.merit.fatebound_evil_stepsister DD=changeling.fate
+@@ &prerequisite.merit.fatebound_evil_stepsister DD=u(_at_least_all, %0, advantage.wyrd:3 attribute.manipulation:3)
+@@ &prereq-text.merit.fatebound_evil_stepsister DD=Wyrd 3+ & Manipulation 3+
+(SaD.90-91)
+
+@@ &merit.fatebound_fair_prince DD=3
+@@ &tags.merit.fatebound_fair_prince DD=changeling.fate
+@@ &prerequisite.merit.fatebound_fair_prince DD=u(_at_least_all, %0, advantage.wyrd:3 attribute.mantle_([u(_value, %0, bio.court)]):3)
+@@ &prereq-text.merit.fatebound_fair_prince DD=Wyrd 3+ & Mantle 3+
+(SaD.91)
+
+@@ &merit.fatebound_fisher_king DD=3
+@@ &tags.merit.fatebound_fisher_king DD=changeling.fate
+@@ &prerequisite.merit.fatebound_fisher_king DD=u(_at_least_all, %0, advantage.wyrd:3 attribute.mantle_([u(_value, %0, bio.court)]):5)
+@@ &prereq-text.merit.fatebound_fisher_king DD=Wyrd 3+ & Mantle 5 & Crown
+(SaD.91)
+
+@@ &merit.fatebound_mobled_queen DD=3
+@@ &tags.merit.fatebound_mobled_queen DD=changeling.fate
+@@ &prerequisite.merit.fatebound_mobled_queen DD=u(_at_least_all, %0, advantage.wyrd:3 attribute.mantle_([u(_value, %0, bio.court)]):5)
+@@ &prereq-text.merit.fatebound_mobled_queen DD=Wyrd 3+ & Mantle 5 & Crown
+(SaD.91)
+
+@@ &merit.fatebound_monkey_heart DD=3
+@@ &tags.merit.fatebound_monkey_heart DD=changeling.fate
+@@ &prerequisite.merit.fatebound_monkey_heart DD=u(_at_least_all, %0, advantage.wyrd:3 attribute.wits:3)
+@@ &prereq-text.merit.fatebound_monkey_heart DD=Wyrd 3+ & Wits 3+
+(SaD.91)
+
+@@ &merit.fatebound_mortal_enemy DD=3
+@@ &tags.merit.fatebound_mortal_enemy DD=changeling.fate
+@@ &prerequisite.merit.fatebound_mortal_enemy DD=u(_at_least_all, %0, advantage.wyrd:3 attribute.resolve:3)
+@@ &prereq-text.merit.fatebound_mortal_enemy DD=Wyrd 3+ & Resolve 3+
+(SaD.92)
+
+@@ &merit.fatebound_starcrossed_lover DD=3
+@@ &tags.merit.fatebound_starcrossed_lover DD=changeling
+@@ &prerequisite.merit.fatebound_starcrossed_lover DD=u(_at_least_all, %0, advantage.wyrd:3 attribute.presence:3)
+@@ &prereq-text.merit.fatebound_starcrossed_lover DD=Wyrd 3+ & Presence 3+
+(SaD.92)
+
+
+@@ Fate Merits: Pages 92-93
+
+&merit.disenchanting_kiss DD=4
+&tags.merit.disenchanting_kiss DD=changeling.fate
+@@ >> Wyrd = 5+, Clarity 9+
+&prerequisite.merit.disenchanting_kiss DD=u(_at_least_all, %0, advantage.wyrd:5 advantage.clarity:9)
+&prereq-text.merit.disenchanting_kiss dd=Wyrd 5+, Clarity 9+
+&page.merit.disenchanting_kiss sr=SaD.92
+
+@@ Too much OOC headache, objection from people, doesn't bring enough benefit
+@@ &merit.glamour_thief DD=4
+@@ &tags.merit.glamour_thief DD=changeling.fate
+@@ >> Wyrd = 3+, Empathy 2+, Occult 2+
+@@ &prerequisite.merit.glamour_thief DD=u(_at_least_all, %0, advantage.wyrd:3 skill.empathy:2 skill.occult:2)
+@@ &prereq-text.merit.glamour_thief dd=Wyrd 3+, Empathy 2+, Occult 2+
+@@ &page.merit.glamour_thief sr=SaD.92
+
+&merit.mobile_hollow_() DD=1.2.3.4.5|*
+&tags.merit.mobile_hollow_() DD=changeling.fate.location
+@@ >> Wyrd = 3+, Hollow (<type>).Size >= 1
+&prerequisite.merit.mobile_hollow_() DD=u(_at_least_all, %0, advantage.wyrd:3 merit.hollow_(%1).size:1)
+&prereq-text.merit.mobile_hollow_() dd=Wyrd 3+, Hollow Size 1+
+&page.merit.mobile_hollow_() sr=SaD.92-93
+&notes.merit.mobile_hollow_() sr=Please remember when it moves, you lose Doors until they are reinstated.
+
+@@ Dream Merits: pp 108-9, with Dream Goblin Contracts to follow
+
+@@ -- TOKENS: SWORDS AT DAWN ---------------------------------------------------
+
+Pages 55-56.
+
+@@ -- ENTITLEMENTS: SWORDS AT DAWN ---------------------------------------------
+
+@@ We're pulling unused entitlements
+@@ @fo me=&bio.entitlement DD=setunion(u(dd/bio.entitlement), The Adjudicators of the Wheel.The Legion of the Iron Wall.The Order of the Hallowed Garden.The Pilgrims of the Endless Road, .)
+
+
+@@ =============================================================================
+@@ == HOUSE RULES ==============================================================
+@@ -- KITHS: HOUSE RULES -------------------------------------------------------
+
+@fo me=&special.kith.fairest dd=[setunion(u(dd/special.kith.fairest), Echo, .)]
+
+
+@@ =============================================================================
+@@ == SECOND SIGHT =============================================================
+@@ -- PSYCHICS: SECOND SIGHT ---------------------------------------------------
+
+@fo me=&bio.template dd=[get(dd/bio.template)].Psychic
+
+-- ESP --
+
+&merit.astral_projection dd=3
+&tags.merit.astral_projection dd=psychic.esp
+&prerequisite.merit.astral_projection dd=and(u(_has, %0, merit.clairvoyance), u(_has_not, %0, merit.clairvoyance.uncontrolled))
+&prereq-text.merit.astral_projection dd=Clairvoyance but not if Uncontrolled
+
+-
+
+&merit.clairvoyance dd=3|Crystal Gazer.Eyes of Another.One Sense Only.Trance Only.Uncontrolled
+&tags.merit.clairvoyance dd=psychic.esp
+
+-
+
+&merit.dowsing dd=1
+&tags.merit.dowsing dd=psychic.esp
+&prerequisite.merit.dowsing dd=u(_has_one_of, %0, merit.clairvoyance merit.channeling_(cayce) merit.channeling_(spirit))
+&prereq-text.merit.dowsing dd=Clairvoyance, Channeling (Cayce), or Channeling (Spirit)
+
+-
+
+&merit.dream_travel dd=1.2.3.4.5
+&tags.merit.dream_travel dd=psychic.esp
+&prerequisite.merit.dream_travel dd=u(_has_all_of, %0, merit.astral_projection merit.mind_reading merit.thought_projection)
+&prereq-text.merit.dream_travel dd=Astral Projection, Mind Reading, and Thought Projection
+
+-
+
+&merit.postcognition dd=1.3
+&tags.merit.postcognition dd=psychic.esp
+&prerequisite.merit.postcognition dd=or(u(_at_least, %0, merit.postcognition, 3, %2), u(_has, %0, merit.precognition))
+&prereq-text.merit.postcognition dd=1 if Precognition, 3 otherwise
+
+-
+
+&merit.precognition dd=4|Precognitive Dreams.Required Foci.Touch Precognition
+&tags.merit.precognition dd=psychic.esp
+
+-
+
+&merit.psychometry dd=3.4
+&tags.merit.psychometry dd=psychic.esp
+
+-- Mediumist --
+
+&merit.automatic_writing dd=2
+&tags.merit.automatic_writing dd=psychic.mediumist
+
+-
+
+&merit.channeling_() dd=3|Cayce.Past Life.Spirit
+&tags.merit.channeling_() dd=psychic.mediumist
+&prerequisite.merit.channeling_() dd=or(not(strmatch(%1, Spirit)), u(_has, %0, merit.ghost_calling))
+&prereq-text.merit.channeling_() dd=Ghost-Calling for Spirit, otherwise none
+
+-
+
+&merit.death_sight dd=4|Permanent
+&tags.merit.death_sight dd=psychic.mediumist
+
+-
+
+&merit.ghost_calling dd=3|Spiritualist Medium
+&tags.merit.ghost_calling dd=psychic.mediumist
+
+-- Psychokinetic --
+
+&merit.biokinesis dd=1.2.3.4.5
+&tags.merit.biokinesis dd=psychic.psychokinetic
+
+-
+
+&merit.cryokinesis dd=1.2.3.4.5|Emotional Cryokinesis
+&tags.merit.cryokinesis dd=psychic.psychokinetic
+&prerequisite.merit.cryokinesis dd=u(_at_most, %0, merit.cryokinesis, u(_min_of, %0, attribute.resolve attribute.stamina), %2)
+&prereq-text.merit.cryokinesis dd=No more than the lower of Resolve or Stamina
+
+-
+
+&merit.plant_empathy dd=1
+&tags.merit.plant_empathy dd=psychic.psychokinetic
+&prerequisite.merit.plant_empathy dd=u(_has, %0, merit.biokinesis)
+&prereq-text.merit.plant_empathy dd=Biokinesis 1+
+
+-
+
+&merit.psychic_healing dd=3.5|Empathic Healing.Faith Healer.New Age Healing
+&tags.merit.psychic_healing dd=psychic.psychokinetic
+&prerequisite.merit.psychic_healing dd=u(_at_least, %0, merit.biokinesis)
+&prereq-text.merit.psychic_healing dd=Biokinesis 3+
+
+-
+
+&merit.psychic_vampirism dd=4.5
+&tags.merit.psychic_vampirism dd=psychic.psychokinetic
+&prerequisite.merit.psychic_vampirism dd=u(_at_most_stat, %0, merit.psychic_vampirism, merit.biokinesis, %2)
+&prereq-text.merit.psychic_vampirism dd=May not be higher than Biokinesis
+
+-
+
+&merit.pyrokinesis dd=5|Emotional Pyrokinesis
+&tags.merit.pyrokinesis dd=psychic.psychokinetic
+
+-
+
+&merit.pyrokinetic_immunity dd=2.4
+&tags.merit.pyrokinetic_immunity dd=psychic.psychokinetic
+&prerequisite.merit.pyrokinetic_immunity dd=u(_has, %0, merit.pyrokinesis)
+&prereq-text.merit.pyrokinetic_immunity dd=Pyrokinesis 1+
+
+-
+
+&merit.pyrokinetic_shaping dd=5
+&tags.merit.pyrokinetic_shaping dd=psychic.psychokinetic
+&prerequisite.merit.pyrokinetic_shaping dd=u(_at_least_all, %0, merit.pyrokinesis:1 merit.pyrokinetic_immunity:4)
+&prereq-text.merit.pyrokinetic_shaping dd=Pyrokinesis 1+ and Pyrokinetic Immunity 4+
+
+-
+
+&merit.telekinesis dd=1.2.3.4.5|Emotional Telekinesis.Limited Telekinesis
+&tags.merit.telekinesis dd=psychic.psychokinetic
+&prerequisite.merit.telekinesis dd=u(_at_most_stat, %0, merit.telekinesis, attribute.resolve, %2)
+&prereq-text.merit.telekinesis dd=No more than Resolve
+@@ >> Original: "Cannot use more dots than Resolve". We further limit that.
+
+-
+
+&merit.thermokinesis dd=1.2.3.4.5|Emotional Thermokinesis
+&tags.merit.thermokinesis dd=psychic.psychokinetic
+&prerequisite.merit.thermokinesis dd=u(_at_most, %0, merit.thermokinesis, u(_min_of, %0, attribute.resolve attribute.stamina), %2)
+&prereq-text.merit.thermokinesis dd=No more than the lower of Resolve or Stamina
+
+-- Telepathic --
+
+&merit.animal_empathy dd=2.4
+&tags.merit.animal_empathy dd=psychic.telepathic
+
+-
+
+&merit.animal_possession dd=4
+&tags.merit.animal_possession dd=psychic.telepathic
+&prerequisite.merit.animal_possession dd=u(_at_least, %0, merit.animal_empathy, 2)
+&prereq-text.merit.animal_possession dd=Animal Empathy 2+
+
+-
+
+&merit.animal_rapport_() dd=3.4.5|*
+&tags.merit.animal_rapport dd=psychic.telepathic
+&prerequisite.merit.animal_rapport dd=u(_at_least, %0, merit.animal_ken, 2)
+&prereq-text.merit.animal_rapport dd=Animal Ken 2+
+
+-
+
+&merit.aura_reading dd=2.5
+&tags.merit.aura_reading dd=psychic.telepathic
+
+-
+
+&merit.mental_blast dd=5
+&tags.merit.mental_blast dd=psychic.telepathic
+&prerequisite.merit.mental_blast dd=gte(first(u(%0/_merit.thought_projection), .), 4)
+&prerequisite.merit.mental_blast dd=u(_at_least, %0, merit.thought_projection, 4)
+&prereq-text.merit.mental_blast dd=Thought Projection 4+
+
+-
+
+&merit.mind_breaker dd=5
+&tags.merit.mind_breaker dd=psychic.telepathic
+&prerequisite.merit.mind_breaker dd=u(_at_least, %0, merit.thought_projection, 4)
+&prereq-text.merit.mind_breaker dd=Thought Projection 4+
+
+-
+
+&merit.mind_control dd=5
+&tags.merit.mind_control dd=psychic.telepathic
+
+-
+
+&merit.mind_reading dd=3.4.5
+&tags.merit.mind_reading dd=psychic.telepathic
+
+-
+
+&merit.psychic_empathy dd=4.5|Limited Empath.Touch Only.Uncontrolled
+&tags.merit.psychic_empathy dd=psychic.telepathic
+&prerequisite.merit.psychic_empathy dd=u(_has_one_of, %0, merit.aura_reading, merit.thought_projection)
+&prereq-text.merit.psychic_empathy dd=Aura Reading or Thought Projection
+
+-
+
+&merit.psychic_illusions dd=5
+&tags.merit.psychic_illusions dd=psychic.telepathic
+&prerequisite.merit.psychic_illusions dd=u(_has_all_of, %0, merit.mind_control merit.thought_projection)
+&prereq-text.merit.psychic_illusions dd=Mind Control and Thought Projection
+
+-
+
+&merit.psychic_invisibility dd=5
+&tags.merit.psychic_invisibility dd=psychic.telepathic
+&prerequisite.merit.psychic_invisibility dd=or(t(first(u(%0/_merit.mind_control), .)), t(first(u(%0/_merit.thought_projection), .)))
+&prerequisite.merit.psychic_invisibility dd=u(_has_one_of, %0, merit.mind_control, merit.thought_projection)
+&prereq-text.merit.psychic_invisibility dd=Mind Control or Thought Projection
+
+-
+
+&merit.telepathic_communication dd=4
+&tags.merit.telepathic_communication dd=psychic.telepathic
+&prerequisite.merit.telepathic_communication dd=u(_at_least, %0, merit.thought_projection, 4)
+&prereq-text.merit.telepathic_communication dd=Thought Projection 4+
+
+-
+
+&merit.telepathic_rapport dd=3
+&tags.merit.telepathic_rapport dd=psychic.telepathic
+&prerequisite.merit.telepathic_rapport dd=u(_has, %0, merit.telepathic_communication)
+&prereq-text.merit.telepathic_rapport dd=Telepathic Communication
+
+-
+
+&merit.thought_projection dd=3.4
+&tags.merit.thought_projection dd=psychic.telepathic
+&prerequisite.merit.thought_projection dd=u(_at_least, %0, merit.mind_reading, 5)
+&prereq-text.merit.thought_projection dd=Mind Reading 5
+
+-- Others --
+
+&merit.anti_psi dd=5
+&tags.merit.anti_psi dd=human
+&prerequisite.merit.anti_psi dd=and(eq(words(u(_value_full, %0, bio.template), .), 1), not(t(lattr(%0/_merit.unseen_sense_(*)))))
+&prereq-text.merit.anti_psi dd=No minor template, no Unseen Sense
+
+-
+
+&merit.believers dd=1.2.3.4.5
+&tags.merit.believers dd=psychic
+
+-
+
+&merit.doubting_thomas dd=1
+&tags.merit.lucid_dreamer dd=human.mental
+&prerequisite.merit.doubting_thomas dd=and(eq(words(u(_value_full, %0, bio.template), .), 1), not(t(lattr(%0/_merit.unseen_sense_(*)))))
+&prereq-text.merit.doubting_thomas dd=No minor template, no Unseen Sense
+
+-
+
+&merit.ghost_ally_() dd=3.4.5|*
+&tags.merit.ghost_ally_() dd=social
+
+-
+
+&merit.hypnotic_voice dd=4
+&tags.merit.hypnotic_voice dd=mental
+&prerequisite.merit.hypnotic_voice dd=u(_is_one_of, %0, skill.persuasion:3 skill.science:3)
+&prereq-text.merit.hypnotic_voice dd=Persuasion 3+ or Science 3+
+
+-
+
+&merit.lucid_dreamer dd=1
+&tags.merit.lucid_dreamer dd=human.mental
+@@ >> how does this interact with Lucid Dreaming?
+
+-
+
+&merit.psychic_resistance dd=1.2.3
+&tags.merit.psychic_resistance dd=human.mental
+
+
+@@ -- THAUMATURGES: SECOND SIGHT -----------------------------------------------
+
+"More importantly, studying a particular tradition requires
+ both dedication and practice Ñ no mortal can practice
+ more than a single tradition of magic. ... Learning a new 
+ tradition completely eliminates the ability of a 
+ thaumaturge to use any previous thaumaturgic tradition she 
+ had learned."
+
+"...thaumaturge characters must have at least one dot in 
+ Occult Skill."
+
+Due to naming conflicts with major template games, all merits are renamed "Ritual <name>"
+
+-- Bio --
+
+@fo me=&bio.template dd=[get(dd/bio.template)].Thaumaturge
+
+&bio.tradition dd=Apostle of the Dark One.Ceremonial Magician.Hedge Witch.Shaman.Taoist Alchemist.Vodoun
+&class.bio.tradition dd=string
+
+&tags.bio.tradition dd=thaumaturge
+&prerequisite.bio.tradition dd=
+	and(
+		lte(words(u(_value_full, %0, bio.tradition), .), 1), 
+		u(_at_least, %0, skill.occult, 1)
+	)
+&prereq-text.bio.tradition dd=One tradition only, Occult 1+
+
+@@ .. the prerequisite to be a Thaumaturge is Occult of 1+.
+
+-- Alchemy () --
+
+Alchemy External
+	2.4
+	Occult 2+ or Science 2+
+	Ceremonial Magician.Taoist Alchemist
+	
+Alchemy Internal
+	2.4
+	Occult 2+ and Medicine 1+
+	Ceremonial Magician (2).Shaman (2).Taoist Alchemist (Defining)
+
+&merit.ritual_alchemy_() dd=2.4|External.Internal
+&tags.merit.ritual_alchemy_() dd=thaumaturge.Ceremonial Magician.Taoist Alchemist
+
+&prerequisite.merit.ritual_alchemy_() dd=
+	switch(
+		%1, 
+@@ >> external
+		external,
+		and(
+			u(_at_least_one, %0, skill.occult:2 skill.science:2), 
+			u(_is_one_of, %0, bio.tradition, Ceremonial Magician.Taoist Alchemist)
+		), 
+@@ >> internal
+		internal, 
+		and(
+			u(_at_least_all, %0, skill.occult:2 skill.medicine:1), 
+			or(
+				u(_is, %0, bio.tradition, Taoist Alchemist), 
+				and(
+					u(_at_most, %0, merit.ritual_alchemy_(internal), 2, %2), 
+					u(_is_one_of, %0, bio.tradition, Ceremonial Magician.Shaman)
+				)
+			)
+		)
+	)
+
+&prereq-text.merit.ritual_alchemy_() dd=External Alchemy needs Occult 2+ or Science 2+ and is only available for Magicians and Alchemists. Internal Alchemy needs Occult 2+, Medicine 1+, and is only available to 2 for Magicians and Shamen, 4 for Alchemists
+
+
+-- Communion --
+
+Communion
+	2.4
+	Ceremonial Magician (2).Taoist Alchemist.Apostle of the Dark One (Defining)
+
+&merit.ritual_communion dd=2.4
+&tags.merit.ritual_communion dd=thaumaturge.Ceremonial Magician.Taoist Alchemist.Apostle of the Dark One
+&prerequisite.merit.ritual_communion dd=
+	or(
+		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Taoist Alchemist), 
+		and(
+			u(_at_most, %0, merit.ritual_communion, 2, %2), 
+			u(_is, %0, bio.tradition, Ceremonial Magician)
+		)
+	)
+
+&prereq-text.merit.ritual_communion dd=Magicians to 2, Apostile or Alchemist to 4
+
+
+-- Countermagic --
+
+Countermagic
+	2.4
+	Wits 2+
+	(Apostle of the Dark One.Taoist Alchemist.Vodoun)
+	>>> All <<<
+
+&merit.ritual_countermagic dd=2.4
+&tags.merit.ritual_countermagic dd=thaumaturge.[u(bio.tradition)]
+&prerequisite.merit.ritual_countermagic dd=
+	gte(first(u(%0/_attribute.wits), .), 2)
+
+&prereq-text.merit.ritual_countermagic dd=Wits 2+
+
+
+-- Curse of Ill Fortune --
+
+Curse of Ill Fortune
+	3
+	Luck Magic and Persuasion 1+
+	Apostle of the Dark One.Ceremonial Magician.Hedge Witch.Vodoun
+
+&merit.ritual_curse_of_ill_fortune dd=3
+&tags.merit.ritual_curse_of_ill_fortune dd=thaumaturge.Apostle of the Dark One.Ceremonial Magician.Hedge Witch.Vodoun
+&prerequisite.merit.ritual_curse_of_ill_fortune dd=
+	and(
+		u(_at_least, %0, skill.persuasion, 1), 
+		u(_has, %0, merit.ritual_luck_magic), 
+		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch.Vodoun)
+	)
+
+&prereq-text.merit.ritual_curse_of_ill_fortune dd=Must be Apostle, Magician, Witch, or Vodoun; Persuasion 1+; Ritual Luck Magic
+
+
+-- Divination --
+
+Divination
+	3
+	(Apostle of the Dark One.Taoist Alchemist.Vodoun)
+	>>> All <<<
+
+&merit.ritual_divination dd=3
+&tags.merit.ritual_divination dd=thaumaturge.[u(bio.tradition)]
+
+
+-- Dream --
+
+Dream
+	1.2.3.4.5
+	(Apostle of the Dark One.Taoist Alchemist.Vodoun)
+	>>> All <<<
+
+&merit.ritual_dream dd=1.2.3.4.5
+&tags.merit.ritual_dream dd=thaumaturge.[u(bio.tradition)]
+
+
+-- Dream Travel --
+
+Dream Travel
+	3
+	Visionary Trances
+	Hedge Witch.Shaman
+
+&merit.ritual_dream_travel dd=3
+&tags.merit.ritual_dream_travel dd=thaumaturge.Hedge Witch.Shaman
+&prerequisite.merit.ritual_dream_travel dd=
+	u(_is_one_of, %0, bio.tradition, Hedge Witch.Shaman)
+&prereq-text.merit.ritual_dream_travel dd=Must be Witch or Shaman
+
+
+-- Enchantment --
+
+Enchantment
+	2.4
+	Apostle of the Dark One.Ceremonial Magician.Hedge Witch (Defining)
+
+&merit.ritual_enchantment dd=2.4
+&tags.merit.ritual_enchantment dd=thaumaturge.Apostle of the Dark One.Ceremonial Magician.Hedge Witch
+&prerequisite.merit.ritual_enchantment dd=
+	u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch)
+&prereq-text.merit.ritual_enchantment dd=Must be Apostle, Magician, or Witch
+
+
+-- Evocation --
+
+Evocation
+	2.4
+	Apostle of the Dark One (spirits only).Ceremonial Magician (spirits only).Shaman (spirits only).Vodoun (ghosts only)
+
+&merit.ritual_evocation_() dd=2.4|Ghosts.Spirits
+&tags.merit.ritual_evocation_() dd=thaumaturge.Apostle of the Dark One.Ceremonial Magician.Shaman.Vodoun
+&prerequisite.merit.ritual_evocation_() dd=
+	switch(
+		%1, 
+		Ghosts, 
+		u(_is, %0, bio.tradition, Vodoun), 
+		Spirits, 
+		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Shaman)
+	)
+&prereq-text.merit.ritual_evocation_() dd=Vodoun only for ghosts; Apostle, Magician and Shaman only for spirits
+
+
+-- Familiar --
+
+Familiar
+	3.4
+	Visionary Trances 4, Communion 4, or Enchantment 4
+	Apostle of the Dark One.Hedge Witch (embodied only).Shaman (twilight only)
+	3 pt: Twilight, 4 pt: Embodied
+
+&merit.ritual_familiar dd=3.4
+&tags.merit.ritual_familiar dd=thaumaturge.Apostle of the Dark One.Hedge Witch.Shaman
+
+&prerequisite.merit.ritual_familiar dd=
+	case(
+@@ if new value is...
+		add(u(_value, %0, merit.ritual_familiar), %2), 
+@@ .. 3: Twilight: Apostle with Communion 4 or Shaman with Visionary Trances 4
+		3, 
+		or(
+			and(
+				u(_is, %0, bio.tradition, Apostle of the Dark One), 
+				u(_at_least, %0, merit.ritual_communion, 4)
+			), 
+			and(
+				u(_is, %0, bio.tradition, Shaman), 
+				u(_at_least, %0, merit.ritual_visionary_trances, 4)
+			)
+		), 
+@@ .. 4: Embodied: Witch with Enchantment 4.
+		4, 
+		and(
+			u(_is, %0, bio.tradition, Hedge Witch), 
+			u(_at_least, %0, merit.ritual_enchantment, 4)
+		)
+	)
+&prereq-text.merit.ritual_familiar dd=Twilight (3): Apostle w/ Communion 4 or Shaman w/ Visionary Trances 4; Embodied (4): Witch w/ Enchantment 4
+
+
+-- Favorable Fortune --
+
+Favorable Fortune
+	3
+	Luck Magic 4
+	Ceremonial Magician
+
+&merit.ritual_favorable_fortune dd=3
+&tags.merit.ritual_favorable_fortune dd=thaumaturge.Ceremonial Magician
+&prerequisite.merit.ritual_favorable_fortune dd=
+	and(
+		u(_at_least, %0, merit.ritual_luck_magic, 4), 
+		u(_is, %0, bio.tradition, Ceremonial Magician)
+	)
+&prereq-text.merit.ritual_favorable_fortune dd=Magician w/ Luck Magic 4
+
+
+-- Geomancy --
+
+Geomancy
+	3
+	Intelligence 2+ and Crafts 1+
+	Taoist Alchemist
+
+&merit.ritual_geomancy dd=3
+&tags.merit.ritual_geomancy dd=thaumaturge.Taoist Alchemist
+&prerequisite.merit.ritual_geomancy dd=
+	and(
+		u(_at_least_all, %0, attribute.intelligence:2 skill.crafts:1), 
+		u(_is, %0, bio.tradition, Taoist Alchemist)
+	)
+&prereq-text.merit.ritual_geomancy dd=Alchemist w/ Luck Magic 4
+
+
+-- Healing --
+
+Healing
+	4
+	Composure 2+ and Medicine 1+
+	Ceremonial Magician.Hedge Witch.Shaman.Taoist Alchemist.Vodoun
+
+&merit.ritual_healing dd=4
+&tags.merit.ritual_healing dd=thaumaturge.Ceremonial Magician.Hedge Witch.Shaman.Taoist Alchemist.Vodoun
+&prerequisite.merit.ritual_healing dd=
+	and(
+		u(_at_least_all, %0, attribute.composure:2 skill.medicine:1), 
+		u(_is_one_of, %0, bio.tradition, Ceremonial Magician.Hedge Witch.Shaman.Taoist Alchemist.Vodoun)
+	)
+
+&prereq-text.merit.ritual_healing dd=Magician, Witch, Shaman, Alchemist or Vodoun w/ Composure 2+ and Medicine 1+
+
+-- Invocation () --
+
+Invocation
+	2.4
+	Hedge Witch (spirits only).Shaman (spirits only), 2.Vodoun (ghosts only, defining).
+
+&merit.ritual_invocation_() dd=2.4|Ghosts.Spirits
+&tags.merit.ritual_invocation_() dd=thaumaturge.Hedge Witch.Shaman.Vodoun
+&prerequisite.merit.ritual_invocation_() dd=
+	switch(
+		%1, 
+		Ghosts, 
+		u(_is, %0, bio.tradition, Vodoun), 
+		Spirits, 
+		u(_is_one_of, %0, bio.tradition, Hedge Witch.Shaman) 
+	)
+
+&prereq-text.merit.ritual_invocation_() dd=Vodoun for Ghosts, Witch or Shaman for Spirits
+
+
+-- Library --
+
+Library
+	1.2.3 (shared)
+	(Apostle of the Dark One.Taoist Alchemist.Vodoun)
+	>>> All <<<
+
+>> Set this up as a "location" merit
+
+&merit.library_() dd=1.2.3|*|*
+&tags.merit.library_() dd=location
+
+
+-- Longevity --
+
+Longevity
+	5
+	Medicine 3+ and Alchemistry Internal 4 or Alchemistry External 4
+	Taoist Alchemist
+
+&merit.ritual_longevity dd=5
+&tags.merit.ritual_longevity dd=thaumaturge.Taoist Alchemist
+&prerequisite.merit.ritual_longevity dd=
+	and(
+		u(_at_least, %0, skill.medicine, 3), 
+		u(_at_least_one, %0, merit.ritual_alchemistry_(external):4, merit.ritual_alchemistry_(internal):4), 
+		u(_is, %0, bio.tradition, Taoist Alchemist)
+	)
+&prereq-text.merit.ritual_longevity dd=Alchemist, Medicine 3+, Alchemistry (External or Internal) 4+
+
+
+-- Luck Magic --
+
+Luck Magic
+	2.4
+	Apostle of the Dark One.Ceremonial Magician (Defining).Hedge Witch (2).Taoist Alchemist.Vodoun
+
+&merit.ritual_luck_magic dd=2.4
+&tags.merit.ritual_luck_magic dd=thaumaturge.Apostle of the Dark One.Ceremonial Magician.Hedge Witch.Taoist Alchemist.Vodoun
+
+&prerequisite.merit.ritual_luck_magic dd=
+	or(
+		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Taoist Alchemist.Vodoun), 
+		and(
+			u(_is, %0, bio.tradition, Hedge Witch), 
+			u(_at_most, %0, merit.ritual_luck_magic, 2, %2)
+		)
+	)
+
+&prereq-text.merit.ritual_luck_magic dd=Witch (2 only), Apostile, Magician, Alchemist or Vodoun
+
+
+-- Magical Nexus --
+
+Magical Nexus
+	1.2
+	(Apostle of the Dark One.Taoist Alchemist.Vodoun)
+	>>> All <<<
+
+&merit.ritual_magical_nexus dd=1.2
+&tags.merit.ritual_magical_nexus dd=thaumaturge.[u(bio.tradition)]
+
+
+-- Psychic Projection --
+
+Psychic Projection
+	4
+	Visionary Trances 4
+	Shaman
+
+&merit.ritual_psychic_projection dd=4
+&tags.merit.ritual_psychic_projection dd=thaumaturge.Shaman
+&prerequisite.merit.ritual_psychic_projection dd=
+	and(
+		u(_at_least, %0, merit.ritual_visionary_trances, 4), 
+		u(_is, %0, bio.tradition, Shaman)
+	)
+&prereq-text.merit.ritual_psychic_projection dd=Shaman w/ Visionary Trances 4
+
+
+-- Sacrifice --
+
+Sacrifice
+	1
+	Apostle of the Dark One (spirits only).Shaman.Vodoun (ghosts only)
+
+&merit.ritual_sacrifice_() dd=1|Ghosts.Spirits
+&tags.merit.ritual_sacrifice_() dd=thaumaturge.Apostle of the Dark One.Shaman.Vodoun
+&prerequisite.merit.ritual_sacrifice_() dd=
+	or(
+		u(_is, %0, bio.tradition, Shaman), 
+		switch(
+			%1, 
+			Ghosts, 
+			u(_is, %0, bio.tradition, Vodoun), 
+			Spirits, 
+			u(_is, %0, bio.tradition, Apostle of the Dark One)
+		)
+	)
+&prereq-text.merit.ritual_sacrifice_() dd=Ghosts only for Vodoun, Spirits only for Apostles, either for Shamans
+
+
+-- Scrying --
+
+Scrying
+	3
+	Wits 2+
+	Apostle of the Dark One.Ceremonial Magician.Hedge Witch
+
+&merit.ritual_scrying dd=3
+&tags.merit.ritual_scrying dd=thaumaturge.Apostle of the Dark One.Ceremonial Magician.Hedge Witch
+&prerequisite.merit.ritual_scrying dd=
+	and(
+		u(_at_least, %0, attribute.wits, 2), 
+		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch)
+	)
+&prereq-text.merit.ritual_scrying dd=Wits 2+ & Apostle, Magician, or Witch
+
+
+-- Second Sight --
+
+Second Sight
+	3
+	Wits 2+
+	(Apostle of the Dark One.Taoist Alchemist.Vodoun)
+	Taoist Alchemist.Vodoun
+	> Apostles get See Spirits, "Common Sense" House Rule
+
+&merit.ritual_second_sight dd=3
+&tags.merit.ritual_second_sight dd=thaumaturge.Taoist Alchemist.Vodoun
+&prerequisite.merit.ritual_second_sight dd=
+	and(
+		u(_at_least, %0, attribute.wits, 2), 
+		u(_is_one_of, %0, bio.tradition, Taoist Alchemist.Vodoun)
+	)
+&prereq-text.merit.ritual_second_sight dd=Wits 2+ & Alchemist or Vodoun
+
+
+-- See Auras --
+
+See Auras
+	2
+	Empathy 2+
+	Ceremonial Magician.Hedge Witch.Taoist Alchemist
+
+&merit.ritual_see_auras dd=2
+&tags.merit.ritual_see_auras dd=thaumaturge.Ceremonial Magician.Hedge Witch.Taoist Alchemist
+&prerequisite.merit.ritual_see_auras dd=
+	and(
+		u(_at_least, %0, skill.empathy, 2), 
+		u(_is_one_of, %0, bio.tradition, Ceremonial Magician.Hedge Witch.Taoist Alchemist)
+	)
+&prereq-text.merit.ritual_see_auras dd=Empathy 2+, Magician, Witch or Alchemist
+
+
+-- See Spirits --
+
+See Spirits
+	2
+	Visionary Trances
+	(Hedge Witch.Shaman)
+	Apostle of the Dark One.Hedge Witch.Shaman
+	> Also Apostles, as per "Common Sense" House Rule
+
+&merit.ritual_see_spirits dd=2
+&tags.merit.ritual_see_spirits dd=thaumaturge.Apostle of the Dark One.Hedge Witch.Shaman
+&prerequisite.merit.ritual_see_spirits dd=
+	and(
+		u(_has, %0, merit.ritual_visionary_trances), 
+		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Hedge Witch.Shaman)
+	)
+&prereq-text.merit.ritual_see_spirits dd=Visionary Trances, Apostle, Witch or Shaman
+
+
+-- Soul Jar --
+
+Soul Jar
+	2.4
+	Second Sight
+	Vodoun
+
+&merit.ritual_soul_jar dd=2.4
+&tags.merit.ritual_soul_jar dd=thaumaturge.Vodoun
+&prerequisite.merit.ritual_soul_jar dd=
+	and(
+		u(_has, %0, merit.ritual_second_sight), 
+		u(_is, %0, bio.tradition, Vodoun)
+	)
+&prereq-text.merit.ritual_soul_jar dd=Vodoun w/ Second Sight
+
+
+-- Visionary Trances --
+
+Visionary Trances
+	2.4
+	Resolve 2+
+	Apostle of the Dark One.Hedge Witch (2).Shaman (Defining)
+
+&merit.ritual_visionary_trances dd=2.4
+&tags.merit.ritual_visionary_trances dd=thaumaturge.Apostle of the Dark One.Hedge Witch.Shaman
+&prerequisite.merit.ritual_visionary_trances dd=
+	and(
+		u(_at_least, %0, attribute.resolve, 2), 
+		or(
+			u(_is_one_of, bio.tradition, Apostle of the Dark One.Shaman), 
+			and(
+				u(_is, %0, bio.tradition, Hedge Witch), 
+				u(_at_most, %0, ritual_visionary_trances, 2, %2)
+			)
+		)
+	)
+&prereq-text.merit.ritual_visionary_trances dd=Resolve 2+ and Witch to 2, Apostle or Shaman to 4
+
+
+-- Warding --
+
+Warding
+	3
+	Resolve 2+
+	(Apostle of the Dark One.Taoist Alchemist.Vodoun)
+	>>> All <<<
+
+&merit.ritual_warding dd=3
+&tags.merit.ritual_warding dd=thaumaturge.[u(bio.tradition)]
+&prerequisite.merit.ritual_warding dd=u(_at_least, %0, attribute.resolve, 2)
+&prereq-text.merit.ritual_warding dd=Resolve 2+
+
+
+-- Weather Control --
+
+Weather Control
+	4
+	Hedge Witch.Shaman.Vodoun
+
+&merit.ritual_weather_control dd=4
+&tags.merit.ritual_weather_control dd=thaumaturge.Hedge Witch.Shaman.Vodoun
+&prerequisite.merit.ritual_weather_control dd=
+	u(_is_one_of, %0, bio.tradition, Hedge Witch.Shaman.Vodoun)
+&prereq-text.merit.ritual_weather_control dd=Witch, Shaman, Vodoun
+
+
+@@ =============================================================================
+@@ == SKINCHANGERS =============================================================
+@@ -- BIO: SKINCHANGERS --------------------------------------------------------
+
+@@ We are only adding skinthieves; the other sections are very NPCish
+@@ (Default Morality to 6)
+
+@fo me=&d.book-lookup SR=[get(sr/d.book-lookup)]|Skin.Skinchangers
+
+@fo me=&bio.template DD=[get(dd/bio.template)].Skinthief
+
+&bio.totem_animal DD=*
+&tag.bio.totem_animal DD=skinthief
+&class.bio.totem_animal DD=string
+&page.bio.totem_animal SR=Skin.17
+
+&bio.thieving_aspect DD=Humane Harvest.Hunter Killer.Vicious Skintaker
+&tags.bio.thieving_aspect DD=skinthief
+&class.bio.thieving_aspect DD=string
+&default.bio.thieving_aspect DD=Hunter Killer
+@@ Humane Harvest: 2, Hunter Killer: 0, Vicious Skintaker: -1
+&page.bio.thieving_aspect SR=Skin.??
+&notes.bio.thieving_aspect SR=Humane Harvest: 2, Hunter Killer: 0, Vicious Skintaker: -1
+
+&bio.talisman_aspect DD=Bound Totem.Talisman.No Talisman.Permanent Talisman
+&tags.bio.talisman_aspect DD=skinthief
+&class.bio.talisman_aspect DD=string
+&default.bio.talisman_aspect DD=Talisman
+@@ Bound Totem: 0, Talisman: 0, No Talisman: 4, Permanent Talisman: 1
+&page.bio.talisman_aspect SR=Skin.17-18 Skin.??
+&notes.bio.talisman_aspect SR=Bound Totem: 0, Talisman: 0, No Talisman: 4, Permanent Talisman: 1
+
+
+@@ -- MERITS: SKINCHANGERS --------------------------------------------------
+
+@@ The merits are available to everyone
+
+&merit.animal_affinity_() DD=1.2.3|*
+&tags.merit.animal_affinity_() DD=social
+&page.merit.animal_affinity_() SR=Skin.20
+&notes.merit.animal_affinity_() SR=Skintheives taking this merit for their totem animal are at effective +1 to a maximum total effect of +3
+
+&merit.predator's_bearing DD=2
+&tags.merit.predator's_bearing DD=social
+&prerequisite.merit.predator's_bearing DD=u(_has_not, %0, merit.socially_small)
+&prereq-text.merit.predator's_bearing DD=Does not have the Socially Small merit
+@@ always on: add to +look
+&page.merit.predator's_bearing SR=Skin.20
+
+&merit.socially_small DD=2
+&tags.merit.socially_small DD=social
+&prerequisite.merit.socially_small DD=u(_has_not, %0, merit.predator's_bearing)
+&prereq-text.merit.socially_small DD=Does not have the Predator's Bearing merit
+@@ always on: add to +look
+&page.merit.socially_small SR=Skin.21
+
+&merit.hunter's_den_() DD=3|*
+&tags.merit.hunter's_den_() DD=social
+&page.merit.hunter's_den_() SR=Skin.21
+&notes.merit.hunter's_den_() SR=Renamed from Den
+
+
+@@ -- ADVANTAGE: SKINCHANGERS --------------------------------------------------
+
+&advantage.supernatural_tolerance DD=1
+&tags.advantage.supernatural_tolerance DD=power level.skinthief
+&default.advantage.supernatural_tolerance DD=1
+
+&advantage.essence DD=[if(u(_has, %0, aspect.increased_essence), 6, 3)]
+&tags.advantage.essence DD=derived.energy.skinthief
+&default.advantage.essence DD=[u(#188/advantage.essence, %!)]
+
+
+@@ -- ASPECT: SKINCHANGERS -----------------------------------------------------
+@@ 5xp/level, restricted
+
+&aspect.animal_speech DD=1.2
+&tags.aspect.animal_speech DD=skinthief.skinchanger
+
+&aspect.bare_necessities DD=1.3
+&tags.aspect.bare_necessities DD=skinthief.skinchanger
+
+&aspect.enchanting_affinity DD=2
+&tags.aspect.enchanting_affinity DD=skinthief.skinchanger
+
+&aspect.extraordinary_specimen DD=1
+&tags.aspect.extraordinary_specimen DD=skinthief.skinchanger
+
+&aspect.fast_healing DD=2
+&tags.aspect.fast_healing DD=skinthief.skinchanger
+
+&aspect.fast_skinner DD=1
+&tags.aspect.fast_skinner DD=skinthief.skinchanger
+
+&aspect.hybrid_form DD=2.5
+&tags.aspect.hybrid_form DD=skinthief.skinchanger
+
+@@ Houseruling this a bit to be bought more like Werewolf Gifts than Tokens
+&aspect.imitate_gift_() DD=1.2.3.5.7|Crescent Moon 1.Crescent Moon 2.Crescent Moon 3.Crescent Moon 4.Crescent Moon 5.Death 1.Death 2.Death 3.Death 4.Death 5.Dominance 1.Dominance 2.Dominance 3.Dominance 4.Dominance 5.Elemental 1.Elemental 2.Elemental 3.Elemental 4.Elemental 5.Evasion 1.Evasion 2.Evasion 3.Evasion 4.Evasion 5.Full Moon 1.Full Moon 2.Full Moon 3.Full Moon 4.Full Moon 5.Gibbous Moon 2.Half Moon 1.Half Moon 2.Half Moon 3.Half Moon 4.Half Moon 5.New Moon 1.New Moon 2.New Moon 3.New Moon 4.New Moon 5.Insight 1.Insight 2.Insight 3.Insight 4.Insight 5.Inspiration 1.Inspiration 2.Inspiration 3.Inspiration 4.Inspiration 5.Knowledge 1.Knowledge 2.Knowledge 3.Knowledge 4.Knowledge 5.Nature 1.Nature 2.Nature 3.Nature 4.Nature 5.Rage 1.Rage 2.Rage 3.Rage 4.Rage 5.Shaping 1.Shaping 2.Shaping 3.Shaping 4.Shaping 5.Stealth 1.Stealth 2.Stealth 3.Stealth 4.Stealth 5.Strength 1.Strength 2.Strength 3.Strength 4.Strength 5.Technology 1.Technology 2.Technology 3.Technology 4.Technology 5.Weather 1.Weather 2.Weather 3.Weather 4
+&tags.aspect.imitate_gift_() DD=skinthief.skinchanger
+
+&prerequisite.aspect.imitate_gift_() DD=eq(%2, case(last(%1, _), 5, 7, 4, 5, last(%1, _)))
+&prereq-text.aspect.imitate_gift_() DD=Value for aspect should match gift, be 5 if 4, and 7 if 5.
+
+
+&page.aspect.imitate_gift_() sr=ss.32
+
+@@ as a werewolf "gift", bought 1:1 until lvl 4, then 2:1
+@@ (special rules, p. 33)
+@@ May add with an explicit list of gifts.
+
+&aspect.increased_essence DD=2
+&tags.aspect.increased_essence DD=skinthief.skinchanger
+
+&aspect.injurious_change DD=-1
+&tags.aspect.injurious_change DD=skinthief.skinchanger
+
+&aspect.long_life DD=1.2
+&tags.aspect.long_life DD=skinthief.skinchanger
+
+&aspect.out_of_body DD=3
+&tags.aspect.out_of_body DD=skinthief.skinchanger
+
+&aspect.rejuvenating_change DD=2.4
+&tags.aspect.rejuvenating_change DD=skinthief.skinchanger
+
+&aspect.resilient_form DD=#
+&tags.aspect.resilient_form DD=skinthief.skinchanger
+
+&aspect.restricted_change_() DD=-1|*
+&tags.aspect.restricted_change_() DD=skinthief.skinchanger
+
+&aspect.scentless_transformation DD=1
+&tags.aspect.scentless_transformation DD=skinthief.skinchanger
+
+&aspect.sense_of_familiarity DD=2
+&tags.aspect.sense_of_familiarity DD=skinthief.skinchanger
+
+&aspect.sense_of_self DD=2
+&tags.aspect.sense_of_self DD=skinthief.skinchanger
+
+&aspect.skillful_change DD=1
+&tags.aspect.skillful_change DD=skinthief.skinchanger
+
+&aspect.static_beast_shape DD=0
+&tags.aspect.static_beast_shape DD=skinthief.skinchanger
+
+&aspect.strong_instincts DD=1
+&tags.aspect.strong_instincts DD=skinthief.skinchanger
+
+@@ &aspect.spirit_affinity DD=4.5.6.7.8.9.10
+@@ &tags.aspect.spirit_affinity DD=skinthief.skinchanger
+@@ imitates a spirit power
+@@ never ever will be used
+
+&aspect.sweet_voiced_fiend DD=1
+&tags.aspect.sweet_voiced_fiend DD=skinthief.skinchanger
+
+&aspect.feral_tell DD=-1
+&tags.aspect.feral_tell DD=skinthief.skinchanger
+@@ renamed from "tell"
+
+&aspect.twisted_tongue DD=1
+&tags.aspect.twisted_tongue DD=skinthief.skinchanger
+
+&aspect.unhealing DD=-1
+&tags.aspect.unhealing DD=skinthief.skinchanger
+
+
+
+@@ =============================================================================
+@@ == WEREWOLF CORE ============================================================
+@@ -- BIO: WEREWOLF CORE -------------------------------------------------------
+
+@fo me=&bio.template DD=[u(dd/bio.template)].Werewolf
+
+&bio.auspice dd=Rahu.Cahalith.Elodoth.Ithaeur.Irraka
+&tags.bio.auspice dd=werewolf
+&class.bio.auspice dd=string
+
+&bio.tribe dd=Blood Talons.Iron Masters.Storm Lords.Bone Shadows.Hunters in Darkness.Ghost Wolves
+&tags.bio.tribe dd=werewolf
+&class.bio.tribe dd=string
+
+
+@@ Simple "Pack" below
+&bio.pack dd=*
+@@ &tags.bio.pack dd=werewolf.human
+@@ &prereq-text.bio.pack dd=Wolf Blooded if Human
+@@ &prerequisite.bio.pack dd=or(u(_list_has, %0, bio.template, werewolf), u(_has, %0, merit.wolf_blooded))
+@@ &class.bio.pack dd=string
+
+@@ +Faction-based Pack here:
+
+&bio.pack dd=[u(#2883/f.player.factions-of-type.names, %0, pack)]
+&tags.bio.pack DD=derived
+&default.bio.pack DD=[u(#data_dictionary/bio.pack, %!)]
+&class.bio.pack dd=string
+
+
+
+&bio.deed_name dd=*
+&tags.bio.deed_name dd=werewolf
+&class.bio.deed_name dd=string
+
+@@ No Crows (core)
+&bio.lodge dd=Garm.Harbingers.Season (Spring).Season (Summer).Season (Autumn).Season (Winter).Lightning.The Hunt
+&tags.bio.lodge dd=werewolf
+&class.bio.lodge dd=string
+
+&page.bio.lodge sr=WtF.199-204
+
+@@ -- ADVANTAGE: WEREWOLF CORE -------------------------------------------------
+
+&advantage.primal_urge dd=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.primal_urge dd=power level.werewolf
+&default.advantage.primal_urge dd=1
+
+
+@@ Werewolf + Skinthief Essence:
+&advantage.essence dd=[switch(u(%0/_bio.template), human.skinthief, if(u(_has, %0, aspect.increased_essence), 6, 3), extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.primal_urge), .), 1))]
+&tags.advantage.essence dd=derived.energy.werewolf.skinthief
+&default.advantage.essence dd=[u(#188/advantage.essence, %!)]
+
+@@ Werewolf-Only Essence:
+@@ &advantage.essence dd=[extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.primal_urge), .), 1)]
+@@ &tags.advantage.essence dd=derived.energy.werewolf
+@@ &default.advantage.essence dd=[u(#188/advantage.essence, %!)]
+
+
+&advantage.harmony dd=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.harmony dd=morality.werewolf
+&default.advantage.harmony dd=7
+
+&advantage.honorary_rank dd=[switch(ladd(iter(lattr(%0/_renown.*), first(u(%0/%i0), .))), >23, 5, >15, 4, >7, 3, >0, 2, 0)]
+&tags.advantage.honorary_rank dd=werewolf
+&default.advantage.honorary_rank dd=[u(#188/advantage.honorary_rank, %!)]
+
+&page.advantage.honorary_rank sr=WtF.272
+
+
+
+@@ -- RENOWN: WEREWOLF CORE ----------------------------------------------------
+
+&renown.purity dd=1.2.3.4.5
+&tags.renown.purity dd=werewolf.rahu.hunters in darkness
+&prereq-text.renown.purity dd=May not be higher than a primary renown
+&prerequisite.renown.purity dd=[u(_renown_check, %0, renown.purity, %2)]
+
+&renown.glory dd=1.2.3.4.5
+&tags.renown.glory dd=werewolf.cahalith.blood talons
+&prereq-text.renown.glory dd=May not be higher than a primary renown
+&prerequisite.renown.glory dd=[u(_renown_check, %0, renown.glory, %2)]
+
+&renown.honor dd=1.2.3.4.5
+&tags.renown.honor dd=werewolf.elodoth.storm lords
+&prereq-text.renown.honor dd=May not be higher than a primary renown
+&prerequisite.renown.honor dd=[u(_renown_check, %0, renown.honor, %2)]
+
+&renown.wisdom dd=1.2.3.4.5
+&tags.renown.wisdom dd=werewolf.ithaeur.bone shadows
+&prereq-text.renown.wisdom dd=May not be higher than a primary renown
+&prerequisite.renown.wisdom dd=[u(_renown_check, %0, renown.wisdom, %2)]
+
+&renown.cunning dd=1.2.3.4.5
+&tags.renown.cunning dd=werewolf.irraka.iron masters
+&prereq-text.renown.cunning dd=May not be higher than a primary renown
+&prerequisite.renown.cunning dd=[u(_renown_check, %0, renown.cunning, %2)]
+
+
+@@ -- MERIT: WEREWOLF CORE -----------------------------------------------------
+
+&merit.wolf_blooded dd=2.3.4.5
+&tags.merit.wolf_blooded dd=human.chargen-only
+@@ house rule:
+&prereq-text.merit.wolf_blooded dd=Cannot be Fae-Touched
+&prerequisite.merit.wolf_blooded dd=not(u(_is_full, %0, bio.template, human.fae-touched))
+
+&merit.lunatic_glare dd=2
+@@ &tags.merit.lunatic_glare dd=human
+&prereq-text.merit.lunatic_glare dd=Wolf Blooded 3+
+&prerequisite.merit.lunatic_glare dd=u(_at_least, %0, merit.wolf_blooded, 3)
+
+&merit.watched dd=1.2.3.4.5
+&prereq-text.merit.watched dd=Wolf Blooded
+&prerequisite.merit.watched dd=u(_has, %0, merit.wolf_blooded)
+
+&merit.fetish dd=#|*
+&tags.merit.fetish dd=chargen-only.item
+&prereq-text.merit.fetish dd=Werewolf or Wolf Blooded
+&prerequisite.merit.fetish dd=or(u(_list_has, %0, Werewolf), u(_has, %0, merit.wolf_blooded))
+&notes.merit.fetish sr=May also be bought with xp during chargen.
+
+&merit.rituals dd=1.2.3.4.5
+&tags.merit.rituals dd=werewolf
+
+&merit.cursed_item dd=1.2.3.4.5|*
+&tags.merit.cursed_item dd=chargen-only.item
+&notes.merit.cursed_item sr=May also be bought with xp during chargen.
+
+&merit.difficult_to_ride dd=4
+&prereq-text.merit.difficult_to_ride dd=Composure 3+ and Resolve 3+
+&prerequisite.merit.difficult_to_ride dd=u(_at_least_all, %0, attribute.composure:3 attribute.resolve:3)
+
+&merit.easy_ride dd=2
+&prereq-text.merit.easy_ride dd=Wits 3+
+&prerequisite.merit.easy_ride dd=u(_at_least, %0, attribute.wits, 3)
+
+&merit.locus_drinker dd=3
+&tags.merit.locus_drinker dd=human
+
+&merit.pack_totem_() dd=#|*
+&tags.merit.pack_totem_() dd=werewolf.location
+&prerequisite.merit.pack_totem_() dd=lte(words(setunion(_MERIT.PACK_TOTEM_(%1), lattr(%0/_merit.pack_totem_(*)))), 1)
+&prereq-text.merit.pack_totem_() dd=One Totem Only
+&notes.merit.pack_totem_() sr=Cost is flat 3 xp per dot
+
+
+&merit.pleasing_aura dd=3
+
+&merit.residual_spirit_energy dd=2
+&tags.merit.residual_spirit_energy dd=human
+@@ &prereq-text.merit.residual_spirit_energy dd=No Minor Template
+@@ &prerequisite.merit.residual_spirit_energy dd=words(u(_value_full, %0, bio.template), .)
+
+&merit.saintly dd=3
+
+&merit.shadow_contacts dd=3.4.5
+
+&merit.shadowless_chambers_() dd=1.2.3.4.5|*
+
+&merit.spirit_communication dd=1.2.3
+
+&merit.hollow_soul dd=2
+&prereq-text.merit.hollow_soul dd=Easy Ride (Merit)
+&prerequisite.merit.hollow_soul dd=u(_has, %0, merit.easy_ride)
+
+
+@@ -- GIFTS: WEREWOLF CORE -----------------------------------------------------
+
+&gift.crescent_moon dd=1.2.3.4.5|Two-World Eyes.Read Spirit.Gauntlet Cloak.Between the Weave.Crash the Gates
+&tags.gift.crescent_moon dd=werewolf.ithaeur
+&prerequisite.gift.crescent_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, ithaeur))
+&prereq-text.gift.crescent_moon dd=No Higher than Max Renown & Ithaeur Only
+&class.gift.crescent_moon dd=list
+<<< ithaeur only >>>
+
+&gift.death dd=1.2.3.4.5|Death Sight.Ghost Knife.Corpse Witness.Word of Quiet.Vengeance of the Slain
+&tags.gift.death dd=werewolf.bone shadows.season (winter)
+&prerequisite.gift.death dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.death dd=No Higher than Max Renown
+&class.gift.death dd=list
+
+&gift.dominance dd=1.2.3.4.5|Warning Growl.Luna's Dictum.Voice of Command.Break the Defiant.Tug the Soul's Strings
+&tags.gift.dominance dd=werewolf.rahu.storm lords
+&prerequisite.gift.dominance dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.dominance dd=No Higher than Max Renown
+&class.gift.dominance dd=list
+
+&gift.elemental dd=1.2.3.4.5|Call Water.Manipulate Earth.Command Fire.Invoke the Wind's Wrath.Lament of the River
+&tags.gift.elemental dd=werewolf.ithaeur.hunters in darkness
+&prerequisite.gift.elemental dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.elemental dd=No Higher than Max Renown
+&class.gift.elemental dd=list
+
+&notes.gift.elemental sr=For Lodge of the Maelstrom, see 'Maelstrom'
+
+&gift.evasion dd=1.2.3.4.5|Loose Tongue.Sand in the Eyes.Playing Possum.Double Back.Fog of War
+&tags.gift.evasion dd=werewolf.irraka.storm lords
+&prerequisite.gift.evasion dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.evasion dd=No Higher than Max Renown
+&class.gift.evasion dd=list
+
+&gift.father_wolf's dd=1.2.3.4.5|Wolf-blood's lure.Father Wolf's Speed.Primal Howl.Savage Rending.Spirit Pack
+&tags.gift.father_wolf's dd=werewolf.general
+&prerequisite.gift.father_wolf's dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.father_wolf's dd=No Higher than Max Renown
+&class.gift.father_wolf's dd=list
+
+&gift.full_moon dd=1.2.3.4.5|Clarity.Attunement.Death Maul.Rage Armor.Luna's Fury
+&tags.gift.full_moon dd=werewolf.rahu
+&prerequisite.gift.full_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, rahu))
+&prereq-text.gift.full_moon dd=No Higher than Max Renown & Rahu Only
+&class.gift.full_moon dd=list
+<<< rahu only >>>
+
+&gift.gibbous_moon dd=1.2.3.4.5|Pack Awareness.Resist Pain.Rallying Cry.Unspoken Communication.Call of Glory
+&tags.gift.gibbous_moon dd=werewolf.cahalith
+&prerequisite.gift.gibbous_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, cahalith))
+&prereq-text.gift.gibbous_moon dd=No Higher than Max Renown & Cahalith Only
+&class.gift.gibbous_moon dd=list
+<<< cahalith only >>>
+
+&gift.half_moon dd=1.2.3.4.5|Scent Beneath the Surface.Snarl of Command.Aura of Truce.Fuel Rage.Bind or Sunder
+&tags.gift.half_moon dd=werewolf.elodoth
+&prerequisite.gift.half_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, elodoth))
+&prereq-text.gift.half_moon dd=No Higher than Max Renown & Elodoth Only
+&class.gift.half_moon dd=list
+<<< elodoth only >>>
+
+&gift.insight dd=1.2.3.4.5|Sense Malice.Scent of Taint.Echo Dream.Soul Read.Omen Gazing
+&tags.gift.insight dd=werewolf.elodoth.bone shadows.season (autumn)
+&prerequisite.gift.insight dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.insight dd=No Higher than Max Renown
+&class.gift.insight dd=list
+
+&gift.inspiration dd=1.2.3.4.5|The Right Words.Camaraderie.True Leader.Spirit Skin.Victor's Song
+&tags.gift.inspiration dd=werewolf.cahalith.blood talons
+&prerequisite.gift.inspiration dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.inspiration dd=No Higher than Max Renown
+&class.gift.inspiration dd=list
+
+&gift.knowledge dd=1.2.3.4.5|Know Name.Traveler's Blessing.Sagacity.Know the Path.Communion with the Land
+&tags.gift.knowledge dd=werewolf.cahalith.iron masters
+&prerequisite.gift.knowledge dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.knowledge dd=No Higher than Max Renown
+&class.gift.knowledge dd=list
+
+&gift.mother_luna's dd=1.2.3.4.5|Partial Change.Anybeast.Silver Jaws.Skin-Stealing.Primal Form
+&tags.gift.mother_luna's dd=werewolf.general
+&prerequisite.gift.mother_luna's dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.mother_luna's dd=No Higher than Max Renown
+&class.gift.mother_luna's dd=list
+
+&gift.nature dd=1.2.3.4.5|Speak with Beasts.Plant Growth.Forest Communion.Beast Ride.Nature's Vengeance
+&tags.gift.nature dd=werewolf.hunters in darkness
+&prerequisite.gift.nature dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.nature dd=No Higher than Max Renown
+&class.gift.nature dd=list
+
+&gift.new_moon dd=1.2.3.4.5|Sense Weakness.Slip Away.Distractions.Blend In.Ghost Step
+&tags.gift.new_moon dd=werewolf.irraka
+&prerequisite.gift.new_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, irraka))
+&prereq-text.gift.new_moon dd=No Higher than Max Renown & Irraka Only
+&class.gift.new_moon dd=list
+<<< irraka only >>>
+
+&gift.rage dd=1.2.3.4.5|Mask of Rage.Hone Rage.Leach Rage.Rekindled Rage.Soured Rage
+&tags.gift.rage dd=werewolf.blood talons.season (summer)
+&prerequisite.gift.rage dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.rage dd=No Higher than Max Renown
+&class.gift.rage dd=list
+
+&gift.shaping dd=1.2.3.4.5|Straighten.Ruin.Sculpt.Shatter.Condense or Expand
+&tags.gift.shaping dd=werewolf.ithaeur.iron masters.ruin
+&prerequisite.gift.shaping dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.shaping dd=No Higher than Max Renown
+&class.gift.shaping dd=list
+
+@@ &gift.stealth dd=1.2.3.4.5|Feet of Mist.Blending.Running Shadow.Shadow Flesh.Vanish
+@@ &tags.gift.stealth dd=werewolf.irraka.hunters in darkness
+@@ &prerequisite.gift.stealth dd=u(_gifts_check, %0, %2)
+@@ &prereq-text.gift.stealth dd=No Higher than Max Renown
+@@ &class.gift.stealth dd=list
+
+&gift.gift_of_stealth dd=1.2.3.4.5|Feet of Mist.Blending.Running Shadow.Shadow Flesh.Vanish
+&tags.gift.gift_of_stealth dd=werewolf.irraka.hunters in darkness.harbingers
+&prerequisite.gift.gift_of_stealth dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.gift_of_stealth dd=No Higher than Max Renown
+&class.gift.gift_of_stealth dd=list
+&notes.gift.gift_of_stealth sr=Renamed from "stealth" to avoid confusion with the skill.
+
+@@ &gift.strength dd=1.2.3.4.5|Crushing Blood.Mighting Bound.Iron-Rending.Legendary Arm.Savage Might
+@@ &tags.gift.strength dd=werewolf.rahu.blood talons
+@@ &prerequisite.gift.strength dd=u(_gifts_check, %0, %2)
+@@ &prereq-text.gift.strength dd=No Higher than Max Renown
+@@ &class.gift.strength dd=list
+
+&gift.gift_of_strength dd=1.2.3.4.5|Crushing Blow.Mighty Bound.Iron-Rending.Legendary Arms.Savage Might
+&tags.gift.gift_of_strength dd=werewolf.rahu.blood talons
+&prerequisite.gift.gift_of_strength dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.gift_of_strength dd=No Higher than Max Renown
+&class.gift.gift_of_strength dd=list
+&notes.gift.gift_of_strength dd=Renamed from "strength" to avoid confusion with the attribute.
+
+&gift.technology dd=1.2.3.4.5|Left-handed Spanner.Nightfall.Iron Treachery.Maschinegeist.Create Techology
+&tags.gift.technology dd=werewolf.iron masters
+&prerequisite.gift.technology dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.technology dd=No Higher than Max Renown
+&class.gift.technology dd=list
+
+&gift.warding dd=1.2.3.4.5|Ward Versus Predators.Ward Versus Humans.Technology Wards.Shadow Ward.Ward of Spirit Slumber
+&tags.gift.warding dd=werewolf.elodoth.bone shadows
+&prerequisite.gift.warding dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.warding dd=No Higher than Max Renown
+&class.gift.warding dd=list
+
+&gift.weather dd=1.2.3.4.5|Call the Breeze.Silent Fog.Deluge.Killing Frost.Thunderbolt
+&tags.gift.weather dd=werewolf.storm lords.season (spring).lightning
+&prerequisite.gift.weather dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.weather dd=No Higher than Max Renown
+&class.gift.weather dd=list
+
+
+@@ -- RITE: WEREWOLF CORE ------------------------------------------------------
+
+&rite.banish_human dd=1
+&tags.rite.banish_human dd=werewolf
+&prerequisite.rite.banish_human dd=u(_rites_check, %0, 1)
+&prereq-text.rite.banish_human dd=Rituals 1+
+
+&rite.funeral_rite dd=1
+&tags.rite.funeral_rite dd=werewolf
+&prerequisite.rite.funeral_rite dd=u(_rites_check, %0, 1)
+&prereq-text.rite.funeral_rite dd=Rituals 1+
+
+&rite.rite_of_dedication dd=1
+&tags.rite.rite_of_dedication dd=werewolf
+&prerequisite.rite.rite_of_dedication dd=u(_rites_check, %0, 1)
+&prereq-text.rite.rite_of_dedication dd=Rituals 1+
+
+&rite.rite_of_renunciation dd=1
+&tags.rite.rite_of_renunciation dd=werewolf
+&prerequisite.rite.rite_of_renunciation dd=u(_rites_check, %0, 1)
+&prereq-text.rite.rite_of_renunciation dd=Rituals 1+
+
+&rite.shared_scent dd=1
+&tags.rite.shared_scent dd=werewolf
+&prerequisite.rite.shared_scent dd=u(_rites_check, %0, 1)
+&prereq-text.rite.shared_scent dd=Rituals 1+
+
+&rite.rite_of_the_spirit_brand dd=1
+&tags.rite.rite_of_the_spirit_brand dd=werewolf
+&prerequisite.rite.rite_of_the_spirit_brand dd=u(_rites_check, %0, 1)
+&prereq-text.rite.rite_of_the_spirit_brand dd=Rituals 1+
+
+&rite.banish_spirit dd=2
+&tags.rite.banish_spirit dd=werewolf
+&prerequisite.rite.banish_spirit dd=u(_rites_check, %0, 2)
+&prereq-text.rite.banish_spirit dd=Rituals 2+
+
+&rite.blessing_of_the_spirit_hunt dd=2
+&tags.rite.blessing_of_the_spirit_hunt dd=werewolf
+&prerequisite.rite.blessing_of_the_spirit_hunt dd=u(_rites_check, %0, 2)
+&prereq-text.rite.blessing_of_the_spirit_hunt dd=Rituals 2+
+
+&rite.call_gaffling dd=2
+&tags.rite.call_gaffling dd=werewolf
+&prerequisite.rite.call_gaffling dd=u(_rites_check, %0, 2)
+&prereq-text.rite.call_gaffling dd=Rituals 2+
+
+&rite.call_human dd=2
+&tags.rite.call_human dd=werewolf
+&prerequisite.rite.call_human dd=u(_rites_check, %0, 2)
+&prereq-text.rite.call_human dd=Rituals 2+
+
+&rite.fortify_the_border_marches dd=2
+&tags.rite.fortify_the_border_marches dd=werewolf
+&prerequisite.rite.fortify_the_border_marches dd=u(_rites_check, %0, 2)
+&prereq-text.rite.fortify_the_border_marches dd=Rituals 2+
+
+&rite.hallow_touchstone dd=2
+&tags.rite.hallow_touchstone dd=werewolf
+&prerequisite.rite.hallow_touchstone dd=u(_rites_check, %0, 2)
+&prereq-text.rite.hallow_touchstone dd=Rituals 2+
+
+&rite.rite_of_contrition dd=2
+&tags.rite.rite_of_contrition dd=werewolf
+&prerequisite.rite.rite_of_contrition dd=u(_rites_check, %0, 2)
+&prereq-text.rite.rite_of_contrition dd=Rituals 2+
+
+&rite.rite_of_dormancy dd=2
+&tags.rite.rite_of_dormancy dd=werewolf
+&prerequisite.rite.rite_of_dormancy dd=u(_rites_check, %0, 2)
+&prereq-text.rite.rite_of_dormancy dd=Rituals 2+
+
+&rite.bar_to_birth dd=2
+&tags.rite.bar_to_birth dd=werewolf
+&prerequisite.rite.bar_to_birth dd=u(_rites_check, %0, 2)
+&prereq-text.rite.bar_to_birth dd=Rituals 2+
+
+&rite.bind_human dd=3
+&tags.rite.bind_human dd=werewolf
+&prerequisite.rite.bind_human dd=u(_rites_check, %0, 3)
+&prereq-text.rite.bind_human dd=Rituals 3+
+
+&rite.bind_spirit dd=3
+&tags.rite.bind_spirit dd=werewolf
+&prerequisite.rite.bind_spirit dd=u(_rites_check, %0, 3)
+&prereq-text.rite.bind_spirit dd=Rituals 3+
+
+&rite.call_jaggling dd=3
+&tags.rite.call_jaggling dd=werewolf
+&prerequisite.rite.call_jaggling dd=u(_rites_check, %0, 3)
+&prereq-text.rite.call_jaggling dd=Rituals 3+
+
+&rite.rite_of_healing dd=3
+&tags.rite.rite_of_healing dd=werewolf
+&prerequisite.rite.rite_of_healing dd=u(_rites_check, %0, 3)
+&prereq-text.rite.rite_of_healing dd=Rituals 3+
+
+&rite.rite_of_initiation dd=3
+&tags.rite.rite_of_initiation dd=werewolf
+&prerequisite.rite.rite_of_initiation dd=u(_rites_check, %0, 3)
+&prereq-text.rite.rite_of_initiation dd=Rituals 3+
+
+&rite.rite_of_the_moon's_love dd=3
+&tags.rite.rite_of_the_moon's_love dd=werewolf
+&prerequisite.rite.rite_of_the_moon dd=u(_rites_check, %0, 3)
+&prereq-text.rite.rite_of_the_moon dd=Rituals 3+
+
+&rite.sacred_hunt dd=3
+&tags.rite.sacred_hunt dd=werewolf
+&prerequisite.rite.sacred_hunt dd=u(_rites_check, %0, 3)
+&prereq-text.rite.sacred_hunt dd=Rituals 3+
+
+&rite.wake_the_spirit dd=3
+&tags.rite.wake_the_spirit dd=werewolf
+&prerequisite.rite.wake_the_spirit dd=u(_rites_check, %0, 3)
+&prereq-text.rite.wake_the_spirit dd=Rituals 3+
+
+&rite.bestowing_the_shadowblind_cloak dd=3
+&tags.rite.bestowing_the_shadowblind_cloak dd=werewolf
+&prerequisite.rite.bestowing_the_shadowblind_cloak dd=u(_rites_check, %0, 3)
+&prereq-text.rite.bestowing_the_shadowblind_cloak dd=Rituals 3+
+
+&rite.fetish_rite dd=4
+&tags.rite.fetish_rite dd=werewolf
+&prerequisite.rite.fetish_rite dd=u(_rites_check, %0, 4)
+&prereq-text.rite.fetish_rite dd=Rituals 4+
+
+&rite.rite_of_the_chosen_ground dd=4
+&tags.rite.rite_of_the_chosen_ground dd=werewolf
+&prerequisite.rite.rite_of_the_chosen_ground dd=u(_rites_check, %0, 4)
+&prereq-text.rite.rite_of_the_chosen_ground dd=Rituals 4+
+
+&rite.drawing_down_the_shadow dd=5
+&tags.rite.drawing_down_the_shadow dd=werewolf
+&prerequisite.rite.drawing_down_the_shadow dd=u(_rites_check, %0, 5)
+&prereq-text.rite.drawing_down_the_shadow dd=Rituals 5+
+
+&rite.rending_the_gauntlet dd=5
+&tags.rite.rending_the_gauntlet dd=werewolf
+&prerequisite.rite.rending_the_gauntlet dd=u(_rites_check, %0, 5)
+&prereq-text.rite.rending_the_gauntlet dd=Rituals 5+
+
+&rite.return_to_the_borderland dd=werewolf
+&tags.rite.return_to_the_borderland dd=werewolf
+&prerequisite.rite.return_to_the_borderland dd=u(_rites_check, %0, 5)
+&prereq-text.rite.return_to_the_borderland dd=Rituals 5+
+
+&rite.risen_the_wardens_closed_the_gates dd=5
+&tags.rite.risen_the_wardens_closed_the_gates dd=werewolf
+&prerequisite.rite.risen_the_wardens_closed_the_gates dd=u(_rites_check, %0, 5)
+&prereq-text.rite.risen_the_wardens_closed_the_gates dd=Rituals 5+
+
+
+@@ =============================================================================
+@@ == WEREWOLF: BLOOD OF THE WOLF ==============================================
+@@ -- MERITS: BLOOD OF THE WOLF ------------------------------------------------
+
+
+
+Cobalt says, ÒWolf blood, Lunatic Glare, and Watched are from Blood of the Wolf.Ó
+
+
+
+Cobalt says, ÒCursed Item, Difficult to Ride, Easy Ride, Locus Drinker, Pleasing Aura, Residiual Spirit Energy, Saintly, Shadowless Chambers, Shadow Contacts, and Hollow Soul are from Book of Spirits.Ó
+
+Cobalt says, ÒSpirit Communion is a custom merit, solving the issue of two separate merits that did effectively the same thing from BoS.Ó
+
+
+@@ =============================================================================
+@@ == WEREWOLF: PLAYER'S GUIDE =================================================
+@@ -- MERITS: PLAYER'S GUIDE ---------------------------------------------------
+
+@@ Auspice Blessing: No, too conditional & too expensive.
+
+&merit.ephemeral_reckoning dd=2.4
+&tags.merit.ephemeral_reckoning dd=mental.werewolf
+&page.merit.ephemeral_reckoning sr=TR.103
+
+&merit.moon_centered dd=2
+&tags.merit.moon_centered dd=mental.werewolf
+&page.merit.moon_centered sr=TR.103
+
+@@ Fighting Style, Tooth & Claw: No fighting styles
+
+&merit.metabolic_control dd=2
+&tags.merit.metabolic_control dd=physical.werewolf
+&prerequisite.merit.metabolic_control dd=u(_at_least, %0, attribute.stamina, 2)
+&prereq-text.merit.metabolic_control dd=Stamina 3+
+&page.merit.metabolic_control sr=TR.105
+
+&merit.animal_magnetism dd=3
+&tags.merit.animal_magnetism dd=social.werewolf
+&page.merit.animal_magnetism sr=TR.105
+
+&merit.predator's_gaze dd=2
+@@ &tags.merit.predator's_gaze dd=social.werewolf
+&tags.merit.predator's_gaze dd=social
+&prerequisite.merit.predator's_gaze dd=u(_at_least_all, %0, attribute.presence:2 skill.intimidation:2)
+&prereq-text.merit.predator's_gaze dd=Presence 2+ and Intimidation 2+
+&page.merit.predator's_gaze sr=TR.105
+&notes.merit.predator's_gaze sr=May be purchased by anyone.
+
+
+
+&merit.pack_affinity dd=1.3
+&tags.merit.pack_affinity dd=social.werewolf
+&page.merit.pack_affinity sr=TR.156
+&notes.merit.pack_affinity sr=Drawback is affected by Iron Stamina. The rolling system does not account for this merit.
+
+@@ Pack Tactics: Probably not going to be added
+
+&merit.synergy dd=2
+&tags.merit.synergy dd=social.werewolf
+&page.merit.synergy sr=TR.156
+&notes.merit.synergy sr=Teamwork rolls involving non-pack members at -1
+
+
+@@ -- GIFTS: PLAYER'S GUIDE ----------------------------------------------------
+
+&gift.alpha dd=1.2.3.4.5|Sense Guilt.AlphaÕs Aura.Taste of Flaws.Lordly Will.AlphaÕs Howl
+&tags.gift.alpha dd=werewolf.storm lords
+&prerequisite.gift.alpha dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.alpha dd=No Higher than Max Renown
+&class.gift.alpha dd=list
+
+&page.gift.alpha sr=TR.107-108
+&notes.gift.alpha sr=Alpha Gifts 3 (Taste of Flaws) is vs. target's Resolve + Resistance
+
+
+
+&gift.battle dd=1.2.3.4.5|Visage of Fenris.Worry the PreyÕs Heels.Savaging.Primal Anger.Heartstopping Howl
+&tags.gift.battle dd=werewolf.blood talons
+&prerequisite.gift.battle dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.battle dd=No Higher than Max Renown
+&class.gift.battle dd=list
+
+&page.gift.battle sr=TR.108-110
+
+
+
+&gift.blending dd=1.2.3.4.5|Shadow Coat.Manytongues.Resist Toxin.Mask the Hunter.Hide the Curse
+&tags.gift.blending dd=werewolf.iron masters
+&prerequisite.gift.blending dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.blending dd=No Higher than Max Renown
+&class.gift.blending dd=list
+
+&page.gift.blending sr=TR.110-111
+
+
+
+&gift.gift_of_darkness dd=1.2.3.4.5|Darksight.Aura of Dread.Shadow Step.Moonlit Talons.Nightblind
+&tags.gift.gift_of_darkness dd=werewolf.general
+&prerequisite.gift.gift_of_darkness dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.gift_of_darkness dd=No Higher than Max Renown
+&class.gift.gift_of_darkness dd=list
+
+&page.gift.gift_of_darkness sr=TR.111-114
+&notes.gift.gift_of_darkness sr=Renamed from "Darkness" to avoid confusion with the contract.
+
+
+
+&gift.ending dd=1.2.3.4.5|Fear of Death.Eyes of the Slain.Death Masque.Bone Hex.Images of Death
+&tags.gift.ending dd=werewolf.bone shadows
+&prerequisite.gift.ending dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.ending dd=No Higher than Max Renown
+&class.gift.ending dd=list
+
+&page.gift.ending sr=TR.114-116
+
+
+
+&gift.endurance dd=1.2.3.4.5|Vigil.Long Running.Eternal Hunter.Rise Beyond.Legacy
+&tags.gift.endurance dd=werewolf.general
+&prerequisite.gift.endurance dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.endurance dd=No Higher than Max Renown
+&class.gift.endurance dd=list
+
+&page.gift.endurance sr=TR.116-118
+
+
+
+&gift.information dd=1.2.3.4.5|Sense the Flow.Tongues.Babel Effect.Steganography.Twisted Words
+&tags.gift.information dd=werewolf.general
+&prerequisite.gift.information dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.information dd=No Higher than Max Renown
+&class.gift.information dd=list
+
+&page.gift.information sr=TR.118-121
+
+
+
+&gift.gift_of_the_pack dd=1.2.3.4.5|Web of Scent.Warning Howl.BrotherÕs Strength.Synergy.Unity
+&tags.gift.gift_of_the_pack dd=werewolf.general
+&prerequisite.gift.gift_of_the_pack dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.gift_of_the_pack dd=No Higher than Max Renown
+&class.gift.gift_of_the_pack dd=list
+
+&page.gift.gift_of_the_pack sr=TR.121-123
+&notes.gift.gift_of_the_pack sr=Renamed from "Pack" to avoid confusion with the basic trait.
+
+
+@@ Predator 3 (Savage Hunt) far too abusive
+@@ 
+@@ &gift.predator dd=1.2.3.4.5|Bestial Fellowship.HunterÕs Fortitude.Savage Hunt.Harry.PredatorÕs Kin
+@@ &tags.gift.predator dd=werewolf.general
+@@ &prerequisite.gift.predator dd=u(_gifts_check, %0, %2)
+@@ &prereq-text.gift.predator dd=No Higher than Max Renown
+@@ &class.gift.predator dd=list
+@@ 
+@@ &page.gift.predator sr=TR.123-125
+
+
+
+&gift.stalking dd=1.2.3.4.5|Night Sight.HeavenÕs Guidance.Scent the Supernatural.Shadow Strike.Shadow Pack
+&tags.gift.stalking dd=werewolf.hunters in darkness
+&prerequisite.gift.stalking dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.stalking dd=No Higher than Max Renown
+&class.gift.stalking dd=list
+
+&page.gift.stalking sr=TR.125-127
+
+
+@@ Weakness 3 can and Weakness 5 does force a morality check
+@@ 
+@@ &gift.weakness dd=1.2.3.4.5|Reflection.Shallow Heart.CowardÕs Soul.Hidden Self.Wrack
+@@ &tags.gift.weakness dd=werewolf.general
+@@ &prerequisite.gift.weakness dd=u(_gifts_check, %0, %2)
+@@ &prereq-text.gift.weakness dd=No Higher than Max Renown
+@@ &class.gift.weakness dd=list
+@@ 
+@@ &page.gift.weakness sr=TR.127-129
+
+
+@@ -- GIFTS: PLAYER'S GUIDE ----------------------------------------------------
+
+&rite.call_the_cloudless_sky dd=2
+&tags.rite.call_the_cloudless_sky dd=werewolf.hunt
+&prerequisite.rite.call_the_cloudless_sky dd=u(_rites_check, %0, 2)
+&prereq-text.rite.call_the_cloudless_sky dd=Rituals 2+
+
+&page.rite.call_the_cloudless_sky sr=TR.130
+
+
+&rite.call_the_empty_road dd=3
+&tags.rite.call_the_empty_road dd=werewolf.hunt
+&prerequisite.rite.call_the_empty_road dd=u(_rites_check, %0, 3)
+&prereq-text.rite.call_the_empty_road dd=Rituals 3+
+
+&page.rite.call_the_empty_road sr=TR.130-131
+
+
+
+&rite.binding_of_locks dd=4
+&tags.rite.binding_of_locks dd=werewolf.hunt
+&prerequisite.rite.binding_of_locks dd=u(_rites_check, %0, 4)
+&prereq-text.rite.binding_of_locks dd=Rituals 4+
+
+&page.rite.binding_of_locks sr=TR.131
+
+
+&rite.blood_communion_of_spring dd=3
+&tags.rite.blood_communion_of_spring dd=werewolf.season
+&prerequisite.rite.blood_communion_of_spring dd=u(_rites_check, %0, 3)
+&prereq-text.rite.blood_communion_of_spring dd=Rituals 3+
+
+&page.rite.blood_communion_of_spring sr=TR.131-132
+
+
+
+&rite.bone_fires_of_summer dd=4
+&tags.rite.bone_fires_of_summer dd=werewolf.season
+&prerequisite.rite.bone_fires_of_summer dd=u(_rites_check, %0, 4)
+&prereq-text.rite.bone_fires_of_summer dd=Rituals 4+
+
+&page.rite.bone_fires_of_summer sr=TR.132-133
+
+
+
+&rite.darkest_night_of_winter dd=4
+&tags.rite.darkest_night_of_winter dd=werewolf.season
+&prerequisite.rite.darkest_night_of_winter dd=u(_rites_check, %0, 4)
+&prereq-text.rite.darkest_night_of_winter dd=Rituals 4+
+
+&page.rite.darkest_night_of_winter sr=TR.133-134
+
+
+
+&rite.spirit_lamps_of_autumn dd=4
+&tags.rite.spirit_lamps_of_autumn dd=werewolf.season
+&prerequisite.rite.spirit_lamps_of_autumn dd=u(_rites_check, %0, 4)
+&prereq-text.rite.spirit_lamps_of_autumn dd=Rituals 4+
+
+&page.rite.spirit_lamps_of_autumn sr=TR.134-135
+
+
+
+
+
+@@ =============================================================================
+@@ == WEREWOLF: LODGES OF THE FAITHFUL =========================================
+
+LoF.Lodges of the Faithful
+
+@@ -- BIO: LODGES OF THE FAITHFUL ----------------------------------------------
+
+@@ Denied: Arms
+
+@fo me=&bio.lodge dd=[setunion(get(dd/bio.lodge), Cerberus.Death.Doors.Harmony.The Maelstrom.Metal.Prophecy.Ruin.Salvation.Unity.Voices, .)]
+
+@fo me=&page.bio.lodge sr=[get(sr/page.bio.lodge)] LoF.30-117
+
+
+@@ -- TAG CHANGES: LODGES OF THE FAITHFUL --------------------------------------
+
+These tags add to the existing gifts or whatnot.  I should have started them sooner, but didn't.
+
+@fo me=&tags.gift.death dd=[get(dd/tags.gift.death)].cerberus
+
+@fo me=&tags.gift.knowledge dd=[get(dd/tags.gift.knowledge)].prophecy
+
+@fo me=&tags.gift.inspiration dd=[u(dd/tags.gift.inspiration)].salvation
+
+
+
+@@ -- GIFTS: LODGES OF THE FAITHFUL --------------------------------------------
+
+&gift.opening dd=1.2.3.4.5|Word of Opening.Lurker's Key.Create Opening.The Open Mind.Gauntlet Key
+&tags.gift.opening dd=werewolf.doors
+&prerequisite.gift.opening dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.lodge, doors))
+&prereq-text.gift.opening dd=No Higher than Max Renown & Lodge of Doors Only
+&class.gift.opening dd=list
+
+&page.gift.opening sr=LoF.50-52
+
+
+&gift.maelstrom dd=1.2.3.4.5|Call Water.Manipulate Water.Command Water.Invoke Water's Wrath.Lament of the Sea
+&tags.gift.maelstrom dd=werewolf.the maelstrom
+&prerequisite.gift.maelstrom dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.lodge, the maelstrom))
+&prereq-text.gift.maelstrom dd=No Higher than Max Renown & Lodge of the Maelstrom only
+&class.gift.maelstrom dd=list
+
+&page.gift.maelstrom sr=HR.Elemental
+&notes.gift.maelstrom sr=Each level behaves as the gift Elemental for the sea
+
+
+@@ -- RITES: LODGES OF THE FAITHFUL --------------------------------------------
+
+&rite.rite_of_churned_earth dd=2
+&tags.rite.rite_of_churned_earth dd=werewolf.harmony
+&prerequisite.rite.rite_of_churned_earth dd=and(u(_rites_check, %0, 2), u(_is, %0, bio.lodge, harmony))
+&prereq-text.rite.rite_of_churned_earth dd=Rituals 2+ & Lodge of Harmony only
+
+&page.rite.rite_of_churned_earth sr=LoF.61
+
+
+&rite.speak_with_the_guardian dd=2
+&tags.rite.speak_with_the_guardian dd=werewolf.cerberus
+&prerequisite.rite.speak_with_the_guardian dd=and(u(_rites_check, %0, 2), u(_is, %0, bio.lodge, cerberus))
+&prereq-text.rite.speak_with_the_guardian dd=Rituals 2+ & Lodge of Cerberus only
+
+&page.rite.speak_with_the_guardian sr=HR.Werewolf_Errata
+
+
+&rite.rite_of_offal dd=3
+&tags.rite.rite_of_offal dd=werewolf.harmony
+&prerequisite.rite.rite_of_offal dd=and(u(_rites_check, %0, 3), u(_is, %0, bio.lodge, harmony))
+&prereq-text.rite.rite_of_offal dd=Rituals 3+ & Lodge of Harmony only
+
+&page.rite.rite_of_offal sr=HR.Werewolf_Errata
+
+
+&rite.rite_of_corrosion dd=4
+&tags.rite.rite_of_corrosion dd=werewolf.metal
+&prerequisite.rite.rite_of_corrosion dd=and(u(_rites_check, %0, 4), u(_is, %0, bio.lodge, metal))
+&prereq-text.rite.rite_of_corrosion dd=Rituals 4+ & Lodge of Metal only
+
+&page.rite.rite_of_corrosion sr=LoF.71
+
+
+&rite.rite_of_the_final_sunrise dd=3
+&tags.rite.rite_of_the_final_sunrise dd=werewolf.ruin
+&prerequisite.rite.rite_of_the_final_sunrise dd=and(u(_rites_check, %0, 3), u(_is, %0, bio.lodge, ruin))
+&prereq-text.rite.rite_of_the_final_sunrise dd=Rituals 3+ & Lodge of Rust only
+
+&page.rite.rite_of_the_final_sunrise sr=LoF.82-83
+
+
+&rite.rite_of_the_moon's_veil dd=3
+&tags.rite.rite_of_the_moon's_veil dd=werewolf.salvation
+&prerequisite.rite.rite_of_the_moon's_veil dd=and(u(_rites_check, %0, 3), u(_is, %0, bio.lodge, salvation))
+&prereq-text.rite.rite_of_the_moon's_veil dd=Rituals 3+ & Lodge of Salvation only
+
+&page.rite.rite_of_the_moon's_veil sr=LoF.86
+
+
+&rite.rite_of_the_silver_scar dd=5
+&tags.rite.rite_of_the_silver_scar dd=werewolf.salvation
+&prerequisite.rite.rite_of_the_silver_scar dd=and(u(_rites_check, %0, 5), u(_is, %0, bio.lodge, salvation))
+&prereq-text.rite.rite_of_the_silver_scar dd=Rituals 5+ & Lodge of Salvation only
+
+&page.rite.rite_of_the_silver_scar sr=LoF.86-87
+
+
+&rite.communion_of_the_flesh dd=2
+&tags.rite.communion_of_the_flesh dd=werewolf.unity
+&prerequisite.rite.communion_of_the_flesh dd=and(u(_rites_check, %0, 2), u(_is, %0, bio.lodge, unity))
+&prereq-text.rite.communion_of_the_flesh dd=Rituals 2+ & Lodge of Unity only
+
+&page.rite.communion_of_the_flesh sr=LoF.125-126
+
+
+
+
+
+
+@@ -- MERITS: LODGES OF THE FAITHFUL -------------------------------------------
+
+&merit.prophet's_voice dd=3
+&tags.merit.prophet's_voice dd=werewolf.prophecy
+&prerequisite.merit.prophet's_voice dd=u(_is, %0, bio.lodge, prophecy)
+&prereq-text.merit.prophet's_voice dd=Lodge of Prophecy
+
+&page.merit.prophet's_voice sr=LoF.79
+
+
+&merit.ancestral_vessel dd=1.2.3.4.5
+&tags.merit.ancestral_vessel dd=werewolf.voices
+&prerequisite.merit.ancestral_vessel dd=u(_is, %0, bio.lodge, voices)
+&prereq-text.merit.ancestral_vessel dd=Lodge of Voices
+
+&page.merit.ancestral_vessel sr=LoF.104-105
+
+
+
+@@ =============================================================================
+@@ == VAMPIRE CORE =============================================================
+@@ -- BIO: VAMPIRE CORE --------------------------------------------------------
+
+@fo me=&bio.template DD=[u(dd/bio.template)].Vampire.Ghoul
+
+&bio.clan DD=Daeva.Gangrel.Mekhet.Nosferatu.Ventrue
+&tags.bio.clan DD=vampire
+
+&bio.covenant DD=CCarthian Movement.Circle of the Crone.Invictus.Lancea Sanctum.Order Dracul.Unaligned.Belial's Brood.VII
+&tags.bio.covenant DD=vampire
+
+&bio.bloodline DD=*|*
+&tags.bio.bloodline DD=vampire
+&prereq-text.bio.bloodline DD=Bloodline must be allowed for Clan.
+&prerequisite.bio.bloodline DD=t(match(u(special.bloodline.[u(_value, %0, bio.clan)]), if(t(%2), %2, u(_value, %0, bio.clan)), .))
+
+&special.bloodline.daeva DD=Toreador
+&special.bloodline.gangrel DD=Bruja
+&special.bloodline.mekhet DD=Morbus
+&special.bloodline.nosferatu DD=Burakumin
+&special.bloodline.ventrue DD=Malkovia
+
+
+-- ADVANTAGE: VAMPIRE CORE -----------------------------------------------------
+
+@@ "blood potency" is the changeling power level stat
+@@ "vitae" is its energy stat
+@@ "humanity" is its morality stat
+
+&advantage.blood_potency DD=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.blood_potency DD=power level.vampire
+&default.advantage.blood_potency DD=1
+
+&advantage.vitae DD=[if(match(u(%0/_bio.template), fae-touched, .), u(_value, %0, attribute.stamina), extract(10 11 12 13 14 15 20 30 50 100, u(%0/_advantage.blood_potency), 1))]
+&tags.advantage.vitae DD=derived.energy.vampire.ghoul
+
+&advantage.humanity DD=1.2.3.4.5.6.7.8.9.10|*
+&tags.advantage.humanity DD=morality.vampire
+&default.advantage.humanity DD=7
+
+>> Each clan has a pair of favored Attributes, enjoying a more
+>> acute development of certain natural aspects of the body. Once
+>> a clan is chosen, choose one Attribute from a clanÕs favored
+>> pair and add one dot to it.
+>> 
+>> Daeva		Dexterity or Manipulation
+>> Gangrel		Composure or Stamina
+>> Mekhet		Intelligence or Wits
+>> Nosferatu	Composure or Strength
+>> Ventrue		Presence or Resolve
+
+
+-- MERIT: VAMPIRE CORE ---------------------------------------------------------
+
+@@ "proper" haven, one main stat bought up 1+ and "spent" anywhere.
+@@ (specific spending spots max at 5)
+@@ &merit.haven DD=#|*
+
+@@ Ours is: You can buy specific hollows and spend them.
+&merit.haven_() DD=#|*|Location.Size.Security
+&tags.merit.haven_() DD=vampire.location
+
+&merit.herd DD=1.2.3.4.5
+&tags.merit.herd DD=vampire
+
+@@ &merit.vampire_status_() DD=1.2.3.4.5|City.Clan.Covenant
+@@ We shall be wrapping this into the main Status merit by way of ignoring it.
+
+>> Members of the Carthians may purchase the Allies, Contacts, Haven and Herd
+>> Merits at half the normal experience-point costs (rounding up). This cost
+>> break does not apply to purchases of these Merits during character creation.
+
+>> Members of the Invictus may purchase the Herd, Mentor, Resources and Retainer 
+>> Merits at half the normal experience-point costs (rounding up). This cost 
+>> break does not apply to purchases of these Merits during character creation.
+
+
+
+-- DISCIPLINE: VAMPIRE CORE ----------------------------------------------------
+
+&discipline.animalism DD=1.2.3.4.5
+&tags.discipline.animalism DD=vampire.gangrel.ventrue
+
+&discipline.auspex DD=1.2.3.4.5
+&tags.discipline.auspex DD=vampire.mekhet
+
+&discipline.celerity DD=1.2.3.4.5
+&tags.discipline.celerity DD=vampire.daeva.mekhet
+
+&discipline.dominate DD=1.2.3.4.5
+&tags.discipline.dominate DD=vampire.ventrue
+
+&discipline.majesty DD=1.2.3.4.5
+&tags.discipline.majesty DD=vampire.daeva
+
+&discipline.nightmare DD=1.2.3.4.5
+&tags.discipline.nightmare DD=vampire.nosferatu
+
+&discipline.obfuscate DD=1.2.3.4.5
+&tags.discipline.obfuscate DD=vampire.mekhet.nosferatu
+
+&discipline.protean DD=1.2.3.4.5
+&tags.discipline.protean DD=vampire.gangrel
+
+&discipline.resilience DD=1.2.3.4.5
+&tags.discipline.resilience DD=vampire.gangrel.ventrue
+
+&discipline.vigor DD=1.2.3.4.5
+&tags.discipline.resilience DD=vampire.daeva.nosferatu
+
+-- Blood Magics --
+
+@@ Although blood magics are considered disciplines, they are put together 
+@@ differently and have different cost considerations.  We'll see how we'll
+@@ make these work.
+
+&discipline.cruac DD=1.2.3.4.5|Pangs of Proserpina.Rigor Mortis.Cheval.The Hydra's Vitae.Deflection of Wooden Doom.Touch of the Morrigan.Blood Price.Willful Vitae.Blood Blight.Feeding the Crone
+
+&tags.discipline.cruac DD=vampire.circle of the crone
+
+&prerequisite.discipline.cruac DD=...
+&prereq-text.discipline.cruac DD=...
+
+>> A character must have at least one dot of Covenant Status (Circle of the 
+>> Crone) in order to learn Crœac.
+
+>> A characterÕs dots in this Discipline, subtracted from 10, is the maximum to 
+>> which his Humanity may rise.
+
+>> Cobalt says, ÒYou buy at 2 x Level.Ó
+>> Cobalt says, ÒYou can have as many in any level that you have the discipline 
+>> equal to.Ó
+
+
+&discipline.theban_sorcery DD=1.2.3.4.5|Blood Scourge.Vitae Reliquary.Curse of Babel.Liar;s Plague.Blandishment of Sin.Malediction of Despair.Gift of Lazarus.Stigmata.Transubstantiation.Wrathful Judgment
+&tags.discipline.theban_sorcery DD=vampire.lancea sanctum
+&prerequisite.discipline.theban_sorcery DD=...
+&prereq-text.discipline.theban_sorcery DD=...
+
+
+&discipline.the_coils_of_the_dragon DD=1.2.3.4.5|The Coil of Blood First Tier.The Coil of Blood Second Tier.The Coil of Blood Third Tier.The Coil of Banes First Tier.The Coil of Banes Second Tier.The Coil of Banes Third Tier.The Coil of the Beast First Tier.The Coil of the Beast Second Tier.The Coil of the Beast Third Tier
+&tags.discipline.the_coils_of_the_dragon DD=vampire.ordo
+dracul
+&prerequisite.discipline.the_coils_of_the_dragon DD=...
+&prereq-text.discipline.the_coils_of_the_dragon DD=...
+
+-- Devotions --
+p.151, may not really be stats
+
+
+
+================================================================================
+== MAGE CORE ===================================================================
+
+Work in progress.
+
+@fo me=&bio.template dd=[get(dd/bio.template)].Mage
+
+&d.type-search-order sfp=attribute skill merit advantage contract renown arcanum gift aspect goblin_contract rite bio
+
+
+--
+
+&bio.path dd=Acanthus.Mastigos.Moros.Obrimos.Thyrsus
+&tags.bio.path dd=mage
+
+&bio.order dd=Adamantine Arrow.Free Council.Guardians of the Veil.Mysterium.Silver Ladder
+&tags.bio.order dd=mage
+
+--
+
+&advantage.wisdom DD=1.2.3.4.5.6.7.8.9.10|*
+&default.advantage.wisdom DD=7
+&tags.advantage.wisdom dd=morality.mage
+
+&advantage.gnosis dd=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.gnosis dd=power level.mage
+&default.advantage.gnosis dd=1
+
+&advantage.mana dd=[extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.gnosis), .), 1)]
+&tags.advantage.mana DD=derived.energy.mage
+&default.advantage.mana DD=[u(#data_dictionary/advantage.mana, %!)]
+
+--
+
+think [setq(1, 3333222111)][setq(c, 33333)][setq(c, ljust(%qc, 10, 0))][gte(%q1, %qc)]
+_TRAIT_CHECK: u(_at_most, %0, %1, u(_max_trait, %0), %2)
+You say, ÒCobalt reminds me that I must also make sure the highest 2 digits of this are also Major Arcana.Ó
+
+0: dbref
+1: arcanum.xxx (item being raised)
+2: amt added to arcanum
+
+1-10: table on p.76
+a: arcana levels
+
+&_arcana_check dd=
+[localize(
+
+@@ >> the table, by gnosis
+	[setq(1, 3333222111)]
+	[setq(2, 4433322211)]
+	[setq(3, 5443332221)]
+	[setq(4, 5544333222)]
+	[setq(5, 5554433322)]
+	[setq(6, 6555443332)]
+	[setq(7, 6655544333)]
+	[setq(8, 6665554433)]
+	[setq(9, 6666555443)]
+	[setq(0, 6666655544)]
+
+@@ >> build the above out of existing sheet arcana
+	[setq(a, 
+@@ .. make it a comparably lengthed number: xxx0000000
+		ljust(
+@@ .. .. remove all spaces
+			edit(
+@@ .. .. .. sort arcana values hightest to lowest
+				revwords(sort(
+@@ .. .. .. .. determine final value of arcanum to be raised
+					[add(first(u(%0/_%1)), %2)] 
+@@ .. .. .. .. list all other existing arcana
+					[iter(
+						setdiff(lattr(%0/_arcanum.*), _%1), 
+						first(u(%0/%i0), .)
+					)]
+					)), 
+				%b, 
+			), 
+			10, 0
+		)
+	)]
+
+@@ >> compare %qa to proper table number by gnosis
+	[gte(r(right(u(%0/_advantage.gnosis), 1)), %qa)]
+)]
+
+--
+
+.. setting to null must always be ok in "prereq-other" check ..
+
+&_arcana_check dd=[localize([setq(1, 3333222111)][setq(2, 4433322211)][setq(3, 5443332221)][setq(4, 5544333222)][setq(5, 5554433322)][setq(6, 6555443332)][setq(7, 6655544333)][setq(8, 6665554433)][setq(9, 6666555443)][setq(0, 6666655544)][setq(a, ljust(edit(revwords(sort([add(first(u(%0/_%1), .), %2)] [iter(setdiff(lattr(%0/_arcanum.*), _%1), first(u(%0/%i0), .))])), %b, ), 10, 0))][gte(r(right(u(%0/_advantage.gnosis), 1)), %qa)])]
+
+--
+
+&arcanum.death dd=1.2.3.4.5.6
+&tags.arcanum.death dd=mage
+&prerequisite.arcanum.death dd=u(_arcana_check, %0, arcanum.death, %2)
+&prereq-text.arcanum.death dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.fate dd=1.2.3.4.5.6
+&tags.arcanum.fate dd=mage
+&prerequisite.arcanum.fate dd=u(_arcana_check, %0, arcanum.fate, %2)
+&prereq-text.arcanum.fate dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.forces dd=1.2.3.4.5.6
+&tags.arcanum.forces dd=mage
+&prerequisite.arcanum.forces dd=u(_arcana_check, %0, arcanum.forces, %2)
+&prereq-text.arcanum.forces dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.life dd=1.2.3.4.5.6
+&tags.arcanum.life dd=mage
+&prerequisite.arcanum.life dd=u(_arcana_check, %0, arcanum.life, %2)
+&prereq-text.arcanum.life dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.matter dd=1.2.3.4.5.6
+&tags.arcanum.matter dd=mage
+&prerequisite.arcanum.matter dd=u(_arcana_check, %0, arcanum.matter, %2)
+&prereq-text.arcanum.matter dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.mind dd=1.2.3.4.5.6
+&tags.arcanum.mind dd=mage
+&prerequisite.arcanum.mind dd=u(_arcana_check, %0, arcanum.mind, %2)
+&prereq-text.arcanum.mind dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.prime dd=1.2.3.4.5.6
+&tags.arcanum.prime dd=mage
+&prerequisite.arcanum.prime dd=u(_arcana_check, %0, arcanum.prime, %2)
+&prereq-text.arcanum.prime dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.spirit dd=1.2.3.4.5.6
+&tags.arcanum.spirit dd=mage
+&prerequisite.arcanum.spirit dd=u(_arcana_check, %0, arcanum.spirit, %2)
+&prereq-text.arcanum.spirit dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.space dd=1.2.3.4.5.6
+&tags.arcanum.space dd=mage
+&prerequisite.arcanum.space dd=u(_arcana_check, %0, arcanum.space, %2)
+&prereq-text.arcanum.space dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.time dd=1.2.3.4.5.6
+&tags.arcanum.time dd=mage
+&prerequisite.arcanum.time dd=u(_arcana_check, %0, arcanum.time, %2)
+&prereq-text.arcanum.time dd=Arcana levels must conform to chart on p. 76
+
+
+--
+
+&merit.artifact_() dd=3.4.5.6.7.8|*
+&tags.merit.artifact_() dd=mage.item(?)
+
+&merit.destiny dd=1.2.3.4.5
+&tags.merit.destiny dd=mage.social
+
+&merit.dream dd=1.2.3.4.5
+&tags.merit.dream dd=mage.mental
+
+&merit.enhanced_item_() dd=#|*
+&tags.merit.enhanced_item_() dd=#|*
+
+&merit.familiar dd=3.4
+&tags.merit.familiar dd=mage.social
+
+&merit.hallow_() dd=1.2.3.4.5|*
+&tags.merit.hallow_() dd=mage.location
+
+&merit.high_speech dd=1
+&tags.merit.high_speech dd=mage.mental
+
+&merit.imbued_item_() dd=2.3.4.5.6.7|*
+&tags.merit.imbued_item_() dd=mage.item(?)
+
+&merit.library dd=1.2.3.4.5 (** SEE SECOND SIGHT MERITS **)
+&tags.merit.library dd=mage.location
+
+&merit.occultation dd=1.2.3
+&tags.merit.occultation dd=mage.mental
+
+&merit.sanctum dd=1.2.3.4.5
+&tags.merit.sanctum dd=mage.location
+
+&merit.sleepwalker_retainer dd=1.2.3.4.5
+&tags.merit.sleepwalker_retainer dd=mage.social
+
+&merit.mage_status_() dd=1.2.3.4.5|Consilium Order
+&tags.merit.mage_status_() dd=mage.social
+
+&merit.thrall dd=3
+&tags.merit.thrall dd=mage.social
+
+Rote Specialties 
+¥ Adamantine Arrow: Athletics, Intimidation, Medicine
+¥ Free Council: Crafts, Persuasion, Science
+¥ Guardians of the Veil: Investigation, Stealth, Subterfuge
+¥ Mysterium: Investigation, Occult, Survival
+¥ Silver Ladder: Expression, Persuasion, Subterfuge
+
+	
+@@ =============================================================================
+@@ == FINISHING TOUCHES ========================================================
+@@ Run this any time you add derived stats
+
+@fo me=@edit dd/*=#data_dictionary, [num(dd)]
+
+
+@@ =============================================================================
+@@ == TOTAL CHARACTER COUNT OF CODE ============================================
+
+think [round(fdiv(ladd(iter(hf #310 dd ss sfp #41 xgs xpcd ac cg, iter(setdiff(lattr(%i0), Created Modified Desc), strlen(get(%i1/%i0))))), 1024), 2)]k
+
+@@ #41 is the Roller. #310 is the Stat Setter

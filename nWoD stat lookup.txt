@@ -1,0 +1,2093 @@
+-- DATA VS. SYSTEM ------------------------------------------------------------
+
+The stat system as a whole is mostly concerned with the data side of things.  It doesn't care how things add up, just that they do.  It cares that someone has a stat if they're supposed to, that someone is set with the proper initial value.  This isn't a character generation system, not a combat system, but is meant to allow these systems to be built easily and sensibly.
+
+
+-- ATTRIBUTES, TYPES, STAT PATH, AND SEARCH ORDER -----------------------------
+
+The basic presumption of this system is that we want to look up as little as possible on the character sheet, and in a way that's most legible to players, either staff who have to maintain the system or people who are typing in the simple player commands.  (You may find we've failed in some respects, but we've put the player first whenever there's a problem.)
+
+Some basic definitions:
+	Validation: The data dictionary, how we check if a value or name is valid
+	Storage: The character sheet, the actual stat value stored
+	Class: What class of stat it is: Simple, Instanced, List, etc.
+
+	<stat type>: Stat names grouped by type.
+	<stat name>: Stat name.
+		Stat names may not contain dashes!  This is because of +roll.
+
+		Stat names may not repeat exactly! The stat name first on the sort order (see below) will always come up first.
+
+		There is one exception to this: If the repeated stat names are on stat types NOT checked by the sort-order.  These are looked up directly anyway.
+	<stat path>: <stat type>.<stat name>[extras]
+
+Stat Paths Explained:
+	The stat path is the entire attribute name, whether for validation or storage. because of this, the "." and all other characters that are not valid for stat type, stat name, substat name, or instance name.
+
+	A validation stat path is:
+		<stat type>.<stat name>[ ()]
+	A storage stat path is:
+		<stat type>.<stat name>[ (<instance name>)][.<substat name>]
+
+	Remember attributes cannot be stored with spaces, so we use _
+
+Sort Order:
+	Some stat types are more important than others, and a few may belong to systems outside the basic stat-lookup system.  For that reason, on the system side we store a "sort-order".  The system looks for stat name first, but sorts the results by type in this sort order.
+
+
+-- STAT FORMATS ---------------------------------------------------------
+
+On the whole there are three formats for stats (and health): Simple (numeric, string, and list), Substat, and Instanced.  I've listed more here because some act slightly differently from one another.
+
+For any list validation, # means any non-zero integer, * means any value
+
+<a.value.list> means a list of values separated by a .
+
+1) Numerical: Simple stats
+	Validated:
+		&<stat type>.<stat name>: <value.list>
+		e.g.
+			&advantage.vice: Envy.Gluttony.Greed.Lust.Pride.Sloth.Wrath
+			&attribute.intelligence: 1.2.3.4.5
+	Stored:
+		&_<stat type>.<stat name>: <value>[.<offset>]
+		<value> ...
+			must validate
+			must be numeric (see below for "string" and "list")
+			may be derived from other stats (and be tagged such)
+		<offset> ...
+			is added to/subtracted from the <value>
+			does not need to validate
+			if set to 0 may be removed from the stored stat
+		e.g.:
+			&_advantage.vice: Sloth
+			&_attribute.intelligence: 3.-1
+			(actual intelligence is 3, but effective intelligence is 2)
+
+2) Any But List: Sub-Stats (aka details)
+	These may or may not require a simple stat, depending on the system. Class:List appear to have substats, but those are ONLY for lookup.
+	Validated:
+		&<stat type>.<stat name>: <value.list>|<substat.list>
+		e.g. &skill.athletics: 1.2.3.4.5|*
+	Stored:
+		&_<stat type>.<stat name>.<substat name>: <value>
+		e.g. (simple-stat "athletics" with sub-stat "quick reflexes")
+			&_skill.athletics: 2
+			&_skill.athletics.quick_reflexes: 1
+	WoD Note:
+		Skill sub-stats are limited to a value of "1" and are added to the skill simple stat.
+
+3) Any: Instanced (aka types)
+	Simple stats that are bought once per "type".
+	Validated:
+		&<stat type>.<stat name> (): <value.list>|<instance.list>
+		e.g. &merit.quick_draw_(): 1|Weaponry.Firearms
+	Stored:
+		&_<stat type>.<stat name> (<instance name>): <value>
+		e.g. &_merit.quick_draw_(weaponry): 1
+
+4) Instanced + Sub-Stats.
+	Sometimes you can add a sub-stat to an instanced stat.
+	Validated:
+		&<stat type>.<stat name> (): <value.list>|<instance.list>|<substat.list>
+		e.g.
+			&merit.hollow_() DD=#|*|Size.Amenities.Doors.Wards
+	Stored: 
+		&_<stat type>.<stat name> (<instance name>).<substat name>: <value>
+		e.g.
+			&_merit.hollow_(downtown): 6
+			&_merit.hollow_(downtown).size: 3
+			&_merit.hollow_(downtown).doors: 1
+			&_merit.hollow_(downtown).wards: 2
+		(in this example, the sum of the substats don't exceed the instance)
+
+5) String.
+	String stats are stats that are stored entirely as entered.
+	+roll may choose to ignore these stats entirely.
+
+	Validated:
+		&<stat type>.<stat name>: <value list>
+		&class.<stat type>.<stat name>: string
+		e.g.
+			&bio.full_name: *
+			&class.bio.full_name: string
+	Stored:
+		&_<stat type>.<stat name>: <value>
+		<value>...
+			must validate
+			may not be derived
+			will not be offset
+		e.g.:
+			&_bio.full_name: Craig Ferguson
+
+6) List.
+	Lists of values that may or may not be numeric.  They may be used as flags for reference or simple lists. 	+roll may choose to ignore these stats entirely.
+	
+	List class of stats may not be instanced or have substats!!!(oneoneeleven)
+	
+	(Use the data-dictionary function _class_translate_list to convert from value to name and visa-versa.)
+
+	Validated:
+		&<stat type>.<stat name>: <value list>[|<reference lookup/detail name>]
+		&class.<stat type>.<stat name>: list
+		e.g.
+			&gift.shaping: 1.2.3.4.5|Straighten.Ruin.Sculpt.Shatter.Condense or Expand
+			&class.gift.shaping: list
+		i.e.
+			gift.shaping 2 is linked to the word "ruin"
+	Stored:
+		&_<stat type>.<stat name>: <list of values>
+		<value>...
+			must validate
+			may not be derived
+			will not be offset
+		e.g.:
+			&_bio.kith: 
+			&_gift.shaping: 2.4
+
+NOTE:
+	Though I could have added &class.<stat path> to &tags instead, I am starting to get concerned with the amount of lookups I am doing.  The class of stat ("numeric" if no &class is set, otherwise "string" or "list") will hopefully allow me to work this into code much quicker than relying on &f.hastag?.
+	
+	In the future, I could set this to "derived" and do derived stats differently, i.e. not having to store the reference on the sheet.
+			
+
+-- HEALTH ---------------------------------------------------------
+
+The WoD health system, found in a different file, works much differently than other stats, but we keep it as close as we can to this system as possible.  Health is not part of the search-order path for stat types.
+
+
+-- TAGS ---------------------------------------------------------
+
+In order to make the stats work smoothly with the coded system, stats may have any number of tags, stored on the validation system as:
+	&tags.<validation stat path>: <tags.list>
+e.g.
+	&tags.advantage.clairty DD=morality.changeling
+
+Tag names are not validated.  As long as they don't have a "." in them, they are left to the user of this system to give meaning to.
+
+HOWEVER, PLEASE DO NOT ADD TAGS THAT ARE NOT NECESSARY.  Tags are meant to be used by higher game systems to determine validations.  <stat type> is a special kind of tag that is inseperable from the basic stat system.  If you need the stat type, please check that.
+
+Tags are never used for storage.
+
+
+-- TAGS USED SO FAR ------------------------------------------------------
+
+(tags marked with a * might not be used, and may be depreciated)
+
+mental, physical, social: Attribute and Skill categories
+
+power, finesse, resistance: Attribute categories
+
+chargen-only: Stat (Merit) that may only be purchased in chargen
+
+human, changeling, fae-touched, psionic, thaumaturge, werewolf:
+	May only be purchased by that template
+	(used along with default.<statpath> to determine if that default gets set)
+
+morality: Stats that map to the human Morality stat (including Morality itself)
+
+power level: Supernatural power stat (also called "Supernatural Affinity")
+
+energy: Supernatural energy pool
+
+location: Core location merits (hollow, etc., also used by +sheet)
+
+item: Core item merits (token, etc., also used by +sheet)
+
+*derived: Stat has a derived.<statpath> attribute on the data dictionary
+
+*pool: Stat is used to spend points (Willpower, Essence, Glamour)
+
+general, seeming.<seeming>, court.<court>: Contracts with specific affinities
+	(Contracts might also list other kiths in their tags.  These are semi-affinities.)
+
+non-affinity: Contracts with no affinities, i.e. contracts created by the Lost
+	(As per the rules in Equinox Road, pp 33-34, especially the last paragraph)
+
+*goblin: Goblin contracts. (always &goblin_contract.* anyway)
+
+sacrifice.<type>: Goblin contracts of sacrifice
+
+wyrd: Goblin contracts of the Wyrd
+
+fate: Merits of Fate
+
+
+-- DERIVED STATS ---------------------------------------------------------
+
+Some stats are created out of a number of other stats.  This system looks up the formula every time the stored stat is accessed.  We could have stored the actual result of the formula, but I felt that changes to the system would be easier if changes in the formula affected all stats immediately.
+
+Derived stats must be set up with several things in mind:
+	* The stat must be tagged "derived".
+	-- we might be able to get away by checking for the formula itself
+	* The <value.list> is the formula that checks for other stored stats and must be a simple stat.
+	* The storage is a function call to this formula, passing the dbref of the character sheet.
+
+validation e.g.
+	&advantage.defense: [min(u(%0/_attribute.wits), u(%0/_attribute.dexterity))]
+	&tags.advantage.defense: derived
+
+That is, the defense stat is the less of the sheet's wits and dexterity.
+
+storage e.g.
+	&_advantage.defense: [u(#xxx/advantage.defense, %!)]
+
+That is, "check object #xxx for this formula, and pass my dbref so it can find the stats it needs".  (Note: This causes no end of preferences problems due to u()-calls being run with the preference of the object they are on.  Setting object #xxx Visual solves these problems, if not in a satisfactory way.)
+
+Stored derived stats follow all the rules of simple stats, so an offset can be applied without issue.  For example, if someone boosted this character's defense by 2 points:
+	&_advantage.defense: [u(#xxx/advantage.defense, %!)].2
+
+Stored derived stats may be overwritten, making them normal simple stats. e.g.
+	&_advantage.defense: 4
+
+
+-- THE "SPECIAL" TYPE -----------------------------------------------------
+
+nWoD has several items which are used in derived stats that are themselves not explicitly stats.  That is, they don't appear on the character sheet.  These stats have a type of "special".
+
+The "special" type should never appear in the "search-order" list.
+
+For instance, "species factor" is used in the "speed" derived stat.
+
+Validation e.g.
+	&advantage.speed: [add(u(%0/_attribute.strength), u(%0/_attribute.dexterity), u(%0/_special.species_factor), u(%0/_merit.fleet_of_foot))]
+
+	&tags.advantage.speed: derived
+
+	&special.species_factor: #
+
+Storage e.g.
+	&_advantage.speed: [u(#xxx/advantage.speed, %!)]
+	&_special.species_factor: 5
+
+Except for never being used except in derived stats, the "special" stat type acts like any simple stat.  A special stat may itself be derived, but the goal of this stat type is to keep things simple.
+
+
+-- DEFAULT VALUES --------------------------------------------------------
+
+Like "tag" and "special", there's another special type, "default" which contains the default (probably initial character-generation) value of any stat.  The format for this is:
+	&default.<stat path>: <value>
+
+For instance, in the World of Darkness, all attributes start at 1, so we would have:
+	&default.attribute.intelligence: 1
+
+All derived stats must have a default value, to tell the character sheet where to find the formula.  (See: Derived Stats.)  The format for this kind of default value would be:
+	&default.<stat path>: [u(#xxx/<stat path>, <charsheet>)]
+
+For instance, with the character sheet on the player object:
+	&default.advantage.defense: [u(#xxx/advantage.defense, %!)]
+
+If the player had a special attribute, _sheet, showing the location of their character sheet object:
+	&default.advantage.defense: [u(#xxx/advantage.defense, v(_sheet))]
+
+(Alternatively, we could set up a macro-replacement scheme, #data_dictionary, #sheet, etc., and @edit the object whenever it's touched.)
+
+
+-- PREREQUISITES -------------------------------------------------------------
+
+Prerequisites are noted for stats as for who can take them, with the exception of templates (which are already tagged), and if they're chargen-only (same).  The end of chargen and any XP spend should have a check that all stats affected meet their prerequsites.
+
+Prerequisites rely only on the permanent stat (not perm + offset).
+
+For the case of stat increases, some stats (such as court contracts) rely on knowing what the new value of the stat is, so we pass the amount the stat's being increased (usually 1).
+
+	0: sheet dbref
+	1: full instance name, if any
+	2: increase/decrease of stat we're checking, or new value if stat is text
+
+	prerequisite.<statpath>: Code to determine prereqs
+	prereq-text.<statpath>: Human-readable version
+
+Failed prerequisites should always return #-3 <reason> and be checked after value-checking.
+
+
+-- ILLEGAL CHARACTERS --------------------------------------------------------
+
+Due to various systems, the following values are illegal:
+
+Names:
+	:	- the colon can't be set as an attribute name
+	.	- the period is a delimiter for the stat name
+
+Stats:
+	<number>.	- starting text this way looks like a numeric stat to the system
+	`			- at the moment we're using the backtick to columnize
+
+
+@@ =============================================================================
+@@ == NOTES TO SELF ============================================================
+@@ =============================================================================
+
+You know what?  Why don't we have a function() staging attribute and a full-on usable attribute?  For instance:
+
+	&f.getstat: Prep stuff, some error-check, pass it off to...
+	&f.getstat.workhorse: Meat of code that can be called by any attribute.
+
+Kind of like how f.statname doesn't (er, didn't) need it.
+
+
+@@ =============================================================================
+@@ == SUPPORT FUNCTIONS ========================================================
+@@ =============================================================================
+
+
+-------------------------------------------------------------------------------
+-- DATA -----------------------------------------------------------------------
+
+&d.data-dictionary sfp=#188
+
+@@ core: attribute skill merit advantage bio
+@@ changeling: contract goblin_contract
+@@ skinchangers: aspect
+@@ werewolf: gift rite renown
+
+&d.type-search-order sfp=attribute skill merit advantage contract renown gift aspect goblin_contract rite bio
+
+&d.type-specials sfp=special health
+
+&sortby.types sfp=[comp(match(v(d.type-search-order), first(%0, .)), match(v(d.type-search-order), first(%1, .)))]
+
+&filter.search-types sfp=t(match(v(d.type-search-order), first(%0, .)))
+
+---
+
+think sortby(sfp/sortby.types, filter(sfp/filter.search-types, sort(lattr(dd/*.s*))))
+
+
+-------------------------------------------------------------------------------
+-- INPUT: VALIDATE NAME --------------------------------------------------------
+
+This is a much more powerful function than I realized, as it does the following tricks, which we well need:
+
+	* Does not care about instance names.
+	* Will return multiple matches with a wildcard: <name>*
+	* It will return the above in the searched order
+
+&f.statpath-validate-name sfp=
+@@ Simply find a stat in the data dictionary
+@@ (does little checking)
+@@ 0: stat name searched for
+@@ 1: instance, if applicable
+@@ returns: full.attribute_()
+@@ (removes substat; just looks for attribute)
+@@ 
+@@ q0: Basic stat
+@@ q1: Basic stat search
+@@ q2: Outcome of basic stat search
+@@ q3: Outcome of literal stat search
+@@ q4: Final outcome
+@@ 
+@@ qz, qa, qb: Regmatch results
+
+localize(
+
+@@ spaces to underscores
+@@ (and, cheating, ignore the instance)
+	[setq(0, edit(first(%0, .), %b, _))]
+
+@@ instanced?
+	[setq(1, 
+		if(
+			regmatch(%q0, %(.*%)%\(%(.*%)%\), z a b), 
+			[trim(%qa, b, _)]*_%(%), 
+			%q0*
+		)
+	)]
+
+@@ look for all possibilities in data dictionary
+@@ then filter it down and grab it by order
+	[setq(2, 
+		sortby(
+			sortby.types, 
+			filter(
+				filter.search-types, 
+				u(f.stat-list-selected, %q1)
+			)
+		)
+	)]
+	
+@@ (look for literal match FIRST, THEN grab first sorted outcome)
+	[setq(4, 
+		if(
+			t(setr(3, graball(%q2, *.%q0))), 
+			%q3, 
+			first(%q2)
+		)
+	)]
+
+@@ return: did I get anything?
+	[if(t(%q4), %q4, #-1 STAT NOT FOUND)]
+)
+
+---
+
+&f.statpath-validate-name sfp=localize([setq(0, edit(first(%0, .), %b, _))][setq(1, if(regmatch(%q0, %(.*%)%\(%(.*%)%\), z a b), [trim(%qa, b, _)]*_%(%), %q0*))][setq(2, sortby(sortby.types, filter(filter.search-types, u(f.stat-list-selected, %q1))))][setq(4, if(t(setr(3, graball(%q2, *.%q0))), %q3, first(%q2)))][if(t(%q4), %q4, #-1 STAT NOT FOUND)])
+
+---
+
+think u(sfp/f.statpath-validate-name, stren)
+think u(sfp/f.statpath-validate-name, lang, fr)
+think u(sfp/f.statpath-validate-name, court)
+think u(sfp/f.statpath-validate-name, cour)
+
+think u(sfp/f.statpath-validate-name, lang(french))
+
+think u(sfp/f.statpath-validate-name, la*)
+
+
+-------------------------------------------------------------------------------
+-- LIST STATS (SELECTED) ------------------------------------------------------
+
+Not only does this list the "valid search order" stats, but those not as well.
+To list all, pass * or null.
+To find middle matches, pass *<name>* or *<name>
+
+&f.stat-list-selected sfp=
+@@ 0: Partial stat name to search for
+	setunion(
+		iter(
+			[v(d.type-search-order)] [v(d.type-specials)], 
+			lattr([u(d.data-dictionary)]/%i0.%0*)
+		), 
+	)
+
+--
+
+think u(sfp/f.stat-list-selected, st)
+
+think u(sfp/f.stat-list-selected, *str*)
+
+think u(sfp/f.stat-list-selected, *ual_k*)
+
+
+-------------------------------------------------------------------------------
+-- INPUT: BREAKDOWN REGISTERS -------------------------------------------------
+
+&f.stat-input-breakdown-registers sfp=
+@@ 0: <stat>[ (<instance>)][.<substat>]
+@@ 		"<stat>(<instance>)" and "<stat>(<instance>" should both also work
+@@ Output: Sets qx, qy, qz -- intended not to be localized!
+@@ 
+@@ That is, the proper use of this is to pass in a player-inputted stat
+@@ and populate these registers for further processing
+
+[setq(z, squish(edit(%0, %(, %b%()))]
+
+[setq(x, trim(before(before(%qz, .), %()))]
+[setq(y, before(rest(before(%qz, .), %(), %)))]
+[setq(z, rest(%qz, .))]
+
+---
+
+&f.stat-input-breakdown-registers sfp=[setq(z, squish(edit(%0, %(, %b%()))][setq(x, trim(before(before(%qz, .), %()))][setq(y, before(rest(before(%qz, .), %(), %)))][if(and(not(comp(%qy, )), strmatch(%qz, *%(*)), setq(y, *))][setq(z, rest(%qz, .))]
+
+---
+
+think [u(sfp/f.stat-input-breakdown-registers, lit(get(foo).yay))]%qx.%qy.%qz
+
+-=> get.foo.yay
+
+-- 
+
+There is a difference between having no instance and having a null instance
+Returns 1 if null instance, else returns 0.
+
+@@ 0: stat as entered
+@@ Returns: 1 if instance is there but null, 0 otherwise
+
+&f.stat-input-instance-is-null? sfp=regmatch(%0, .*%\(%\))
+
+
+-------------------------------------------------------------------------------
+-- FIND SHEET -----------------------------------------------------------------
+
+&f.find-sheet sfp=
+@@ character sheets might not be on the person they're meant to be on
+@@ this is a simple lookup function, in case things are changed
+@@ 0: dbref of player
+@@ returns: dbref of sheet
+
+@@ if the "sheet location" stat is on the passed item, pass that back
+@@ else assume the sheet is on the player
+	if(
+		hasattr(%0, _special.sheet_location), 
+		u(%0/_special.sheet_location),
+		%0
+	)
+
+
+---
+
+&f.find-sheet sfp=if(hasattr(%0, _special.sheet_location), u(%0/_special.sheet_location), %0)
+
+
+-------------------------------------------------------------------------------
+-- STATVALUE-GOOD -------------------------------------------------------------
+
+It occurred to me, a bit late, that I could use a function that does nothing but check to see if the value someone is trying to set for a stat is bad.  Bad values are: 
+	<value>.	- because the system thinks this is a numeric value
+	`			- because the charsheet uses this as a delimiter
+
+That's it for now.
+
+NOTE: With the inclusion of &class.<statpath>: string, <value>. may not need checked.  We'll see.
+
+
+&f.statvalue-good sfp=
+@@ 0: The value
+@@ returns: 0 if bad, 1 if good
+
+@@ pre-"string type" version, where we were worried about <num>.<string>
+@@ confuing the system into thinking this was a numeric stat.
+@@	and(
+@@		not(regmatch(%0, %[0-9%]%[0-9%]*%\..*)), 
+@@		not(strmatch(%0, *`*))
+@@	)
+
+	not(strmatch(%0, *`*))
+
+---
+
+&f.statvalue-good sfp=not(strmatch(%0, *`*))
+
+---
+
+think u(sfp/f.statvalue-good, blah)
+
+think u(sfp/f.statvalue-good, .blah)
+think u(sfp/f.statvalue-good, blah.blah)
+think u(sfp/f.statvalue-good, 10.blah)
+
+think u(sfp/f.statvalue-good, `blah)
+think u(sfp/f.statvalue-good, b`lah)
+think u(sfp/f.statvalue-good, blah`)
+
+
+-- GET CLASS -------------------------------------------------------------------
+
+Get what kind of class a <statpath> is.  If only we did this in a more object-oriented manner.
+
+0: full stat path (may include substat!)
+returns: class.<statpath> or "numeric" if null
+
+&f.get-class sfp=
+	udefault(
+		[u(d.data-dictionary)]/
+		class.[u(f.statpath-without-instance, extract(%0, 1, 2, .))], 
+		numeric
+	)
+
+--
+
+&f.get-class sfp=udefault([u(d.data-dictionary)]/class.[u(f.statpath-without-instance, %0)], numeric)
+
+--
+
+think u(sfp/f.get-class, attribute.strength)
+think u(sfp/f.get-class, bio.template)
+think u(sfp/f.get-class, bio.full_name)
+
+
+-- ISCLASS? --------------------------------------------------------------------
+
+Does the class of the stat path match any of the passed parameters?
+
+0: full stat path (may include substat!)
+1: space-delimited class types to find
+returns: 1 or 0
+
+&f.isclass? sfp=t(match(%1, ulocal(f.get-class, %0)))
+
+--
+
+think u(sfp/f.isclass?, attribute.strength, string)
+think u(sfp/f.isclass?, attribute.strength, numeric string)
+
+think u(sfp/f.isclass?, gift.full_moon, list)
+
+
+===============================================================================
+== STATPATH FUNCTIONS =========================================================
+
+The following functions care about where a stat is, exactly, on the data dictionary or a character sheet.  All additions to stats are in the format of <what>.<statpath>, such as tags.<statpath>.
+
+
+-------------------------------------------------------------------------------
+-- STATPATH: DATA DICTIONARY --------------------------------------------------
+
+Use this if we know that the path we're looking for is on the data dictionary itself.
+
+Because the "substat" section for List stats is only for lookup, we will return only the type.name portion for list stats.  (Remember to do the same for sheet, below.)
+
+&f.statpath-lookup-dd sfp=
+@@ 0: stat name[ (instance)][.substat]
+@@ returns: stat_name[_(instance)][.substat]
+@@
+@@ qn: Validated (then later, built) stat name
+@@ qs: stat dd entry
+@@ qc: stat class
+@@ qi: instance passed, returned WITH UNDERSCORES
+@@ q0, 1: tmp result holders
+@@ qx, y, z: stat name, instance, substat to be validated
+@@ 
+@@ This version validates from the Data Dictionary ONLY.
+@@ MORE PERMISSIVE than statname-lookup-sheet, as * is "anything"
+@@ Used for validating new purchases if sheet-lookup fails.
+
+@@ Break down stat into registers x, y, z
+[setq(0, edit(%0, _, %b))]
+[u(f.stat-input-breakdown-registers, %q0)]
+
+@@ validate stat name:
+[if(
+	setr(n, u(f.statpath-validate-name, %q0)), 
+
+@@ .. get dd entry
+	[setq(s, u(v(d.data-dictionary)/%qn))]
+@@ .. get dd entry's "class" (we're guaranteed no instance here)
+	[setq(c, udefault(v(d.data-dictionary)/class.%qn, numeric))]
+
+@@ >> if instance, check dd entry for that instance and if not found, error
+@@ .. we are expecting an instance if validated stat name ends in ()
+	[if(
+		strmatch(%qn, *_%(%)), 
+		switch(
+			1, 
+@@ .. .. instance list is *, return exactly what we were passed
+			strmatch(*, setr(1, extract(%qs, 2, 1, |))), 
+			setq(n, [before(%qn, _%(%))]_%([edit(%qy, %b, _)]%)), 
+@@ .. .. expecting specific instance, none passed
+			match(%qy, ), 
+			setq(n, #-2 INSTANCE NOT FOUND), 
+@@ .. .. instance list is something else and we can find what was passed on it
+			t(setr(0, grab(%q1, %qy*, .))), 
+			setq(n, [before(%qn, _%(%))]_%([edit(%q0, %b, _)]%)), 
+@@ .. .. all other conditions failed: error
+			setq(n, #-2 INSTANCE NOT FOUND)
+		)
+	)]
+
+@@ >> if substat, check dd entry for that substat and if not found, error
+	[if(
+		and(t(%qz), t(%qn)), 
+		switch(
+			1, 
+@@ .. .. substat-list is *
+@@ .. .. (our dd format shifts the substat-list at instance-list +1)
+@@ .. .. (for dd-lookup, the instance may be null and still valid)
+			setr(1, 
+				strmatch(*, 
+					extract(%qs, add(2, t(regmatch(%qn, .*%\(.*%\)))), 1, |)
+				)
+			), 
+			setq(n, %qn.[edit(%qz, %b, _)]), 
+@@ .. .. substat-list is an actual list
+			t(setr(0, grab(%q1, %qz*, .))), 
+			setq(n, %qn.%q0), 
+@@ .. .. no matches
+			setq(n, #-2 SUBSTAT NOT FOUND)
+		)
+	)]
+)]
+
+@@ return built stat, or error -- for class:list stats, type.name only
+[if(and(t(%qn), strmatch(%qc, list)), extract(%qn, 1, 2, .), %qn)]
+
+---
+
+>> New: Returns non-matched instances with underscores.
+&f.statpath-lookup-dd sfp=[u(f.stat-input-breakdown-registers, edit(%0, _, %b))][if(setr(n, u(f.statpath-validate-name, %0)), [setq(s, u(v(d.data-dictionary)/%qn))][setq(c, udefault(v(d.data-dictionary)/class.%qn, numeric))][if(strmatch(%qn, *_%(%)), switch(1, strmatch(*, setr(1, extract(%qs, 2, 1, |))), setq(n, [before(%qn, _%(%))]_%([edit(%qy, %b, _)]%)), match(%qy, ), setq(n, #-2 INSTANCE NOT FOUND), t(setr(0, grab(%q1, %qy*, .))), setq(n, [before(%qn, _%(%))]_%([edit(%q0, %b, _)]%)), setq(n, #-2 INSTANCE NOT FOUND)))][if(and(t(%qz), t(%qn)), switch(1, strmatch(*, setr(1, extract(%qs, add(2, t(regmatch(%qn, .*%\(.*%\)))), 1, |))), setq(n, %qn.[edit(%qz, %b, _)]), t(setr(0, grab(%q1, %qz*, .))), setq(n, %qn.%q0), setq(n, #-2 SUBSTAT NOT FOUND)))])][if(and(t(%qn), strmatch(%qc, list)), extract(%qn, 1, 2, .), %qn)]
+
+
+---
+
+think u(sfp/f.statpath-lookup-dd, str)
+think u(sfp/f.statpath-lookup-dd, c (su))
+think u(sfp/f.statpath-lookup-dd, aca.lib)
+
+think statpath(court)
+think statpath(cour)
+think statpath(cour(s))
+think statpath(lang ())
+think statpath(lang ().ft)
+
+
+think ## [setr(0, lit(str|l (French)|aca.Library Science|mantle (courtless)))] %r--> [iter(%q0, u(sfp/f.statpath-lookup-dd, ##), |, %r-->%b)]
+
+
+-------------------------------------------------------------------------------
+-- STATPATH: WITHOUT INSTANCE --------------------------------------------------
+
+Reverses the statpath process, taking a stat from the sheet and stripping the instance from it.  Generally used to then look up things directly on the data dictionary itself.
+
+@@ 0: Full statpath
+@@ qz: temp holder to grab just the name portion of a stapath
+
+&f.statpath-without-instance sfp=localize(if(regmatchi(%0, %(.*%)%\(.*%\), z z), %qz%(%), %0))
+
+think u(sfp/f.statpath-without-instance, statpath(strength))
+think u(sfp/f.statpath-without-instance, statpath(cour(sp)))
+think u(sfp/f.statpath-without-instance, statpath(lan (spanish)))
+
+
+-------------------------------------------------------------------------------
+-- STATPATH: SHEET ------------------------------------------------------------
+
+Use this when we know (or suspect) the stat we're looking for is on the character's sheet.  It's quicker to start with the sheet lookup then, if that doesn't work, check (without instance) on the data dictionary.
+
+
+&f.statpath-lookup-sheet sfp=
+@@ 0: player dbref
+@@ 1: stat name[ (instance)][.substat]
+@@ returns: stat path: stat_name[_(instance)][.substat]
+@@
+@@ qn: Validated stat name
+@@ qs: stat dd entry
+@@ qc: class from stat dd entry
+@@ q0: tmp result holder
+@@ qx, y, z: stat name, instance, substat to be validated (from another func)
+@@ 
+@@ NOTE: Instances and Substats on sheet are stored with _ for spaces
+
+@@ until I can figure out how to have this and lookup-dd work together:
+
+@@ Break down stat into registers x, y, z
+[setq(0, edit(%1, _, %b))]
+[u(f.stat-input-breakdown-registers, %q0)]
+[setq(y, edit(%qy, %b, _))]
+
+@@ validate stat name:
+[if(
+	setr(n, u(f.statpath-validate-name, %q0)), 
+
+	[setq(s, u(v(d.data-dictionary)/%qn))]
+	[setq(c, u(f.get-class, %qn))]
+
+@@ .. validate instance, if any
+	[if(
+@@ .. we are expecting an instance if validated stat name ends in ()
+		strmatch(%qn, *_%(%)), 
+@@ .. .. dd lookup, else sheet lookup, else error
+		switch(
+			1, 
+@@ .. .. .. instance nowhere, because it wasn't passed
+			match(%qy, ), 
+			setq(n, #-2 INSTANCE NOT FOUND), 
+@@ .. .. .. instance on dd
+			t(setr(0, grab(extract(%qs, 2, 1, |), %qy*, .))), 
+			setq(n, [before(%qn, _%(%))]_%(%q0%)), 
+
+@@ .. .. .. instance on sheet
+			t(setr(0, lattr(u(f.find-sheet, %0)/_[before(%qn, _%(%))]_%(%qy*%)))), 
+			setq(n, rest(%q0, _)), 
+@@ .. .. .. instance nowhere, because nothing else matched
+			setq(n, #-2 INSTANCE NOT FOUND)
+		)
+	)]
+
+	[if(
+		and(t(%qz), t(%qn)), 
+@@ .. .. dd lookup, else sheet lookup, else error
+		switch(
+			1, 
+			t(setr(0, grab(extract(%qs, add(2, t(%qy)), 1, |), %qz*, .))), 
+			setq(n, %qn.%q0), 
+			t(setr(0, lattr(u(f.find-sheet, %0)/_%qn.[edit(%qz, %b, _)]*))), 
+			setq(n, rest(%q0, _)), 
+			setq(n, #-2 SUBSTAT NOT FOUND)
+		)
+	)]
+)]
+
+@@ return built stat, or error -- for class:list stats, type.name only
+[if(and(t(%qn), strmatch(%qc, list)), extract(%qn, 1, 2, .), %qn)]
+
+---
+
+
+&f.statpath-lookup-sheet sfp=[u(f.stat-input-breakdown-registers, setr(0, edit(%1, _, %b)))][setq(y, edit(%qy, %b, _))][if(setr(n, u(f.statpath-validate-name, %q0)), [setq(s, u(v(d.data-dictionary)/%qn))][setq(c, u(f.get-class, %qn))][if(strmatch(%qn, *_%(%)), switch(1, match(%qy, ), setq(n, #-2 INSTANCE NOT FOUND), t(setr(0, grab(extract(%qs, 2, 1, |), %qy*, .))), setq(n, [before(%qn, _%(%))]_%(%q0%)), t(setr(0, lattr(u(f.find-sheet, %0)/_[before(%qn, _%(%))]_%(%qy*%)))), setq(n, rest(%q0, _)), setq(n, #-2 INSTANCE NOT FOUND)))][if(and(t(%qz), t(%qn)), switch(1, t(setr(0, grab(extract(%qs, add(2, t(%qy)), 1, |), %qz*, .))), setq(n, %qn.%q0), t(setr(0, lattr(u(f.find-sheet, %0)/_%qn.[edit(%qz, %b, _)]*))), setq(n, rest(%q0, _)), setq(n, #-2 SUBSTAT NOT FOUND)))])][if(and(t(%qn), strmatch(%qc, list)), extract(%qn, 1, 2, .), %qn)]
+
+
+
+---
+
+think u(sfp/f.statpath-lookup-sheet, %!, str)
+think u(sfp/f.statpath-lookup-sheet, %!, c (s))
+think u(sfp/f.statpath-lookup-sheet, %!, cont.rep)
+think u(sfp/f.statpath-lookup-sheet, %!, lang (fr))
+
+
+think [setq(0, lit(str|l (French)|athl.quick r|mantle (sp)))][setq(1, pmatch(thenomain))][iter(%q0, ==> [ljust(%q1/##, 15)] --> [statname(%q1/##)], |, %r)]
+
+
+YES, LOOKUP-SHEET PRACTICALLY VALIDATES THE STAT ON THE SHEET, BUT NOT ENTIRELY
+
+================================================================================
+== PREREQUITE FUNCTIONS ========================================================
+
+We check format, stat path, and roughly check the value.  Here we also check the types of prerequisites imposed upon us by ourselves in &prerequisite.<statpath>, but also by the Storytelling system.  I'll try to be careful to notate which is which.
+
+These functions do minimal error-checking.
+
+Failed prerequisites should always return #-3 <reason> and be checked after value-checking.
+
+
+--------------------------------------------------------------------------------
+-- PREREQ: OTHER ---------------------------------------------------------------
+
+We'll start with the most generic of prerequisite checks, stored on &prerequisite.<statpath>.  The error message when this check fails are pulled from &prereq-text.<statpath>
+
+Remember we pass to prerequisite.<statpath> the following:
+	0: dbref of sheet
+	1: instance of stat, if any
+	2: stat-raise (offset) if stat being checked is being raised (used in cg/xp)
+
+
+&f.prereq-check-other sfp=
+@@ 0: sheet dbref
+@@ 1: full.statpath
+@@ 2: instance, if any (may include spaces, so edit)
+@@ 3: stat-raised-by (offset) or stat-set-to
+@@ returns: 1 if valid, #-1 <reason> if not
+@@ 
+@@ p: return for &prerequisite.<statpath>
+
+localize(
+	[setq(
+		p, 
+		ulocal([u(d.data-dictionary)]/prerequisite.%1, %0, edit(%2, %b, _), %3)
+	)]
+	[case(
+		0, 
+		comp(%qp, ), 1, 
+		%qp, #-3 [u([u(d.data-dictionary)]/prereq-text.%1, %0, edit(%2, _, %b), %3)], 
+		1
+	)]
+)
+
+---
+
+&f.prereq-check-other sfp=localize([setq(p, ulocal([u(d.data-dictionary)]/prerequisite.%1, %0, edit(%2, %b, _), %3))][case(0, comp(%qp, ), 1, %qp, #-3 [u([u(d.data-dictionary)]/prereq-text.%1, %0, edit(%2, _, %b), %3)], 1)])
+
+---
+
+think u(sfp/f.prereq-check-other, pmatch(dog), merit.mantle_(), spring)
+think u(sfp/f.prereq-check-other, pmatch(dog), merit.court_goodwill_(), spring)
+
+think u(sfp/f.prereq-check-other, pmatch(gwen), merit.mantle_(), spring, 1)
+think u(sfp/f.prereq-check-other, pmatch(gwen), merit.court_goodwill_(), spring, 1)
+
+think u(sfp/f.prereq-check-other, pmatch(thenomain), contract.fleeting_spring, spring, 1)
+think u(sfp/f.prereq-check-other, pmatch(thenomain), contract.fleeting_spring, spring, 5)
+
+think u(sfp/f.prereq-check-other, pmatch(gwen), contract.fleeting_spring, spring, 1)
+think u(sfp/f.prereq-check-other, pmatch(gwen), contract.fleeting_spring, spring, 5)
+
+
+think u(sfp/f.prereq-check-other, pmatch(jade), merit.workshop_(), Washington's_Obsequy)
+think u(sfp/f.prereq-check-other, pmatch(jade), merit.workshop_(), Washington's_Obsequy, 1)
+
+
+--------------------------------------------------------------------------------
+-- PREREQ: CGEN ----------------------------------------------------------------
+
+Some stats are cgen-only.  We are not going to enforce this, but add this function to the stat system for completeness.
+
+Please note that unlike other support functions, we're sending the player dbref, not the sheet dbref.  Fine-tune this for your own game.
+
+&f.prereq-check-cgen sfp=
+@@ may use zones in the future
+@@ 0: player dbref
+@@ 1: full.statpath
+@@ returns: 1 if valid, #-1 <reason> if not
+
+	if(
+		or(
+@@ .. player is in chargen
+			strmatch(loc(%0), #xxx), 
+@@ .. stat is not cg-only
+			not(u(f.hastag?.workhorse, %1, chargen-only))
+		), 
+		1, 
+		#-3 Stat May Only Be Purchased At Character Generation
+	)
+
+---
+
+&f.prereq-check-cgen sfp=if(or(strmatch(loc(%0), #xxxCharGenxxx), not(u(f.hastag?.workhorse, %1, chargen-only))), 1, #-3 Stat May Only Be Purchased At Character Generation)
+
+---
+
+think u(sfp/f.prereq-check-cgen, pmatch(thenomain), attribute.presence)
+think u(sfp/f.prereq-check-cgen, pmatch(thenomain), merit.encyclopedic_knowledge)
+
+
+--------------------------------------------------------------------------------
+-- PREREQ: TEMPLATE ------------------------------------------------------------
+
+I know the stat system as a whole doesn't normally care about this, but to validate setstat(), we'll need this.
+
+Templates are only important for the Storytelling (etc) systems, but I can see it being used in other systems as well.  Say only your Anita Blake Vampires can have the Sexy Fangs stat.
+
+Requires the Data Dictionary to have &bio.template, and &tags.<statpath> to include the stat.  If &tags.<statpath> has no templates in it, then it will be considered valid.  (So even if you don't use templates, this system won't hurt anything, just be extra code.)
+
+
+&f.prereq-check-template sfp=
+@@ 0: sheet dbref
+@@ 1: full.statpath_()
+@@ returns: 1 if valid, #-1 <reason> if not
+@@ 
+@@ d: data dictionary dbref (we use it that often)
+@@ b: bio.templates
+@@ t: templates used in tags.<statpath>
+
+localize(
+	[setq(d, u(d.data-dictionary))]
+	[setq(b, lcstr(u(%qd/bio.template)))]
+	[setq(t, setinter(lcstr(u(%qd/tags.%1)), %qb, .))]
+	[case(
+		0, 
+@@ .. stat uses no templates, so is valid to all templates
+		comp(%qt, ), 1, 
+@@ .. check the intersection of stat's templates with sheet's
+		comp(setinter(%qt, lcstr(u(%0/_bio.template)), .), ), 
+		#-3 Stat Not Allowed For This Template, 
+@@ .. no other errors, so 1
+		1
+	)]	
+)
+
+---
+
+&f.prereq-check-template sfp=localize([setq(d, u(d.data-dictionary))][setq(b, lcstr(u(%qd/bio.template)))][setq(t, setinter(lcstr(u(%qd/tags.%1)), %qb, .))][case(0, comp(%qt, ), 1, comp(setinter(%qt, lcstr(u(%0/_bio.template)), .), ), #-3 Stat Not Allowed For This Template, 1)])
+
+---
+
+think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.unseen_sense_())
+think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.mantle_())
+think u(sfp/f.prereq-check-template, pmatch(thenomain), attribute.strength)
+
+---
+
+See Also: setstat(), where this will be used.
+
+
+@@ =============================================================================
+@@ == PRIMARY FUNCTIONS ========================================================
+@@ =============================================================================
+
+You know, the reason we do this.
+
+== statpath([<player>/]<stat>) ================================================
+
+USER-DEFINED FUNCTION: STATPATH()
+
+This function is simply an API-like function that allows a staffer-project to pull the raw "where would I find this stat" via the statname-lookup functions, and do some additional error checking.
+
+&f.statpath sfp=
+@@ 0: As passed, will be broken apart.
+@@ Output: Full stat path or #-1 or whatever (via f.statpath.workhorse).
+@@ 
+@@ qp: Player to check.
+@@ qs: Stat to check.
+
+@@ Prime the registers.  If it hurts your brain, it hurts mine too.
+[setq(s, )][setq(p, )]
+[setq(s, if(t(setr(s, rest(%0, /))), %qs[setq(p, before(%0, /))], %0))]
+
+@@ Validate Input
+
+[case(
+	0, 
+@@ .. staff-only
+	isstaff(%@), 
+	#-1 STAFF ONLY, 
+@@ .. must have a stat to look up
+	comp(%qs, ), 
+	#-1 NEED STAT TO LOOK UP,  
+@@ .. else call the Workhorse.  If it hurts your brain, tough.
+	ulocal(f.statpath.workhorse, %qs, %qp)
+)]
+
+---
+
+&f.statpath.workhorse sfp=
+@@ 0: Stat to check.
+@@ 1: Player dbref of target, if any
+@@ Output: Full stat path or #-1 Whatever
+@@ 
+@@ qp: Dbref of player then of player's sheet
+
+
+@@ If player, do the player dance, else do the dd-lookup dance.
+@@ If player but player lookup failed, also do the dd-lookup dance.
+	[if(
+		t(%1), 
+@@ .. .. player error-checking
+		case(
+			0, 
+			t(setr(p, pmatch+(%1))), 
+			#-1 PLAYER NOT FOUND, 
+			t(setr(p, u(f.find-sheet, %qp))), 
+			#-1 SHEET NOT FOUND, 
+@@ .. .. .. okay, do the lookup
+			setq(p, ulocal(f.statpath-lookup-sheet, %qp, %0))
+		), 
+@@ .. .. plain dd-lookup
+		setq(p, ulocal(f.statpath-lookup-dd, %0))
+	)]
+	[if(
+@@ If dbref passed, and the player lookup failed...
+		and(t(%1), strmatch(%qp, #-*)), 
+@@ .. try the dd lookup
+		ulocal(f.statpath-lookup-dd, %0), 
+@@ .. else output whatever we have
+		%qp
+	)]
+
+---
+
+&f.statpath sfp=[setq(s, )][setq(p, )][setq(s, if(t(setr(s, rest(%0, /))), %qs[setq(p, before(%0, /))], %0))][case(0, isstaff(%@), #-1 STAFF ONLY, comp(%qs, ), #-1 NEED STAT TO LOOK UP,  ulocal(f.statpath.workhorse, %qs, %qp))]
+
+@@ Current: 
+&f.statpath.workhorse sfp=[if(t(%1), case(0, t(setr(p, pmatch+(%1))), #-1 PLAYER NOT FOUND, t(setr(p, u(f.find-sheet, %qp))), #-1 SHEET NOT FOUND, setq(p, ulocal(f.statpath-lookup-sheet, %qp, %0))), setq(p, ulocal(f.statpath-lookup-dd, %0)))][if(and(t(%1), strmatch(%qp, #-*)), ulocal(f.statpath-lookup-dd, %0), %qp)]
+
+@@ Older:
+	&f.statpath.workhorse sfp=if(t(%1), case(0, t(setr(p, pmatch+(%1))), #-1 PLAYER NOT FOUND, t(setr(p, u(f.find-sheet, %qp))), #-1 SHEET NOT FOUND, ulocal(f.statpath-lookup-sheet, %qp, %0)), ulocal(f.statpath-lookup-dd, %0))
+
+
+---
+
+USER-DEFINED FUNCTION: STATPATH()
+
+== statname([<player>/]<stat>) ================================================
+
+&f.statname sfp=
+@@ 0: same as f.statpath
+@@ output: prettified Just-The-Stat-Name
+@@ qr: results of f.statpath
+
+if(
+	t(setr(r, u(f.statpath, %0))), 
+@@ .. dd stat: send the name portion of the statpath
+	u(f.statname.workhorse, rest(%qr, .)), 
+@@ .. error: show what f.statpath handed us
+	%qr
+)
+
+---
+
+&f.statname.workhorse sfp=
+@@ 0: The "rest" of the statpath (that is, just the name portion)
+
+	iter(
+@@ .. .. Step 1: Capitalize Words
+		edit(%0, _, %b), 
+@@ .. Step 2: Capitalize Substats
+		titlestr(%i0), 
+		., 
+		.
+	)
+
+---
+
+&f.statname sfp=if(t(setr(r, u(f.statpath, %0))), u(f.statname.workhorse, rest(%qr, .)), %qr)
+
+&f.statname-workhorse sfp=iter(iter(edit(lcstr(%0), _, %b), capstr(##), ., .), capstr(##))
+
+&f.statname.workhorse sfp=[setq(r, iter(iter(edit(lcstr(%0), _, %b), capstr(%i0)), capstr(%i0), ., .))][if(regmatch(%qr, %(.*%) %\%(%(.*%)%\%), m s i), %qs ([u(f.statname.workhorse, %qi)]), %qr)]
+
+&f.statname.workhorse sfp=iter(edit(%0, _, %b), titlestr(%i0), ., .)
+
+---
+
+think iter(iter(edit(a_b.c_d, _, %b), capstr(##), ., .), capstr(##))
+
+think statname(str)
+think statname(cont.rep)
+think statname(thenomain/cont.rep)
+think statname(c(s))
+think statname(blah)
+
+
+== hasstat(<player>/<stat>) ====================================================
+
+hasstat(<player>/<stat>) - ??? Do We Need This?
+
+
+== getstat(<player>/<stat>[, <statstuff>]) =====================================
+
+Getstat is checked against f.statpath, which gets us 2/3rds of what we need.
+
+<statstuff>: 
+- [p]ermanent: return the first part, if numeric
+- [o]ffset: return the second part, if first part is numeric
+- [b]oth: return <perm>.<offset>
+- [t]otal: default, return <perm> + <offset>
+
+p, o, b and t are ignored if the stat is non-numeric.
+
+
+&f.getstat sfp=
+@@ 0: <player>/<stat>
+@@ 1: [p]ermanent, [o]ffset, [b]oth, [t]otal, if any
+@@ 
+@@ qp: <player>
+@@ qs: <stat>
+@@ qd: dbref of sheet
+@@ 
+@@ requires: isstaff(<dbref>), pmatch+(<player|"me">)
+
+[setq(p, pmatch+(before(%0, /)))]
+[setq(s, rest(%0, /))]
+
+[case(
+	0, 
+@@ the following may work without objeval(<wiz>, getstat(xx/yy))
+@@	or(isstaff(%@), strmatch(%qp, %#)), 
+	isstaff(%@), 
+	#-1 PERMISSION DENIED, 
+	t(%qp), 
+	#-1 PLAYER NOT FOUND, 
+	t(setr(d, u(f.find-sheet, %qp))), 
+	#-1 SHEET NOT FOUND, 
+	t(%qs), 
+	#-1 STAT MUST BE PROVIDED, 
+	u(f.getstat.workhorse, %qp, %qs, %qd, %1)
+)]
+
+---
+
+&f.getstat.workhorse sfp=
+@@ 0: Player dbref
+@@ 1: Stat to Get
+@@ 2: Sheet Loc
+@@ 3: [p]ermanent, [o]ffset, [b]oth, [t]otal, if any
+@@ 
+@@ qs: <stat path>, then <stat>'s location if character would have it
+@@ qd: <stat> details if on sheet
+@@ qc: class of <stat path>: numeric, string, list
+
+[setq(s, u(f.statpath.workhorse, %1, %0))]
+[setq(d, u(%2/_%qs))]
+[setq(c, u(f.get-class, %qs))]
+
+
+[if(
+	t(%qs), 
+@@ .. Stat Location Valid & Found
+	case(
+		%qc, 
+@@ >> Statpath's Class: String (ignore %3, give all)
+		string, %qd, 
+@@ >> Statpath's Class: List (ignore %3, give all)
+		list, %qd, 
+@@ >> Statpath's Class: Number (follow %3)
+		numeric, 
+		switch(
+			%3, 
+			p*, first(%qd, .), 
+			o*, rest(%qd, .), 
+			b*, %qd, 
+			t*, ladd(%qd, .), 
+			ladd(%qd, .)
+		), 
+@@ >> Else: Panic and return full stat
+		%qd
+	), 
+@@ .. Error Looking Up Stat
+	%qs
+)]
+
+--
+
+&f.getstat sfp=[setq(p, pmatch+(before(%0, /)))][setq(s, rest(%0, /))][case(0, isstaff(%@), #-1 STAFF ONLY, t(%qp), #-1 PLAYER NOT FOUND, t(setr(d, u(f.find-sheet, %qp))), #-1 SHEET NOT FOUND, t(%qs), #-1 STAT MUST BE PROVIDED, u(f.getstat.workhorse, %qp, %qs, %qd, %1))]
+
+&f.getstat.workhorse sfp=[setq(s, u(f.statpath.workhorse, %1, %0))][setq(d, u(%2/_%qs))][setq(c, u(f.get-class, %qs))][if(t(%qs), case(%qc, string, %qd, list, %qd, numeric, switch(%3, p*, first(%qd, .), o*, rest(%qd, .), b*, %qd, t*, ladd(%qd, .), ladd(%qd, .)), %qd), %qs)]
+
+
+---
+
+@@ General Test
+think [statname(thenomain/cont.rep)]: [getstat(thenomain/cont.rep)]
+
+think [iter(full name|c(sp)|athl|athl.quick|speed|kith|blah, --> [ansi(c, statname(thenomain/##))]: [getstat(thenomain/##)], |, %r)]
+
+@@ List and String Lookups
+think getstat(thenomain/kith)
+think getstat(thenomain/full name)
+
+@@ Numeric Without Offset Lookup
+think getstat(thenomain/str)
+think getstat(thenomain/str, perm)
+think getstat(thenomain/str, offset)
+think getstat(thenomain/str, both)
+think getstat(thenomain/str, total)
+
+@@ Numeric With Offset Lookup
+think getstat(thenomain/speed)
+think getstat(thenomain/speed, perm)
+think getstat(thenomain/speed, offset)
+think getstat(thenomain/speed, both)
+think getstat(thenomain/speed, total)
+
+@@ Non-Numeric Lookup
+think getstat(thenomain/cont.rep)
+think getstat(thenomain/cont.rep, perm)
+think getstat(thenomain/cont.rep, offset)
+think getstat(thenomain/cont.rep, both)
+think getstat(thenomain/cont.rep, total)
+
+
+
+@@ =============================================================================
+@@ == AFTER-THOUGHTS ===========================================================
+@@ =============================================================================
+
+
+== List of Stats Based on Tags =================================================
+
+Returns only the stats of a certain category (* for 'all') with a certain tag ('*' for 'don't filter', in which case don't use this function, use lattr(<sheet>/_<category>.*) and leave it at that).
+
+&f.list-stats-tags sfp=
+@@ list of stats on a sheet, based on passed tags
+@@ 0: dbref of sheet
+@@ 1: category (may be *)
+@@ 2: tags.list (all required, if any, for 'mental', etc., * for 'all')
+@@ 3: 'or' for the default behavior of hastag? (defaults to 'and')
+@@ 
+@@ returns: character sheet statpaths
+
+	filter(
+		fil.list-stats-tags, 
+@@ .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
+@@ .. so we can use the filter for non-sheet matches
+		rest(edit(lattr(%0/_%1.*), %b_, %b), _), 
+		, 
+		, 
+		%2, 
+		not(strmatch(%3, or))
+	)
+
+--
+
+&f.list-stats-tags sfp=filter(fil.list-stats-tags, rest(edit(lattr(%0/_%1.*), %b_, %b), _), , , %2, not(strmatch(%3, or)))
+
+
+== Filter: Does this stat have these tags? =====================================
+
+&fil.list-stats-tags sfp=
+@@ Filter based on a tags list 
+@@ 0: stat.path_(with or without instance)
+@@ 1: tags.to.check.against
+@@ 2: "0" for or, "1" for and
+
+	ulocal(
+		f.hastag?.workhorse,
+		ulocal(f.statpath-without-instance, %0), 
+		%1, 
+		%2
+	)
+
+--
+
+&fil.list-stats-tags sfp=ulocal(f.hastag?.workhorse,ulocal(f.statpath-without-instance, %0), %1, %2)
+
+
+== Filter: Is This Stat One of These Types? ====================================
+
+Probably duplicitous.
+
+&fil.list-stats-types sfp=
+@@ Filter based on a tags list 
+@@ 0: stat.path_(with or without instance)
+@@ 1: types to check against
+
+	t(match(%1, first(%0, .)))
+
+--
+
+&fil.list-stats-types sfp=t(match(%1, first(%0, .)))
+
+
+== Filter: Does This Stat Have One of These Values? ============================
+
+
+Filter based on values list (value.value 2.value 3)
+
+0: stat.path_(with or without instance)
+1: values to check against
+
+&fil.list-stats-values sfp=
+	setunion(
+		get([u(d.data-dictionary)]/[ulocal(f.statpath-without-instance, %0)]), 
+		%1, 
+		.
+	)
+
+
+---
+
+think filter(sfp/fil.list-stats-tags, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , changeling)
+
+think filter(sfp/fil.list-stats-types, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , attribute merit)
+
+think [setq(0, merit)][setq(1, changeling)][filter(sfp/fil.list-stats-tags, lattr(dd/%q0.*), , , %q1, not(strmatch(%q2, or)))]
+
+
+
+think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , 4)
+
+think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , Changeling)
+
+
+--------------------------------------------------------------------------------
+-- THE PRETTYSTAT FUNCTION FOR CHARSHEET ---------------------------------------
+
+This is out of place, but it takes the value and offset of a number, and outputs either stars or a number for that stat, prettified.
+
+&f.pretty-stat-num sfp=
+@@ 0: <base>.<offset>
+@@ 1: stars?, 1 for stars, 0 for number
+@@ output: Either **** or Value, with color representing if offset is + or -
+@@ 
+@@ qb: base
+@@ qo: offset
+
+localize(switch(
+	[setq(b, first(%0, .))]
+	[setq(o, rest(%0, .))]
+	1, 
+@@ if <value> or <offset> are non-numeric, forget it
+	not(and(isnum(%qb), or(isnum(%qo), not(t(%qo))))), 
+	ansi(hw, %0), 
+@@ stars! + offset = wwwhh
+	and(t(%1), gte(%qo, 0)), 
+	ansi(w, [repeat(o, %qb)], g, [repeat(*, %qo)]), 
+@@ stars! - offset = yyxxx
+	and(t(%1), lt(%qo, 0)), 
+	ansi(w, [repeat(o, add(%qb, %qo))], hx, [repeat(., min(abs(%qo), %qb))]), 
+@@ number! + offset = g
+	gt(%qo, 0), 
+	ansi(ng, add(%qb, %qo)), 
+@@ number! - offset = y
+	lt(%qo, 0), 
+	ansi(hy, add(%qb, %qo)), 
+@@ else, number! + 0 = w
+	ansi(w, %0)
+))
+
+---
+
+&f.prettify-stat-num sfp=localize(switch([setq(b, first(%0, .))][setq(o, rest(%0, .))]1, not(and(isnum(%qb), or(isnum(%qo), not(t(%qo))))), ansi(w, %0), and(t(%1), gte(%qo, 0)), ansi(w, [repeat(o, %qb)], h, [repeat(*, %qo)]), and(t(%1), lt(%qo, 0)), ansi(w, [repeat(o, add(%qb, %qo))], hx, [repeat(., min(abs(%qo), %qb))]), gt(%qo, 0), ansi(ng, add(%qb, %qo)), lt(%qo, 0), ansi(hy, add(%qb, %qo)), ansi(w, %0)))
+
+---
+
+think [ansi(c, statname(setr(0, thenomain/str)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)] ([u(sfp/f.prettify-stat-num, %q1)])
+
+think [ansi(c, statname(setr(0, thenomain/glam)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)] ([u(sfp/f.prettify-stat-num, %q1)])
+
+think [ansi(c, statname(setr(0, thenomain/spee)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)] ([u(sfp/f.prettify-stat-num, %q1)])
+
+think [ansi(c, statname(setr(0, thenomain/cont.rep)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)]
+
+think u(sfp/f.prettify-stat-num, 4, 1)
+think u(sfp/f.prettify-stat-num, 4.-1, 1)
+think u(sfp/f.prettify-stat-num, 4.+1, 1)
+think u(sfp/f.prettify-stat-num, 4)
+think u(sfp/f.prettify-stat-num, 4.-1)
+think u(sfp/f.prettify-stat-num, 4.+1)
+
+think iter(str glam spee cont.rep, >> [ansi(g, statname(setr(0, thenomain/##)))]: [[u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)]], , %r)
+
+================================================================================
+== Boolean? Functions ==========================================================
+
+isstat?(<stat>) - Is <stat> a valid stat name? - just t(statname(<stat>))
+
+hasstat?(<player>/<stat>[, <value>]) - Does <player> have <stat> (at <value>/greater than <value>)? - Just getstat(<player>/<stat>) run through a conditional
+
+
+-------------------------------------------------------------------------------
+-- hastag?(<stat>, <tag.list>[, or|and]) --------------------------------------
+
+Or/Default: Does <stat> have a tag in <tag.list>? And: Does <stat> have all tags in <tag.list>?
+
+@@ 0: stat
+@@ 1: tag.list (not case sensitive)
+@@ 2: or/and, if there.  Assume or-check
+@@ output: 1 or 0 (invalid stat names will always return 0)
+@@ 
+@@ qs: stat path
+
+&f.hastag? sfp=
+	[setq(s, u(f.statpath.workhorse, %0))]
+	
+	[if(
+		t(%qs), 
+		u(f.hastag?.workhorse, u(f.statpath-without-instance, %qs), %1, strmatch(%2, a*)), 
+		0
+	)]
+
+---
+
+&f.hastag?.workhorse sfp=
+@@ 0: stat path
+@@ 1: tag.list (not case sensitive)
+@@ 2: 1 if "and", 0/null if "or"
+@@ 
+@@ qt: tags for stat
+@@ qb: boolean list of matches
+
+[setq(t, lcstr(u(v(d.data-dictionary)/tags.%0)))]
+[setq(b, iter(%1, match(%qt, ##, .), .))]
+
+[if(
+	%2, 
+@@ and-check
+	land(%qb), 
+@@ else/default: or-check
+	lor(%qb)
+)]
+
+---
+
+&f.hastag? sfp=[setq(s, u(f.statpath.workhorse, %0))][if(t(%qs), u(f.hastag?.workhorse, u(f.statpath-without-instance, %qs), %1, strmatch(%2, a*)), 0)]
+
+&f.hastag?.workhorse sfp=[setq(t, lcstr(u(v(d.data-dictionary)/tags.%0)))][setq(b, iter(%1, match(%qt, ##, .), .))][if(%2, land(%qb), lor(%qb))]
+
+---
+
+think hastag?(wyrd, changeling)
+think hastag?(wyrd, CHangelinG, and)
+think hastag?(wyrd, changeling.DERIVED)
+think hastag?(wyrd, changeling.derived, and)
+think hastag?(wyrd, CHORNGEling.derived)
+think hastag?(wyrd, CHORNGEling.derived, and)
+think hastag?(wyrd)
+
+
+-------------------------------------------------------------------------------
+-- statvalidate(<stat>, <value>|default) --------------------------------------
+
+The point of this function is to take a statpath and a (possibly partial) value, or the value of "default", and return the full value if valid, #-1 if not.
+
+UPDATE: Now we're adding list stats, <num>.<num>.<num> is valid input for class.<statpath>: list
+
+
+&f.statvalidate sfp=
+@@ .. strip instance from the statpath to pull value list directly from the DD
+	[setq(s, u(f.statpath-without-instance, u(f.statpath.workhorse, %0)))]
+
+	[switch(
+		0, 
+		1[@@(<is staff>)], #-1 STAFF ONLY, 
+		t(%qs), %qs, 
+		u(f.statvalidate.workhorse, %qs, %1)
+	)]
+
+---
+
+&f.statvalidate.workhorse sfp=
+@@ 0: stat path *without instance*
+@@ 1: value|"default"
+@@ Output: closest valid match. if "default", default value
+@@ 
+@@ qs: stat's value validation list (grabbed from DD)
+@@ qc: stat's  class
+@@ qv: matched value, if any
+
+localize(switch(
+	0, 
+	u(f.statvalue-good, %1), #-1 VALUE CONTAINS ILLEGAL FORMAT, 
+@@ >> check for and grab "default"
+	comp(lcstr(%1), default), 
+	[setq(v, get(u(d.data-dictionary)/default.%0))]
+	[if(
+		t(%qv), 
+		%qv, 
+		#-1 DEFAULT NOT FOUND
+	)], 
+@@ >> else check for and grab value
+	[setq(s, first(get(u(d.data-dictionary)/%0), |))]
+	[setq(c, get(u(d.data-dictionary)/class.%0))]
+@@	[setq(v, grab(%qs, %1*, .))]
+@@ .. completed value 
+	[setq(v, 
+		case(%qc, 
+@@ .. >> list: set-intersect as a cheap filter, will not name-complete
+@@ .. .. (like setstat.workhorse, make space -> '.')
+			list, 
+@@ .. .. filter out the items that don't match %qs (filter sees !xx as xx)
+			[filter(fil.statvalidate-list, 
+				edit(%1, %b, .), 
+				., ., %qs
+			)], 
+@@ .. >> else: grab the first match
+			grab(%qs, %1*, .)
+		)
+	)]
+
+	[case(%qs, 
+@@ .. .. *: Anything will do, return what was passed (probably "string" class)
+		*, 
+		%1, 
+@@ .. .. #: Any number 1+
+		#, 
+		if(and(gte(%1, 1), isint(%1)), %1, #-1 VALUE NOT A POSITIVE INTEGER), 
+@@ .. >> else: process the value
+		switch(
+			0, 
+@@ .. .. .. passed null
+			comp(%1, ), #-1 VALUE WAS NULL, 
+@@ .. .. .. substats are implied "*"
+			lt(words(%0, .), 3), %1, 
+@@ .. .. .. requested value not in the list
+			t(%qv), #-1 VALUE NOT FOUND,
+@@ .. .. .. else return grabbed value
+			%qv
+		)
+	)]
+))
+
+---
+
+&fil.statvalidate-list sfp=t(match(%1, edit(%0, !, ), .))
+
+---
+
+&f.statvalidate sfp=[setq(s, u(f.statpath-without-instance, u(f.statpath.workhorse, %0)))][switch(0, 1[@@(<is staff>)], #-1 STAFF ONLY, t(%qs), %qs, u(f.statvalidate.workhorse, %qs, %1))]
+
+&f.statvalidate.workhorse sfp=localize(switch(0, u(f.statvalue-good, %1), #-1 VALUE CONTAINS ILLEGAL FORMAT, comp(lcstr(%1), default), [setq(v, get(u(d.data-dictionary)/default.%0))][if(t(%qv), %qv, #-1 DEFAULT NOT FOUND)], [setq(s, first(get(u(d.data-dictionary)/%0), |))][setq(c, get(u(d.data-dictionary)/class.%0))][setq(v, case(%qc, list, [filter(fil.statvalidate-list, edit(%1, %b, .), ., ., %qs)], grab(%qs, %1*, .)))][case(%qs, *, %1, #, if(and(gte(%1, 1), isint(%1)), %1, #-1 VALUE NOT A POSITIVE INTEGER), switch(0, comp(%1, ), #-1 VALUE WAS NULL, lt(words(%0, .), 3), %1, t(%qv), #-1 VALUE NOT FOUND,%qv))]))
+
+---
+
+@dolist str:1 stren:pie court:s clarity:default init:default lang_(fr):1 cou_(s):2 cou(s):default acad.library:1={think >> set [setr(z, first(##, :))] to [setr(y, rest(##, :))] => [escape(statvalidate(%qz, %qy))] [ansi(xh, %([lcstr(statpath(%qz))]%))]}
+
+think statvalidate(lang (fr), 1)
+think statvalidate(court (s), 1)
+think statvalidate(seeming, ele)
+think statvalidate(acad.library, 1)
+
+think statvalidate(full name, Alee)
+think statvalidate(full name, Alee`)
+think statvalidate(full name, 10.Alee)
+
+@@ "list" class examples
+
+think statvalidate(rage, 1.3.47)
+
+
+-------------------------------------------------------------------------------
+-- statvalidate?(<stat>, <value>) ---------------------------------------------
+
+@@ 0: stat to validate
+@@ 1: value to validate (not case sensitive)
+@@ output: 1 or 0 (invalid stat names and derived stats will always return 0)
+@@ 
+@@ Pushes through f.statvalidate, and that's it.
+@@ Probably not needed
+
+&f.statvalidate? sfp=[t(ulocal(f.statvalidate, %0, %1))]
+
+
+================================================================================
+== setstat(<player>/<stat>, <value>|default[, <behavior>]) =====================
+
+Almost exactly like getstat() and possibly others, <behavior> is:
+
+- [of]fset: set the second part, if stat is numeric
+- [ov]erride: ignore validation & prerequisite checks for stat, set literally
+- default: restore stat to default value, first part if numeric 
+
+"Default" only has meaning for the permanent stat. 
+
+Overwrites current values.
+
+Text is determined by stat's current value.
+
+@@ THIS STUFF IS WORK IN PROCESS,  A LOT.
+@@ NOTE THIS SOMEWHERE: Offsets must always be numeric, 0 = null = erase
+
+@@ 0: player/stat
+@@ 1: value - if null, erase stat or reset default
+@@ 2: [of]fset, [ov]erride validation
+@@ 
+@@ qp: player dbref
+@@ qw: where-is-sheet location (just to pass it along)
+@@ qs: stat path
+@@ qi: statpath without instance
+@@ qv: value to set, validated
+@@ qr: prerequisite checks
+@@ 
+@@ uses: pmatch+(), a pmatch() that accepts 'me'
+
+
+&f.setstat sfp=
+
+if(
+	isstaff(%@), 
+@@ Staff?  OK.
+	[setq(p, pmatch+(first(%0, /)))]
+	[setq(w, u(f.find-sheet, %qp))]
+@@ Statpath: If we can grab it from the player, great, else grab it from the dd.
+@@ (Note: "first()" is there in case they're trying to set multiple stats)
+	[setq(
+		s, 
+		if(
+			setr(s, ulocal(f.statpath.workhorse, rest(%0, /), %qp)), 
+			%qs, 
+			ulocal(f.statpath.workhorse, rest(%0, /))
+		)
+	)]
+	[setq(i, ulocal(f.statpath-without-instance, %qs))]
+
+@@ value validation
+	[setq(v, 
+		switch(
+			%2, 
+@@ .. override - whatever we want
+			ov*, 
+			%1, 
+@@ .. offset - must be numeric (we check stat's class in workhorse)
+			of*, 
+			if(
+				or(isnum(%1), not(comp(%1, ))), 
+				%1, 
+				#-1 Non-Numeric Offset
+			), 
+@@ .. normal - validate completely, if null then default or null
+			if(
+				comp(%1, ), 
+				ulocal(f.statvalidate.workhorse, %qi, %1), 
+@@ >> if get(dd/default.%qi) is null, null will be set, which is fine
+				get(u(d.data-dictionary)/default.%qi)
+			)
+		)
+	)]
+
+
+@@ qr: pre-requisites validation, 'template' and 'other' only
+	[setq(r, 
+		case(0, 
+@@ .. always good if "override" is set
+			not(strmatch(%2, ov*)), 
+			1, 
+@@ .. if template check is bad, pass error
+			t(setr(r, u(f.prereq-check-template, %qw, %qi))), 
+			%qr, 
+@@ .. offset is bad for template (above) but good for other (below)
+			not(strmatch(%2, of*)), 
+			1, 
+@@ .. if other check is bad, pass error
+			t(setr(
+				r, 
+				u(
+					f.prereq-check-other, 
+					%qw, 
+					%qi, 
+					before(rest(%qs, %(), %)), 
+@@ .. (stat being changed by...)
+@@ .. (don't mess with if %qv is non-numeric)
+					if(
+						isnum(%qv), 
+@@ .. .. .. (if numeric, find the change-by: 'qv - stat value')
+						sub(%qv, first(u(%qw/_%qs), .)), 
+						%qv
+					)
+				)
+			)), 
+			%qr, 
+
+@@ .. else, all was good
+			1
+		)
+	)]
+
+@@ >> make sure qp, qw, qs and qv are all good!
+	[switch(
+		0, 
+		t(%qp), #-1 Player Not Found, 
+
+@@ .. must have a template unless "override" switch
+		or(t(get(%qw/_bio.template)), strmatch(%2, ov*)), 
+		#-1 Sheet Template Not Found, 
+
+		comp(rest(%0, /), ), #-1 Stat Name May Not Be Null, 
+
+@@ .. stat name check
+		t(%qs), %qs, 
+
+@@ .. stat value check
+		not(strmatch(%qv, #-*)), %qv, 
+
+@@ .. stat prerequisite check
+		t(%qr), %qr, 
+
+@@ .. else: good!
+		u(f.setstat.workhorse, %qw, edit(%qs, %b, _), %qv, %2)
+	)], 
+
+@@ Not Staff?  NO WAY!
+	#-1 Not Staff
+)
+
+---
+&f.setstat.workhorse sfp=
+
+@@ 0: Sheet Loc
+@@ 1: Full Stat Path
+@@ 2: <value>
+@@ 3: [of]ffset  ([ov]veride may be passed, but ignored)
+@@
+@@ q0 - q3: regexp results
+@@ qd: <stat> details if on sheet, if any
+@@ qc: stat's class
+@@ qs: statpath, edited if class:list (to remove substat)
+@@ qf: first (permanent) value on %qd
+@@ qr: offset ("rest") on %qd, if any
+@@
+@@ qm: Message (since the 'set' message doesn't look like it's passed through.)
+@@ qv: processed value to set (if complex processing needs done, like lists)
+@@ 
+@@ qa: "add" these list items (for type:class only)
+@@ qu: "un-add" these list items (for type:class only)
+
+[setq(v, )]
+[setq(c, ulocal(f.get-class, %1))]
+
+@@ .. oh yeah, if class:list + type.stat.substat, strip the substat
+[if(
+	and(strmatch(%qc, list), strmatch(%1, *.*.*)), setq(s, extract(%1, 1, 2, .)), 
+	setq(s, %1)
+)]
+
+[setq(d, get(%0/_%qs))]
+[setq(0, regmatch(%qd, %(%\%[.*%\%]%)%(%\..*%)?|%(.*%), 0 1 2 3))]
+[if(
+	t(%q3), [setq(f, first(%qd, .))][setq(r, rest(%qd, .))], 
+	[setq(f, %q1)][setq(r, rest(%q2, .))]
+)]
+
+
+[setq(m, case(
+	1, 
+@@ >> switch is "offset", replace remove or set - "numeric" type only.
+	strmatch(%3, of*), 
+	case(0, 
+@@ .. .. stat class is not "numeric", deny offset
+		strmatch(%qc, numeric), 
+		#-1 CANNOT OFFSET NON-NUMERIC STAT, 
+@@ .. .. offset is null or 0 = erase offset
+		and(comp(%2, ), neq(%2, 0)), 
+		set(%0, _%qs:%qf), 
+@@ .. .. stat doesn't exist, set 0.<offset>
+		comp(%qf, ), 
+		set(%0, _%qs:0.%2), 
+@@ .. .. else set <perm>.<offset>
+		set(%0, _%qs:%qf.%2)
+	), 
+@@ >> switch is "override", replace the whole thing without checking anything
+	strmatch(%3, ov*), 
+	set(%0, _%qs:%2), 
+@@ >> value is null, erase stat (this could be in the "else", too)
+	not(comp(%2, )), 
+	set(%0, _%qs:),
+@@ >> stat class is "numeric", replace permanent
+	strmatch(%qc, numeric), 
+	set(%0, _%qs:%2[if(%qr, .%qr)]), 
+@@ >> stat class is "list", set or un-set (!value) each item in list
+@@ .. right now, lists may be space-delimited, editing space to .
+	strmatch(%qc, list), 
+	[setq(v, edit(%2, %b, .))]
+	[setq(u, graball(%qv, !*, ., .))]
+	[setq(a, setdiff(%qv, %qu, .))]
+	[setq(u, edit(%qu, !, ))]
+@@ .. .. qv: remove the remove stuff then add the add stuff
+	[setq(v, setunion(setdiff(%qd, %qu, .), %qa, .))]
+	[set(%0, _%qs:%qv)], 
+@@ >> else, replace all
+	set(%0, _%qs:%2)
+))]
+
+@@ Display (the set() function in Mux returns null).
+[if(
+	comp(%qm, ), 
+@@ .. probably an error
+	%qm, 
+@@ .. show what we set
+	Set 
+	[ulocal(f.statname.workhorse, rest(%qs, .))]
+	[if(strmatch(%3, of*), %boffset)] to '[if(t(%qv), %qv, %2)]'.
+)]
+
+
+---
+
+&f.setstat sfp=if(isstaff(%@), [setq(p, pmatch+(first(%0, /)))][setq(w, u(f.find-sheet, %qp))][setq(s, if(setr(s, ulocal(f.statpath.workhorse, rest(%0, /), %qp)), %qs, ulocal(f.statpath.workhorse, rest(%0, /))))][setq(i, ulocal(f.statpath-without-instance, %qs))][setq(v, switch(%2, ov*, %1, of*, if(or(isnum(%1), not(comp(%1, ))), %1, #-1 Non-Numeric Offset), if(comp(%1, ), ulocal(f.statvalidate.workhorse, %qi, %1), get(u(d.data-dictionary)/default.%qi))))][setq(r, case(0, not(strmatch(%2, ov*)), 1, t(setr(r, u(f.prereq-check-template, %qw, %qi))), %qr, not(strmatch(%2, of*)), 1, t(setr(r, u(f.prereq-check-other, %qw, %qi, before(rest(%qs, %(), %)), if(isnum(%qv), sub(%qv, first(u(%qw/_%qs), .)), %qv)))), %qr, 1))][switch(0, t(%qp), #-1 Player Not Found, or(t(get(%qw/_bio.template)), strmatch(%2, ov*)), #-1 Sheet Template Not Found, comp(rest(%0, /), ), #-1 Stat Name May Not Be Null, t(%qs), %qs, not(strmatch(%qv, #-*)), %qv, t(%qr), %qr, u(f.setstat.workhorse, %qw, edit(%qs, %b, _), %qv, %2))], #-1 Not Staff)
+
+
+&f.setstat.workhorse sfp=[setq(v, )][setq(c, ulocal(f.get-class, %1))][if(and(strmatch(%qc, list), strmatch(%1, *.*.*)), setq(s, extract(%1, 1, 2, .)), setq(s, %1))][setq(d, get(%0/_%qs))][setq(0, regmatch(%qd, %(%\%[.*%\%]%)%(%\..*%)?|%(.*%), 0 1 2 3))][if(t(%q3), [setq(f, first(%qd, .))][setq(r, rest(%qd, .))], [setq(f, %q1)][setq(r, rest(%q2, .))])][setq(m, case(1, strmatch(%3, of*), case(0, strmatch(%qc, numeric), #-1 CANNOT OFFSET NON-NUMERIC STAT, and(comp(%2, ), neq(%2, 0)), set(%0, _%qs:%qf), comp(%qf, ), set(%0, _%qs:0.%2), set(%0, _%qs:%qf.%2)), strmatch(%3, ov*), set(%0, _%qs:%2), not(comp(%2, )), set(%0, _%qs:),strmatch(%qc, numeric), set(%0, _%qs:%2[if(%qr, .%qr)]), strmatch(%qc, list), [setq(v, edit(%2, %b, .))][setq(u, graball(%qv, !*, ., .))][setq(a, setdiff(%qv, %qu, .))][setq(u, edit(%qu, !, ))][setq(v, setunion(setdiff(%qd, %qu, .), %qa, .))][set(%0, _%qs:%qv)], set(%0, _%qs:%2)))][if(comp(%qm, ), %qm, Set [ulocal(f.statname.workhorse, rest(%qs, .))][if(strmatch(%3, of*), %boffset)] to '[if(t(%qv), %qv, %2)]'.)]
+
+
+---
+
+@@ Thenotest, my test frob.
+
+@@ ---
+@@ Start by cleaning the slate
+think [setstat(thenotest/willpo, 0, offset)] -> [getstat(thenotest/willp, b)]
+think [setstat(thenotest/willpo, default)] -> [getstat(thenotest/willp, b)]
+
+@@ set the offset, change the derived stat to just "5", reset the default
+think [setstat(thenotest/willpo, 2, off)] -> [getstat(thenotest/willp, b)]
+think [setstat(thenotest/willpo, 5, override)] -> [getstat(thenotest/willp, b)]
+think [setstat(thenotest/willpo, default)] -> [getstat(thenotest/willp, b)]
+
+@@ clear the stat entirely and try to set an offset
+think [setstat(thenotest/willpo, , overr)] -> [getstat(thenotest/willp, b)]
+think [setstat(thenotest/willpo, 2, off)] -> [getstat(thenotest/willp, b)]
+
+@@ Restore
+think [setstat(thenotest/willpo, default)] -> [getstat(thenotest/willp, b)]
+
+@@ ---
+@@ Let's play with Academics
+think [setstat(thenotest/acad, 2)] -> [getstat(thenotest/acad, b)]
+
+@@ Try to set a default on a stat that doesn't have one
+think [setstat(thenotest/acad, default)] -> [getstat(thenotest/acad, b)]
+
+@@ Okay, let's clear it.
+think [setstat(thenotest/acad)] -> [getstat(thenotest/acad, b)]
+
+@@ We can give someone a specialty without a stat.
+think [setstat(thenotest/acad.history, 1)] -> [getstat(thenotest/acad.history, b)]
+
+@@ But not for stats that won't allow specialties/secondaries
+think [setstat(thenotest/strength.history, 1)]
+
+@@ Restore Academics to normal
+think [setstat(thenotest/acad)] -> [getstat(thenotest/acad, b)]
+think [setstat(thenotest/acad.history)] -> [getstat(thenotest/acad.history, b)]
+
+
+-- shiftstat(<stat>, <value>[, <option>]) -----------------------------------
+
+<option>:
+	offset: Increase the offset
+	override: Ignore the stat limitations, still must be numeric
+
+@@ validate stat path
+@@ validate stat may end as <current> + <value>, unless override
+@@ basically getstat + setstat
+
+@@ 0: player/stat
+@@ 1: value (must be non-zero numeric)
+@@ 2: option ([of]fset, [ov]erride)
+@@
+@@ qp: player dbref
+@@ qw: where-is-sheet location (just to pass it along)
+@@ qs: stat path
+@@ qc: stat class (numeric, string, list - we only accept numeric, here)
+@@ qv: value to shift by, validated
+@@ qa: amount to offset by
+@@ qr: prerequisites check, 'template' and 'other' only
+
+
+&f.shiftstat sfp=
+
+[setq(p, pmatch+(first(%0, /)))]
+[setq(w, u(f.find-sheet, %qp))]
+
+@@ Statpath: If we can grab it from the player, great, else grab it from the dd.
+@@ (Note: "first()" is there in case they're trying to set multiple stats)
+[setq(
+	s, 
+	if(
+		setr(s, u(f.statpath.workhorse, rest(%0, /), %qp)), 
+		%qs, 
+		u(f.statpath.workhorse, rest(%0, /))
+	)
+)]
+[setq(c, ulocal(f.get-class, %qs))]
+[setq(v, 
+	if(
+		and(isnum(%1), neq(%1, 0)), 
+		trim(%1, l, +), 
+		#-1 SHIFT MUST BE NON-ZERO NUMERIC
+	)
+)]
+
+@@ pre-requisites validation, 'template' and 'other' only
+[setq(
+	r, 
+	case(
+		0, 
+		not(strmatch(%2, ov*)), 1, 
+		t(setr(r, u(f.prereq-check-template, %qw, %qi))), %qr, 
+		t(setr(
+			r, 
+			u(
+				f.prereq-check-other, 
+				%qw, 
+				%qi, 
+@@ >>> >>> >>> What is the next line doing? <<< <<< <<<
+				before(rest(%qs, %(), %)), 
+				%qv
+			)
+		)), 
+		%qr, 
+		1
+	)
+)]
+
+[switch(
+	0, 
+	isstaff(%@), #-1 Staff Only, 
+	t(%qp), #-1 Player Not Found, 
+	t(get(%qw/_bio.template)), #-1 Sheet Template Not Found, 
+	comp(rest(%0, /), ), #-1 Stat Name May Not Be Null, 
+	t(%qs), %qs, 
+	strmatch(%qc, numeric), #-1 Stat Class Must Be Numeric, 
+	t(%qv), %qv, 
+	t(%qr), %qr, 
+	u(f.shiftstat.workhorse, %qw, %qs, %qv, %2)
+)]
+
+
+---
+
+@@ 0: sheet location
+@@ 1: statpath
+@@ 2: amount to inc/dec
+@@ 3: [of]fset, [ov]erride
+@@ 
+@@ qd: current stat details
+@@ qf: first portion of stat (permanent)
+@@ qr: rest of stat (offset)
+@@ qa: sum of %qf and %2, if 0 then <null> (to erase value with setstat)
+@@ qi: statpath without instance (because of the validate system)
+@@ 
+@@ q1: Contents if permanent stat is [...], empty if not
+@@ q0-3: Used in above determination
+
+
+&f.shiftstat.workhorse sfp=
+
+localize(
+
+[setq(d, u(%0/_%1))]
+[setq(f, first(%qd, .))]
+[setq(r, rest(%qd, .))]
+[setq(a, if(setr(a, add(%qf, %2)), %qa, ))]
+[setq(i, u(f.statpath-without-instance, %1))]
+
+@@ Break up the actual stat, like setstat does
+@@ (I have to warn you, this is silly, but we just need %q1)
+[setq(0, regmatch(get(%0/_%1), %(%\%[.*%\%]%)%(%\..*%)?|%(.*%), 0 1 2 3))]
+
+@@ current stat must be numeric or empty
+[if(
+	or(
+		not(comp(%qd, )), 
+		isnum(%qf)
+	), 
+@@ .. ok, continue
+	switch(%3, 
+		ov*, ulocal(f.setstat.workhorse, %0, %1, %qa, ov), 
+		of*, ulocal(f.setstat.workhorse, %0, %1, add(%qr, %2), of), 
+@@ .. .. validate new stat, if current stat is [...] then error
+		switch(
+			1, 
+			t(%q1), #-1 CANNOT SHIFT DERIVED STAT WITHOUT OVERRIDE, 
+			not(t(ulocal(f.statvalidate.workhorse, %qi, %qa))), 
+				#-1 SHIFT MAKES STAT INVALID, 
+			ulocal(f.setstat.workhorse, %0, %1, %qa)
+		)
+	), 
+@@ .. else, error
+	#-1 STAT VALUE MUST BE NUMERIC OR EMPTY
+)]
+
+)
+
+---
+
+&f.shiftstat sfp=[setq(p, pmatch+(first(%0, /)))][setq(w, u(f.find-sheet, %qp))][setq(s, if(setr(s, u(f.statpath.workhorse, rest(%0, /), %qp)), %qs, u(f.statpath.workhorse, rest(%0, /))))][setq(c, ulocal(f.get-class, %qs))][setq(v, if(and(isnum(%1), neq(%1, 0)), trim(%1, l, +), #-1 SHIFT MUST BE NON-ZERO NUMERIC))][setq(r, case(0, not(strmatch(%2, ov*)), 1, t(setr(r, u(f.prereq-check-template, %qw, %qi))), %qr, t(setr(r, u(f.prereq-check-other, %qw, %qi, before(rest(%qs, %(), %)), %qv))), %qr, 1))][switch(0, isstaff(%@), #-1 Staff Only, t(%qp), #-1 Player Not Found, t(get(%qw/_bio.template)), #-1 Sheet Template Not Found, comp(rest(%0, /), ), #-1 Stat Name May Not Be Null, t(%qs), %qs, strmatch(%qc, numeric), #-1 Stat Class Must Be Numeric,  t(%qv), %qv, t(%qr), %qr, u(f.shiftstat.workhorse, %qw, %qs, %qv, %2))]
+
+&f.shiftstat.workhorse sfp=localize([setq(d, u(%0/_%1))][setq(f, first(%qd, .))][setq(r, rest(%qd, .))][setq(a, if(setr(a, add(%qf, %2)), %qa, ))][setq(i, u(f.statpath-without-instance, %1))][setq(0, regmatch(get(%0/_%1), %(%\%[.*%\%]%)%(%\..*%)?|%(.*%), 0 1 2 3))][if(or(not(comp(%qd, )), isnum(%qf)), switch(%3, ov*, ulocal(f.setstat.workhorse, %0, %1, %qa, ov), of*, ulocal(f.setstat.workhorse, %0, %1, add(%qr, %2), of), switch(1, t(%q1), #-1 CANNOT SHIFT DERIVED STAT WITHOUT OVERRIDE, not(t(ulocal(f.statvalidate.workhorse, %qi, %qa))), #-1 SHIFT MAKES STAT INVALID, ulocal(f.setstat.workhorse, %0, %1, %qa))), #-1 STAT VALUE MUST BE NUMERIC OR EMPTY)])
+
+---
+
+think [shiftstat(thenotest/strength, 1)] -> [getstat(thenotest/strength, b)]
+think [shiftstat(thenotest/stren, 1, off)] -> [getstat(thenotest/strength, b)]
+think [shiftstat(thenotest/strength, -1)] -> [getstat(thenotest/strength, b)]
+think [shiftstat(thenotest/stren, 0, off)] -> [getstat(thenotest/strength, b)]
+think [shiftstat(thenotest/stre, -1, off)] -> [getstat(thenotest/strength, b)]
+
+think setstat(thenotest/full name, Jack Fireheart)
+think [shiftstat(thenotest/full name, Jack Fireheart)] -> [getstat(thenotest/full name)]
+think [shiftstat(thenotest/full name, 4)] -> [getstat(thenotest/full name)]
+think setstat(thenotest/full name, )
+think [shiftstat(thenotest/full name, 4)] -> [getstat(thenotest/full name)]
+
+
+== THE COMMAND ================================================================
+
++setstat <player>/<stat>=[+|-]<value>
+
+illegal characters for value: : ` <number>. (but only at the start)
+
+
+
+
+
+
+
+
+
+Sets a player's stat to <value> or returns it to the default chargen value, which may be null or derived.
+
+(Once I get the default value for the chargen object filled.)
+(have +command use stattag to allow only for 'derived' tagged stats.)
+
+Code Flow:
+
+* validate sheet
+* validate stat name
+* validate stat value (or if it has a default).
+
+Hmm.  Validate Value should be simple once we've Validated the Stat (and boy have we validated the fuck out of it.)
+
+How do I best set up so they can set the offset ("boost") in this, or do I?
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=--==--=-=-=-=-=-=-=-=-==-==--=-=-==--
+
+DATA DICTIONARY THOUGHTS: 
+
+You say, ÒIf your seeming or kith matches something in the tag list, affinity. If goblin matches something in the tag list, goblin. Else, non-affinity.Ó
+
+Blue says, ÒVery near, though they don't scale in cost the same way. You just pay for the rank, straight up, without worrying about any ranks that came before.Ó
+
+You say, ÒWerewolf's gifts are also bought at level, like goblin contracts, I think.Ó
+
+You say, ÒI believe this is done because you can jump around.Ó
+
+-- a reason to make "goblin_contract" just "contract" in the DD.
+
+&xp.<type>: <value>??? - Willpower is always 8xp/dot.
+
+May not be so important if I keep stat-lookup & character-advancement DDs separate. ---
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-=-=--=-=-==-=--=-=-==---=-=-==-=--=-=-=
+
+&HELP~stat_topics~+STAT #96=About Stats~+stat is a multi-functional command that lists information about stats available on the game. It only lists stats available to the players, which are almost all, but not all, stats on +sheet. (XP and health are notable exceptions.) Additionally, the staff version of this command allows staff to set the values on characters.%r%r[ansi(h, +stat)] : Does nothing.%r%r[ansi(h, +stat <stat>)] : Detailed information about <stat>. %r%r[ansi(h, +stat <stat>*)] : List of stats matching the wildcard and their stat category.%r%rFor a list of all stats available, [ansi(h, +stat *)].
+
+&SHELP~STAT_COMMANDS~+STAT #102=Manipulating Stats~In addition to the commands listed in +help stat, staff may perform the following:%r%r[ansi(h, +stat/template <player>=<template>)] : Sets <player> up with the proper template. Right now we only have Human and Changeling.%r%r[ansi(h, +stat/wipe <player>)] : Wipes all stats from a player's sheet. Spams you with what they were set at. %r%r[ansi(h, +stat/set <player>/<stat> = <value>)] : Set a stat to that value. If value is "default", re-sets to initial and derived value.%r%r[ansi(h, +stat/set <player>/<stat> +|- <value>)] : Increase/decrease a stat by that amount. Numeric stats only.%r%r[ansi(h, +stat/offset <player>/<stat> = <value>)] : Same thing as /set, but plays with the offset. Numeric stats only. + and - also work.%r%r[ansi(h, +stat/override <player>/<stat> = <value>)] : Overrides the entire check system. Set any stat to anything.%r%rFor information about offset and override, see [ansi(h, +shelp setstat%(%))], which this command mainly calls.
+
+
+&SHELP~CHARGEN~SETSTAT() #102=Setting the Stat, the Complex Way~[ansi(h, setstat%(<player>/<stat>%, <value>|default%[%, <behavior>%]%))]%r%rThis is the end-result of all other functions and stat code and will do all the validation needed to set almost anything on almost anyone. It won't allow you to set stats in categories that aren't in the search list (such as health), and it will give you a descriptive #-1 error message if it doesn't like what you did. As usual, it will name-complete as much as it can.%r%r> Setting a stat to "default" will set it to the default, if there is one. (Attributes default at "1", derived stats default at their derived formula.) %r%r> Setting the <behavior> to "offset" will, for numeric stats (think pools, including Clarity and Morality), create a temporary boost or decline without destroying the base stat. %r%r> Setting the <behavior> to "override" will ignore the value-check for stats. That is, you can set someone's Strength to "-1", "50", or "peanut brittle".%r%r> Default only works with the permanent stat value. Offset only works with numeric values. You can't override to default, you can't override an offset. If you want to do either of these things, override the entire stat.~[ansi(h, Examples)]%r%r%b think setstat(thenotest/willpo, 5)%r%b think setstat(thenotest/willpo, 2, off)%r%b think setstat(thenotest/willpo, peanut brittle, overr)%r%b think setstat(thenotest/willpo, default)%r%r%b think setstat(thenotest/fleeting summer, 5)
+
+&SHELP~STAT_COMMANDS~+XP #102=Adding and Spending a Player's XP~>>> This is a purely temporary solution. <<<%r%r[ansi(h, +xp)] : See your own XP, open to all.%r[ansi(h, +xp <player>)] : See <player>'s XP.%r[ansi(h, +xp/add <player>=<amt>)] : Add <amt> to <player>'s total XP.%r[ansi(h, +xp/spend <player>=<amt>)] : "Spend" <amt> of <player>'s XP.%r%rTechnically, this last one subtracts to the offset of the player's XP stat, so it can act a bit touchy. At the moment, you can "give back" Spent XP with a +xp/spend player=-amt.%r%rThis does not increase stats at all. See [ansi(h, +shelp stat)] and use that in conjunction with +xp/spend for now.

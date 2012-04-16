@@ -1,0 +1,912 @@
+
+
+-==--=-==--==--=-=-=-=
+
+Objects Required:
+
+- code object
+- notes template (for parenting)
+- - @desc is output of notes on the object
+- - "general" always goes first, then sort alpha
+
+-==--=-=-=-=-==--=-=-=
+
+Assumptions:
+
+- all notes are pointed at the character (+note bob)
+- players can "look" at their notes, but can also +notes for them
+- notes in categories? basically +help with a front-end?
+
+=--=-=-=-=-=-=-=-==--=
+
+Creating a New Notes Object: 
+
++note/create <player>
++note/new <player>
+- check user is staff
+- check player
+- check that they don't already have a notes object
+- - (report dbref if they do)
+- create the thing with player dbref in name
+- - hands off to the "listener" to finish things up
+
+listener:
+- check which player it belongs to (in name)
+- put player dbref into attribute
+- rename to something sensible
+- @chzone to Note ZMO (#481)
+- @parent to notes template
+- @set notes object "safe"
+- teleport to player
+- report success
+
+=-=--=-=-=-=-=-=-=-==-
+
+Listing Notes Objects:
+
++note/list
+- check user is staff
+- format search(eval=match(zone(##), <note zmo>))
+
+-==-=--==--=-=-=-=-=-=
+
+Listing Notes on an Object:
+
+the note template will have this formatted, so looking at the object should be enough
+
++note[s]
+- @pemit the desc of your object
+
++note[s] <player>
++note[s] [<player>/]<note>
+- laugh manically as you start to cry (bear with me a moment)
+- if the input is */*, this is easy: use +note/view
+- if the input is *
+- - if the user is staff and input is player, show object's desc
+- - if the user is staff and input is not player, show specific note
+- - if the user is not staff, show specific note
+
++note/view <player>[/<note>]
+- check if user is staff
+- if input is */*, show that specific note
+- if input is *, show that object's @desc
+
+=--=-=-=-=-=-=-=-=-=-=
+
+Adding a Note: 
+
++note/add <player>[/<category>]=<name>/<note>
+- check if user is staff
+- check for player note object
+- if <category> is null, <category> is "general"
+- check/clean input
+- check for existing note
+- add note in +help-system format: &note~category~name: timestamp~note
+
+=-=--=-=-=-=-=-=-=-=-=
+
+Deleting a Note:
+
++note/delete <player>=<note>
+- check if user is staff
+- check for player note object
+- check for note
+- be annoying and demand the user uses the next command
+
++note/deleteYES <player>=<note>
+- as above, but outputs the note to the user and deletes it
+
+=--=-==--==-=-=--==--=-
+
+Deleting a Note Object:
+
+Use @destroy
+Get frustrated at the error message & use @destroy/override
+(we set the object Safe on creation)
+
+-==--=-=-==-=-=-=-=-=-
+
+
+================================================================================
+== NOTES SETTER <NS> ===========================================================
+
+@parent ns=Code Object @Desc Parent
+
+&d.template ns=#616
+&d.note-zmo ns=#481
+
+&f.scrub-name ns=strip(%0, %%%,;<>%[%]~*)
+
+&f.search-for #629=
+	case(%1, 
+@@ .. rooms are their own note objects, but at least make sure a note's set
+		room, 
+		if(
+			t(lattr(%0/_note~*~*)), 
+			%0, 
+			#-1 No Notes Set
+		), 
+@@ .. players have them stored elsewhere
+		player, 
+		search(
+			eobject=
+			and(
+				strmatch(zone(##), u(d.note-zmo)), 
+				strmatch(u(##/d.owner), %0)
+			)
+		), 
+@@ .. anything else, assume player
+		search(
+			eobject=
+			and(
+				strmatch(zone(##), u(d.note-zmo)), 
+				strmatch(u(##/d.owner), %0)
+			)
+		)
+	)
+
+
+&f.search-all ns=search(eobject=strmatch(zone(##), u(d.note-zmo)))
+
+@@ 3: _ if setting on a room.  I know, I know.
+
+&f.note.get #629=rest(get(%0/%3note~%1~%2), ~)
+&f.note.stamp #629=first(get(%0/%3note~%1~%2), ~)
+
+&f.format.note ns=wrap(%0, 76, left, %b%b)
+&f.format.stamp ns=%0
+&f.format.makestamp ns=%N (%#) [time()]
+&f.format.title #629=titlestr(edit([extract(%0, 2, 1, ~)] / [last(%0, ~)], _, %b))
+
+&f.format.name #629=
+@@ 0: object dbref
+@@ 1: note~attribute~name
+@@ outputs: [<name>] if dark, <name> otherwise
+titlestr(edit(if(strmatch(flags(%0/%1), *M*), %[ [last(%1, ~)] %], last(%1, ~)), _, %b))
+
+&f.format.all-notes #629=[header([name(%0)]'s Notes[if(and(isstaff(%#), hastype(%0, PLAYER)), %b%(%1%))])]%r[u(f.display.all-notes, %1)][footer()]
+
+
+--------------------------------------------------------------------------------
+-- Pseudo-Mistress Setup -------------------------------------------------------
+
+Filched from the the updated help/news, but we're trying something new here: All of the functions that are direct "commands" are now c. instead of f.  This should help keep them visibly separate and allows us to do f.note/blah.workhorse without confusing the system.
+
+
+&c.note.regexp ns=
+@@ 1: 's' for "note" or "notes".  We ignore it.
+@@ 2: Everything else
+	$^\+note(s?)(.*):
+	@pemit %#=
+@@ .. this was supposed to be a secure(), but it seems to be breaking
+	[setq(0, %2)]
+	[switch(%q0, 
+		@@(<null>), u(c.note.default, %qs), 
+		/*, u(c.note.switched, first(after(%q0, /)), rest(%q0)), 
+		%b*, u(c.note.specific, trim(%q0), %qs), 
+		Error: +note's format is +note or +note%[/<switch>%] <topic>
+	)]
+
+@set ns/c.note.regexp=regexp
+
+DOES NOT WORK FOR INPUT WITH %r IN IT (the input is cut short)
+
+&c.note ns=
+	$+note*:@pemit %#=
+	[switch(%0, 
+		@@(<null>), u(c.note.default, %qs), 
+		s, u(c.note.default, %qs), 
+		s/*, u(c.note.switched, first(after(%0, /)), rest(%0)), 
+		/*, u(c.note.switched, first(after(%0, /)), rest(%0)), 
+		s *, u(c.note.specific, trim(rest(%0)), %qs), 
+		%b*, u(c.note.specific, trim(%0), %qs), 
+		Error: +note's format is +note or +note%[/<switch>%] <topic>
+	)]
+
+--
+
+&c.note ns=$+note*:@pemit %#=[switch(%0, @@(<null>), u(c.note.default, %qs), s, u(c.note.default, %qs), s/*, u(c.note.switched, first(after(%0, /)), rest(%0)), /*, u(c.note.switched, first(after(%0, /)), rest(%0)), s *, u(c.note.specific, trim(rest(%0)), %qs), %b*, u(c.note.specific, trim(%0), %qs), Error: +note's format is +note or +note%[/<switch>%] <topic>)]
+
+--
+
+&c.note.switched ns=
+	[setq(m, lattr(%!/c.note/%0*))]
+	[case(0, 
+		words(lattr(%!/c.note/*)), Error: +note does not take switches., 
+	
+		neq(words(%qm), 1), u(%qm, %1), 
+
+		[case(1, 
+			gt(words(%qm), 1), Error: Too many matches, 
+			lt(words(%qm), 1), Error: No match, 
+			Error: Unknown reason
+		)]%r
+		Possible Switches: 
+			[itemize(titlestr(iter(lattr(%!/c.note/*), rest(%i0, /))))]
+	)]
+
+
+--------------------------------------------------------------------------------
+-- +NOTE DEFAULT ---------------------------------------------------------------
+
++note defaults to the notes on your object, so it defaults right to f.display.all-notes
+
+&c.note.default ns=
+	case(0, 
+		t(setr(o, u(f.search-for, %#))), 
+		Error: You don't have a notes object., 
+		u(f.format.all-notes, %#, %qo)
+	)
+
+--
+
+&c.note.default ns=case(0, t(setr(o, u(f.search-for, %#))), Error: You don't have a notes object., u(f.format.all-notes, %#, %qo))
+
+
+--------------------------------------------------------------------------------
+-- +NOTE SPECIFIC --------------------------------------------------------------
+
++note[s] <player>|<location>|here
++note[s] [<player>|<location>|here/]<note>
+- laugh manically as you start to cry (bear with me a moment)
+- if the input is */*, this is easy: use +note/view
+- if the input is *
+- - if the user is staff and input is player, show all player's notes
+- - else, show your specific note
+
+&c.note.specific #629=
+@@ 0: <target> or [<target>/]<note>
+
+	case(1, 
+@@ if the input is */*, this is easy: +note/view <player>/<note>
+		strmatch(%0, */*), u(c.note/view, %0), 
+@@ <target> is "here", use c.note/view with location
+		strmatch(%0, here), u(c.note/view, loc(%#)), 
+@@ if the user is staff and input is player, use +note/view <player>
+		and(isstaff(%#), t(pmatch+(%0))), u(c.note/view, %0), 
+@@ staff or "this location" are also both safe, if location
+		and(hastype(%0, ROOM), or(isstaff(%#), strmatch(loc(%#), %0))), 
+		u(c.note/view, %0),
+@@ else it's easy again: +note/view %#/<note>
+		u(c.note/view, %#/%0)
+	)
+
+--
+
+&c.note.specific #629=case(1, strmatch(%0, */*), u(c.note/view, %0), strmatch(%0, here), u(c.note/view, loc(%#)), and(isstaff(%#), t(pmatch+(%0))), u(c.note/view, %0), and(hastype(%0, ROOM), or(isstaff(%#), strmatch(loc(%#), %0))), u(c.note/view, %0),u(c.note/view, %#/%0))
+
+
+--------------------------------------------------------------------------------
+-- +NOTE/SETUP ----------------------------------------------------------------
+
++note/setup <player>
+- check user is staff
+- check player
+- check that they don't already have a notes object
+- - (report dbref if they do)
+- create the thing with player dbref in name
+- - hands off to the "listener" to finish things up
+
+&c.note/setup ns=
+@@ 0: <player>
+@@ 
+@@ p: player dbref
+@@ o: notes object dbref, if it exists
+@@ r: return message
+
+	case(0, 
+		isstaff(%#), Error: Staff Only., 
+		t(setr(p, pmatch+(%0))), Error: Cannot find player., 
+		not(t(setr(o, u(f.search-for, %qp)))), Error: Player already has notes., 
+		[ansi(h, >>> BEGINNING SETUP <<<)] %r
+		%b Create: [setr(o, create([name(%qp)]'s Note Object, 10))] 
+		[if(t(%qo), 
+@@ .. creation ok, trigger() for the rest.
+			[ansi(g, %[OK%])] %r
+
+			%b Set safe flag: 
+			[set(%qo, safe)][flags(%qo)] 
+			[if(
+				hasflag(%qo, safe), 
+				ansi(g, %[OK%]), 
+				ansi(r, %[failed%])
+			)] %r
+
+
+			%b Set &d.owner: 
+			[if(
+				strmatch(setr(r, set(%qo, d.owner:%qp)), ), 
+				%qp [ansi(g, %[OK%])], 
+				%qr [ansi(r, %[failed%])]
+			)] %r
+
+			%b Set &d.creator: 
+			[if(
+				strmatch(setr(r, set(%qo, d.creator:%#)), ), 
+				%# [ansi(g, %[OK%])], 
+				%qr [ansi(r, %[failed%])]
+			)] %r
+			%b Triggering...
+			[trigger(%!/tr.note/setup, %#, %qp, %qo)], 
+@@ .. creation failed
+			ansi(r, %[failed%])
+		)]
+	)
+
+--
+
+&c.note/setup #629=case(0, isstaff(%#), Error: Staff Only., t(setr(p, pmatch+(%0))), Error: Cannot find player., not(t(setr(o, u(f.search-for, %qp)))), Error: Player already has notes., [ansi(h, >>> BEGINNING SETUP <<<)] %r%b Create: [setr(o, create([name(%qp)]'s Note Object, 10))] [if(t(%qo), [ansi(g, %[OK%])] %r%b Set safe flag: [set(%qo, safe)][flags(%qo)] [if(hasflag(%qo, safe), ansi(g, %[OK%]), ansi(r, %[failed%]))] %r%b Set &d.owner: [if(strmatch(setr(r, set(%qo, d.owner:%qp)), ), %qp [ansi(g, %[OK%])], %qr [ansi(r, %[failed%])])] %r%b Set &d.creator: [if(strmatch(setr(r, set(%qo, d.creator:%#)), ), %# [ansi(g, %[OK%])], %qr [ansi(r, %[failed%])])] %r%b Triggering...[trigger(%!/tr.note/setup, %#, %qp, %qo)], ansi(r, %[failed%]))])
+
+
+--------------------------------------------------------------------------------
+-- Trigger: Note/Setup ---------------------------------------------------------
+
+This is the rest of the c.note/setup function using commands that don't have side-effect function equivilents.  @parent to the template, @chzone to the Note ZMO, 
+
+&tr.note/setup ns=
+@@ 0: %#
+@@ 1: target dbref (might not get used, keep it anyhow)
+@@ 2: notes object dbref
+
+	@chzone %2=[u(d.note-zmo)]; 
+	@parent %2=[u(d.template)]; 
+	@pemit %0=
+		%b Zone: [zone(%2)] 
+		[if(
+			strmatch(zone(%2), u(d.note-zmo)), 
+			[ansi(g, %[OK%])], 
+			[ansi(r, %[should be [u(d.note-zmo)]%])]
+		)] %r
+
+		%b Template: [parent(%2)] 
+		[if(
+			strmatch(parent(%2), u(d.template)), 
+			[ansi(g, %[OK%])], 
+			[ansi(r, %[should be [u(d.template)]%])]
+		)] %r
+
+		[ansi(h, >>> SETUP COMPLETE <<<)]
+
+--
+
+&tr.note/setup #629=@chzone %2=[u(d.note-zmo)]; @parent %2=[u(d.template)]; @pemit %0=%b Zone: [zone(%2)] [if(strmatch(zone(%2), u(d.note-zmo)), [ansi(g, %[OK%])], [ansi(r, %[should be [u(d.note-zmo)]%])])] %r%b Template: [parent(%2)] [if(strmatch(parent(%2), u(d.template)), [ansi(g, %[OK%])], [ansi(r, %[should be [u(d.template)]%])])] %r[ansi(h, >>> SETUP COMPLETE <<<)]
+
+--------------------------------------------------------------------------------
+-- ABOUT TARGET ----------------------------------------------------------------
+
+0: name, dbref, "here"
+1: dbref of "looker" (normally %#)
+Returns:
+	<dbref>|player
+	<dbref>|room
+	#-1
+
+&f.about-target #629=
+	case(1, 
+		t(pmatch+(%0)), [pmatch+(%0)]|player, 
+		strmatch(%0, here), [loc(%1)]|room, 
+		hastype(%0, ROOM), %0|room, 
+		#-1
+	)
+
+--
+
+&f.about-target #629=case(1, t(pmatch+(%0)), [pmatch+(%0)]|player, strmatch(%0, here), [loc(%1)]|room, hastype(%0, ROOM), %0|room, #-1)
+
+--
+
+think u(#629/f.about-target, here, %#)
+think u(#629/f.about-target, loc(*dog), %#)
+think u(#629/f.about-target, dog, %#)
+
+
+--------------------------------------------------------------------------------
+-- +NOTE/VIEW ------------------------------------------------------------------
+
++note/view <target>[/<note>]
+- check if user is staff
+- if input is */*, show that specific note
+- if input is *, show that object's @desc
+
+View someone's notes, or a specific note for someone.  This is here in part to make '+note specific' easier to code.  That part of the code will simply reference this.
+
+&c.note/view #629=
+@@ 0: <player|location>[/<note>]
+@@ 
+@@ t: target type
+@@ d: target dbref
+@@ n: note name
+@@ o: note object (if type is room, itself)
+@@ a: attribute(s) of the note being searched for
+
+
+[setq(t, u(f.about-target, trim(first(%0, /)), %#))]
+[setq(d, first(%qt, |))][setq(t, rest(%qt, |))]
+[setq(n, edit(trim(rest(%0, /)), %b, _))]
+
+[case(0, 
+@@ .. it's ok for staff to check anyone, players can only check "me" and "here"
+	or(isstaff(%#), strmatch(%qd, %#), strmatch(%qd, loc(%#))), 
+	Error: Staff Only., 
+
+@@ .. didn't find the whatever we were looking for
+	t(%qd), Error: Room or player not found., 
+
+@@ .. check for a notes object
+	t(setr(o, u(f.search-for, %qd, %qt))), Error: No notes to display., 
+
+@@ check if it's all notes or just one note
+@@ (this can later be improved by letting <name>* filter the display-everything)
+@@ >> everything
+	t(%qn), u(f.format.all-notes, %qd, %qo), 
+@@ >> just one note
+@@ .. if at least one match (remember, general category is ranked first)
+	neq(words(setr(a, u(f.list.notes, %qo, , %qn))), 0), 
+	Error: Couldn't find that note., 
+@@ .. pull the entry on the first match
+	u(f.format.one-note, %qd, %qo, first(%qa))
+)]
+
+--
+
+&c.note/view #629=[setq(t, u(f.about-target, trim(first(%0, /)), %#))][setq(d, first(%qt, |))][setq(t, rest(%qt, |))][setq(n, edit(trim(rest(%0, /)), %b, _))][case(0, or(isstaff(%#), strmatch(%qd, %#), strmatch(%qd, loc(%#))), Error: Staff Only., t(%qd), Error: Room or player not found., t(setr(o, u(f.search-for, %qd, %qt))), Error: No notes to display., t(%qn), u(f.format.all-notes, %qd, %qo), neq(words(setr(a, u(f.list.notes, %qo, , %qn))), 0), Error: Couldn't find that note., u(f.format.one-note, %qd, %qo, first(%qa)))]
+
+
+--------------------------------------------------------------------------------
+-- Format: One Note ------------------------------------------------------------
+
+&f.format.one-note #629=
+@@ 0: player or room (target) dbref
+@@ 1: note object dbref
+@@ 2: <category>~<name>
+@@ 
+@@ c: category
+@@ n: name
+@@ a: attribute (_attribute if room)
+
+	[setq(a, 
+@@ if target = note object dbref, it's a room
+@@ (room attributes begin with _ to keep them safe)
+		[if(strmatch(%0, %1), _)]
+		NOTE~%2
+	)]
+
+	[header([name(%0)]'s Note: [u(f.format.title, %qa)])]%r
+	[u(f.format.note, rest(u(%1/%qa), ~))]%r
+	[footer(u(f.format.stamp, first(u(%1/%qa), ~)))]
+
+--
+
+&f.format.one-note #629=[setq(a, [if(strmatch(%0, %1), _)]NOTE~%2)][header([name(%0)]'s Note: [u(f.format.title, %qa)])]%r[u(f.format.note, rest(u(%1/%qa), ~))]%r[footer(u(f.format.stamp, first(u(%1/%qa), ~)))]
+
+
+--------------------------------------------------------------------------------
+-- +NOTE/ADD -------------------------------------------------------------------
+
++note/add <target>[/<category>]=<name>/<note>
+- check if user is staff
+- if <target> is player, check for note object (search zone object and d.owner)
+- if <target> is room, note object is the room itself plus _<attr>
+- if <category> is null, <category> is "general"
+- check/clean input
+- check for existing note (report 'old note/new note')
+- add note in +help-system format: &note~category~name: timestamp~note
+
+
+Add does not hit the same functions that filter out the "Dark" (hidden) attributes, which is a good thing.
+
+
+&c.note/add #629=
+@@ d: target dbref
+@@ n: name
+@@ c: category (defaults to general)
+@@ s: note to set
+@@ o: note object
+@@ t: timestamp of new note
+@@ 
+@@ p: target dbref if player
+@@ h: target dbref if "here"
+@@ r: _ if target is room (as attribute prefix)
+
+@@ (Regmatch fails when %r is used; mutliple lines are not matched.)
+
+@@ d and n become our before/after = registers
+	[setq(d, first(%0, =))]
+	[setq(n, rest(%0, =))]
+
+@@ split d into d and c
+	[if(
+		strmatch(%qd, */*), 
+		[setq(c, edit(trim(rest(%qd, /)), %b, _))][setq(d, first(%qd, /))], 
+		[setq(c, general)]
+	)]
+
+@@ split n into n and s
+	[setq(s, trim(rest(%qn, /)))]
+	[setq(n, u(f.scrub-name, trim(first(%qn, /))))]
+
+@@ Error-Check & Object Set
+	[case(0, 
+
+@@ .. check for staff
+		isstaff(%#), 
+		Error: Only staff may add notes., 
+
+@@ .. check for player or room
+		or(
+			t(setr(p, pmatch+(%qd))), 
+			t(setr(h, if(strmatch(%qd, here), loc(%#)))), 
+			hastype(%qd, ROOM)
+		), 
+		Error: Could not find that target., 
+
+@@ .. if player, check for notes object
+		or(not(%qp), t(setr(o, u(f.search-for, %qp)))), 
+		Error: Player doesn't have a notes object. Use +note/setup <player>/de, 
+
+@@ .. check for the name (in a different category)
+@@ (move p or m, if matched into d; if room, set o; I hate having to do this)
+@@ (at this point, d is now a dbref)
+		[setq(d, 
+			case(1, t(%qp), %qp, t(%qh), %qh[setq(o, %qh)], %qd[setq(o, %qd)])
+		)]
+		[setq(r, if(hastype(%qd, ROOM), _))]
+
+		[not(words(setdiff(lattr(%qo/%qrNOTE~*~%qn), ucstr(%qrNOTE~%qc~%qn))))], 
+		Error: That note name exists under a different category.  Please choose different name., 
+
+@@ .. set that puppy!
+		[setq(t, u(f.format.makestamp))]
+		[header(ADDING [name(%qd)]'s Note: [titlestr([edit(%qc, _, %b)] / %qn)])]%r
+		[setq(n, edit(%qn, %b, _))]
+@@ .. .. report old value, if exists
+		[if(
+			hasattr(%qo, %qrNOTE	~%qc~%qn), 
+			[footer(Old Value: [u(f.format.stamp, u(f.note.stamp, %qo, %qc, %qn, %qr))])]%r
+			[u(f.format.note, u(f.note.get, %qo, %qc, %qn, %qr))]%r
+			[footer(New Value)]%r
+		)]
+		[if(
+			strmatch(setr(e, set(%qo, %qrNOTE~%qc~%qn:%qt~%qs)), #-*), 
+			%b ERROR WHILE SETTING: %qe, 
+			u(f.format.note, %qs)
+		)]%r
+		[footer(u(f.format.stamp, %qt))]
+	)]
+
+--
+
+&c.note/add #629=[setq(d, first(%0, =))][setq(n, rest(%0, =))][if(strmatch(%qd, */*), [setq(c, edit(trim(rest(%qd, /)), %b, _))][setq(d, first(%qd, /))], [setq(c, general)])][setq(s, trim(rest(%qn, /)))][setq(n, u(f.scrub-name, trim(first(%qn, /))))][case(0, isstaff(%#), Error: Only staff may add notes., or(t(setr(p, pmatch+(%qd))), t(setr(h, if(strmatch(%qd, here), loc(%#)))), hastype(%qd, ROOM)), Error: Could not find that target., or(not(%qp), t(setr(o, u(f.search-for, %qp)))), Error: Player doesn't have a notes object., [setq(d, case(1, t(%qp), %qp, t(%qh), %qh[setq(o, %qh)], %qd[setq(o, %qd)]))][setq(r, if(hastype(%qd, ROOM), _))][not(words(setdiff(lattr(%qo/%qrNOTE~*~%qn), ucstr(%qrNOTE~%qc~%qn))))], Error: That note name exists under a different category.  Please choose different name., [setq(t, u(f.format.makestamp))][header(ADDING [name(%qd)]'s Note: [titlestr([edit(%qc, _, %b)] / %qn)])]%r[setq(n, edit(%qn, %b, _))][if(hasattr(%qo, %qrnote~%qc~%qn), [footer(Old Value%, [u(f.format.stamp, u(f.note.stamp, %qo, %qc, %qn, %qr))])]%r[u(f.format.note, u(f.note.get, %qo, %qc, %qn, %qr))]%r[footer(New Value)]%r)][if(strmatch(setr(e, set(%qo, %qrNOTE~%qc~%qn:%qt~%qs)), #-*), %b ERROR WHILE SETTING: %qe, u(f.format.note, %qs))]%r[footer(u(f.format.stamp, %qt))])]
+
+
+--------------------------------------------------------------------------------
+-- +NOTE/DELETE ----------------------------------------------------------------
+
+We're allowing people to delete their own notes, but like other situations we're going to make the deletion process require an extended "=YES" to go through.
+
+So we don't let the player "find" and delete a dark note, we filter the results available to them through the Not Hidden filter.
+
+
+&c.note/delete #629=
+@@ 0: [<player>/][<category>/]<note>[=YES]
+@@ 
+@@ d: dbref of target
+@@ n: note
+@@ c: category.
+@@ y: what is set for the "YES"
+@@ o: notes object
+@@ l: list of attributes matching the note (filtered)
+@@ 
+@@ p: result of pmatch
+@@ r: _ if target is room (as attribute prefix)
+
+
+@@ extract target (%qd) from the input
+	[if(
+		t(setr(n, rest(%0, /))), 
+		[setq(d, first(%0, /))], 
+		[setq(d, %#)][setq(n, %0)]
+	)]
+
+@@ extract the category. (%qc) from the input, if any
+@@ ... else set to * so we can search for '*~<name>' or '<cat>~<name>' equally
+	[if(
+		gte(words(%qn, /), 2), 
+		[setq(c, first(%qn, /))][setq(n, rest(%qn, /))], 
+		setq(c, *)
+	)]
+
+@@ check for "=YES"
+	[setq(y, trim(rest(%qn, =)))]
+	[setq(n, trim(first(%qn, =)))]
+
+@@ check if player
+	[setq(p, pmatch+(%qd))]
+@@ move dbref into d
+	[setq(d, case(1, t(%qp), %qp, strmatch(%qd, here), loc(%#), %qd))]
+@@ if room, set up r
+	[setq(r, if(hastype(%qd, ROOM), _))]
+@@ and since we did the rest of this, set o
+	[setq(o, if(t(%qp), u(f.search-for, %qd), %qd))]
+
+
+@@ error-checking dance
+	[case(0, 
+
+@@ .. validate target
+		or(hastype(%qd, PLAYER), hastype(%qd, ROOM)), 
+		Error: Could not find a valid target., 
+
+@@ .. check for staff
+		or(isstaff(%#), not(comp(%qd, %#))), 
+		Error: You may delete only your personal notes., 
+
+@@ .. check for notes object
+		or(not(%qp), t(%qo)), 
+		Error: Player doesn't have a notes object., 
+
+@@ .. check for the name
+		lte(
+			words(setr(l, 
+@@ .. .. the "not hidden" filter guarantees players cannot delete dark notes
+				filter(
+					fil.not-hidden, 
+					lattr(%qo/%qrNOTE~%qc~[edit(%qn, %b, _)]*), , , 
+					%qo, 
+					%#
+				)
+			)), 
+			1
+		), 
+		Error: More than one note matches that name. Please be more specific., 
+
+@@ .. more name check
+		gte(words(%ql), 1), 
+		Error: A note by that name could not be found., 
+
+@@ .. check for =<something>
+		comp(%qy, ), 
+		WARNING: You are about to delete the note: [titlestr(last(edit(%ql, _, %b), ~))]%r
+		[space(8)] If you are sure%, type: +notes/delete %0=YES, 
+
+@@ .. check for the =YES
+		not(t(comp(%qy, YES))), 
+		Error: If you want to delete the note%, you need to use YES., 
+
+@@ .. yes is there, delete that puppy
+		[header(DELETING [name(%qd)]'s Note: [u(f.format.title, %ql)])]%r
+		[u(f.format.note, rest(u(%qo/%ql), ~))]%r
+		[footer(u(f.format.stamp, first(u(%qo/%ql), ~)))]
+		[set(%qo, %ql:)]
+	)]
+
+--
+
+&c.note/delete #629=[if(t(setr(n, rest(%0, /))), [setq(d, first(%0, /))], [setq(d, %#)][setq(n, %0)])][if(gte(words(%qn, /), 2), [setq(c, first(%qn, /))][setq(n, rest(%qn, /))], setq(c, *))][setq(y, trim(rest(%qn, =)))][setq(n, trim(first(%qn, =)))][setq(p, pmatch+(%qd))][setq(d, case(1, t(%qp), %qp, strmatch(%qd, here), loc(%#), %qd))][setq(r, if(hastype(%qd, ROOM), _))][setq(o, if(t(%qp), u(f.search-for, %qd), %qd))][case(0, or(hastype(%qd, PLAYER), hastype(%qd, ROOM)), Error: Could not find a valid target., or(isstaff(%#), not(comp(%qd, %#))), Error: You may delete only your personal notes., or(not(%qp), t(%qo)), Error: Player doesn't have a notes object., lte(words(setr(l, filter(fil.not-hidden, lattr(%qo/%qrNOTE~%qc~[edit(%qn, %b, _)]*), , , %qo, %#))), 1), Error: More than one note matches that name. Please be more specific., gte(words(%ql), 1), Error: A note by that name could not be found., comp(%qy, ), WARNING: You are about to delete the note: [titlestr(last(edit(%ql, _, %b), ~))]%r[space(8)] If you are sure%, type: +notes/delete %0=YES, not(t(comp(%qy, YES))), Error: If you want to delete the note%, you need to use YES., [header(DELETING [name(%qd)]'s Note: [u(f.format.title, %ql)])]%r[u(f.format.note, rest(u(%qo/%ql), ~))]%r[footer(u(f.format.stamp, first(u(%qo/%ql), ~)))][set(%qo, %ql:)])]
+
+
+--------------------------------------------------------------------------------
+-- +NOTE/DARK ------------------------------------------------------------------
+
+Set a note "Dark", invisible to the player.
+This will set the attribute Hidden (M).
+
+&c.note/dark #629=
+@@ 0: <player>/<note>
+@@ 1: ! if setting !dark (internal, called below)
+@@ 
+@@ d: dbref of target
+@@ n: note
+@@ o: notes object
+@@ l: list of matches on %qn*
+@@ 
+@@ p: return of pmatch+()
+@@ r: _ if target is room (as attribute prefix)
+
+	[setq(d, first(%0, /))]
+	[setq(n, trim(rest(%0, /)))]
+
+@@ check if player
+	[setq(p, pmatch+(%qd))]
+@@ move dbref into d
+	[setq(d, case(1, t(%qp), %qp, strmatch(%qd, here), loc(%#), %qd))]
+@@ if room, set up r
+	[setq(r, if(hastype(%qd, ROOM), _))]
+@@ and since we did the rest of this, set o
+	[setq(o, if(t(%qp), u(f.search-for, %qd), %qd))]
+
+
+	[case(0, 
+@@ .. if %1, check that it's ! (this works)
+		or(not(strlen(%1)), not(comp(%1, !))), 
+		Error: To undark%, ! must be passed., 
+
+@@ .. check for staff
+		isstaff(%#), Error: Only staff can set notes %1dark., 
+
+@@ .. validate target
+		or(hastype(%qd, PLAYER), hastype(%qd, ROOM)), 
+		Error: Could not find a valid target., 
+
+@@ .. check for notes object for players
+		or(not(%qp), t(%qo)), 
+		Error: Player doesn't have a notes object., 
+
+@@ .. check for the name
+		lte(words(setr(l, lattr(%qo/%qrNOTE~*~[edit(%qn, %b, _)]*))), 1), 
+		Error: More than one note matches that name. Please be specific., 
+
+@@ .. more name check
+		gte(words(%ql), 1), 
+		Error: A note by that name could not be found., 
+
+@@ .. Dark or !Dark that thing.
+		[set(%qo/%ql, %1hidden)]
+		+Note: Set [name(%qd)]'s [u(f.format.title, %ql)] %1dark... 
+@@ .. .. validate
+		[if(
+			t(%1), 
+			if(strmatch(flags(%qo/%ql), M), Failed, Success), 
+			if(strmatch(flags(%qo/%ql), M), Success, Failed)
+		)].
+
+	)]
+
+--
+
+&c.note/dark #629=[setq(d, first(%0, /))][setq(n, trim(rest(%0, /)))][setq(p, pmatch+(%qd))][setq(d, case(1, t(%qp), %qp, strmatch(%qd, here), loc(%#), %qd))][setq(r, if(hastype(%qd, ROOM), _))][setq(o, if(t(%qp), u(f.search-for, %qd), %qd))][case(0, or(not(strlen(%1)), not(comp(%1, !))), Error: To undark%, ! must be passed., isstaff(%#), Error: Only staff can set notes %1dark., or(hastype(%qd, PLAYER), hastype(%qd, ROOM)), Error: Could not find a valid target., or(not(%qp), t(%qo)), Error: Player doesn't have a notes object., lte(words(setr(l, lattr(%qo/%qrNOTE~*~[edit(%qn, %b, _)]*))), 1), Error: More than one note matches that name. Please be specific., gte(words(%ql), 1), Error: A note by that name could not be found., [set(%qo/%ql, %1hidden)]+Note: Set [name(%qd)]'s [u(f.format.title, %ql)] %1dark... [if(t(%1), if(strmatch(flags(%qo/%ql), M), Failed, Success), if(strmatch(flags(%qo/%ql), M), Success, Failed))].)]
+
+
+
+
+--------------------------------------------------------------------------------
+-- +NOTE/!DARK -----------------------------------------------------------------
+
+Pass it up.
+
+&c.note/!dark #629=u(c.note/dark, %0, !)
+
+
+--------------------------------------------------------------------------------
+-- Display: All Notes ----------------------------------------------------------
+
+This is brazenly stolen from +help/+news, pared down to be usable for a much simplified version.  This will, among other things, be placed as the @desc of the template object, passing its own dbref up to get processed.  (No special privs are needed; it would be listing attributes from itself.)
+
+Don't show notes that are set Dark.
+
+&f.display.all-notes #629=
+@@ 0: note object dbref
+@@ Outputs: Our typical, default help list, sans header/footer
+@@ 
+@@ l: list of <category>~<topic>; general always goes first
+@@ c: current <category> (control key)
+@@ i: items for <category> (built as part of the control break)
+@@ r: _ prefix if notes object is a room (so attrs are dark/locked)
+
+
+@@ prime the Display. ("priming read")
+[setq(i, )]
+[setq(l, u(f.list.notes, %0))]
+[setq(c, first(%ql, ~))]
+[setq(r, if(hastype(%0, ROOM), _))]
+
+[footer(titlestr(edit(%qc, _, %b)))]
+
+@@ Single-Level Control Break on "category"
+[iter(
+	%ql, 
+	[ifelse(
+		not(strmatch(first(%i0, ~), %qc)), 
+@@ .. Control Break.  Display the buffer and clear it.
+		%r[columns(trim(revwords(%qi, |), b, |), 25, |, 2)]
+		[setq(i, )]
+		[setq(c, first(%i0, ~))]
+		[footer(titlestr(edit(%qc, _, %b)))], 
+@@ .. Else, go on as usual
+	)]
+	[setq(i, 
+		insert(
+			%qi, 
+			1, 
+@@ .. .. if %i0 is dark, format as dark
+			left(u(f.format.name, %0, %rNOTE~%i0), 23), 
+			|
+		)
+	)]
+)]%r
+
+@@ The end.  Remember to display the buffer
+[columns(trim(revwords(%qi, |), b, |), 25, |, 2)]
+
+--
+
+&f.display.all-notes #629=[setq(i, )][setq(l, u(f.list.notes, %0))][setq(c, first(%ql, ~))][setq(r, if(hastype(%0, ROOM), _))][footer(titlestr(edit(%qc, _, %b)))][iter(%ql, [ifelse(not(strmatch(first(%i0, ~), %qc)), %r[columns(trim(revwords(%qi, |), b, |), 25, |, 2)][setq(i, )][setq(c, first(%i0, ~))][footer(titlestr(edit(%qc, _, %b)))], )][setq(i, insert(%qi, 1, left(u(f.format.name, %0, %qrNOTE~%i0), 23), |))])]%r[columns(trim(revwords(%qi, |), b, |), 25, |, 2)]
+
+
+
+--------------------------------------------------------------------------------
+-- List Note Attributes --------------------------------------------------------
+
+The point of this function is twofold.
+
+First, without anything passed it will return a sorted list of all notes entries on the object, sorted by category.
+
+Second, it can also search by category, name, or both.
+
+This is used almost exclusively to discover/display.  That it forces General items first means it's also forcing a search order.
+
+Don't show notes that are set dark (hidden, invisible) to non-staff
+
+&f.list.notes #629=
+@@ 0: dbref of object to check
+@@ 1: if passed, filter for that category (partial match applies)
+@@ 2: if passed, filter for that article name (partial match applies)
+@@ Output: List of <category>~<name>, unsorted
+@@ 
+@@ l: item list: <category>~<name>
+@@ g: "general" (default) category items: general~<name>
+@@ r: _ if object is room, prefix (we hide the room notes with &_attr)
+
+localize(
+	trim(
+		[setq(r, if(hastype(%0, ROOM), _))]
+@@ Grab the whole list, fitered through Not Hidden (i.e., don't show dark)
+		[setq(l, filter(fil.not-hidden, lattr(%0/%qrnote~%1*~%2*), , , %0, %#))]
+@@ Edit down the remains to <category>~<name>
+		[setq(l, edit(%ql, %qrNOTE~, ))]
+@@ Sparate out the General category, sort the rest.
+		[setq(g, filter(fil.cagegory.general, %ql))]
+		[setq(l, sort(setdiff(%ql, %qg)))]
+@@ Display
+		%qg %ql
+	)
+)
+
+
+
+--
+
+&f.list.notes #629=localize(trim([setq(r, if(hastype(%0, ROOM), _))][setq(l, filter(fil.not-hidden, lattr(%0/%qrnote~%1*~%2*), , , %0, %#))][setq(l, edit(%ql, %qrNOTE~, ))][setq(g, filter(fil.cagegory.general, %ql))][setq(l, sort(setdiff(%ql, %qg)))]%qg %ql))
+
+
+--------------------------------------------------------------------------------
+-- Filter: General Categories --------------------------------------------------
+
+&fil.cagegory.general #629=strmatch(%0, general~*)
+
+
+--------------------------------------------------------------------------------
+-- Filter: Not Hidden  ---------------------------------------------------------
+
+0: attribute <list>
+1: object
+2: observer
+
+&fil.not-hidden #629=or(isstaff(%2), not(strmatch(flags(%1/%0), *M*)))
+
+
+
+
+================================================================================
+== NOTES OBJECT TEMPLATE =======================================================
+
+&d.funcs notes object template=#629
+
+@descformat notes obj=[header(name(%!))]%r%0[footer()]
+@desc notes object template=[u([u(d.funcs)]/f.display.all-notes, %!)]
+
+
+     VisibleLock:  All:            Controls object visibility when the object
+                                   is not dark and the looker passes the lock.
+                                   In DARK locations, the object must also be
+                                   set LIGHT and the viewer must pass the
+                                   VisibleLock.
+
+
+================================================================================
+== ONGOING HELP & SHELP ENTRIES ================================================
+
+&help~about_me~+notes #96=Notes of All Types~The notes system is a pared down, portable version of the +help and news systems complete with categories. For all commands, you may use +note or +notes.  Staff is able to set invisible (dark) notes that you shouldn't be able to access.%r%r[ansi(h, +notes)]: Show your notes. %r[ansi(h, +note <note>)]: Show that specific note. %r%r[ansi(h, +note/delete <note>)]: Delete a note of yours. Use only if you mean it.%r%r[ansi(h, +note here)]: List notes in your current location.  Read a specific note with +note here/<name>%r%r[ansi(h, See Also)]: +shelp +notes
+
+
+&shelp~staff_commands~+notes #102=Notes of All Types~This file is an extension of +help notes. For all commands, you may use +note or +notes. Player notes are stored on objects related to the character object and part of the Note ZMO (#481). Rooms store the notes on the room on a &_attribute.  You may use the "here" shortcut for this.%r%r[ansi(h, +note/setup <player>)]: Set up a note object for <player> %r%r[ansi(h, +note <player>%[/<title>%])] %r[ansi(h, +note/view <player>%[/<title>%])]: View <player>'s notes, or view a specific <title>. Note names surrounded by %[..%] are dark to the player. %r%r[ansi(h, +note/add <player>%[/<category>%]=<title>/<note>)]: Set up a <note> with the name <title>, if <category> is not given it will go under the 'general' category. Notes of the same name are overwritten. %r%r[ansi(h, +note/delete <player>/<note>)]: Delete a note. %r%r[ansi(h, +note/delete <player>/<category>/<note>)]: Delete a note from a specific category. %r%r[ansi(h, +note/%[!%]dark <player>/<note>)]: Sets a note dark (invisible to the player) or sets it visible again. %r%r[ansi(h, See Also)]: +help +notes

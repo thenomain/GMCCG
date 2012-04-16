@@ -1,0 +1,294 @@
+
+MASKS AND MIENS
+
+for <game>.conf:
+
+## -- Reality Levels -----------------------------
+reality_level Real 1 _DESC
+reality_level Fae 2 MIEN
+reality_level Shred 4 MIEN
+reality_level All 4294967295
+
+Default Levels:
+
+	@txlevel non-fae = real
+	@rxlevel non-fae = real shred
+
+	@txlevel changeling = real fae
+	@rxlevel changeling = real fae
+
+How It Works:
+
+	If a reality description attribute is not set, it will default to @desc.  We set up the default ("real") attribute to _DESC, which is default not setable by people so will (almost always) be blank, forcing reality levels to show @DESC.
+	
+	However, it seems that it will only default to @DESC if /all/ description attributes are blank.  Therefore, for changelings, &_DESC and &MIEN returns <null> and a mien respectively, therefore @DESC will never be sent.
+
+Shred:
+
+	There are situations where an object's mien is exposed, such as the changeling has shred their mask or entered the Hedge.  For this, set (and unset) "shred" on the changeling's tx-level.
+
+	Because it is a default rx-level for non changelings and uses the &MIEN description, it will expose the mien situationally to others.
+
+Strengthened Masks:
+
+	To strengthen a changeling's Mask, just "!fae" to their tx-level.  No matter how strong a Mask, however, it will be exposed in the Hedge (see "Shred").
+
+
+=--=-=-=-=-=-=-=-=-==-=-==-=-==-=--=-=-=-=-=-==-=--==-=--=-=-=-==--==-=--=-=-==
+
+Porting with Mux:
+
+In-Game:
+	@disable cleaning
+	@disable checkpointing
+	@disable building
+
+	@dump/flatfile
+
+	@enable cleaning
+	@enable checkpointing
+	@enable building
+
+On-Server:
+
+	cp ~/mux2.7/game/data/zombies.db.FLAT ~/devmux/game/data/
+	cp ~/mux2.7/game/data/mail.db ~/devmux/game/data/
+	cp ~/mux2.7/game/data/comsys.db ~/devmux/game/data/
+
+	cd ~/devmux/game/data/
+	./db_load zombies zombies.db.FLAT zombies.db
+
+	cd ../.Startmux
+
+
+=--=-=-=-=-=-=-=-=-==-=-==-=-==-=--=-=-=-=-=-==-=--==-=--=-=-=-==--==-=--=-=-==
+
+Until Mux gets this fixed:
+
+@descformat me=[mein()]
+
+&f_mien #107=
+@@ %@: dbref of target
+@@ %#: dbref of looker
+@@ 
+@@ Calls "which desc?" function (below), saves a lot of time in the future
+
+localize(
+@@ get the @desc or &mien -- needs staff privs
+	[setq(d, get(%@/[whichdesc?(%#, %@)]))]
+@@ show it as the privs of the person we grabbed it from (target)
+	[objeval(%@, s(%qd))]
+)
+
+---
+
+&switch_mien #107=/privileged
+
+---
+
+&f_mien #107=localize([setq(d, get(%@/[whichdesc?(%#, %@)]))][objeval(%@, s(%qd))])
+
+---
+
+&help~functions~mein() #96=Setting Up Your Mask/Mien~[ansi(h, @descformat me=%[faedesc()%])]%r%rFor technical reasons, we cannot with MUX 2.7.4 use reality levels to simulate the changeling Mask.  In the meantime, we ask people to use the above command.  The Mask — what non-changelings see — will remain as your @desc, while the mien will be pulled from &mien.%r%rIf there are any coded situations where the mien will be seen instead (such as a changeling in the Hedge), the mien will be exposed then as well.
+
+== SHORTDESC() =================================================================
+
+A shortdesc() function, to be used in a +look command that shows the proper between: short-desc or short-mien.
+
+&f_shortdesc #107=
+@@ %0: dbref of target << as opposed to %@ with mien()
+@@ %#: dbref of looker
+@@ 
+@@ m: mien/mask with get() - so we can objeval(%#, s(%qm))
+@@ d: dbref of target (%@ doesn't last) - "me"
+@@ l: template(s) of looker
+@@ t: template(s) of target
+@@ e: encorcled? (looker can see miens)
+@@ a: arcadian? (target has a mien)
+
+	default(%0/short-[whichdesc?(%#, %0)], get(%0/short-desc))
+
+---
+
+&switch_shortdesc #107=/privileged
+
+---
+
+&f_shortdesc #107=localize([setq(d, pmatch+(%0))][setq(l, lcstr(u(%#/_bio.template)))][setq(t, lcstr(u(%qd/_bio.template)))][setq(e, t(setinter(%ql, changeling.fae-touched, .)))][setq(a, t(setinter(%qt, changeling.fae-touched, .)))][strtrunc(case(1, and(%qe, %qa), [setq(m, default(%qd/short-mien, get(%qd/short-desc)))][objeval(%qd, s(%qm))], and(strmatch(zone(room(%qd)), #64), %qa), [setq(m, default(%qd/short-mien, get(%qd/short-desc)))][objeval(%qd, s(%qm))], objeval(%qd, u(%!/short-desc))), 70)])
+
+
+
+
+&f_shortdesc #107=default(%0/short-[whichdesc?(%#, %0)], get(%0/short-desc))
+
+
+---
+
+think shortdesc(pmatch+(dog))
+
+
+== WHICHDESC?() ================================================================
+
+0: viewer
+1: viewed
+returns: 'desc' or 'mien'
+
+Determines which desc (or reality) is seen by the viewer.  This code drives existing mask/mien desc code, but can be used to determine this for any reason.
+
+Staff only.
+
+
+&f_whichdesc? #107=
+@@ %0: dbref of looker
+@@ %1: dbref of target
+@@ 
+@@ m: mien/mask with get() - so we can objeval(%0, s(%qm))
+@@ l: template(s) of looker
+@@ t: template(s) of target
+@@ e: encorcled? (looker can see miens)
+@@ a: arcadian? (target has a mien)
+
+localize(
+	[setq(l, lcstr(u(%0/_bio.template)))]
+	[setq(t, lcstr(u(%1/_bio.template)))]
+	[setq(e, 
+		or(
+@@ .. looker is changeling or fae-touched
+			t(setinter(%ql, changeling.fae-touched, .)), 
+@@ .. looker has enchanted mortal merit
+			hasattr(%0, _merit.enchanted_mortal)
+		)
+	)]
+	[setq(a, t(setinter(%qt, changeling.fae-touched, .)))]
+	[case(1, 
+		not(isstaff(%@)), #-1 Staff Only, 
+@@ >> looker is "encorcled" (can see fae, is fae, etc) and target is "arcadian"
+@@ .. can see mien
+		and(%qe, %qa), 
+		mien, 
+@@ >> target is in the hedge and "arcadian"
+@@ .. can see mien
+		and(strmatch(zone(room(%qd)), #64), %qa), 
+		mien, 
+@@ >> else, can only see mask
+		desc
+	)]
+)
+
+
+---
+
+&switch_whichdesc? #107=/privileged
+
+---
+
+&f_whichdesc? #107=localize([setq(l, lcstr(u(%0/_bio.template)))][setq(t, lcstr(u(%1/_bio.template)))][setq(e, or(t(setinter(%ql, changeling.fae-touched, .)), hasattr(%0, _merit.enchanted_mortal)))][setq(a, t(setinter(%qt, changeling.fae-touched, .)))][case(1, not(isstaff(%@)), #-1 Staff Only, and(%qe, %qa), mien, and(strmatch(zone(room(%qd)), #64), %qa), mien, desc)])
+
+---
+
+think whichdesc?(pmatch+(dog), pmatch+(gwen))
+think whichdesc?(pmatch+(wolfe), pmatch+(gwen))
+think whichdesc?(pmatch+(dog), pmatch+(wolfe))
+
+
+== +LOOK =======================================================================
+
+Please maintain to be same logic as mien().
+
+&c.+look #37=$+look*:@pemit %#=
+	[setq(0, trim(%0))]
+	[case(1, 
+		and(t(%q0), not(isstaff(%#))), [alert(+look)] Only staff may look afar., 
+
+		and(t(%q0), not(hastype(%q0, ROOM))), 
+		[alert(+look)] That's not a room., 
+
+		[setq(w, if(t(%q0), %q0, loc(%#)))]
+		[header(+look[if(t(%q0), %b[name(%qw)])])]%r
+		[iter(
+			setr(e, objeval(%#, lcon(%qw, CONNECT))), 
+			u(f.look-item.[if(hasattr(%#, look-type), short, full)], %i0)
+			, , %r
+		)]%r
+		[footer(words(%qe))]
+	)]
+
+--
+
+&c.+look #37=$+look*:@pemit %#=[setq(0, trim(%0))][case(1, and(t(%q0), not(isstaff(%#))), [alert(+look)] Only staff may look afar., and(t(%q0), not(hastype(%q0, ROOM))), [alert(+look)] That's not a room., [setq(w, if(t(%q0), %q0, loc(%#)))][header(+look[if(t(%q0), %b[name(%qw)])])]%r[iter(setr(e, objeval(%#, lcon(%qw, CONNECT))), u(f.look-item.[if(hasattr(%#, look-type), short, full)], %i0), , %r)]%r[footer(words(%qe))])]
+
+-- dflook-item.short -----------------------------------------------------------
+
+A single item for the "short" version of look, set via: &look-type me=short
+(or anything, really)
+
+0: dbref of person 
+
+&f.look-item.short #37=%b[ansi(h, name(%i0))] ([switch(get(%i0/sex), m*, M, f*, F, ?)]): [strtrunc(shortdesc(%i0), sub(69, strlen(name(%i0))))]
+
+
+-- f.look-item.full ------------------------------------------------------------
+
+A single item for the full or "long" version of look, shown by default
+
+Name (Sex[ <Court>][ <Seeming>[ Fae-Touched]])
+
+0: dbref of person 
+
+&f.look-item.full #37=
+	> [ansi(h, name(%0))] 
+	(
+		[switch(get(%0/sex), m*, Male, f*, Female, ???)]
+
+@@ >> if the viewer can see the mien, report seeming & mantle
+		[case(setr(m, whichdesc?(%#, %0)), 
+			mien, 
+
+@@ .. court, show if 2+ except winter, show if 2-
+@@ .. (set court to "null" if it's not shown, so we know the ", " wasn't)
+			[setq(c, get(%0/_bio.court))]
+			[case(%qc, 
+				winter, 
+				if(lte(getstat(%0/mantle (%qc)), 3), %, %qc, setq(c, )), 
+				if(gte(getstat(%0/mantle (%qc)), 2), %, %qc, setq(c, ))
+			)]
+
+@@ .. only show seeming if they have one, then check if they're also fae-touched
+@@ .. if court was shown (%qc), don't show the comma, else show it
+			[if(t(setr(s, get(%0/_bio.seeming))), 
+				[if(not(t(%qc)), %,)]  %qs
+				[if(t(strmatch(get(%0/_bio.template), *fae-touched*)), %bFae-Touched)]
+
+			)]
+		)]
+
+@@ >> build the "obvious physical merits" list: Striking Looks, Giant
+		[iter(
+			 u(d.look-item.obvious-merits), 
+			if(hasattr(%0, _merit.%i0), %, [edit(%i0, _, %b)]), , @@
+		)]
+		
+	): %r
+@@ >> show desc, max length 73
+	%b [if(
+		t(setr(c, shortdesc(%0))), 
+		strtrunc(%qc, sub(73, strlen(name(%0)))), 
+		ansi(hx, <no short-%qm set>)
+	)]
+
+
+--
+
+&f.look-item.full #37=> [ansi(h, name(%0))] ([switch(get(%0/sex), m*, Male, f*, Female, ???)][case(setr(m, whichdesc?(%#, %0)), mien, [setq(c, get(%0/_bio.court))][case(%qc, winter, if(lte(getstat(%0/mantle (%qc)), 3), %, %qc, setq(c, )), if(gte(getstat(%0/mantle (%qc)), 2), %, %qc, setq(c, )))][if(t(setr(s, get(%0/_bio.seeming))), [if(not(t(%qc)), %,)]  %qs[if(t(strmatch(get(%0/_bio.template), *fae-touched*)), %bFae-Touched)])])][iter( u(d.look-item.obvious-merits), if(hasattr(%0, _merit.%i0), %, [edit(%i0, _, %b)]), , @@)]): %r%b [if(t(setr(c, shortdesc(%0))), strtrunc(%qc, sub(73, strlen(name(%0)))), ansi(hx, <no short-%qm set>))]
+
+
+-- OBVIOUS MERITS --------------------------------------------------------------
+
+&d.look-item.obvious-merits #37=
+	Striking_Looks Animal_Magnetism Giant Predator's_Bearing Predator's_Gaze Socially_Small
+
+
+== HELP ========================================================================
+
+&help~ic_commands~+look #96=Quick Looks~[ansi(h, +look)]: Look at the &short-desc or &short-mien of everyone in the room, as well as any obvious stat-based traits or merits.  It otherwise works exactly like mien()%r%r[ansi(h, +look <room dbref>)]: Staff can +look from afar using this version.%r%rIf you want to see a short +look format, type: &look-type me=short%r%rThe following merits are currently considered obvious:%r%r[wrap(edit(itemize(get(#37/d.look-item.obvious-merits)), _, %b), 68, left, %b %b%b)]

@@ -1,0 +1,1339 @@
+================================================================================
+== OPENING NOTES ===============================================================
+
+Stored:
+
+&pledge.#: <name>|<type>|<date>|<stats>|<players>
+&filter.#: <works like filter, "1" if "public">
+&text.#: <text>
+
+A skill can only be raised once, so adding or removing someone from a pledge requires checking all the pledges they're on to see if the offset needs to be added/removed.
+
+A pledge must be filled out (name, type, date, etc.) before the players may be added.  This is a security feature to keep players from seeing incomplete entries.  The code for this resides on &f.validate-element.players
+
+I am extremely sloppy with u() and ulocal().  This system is largely self-contained, but if you're going to be making external calls to it, always use ulocal().  I plan on coding up an API (what other objects would use to interface with +pledges), but may not get to it.
+
+FUTURE FEATURE: Filter is passed %0 (person looking) and %1 (dbref on the list), and will be meshed with a filter that allows staff to see the whole list.  That is, references to &filter.# are not functional.
+
+
+--------------------------------------------------------------------------------
+-- Design Notes ----------------------------------------------------------------
+
+Each element has a number of handlers, so it's set up as heirarchal as I could.  For instance, validation goes this way:
+
+	&f.validate-element :: 0: element type, 1: data
+	&f.validate-element.<type> :: 0: data
+
+You don't need to do anything special to the top-level element handler to add an element, just add the information to the "elements master list" and add, as appropriate:
+	&f.validate-element.<type> :: 0: data - assumes valid (1) if not there
+	&f.convert-element.<type> :: 0: data - returns "data" if not there 
+	&f.display-element.<type> :: 0: data, 1: show errors?
+	&f.filter.<type> :: 0: element data, 1: value, 2: comparison type (optional)
+
+For the filter, while it is optional the system will error if someone tries to use +pledge/filter with it.  While it's trivial to add an element filter, it's by no means necessary.
+
+
+--------------------------------------------------------------------------------
+-- User-Defined Functions ------------------------------------------------------
+
+Uses the following user-defined functions:
+	isstaff(<dbref>)
+	header(<text>) & footer(<text>)
+	alert(<text>[, alert])
+		A simple formatter that outputs: |<text>|, for use with notices from
+		the system.  You probably have your own.
+	isapproved(<dbref>)
+		-1 if "frozen", 0 if not yet approved, 1 if approved
+		We use this function only in the following function:
+			&f.validate-element.players.one (I give too much detail on purpose)
+
+
+================================================================================
+== PLEDGES: SETUP ==============================================================
+
+@create Pledges Database <pd>
+@set pd=safe
+@set pd=inherit
+
+@create Pledge System <ps>
+@set ps=safe
+@set ps=inherit
+
+@fo me=&d.pledges ps=[num(Pledges Database <pd>)]
+
+@@ CODE OBJECT @DESC PARENT - I use this to format the @desc on my code objects
+@@ You don't need it.  Can be provided.
+@parent ps=codp
+@desc ps=%0%r%b Num Pledges: [attrcnt([u(d.pledges)]/pledge.*)]%r[footer()]
+
+@@ TEST PLEDGE
+&pledge.1 pd=Theno's Test Pledge|vow|1279317084|stats go here|#33
+&filter.1 pd=1
+&text.1 pd=this is a sample pledge
+
+
+--------------------------------------------------------------------------------
+-- Counter ---------------------------------------------------------------------
+
+The purpose of the counter is to determine the next free number for the pledge system, which may be lower than the maximum current number.
+
+i.e., in 1 2 5 9, the next "free" number is 3.
+
+--
+
+&f.counter.pledges ps=sort(edit(lattr(u(d.pledges)/pledge.*), PLEDGE., ))
+
+&f.counter.free ps=
+localize(
+	first(
+		setdiff(
+@@ lnum(1 to max pledge number)
+			lnum(1, inc(last(setr(n, u(f.counter.pledges))))), 
+@@ .. pledge numbers
+			%qn
+		)
+	)
+)
+
+--
+
+&f.counter.free ps=localize(first(setdiff(lnum(1, inc(last(setr(n, u(f.counter.pledges))))), %qn)))
+
+--
+
+think u(ps/f.counter.free)
+
+
+--------------------------------------------------------------------------------
+-- Elements --------------------------------------------------------------------
+
+The elements are those items which may be entered for a pledge.  
+
+element format:
+	<element name> <attribute.# it's on> <position in list>
+
+This way, a pledge may have elements on multiple attributes, which will allow more elements to be easily added without limiting the main text.
+
+e.g.:
+	&pledge.2: Motley: Blustery Nothings|vow|1285196518|Survival +1, Brawl +1, Resources +1, Empathy +1 (Jackson), Intimidation +1 (FL), Streetwise +1 (Winnifred), Socialize +2 (Kottyn)|#1446 #1795 #286
+	
+	&text.2: <text text text>
+
+BUG: For some reason, "text.#" has 5 slots when created.  I probably typo'd in the pledge creation for the 'text' attribute.  This does not affect the system in any way.
+
+--
+
+&d.elements.positions ps=name pledge. 1|type pledge. 2|date pledge. 3|stats pledge. 4|players pledge. 5|text text. 1|filter filter. 1
+
+@@ 0: space-delim list of possible element names, out: full|element|data
+
+&f.data-elements.list ps=iter(%0, grab([u(ps/d.elements.positions)], %i0*, |), , |)
+
+--
+
+think u(#1575/f.data-elements.list, na dat text)
+
+think u(#1575/f.data-elements.list, na dad text)
+
+
+--------------------------------------------------------------------------------
+-- Get Elements ----------------------------------------------------------------
+
+Main "tell me about" function
+0: pledge number, 1: element name(s) (may be space-delim list)
+out: list|of|information|requested
+
+&f.get-elements ps=[setq(e, u(f.data-elements.list, %1))][case(0, comp(%qe, ),  #-1 Element(s) Requested Unknown, t(get([u(d.pledges)]/pledge.%0)), #-1 Pledge #%0 Not Found, iter(%qe, extract(u([u(d.pledges)]/[extract(%i0, 2, 1)]%0), last(%i0), 1, |), |, |))]
+
+--
+
+think u(ps/f.get-elements, 1, na da text)
+think u(ps/f.get-elements, 1, players)
+
+think u(ps/f.get-elements, 9999, na da text)
+
+
+--------------------------------------------------------------------------------
+-- Set Element -----------------------------------------------------------------
+
+Set a single element to something new.  No validation.
+
+0: pledge number, 1: element name, 2: value
+
+e: element's data entry (<name> <attribute> <position>)
+a: <attribute> for that element
+p: existing pledge's entry
+
+&f.set-element ps=localize(
+	[setq(e, u(f.data-elements.list, %1))]
+	[setq(a, [extract(%qe, 2, 1)]%0)]
+	[case(0, 
+		comp(%qe, ),  #-1 Element Requested Unknown, 
+		eq(words(%qe, |), 1), #-1 Multiple Elements Found, 
+		t(setr(p, ulocal([u(d.pledges)]/pledge.%0))), #-1 Pledge #%0 Not Found, 
+
+@@ .. ok
+		[setq(p, replace(%qp, last(%qe), %2, |))]
+		[setq(p, set([u(d.pledges)], %qa:%qp))]
+		[if(comp(%qp, ), 
+			#-1 Error setting pledge attribute, 
+			Set: Pledge #%0's [first(%qe)] to '%2'
+		)]
+	)]
+)
+
+--
+
+&f.set-element ps=localize([setq(e, u(f.data-elements.list, %1))][setq(a, [extract(%qe, 2, 1)]%0)][case(0, comp(%qe, ),  #-1 Element Requested Unknown, eq(words(%qe, |), 1), #-1 Multiple Elements Found, t(setr(p, ulocal([u(d.pledges)]/pledge.%0))), #-1 Pledge #%0 Not Found, [setq(p, replace(%qp, last(%qe), %2, |))][setq(p, set([u(d.pledges)], %qa:%qp))][if(comp(%qp, ), #-1 Error setting pledge attribute, Set: Pledge #%0's [first(%qe)] to '%2')])])
+
+--
+
+think u(ps/f.set-element, 1, na da text, fun!)
+
+think u(ps/f.set-element, 1, nam, fun!)
+
+think u(ps/f.set-element, 99999, tex, fun!)
+
+
+--------------------------------------------------------------------------------
+-- Validate Element ------------------------------------------------------------
+
+We use validation for entering data and checking if a pledge is no longer valid.  The largest reasons for a pledge no longer being valid are 
+
+0: element type, 1: element data
+
+&f.validate-element ps=localize(case(1, strmatch(%1, *|*), #-1 [capstr(lcstr(%0))] may not contain pipe character, strmatch(setr(m, udefault(f.validate-element.%0, 1, %1)), #-*), %qm, 1))
+
+&f.validate-element.name ps=case(0, lte(strlen(%0), 30), #-1 Name max length 30 characters)
+
+&f.validate-element.type ps=case(0, match(vow oath corporal sanction, %0), #-1 Type must be vow oath corporal or sanction)
+
+&f.validate-element.date ps=case(0, comp(%0, lifetime), 1, comp(%0, generational), 1, comp(%0, ), #-1 Date is empty, isint(%0), #-1 Date must be passed as seconds, gt(%0, secs()), #-1 Date has passed)
+
+&f.validate-element.stats ps=1[@@(always valid)]
+
+&f.validate-element.players ps=localize(
+	case(0, 
+		land(
+			iter(%0, 
+				setr(e, u(f.validate-element.players.one, %i0))
+			)
+		), 
+		if(eq(words(%0), 1), %qe, #-1 One or more players has an error)
+	)
+)
+
+&f.validate-element.players.one ps=case(0, t(pmatch+(%0)), #-1 Player not found, comp(isapproved(%0), 0), #-1 Player not approved, comp(isapproved(%0), -1), #-1 Player is frozen, 1)
+
+
+&f.validate-element.text ps=case(0, t(strlen(%0)), #-1 Text may not be null)
+
+
+--------------------------------------------------------------------------------
+-- Convert Element -------------------------------------------------------------
+
+Convert to internal storage format, happens before Validation, does not validate anything 
+
+0: element name, 1: value
+
+&f.convert-element ps=udefault(f.convert-element.%0, %1, %1)
+
+--
+
+precise: enter - yyyymmdd, converts to - yyyy-mm-dd HH:MM:SS
+
+&f.convert-element.date ps=
+	switch(%0, 
+		now, secs(), 
+		day*, add(secs(), 86400), 
+		wee*, add(secs(), 604800), 
+		moo*, add(secs(), 2419200), 
+		sea*, add(secs(), 7689600), 
+		yea*, add(secs(), 31622400), 
+		dec*, add(secs(), 316224000), 
+		life*, lifetime, 
+		gen*, generational, 
+		convtime(
+			[mid(%0, 0, 4)]-[mid(%0, 4, 2)]-[mid(%0, 6, 2)] 
+			[extract(time(), 4, 1)]
+		)
+	)
+
+--
+
+&f.convert-element.players ps=iter(%0, case(1, isdbref(%i0), %i0, pmatch+(%i0)))
+
+--
+
+&f.convert-element.date ps=switch(%0, now, secs(), day*, add(secs(), 86400), wee*, add(secs(), 604800), moo*, add(secs(), 2419200), sea*, add(secs(), 7689600), yea*, add(secs(), 31622400), dec*, add(secs(), 316224000), life*, lifetime, gen*, generational, convtime([mid(%0, 0, 4)]-[mid(%0, 4, 2)]-[mid(%0, 6, 2)] [extract(time(), 4, 1)]))
+
+--
+
+think u(ps/f.convert-element.date, day)
+think u(ps/f.convert-element.date, 20101105)
+
+think u(ps/f.convert-element.players, burke)
+
+
+================================================================================
+== DISPLAY =====================================================================
+
+--------------------------------------------------------------------------------
+-- Sort: Pledge ----------------------------------------------------------------
+
+We need a sortby because we format <attr>.<pledgenum>, which doesn't make sort() happy.
+
+&sort.pledge ps=comp(rpad(last(%0, .), 3, 0), rpad(last(%1, .), 3, 0))
+
+
+--------------------------------------------------------------------------------
+-- Display: Element ------------------------------------------------------------
+
+Make the raw data human-redable.  "show error detail?" allows you to do the trick of showing hilighted (in our case, red) information if the element has an error during validation.
+
+where applicable
+
+0: element name, 1: data, 2: true if "show error detail?"
+&f.display.element ps=udefault(f.display.element.%0, %1, %1, %2)
+
+
+The format of a specific display (for easy adding of other elements) is:
+	[setq(t, <type>)]
+	[setq(v, <the formatted output for that type>)]
+	[setq(e, u(f.validate-element, %qt, %0))]
+	[if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])]
+
+
+0: data, 1: true if "show error detail"
+
+&f.display.element.name ps=localize([setq(t, name)][setq(v, titlestr(%0))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
+
+&f.display.element.type ps=localize([setq(t, type)][setq(v, capstr(lcstr(%0)))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
+
+&f.display.element.date ps=localize([setq(t, date)][setq(v, if(isint(%0), timefmt($Y-$m-$d, %0), %0))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
+
+@@ ekes out which players have the error
+&f.display.element.players ps=localize(itemize(iter(%0, [setq(v, name(%i0))][setq(e, u(f.validate-element.players.one, %i0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])], , |), |))
+
+
+
+--
+
+think u(ps/f.display.element, name, this is a test)
+think u(ps/f.display.element, date, secs())
+
+think u(ps/f.display.element.name, this is a test)
+
+think u(ps/f.display.element, date, secs(), true)
+think u(ps/f.display.element.name, this is a te|st, true)
+
+
+--------------------------------------------------------------------------------
+-- Display: Pledge, Full -------------------------------------------------------
+
+0: pledge number
+
+e: elements list (we'll use this a few times)
+p: entire pledge item, compressed
+
+v: present element's validation
+d: present element's data (from %qp)
+n: element w/name, formatted for easy output
+
+&f.display.pledge.full ps=
+	[setq(e, Name Type Date Stats Players)]
+	[setq(p, ulocal(f.get-elements, %0, %qe))]
+
+	[header(Pledge #%0)]%r
+	
+	[iter(%qe, 
+@@ re-validate element for errors/overdue
+		[setq(d, extract(%qp, inum(), 1, |))]
+		[setq(v, ulocal(f.validate-element, %i0, %qd))]
+		[setq(d, [ansi(g, %i0:)] [ulocal(f.display.element, %i0, %qd, true)])]
+
+@@ and output
+		[wrap(%qd, sub(74, add(2, strlen(%i0))), left, %b%b, , add(2, strlen(%i0)), , 74)], 
+		, %r
+	)]%r
+
+@@ text is treated special-like
+	[setq(d, ulocal(f.get-elements, %0, text))]
+	[setq(v, ulocal(f.validate-element, text, %qd))]
+	[setq(n, if(t(%qv), Text, ansi(r, Text, xh, %b%([rest(%qv)]%))))]
+	[center(%b%qn%b, 79, %xg-%xn)]%r
+	[wrap(%qd, 74, left, %b%b)]%r
+
+	[footer(+pledge %0)]
+
+--
+
+&f.display.pledge.full ps=[setq(e, Name Type Date Stats Players)][setq(p, ulocal(f.get-elements, %0, %qe))][header(Pledge #%0)]%r[iter(%qe, [setq(d, extract(%qp, inum(), 1, |))][setq(v, ulocal(f.validate-element, %i0, %qd))][setq(d, [ansi(g, %i0:)] [ulocal(f.display.element, %i0, %qd, true)])][wrap(%qd, sub(74, add(2, strlen(%i0))), left, %b%b, , add(2, strlen(%i0)), , 74)], , %r)]%r[setq(d, ulocal(f.get-elements, %0, text))][setq(v, ulocal(f.validate-element, text, %qd))][setq(n, if(t(%qv), Text, ansi(r, Text, xh, %b%([rest(%qv)]%))))][center(%b%qn%b, 79, %xg-%xn)]%r[wrap(%qd, 74, left, %b%b)]%r[footer(+pledge %0)]
+
+
+--
+
+think u(ps/f.display.pledge.full, 1)
+
+
+--------------------------------------------------------------------------------
+-- Display: Pledge, Line -------------------------------------------------------
+
+The overview (one-line) pledge.
+
+------------------------------------ Text -------------------------------------
+
+ xxx) <name..................................> - type (yyyy-mm-dd): xx members
+
+&f.display.pledge.line ps=
+	[setq(e, Name Type Date Players)]
+	[setq(p, ulocal(f.get-elements, %0, %qe))]
+
+@@ number
+	%b[rjust(%0, 3)]) 
+
+@@ name
+	[setq(d, elements(%qp, 1, |))]
+	[setq(v, ulocal(f.validate-element, name, %qd))]
+	[setq(d, ulocal(f.display.element, name, %qd))]
+	[ljust(if(t(%qv), %qd, ansi(r, %qd)), 39)] - 
+
+@@ type
+	[setq(d, elements(%qp, 2, |))]
+	[setq(v, ulocal(f.validate-element, type, %qd))]
+	[setq(d, strtrunc(ulocal(f.display.element, type, %qd), 4))]
+	[ljust(if(t(%qv), %qd, ansi(r, %qd)), 4)] - 
+
+@@ players
+	[setq(d, elements(%qp, 4, |))]
+	[setq(v, ulocal(f.validate-element, players, %qd))]
+	[setq(d, [words(%qd)] members)]
+	[rjust(if(t(%qv), %qd, ansi(r, %qd)), 10)] - 
+
+@@ date
+	[setq(d, elements(%qp, 3, |))]
+	[setq(v, ulocal(f.validate-element, date, %qd))]
+	[setq(d, ulocal(f.display.element, date, %qd))]
+	[if(t(%qv), %qd, ansi(r, %qd))]
+
+--
+
+&f.display.pledge.line ps=[setq(e, Name Type Date Players)][setq(p, ulocal(f.get-elements, %0, %qe))]%b[rjust(%0, 3)]) [setq(d, elements(%qp, 1, |))][setq(v, ulocal(f.validate-element, name, %qd))][setq(d, ulocal(f.display.element, name, %qd))][ljust(if(t(%qv), %qd, ansi(r, %qd)), 39)] - [setq(d, elements(%qp, 2, |))][setq(v, ulocal(f.validate-element, type, %qd))][setq(d, strtrunc(ulocal(f.display.element, type, %qd), 4))][ljust(if(t(%qv), %qd, ansi(r, %qd)), 4)] - [setq(d, elements(%qp, 4, |))][setq(v, ulocal(f.validate-element, players, %qd))][setq(d, [words(%qd)] members)][rjust(if(t(%qv), %qd, ansi(r, %qd)), 10)] - [setq(d, elements(%qp, 3, |))][setq(v, ulocal(f.validate-element, date, %qd))][setq(d, ulocal(f.display.element, date, %qd))][if(t(%qv), %qd, ansi(r, %qd))]
+
+--
+
+think u(ps/f.display.pledge.line, 1)
+
+
+--------------------------------------------------------------------------------
+-- Filter: Pledge.Can-See ------------------------------------------------------
+
+Returns if %1 (dbref) can see that pledge.  To start, only staff and people on the pledge can see it.
+
+0: attr of pledge
+1: dbref of person looking
+
+&fil.pledge.can-see ps=or(isstaff(%1), t(match(last(get([u(d.pledges)]/%0), |), %1)))
+
+--
+
+think u(ps/fil.pledge.can-see, pledge.1, %#)
+think u(ps/fil.pledge.can-see, pledge.1, #99)
+think u(ps/fil.pledge.can-see, pledge.1, #302)
+
+
+================================================================================
+== +PLEDGE =====================================================================
+
+The main driver.  +pledge and +pledges both processed here.  (I hate you, +job/+jobs.)
+
+&c.pledge ps=$+pledge*:@pemit %#=
+	[switch(%0, 
+		, u(c.pledge.default), 
+@@ .. 'pledges'
+		s, u(c.pledge.default), 
+		s/*, u(c.pledge.switch, /[first(after(%0, /))], rest(%0)), 
+		s%b*, u(c.pledge.specific, trim(rest(%0))), 
+@@ .. normal
+		/*, u(c.pledge.switch, first(%0), rest(%0)), 
+		%b*, u(c.pledge.specific, trim(%0)), 
+		Error: I don't know what you mean.  Please see [ansi(h, +help pledge)]
+	)]
+
+--
+
+
+&c.pledge ps=$+pledge*:@pemit %#=[setq(0, %0)][switch(%0, , u(c.pledge.default), s, u(c.pledge.default), s/*, u(c.pledge.switch, /[first(after(%0, /))], rest(%0)), s%b*, u(c.pledge.specific, trim(rest(%0))), /*, u(c.pledge.switch, first(%0), rest(%0)), %b*, u(c.pledge.specific, trim(%0)), Error: I don't know what you mean.  Please see [ansi(h, +help pledge)])]
+
+
+--------------------------------------------------------------------------------
+-- c.pledge.switch -------------------------------------------------------------
+
+0: /switch
+1: everything else
+
+&c.pledge.switch ps=
+	udefault(
+		first(sort(lattr(%!/c.*%0*))), 
+		[alert(pledge)] No such switch., 
+		%1
+	)
+
+--
+
+&c.pledge.switch ps=udefault(first(sort(lattr(%!/c.*%0*))), [alert(pledge)] No such switch., %1)
+
+
+--------------------------------------------------------------------------------
+-- c.pledge.default ------------------------------------------------------------
+
+List all (visible) pledges
+
+l: list of displayed pledges
+
+&c.pledge.default ps=
+	[setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, lattr([u(d.pledges)]/pledge.*), , , %#)))]
+
+	[header(Pledges)]%r
+
+	[if(t(words(%ql)), 
+		iter(%ql, u(f.display.pledge.line, rest(%i0, .)), , %r), 
+		%b No pledges to list.
+	)]%r
+
+	[footer(if(t(words(%ql)), [words(%ql)] pledges))]
+
+--
+
+&c.pledge.default ps=[setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, lattr([u(d.pledges)]/pledge.*), , , %#)))][header(Pledges)]%r[if(t(words(%ql)), iter(%ql, u(f.display.pledge.line, rest(%i0, .)), , %r), %b No pledges to list.)]%r[footer(if(t(words(%ql)), [words(%ql)] pledges))]
+
+
+--------------------------------------------------------------------------------
+-- c.pledge.specific -----------------------------------------------------------
+
+"view pledge <num>"
+
+n: pledge number
+
+&c.pledge.specific ps=
+	[setq(n, %0)]
+	
+	[case(0, 
+		and(isint(%qn), gt(%qn, 0)), 
+		[alert(+pledge)] Pledge lookup must be a positive number., 
+
+		t(get([u(d.pledges)]/pledge.%qn)), 
+		[alert(+pledge)] Pledge not found., 
+
+		or(isstaff(%#), t(match(u(f.get-elements, %qn, players), %#))), 
+		[alert(+pledge)] You may not review someone else's pledge., 
+
+		u(f.display.pledge.full, %qn)
+	)]
+
+--
+
+&c.pledge.specific ps=[setq(n, %0)][case(0, and(isint(%qn), gt(%qn, 0)), [alert(+pledge)] Pledge lookup must be a positive number., t(get([u(d.pledges)]/pledge.%qn)), [alert(+pledge)] Pledge not found., or(isstaff(%#), t(match(u(f.get-elements, %qn, players), %#))), [alert(+pledge)] You may not review someone else's pledge., u(f.display.pledge.full, %qn))]
+
+
+================================================================================
+== /edit =======================================================================
+
+	+pledge/edit <number>/<element>=<new value>
+
+Edit an element from an existing pledge.  This is the most 
+
+n: pledge number
+e: element
+v: new value
+
+&c.pledge/edit ps=
+	[setq(n, first(%0, /))]
+	[setq(e, rest(first(%0, =), /))]
+	[setq(v, last(%0, =))]
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+		t(%qn), [alert(pledge)] Number not entered, 
+		t(%qe), [alert(pledge)] Element not entered, 
+		attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, 
+		eq(words(%qe), 1), [alert(pledge)] Enter only one element, 
+		comp(setr(e, u(f.data-elements.list, %qe)), ), [alert(pledge/edit)] Element not found, 
+		u(f.pledge/edit.workhorse, %qn, first(%qe), %qv)
+	)]
+
+--
+
+&c.pledge/edit ps=[setq(n, first(%0, /))][setq(e, rest(first(%0, =), /))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, t(%qe), [alert(pledge)] Element not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, eq(words(%qe), 1), [alert(pledge)] Enter only one element, comp(setr(e, u(f.data-elements.list, %qe)), ), [alert(pledge/edit)] Element not found, u(f.pledge/edit.workhorse, %qn, first(%qe), %qv))]
+
+
+--------------------------------------------------------------------------------
+-- /edit.workhorse -------------------------------------------------------------
+
+Does most of the checking and heavy lifting of editing an element.
+
+0: pledge number, 1: element, 2: new value
+
+p: existing element's pledge data
+c: converted value
+v: validation result
+s: set result
+
+z: slush register
+
+
+&f.pledge/edit.workhorse ps=
+	[setq(p, ulocal(f.get-elements, %0, %1))]
+	[setq(c, ulocal(f.convert-element, %1, %2))]
+	[setq(v, ulocal(f.validate-element, %1, %qc))]
+
+@@ extra element-based checks, "1" if valid or not checked
+	[setq(e, 
+		case(%1, 
+@@ .. players
+			players, 
+			if(
+				land(
+					[iter(type date text, 
+						[t(setr(z, ulocal(f.get-elements, %0, %i0)))] 
+						[t(ulocal(f.validate-element, %i0, %qz))]
+					)]
+				), 
+				1, 
+				#-1 Can't edit players until type%, date%, and text are set and valid
+			), 
+@@.. others
+			1
+		)
+	)]
+
+@@ process
+	[case(0, 
+		t(%qv), [alert(pledge)] [rest(%qv)], 
+		t(%qe), [alert(pledge)] [rest(%qe)], 
+@@ .. ok
+		u(f.pledge/edit.process, %0, %1, %qp, %qc)
+	)]
+
+
+--
+
+&f.pledge/edit.workhorse ps=[setq(p, ulocal(f.get-elements, %0, %1))][setq(c, ulocal(f.convert-element, %1, %2))][setq(v, ulocal(f.validate-element, %1, %qc))][setq(e, case(%1, players, if(land([iter(type date text, [t(setr(z, ulocal(f.get-elements, %0, %i0)))] [t(ulocal(f.validate-element, %i0, %qz))])]), 1, #-1 Can't edit players until type%, date%, and text are set and valid), 1))][case(0, t(%qv), [alert(pledge)] [rest(%qv)], t(%qe), [alert(pledge)] [rest(%qe)], u(f.pledge/edit.process, %0, %1, %qp, %qc))]
+
+
+--------------------------------------------------------------------------------
+-- /edit.process ---------------------------------------------------------------
+
+After the workhorse, do the actual editing.  This is separated out because there are times where we want to edit a bad stat, specifically when removing a player from a list where there may still be invalid players in it.
+
+This should probably be in a different attribute structure than /edit, but it's going here for now.
+
+	u(f.pledge/edit.process, <num>, <element>, <from>, <to>)
+
+0: pledge number
+1: pledge element
+2: 'from' value
+3: 'to' value
+
+e: potential error message (was qs)
+
+&f.pledge/edit.process ps=
+	[alert(pledge)] Changing [ucstr(%1)] 
+	from '[u(f.display.element, %1, %2)]' 
+	to '[u(f.display.element, %1, %3)]' ... 
+
+	[setq(e, ulocal(f.set-element, %0, %1, %3))]
+	[if(t(%qe), set!, error: [rest(%qe)])]
+
+--
+
+&f.pledge/edit.process ps=[alert(pledge)] Changing [ucstr(%1)] from '[u(f.display.element, %1, %2)]' to '[u(f.display.element, %1, %3)]' ... [setq(e, ulocal(f.set-element, %0, %1, %3))][if(t(%qe), set!, error: [rest(%qe)])]
+
+
+--------------------------------------------------------------------------------
+-- /new ------------------------------------------------------------------------
+
+	+pledge/new <name>
+
+n: name
+c: counter - next available pledge number
+
+&c.pledge/new ps=
+	[setq(n, %0)]
+	[setq(c, u(f.counter.free))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+
+		t(setr(e, u(f.validate-element, name, %qn))), 
+		[alert(pledge)] [rest(%qe)], 
+
+@@ the "repeat" thing determines how many elements for pledge.# there are
+@@ minus one to find out how many seperators that is
+		[set(
+			[u(d.pledges)], 
+			pledge.%qc:%qn[repeat(|,dec(words(graball(u(d.elements.positions), * pledge. *, |, |), |)))]
+		)]
+		[null(u(f.set-element, %qc, type, vow))]
+		[alert(pledge)] Set up new pledge [ansi(h, #%qc)] with name '[titlestr(%qn)]' and default type 'Vow'.
+	)]
+
+--
+
+&c.pledge/new ps=[setq(n, %0)][setq(c, u(f.counter.free))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(setr(e, u(f.validate-element, name, %qn))), [alert(pledge)] [rest(%qe)], [set([u(d.pledges)], pledge.%qc:%qn[repeat(|,dec(words(graball(u(d.elements.positions), * pledge. *, |, |), |)))])][null(u(f.set-element, %qc, type, vow))][alert(pledge)] Set up new pledge [ansi(h, #%qc)] with name '[titlestr(%qn)]' and default type 'Vow'.)]
+
+
+--------------------------------------------------------------------------------
+-- /delete ---------------------------------------------------------------------
+
+	+pledge/delete <number>[=YES]
+
+&c.pledge/delete ps=
+	[setq(n, before(%0, =))]
+	[setq(v, rest(%0, =))]
+	
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+
+		eq(attrcnt([u(d.pledges)]/pledge.%qn), 1), 
+		[alert(pledge)] Pledge not found, 
+
+		not(comp(%qv, YES)), 
+		[alert(pledge)] If you are absolutely sure you want to delete this pledge%, type: +pledge/delete %qn=YES, 
+
+		[header(Deleting Pledge #%qn)]%r
+		[ulocal(f.display.pledge.full, %qn)]%r
+
+		[setq(p, set([u(d.pledges)], pledge.%qn:))]
+		[setq(t, set([u(d.pledges)], text.%qn:))]
+		[footer(
+			case(1, 
+				comp(%qp, ), Error Clearing &Pledge: %qp, 
+				comp(%qt, ), Error Clearing &Text: %qt, 
+				Deleted
+			)
+		)]
+	)]
+
+--
+
+&c.pledge/delete ps=[setq(n, before(%0, =))][setq(v, rest(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, eq(attrcnt([u(d.pledges)]/pledge.%qn), 1), [alert(pledge)] Pledge not found, not(comp(%qv, YES)), [alert(pledge)] If you are absolutely sure you want to delete this pledge%, type: +pledge/delete %qn=YES, [header(Deleting Pledge #%qn)]%r[ulocal(f.display.pledge.full, %qn)]%r[setq(p, set([u(d.pledges)], pledge.%qn:))][setq(t, set([u(d.pledges)], text.%qn:))][footer(case(1, comp(%qp, ), Error Clearing &Pledge: %qp, comp(%qt, ), Error Clearing &Text: %qt, Deleted))])]
+
+
+================================================================================
+== SHORTCUT SWITCHES ===========================================================
+
+It's a pain to keep typing: +pledge/edit etc., etc., so adding shortcuts.
+
+
+--------------------------------------------------------------------------------
+-- /player ---------------------------------------------------------------------
+
+Add/remove a specific player.  Driven mainly by /edit.workhorse
+This one is different from the rest because it's manipulating a list
+
+	+pledge/player <num>=[!]<name>
+
+t: type (just for shorthand purposes)
+n: pledge number
+v: new value
+b: bang? ('!')
+p: players on pledge
+
+e: potential error validating the player entered
+
+&c.pledge/players ps=
+	[setq(n, first(%0, =))]
+	[setq(v, last(%0, =))]
+	[setq(b, strmatch(%qv, !*))]
+	[if(%qb, setq(v, right(%qv, dec(strlen(%qv)))))]
+	[setq(p, ulocal(f.get-elements, %qn, players))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+		t(%qn), [alert(pledge)] Number not entered, 
+		attrcnt([ulocal(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, 
+@@ .. it's okay to remove a player with another error
+		or(%qb, t(setr(e, ulocal(f.validate-element.players.one, setr(v, pmatch+(%qv)))))), 
+		[alert(pledge)] [rest(%qe)], 
+@@ .. process
+		[if(%qb, 
+@@ .. .. !<player>: Make sure they're on it, and ignore validating the stat
+			if(t(match(%qp, %qv)), 
+				[setq(v, setdiff(%qp, %qv))]
+				[ulocal(f.pledge/edit.process, %qn, players, %qp, %qv)], 
+				[alert(pledge)] Player not on the pledge to be removed
+			), 
+			case(1, 
+				t(match(%qp, %qv)), 
+				[alert(pledge)] Player already on the pledge, 
+				[setq(v, setunion(%qp, %qv))]
+				[ulocal(f.pledge/edit.workhorse, %qn, players, %qv)]
+			)
+		)]
+	)]
+
+
+--
+
+&c.pledge/players ps=[setq(n, first(%0, =))][setq(v, last(%0, =))][setq(b, strmatch(%qv, !*))][if(%qb, setq(v, right(%qv, dec(strlen(%qv)))))][setq(p, ulocal(f.get-elements, %qn, players))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([ulocal(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, or(%qb, t(setr(e, ulocal(f.validate-element.players.one, setr(v, pmatch+(%qv)))))), [alert(pledge)] [rest(%qe)], [if(%qb, if(t(match(%qp, %qv)), [setq(v, setdiff(%qp, %qv))][ulocal(f.pledge/edit.process, %qn, players, %qp, %qv)], [alert(pledge)] Player not on the pledge to be removed), case(1, t(match(%qp, %qv)), [alert(pledge)] Player already on the pledge, [setq(v, setunion(%qp, %qv))][ulocal(f.pledge/edit.workhorse, %qn, players, %qv)]))])]
+
+
+--------------------------------------------------------------------------------
+-- /text -----------------------------------------------------------------------
+
+	+pledge/text <num>=<text>
+
+t: element type
+n: pledge number
+v: new value
+e: potential error from validation
+
+&c.pledge/text ps=
+	[setq(t, text)]
+	[setq(n, first(%0, =))]
+	[setq(v, last(%0, =))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+		t(%qn), [alert(pledge)] Number not entered, 
+		attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, 
+@@ .. process (conversion/validation done by workhorse)
+		[u(f.pledge/edit.workhorse, %qn, %qt, %qv)]
+	)]
+
+--
+
+&c.pledge/text ps=[setq(t, text)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+
+
+--------------------------------------------------------------------------------
+-- /name ----------------------------------------------------------------------
+
+	+pledge/name <num>=<name>
+
+t: element type
+n: pledge number
+v: new value
+e: potential error from validation
+
+&c.pledge/name ps=
+	[setq(t, name)]
+	[setq(n, first(%0, =))]
+	[setq(v, last(%0, =))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+		t(%qn), [alert(pledge)] Number not entered, 
+		attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, 
+@@ .. process (conversion/validation done by workhorse)
+		[u(f.pledge/edit.workhorse, %qn, %qt, %qv)]
+	)]
+
+--
+
+&c.pledge/name ps=[setq(t, name)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+
+
+--------------------------------------------------------------------------------
+-- /stats ----------------------------------------------------------------------
+
+	+pledge/stats <num>=<stats>
+
+t: element type
+n: pledge number
+v: new value
+e: potential error from validation
+
+&c.pledge/stats ps=
+	[setq(t, stats)]
+	[setq(n, first(%0, =))]
+	[setq(v, last(%0, =))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+		t(%qn), [alert(pledge)] Number not entered, 
+		attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, 
+@@ .. process (conversion/validation done by workhorse)
+		[u(f.pledge/edit.workhorse, %qn, %qt, %qv)]
+	)]
+
+--
+
+&c.pledge/stats ps=[setq(t, stats)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+
+
+--------------------------------------------------------------------------------
+-- /type -----------------------------------------------------------------------
+
+	+pledge/type <num>=<type>
+
+t: element type
+n: pledge number
+v: new value
+e: potential error from validation
+
+&c.pledge/type ps=
+	[setq(t, type)]
+	[setq(n, first(%0, =))]
+	[setq(v, last(%0, =))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+		t(%qn), [alert(pledge)] Number not entered, 
+		attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, 
+@@ .. process (conversion/validation done by workhorse)
+		[u(f.pledge/edit.workhorse, %qn, %qt, %qv)]
+	)]
+
+--
+
+&c.pledge/type ps=[setq(t, type)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+
+
+--------------------------------------------------------------------------------
+-- /date -----------------------------------------------------------------------
+
+	+pledge/date <num>=<date>
+
+t: element type
+n: pledge number
+v: new value
+e: potential error from validation
+
+&c.pledge/date ps=
+	[setq(t, date)]
+	[setq(n, first(%0, =))]
+	[setq(v, last(%0, =))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+		t(%qn), [alert(pledge)] Number not entered, 
+		attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, 
+@@ .. process (conversion/validation done by workhorse)
+		[u(f.pledge/edit.workhorse, %qn, %qt, %qv)]
+	)]
+
+--
+
+&c.pledge/date ps=[setq(t, date)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+
+
+--------------------------------------------------------------------------------
+-- /duration -------------------------------------------------------------------
+
+Aliased to /date.
+
+&c.pledge/duration ps=[u(c.pledge/date, %0)]
+
+
+================================================================================
+== ADVANCED SWITCHES ===========================================================
+
+--------------------------------------------------------------------------------
+-- /raw ------------------------------------------------------------------------
+
+	+pledge/raw <pledge>/<element>
+
+Returns the raw (unprocessed) element, useful for error-checking or if, for whatever reason, you need the list of player dbrefs or the end-date in seconds.
+
+0: pledge/element
+
+n: pledge number
+e: element
+p: existing element's pledge data
+
+
+&c.pledge/raw ps=
+	[setq(n, first(%0, /))]
+	[setq(e, rest(%0, /))]
+	[setq(p, ulocal(f.get-elements, %qn, %qe))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only., 
+		t(%qn), [alert(pledge)] Number not entered, 
+		t(%qe), [alert(pledge)] Element not entered, 
+		eq(words(%qe)), [alert(pledge)] One element only, 
+		attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, 
+		comp(setr(e, first(u(f.data-elements.list, %qe))), ), [alert(pledge)] Element not found, 
+
+		[alert(pledge #%qn)] [ansi(h, titlestr(%qe))]: %qp
+	)]
+
+--
+
+&c.pledge/raw ps=[setq(n, first(%0, /))][setq(e, rest(%0, /))][setq(p, ulocal(f.get-elements, %qn, %qe))][case(0, isstaff(%#), [alert(pledge)] Staff only., t(%qn), [alert(pledge)] Number not entered, t(%qe), [alert(pledge)] Element not entered, eq(words(%qe)), [alert(pledge)] One element only, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, comp(setr(e, first(u(f.data-elements.list, %qe))), ), [alert(pledge)] Element not found, [alert(pledge #%qn)] [ansi(h, titlestr(%qe))]: %qp)]
+
+
+--------------------------------------------------------------------------------
+-- /filter ---------------------------------------------------------------------
+
+	+pledge/filter <element> <comparison> <value>
+
+Most the pledge filters are coded in Element Filters, below.  I imagine of the basic filters, the ones that will be used most will be:
+
+	+pledge/filter player=<person>
+
+After filtering (which returns attributes, not values), run it through the one-line (default) system, which will filter again.
+
+m: match?
+e: element
+c: comparison type (may be ignored)
+v: value
+f: filter
+l: list of "displayed pledges" - pledges player is allowed to see
+
+&c.pledge/filter #1575=
+	[setq(m, 
+		regmatch(%0, 
+			(.*)(\[<>=\])(.*), 
+			m e c v
+		)
+	)]
+	[setq(e, trim(%qe))]
+	[setq(v, trim(%qv))]
+	[setq(f, u(f.filter, %qe, %qv, %qc))]
+
+	[case(0, 
+		t(%qm), [alert(pledge)] Filter format: <element> <comparison> <value>, 
+		t(%qf), [alert(pledge)] [rest(%qf)], 
+
+		[setq(f, iter(%qf, PLEDGE.[last(%i0, .)]))]
+		[setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, %qf, , , %#)))]
+
+		[header(Pledges: Filtered by '%qv')]%r
+
+		[if(t(words(%ql)), 
+			iter(%ql, u(f.display.pledge.line, rest(%i0, .)), , %r), 
+			%b No pledges to list.
+		)]%r
+
+		[footer(if(t(words(%ql)), [words(%ql)] pledges))]
+	)]
+
+--
+
+&c.pledge/filter ps=[setq(m, regmatch(%0, (.*)(\[<>=\])(.*), m e c v))][setq(e, trim(%qe))][setq(v, trim(%qv))][setq(f, u(f.filter, %qe, %qv, %qc))][case(0, t(%qm), [alert(pledge)] Filter format: <element> <comparison> <value>, t(%qf), [alert(pledge)] [rest(%qf)], [setq(f, iter(%qf, PLEDGE.[last(%i0, .)]))][setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, %qf, , , %#)))][header(Pledges: Filtered by '%qv')]%r[if(t(words(%ql)), iter(%ql, u(f.display.pledge.line, rest(%i0, .)), , %r), %b No pledges to list.)]%r[footer(if(t(words(%ql)), [words(%ql)] pledges))])]
+
+
+--
+
++pledge/filter pl = william
++pledge/filter name = free
++pledge/filter name=motley
++pledge/filter stat=brawl
++pledge/filter text=ensorc
++pledge/filter date > moon
++pledge/fil type=corporal
+
+
+--------------------------------------------------------------------------------
+-- /clean ----------------------------------------------------------------------
+
+Right now it doesn't do anything but delete all non-players from the pledge cleaned.
+
+	+pledge/delete <number>
+
+qn: pledge number (there just in case we need to massage some other time)
+qp: "player" dbrefs on pledge
+qq: non-player dbrefs on pledge (not using filter() quite yet)
+qc: cleaned list
+qx: return message from setting
+
+&c.pledge/clean #1575=
+	[setq(n, trim(%0))]
+
+	[case(0, 
+		isstaff(%#), [alert(pledge)] Staff only, 
+
+		eq(attrcnt([u(d.pledges)]/pledge.%qn), 1), 
+		[alert(pledge)] Pledge not found, 
+
+@@ .. determine non-players on player list
+		[setq(p, u(f.get-elements, %qn, players))]
+		[setq(q, iter(%qp, if(hastype(%i0, PLAYER), , %i0)))]
+		[setq(c, setdiff(%qp, %qq))]
+
+@@ >> display, if any
+		[header(Cleaning Pledge #%qn)]%r
+
+		[if(words(%qq), 
+@@ .. items to display
+		%b [ansi(h, To Clean:)] %r
+			[iter(%qq, 
+				%b %b [name(%i0)] (%i0), 
+				, %r
+			)]%r %r
+
+@@ .. set new stuff
+			[setq(x, u(f.set-element, %qn, players, %qc))]
+			%b [ansi(h, Setting Cleaned Players:)] 
+			[if(t(%qx), 
+				[ansi(n, %[, g, OK, n, %])], 
+				[ansi(n, %[, r, error, n, %])]%r%b [rest(%qx)]%r %rCheck '+pledge %qn' to make sure nothing has changed!
+			)], 
+
+@@ .. nothing to display
+			%b [ansi(h, No non-players on player list -- nothing to clean.)]
+		)]%r
+
+		[footer([words(%qq)] cleaned)]
+	)]
+
+--
+
+&c.pledge/clean ps=[setq(n, trim(%0))][case(0, isstaff(%#), [alert(pledge)] Staff only, eq(attrcnt([u(d.pledges)]/pledge.%qn), 1), [alert(pledge)] Pledge not found, [setq(p, u(f.get-elements, %qn, players))][setq(q, iter(%qp, if(hastype(%i0, PLAYER), , %i0)))][setq(c, setdiff(%qp, %qq))][header(Cleaning Pledge #%qn)]%r[if(words(%qq), %b [ansi(h, To Clean:)] %r[iter(%qq, %b %b [name(%i0)] (%i0), , %r)]%r %r[setq(x, u(f.set-element, %qn, players, %qc))]%b [ansi(h, Setting Cleaned Players:)] [if(t(%qx), [ansi(n, %[, g, OK, n, %])], [ansi(n, %[, r, error, n, %])]%r%b [rest(%qx)]%r %rCheck '+pledge %qn' to make sure nothing has changed!)], %b [ansi(h, No non-players on player list -- nothing to clean.)])]%r[footer([words(%qq)] cleaned)])]
+
+
+================================================================================
+== Element Filters =============================================================
+
+We'll need them eventually.
+
+Contains (a list item)
+Finds (a text word)
+Is (an actual item)
+Is Less (than the item)
+Is More (than the item)
+
+	+pledge/filter date < week (is less)
+	+pledge/filter player = anderson (contains)
+	+pledge/filter text = ensorc (finds)
+
+NOT YET IMPLEMENTED
+	+pledge/filter player = error
+	+pledge/filter all = error
+
+The "error" and "all" keywords process differently.  "error" is the only valid filter with "all"
+
+
+--------------------------------------------------------------------------------
+-- Basic Filters ---------------------------------------------------------------
+
+These are generic filters to help creating more complex filters or for future elements.
+
+For all element filters:
+
+	0: attribute (grabbed from f.data-elements.list + pledge # = <attr>.<#>)
+	1: element position (grabbed from f.data-elements.list)
+	2: value(s)
+
+&fil.contains ps=t(match(elements(get([u(d.pledges)]/%0), %1, |), %2))
+&fil.matches ps=t(strmatch(elements(get([u(d.pledges)]/%0), %1, |), *%2*))
+&fil.is ps=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), 0)
+&fil.is_more ps=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), 1)
+&fil.is_less ps=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), -1)
+
+--
+
+think u(#1575/fil.contains, pledge.1, last(u(#1575/f.data-elements.list, players)), pmatch(thenomain))
+
+think [setq(0, players)][setq(1, thenomain)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, pmatch(%q1))][sort(filter(#1575/fil.contains, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+think [setq(0, players)][setq(1, william)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, pmatch(%q1))][sort(filter(#1575/fil.contains, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+-
+
+think [setq(0, text)][setq(1, ensorc)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.matches, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+think [setq(0, stats)][setq(1, persuasion)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.finds, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+-
+
+think [setq(0, date)][setq(1, 1278988486)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.is, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+think [setq(0, date)][setq(1, secs())][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.is_less, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+think [setq(0, date)][setq(1, secs())][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.is_more, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+
+think [setq(0, date)][setq(1, add(secs(), 31622400))][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.is_less, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+
+--------------------------------------------------------------------------------
+-- Filter Functions ------------------------------------------------------------
+
+0: element, 1: value, 2: comparison type (optional, may be ignored)
+e: element data (<name> <attribute.> <position>)
+n: element name
+c: converted element data
+v: validated converted element data
+f: filter results
+output: attributes matching filter
+
+&f.filter #1575=
+localize(
+	[setq(e, u(f.data-elements.list, %0))]
+	[setq(n, first(%qe))]
+	[setq(c, u(f.convert-element, %qn, %1))]
+	[setq(v, u(f.validate-element, %qn, %qc))]
+	[case(0, 
+		eq(words(%0), 1), #-1 Filter only one element, 
+		eq(words(%qe, |), 1), #-1 Element not found, 
+		t(%qe), #-1 Elements: [rest(%qe)], 
+		t(%qc), #-1 Convert: [rest(%qc)], 
+@@ .. don't validate date; the convert will do that fine
+@@ .. and we need all dates available
+		or(strmatch(%qe, date*), t(%qv)), %qv, 
+		ulocal(f.filter-workhorse, %qn, %qe, %qc, %2)
+	)]
+)
+
+
+&f.filter-workhorse #1575=
+	case(0, 
+		strlen(setr(f, udefault(f.filter.%0, #-1 No filter for %0, %1, %2, %3))), 
+		#-1 No results, 
+		%qf
+	)
+
+--
+
+&f.filter ps=localize([setq(e, u(f.data-elements.list, %0))][setq(n, first(%qe))][setq(c, u(f.convert-element, %qn, %1))][setq(v, u(f.validate-element, %qn, %qc))][case(0, eq(words(%0), 1), #-1 Filter only one element, eq(words(%qe, |), 1), #-1 Element not found, t(%qe), #-1 Elements: [rest(%qe)], t(%qc), #-1 Convert: [rest(%qc)], or(strmatch(%qe, date*), t(%qv)), %qv, ulocal(f.filter-workhorse, %qn, %qe, %qc, %2))])
+
+&f.filter-workhorse ps=case(0, strlen(setr(f, udefault(f.filter.%0, #-1 No filter for %0, %1, %2, %3))), #-1 No results, %qf)
+
+--
+
+For the specific filters:
+0: element data, 1: value, 2: comparison type (optional, may be ignored)
+
+&f.filter.text ps=filter(fil.matches, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
+
+&f.filter.stats ps=u(f.filter.text, %0, %1, %2)
+
+&f.filter.name ps=u(f.filter.text, %0, %1, %2)
+
+&f.filter.type ps=filter(fil.is, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
+
+&f.filter.players ps=filter(fil.contains, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
+
+For date, we care about %2. t: filter type
+
+&f.filter.date ps=
+localize(
+	[setq(t, 
+		case(%2, 
+			>, is_more, 
+			<, is_less, 
+			=, is, 
+			switch(%2, 
+				gr*, is_more, 
+				mo*, is_more, 
+				le*, is_less, 
+				is
+			)
+		)
+	)]
+	[filter(fil.%qt, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)]
+)
+
+&f.filter.date ps=localize([setq(t, case(%2, >, is_more, <, is_less, =, is, switch(%2, gr*, is_more, mo*, is_more, le*, is_less, is)))][filter(fil.%qt, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)])
+
+--
+
+think u(#1575/f.filter, fds fds, ensorc)
+think u(#1575/f.filter, nam typ, ensorc)
+think u(#1575/f.filter, , ensorc)
+think u(#1575/f.filter, nam, )
+
+
+think u(#1575/f.filter, nam, ensorc)
+think u(#1575/f.filter, te, ensorc)
+think u(#1575/f.filter, stat, brawl)
+
+think u(#1575/f.filter, players, william)
+
+think u(#1575/f.filter, date, now, <)
+think u(#1575/f.filter, date, moon, <)
+
+
+
+================================================================================
+== SHELP FILE ==================================================================
+
+For my personal softcoded help-file system.
+
+--
+
+&shelp~stat_commands~+pledge #102=Central Pledge Database~For all uses of this command, +pledge and +pledges are synonymous.
+
+[ansi(h, +pledge)]: List pledges, items in red are errors & expired dates
+
+[ansi(h, +pledge <num>)]: List detail about a pledge, items in red are errors with reason (meant to be clear)
+
+[ansi(h, +pledge/new <name>)]: Makes a pledge with <name> and default type of Vow
+
+[ansi(h, +pledge/delete <num>)]: Deletes a pledge from the system.
+
+[ansi(h, +pledge/edit <num>/<element>=<value>)]: Change <element> to <value>
+
+[ansi(h, +pledge/raw <num>/<element>)]: Don't massage an <element>, good for error-checking.
+
+Shortcuts:
+%b [ansi(h, +pledge/player <num>=[!]<player>)]: Add or delete a player from a pledge.
+%b [ansi(h, +pledge/name <num>=<name>)]: Set the name of a pledge.
+%b [ansi(h, +pledge/stats <num>=<stats>)]: Set the stats of a pledge.
+%b [ansi(h, +pledge/date <num>=<duration or end date>)]: Set the end date of a pledge.
+%b [ansi(h, +player/duration <num>=<duration>)]: Same as /date.
+%b [ansi(h, +pledge/text <num>=<text>)]: Set the text of a pledge.
+See next page for explanations of the elements.~= [ansi(h, Elements)] =
+
+All elements have their own validation system, but none may have the | character in them.
+
+[ansi(h, Name)]: The name of a pledge.  Max length: 30 characters.
+
+[ansi(h, Type)]: The type of pledge. Vow, Oath, Corporal, or Sanction.
+
+[ansi(h, Stats)]: A shortcut to see stats affected by a a pledge. Any value.
+
+[ansi(h, Text)]: The raw text of the pledge.
+
+[ansi(h, Players)]: A list of player objects on this pledge. May only be used after Name, Type, Date, and Text are entered.
+
+[ansi(h, Date)]: The end date of the pledge.  May take any duration name from the book except "permanent".  If a specific date is desired, must be entered in the format 'YYYYMMDD'.  (The end time for a pledge is always based upon the time you enter it.)
+
+See next page for a sample pledge.~
+
+Sample Pledge:
+
++pledge/new Motley: The Queens of Torts%r%b (the system returns that this is pledge 4)
+
++pledge/date 4=year
++pledge/text 4=This motley is an all-girl legal team. <etc. etc>
++pledge/stats 4=+1 Persuasion, +2 Stunning Looks (sanctioned)
++pledge/player 4=Jane
++pledge/player 4=Flit
++pledge/player 4=Benni
+
+Players could be entered:
++pledge/edit 4/players=Jane Flit Benni
+--
+
+&shelp~stat_commands~+pledge #102=Central Pledge Database~For all uses of this command, +pledge and +pledges are synonymous. %r %r[ansi(h, +pledge)]: List pledges, items in red are errors & expired dates %r %r[ansi(h, +pledge <num>)]: List detail about a pledge, items in red are errors with reason (meant to be clear) %r %r[ansi(h, +pledge/new <name>)]: Makes a pledge with <name> and default type of Vow %r %r[ansi(h, +pledge/delete <num>)]: Deletes a pledge from the system. %r %r[ansi(h, +pledge/edit <num>/<element>=<value>)]: Change <element> to <value> %r %r[ansi(h, +pledge/raw <num>/<element>)]: Don't massage an <element>, good for error-checking. %r %r[ansi(h, +pledge/clean <num>)]: Clean non-players (recycled dbrefs) from a pledge. %r %rShortcuts: %r%b [ansi(h, +pledge/player <num>=[!]<player>)]: Add or delete a player from a pledge.%r%b [ansi(h, +pledge/name <num>=<name>)]: Set the name of a pledge. %r%b [ansi(h, +pledge/stats <num>=<stats>)]: Set the stats of a pledge. %r%b [ansi(h, +pledge/date <num>=<duration or end date>)]: Set the end date of a pledge%r%b [ansi(h, +player/duration <num>=<duration/date>)]: Same as /date.%r%b [ansi(h, +pledge/text <num>=<text>)]: Set the text of a pledge. %r %rSee next page for explanations of the elements.~= [ansi(h, Elements)] = %r %rAll elements have their own validation system, but none may have the | character in them. %r %r[ansi(h, Name)]: The name of a pledge.  Max length: 30 characters. %r %r[ansi(h, Type)]: The type of pledge. Vow, Oath, Corporal, or Sanction. %r %r[ansi(h, Stats)]: A shortcut to see stats affected by a a pledge. Any value. %r %r[ansi(h, Text)]: The raw text of the pledge. %r %r[ansi(h, Players)]: A list of player objects on this pledge. May only be used after Name, Type, Date, and Text are entered. %r %r[ansi(h, Date)]: The end date of the pledge.  May take any duration name from the book except "permanent".  If a specific date is desired, must be entered in the format 'YYYYMMDD'.  (The end time for a pledge is always based upon the time you enter it.)%r%rSee next page for a sample pledge.~Sample Pledge:%r%r+pledge/new Motley: The Queens of Torts%r%b (the system returns that this is pledge 4)%r%r+pledge/date 4=year%r+pledge/text 4=This motley is an all-girl legal team. <etc. etc>%r+pledge/stats 4=+1 Persuasion, +2 Stunning Looks (Sanctioned)%r+pledge/player 4=Jane%r+pledge/player 4=Flit%r+pledge/player 4=Benni%r%rPlayers could be entered:%r+pledge/edit 4/players=Jane Flit Benni
+
+
+
+
+================================================================================
+== HELP FILE ===================================================================
+
+&help~about_me~+pledge #96=Pledges~Changelings (and mortals, to a changeling) may have multiple pledges going on at one time, with multiple elements and stats.  To make the record-keeping easier, we have a central pledge database. %r %r[ansi(h, +pledge)]: List all the pledges I'm on. %r %rIf you see elements in red, the system has detected an error.  It could be as simple as the pledge is expired. %r %r[ansi(h, +pledge <number>)]: List the details of this pledge.  Errors will be reported in detail here.  Because players can't edit pledges this may not help, but staff may delete an expired pledge so keep them in the loop.%r %r(For all uses of this command, +pledge and +pledges are synonymous.)%r%rNext page: Filters~[ansi(h, +pledge/filter <element> <comparison> <value>)]%r%rFilter the +pledge list.  Most comparisons will be '=', except in rare cases.%r%b +pledge/filter name=<part of a pledge name>%r%b +pledge/filter type=vow, oath, corporal, or sanction%r%b +pledge/filter stats=<a word in the stats, like a skill>%r%b +pledge/filter players=<someone's name>%r%b +pledge/filter text=<a word in the pledge text>%r%b +pledge/filter date = <keyword or date>%r%b +pledge/filter date < <keyword or date>%r%b +pledge/filter date > <keyword or date>%r%b %b Date Keywords: now, day, week, moon, season, year, decade%r%b %b Manual Date Format: YYYYMMDD %r %rAs with many commands, shorthand works just as well.  +pledge/fil st=brawl, for instance.
+
+
+
+
+
+
+-- TO-DO LIST:
+
+[OK] CHECK EXISTING PLEDGE: Revalidate its elements
+[OK] EDIT EXISTING PLEDGE
+[OK] ADD NEW PLEDGE
+[OK] DELETE PLEDGE: force verification
+[OK] DISPLAY PLEDGE LINE: Display a pledge summary on a line or two, validate
+[OK] DISPLAY PLEDGE FULL: Display a full pledge, validate
+DISPLAY PLEDGE NOTE: Display a full pledge in +note format - MAKE API (!!!)
+FILTER PLEDGE PLAYER: Filter pledges by a player (dbref) on them
+FILTER PLEDGE EXPIRED: Filter pledges by "Date Invalid" check
+
+FILTER ELEMENT PLAYERS: Filters the "players" list based on who's looking at it
