@@ -194,7 +194,7 @@ Please maintain to be same logic as mien().
 
 &c.+look #37=$+look*:@pemit %#=[setq(0, trim(%0))][case(1, and(t(%q0), not(isstaff(%#))), [alert(+look)] Only staff may look afar., and(t(%q0), not(hastype(%q0, ROOM))), [alert(+look)] That's not a room., [setq(w, if(t(%q0), %q0, loc(%#)))][header(+look[if(t(%q0), %b[name(%qw)])])]%r[iter(setr(e, objeval(%#, lcon(%qw, CONNECT))), u(f.look-item.[if(hasattr(%#, look-type), short, full)], %i0), , %r)]%r[footer(words(%qe))])]
 
--- dflook-item.short -----------------------------------------------------------
+-- f.look-item.short -----------------------------------------------------------
 
 A single item for the "short" version of look, set via: &look-type me=short
 (or anything, really)
