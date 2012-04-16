@@ -1,3 +1,10 @@
+################################################################################
+## IMPORTANT NOTES #############################################################
+
+This is mostly sketch work until "Roller 3.0". The early rollers are simple enough to adapt.
+
+----------------------------------------
+
 A VERY, VERY TEMPORARY WOD ROLLING SYSTEM BASED ON SOME BASIC PREVIOUS WORKS
 
 +roll[/weakness|again=<x>] <dice>
