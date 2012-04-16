@@ -30,9 +30,17 @@ These mimic the functions on the DD.
 
 think [setq(f, 0)][setq(t, 4)][setq(x, 2)][ladd(iter(lnum(inc(%qf), %qt), mul(%i0, %qx)))]
 
+@@ &f.cost.standard #388=ladd(iter(lnum(inc(%1), %2), mul(%i0, %0)))
+
+think [setq(f, 3)][setq(t, 4)][setq(x, 2)][setq(f, inc(%qf))][mul(add(power(%qt, 2), -[power(%qf, 2)], %qf, %qt), .5, %qx)]
+
+The formula above, ( L² - F² + F + L ) / 2, should work better.
+
+--
+
 @@ %0: xp cost, %1: from, %2: to
 
-&f.cost.standard #388=ladd(iter(lnum(inc(%1), %2), mul(%i0, %0)))
+&f.cost.standard #388=mul(add(power(%2, 2), -[power(inc(%1), 2)], inc(%1), %2), .5, %0)
 
 
 --------------------------------------------------------------------------------
