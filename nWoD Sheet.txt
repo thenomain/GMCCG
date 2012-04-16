@@ -1,3 +1,8 @@
+################################################################################
+## IMPORTANT NOTES #############################################################
+
+There are several versions of sheet here.  The third one is the one we were using.
+
 
 SHEET:
 
