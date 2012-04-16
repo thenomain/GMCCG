@@ -1,3 +1,5 @@
+PLEASE NOTE: This system is an earlier version of the Supernatural Agreement Storage System (SASS) and should be used with caution.
+
 ================================================================================
 == OPENING NOTES ===============================================================
 
