@@ -33,35 +33,11 @@ Strengthened Masks:
 
 	To strengthen a changeling's Mask, just "!fae" to their tx-level.  No matter how strong a Mask, however, it will be exposed in the Hedge (see "Shred").
 
-
 =--=-=-=-=-=-=-=-=-==-=-==-=-==-=--=-=-=-=-=-==-=--==-=--=-=-=-==--==-=--=-=-==
 
-Porting with Mux:
+Reality levels and @descformat don't play well with one another, however:
 
-In-Game:
-	@disable cleaning
-	@disable checkpointing
-	@disable building
-
-	@dump/flatfile
-
-	@enable cleaning
-	@enable checkpointing
-	@enable building
-
-On-Server:
-
-	cp ~/mux2.7/game/data/zombies.db.FLAT ~/devmux/game/data/
-	cp ~/mux2.7/game/data/mail.db ~/devmux/game/data/
-	cp ~/mux2.7/game/data/comsys.db ~/devmux/game/data/
-
-	cd ~/devmux/game/data/
-	./db_load zombies zombies.db.FLAT zombies.db
-
-	cd ../.Startmux
-
-
-=--=-=-=-=-=-=-=-=-==-=-==-=-==-=--=-=-=-=-=-==-=--==-=--=-=-=-==--==-=--=-=-==
+	http://code.google.com/p/tinymux/issues/detail?id=608&q=descformat
 
 Until Mux gets this fixed:
 
