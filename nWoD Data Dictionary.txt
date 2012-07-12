@@ -465,12 +465,12 @@ The more supers we get, the more generalized we need to make some of these thing
 		5, 
 		u(_value, 
 			%0, 
-			case(last(u(_value_full, %0, bio.template),
+			case(last(u(_value_full, %0, bio.template), .), 
 				Changeling, advantage.wyrd, 
 				Werewolf, advantage.primal_urge, 
 @@ 				Vampire, advantage.blood_potency, 
 @@ 				Promethean, advantage.azoth, 
-@@ 				Mage, advantage.gnosis, 
+ 				Mage, advantage.gnosis, 
 @@ 				Geist, advantage.psyche, 
 				Skinthief, advantage.supernatural_tolerance
 			)
@@ -2807,7 +2807,7 @@ Library
 >> Set this up as a "location" merit
 
 &merit.library_() dd=1.2.3|*|*
-&tags.merit.library_() dd=location
+&tags.merit.library_() dd=thaumaturge.location
 
 
 -- Longevity --
@@ -3237,8 +3237,6 @@ Weather Control
 &default.bio.pack DD=[u(#data_dictionary/bio.pack, %!)]
 &class.bio.pack dd=string
 
-
-
 &bio.deed_name dd=*
 &tags.bio.deed_name dd=werewolf
 &class.bio.deed_name dd=string
@@ -3266,7 +3264,6 @@ Weather Control
 @@ &advantage.essence dd=[extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.primal_urge), .), 1)]
 @@ &tags.advantage.essence dd=derived.energy.werewolf
 @@ &default.advantage.essence dd=[u(#188/advantage.essence, %!)]
-
 
 &advantage.harmony dd=1.2.3.4.5.6.7.8.9.10
 &tags.advantage.harmony dd=morality.werewolf
@@ -3927,9 +3924,6 @@ Cobalt says, ÒSpirit Communion is a custom merit, solving the issue of two separ
 &page.rite.spirit_lamps_of_autumn sr=TR.134-135
 
 
-
-
-
 @@ =============================================================================
 @@ == WEREWOLF: LODGES OF THE FAITHFUL =========================================
 
@@ -4090,7 +4084,7 @@ These tags add to the existing gifts or whatnot.  I should have started them soo
 &special.bloodline.ventrue DD=Malkovia
 
 
--- ADVANTAGE: VAMPIRE CORE -----------------------------------------------------
+@@ -- ADVANTAGE: VAMPIRE CORE --------------------------------------------------
 
 @@ "blood potency" is the changeling power level stat
 @@ "vitae" is its energy stat
@@ -4119,7 +4113,7 @@ These tags add to the existing gifts or whatnot.  I should have started them soo
 >> Ventrue		Presence or Resolve
 
 
--- MERIT: VAMPIRE CORE ---------------------------------------------------------
+@@ -- MERIT: VAMPIRE CORE ------------------------------------------------------
 
 @@ "proper" haven, one main stat bought up 1+ and "spent" anywhere.
 @@ (specific spending spots max at 5)
@@ -4218,17 +4212,17 @@ p.151, may not really be stats
 
 
 
-================================================================================
-== MAGE CORE ===================================================================
+@@ =============================================================================
+@@ == MAGE CORE ================================================================
 
 Work in progress.
-
-@fo me=&bio.template dd=[get(dd/bio.template)].Mage
 
 &d.type-search-order sfp=attribute skill merit advantage contract renown arcanum gift aspect goblin_contract rite bio
 
 
---
+@@ -- BIO: MAGE CORE -----------------------------------------------------------
+
+@fo me=&bio.template dd=[get(dd/bio.template)].Mage
 
 &bio.path dd=Acanthus.Mastigos.Moros.Obrimos.Thyrsus
 &tags.bio.path dd=mage
@@ -4236,7 +4230,7 @@ Work in progress.
 &bio.order dd=Adamantine Arrow.Free Council.Guardians of the Veil.Mysterium.Silver Ladder
 &tags.bio.order dd=mage
 
---
+@@ -- ADVANTAGE: MAGE CORE -----------------------------------------------------
 
 &advantage.wisdom DD=1.2.3.4.5.6.7.8.9.10|*
 &default.advantage.wisdom DD=7
@@ -4252,19 +4246,15 @@ Work in progress.
 
 --
 
-think [setq(1, 3333222111)][setq(c, 33333)][setq(c, ljust(%qc, 10, 0))][gte(%q1, %qc)]
-_TRAIT_CHECK: u(_at_most, %0, %1, u(_max_trait, %0), %2)
-You say, ÒCobalt reminds me that I must also make sure the highest 2 digits of this are also Major Arcana.Ó
+@@ 0: dbref
+@@ 1: arcanum.xxx (item being raised)
+@@ 2: amt added to arcanum
 
-0: dbref
-1: arcanum.xxx (item being raised)
-2: amt added to arcanum
-
-1-10: table on p.76
-a: arcana levels
+@@ 1-10: table on p.76
+@@ a: arcana levels
 
 &_arcana_check dd=
-[localize(
+localize(
 
 @@ >> the table, by gnosis
 	[setq(1, 3333222111)]
@@ -4302,15 +4292,15 @@ a: arcana levels
 
 @@ >> compare %qa to proper table number by gnosis
 	[gte(r(right(u(%0/_advantage.gnosis), 1)), %qa)]
-)]
+)
 
 --
 
-.. setting to null must always be ok in "prereq-other" check ..
+@@ .. setting to null must always be ok in "prereq-other" check ..
 
 &_arcana_check dd=[localize([setq(1, 3333222111)][setq(2, 4433322211)][setq(3, 5443332221)][setq(4, 5544333222)][setq(5, 5554433322)][setq(6, 6555443332)][setq(7, 6655544333)][setq(8, 6665554433)][setq(9, 6666555443)][setq(0, 6666655544)][setq(a, ljust(edit(revwords(sort([add(first(u(%0/_%1), .), %2)] [iter(setdiff(lattr(%0/_arcanum.*), _%1), first(u(%0/%i0), .))])), %b, ), 10, 0))][gte(r(right(u(%0/_advantage.gnosis), 1)), %qa)])]
 
---
+@@ -- ARCANUM: MAGE CORE -------------------------------------------------------
 
 &arcanum.death dd=1.2.3.4.5.6
 &tags.arcanum.death dd=mage
@@ -4363,7 +4353,7 @@ a: arcana levels
 &prereq-text.arcanum.time dd=Arcana levels must conform to chart on p. 76
 
 
---
+@@ -- MERIT: MAGE CORE ---------------------------------------------------------
 
 &merit.artifact_() dd=3.4.5.6.7.8|*
 &tags.merit.artifact_() dd=mage.item(?)
@@ -4371,8 +4361,13 @@ a: arcana levels
 &merit.destiny dd=1.2.3.4.5
 &tags.merit.destiny dd=mage.social
 
-&merit.dream dd=1.2.3.4.5
-&tags.merit.dream dd=mage.mental
+@@ -- mage-only game
+@@ &merit.dream dd=1.2.3.4.5
+@@ &tags.merit.dream dd=mage.mental
+
+@@ -- mage + thaumaturge game
+&merit.ritual_dream dd=1.2.3.4.5
+@fo me=&tags.merit.ritual_dream dd=mage.[get(dd/tags.merit.ritual_dream)]
 
 &merit.enhanced_item_() dd=#|*
 &tags.merit.enhanced_item_() dd=#|*
@@ -4387,10 +4382,21 @@ a: arcana levels
 &tags.merit.high_speech dd=mage.mental
 
 &merit.imbued_item_() dd=2.3.4.5.6.7|*
-&tags.merit.imbued_item_() dd=mage.item(?)
+&tags.merit.imbued_item_() dd=mage.item
 
-&merit.library dd=1.2.3.4.5 (** SEE SECOND SIGHT MERITS **)
-&tags.merit.library dd=mage.location
+@@ -- mage-only game
+@@ &merit.library_() dd=1.2.3.4.5
+@@ &tags.merit.library_() dd=mage.location
+
+@@ -- mage + thaumaturge game
+&merit.library_() dd=1.2.3.4.5
+@fo me=&tags.merit.library_() dd=mage.[get(dd/tags.merit.library_())]
+&prerequisite.merit.library_() dd=
+	or(
+		u(_is, %0, bio.template, Mage), 
+		u(_at_most, %0, merit.library, 3, %2)
+	)
+&prereq-text.merit.library_() dd=Thaumaturges may take only to 3
 
 &merit.occultation dd=1.2.3
 &tags.merit.occultation dd=mage.mental
@@ -4407,14 +4413,27 @@ a: arcana levels
 &merit.thrall dd=3
 &tags.merit.thrall dd=mage.social
 
-Rote Specialties 
+		----=-=-=-=-=----   ----=-=-=-=-=----   ----=-=-=-=-=----
+
+Rote Specialties -- Add 'Rote' as a skill spec.
 ¥ Adamantine Arrow: Athletics, Intimidation, Medicine
 ¥ Free Council: Crafts, Persuasion, Science
 ¥ Guardians of the Veil: Investigation, Stealth, Subterfuge
 ¥ Mysterium: Investigation, Occult, Survival
 ¥ Silver Ladder: Expression, Persuasion, Subterfuge
 
-	
+¥ Ruling: 6 x New
+¥ Common: 7 x New
+¥ Inferior: 8 x New
+
+Orders and their Ruling/Inferior Arcanum
+¥ Acanthus: Ruling: Fate/Time, Inferior: Forces
+¥ Mastigos: Ruling: Mind/Space, Inferior: Matter
+¥ Moros - Ruling: Death/Matter, Inferior: Spirit
+¥ Obrimos - Ruling: Prime/Forces, Inferior: Death
+¥ Thyrsus - Ruling: Life/Spirit, Inferior: Mind
+
+
 @@ =============================================================================
 @@ == FINISHING TOUCHES ========================================================
 @@ Run this any time you add derived stats

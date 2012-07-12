@@ -358,6 +358,51 @@ Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 	)
 
 
+-- Arcanum Costs ---------------------------------------------------------------
+
+• Acanthus: Ruling: Fate/Time, Inferior: Forces
+• Mastigos: Ruling: Mind/Space, Inferior: Matter
+• Moros - Ruling: Death/Matter, Inferior: Spirit
+• Obrimos - Ruling: Prime/Forces, Inferior: Death
+• Thyrsus - Ruling: Life/Spirit, Inferior: Mind
+
+@@ 1 if arcana (%0) is major/minor, 0 otherwise
+
+&xp.arcanum #388=
+	case(1, 
+@@ major
+		t(match(
+			%3, 
+			case(get(%0/bio.path), 
+				Acanthus, Fate.Time, 
+				Mastigos, Mind.Space, 
+				Moros, Death.Matter, 
+				Obrimos, Prime.Forces, 
+				Thyrsus, Life.Spirit
+			), 
+			.
+		)), 
+		u(f.cost.standard, 6, %1, %2), 
+
+@@ minor
+		t(match(
+			%3, 
+			case(get(%0/bio.path), 
+				Acanthus, Forces, 
+				Mastigos, Matter, 
+				Moros, Spirit, 
+				Obrimos, Death, 
+				Thyrsus, Mind
+			), 
+			.
+		)), 
+		u(f.cost.standard, 8, %1, %2), 
+
+@@ other
+		u(f.cost.standard, 7, %1, %2)
+	)
+
+
 -=-=-=-=-=-=-=-=-=-=-=-=-=
 
 

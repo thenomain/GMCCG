@@ -656,8 +656,6 @@ localize(
 
 --
 
-&f.validate.stat #310=localize([setq(k, u([u(d.chargen)]/f.statcheck, %qw, _%qs, case(u([v(d.stat-funcs)]/f.get-class, %qs), numeric, sub(%qv, %qt), %qv)))][case(0, t(%qs), Error: Could not find stat., t(first(%qk, .)), Error: [titlestr(rest(first(%qk, .)))]., t(extract(%qk, 2, 1, .)), Error: Can't set the stat outside character generation., t(extract(%qk, 3, 1, .)), Error: Stat cannot be taken by your template., t(last(%qk, .)), Error: [titlestr(rest(last(%qk, .)))].)])
-
 --> NEW (passes through stats set to 'null')
 
 &f.validate.stat #310=localize([setq(t, case(u([v(d.stat-funcs)]/f.get-class, %qs), numeric, sub(%qv, %qt), %qv))][setq(k, u([u(d.chargen)]/f.statcheck, %qw, _%qs, %qt))][case(0, t(%qs), Error: Could not find stat., not(strmatch(%qv, #-*)), Error: [titlestr(rest(%qv))], or(t(first(%qk, .)), strmatch(%qv, )), Error: [titlestr(rest(first(%qk, .)))]., t(extract(%qk, 2, 1, .)), Error: Can't set the stat outside character generation., t(extract(%qk, 3, 1, .)), Error: Stat cannot be taken by your template., t(last(%qk, .)), Error: [titlestr(rest(last(%qk, .)))].)])
