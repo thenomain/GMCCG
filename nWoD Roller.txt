@@ -1115,15 +1115,21 @@ a: attribute - action.<action name>
 
 
 &c.action #41=$+action*:@pemit %#=
-	[setq(s, first(rest(%0, /)))]
-	[setq(r, if(t(%qs), rest(%0), trim(%0)))]
+
+@@ treat 'actions' as 'action' and go from there
+	[setq(0, 
+		if(strmatch(%0, s*), rest(%0, s), %0) 
+	)]
+
+	[setq(s, first(rest(%q0, /)))]
+	[setq(r, if(t(%qs), rest(%q0), trim(%q0)))]
 	[setq(n, first(%qr))]
 	[setq(r, rest(%qr))]
 
 	[setq(a, grab(sort(lattr(%#/action.*)), action.%qn*))]
 
 	[case(0, 
-		t(%0), u(f.action.list, %#), 
+		t(%q0), u(f.action.list, %#), 
 		t(%qn), [alert(Action)] Action_Name not entered., 
 		t(%qa), [alert(Action)] Action '%qn' not found., 
 		u(f.action, %#, %qa, %qs, %qr)
@@ -1131,7 +1137,7 @@ a: attribute - action.<action name>
 
 --
 
-&c.action #41=$+action*:@pemit %#=[setq(s, first(rest(%0, /)))][setq(r, if(t(%qs), rest(%0), trim(%0)))][setq(n, first(%qr))][setq(r, rest(%qr))][setq(a, grab(sort(lattr(%#/action.*)), action.%qn*))][case(0, t(%0), u(f.action.list, %#), t(%qn), [alert(Action)] Action_Name not entered., t(%qa), [alert(Action)] Action '%qn' not found., u(f.action, %#, %qa, %qs, %qr))]
+&c.action #41=$+action*:@pemit %#=[setq(0, if(strmatch(%0, s*), rest(%0, s), %0) )][setq(s, first(rest(%q0, /)))][setq(r, if(t(%qs), rest(%q0), trim(%q0)))][setq(n, first(%qr))][setq(r, rest(%qr))][setq(a, grab(sort(lattr(%#/action.*)), action.%qn*))][case(0, t(%q0), u(f.action.list, %#), t(%qn), [alert(Action)] Action_Name not entered., t(%qa), [alert(Action)] Action '%qn' not found., u(f.action, %#, %qa, %qs, %qr))]
 
 
 --------------------------------------------------------------------------------
