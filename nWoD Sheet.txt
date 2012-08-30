@@ -507,6 +507,7 @@ Column two is a wider column with a lot of other things
 			*Changeling*, Clarity, 
 			*Vampire*, Humanity, 
 			*Werewolf*, Harmony, 
+			*Mage*, Wisdom, 
 			Morality
 		)
 	)]
@@ -1270,6 +1271,19 @@ think u(#345/sec.bio.human.fae-touched, pmatch+(tyla))
 &sec.bio.human.skinthief #345=[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Virtue Vice[if(t(u(%0/_bio.pack, %0)), %bPack)], 12))][setq(b, ulocal(f.column-names-only, Totem_Animal Talisman_Aspect Thieving_Aspect, 15))][setq(c, ulocal(f.column-text-only, %0, Totem_Animal Talisman_Aspect Thieving_Aspect))][vcolumns(39:%qa, 16:%qb, 20:%qc, `, %b, %b)]
 
 
+--------------------------------------------------------------------------------
+-- Section: Bio Mage -----------------------------------------------------------
+
+&sec.bio.mage #345=
+	[setq(a, ulocal(f.column-names-and-text, %0, Birthdate Virtue Vice[if(hasattr(%0, _bio.legacy), %bLegacy)], 12))]
+
+	[setq(b, ulocal(f.column-names-only, Shadow_Name Path Order[if(t(u(%0/_bio.cabal, %0)), %bCabal)], 12))]
+
+	[setq(c, ulocal(f.column-text-only, %0, Shadow_Name Path Order[if(t(u(%0/_bio.cabal, %0)), %bCabal)]))]
+	[vcolumns(39:%qa, 13:%qb, 23:%qc, `, %b, %b)]
+
+
+
 ================================================================================
 == SECTION: ATTRIBUTES =========================================================
 
@@ -1364,13 +1378,13 @@ Like above: 0: dbref of sheet, 1: column width, 2: name width
 			*Changeling*, contracts, 
 			*Skinthief*, aspects, 
 			*Werewolf*, gifts rites,
+			*Mage*, arcana, 
 		)] 
 		traits others health, 
 		u(block.%i0, %0, %1, %2), , `
 	)
 
-&col.other.other #345=iter(merits [switch(u(%0/_bio.template), *Changeling*, contracts, *Skinthief*, aspects, *Werewolf*, gifts rites,)] traits others health, u(block.%i0, %0, %1, %2), , `)
-
+&col.other.other #345=iter(merits [switch(u(%0/_bio.template), *Changeling*, contracts, *Skinthief*, aspects, *Werewolf*, gifts rites,*Mage*, arcana, )] traits others health, u(block.%i0, %0, %1, %2), , `)
 
 think u(#345/col.other.other, pmatch+(me), 51, 40)
 
@@ -1483,6 +1497,14 @@ think u(#345/block.rites, pmatch+(me), 51, 40)
 
 
 --------------------------------------------------------------------------------
+-- Block: Arcana ---------------------------------------------------------------
+
+&block.arcana #345=
+	[u(f.format-subheader, Arcana, %1)]`
+	[u(f.column-stats-and-substats, %0, sort(lattr(%0/_arcanum.*)), %1, %2)]
+
+
+--------------------------------------------------------------------------------
 -- Block: Traits ---------------------------------------------------------------
 
 &block.traits #345=
@@ -1493,7 +1515,8 @@ think u(#345/block.rites, pmatch+(me), 51, 40)
 			*Changeling*, Wyrd Glamour, 
 			*Fae-Touched*, Glamour, 
 			*Skinthief*, Supernatural_Tolerance Essence, 
-			*Werewolf*, Primal_Urge Essence
+			*Werewolf*, Primal_Urge Essence, 
+			*Mage*, Gnosis Mana
 		)] 
 		Willpower, 
 		u(f.format-pool, %0, %i0, add(%2, 3)), 
@@ -1503,7 +1526,7 @@ think u(#345/block.rites, pmatch+(me), 51, 40)
 
 --
 
-&block.traits #345=[u(f.format-subheader, Traits, %1)]`[iter([switch(u(%0/_bio.template), *Changeling*, Wyrd Glamour, *Fae-Touched*, Glamour, *Skinthief*, Supernatural_Tolerance Essence, *Werewolf*, Primal_Urge Essence)] Willpower, u(f.format-pool, %0, %i0, add(%2, 3)), , `)]`[u(f.format-morality, %0, %1, %2)]
+&block.traits #345=[u(f.format-subheader, Traits, %1)]`[iter([switch(u(%0/_bio.template), *Changeling*, Wyrd Glamour, *Fae-Touched*, Glamour, *Skinthief*, Supernatural_Tolerance Essence, *Werewolf*, Primal_Urge Essence, *Mage*, Gnosis Mana)] Willpower, u(f.format-pool, %0, %i0, add(%2, 3)), , `)]`[u(f.format-morality, %0, %1, %2)]
 
 --
 
