@@ -4230,6 +4230,19 @@ Work in progress.
 &bio.order dd=Adamantine Arrow.Free Council.Guardians of the Veil.Mysterium.Silver Ladder
 &tags.bio.order dd=mage
 
+&bio.shadow_name dd=*
+&tags.bio.shadow_name dd=mage
+&class.bio.shadow_name dd=string
+
+&bio.legacy dd=Walkers in Mists.Subtle Ones.Uncrowned Kings.Perfected Adept.Orphans of Proteus.Tremere Lich.Scelesti.Storm Keepers.Liberatores.Bokor.Ascended Adept.Neocologists.Clvicularius.Daksha.Daoine.Fallen Pillar.House of Ariadne.Pygmalian Society.Scions of God.Sodality of the Tor.Stone Scribes.Threnodists.Transhuman Engineers.Fangs of Mara.Cult of the Doomsday Clock.Dreamspeakers.Tamers of the Cave.Tamers of Fire.Tamers of Rivers.Tamers of Stone.Tamers of Winds.Forge Masters.Skalds.Spinhx.Thread Cutters.Thrice-Great.Echo Walkers.Logophages.Bearers of the Eternal Voice.Eleventh Question.Votaries of the Ordained.Austere.Blank Badges.Cryptologos.Imagineers.Eyes of Ain Soph.Singers in Silence.Reality Stalker.Unforgotten Scions.Wraiths of Epochs.The Awakening Gambit.Brotherhood of the Demon Wind.Devourers of the Flesh.Bene Ashmedai.Keepers of the Covenant.Lords of the Inanimate.The Pure Sovereigns.The Reality Makers.The Sisterhood of the Blessed.Stewards of the Celiestial Orrery.The Carnival Melancholy.Timori.Dreamers of the Black Sun.Tellurians.Gaolers of Gaolers of Ialdabaoth.The Path of the Book.Followers of the True Soul.The Celestial Masters.The Illuminated Path.Mimir's Voice.The Roses of Eden.Whipping Boys.Scelesti II.The Architects of the Future.Chrysalides.The Masters of Destruction.Princes ofthe Many Masks.Secret Order of the Gate.Choir of Hashmallim.The Concord of Serpents.Katsinam Suukya.The People of the Hour.Stygian Heralds.The Legion.The Morphen Continuity.Scelesti III.The Quiescent.Tamers of Trees.Tamers of Iron.Tamers of Rain.Tamers of Ice.Tamers of Light.Tamers of Sand.Tamers of Blood.Hostpur Brigade.Brothers of Sadr-Ud-Din
+
+&tags.bio.legacy dd=mage
+&class.bio.legacy dd=string
+
+&bio.cabal dd=*
+&tags.bio.cabal dd=mage
+&class.bio.cabal dd=string
+
 @@ -- ADVANTAGE: MAGE CORE -----------------------------------------------------
 
 &advantage.wisdom DD=1.2.3.4.5.6.7.8.9.10|*
@@ -4412,6 +4425,13 @@ localize(
 
 &merit.thrall dd=3
 &tags.merit.thrall dd=mage.social
+
+
+@@ -- ROTES: MAGE CORE ---------------------------------------------------------
+
+&merit.rote_() dd=1.2.3.4.5|*
+&tags.merit.rote_() dd=mage
+
 
 		----=-=-=-=-=----   ----=-=-=-=-=----   ----=-=-=-=-=----
 
