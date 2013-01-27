@@ -334,6 +334,15 @@ Kind of like how f.statname doesn't (er, didn't) need it.
 -------------------------------------------------------------------------------
 -- DATA -----------------------------------------------------------------------
 
+d.type-search-order: 
+	When name matching, go through the various stat classes in this order. 
+	Therefore, "str" will match "strength" before "strength of the lion".
+
+d.type-specials:
+	These are stat classes that are not rollable nor settable via softcode.
+
+--
+
 &d.data-dictionary sfp=#188
 
 @@ core: attribute skill merit advantage bio
