@@ -454,7 +454,7 @@
 @@ == CORE: MIDNIGHT ROADS =====================================================
 @@ -- MERITS: MIDNIGHT ROADS ---------------------------------------------------
 
-@fo me=&d.book-lookup sr=[remove(get(sr/d.book-lookup), HR.House Rule, |)]|MR.Midnight Roads|HR.House Rule
+@@ @fo me=&d.book-lookup sr=[remove(get(sr/d.book-lookup), HR.House Rule, |)]|MR.Midnight Roads|HR.House Rule
 
 &merit.driver's_charm_() dd=1.2.3.4.5|*
 &page.merit.driver's_charm_() sr=MR.56
@@ -473,16 +473,16 @@
 &tags.merit.outdoorsman dd=physical
 &prerequisite.merit.outdoorsman dd=u(_at_least, %0, skill.survival, 3)
 &prereq-text.merit.outdoorsman dd=Survival 3+
-&page.merit.outdoorsman sr=MR.59
+@@ &page.merit.outdoorsman sr=MR.59
 
 &merit.steady_driver dd=1
 &tags.merit.steady_driver dd=physical
 &prerequisite.merit.steady_driver dd=u(_at_least, %0, skill.drive, 2)
 &prereq-text.merit.steady_driver dd=Drive 2+
-&page.merit.steady_driver sr=MR.59
+@@ &page.merit.steady_driver sr=MR.59
 
 &merit.wheelman dd=2
 &tags.merit.wheelman dd=physical
 &prerequisite.merit.wheelman dd=u(_at_least_all, %0, attribute.dexterity:2 skill.drive:2)
 &prereq-text.merit.wheelman dd=Dexterity 2+, Drive 2+
-&page.merit.wheelman sr=MR.59
+@@ &page.merit.wheelman sr=MR.59
