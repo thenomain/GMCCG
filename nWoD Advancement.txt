@@ -859,7 +859,12 @@ We'll bring the formulas (below) and the formula finder (above) together.
 [setq(3, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%3, l, _)))]
 [if(
 	t(setr(t, u(f.xp.formula.finder, %q3))), 
-	u([u(d.xp-costs)]/%qt, %0, %1, %2, last(%q3, .)), 
+	u(
+		[u(d.xp-costs)]/%qt, 
+		%0, %1, %2, last(%q3, .), 
+@@ .. main.value.list of <statpath>
+		first(get([v(d.data-dictionary)]/%3), |)
+	), 
 
 @@ .. error
 	%qt
@@ -867,7 +872,7 @@ We'll bring the formulas (below) and the formula finder (above) together.
 
 --
 
-&f.xp.cost.calculator #310=[setq(3, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%3, l, _)))][if(t(setr(t, u(f.xp.formula.finder, %q3))), u([u(d.xp-costs)]/%qt, %0, %1, %2, last(%q3, .)), %qt)]
+&f.xp.cost.calculator #310=[setq(3, u([u(d.stat-funcs)]/f.statpath-without-instance, trim(%3, l, _)))][if(t(setr(t, u(f.xp.formula.finder, %q3))), u([u(d.xp-costs)]/%qt, %0, %1, %2, last(%q3, .), first(get([v(d.data-dictionary)]/%3), |)), %qt)]
 
 --
 
@@ -999,21 +1004,25 @@ Spend is Cost, only it does more.
 - In the case of success, spend the XP and raise the stat.
 - For the first month of use, log EVERYTHING.
 
+--
 
+0: [<player>/]<stat>[=<value>]
+
+p: player dbref
+w: where's the sheet
+n: stat name
+s: stat.path_(instanced)
+v: value (new)
+t: trait value (current)
+c: cost
+
+e: error message, if any
+x: xp stat of person
+g: current value of (_stat.path)
+
+--
 
 &f.xp/spend #310=
-@@ 0: [<player>/]<stat>[=<value>]
-@@ p: player dbref
-@@ w: where's the sheet
-@@ n: stat name
-@@ s: stat.path_(instanced)
-@@ v: value (new)
-@@ t: trait value (current)
-@@ c: cost
-@@ 
-@@ e: error message, if any
-@@ x: xp stat of person
-@@ g: current value of (_stat.path)
 
 @@ -- Same As /Cost --
 @@ Break 0 down into p, n, v
@@ -1050,7 +1059,8 @@ Spend is Cost, only it does more.
 @@ >> report costs, possibly set
 @@ .. report cost
 
-		Spending %qc xp[if(t(comp(%#, %qp)), %, for [name(%qp)]%,%b[setq(n, %qp/%qn)], %b)]
+		Spending %qc xp
+		[if(t(comp(%#, %qp)), %, for [name(%qp)]%,%b[setq(n, %qp/%qn)], %b)]
 
 		[case(u([u(d.stat-funcs)]/f.get-class, %qs), 
 			list, 

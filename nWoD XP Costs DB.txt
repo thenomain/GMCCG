@@ -8,10 +8,12 @@ If the XP path's value is set to 0, it cannot be bought.
 
 Buying XP must also follow Prerequeisites.
 
+Following is sent from XP: 
 	%0: dbref of sheet
 	%1: from
 	%2: to
 	%3: name of stat, sans instance
+	%4: value.list.of.statpath
 
 XP Cost Databse <xpcd>: #388 
 
@@ -41,6 +43,28 @@ The formula above, ( L² - F² + F + L ) / 2, should work better.
 @@ %0: xp cost, %1: from, %2: to
 
 &f.cost.standard #388=mul(add(power(%2, 2), -[power(inc(%1), 2)], inc(%1), %2), .5, %0)
+
+
+--------------------------------------------------------------------------------
+-- nWoD Standard Without Phantom Dots XP Cost ----------------------------------
+
+Needs to know the entire costs list. If cost is '#', send to 'f.cost.standard' instead.
+
+think [setq(v, 1.3.4.5)][setq(f, 1)][setq(l, 4)][setq(x, 2)][ladd(iter(setinter(%qv, lnum(inc(%qf), %ql, .), .), mul(%qx, %i0), ., .), .)]
+
+
+0: xp cost
+1: from
+2: to
+3: stat's numeric value list (e.g., 2.4)
+
+--
+
+&f.cost.no-phantom-dots #388=ladd(iter(setinter(%3, lnum(inc(%1), %2, .), .), mul(%0, %i0), ., .), .)
+
+--
+
+think u(#388/f.cost.no-phantom-dots, 2, 0, 4, 2.4)
 
 
 --------------------------------------------------------------------------------
@@ -137,6 +161,16 @@ From Second Sight, p. 83
 -- Merit Costs -----------------------------------------------------------------
 
 &xp.merit #388=u(f.cost.standard, 2, %1, %2)
+
+--
+
+'Skip Phantom Dots' merit costs:
+
+&xp.merit #388=
+	if(strmatch(%4, #), 
+		u(f.cost.standard, 2, %1, %2), 
+		u(f.cost.no-phantom-dots, 2, %1, %2, %4)
+	)
 
 --
 
