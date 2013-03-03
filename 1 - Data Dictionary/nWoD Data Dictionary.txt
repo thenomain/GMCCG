@@ -1518,6 +1518,8 @@ Everything together.
 
 &prereq-text.merit.dual_kith_() DD=Different than main kith, 2-point version must be a Seeming kith, 3-point version may not be
 
+&prereq-text.bio.kith dd=Kith must be allowed for Seeming or match Dual Kith or Wyrd Evolution.
+
 @@ -- Change the bio.kith prerequisite to notice Dual Kith's Merit -- 
 
 &prerequisite.bio.kith dd=
@@ -1560,6 +1562,8 @@ Everything together.
 
 &merit.wyrd_evolution dd=1.2
 &tags.merit.wyrd_evolution dd=changeling
+
+&prereq-text.bio.kith dd=Kith must be allowed for Seeming or match Dual Kith or Wyrd Evolution.
 
 &prerequisite.merit.wyrd_evolution dd=or(not(lattr(%0/_merit.dual_kith*)), case(add(%2, u(_value, %0, merit.wyrd_evolution)), 1, u(_at_least, %0, advantage.wyrd, 5), 2, u(_at_least, %0, advantage.wyrd, 9)))
 
