@@ -1,0 +1,377 @@
+@@ =============================================================================
+@@ == CHANGELING: RITES OF SPRING ==============================================
+
+@@ -- RITES OF SPRING: BIO -----------------------------------------------------
+
+@@ -- Some games may not want 'true name', or may want to restrict it. --
+
+&bio.true_name DD=*
+&type.bio.true_name DD=string
+
+@@ &page.bio.true_name stat reference=RoS.22
+
+
+@@ -- RITES OF SPRING: MERITS --------------------------------------------------
+
+&merit.arcadian_body_() DD=4|[iter(lattr(attribute.*), rest(itext(0), .), .)]
+&tags.merit.arcadian_body_() DD=changeling.chargen-only
+&prerequisite.merit.arcadian_body_() DD=gte(first(u(%0/_attribute.%1), .), 3)
+&prerequisite.merit.arcadian_body_() DD=u(_at_least, %0, attribute.%1, 3)
+&prereq-text.merit.arcadian_body_() dd=Attribute must be 3+
+
+&merit.arcadian_metabolism DD=3
+&tags.merit.arcadian_metabolism DD=changeling
+@@ -- doubles healing from goblin fruit or 1 agg, -1 to medicine on this person
+
+&merit.archive_() DD=1.2.3.4.5|*|*
+&tags.merit.archive_() DD=changeling.fae-touched
+&prerequisite.merit.archive_() DD=u(_at_least, %0, merit.hollow_%(%1%).size, 1)
+&prereq-text.merit.archive_() dd=Hollow's Size 1+
+
+&merit.brownie's_boon DD=1
+&tags.merit.brownie's_boon DD=changeling
+@@ -- stacks with the drudge's kith blessing --
+
+&merit.charmed_life DD=2
+&tags.merit.charmed_life DD=changeling
+
+@@ -- "Merit" version of Dual Kith -- 
+&merit.dual_kith_() DD=2.3|*
+&tags.merit.dual_kith_() DD=changeling.chargen-only
+
+@@ -- Dual-Kith pre-req: Chargen-Only, don't already have it --
+@@ -- "Kithless" from Arcadian Road --
+
+&prerequisite.merit.dual_kith_() DD=
+	and(
+@@ .. not Kithless, not the primary Kith
+		u(_is_none_of, %0, bio.kith, %1.Kithless), 
+
+@@ .. doesn't already have Dual Kith (of a different kith)
+		strmatch(
+			setdiff(
+				lattr(%0/_merit.dual_kith_(*)), 
+				ucstr(_merit.dual_kith_(%1))
+			), 
+		), 
+
+@@ .. points?
+		switch(
+			add(%2, u(_value, %0, merit.dual_kith_(%1))), 
+@@ .. .. "2-point" must match seeming
+			2, 
+			match(
+				u(special.kith.[u(_value, %0, bio.seeming)]), 
+				edit(%1, _, %b), 
+				.
+			), 
+@@ .. .. "3-point" must match anything else
+			3, 
+			match(
+				iter(
+					setdiff(
+						lattr(%!/special.kith.*), 
+						ucstr(special.kith.seemingless special.kith.[u(_value, %0, bio.seeming)])
+					), 
+					u(%i0), 
+					, .
+				), 
+				edit(%1, _, %b), 
+				.
+			), 
+@@ .. .. "sum equals current value" means they're trying to unset; allow this
+			u(_value, %0, merit.dual_kith_(%1)), 
+			1, 
+@@ .. .. "else": return 0 for false
+			0
+		)
+	)
+
+&prereq-text.merit.dual_kith_() DD=Different than main kith, 2-point version must be a Seeming kith, 3-point version may not be
+
+&prereq-text.bio.kith dd=Kith must be allowed for Seeming or match Dual Kith or Wyrd Evolution.
+
+
+@@ -- Change the bio.kith prerequisite to notice Dual Kith's Merit -- 
+
+&prerequisite.bio.kith dd=
+@@ (if no new value, check the old)
+	[setq(k, edit(if(t(%2), %2, u(_value_full, %0, bio.kith)), %b, _))]
+	[and(
+@@ we are setting list stats as any text stat, so %2 is always the new value
+		t(
+			match(
+				u(special.kith.[u(_value, %0, bio.seeming)]), 
+				first(%qk, .), 
+				.
+			)
+		), 
+@@ if there's a second, it /must/ match dual kith's instance
+		or(
+			not(strlen(rest(%qk, .))), 
+			u(_has, %0, merit.dual_kith_%([rest(%qk, .)]%))
+		)
+	)]
+
+
+@fo me=&prereq-text.bio.kith dd=[get(dd/prereq-text.bio.kith)], second kith must match Dual Kith.
+
+
+@@ Following in case we need it:
+@@  2 points = In-Seeming
+@@    [setdiff(
+@@      u(special.kith.[u(%0/_bio.seeming)]), 
+@@      [u(%0/_special.kith)].Kithless, 
+@@      .
+@@    )]
+@@  3 points = Out-of-Seeming
+@@    [setdiff(
+@@      iter(lattr(special.kith.*), u(%i0), , .),
+@@      u(special.kith.[u(%0/_bio.seeming)]), 
+@@      .
+@@    )]
+
+
+@@ -- "Wyrd Evolution" version of Dual Kith --
+
+&merit.wyrd_evolution dd=1.2
+&tags.merit.wyrd_evolution dd=changeling
+
+&prereq-text.bio.kith dd=Kith must be allowed for Seeming or match Dual Kith or Wyrd Evolution.
+
+&prerequisite.merit.wyrd_evolution dd=or(not(lattr(%0/_merit.dual_kith*)), case(add(%2, u(_value, %0, merit.wyrd_evolution)), 1, u(_at_least, %0, advantage.wyrd, 5), 2, u(_at_least, %0, advantage.wyrd, 9)))
+
+&prereq-text.merit.wyrd_evolution dd=No Dual Kith, 1-dot at Wyrd 5+, 2-dots at Wyrd 9+
+
+@@ &page.merit.wyrd_evolution sr=wm.98
+@@ &notes.merit.wyrd_evolution sr=Each level evolves the changeling with a new kith
+
+
+&merit.enchanting_performance DD=4
+&tags.merit.enchanting_performance DD=changeling
+&prerequisite.merit.enchanting_performance DD=u(_at_least, %0, skill.expression, 3)
+&prereq-text.merit.enchanting_performance dd=Expression 3+
+
+&merit.fae_mount DD=1.2.3.5
+&tags.merit.fae_mount DD=changeling
+
+&merit.faerie_favor DD=3
+&tags.merit.faerie_favor DD=changeling
+
+&merit.faerie_healing DD=2
+&tags.merit.faerie_healing DD=changeling
+
+@@ -- Fighting Styles would go here if I had ever coded them --
+
+&merit.gentrified_bearing DD=4
+&tags.merit.gentrified_bearing DD=changeling
+&prerequisite.merit.gentrified_bearing DD=u(_at_least, %0, advantage.wyrd, 3)
+&prereq-text.merit.gentrified_bearing dd=Wyrd 3+
+
+&merit.goblin_vow DD=1.2.3.4.5|*
+&tags.merit.goblin_vow DD=changeling
+
+@@ -- if you want to limit the kinds of things someone can Goblin Vow... --
+@@ &merit.goblin_vow DD=1.2.3.4.5|Darkness
+@@ Pledges to specific things with +1 punishment, Page 38
+
+&merit.hedge_gate_sense DD=1
+&tags.merit.hedge_gate_sense DD=changeling
+
+&merit.hidden_life DD=1.2.3
+&tags.merit.hidden_life DD=changeling
+&prerequisite.merit.hidden_life DD=and(u(_has_not, %0, merit.fame), u(_at_most_stat, %0, merit.hidden_life, advantage.wyrd, %2))
+&prereq-text.merit.hidden_life dd=No Fame & Hidden Life <= Wyrd
+
+@@ -- Alter fame to match --
+@@ -- (Like Speed, there has to be a better no-collision way to do this) --
+
+&prerequisite.merit.fame DD=u(_has_not, %0, merit.hidden_life)
+&prereq-text.merit.fame dd=No Hidden Life
+
+&merit.hob_kin DD=2
+&tags.merit.hob_kin DD=changeling
+&prerequisite.merit.hob_kin DD=t(lattr(%0/_merit.hollow_%(*%).size))
+&prereq-text.merit.hob_kin dd=Any Hollow Size 1+
+
+&merit.hobgoblin_trainer DD=2
+&tags.merit.hobgoblin_trainer DD=changeling
+
+&merit.lethal_mien DD=2
+&tags.merit.lethal_mien DD=changeling
+&prerequisite.merit.lethal_mien DD=u(_at_least, %0, advantage.wyrd, 3)
+&prereq-text.merit.lethal_mien dd=Wyrd 3+
+
+&merit.long_of_days DD=2
+&tags.merit.long_of_days DD=changeling
+
+&merit.market_sense DD=1
+&tags.merit.market_sense DD=changeling
+
+&merit.perfect_stillness DD=1
+&tags.merit.perfect_stillness DD=changeling
+&prerequisite.merit.perfect_stillness DD=u(_at_least, %0, skill.stealth, 1)
+&prereq-text.merit.perfect_stillness dd=Stealth 1+
+
+&merit.pledgesmith DD=1.2.3
+&tags.merit.pledgesmith DD=changeling
+
+&merit.prophet_circle DD=1.2.3.4.5
+&tags.merit.prophet_circle DD=changeling
+@@ -- subtracts from number of pledges possible --
+@@ -- so can't be bought up above number of free pledges --
+
+&merit.rigid_mask DD=2
+&tags.merit.rigid_mask DD=changeling
+&prerequisite.merit.rigid_mask DD=u(_at_least, %0, skill.subterfuge, 2)
+&prereq-text.merit.rigid_mask dd=Subterfuge 2+
+
+&merit.ritual_doorway_() DD=3|*
+&tags.merit.ritual_doorway_() DD=changeling
+@@ -- Hollow (<place>).doors = 5+ --
+&prerequisite.merit.ritual_doorway_() DD=u(_at_least, %0, merit.hollow_%(%1%).doors, 5)
+&prereq-text.merit.ritual_doorway_() dd=Hollow's Doors 5
+
+&merit.siren_song DD=3
+&tags.merit.siren_song DD=changeling
+
+&merit.soul_sense DD=2
+&tags.merit.soul_sense DD=changeling
+&prereq-text.merit.soul_sense dd=A living Fetch.
+
+&merit.visionary_dreams DD=2
+&tags.merit.visionary_dreams DD=changeling
+&prerequisite.merit.visionary_dreams DD=u(_at_least, %0, advantage.wyrd, 3)
+&prereq-text.merit.visionary_dreams dd=Wyrd 3+
+
+&merit.wisdom_of_dreams DD=3
+&tags.merit.wisdom_of_dreams DD=changeling
+&prerequisite.merit.wisdom_of_dreams DD=u(_at_least, %0, advantage.wyrd, 2)
+&prereq-text.merit.wisdom_of_dreams dd=Wyrd 2+
+
+&merit.workshop_() DD=1.2.3.4.5|*|*
+&tags.merit.workshop_() DD=changeling
+@@ -- Workshop (<place>) <= Hollow (<place>).size - after buying --
+&prerequisite.merit.workshop_() DD=u(_at_most_stat, %0, merit.workshop_(%1), merit.hollow_(%1).size, %2)
+&prereq-text.merit.workshop_() dd=Workshop is <= its Size
+
+&merit.token_maker DD=2
+&tags.merit.token_maker DD=changeling
+
+
+@@ -- RITES OF SPRING: CONTRACTS -----------------------------------------------
+
+&contract.forge DD=1.2.3.4.5
+&tags.contract.forge DD=changeling.seeming.wizened
+
+&contract.hours DD=1.2.3.4.5
+&tags.contract.hours DD=changeling.general
+
+&contract.moon DD=1.2.3.4.5
+&tags.contract.moon DD=changeling.general
+
+&contract.omen DD=1.2.3.4.5
+&tags.contract.omen DD=changeling.general
+
+&contract.wild DD=1.2.3.4.5
+&tags.contract.wild DD=changeling.seeming.beast.elemental
+
+
+@@ -- RITES OF SPRING: GOBLIN CONTRACTS ----------------------------------------
+
+&goblin_contract.sight_of_truth_and_lies DD=1
+&tags.goblin_contract.sight_of_truth_and_lies DD=changeling.goblin
+
+&goblin_contract.calling_the_guardian DD=2
+&tags.goblin_contract.calling_the_guardian DD=changeling.goblin
+
+&goblin_contract.the_blessing_of_forgetfulness DD=3
+&tags.goblin_contract.the_blessing_of_forgetfulness DD=changeling.goblin
+
+&goblin_contract.goblin_oath DD=4
+&tags.goblin_contract.goblin_oath DD=changeling.goblin
+
+&goblin_contract.bloodbinding DD=5
+&tags.goblin_contract.bloodbinding DD=changeling.goblin
+
+@@ -- Goblin Contracts of Sacrifice: Fortune --
+
+&goblin_contract.fortune's_favor DD=1
+&tags.goblin_contract.fortune's_favor DD=changeling.goblin.sacrifice.fortune
+
+&goblin_contract.fortune's_swift_blessing DD=2
+&tags.goblin_contract.fortune's_swift_blessing DD=changeling.goblin.sacrifice.fortune
+
+&goblin_contract.fortune's_bane DD=3
+&tags.goblin_contract.fortune's_bane DD=changeling.goblin.sacrifice.fortune
+
+&goblin_contract.distracting_the_hounds DD=4
+&tags.goblin_contract.distracting_the_hounds DD=changeling.goblin.sacrifice.fortune
+
+&goblin_contract.recalling_the_lost DD=5
+&tags.goblin_contract.recalling_the_lost DD=changeling.goblin.sacrifice.fortune
+
+@@ -- Goblin Contracts of Sacrifice: Transformation --
+
+&goblin_contract.healing_sacrifice DD=1
+&tags.goblin_contract.healing_sacrifice DD=changeling.goblin.sacrifice.transformation
+
+&goblin_contract.seven_year_gift DD=2
+&tags.goblin_contract.seven_year_gift DD=changeling.goblin.sacrifice.transformation
+
+&goblin_contract.trading_beauty_for_love DD=3
+&tags.goblin_contract.trading_beauty_for_love DD=changeling.goblin.sacrifice.transformation
+
+&goblin_contract.changing_minds DD=4
+&tags.goblin_contract.changing_minds DD=changeling.goblin.sacrifice.transformation
+
+&goblin_contract.the_fatal_transformation DD=5
+&tags.goblin_contract.the_fatal_transformation DD=changeling.goblin.sacrifice.transformation
+
+
+@@ -- GOBLIN FRUIT: RITES OF SPRING --------------------------------------------
+
+@@ Just a note that these are on page 131.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@@ =============================================================================
+@@ == CHANGELING: AUTUMN NIGHTMARES ============================================
+
+@@ -- AUTUMN NIGHTMARES: MERITS ------------------------------------------------
+
+&merit.hedge_beast_companion_() DD=1.2.3|*
+&tags.merit.hedge_beast_companion_() DD=changeling
+
+
+@@ -- AUTUMN NIGHTMARES: MILESTONE MERITS --------------------------------------
+
+@fo me=&merit.milestone dd=[setunion([get(dd/merit.milestone)], Bloodied Ground.Cuckoo's Egg.False Heart.Fetchbone.Shared Guilt, .)]
+
+@@ @fo me=&page.merit.milestone sr=[get(sr/page.merit.milestone)] AN.103-104
+
+
+@@ -- TOKENS, FRUITS AND OTHERS: AUTUMN NIGHTMARES -----------------------------
+@@ These aren't stats, but I'm noting them here for now.
+@@ 
+@@ Token: Promise Stone (***) <p 13?>
+@@ Goblin Fruit: Hidefruit <p 59>
+@@ Token: Ashlight (***) <p 75>
