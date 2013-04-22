@@ -44,7 +44,6 @@
 -- Default ---------------------------------------------------------------------
 
 This hits the iteration limit and hits it hard. 
-WILL NOT WORK ON TINYMUSH 2.7 OR EARLIER
 
 --
 
@@ -169,11 +168,6 @@ t: list of types for stat (<type>)
 	)]
 
 
---
-
-&c.census-specific #670=[setq(s, statpath(%0))][setq(k, lattr([u(d.data-dictionary)]/special.kith.%0*))][setq(g, first(%qk))][setq(j, grab(%qk, special.kith.%0))][case(1, t(%qj), [header(Census: [titlestr(last(%qj, .))])]%r[edit(ulocal(f.display.census.attribute, _bio.kith, u([u(d.data-dictionary)]/%qj), l), %b0, ansi(xh, %b-))][footer()], t(%qs), [header(Census: [statname(%0)])]%r[u(f.display.census.breakdown, %qs, isstaff(%#))][footer()], t(%qg), [header(Census: [titlestr(last(%qg, .))])]%r[edit(ulocal(f.display.census.attribute, _bio.kith, u([u(d.data-dictionary)]/%qg), l), %b0, ansi(xh, %b-))][footer()], [alert(+census)] I couldn't process the stat you wanted.)]
-
-
 ================================================================================
 == SWITCHES ====================================================================
 
@@ -269,10 +263,6 @@ localize(
 
 --
 
-&f.roster.string cs=localize([setq(s, u(f.search.attr.template, %0))][iter(%1, %i0:[filter(fil.attr.[switch(%2, l*, list.contains, s*, string.is, string.is)], %qs, , , %0, %i0)], ., |)])
-
---
-
 think ulocal(#670/f.roster.string, sex, m*.f*)
 think ulocal(cs/f.roster.string, _bio.template, thaum*.ps*, l)
 think ulocal(cs/f.roster.string, _bio.kith, bloodbrute, l)
@@ -363,10 +353,6 @@ localize(
 
 --
 
-&f.roster.numeric cs=localize([setq(o, case(strtrunc(%2, 1), i, is, =, is, g, gte, >, gte, l, lte, <, lte, is))][setq(s, u(f.search.attr.template, %0))]%1:[filter(fil.attr.value.%qo, %qs, , , %0, %1)])
-
---
-
 think u(#670/f.roster.numeric, _attribute.strength, 3)
 think u(#670/f.roster.numeric, _attribute.strength, 3, =)
 think u(#670/f.roster.numeric, _attribute.strength, 3, >)
@@ -390,10 +376,6 @@ localize(
 	Waiting:[filter(fil.unapproved, %qt)]|
 	Freezered:[filter(fil.freezered, %qt)]
 )
-
---
-
-&f.roster.totals cs=localize([setq(t, u(f.search.attr, _bio.template))]Approved:[filter(fil.approved, %qt)]|Waiting:[filter(fil.unapproved, %qt)]|Freezered:[filter(fil.freezered, %qt)])
 
 --
 
@@ -421,9 +403,6 @@ Might never use this, but it's nice to have for completeness.
 		25, |, 2
 	)
 
---
-
-&f.display.census.totals cs=columns(iter(u(f.roster.totals), [first(%i0, :)]: [words(rest(%i0, :))], |, |), 25, |, 2)
 
 --
 
@@ -466,11 +445,6 @@ localize(
 	)]
 )
 
-
---
-
-&f.display.census.attribute cs=localize([setq(v, iter(%1, first(%i0, :), ., .))][setq(r, ulocal(f.roster.string, %0, %qv, if(t(%2), l)))][columns(iter(%qr, [setq(l, rest(%i0, :))][setq(u, filter(fil.unapproved, %ql))][setq(d, rest(extract(%1, inum(), 1, .), :))][if(t(%qd), %qd, first(%i0, :))]: [words(filter(fil.approved, %ql))][if(%qu, ansi(xh, %b%(+[words(%qu)]%)))], |, |), 25, |, 2)])
-
 --
 
 think u(#670/f.display.census.attribute, sex, m*.f*)
@@ -508,10 +482,6 @@ output: List.of.types.  If dd has them, it's easy, else we have to build them
 
 --
 
-&f.roster.types #670=[case(comp(%1, *), -1, @@(return nothing), 1, %1, 0, localize([setq(0, edit(%0, %(%), %(*%)))][setq(l, setunion(iter(search(type=player), lattr(%i0/_%q0)), ))][iter(%ql, first(rest(%i0, %(), %)), , .)]))]
-
---
-
 think [setr(0, contract.fang_and_talon_())] -> [ulocal(#670/f.roster.types, %q0, extract(get(dd/%q0), 2, 1, |))]
 
 think [setr(0, merit.mantle_())] -> [ulocal(#670/f.roster.types, %q0, extract(get(dd/%q0), 2, 1, |))]
@@ -543,10 +513,6 @@ outputs: value name:approved list:unapproved list|value:approved:unapproved
 		[filter(fil.unapproved, rest(%i0, :))], 
 		|, |
 	)
-
---
-
-&f.roster.order-approved #670=iter(if(%2, iter(%1, ulocal(f.roster.numeric, %0, %i0), ., |), ulocal(f.roster.string, %0, %1, l)), [first(%i0, :)]:[filter(fil.approved, rest(%i0, :))]:[filter(fil.unapproved, rest(%i0, :))], |, |)
 
 --
 
@@ -611,18 +577,6 @@ localize(
 		)]
 	)]
 )
-
---
-
->>> This is the compiled code, but it causes crashes Mux 2.7.4. NEEDS PATCH <<<
-
-&f.display.census.breakdown #670=localize([setq(d, u([u(d.data-dictionary)]/%0))][setq(t, if(strmatch(%0, *()), extract(%qd, 2, 1, |)))][setq(d, first(%qd, |))][setq(t, ulocal(f.roster.types, %0, %qt))][setq(n, u([u(d.stat-functions)]/f.isclass?, %0, numeric))][setq(z, 0)][iter(%qd, setq(z, max(strlen(%i0), %qz)), ., @@)][if(t(%qt), [iter(%qt, [setq(0, edit(%0, %(%), %(%i0%)))][setq(l, u(f.roster.order-approved, _%q0, %qd, %qn))][if(%1, u(f.display.census.breakdown.names, type.%i0, %ql, %qn), [footer(titlestr(edit(%i0, _, %b)))]%r[u(f.display.census.breakdown.totals, %ql, %qn, %qz)])], ., @@)], [setq(l, u(f.roster.order-approved, _%0, %qd, %qn))][if(%1, u(f.display.census.breakdown.names, %0, %ql, %qn), u(f.display.census.breakdown.totals, %ql, %qn, %qz))])])
-
->>> Version we're using at the moment:
-
-&f.display.census.breakdown #670=localize([setq(d, u([u(d.data-dictionary)]/%0))][setq(t, if(strmatch(%0, *()), extract(%qd, 2, 1, |)))][setq(d, first(%qd, |))][setq(t, ulocal(f.roster.types, %0, %qt))][setq(n, u([u(d.stat-functions)]/f.isclass?, %0, numeric))][setq(z, 0)][iter(%qd, setq(z, max(strlen(%i0), %qz)), ., @@)][if(t(%qt), %b Sadly%, no.%r, [setq(l, u(f.roster.order-approved, _%0, %qd, %qn))][if(%1, u(f.display.census.breakdown.names, %0, %ql, %qn), u(f.display.census.breakdown.totals, %ql, %qn, %qz))])])
-
-
 
 --
 
