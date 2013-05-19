@@ -789,7 +789,7 @@ localize(
 
 
 --------------------------------------------------------------------------------
--- Display: Template: Thaumaturge ----------------------------------------------
+-- Display: Template: Vampire --------------------------------------------------
 
 &display.census.template.vampire cs=
 localize( 
@@ -835,7 +835,7 @@ localize(
 								max( %qw, 
 									add( 
 										strlen( first( %i0, : )), 
-										strlen( elements( %i0, 2 3, : )), 
+										words( elements( %i0, 2 3, :, %b )), 
 										4
 									)
 								)
