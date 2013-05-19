@@ -70,7 +70,7 @@ Werewolf Stat Checks -
 What is the class of the stat?
 	0: stat path
 
-&_Class dd=udefault(class.%0, numeric)
+&_Class dd=udefault( class.%0, numeric )
 
 
 --------------------------------------------------------------------------------
