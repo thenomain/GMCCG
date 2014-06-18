@@ -966,6 +966,11 @@ think Hunterhearts by Court: [setq(a, u(#670/f.search.approved))][setq(l, filter
 
 
 
+think Seemings in Summer: [setq(a, u(#670/f.search.approved))][setq(l, filter(#670/fil.attr.list.contains, %qa, , , _bio.court, Summer))][iter(u(dd/bio.seeming), %i0: [words(filter(#670/fil.attr.list.contains, %ql, , , _bio.seeming, %i0))], ., %b-%b)]
+
+
+
+
 
 
 -=-==-=-=-=-=--=-=-==-=-=--==-=--==-=--==-=-=--=-==-=-=-=-=--=-==--==-=-=-=-
