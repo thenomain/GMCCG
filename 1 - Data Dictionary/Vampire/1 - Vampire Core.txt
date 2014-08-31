@@ -1,0 +1,151 @@
+@@ =============================================================================
+@@ == VAMPIRE CORE =============================================================
+@@ -- BIO: VAMPIRE CORE --------------------------------------------------------
+
+@fo me=&bio.template DD=[u(dd/bio.template)].Vampire.Ghoul
+
+&bio.clan DD=Daeva.Gangrel.Mekhet.Nosferatu.Ventrue
+&tags.bio.clan DD=vampire
+
+&bio.covenant DD=CCarthian Movement.Circle of the Crone.Invictus.Lancea Sanctum.Order Dracul.Unaligned.Belial's Brood.VII
+&tags.bio.covenant DD=vampire
+
+&bio.bloodline DD=*|*
+&tags.bio.bloodline DD=vampire
+&prereq-text.bio.bloodline DD=Bloodline must be allowed for Clan.
+&prerequisite.bio.bloodline DD=t(match(u(special.bloodline.[u(_value, %0, bio.clan)]), if(t(%2), %2, u(_value, %0, bio.clan)), .))
+
+&special.bloodline.daeva DD=Toreador
+&special.bloodline.gangrel DD=Bruja
+&special.bloodline.mekhet DD=Morbus
+&special.bloodline.nosferatu DD=Burakumin
+&special.bloodline.ventrue DD=Malkovia
+
+
+@@ -- ADVANTAGE: VAMPIRE CORE --------------------------------------------------
+
+@@ "blood potency" is the changeling power level stat
+@@ "vitae" is its energy stat
+@@ "humanity" is its morality stat
+
+&advantage.blood_potency DD=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.blood_potency DD=power level.vampire
+&default.advantage.blood_potency DD=1
+
+&advantage.vitae DD=[if(match(u(%0/_bio.template), fae-touched, .), u(_value, %0, attribute.stamina), extract(10 11 12 13 14 15 20 30 50 100, u(%0/_advantage.blood_potency), 1))]
+&tags.advantage.vitae DD=derived.energy.vampire.ghoul
+
+&advantage.humanity DD=1.2.3.4.5.6.7.8.9.10|*
+&tags.advantage.humanity DD=morality.vampire
+&default.advantage.humanity DD=7
+
+>> Each clan has a pair of favored Attributes, enjoying a more
+>> acute development of certain natural aspects of the body. Once
+>> a clan is chosen, choose one Attribute from a clan’s favored
+>> pair and add one dot to it.
+>> 
+>> Daeva		Dexterity or Manipulation
+>> Gangrel		Composure or Stamina
+>> Mekhet		Intelligence or Wits
+>> Nosferatu	Composure or Strength
+>> Ventrue		Presence or Resolve
+
+
+@@ -- MERIT: VAMPIRE CORE ------------------------------------------------------
+
+@@ "proper" haven, one main stat bought up 1+ and "spent" anywhere.
+@@ (specific spending spots max at 5)
+@@ &merit.haven DD=#|*
+
+@@ Ours is: You can buy specific hollows and spend them.
+&merit.haven_() DD=#|*|Location.Size.Security
+&tags.merit.haven_() DD=vampire.location
+
+&merit.herd DD=1.2.3.4.5
+&tags.merit.herd DD=vampire
+
+@@ &merit.vampire_status_() DD=1.2.3.4.5|City.Clan.Covenant
+@@ We shall be wrapping this into the main Status merit by way of ignoring it.
+
+>> Members of the Carthians may purchase the Allies, Contacts, Haven and Herd
+>> Merits at half the normal experience-point costs (rounding up). This cost
+>> break does not apply to purchases of these Merits during character creation.
+
+>> Members of the Invictus may purchase the Herd, Mentor, Resources and Retainer 
+>> Merits at half the normal experience-point costs (rounding up). This cost 
+>> break does not apply to purchases of these Merits during character creation.
+
+
+
+-- DISCIPLINE: VAMPIRE CORE ----------------------------------------------------
+
+&discipline.animalism DD=1.2.3.4.5
+&tags.discipline.animalism DD=vampire.gangrel.ventrue
+
+&discipline.auspex DD=1.2.3.4.5
+&tags.discipline.auspex DD=vampire.mekhet
+
+&discipline.celerity DD=1.2.3.4.5
+&tags.discipline.celerity DD=vampire.daeva.mekhet
+
+&discipline.dominate DD=1.2.3.4.5
+&tags.discipline.dominate DD=vampire.ventrue
+
+&discipline.majesty DD=1.2.3.4.5
+&tags.discipline.majesty DD=vampire.daeva
+
+&discipline.nightmare DD=1.2.3.4.5
+&tags.discipline.nightmare DD=vampire.nosferatu
+
+&discipline.obfuscate DD=1.2.3.4.5
+&tags.discipline.obfuscate DD=vampire.mekhet.nosferatu
+
+&discipline.protean DD=1.2.3.4.5
+&tags.discipline.protean DD=vampire.gangrel
+
+&discipline.resilience DD=1.2.3.4.5
+&tags.discipline.resilience DD=vampire.gangrel.ventrue
+
+&discipline.vigor DD=1.2.3.4.5
+&tags.discipline.resilience DD=vampire.daeva.nosferatu
+
+-- Blood Magics --
+
+@@ Although blood magics are considered disciplines, they are put together 
+@@ differently and have different cost considerations.  We'll see how we'll
+@@ make these work.
+
+&discipline.cruac DD=1.2.3.4.5|Pangs of Proserpina.Rigor Mortis.Cheval.The Hydra's Vitae.Deflection of Wooden Doom.Touch of the Morrigan.Blood Price.Willful Vitae.Blood Blight.Feeding the Crone
+
+&tags.discipline.cruac DD=vampire.circle of the crone
+
+&prerequisite.discipline.cruac DD=...
+&prereq-text.discipline.cruac DD=...
+
+>> A character must have at least one dot of Covenant Status (Circle of the 
+>> Crone) in order to learn Crúac.
+
+>> A character’s dots in this Discipline, subtracted from 10, is the maximum to 
+>> which his Humanity may rise.
+
+>> Cobalt says, “You buy at 2 x Level.”
+>> Cobalt says, “You can have as many in any level that you have the discipline 
+>> equal to.”
+
+
+&discipline.theban_sorcery DD=1.2.3.4.5|Blood Scourge.Vitae Reliquary.Curse of Babel.Liar;s Plague.Blandishment of Sin.Malediction of Despair.Gift of Lazarus.Stigmata.Transubstantiation.Wrathful Judgment
+&tags.discipline.theban_sorcery DD=vampire.lancea sanctum
+&prerequisite.discipline.theban_sorcery DD=...
+&prereq-text.discipline.theban_sorcery DD=...
+
+
+&discipline.the_coils_of_the_dragon DD=1.2.3.4.5|The Coil of Blood First Tier.The Coil of Blood Second Tier.The Coil of Blood Third Tier.The Coil of Banes First Tier.The Coil of Banes Second Tier.The Coil of Banes Third Tier.The Coil of the Beast First Tier.The Coil of the Beast Second Tier.The Coil of the Beast Third Tier
+&tags.discipline.the_coils_of_the_dragon DD=vampire.ordo
+dracul
+&prerequisite.discipline.the_coils_of_the_dragon DD=...
+&prereq-text.discipline.the_coils_of_the_dragon DD=...
+
+-- Devotions --
+p.151, are stats but are flagged stats, you have them or you don't.
+
+Probably take a cue how Reach does these.
