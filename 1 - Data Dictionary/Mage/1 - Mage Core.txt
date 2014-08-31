@@ -1,0 +1,240 @@
+@@ =============================================================================
+@@ == MAGE CORE ================================================================
+
+Work in progress.
+
+&d.type-search-order sfp=attribute skill merit advantage contract renown arcanum gift aspect goblin_contract rite bio
+
+
+@@ -- BIO: MAGE CORE -----------------------------------------------------------
+
+@fo me=&bio.template dd=[get(dd/bio.template)].Mage
+
+&bio.path dd=Acanthus.Mastigos.Moros.Obrimos.Thyrsus
+&tags.bio.path dd=mage
+
+&bio.order dd=Adamantine Arrow.Free Council.Guardians of the Veil.Mysterium.Silver Ladder
+&tags.bio.order dd=mage
+
+&bio.shadow_name dd=*
+&tags.bio.shadow_name dd=mage
+&class.bio.shadow_name dd=string
+
+&bio.legacy dd=Walkers in Mists.Subtle Ones.Uncrowned Kings.Perfected Adept.Orphans of Proteus.Tremere Lich.Scelesti.Storm Keepers.Liberatores.Bokor.Ascended Adept.Neocologists.Clvicularius.Daksha.Daoine.Fallen Pillar.House of Ariadne.Pygmalian Society.Scions of God.Sodality of the Tor.Stone Scribes.Threnodists.Transhuman Engineers.Fangs of Mara.Cult of the Doomsday Clock.Dreamspeakers.Tamers of the Cave.Tamers of Fire.Tamers of Rivers.Tamers of Stone.Tamers of Winds.Forge Masters.Skalds.Spinhx.Thread Cutters.Thrice-Great.Echo Walkers.Logophages.Bearers of the Eternal Voice.Eleventh Question.Votaries of the Ordained.Austere.Blank Badges.Cryptologos.Imagineers.Eyes of Ain Soph.Singers in Silence.Reality Stalker.Unforgotten Scions.Wraiths of Epochs.The Awakening Gambit.Brotherhood of the Demon Wind.Devourers of the Flesh.Bene Ashmedai.Keepers of the Covenant.Lords of the Inanimate.The Pure Sovereigns.The Reality Makers.The Sisterhood of the Blessed.Stewards of the Celiestial Orrery.The Carnival Melancholy.Timori.Dreamers of the Black Sun.Tellurians.Gaolers of Gaolers of Ialdabaoth.The Path of the Book.Followers of the True Soul.The Celestial Masters.The Illuminated Path.Mimir's Voice.The Roses of Eden.Whipping Boys.Scelesti II.The Architects of the Future.Chrysalides.The Masters of Destruction.Princes ofthe Many Masks.Secret Order of the Gate.Choir of Hashmallim.The Concord of Serpents.Katsinam Suukya.The People of the Hour.Stygian Heralds.The Legion.The Morphen Continuity.Scelesti III.The Quiescent.Tamers of Trees.Tamers of Iron.Tamers of Rain.Tamers of Ice.Tamers of Light.Tamers of Sand.Tamers of Blood.Hostpur Brigade.Brothers of Sadr-Ud-Din
+
+&tags.bio.legacy dd=mage
+&class.bio.legacy dd=string
+
+&bio.cabal dd=*
+&tags.bio.cabal dd=mage
+&class.bio.cabal dd=string
+
+@@ -- ADVANTAGE: MAGE CORE -----------------------------------------------------
+
+&advantage.wisdom DD=1.2.3.4.5.6.7.8.9.10|*
+&default.advantage.wisdom DD=7
+&tags.advantage.wisdom dd=morality.mage
+
+&advantage.gnosis dd=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.gnosis dd=power level.mage
+&default.advantage.gnosis dd=1
+
+&advantage.mana dd=[extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.gnosis), .), 1)]
+&tags.advantage.mana DD=derived.energy.mage
+&default.advantage.mana DD=[u(#data_dictionary/advantage.mana, %!)]
+
+--
+
+@@ 0: dbref
+@@ 1: arcanum.xxx (item being raised)
+@@ 2: amt added to arcanum
+
+@@ 1-10: table on p.76
+@@ a: arcana levels
+
+&_arcana_check dd=
+localize(
+
+@@ >> the table, by gnosis
+	[setq(1, 3333222111)]
+	[setq(2, 4433322211)]
+	[setq(3, 5443332221)]
+	[setq(4, 5544333222)]
+	[setq(5, 5554433322)]
+	[setq(6, 6555443332)]
+	[setq(7, 6655544333)]
+	[setq(8, 6665554433)]
+	[setq(9, 6666555443)]
+	[setq(0, 6666655544)]
+
+@@ >> build the above out of existing sheet arcana
+	[setq(a, 
+@@ .. make it a comparably lengthed number: xxx0000000
+		ljust(
+@@ .. .. remove all spaces
+			edit(
+@@ .. .. .. sort arcana values hightest to lowest
+				revwords(sort(
+@@ .. .. .. .. determine final value of arcanum to be raised
+					[add(first(u(%0/_%1)), %2)] 
+@@ .. .. .. .. list all other existing arcana
+					[iter(
+						setdiff(lattr(%0/_arcanum.*), _%1), 
+						first(u(%0/%i0), .)
+					)]
+					)), 
+				%b, 
+			), 
+			10, 0
+		)
+	)]
+
+@@ >> compare %qa to proper table number by gnosis
+	[gte(r(right(u(%0/_advantage.gnosis), 1)), %qa)]
+)
+
+--
+
+@@ .. setting to null must always be ok in "prereq-other" check ..
+
+&_arcana_check dd=[localize([setq(1, 3333222111)][setq(2, 4433322211)][setq(3, 5443332221)][setq(4, 5544333222)][setq(5, 5554433322)][setq(6, 6555443332)][setq(7, 6655544333)][setq(8, 6665554433)][setq(9, 6666555443)][setq(0, 6666655544)][setq(a, ljust(edit(revwords(sort([add(first(u(%0/_%1), .), %2)] [iter(setdiff(lattr(%0/_arcanum.*), _%1), first(u(%0/%i0), .))])), %b, ), 10, 0))][gte(r(right(u(%0/_advantage.gnosis), 1)), %qa)])]
+
+@@ -- ARCANUM: MAGE CORE -------------------------------------------------------
+
+&arcanum.death dd=1.2.3.4.5.6
+&tags.arcanum.death dd=mage
+&prerequisite.arcanum.death dd=u(_arcana_check, %0, arcanum.death, %2)
+&prereq-text.arcanum.death dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.fate dd=1.2.3.4.5.6
+&tags.arcanum.fate dd=mage
+&prerequisite.arcanum.fate dd=u(_arcana_check, %0, arcanum.fate, %2)
+&prereq-text.arcanum.fate dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.forces dd=1.2.3.4.5.6
+&tags.arcanum.forces dd=mage
+&prerequisite.arcanum.forces dd=u(_arcana_check, %0, arcanum.forces, %2)
+&prereq-text.arcanum.forces dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.life dd=1.2.3.4.5.6
+&tags.arcanum.life dd=mage
+&prerequisite.arcanum.life dd=u(_arcana_check, %0, arcanum.life, %2)
+&prereq-text.arcanum.life dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.matter dd=1.2.3.4.5.6
+&tags.arcanum.matter dd=mage
+&prerequisite.arcanum.matter dd=u(_arcana_check, %0, arcanum.matter, %2)
+&prereq-text.arcanum.matter dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.mind dd=1.2.3.4.5.6
+&tags.arcanum.mind dd=mage
+&prerequisite.arcanum.mind dd=u(_arcana_check, %0, arcanum.mind, %2)
+&prereq-text.arcanum.mind dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.prime dd=1.2.3.4.5.6
+&tags.arcanum.prime dd=mage
+&prerequisite.arcanum.prime dd=u(_arcana_check, %0, arcanum.prime, %2)
+&prereq-text.arcanum.prime dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.spirit dd=1.2.3.4.5.6
+&tags.arcanum.spirit dd=mage
+&prerequisite.arcanum.spirit dd=u(_arcana_check, %0, arcanum.spirit, %2)
+&prereq-text.arcanum.spirit dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.space dd=1.2.3.4.5.6
+&tags.arcanum.space dd=mage
+&prerequisite.arcanum.space dd=u(_arcana_check, %0, arcanum.space, %2)
+&prereq-text.arcanum.space dd=Arcana levels must conform to chart on p. 76
+
+&arcanum.time dd=1.2.3.4.5.6
+&tags.arcanum.time dd=mage
+&prerequisite.arcanum.time dd=u(_arcana_check, %0, arcanum.time, %2)
+&prereq-text.arcanum.time dd=Arcana levels must conform to chart on p. 76
+
+
+@@ -- MERIT: MAGE CORE ---------------------------------------------------------
+
+&merit.artifact_() dd=3.4.5.6.7.8|*
+&tags.merit.artifact_() dd=mage.item(?)
+
+&merit.destiny dd=1.2.3.4.5
+&tags.merit.destiny dd=mage.social
+
+@@ -- mage-only game
+@@ &merit.dream dd=1.2.3.4.5
+@@ &tags.merit.dream dd=mage.mental
+
+@@ -- mage + thaumaturge game
+&merit.ritual_dream dd=1.2.3.4.5
+@fo me=&tags.merit.ritual_dream dd=mage.[get(dd/tags.merit.ritual_dream)]
+
+&merit.enhanced_item_() dd=#|*
+&tags.merit.enhanced_item_() dd=#|*
+
+&merit.familiar dd=3.4
+&tags.merit.familiar dd=mage.social
+
+&merit.hallow_() dd=1.2.3.4.5|*
+&tags.merit.hallow_() dd=mage.location
+
+&merit.high_speech dd=1
+&tags.merit.high_speech dd=mage.mental
+
+&merit.imbued_item_() dd=2.3.4.5.6.7|*
+&tags.merit.imbued_item_() dd=mage.item
+
+@@ -- mage-only game
+@@ &merit.library_() dd=1.2.3.4.5
+@@ &tags.merit.library_() dd=mage.location
+
+@@ -- mage + thaumaturge game
+&merit.library_() dd=1.2.3.4.5
+@fo me=&tags.merit.library_() dd=mage.[get(dd/tags.merit.library_())]
+&prerequisite.merit.library_() dd=
+	or(
+		u(_is, %0, bio.template, Mage), 
+		u(_at_most, %0, merit.library, 3, %2)
+	)
+&prereq-text.merit.library_() dd=Thaumaturges may take only to 3
+
+&merit.occultation dd=1.2.3
+&tags.merit.occultation dd=mage.mental
+
+&merit.sanctum dd=1.2.3.4.5
+&tags.merit.sanctum dd=mage.location
+
+&merit.sleepwalker_retainer dd=1.2.3.4.5
+&tags.merit.sleepwalker_retainer dd=mage.social
+
+&merit.mage_status_() dd=1.2.3.4.5|Consilium Order
+&tags.merit.mage_status_() dd=mage.social
+
+&merit.thrall dd=3
+&tags.merit.thrall dd=mage.social
+
+
+@@ -- ROTES: MAGE CORE ---------------------------------------------------------
+
+&merit.rote_() dd=1.2.3.4.5|*
+&tags.merit.rote_() dd=mage
+
+
+		----=-=-=-=-=----   ----=-=-=-=-=----   ----=-=-=-=-=----
+
+Rote Specialties -- Add 'Rote' as a skill spec.
+• Adamantine Arrow: Athletics, Intimidation, Medicine
+• Free Council: Crafts, Persuasion, Science
+• Guardians of the Veil: Investigation, Stealth, Subterfuge
+• Mysterium: Investigation, Occult, Survival
+• Silver Ladder: Expression, Persuasion, Subterfuge
+
+• Ruling: 6 x New
+• Common: 7 x New
+• Inferior: 8 x New
+
+Orders and their Ruling/Inferior Arcanum
+• Acanthus: Ruling: Fate/Time, Inferior: Forces
+• Mastigos: Ruling: Mind/Space, Inferior: Matter
+• Moros - Ruling: Death/Matter, Inferior: Spirit
+• Obrimos - Ruling: Prime/Forces, Inferior: Death
+• Thyrsus - Ruling: Life/Spirit, Inferior: Mind
