@@ -3666,10 +3666,7 @@ Weather Control
 @@ -- MERITS: BLOOD OF THE WOLF ------------------------------------------------
 
 
-
 Cobalt says, ÒWolf blood, Lunatic Glare, and Watched are from Blood of the Wolf.Ó
-
-
 
 Cobalt says, ÒCursed Item, Difficult to Ride, Easy Ride, Locus Drinker, Pleasing Aura, Residiual Spirit Energy, Saintly, Shadowless Chambers, Shadow Contacts, and Hollow Soul are from Book of Spirits.Ó
 
@@ -4187,7 +4184,9 @@ dracul
 &prereq-text.discipline.the_coils_of_the_dragon DD=...
 
 -- Devotions --
-p.151, may not really be stats
+p.151, are stats but are flagged stats, you have them or you don't.
+
+Probably take a cue how Reach does these.
 
 
 
