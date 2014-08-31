@@ -1,0 +1,327 @@
+-- DATA VS. SYSTEM -------------------------------------------------------------
+
+The stat system as a whole is mostly concerned with the data side of things. It doesn't care how things add up, just that they do. It cares that someone has a stat if they're supposed to, that someone is set with the proper initial value. This isn't a character generation system, not a combat system, but is meant to allow these systems to be built easily and sensibly.
+
+
+-- ATTRIBUTES, TYPES, STAT PATH, AND SEARCH ORDER ------------------------------
+
+The basic presumption of this system is that we want to look up as little as possible on the character sheet, and in a way that's most legible to players, either staff who have to maintain the system or people who are typing in the simple player commands. (You may find we've failed in some respects, but we've put the player first whenever there's a problem.)
+
+Some basic definitions:
+	Validation: The data dictionary, how we check if a value or name is valid
+	Storage: The character sheet, the actual stat value stored
+	Class: What class of stat it is: Simple, Instanced, List, etc.
+
+	<stat type>: Stat names grouped by type.
+	<stat name>: Stat name.
+		Stat names may not contain dashes!  This is because of +roll.
+
+		Stat names may not repeat exactly! The stat name first on the sort order (see below) will always come up first.
+
+		There is one exception to this: If the repeated stat names are on stat types NOT checked by the sort-order. These are looked up directly anyway.
+	<stat path>: <stat type>.<stat name>[extras]
+
+Stat Paths Explained:
+	The stat path is the entire attribute name, whether for validation or storage. because of this, the "." and all other characters that are not valid for stat type, stat name, substat name, or instance name.
+
+	A validation stat path is:
+		<stat type>.<stat name>[ ()]
+	A storage stat path is:
+		<stat type>.<stat name>[ (<instance name>)][.<substat name>]
+
+	Remember attributes cannot be stored with spaces, so we use _
+
+Sort Order:
+	Some stat types are more important than others, and a few may belong to systems outside the basic stat-lookup system. For that reason, on the system side we store a "sort-order". The system looks for stat name first, but sorts the results by type in this sort order.
+
+
+-- STAT FORMATS ----------------------------------------------------------------
+
+On the whole there are three formats for stats (and health): Simple (numeric, string, and list), Substat, and Instanced. I've listed more here because some act slightly differently from one another.
+
+For any list validation, # means any non-zero integer, * means any value
+
+'a.value.list' means a list of values separated by a .
+
+1) Numerical: Simple stats
+	Validated:
+		&<stat type>.<stat name>: <value.list>
+		e.g.
+			&advantage.vice: Envy.Gluttony.Greed.Lust.Pride.Sloth.Wrath
+			&attribute.intelligence: 1.2.3.4.5
+	Stored:
+		&_<stat type>.<stat name>: <value>[.<offset>]
+		<value> ...
+			must validate
+			must be numeric (see below for "string" and "list")
+			may be derived from other stats (and be tagged such)
+		<offset> ...
+			is added to/subtracted from the <value>
+			does not need to validate
+			if set to 0 may be removed from the stored stat
+		e.g.:
+			&_advantage.vice: Sloth
+			&_attribute.intelligence: 3.-1
+			(actual intelligence is 3, but effective intelligence is 2)
+
+2) Any But List: Sub-Stats (aka details)
+	These may or may not require a simple stat, depending on the system. Class:List appear to have substats, but those are ONLY for lookup.
+	Validated:
+		&<stat type>.<stat name>: <value.list>|<substat.list>
+		e.g. &skill.athletics: 1.2.3.4.5|*
+	Stored:
+		&_<stat type>.<stat name>.<substat name>: <value>
+		e.g. (simple-stat "athletics" with sub-stat "quick reflexes")
+			&_skill.athletics: 2
+			&_skill.athletics.quick_reflexes: 1
+	WoD Note:
+		Skill sub-stats are limited to a value of "1" and are added to the skill simple stat.
+
+3) Any: Instanced (aka types)
+	Simple stats that are bought once per "type".
+	Validated:
+		&<stat type>.<stat name> (): <value.list>|<instance.list>
+		e.g. &merit.quick_draw_(): 1|Weaponry.Firearms
+	Stored:
+		&_<stat type>.<stat name> (<instance name>): <value>
+		e.g. &_merit.quick_draw_(weaponry): 1
+
+4) Instanced + Sub-Stats.
+	Sometimes you can add a sub-stat to an instanced stat.
+	Validated:
+		&<stat type>.<stat name> (): <value.list>|<instance.list>|<substat.list>
+		e.g.
+			&merit.hollow_() DD=#|*|Size.Amenities.Doors.Wards
+	Stored: 
+		&_<stat type>.<stat name> (<instance name>).<substat name>: <value>
+		e.g.
+			&_merit.hollow_(downtown): 6
+			&_merit.hollow_(downtown).size: 3
+			&_merit.hollow_(downtown).doors: 1
+			&_merit.hollow_(downtown).wards: 2
+		(in this example, the sum of the substats don't exceed the instance)
+
+5) String.
+	String stats are stats that are stored entirely as entered.
+	+roll may choose to ignore these stats entirely.
+
+	Validated:
+		&<stat type>.<stat name>: <value list>
+		&class.<stat type>.<stat name>: string
+		e.g.
+			&bio.full_name: *
+			&class.bio.full_name: string
+	Stored:
+		&_<stat type>.<stat name>: <value>
+		<value>...
+			must validate
+			may not be derived
+			will not be offset
+		e.g.:
+			&_bio.full_name: Craig Ferguson
+
+6) List.
+	Lists of values that may or may not be numeric. They may be used as flags for reference or simple lists. 	+roll may choose to ignore these stats entirely.
+	
+	List class of stats may not be instanced or have substats!!!(oneoneeleven)
+	
+	(Use the data-dictionary function _class_translate_list to convert from value to name and visa-versa.)
+
+	Validated:
+		&<stat type>.<stat name>: <value list>[|<reference lookup/detail name>]
+		&class.<stat type>.<stat name>: list
+		e.g.
+			&gift.shaping: 1.2.3.4.5|Straighten.Ruin.Sculpt.Shatter.Condense or Expand
+			&class.gift.shaping: list
+		i.e.
+			gift.shaping 2 is linked to the word "ruin"
+	Stored:
+		&_<stat type>.<stat name>: <list of values>
+		<value>...
+			must validate
+			may not be derived
+			will not be offset
+		e.g.:
+			&_bio.kith: 
+			&_gift.shaping: 2.4
+
+NOTE:
+	Though I could have added &class.<stat path> to &tags instead, I am starting to get concerned with the amount of lookups I am doing. The class of stat ("numeric" if no &class is set, otherwise "string" or "list") will hopefully allow me to work this into code much quicker than relying on &f.hastag?.
+	
+	In the future, I could set this to "derived" and do derived stats differently, i.e. not having to store the reference on the sheet.
+			
+
+-- HEALTH ----------------------------------------------------------------------
+
+The WoD health system, found in a different file, works much differently than other stats, but we keep it as close as we can to this system as possible. Health is not part of the search-order path for stat types.
+
+
+-- TAGS ------------------------------------------------------------------------
+
+In order to make the stats work smoothly with the coded system, stats may have any number of tags, stored on the validation system as:
+	&tags.<validation stat path>: <tags.list>
+e.g.
+	&tags.advantage.clairty DD=morality.changeling
+
+Tag names are not validated. As long as they don't have a "." in them, they are left to the user of this system to give meaning to.
+
+HOWEVER, PLEASE DO NOT ADD TAGS THAT ARE NOT NECESSARY. Tags are meant to be used by higher game systems to determine validations. <stat type> is a special kind of tag that is inseperable from the basic stat system. If you need the stat type, please check that.
+
+Tags are never used for storage.
+
+
+-- TAGS USED SO FAR ------------------------------------------------------------
+
+(tags marked with a * might not be used, and may be depreciated)
+
+mental, physical, social: Attribute and Skill categories
+
+power, finesse, resistance: Attribute categories
+
+chargen-only: Stat (Merit) that may only be purchased in chargen
+
+human, changeling, fae-touched, psionic, thaumaturge, werewolf:
+	May only be purchased by that template
+	(used along with default.<statpath> to determine if that default gets set)
+
+morality: Stats that map to the human Morality stat (including Morality itself)
+
+power level: Supernatural power stat (also called "Supernatural Affinity")
+
+energy: Supernatural energy pool
+
+location: Core location merits (hollow, etc., also used by +sheet)
+
+item: Core item merits (token, etc., also used by +sheet)
+
+*derived: Stat has a derived.<statpath> attribute on the data dictionary
+
+*pool: Stat is used to spend points (Willpower, Essence, Glamour)
+
+general, seeming.<seeming>, court.<court>: Contracts with specific affinities
+	(Contracts might also list other kiths in their tags. These are semi-affinities.)
+
+non-affinity: Contracts with no affinities, i.e. contracts created by the Lost
+	(As per the rules in Equinox Road, pp 33-34, especially the last paragraph)
+
+*goblin: Goblin contracts. (always &goblin_contract.* anyway)
+
+sacrifice.<type>: Goblin contracts of sacrifice
+
+wyrd: Goblin contracts of the Wyrd
+
+fate: Merits of Fate
+
+
+-- DERIVED STATS ---------------------------------------------------------------
+
+Some stats are created out of a number of other stats. This system looks up the formula every time the stored stat is accessed. We could have stored the actual result of the formula, but I felt that changes to the system would be easier if changes in the formula affected all stats immediately.
+
+Derived stats must be set up with several things in mind:
+	* The stat must be tagged "derived".
+	-- we might be able to get away by checking for the formula itself
+	* The <value.list> is the formula that checks for other stored stats and must be a simple stat.
+	* The storage is a function call to this formula, passing the dbref of the character sheet.
+
+validation e.g.
+	&advantage.defense: [min(u(%0/_attribute.wits), u(%0/_attribute.dexterity))]
+	&tags.advantage.defense: derived
+
+That is, the defense stat is the less of the sheet's wits and dexterity.
+
+storage e.g.
+	&_advantage.defense: [u(#xxx/advantage.defense, %!)]
+
+That is, "check object #xxx for this formula, and pass my dbref so it can find the stats it needs". (Note: This causes no end of preferences problems due to u()-calls being run with the preference of the object they are on. Setting object #xxx Visual solves these problems, if not in a satisfactory way.)
+
+Stored derived stats follow all the rules of simple stats, so an offset can be applied without issue. For example, if someone boosted this character's defense by 2 points:
+	&_advantage.defense: [u(#xxx/advantage.defense, %!)].2
+
+Stored derived stats may be overwritten, making them normal simple stats. e.g.
+	&_advantage.defense: 4
+
+
+-- THE "SPECIAL" TYPE ----------------------------------------------------------
+
+nWoD has several items which are used in derived stats that are themselves not explicitly stats. That is, they don't appear on the character sheet. These stats have a type of "special".
+
+The "special" type should never appear in the "search-order" list.
+
+For instance, "species factor" is used in the "speed" derived stat.
+
+Validation e.g.
+	&advantage.speed: [add(u(%0/_attribute.strength), u(%0/_attribute.dexterity), u(%0/_special.species_factor), u(%0/_merit.fleet_of_foot))]
+
+	&tags.advantage.speed: derived
+
+	&special.species_factor: #
+
+Storage e.g.
+	&_advantage.speed: [u(#xxx/advantage.speed, %!)]
+	&_special.species_factor: 5
+
+Except for never being used except in derived stats, the "special" stat type acts like any simple stat. A special stat may itself be derived, but the goal of this stat type is to keep things simple.
+
+
+-- DEFAULT VALUES --------------------------------------------------------------
+
+Like "tag" and "special", there's another special type, "default" which contains the default (probably initial character-generation) value of any stat. The format for this is:
+	&default.<stat path>: <value>
+
+For instance, in the World of Darkness, all attributes start at 1, so we would have:
+	&default.attribute.intelligence: 1
+
+All derived stats must have a default value, to tell the character sheet where to find the formula. (See: Derived Stats.)  The format for this kind of default value would be:
+	&default.<stat path>: [u(#xxx/<stat path>, <charsheet>)]
+
+For instance, with the character sheet on the player object:
+	&default.advantage.defense: [u(#xxx/advantage.defense, %!)]
+
+If the player had a special attribute, _sheet, showing the location of their character sheet object:
+	&default.advantage.defense: [u(#xxx/advantage.defense, v(_sheet))]
+
+(Alternatively, we could set up a macro-replacement scheme, #data_dictionary, #sheet, etc., and @edit the object whenever it's touched.)
+
+
+-- PREREQUISITES ---------------------------------------------------------------
+
+Prerequisites are noted for stats as for who can take them, with the exception of templates (which are already tagged), and if they're chargen-only (same). The end of chargen and any XP spend should have a check that all stats affected meet their prerequsites.
+
+Prerequisites rely only on the permanent stat (not perm + offset).
+
+For the case of stat increases, some stats (such as court contracts) rely on knowing what the new value of the stat is, so we pass the amount the stat's being increased (usually 1).
+
+	0: sheet dbref
+	1: full instance name, if any
+	2: increase/decrease of stat we're checking, or new value if stat is text
+
+	prerequisite.<statpath>: Code to determine prereqs
+	prereq-text.<statpath>: Human-readable version
+
+Failed prerequisites should always return #-3 <reason> and be checked after value-checking.
+
+
+-- ILLEGAL CHARACTERS ----------------------------------------------------------
+
+Due to various systems, the following values are illegal:
+
+Names:
+	:	- the colon can't be set as an attribute name
+	.	- the period is a delimiter for the stat name
+
+Stats:
+	<number>.	- starting text this way looks like a numeric stat to the system
+	`			- we're using the backtick to columnize
+
+
+@@ =============================================================================
+@@ == NOTES TO SELF ============================================================
+@@ =============================================================================
+
+You know what?  Why don't we have a function() staging attribute and a full-on usable attribute?  For instance:
+
+	&f.getstat: Prep stuff, some error-check, pass it off to...
+	&f.getstat.workhorse: Meat of code that can be called by any attribute.
+
+Kind of like how f.statname doesn't (er, didn't) need it.
+
