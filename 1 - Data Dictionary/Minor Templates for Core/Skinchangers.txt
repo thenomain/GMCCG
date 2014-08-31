@@ -1,0 +1,167 @@
+@@ =============================================================================
+@@ == SKINCHANGERS =============================================================
+@@ -- BIO: SKINCHANGERS --------------------------------------------------------
+
+@@ We are only adding skinthieves; the other sections are very NPCish
+@@ (Default Morality to 6)
+
+@fo me=&d.book-lookup SR=[get(sr/d.book-lookup)]|Skin.Skinchangers
+
+@fo me=&bio.template DD=[get(dd/bio.template)].Skinthief
+
+&bio.totem_animal DD=*
+&tag.bio.totem_animal DD=skinthief
+&class.bio.totem_animal DD=string
+&page.bio.totem_animal SR=Skin.17
+
+&bio.thieving_aspect DD=Humane Harvest.Hunter Killer.Vicious Skintaker
+&tags.bio.thieving_aspect DD=skinthief
+&class.bio.thieving_aspect DD=string
+&default.bio.thieving_aspect DD=Hunter Killer
+@@ Humane Harvest: 2, Hunter Killer: 0, Vicious Skintaker: -1
+&page.bio.thieving_aspect SR=Skin.??
+&notes.bio.thieving_aspect SR=Humane Harvest: 2, Hunter Killer: 0, Vicious Skintaker: -1
+
+&bio.talisman_aspect DD=Bound Totem.Talisman.No Talisman.Permanent Talisman
+&tags.bio.talisman_aspect DD=skinthief
+&class.bio.talisman_aspect DD=string
+&default.bio.talisman_aspect DD=Talisman
+@@ Bound Totem: 0, Talisman: 0, No Talisman: 4, Permanent Talisman: 1
+&page.bio.talisman_aspect SR=Skin.17-18 Skin.??
+&notes.bio.talisman_aspect SR=Bound Totem: 0, Talisman: 0, No Talisman: 4, Permanent Talisman: 1
+
+
+@@ -- MERITS: SKINCHANGERS --------------------------------------------------
+
+@@ The merits are available to everyone
+
+&merit.animal_affinity_() DD=1.2.3|*
+&tags.merit.animal_affinity_() DD=social
+&page.merit.animal_affinity_() SR=Skin.20
+&notes.merit.animal_affinity_() SR=Skintheives taking this merit for their totem animal are at effective +1 to a maximum total effect of +3
+
+&merit.predator's_bearing DD=2
+&tags.merit.predator's_bearing DD=social
+&prerequisite.merit.predator's_bearing DD=u(_has_not, %0, merit.socially_small)
+&prereq-text.merit.predator's_bearing DD=Does not have the Socially Small merit
+@@ always on: add to +look
+&page.merit.predator's_bearing SR=Skin.20
+
+&merit.socially_small DD=2
+&tags.merit.socially_small DD=social
+&prerequisite.merit.socially_small DD=u(_has_not, %0, merit.predator's_bearing)
+&prereq-text.merit.socially_small DD=Does not have the Predator's Bearing merit
+@@ always on: add to +look
+&page.merit.socially_small SR=Skin.21
+
+&merit.hunter's_den_() DD=3|*
+&tags.merit.hunter's_den_() DD=social
+&page.merit.hunter's_den_() SR=Skin.21
+&notes.merit.hunter's_den_() SR=Renamed from Den
+
+
+@@ -- ADVANTAGE: SKINCHANGERS --------------------------------------------------
+
+&advantage.supernatural_tolerance DD=1
+&tags.advantage.supernatural_tolerance DD=power level.skinthief
+&default.advantage.supernatural_tolerance DD=1
+
+&advantage.essence DD=[if(u(_has, %0, aspect.increased_essence), 6, 3)]
+&tags.advantage.essence DD=derived.energy.skinthief
+&default.advantage.essence DD=[u(#188/advantage.essence, %!)]
+
+
+@@ -- ASPECT: SKINCHANGERS -----------------------------------------------------
+@@ 5xp/level, restricted
+
+&aspect.animal_speech DD=1.2
+&tags.aspect.animal_speech DD=skinthief.skinchanger
+
+&aspect.bare_necessities DD=1.3
+&tags.aspect.bare_necessities DD=skinthief.skinchanger
+
+&aspect.enchanting_affinity DD=2
+&tags.aspect.enchanting_affinity DD=skinthief.skinchanger
+
+&aspect.extraordinary_specimen DD=1
+&tags.aspect.extraordinary_specimen DD=skinthief.skinchanger
+
+&aspect.fast_healing DD=2
+&tags.aspect.fast_healing DD=skinthief.skinchanger
+
+&aspect.fast_skinner DD=1
+&tags.aspect.fast_skinner DD=skinthief.skinchanger
+
+&aspect.hybrid_form DD=2.5
+&tags.aspect.hybrid_form DD=skinthief.skinchanger
+
+@@ Houseruling this a bit to be bought more like Werewolf Gifts than Tokens
+&aspect.imitate_gift_() DD=1.2.3.5.7|Crescent Moon 1.Crescent Moon 2.Crescent Moon 3.Crescent Moon 4.Crescent Moon 5.Death 1.Death 2.Death 3.Death 4.Death 5.Dominance 1.Dominance 2.Dominance 3.Dominance 4.Dominance 5.Elemental 1.Elemental 2.Elemental 3.Elemental 4.Elemental 5.Evasion 1.Evasion 2.Evasion 3.Evasion 4.Evasion 5.Full Moon 1.Full Moon 2.Full Moon 3.Full Moon 4.Full Moon 5.Gibbous Moon 2.Half Moon 1.Half Moon 2.Half Moon 3.Half Moon 4.Half Moon 5.New Moon 1.New Moon 2.New Moon 3.New Moon 4.New Moon 5.Insight 1.Insight 2.Insight 3.Insight 4.Insight 5.Inspiration 1.Inspiration 2.Inspiration 3.Inspiration 4.Inspiration 5.Knowledge 1.Knowledge 2.Knowledge 3.Knowledge 4.Knowledge 5.Nature 1.Nature 2.Nature 3.Nature 4.Nature 5.Rage 1.Rage 2.Rage 3.Rage 4.Rage 5.Shaping 1.Shaping 2.Shaping 3.Shaping 4.Shaping 5.Stealth 1.Stealth 2.Stealth 3.Stealth 4.Stealth 5.Strength 1.Strength 2.Strength 3.Strength 4.Strength 5.Technology 1.Technology 2.Technology 3.Technology 4.Technology 5.Weather 1.Weather 2.Weather 3.Weather 4
+&tags.aspect.imitate_gift_() DD=skinthief.skinchanger
+
+&prerequisite.aspect.imitate_gift_() DD=eq(%2, case(last(%1, _), 5, 7, 4, 5, last(%1, _)))
+&prereq-text.aspect.imitate_gift_() DD=Value for aspect should match gift, be 5 if 4, and 7 if 5.
+
+
+&page.aspect.imitate_gift_() sr=ss.32
+
+@@ as a werewolf "gift", bought 1:1 until lvl 4, then 2:1
+@@ (special rules, p. 33)
+@@ May add with an explicit list of gifts.
+
+&aspect.increased_essence DD=2
+&tags.aspect.increased_essence DD=skinthief.skinchanger
+
+&aspect.injurious_change DD=-1
+&tags.aspect.injurious_change DD=skinthief.skinchanger
+
+&aspect.long_life DD=1.2
+&tags.aspect.long_life DD=skinthief.skinchanger
+
+&aspect.out_of_body DD=3
+&tags.aspect.out_of_body DD=skinthief.skinchanger
+
+&aspect.rejuvenating_change DD=2.4
+&tags.aspect.rejuvenating_change DD=skinthief.skinchanger
+
+&aspect.resilient_form DD=#
+&tags.aspect.resilient_form DD=skinthief.skinchanger
+
+&aspect.restricted_change_() DD=-1|*
+&tags.aspect.restricted_change_() DD=skinthief.skinchanger
+
+&aspect.scentless_transformation DD=1
+&tags.aspect.scentless_transformation DD=skinthief.skinchanger
+
+&aspect.sense_of_familiarity DD=2
+&tags.aspect.sense_of_familiarity DD=skinthief.skinchanger
+
+&aspect.sense_of_self DD=2
+&tags.aspect.sense_of_self DD=skinthief.skinchanger
+
+&aspect.skillful_change DD=1
+&tags.aspect.skillful_change DD=skinthief.skinchanger
+
+&aspect.static_beast_shape DD=0
+&tags.aspect.static_beast_shape DD=skinthief.skinchanger
+
+&aspect.strong_instincts DD=1
+&tags.aspect.strong_instincts DD=skinthief.skinchanger
+
+@@ &aspect.spirit_affinity DD=4.5.6.7.8.9.10
+@@ &tags.aspect.spirit_affinity DD=skinthief.skinchanger
+@@ imitates a spirit power
+@@ never ever will be used
+
+&aspect.sweet_voiced_fiend DD=1
+&tags.aspect.sweet_voiced_fiend DD=skinthief.skinchanger
+
+&aspect.feral_tell DD=-1
+&tags.aspect.feral_tell DD=skinthief.skinchanger
+@@ renamed from "tell"
+
+&aspect.twisted_tongue DD=1
+&tags.aspect.twisted_tongue DD=skinthief.skinchanger
+
+&aspect.unhealing DD=-1
+&tags.aspect.unhealing DD=skinthief.skinchanger
