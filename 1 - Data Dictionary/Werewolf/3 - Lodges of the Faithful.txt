@@ -1,0 +1,133 @@
+@@ =============================================================================
+@@ == WEREWOLF: LODGES OF THE FAITHFUL =========================================
+
+LoF.Lodges of the Faithful
+
+@@ -- BIO: LODGES OF THE FAITHFUL ----------------------------------------------
+
+@@ Denied: Arms
+
+@fo me=&bio.lodge dd=[setunion(get(dd/bio.lodge), Cerberus.Death.Doors.Harmony.The Maelstrom.Metal.Prophecy.Ruin.Salvation.Unity.Voices, .)]
+
+@fo me=&page.bio.lodge sr=[get(sr/page.bio.lodge)] LoF.30-117
+
+
+@@ -- TAG CHANGES: LODGES OF THE FAITHFUL --------------------------------------
+
+These tags add to the existing gifts or whatnot.  I should have started them sooner, but didn't.
+
+@fo me=&tags.gift.death dd=[get(dd/tags.gift.death)].cerberus
+
+@fo me=&tags.gift.knowledge dd=[get(dd/tags.gift.knowledge)].prophecy
+
+@fo me=&tags.gift.inspiration dd=[u(dd/tags.gift.inspiration)].salvation
+
+
+
+@@ -- GIFTS: LODGES OF THE FAITHFUL --------------------------------------------
+
+&gift.opening dd=1.2.3.4.5|Word of Opening.Lurker's Key.Create Opening.The Open Mind.Gauntlet Key
+&tags.gift.opening dd=werewolf.doors
+&prerequisite.gift.opening dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.lodge, doors))
+&prereq-text.gift.opening dd=No Higher than Max Renown & Lodge of Doors Only
+&class.gift.opening dd=list
+
+&page.gift.opening sr=LoF.50-52
+
+
+&gift.maelstrom dd=1.2.3.4.5|Call Water.Manipulate Water.Command Water.Invoke Water's Wrath.Lament of the Sea
+&tags.gift.maelstrom dd=werewolf.the maelstrom
+&prerequisite.gift.maelstrom dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.lodge, the maelstrom))
+&prereq-text.gift.maelstrom dd=No Higher than Max Renown & Lodge of the Maelstrom only
+&class.gift.maelstrom dd=list
+
+&page.gift.maelstrom sr=HR.Elemental
+&notes.gift.maelstrom sr=Each level behaves as the gift Elemental for the sea
+
+
+@@ -- RITES: LODGES OF THE FAITHFUL --------------------------------------------
+
+&rite.rite_of_churned_earth dd=2
+&tags.rite.rite_of_churned_earth dd=werewolf.harmony
+&prerequisite.rite.rite_of_churned_earth dd=and(u(_rites_check, %0, 2), u(_is, %0, bio.lodge, harmony))
+&prereq-text.rite.rite_of_churned_earth dd=Rituals 2+ & Lodge of Harmony only
+
+&page.rite.rite_of_churned_earth sr=LoF.61
+
+
+&rite.speak_with_the_guardian dd=2
+&tags.rite.speak_with_the_guardian dd=werewolf.cerberus
+&prerequisite.rite.speak_with_the_guardian dd=and(u(_rites_check, %0, 2), u(_is, %0, bio.lodge, cerberus))
+&prereq-text.rite.speak_with_the_guardian dd=Rituals 2+ & Lodge of Cerberus only
+
+&page.rite.speak_with_the_guardian sr=HR.Werewolf_Errata
+
+
+&rite.rite_of_offal dd=3
+&tags.rite.rite_of_offal dd=werewolf.harmony
+&prerequisite.rite.rite_of_offal dd=and(u(_rites_check, %0, 3), u(_is, %0, bio.lodge, harmony))
+&prereq-text.rite.rite_of_offal dd=Rituals 3+ & Lodge of Harmony only
+
+&page.rite.rite_of_offal sr=HR.Werewolf_Errata
+
+
+&rite.rite_of_corrosion dd=4
+&tags.rite.rite_of_corrosion dd=werewolf.metal
+&prerequisite.rite.rite_of_corrosion dd=and(u(_rites_check, %0, 4), u(_is, %0, bio.lodge, metal))
+&prereq-text.rite.rite_of_corrosion dd=Rituals 4+ & Lodge of Metal only
+
+&page.rite.rite_of_corrosion sr=LoF.71
+
+
+&rite.rite_of_the_final_sunrise dd=3
+&tags.rite.rite_of_the_final_sunrise dd=werewolf.ruin
+&prerequisite.rite.rite_of_the_final_sunrise dd=and(u(_rites_check, %0, 3), u(_is, %0, bio.lodge, ruin))
+&prereq-text.rite.rite_of_the_final_sunrise dd=Rituals 3+ & Lodge of Rust only
+
+&page.rite.rite_of_the_final_sunrise sr=LoF.82-83
+
+
+&rite.rite_of_the_moon's_veil dd=3
+&tags.rite.rite_of_the_moon's_veil dd=werewolf.salvation
+&prerequisite.rite.rite_of_the_moon's_veil dd=and(u(_rites_check, %0, 3), u(_is, %0, bio.lodge, salvation))
+&prereq-text.rite.rite_of_the_moon's_veil dd=Rituals 3+ & Lodge of Salvation only
+
+&page.rite.rite_of_the_moon's_veil sr=LoF.86
+
+
+&rite.rite_of_the_silver_scar dd=5
+&tags.rite.rite_of_the_silver_scar dd=werewolf.salvation
+&prerequisite.rite.rite_of_the_silver_scar dd=and(u(_rites_check, %0, 5), u(_is, %0, bio.lodge, salvation))
+&prereq-text.rite.rite_of_the_silver_scar dd=Rituals 5+ & Lodge of Salvation only
+
+&page.rite.rite_of_the_silver_scar sr=LoF.86-87
+
+
+&rite.communion_of_the_flesh dd=2
+&tags.rite.communion_of_the_flesh dd=werewolf.unity
+&prerequisite.rite.communion_of_the_flesh dd=and(u(_rites_check, %0, 2), u(_is, %0, bio.lodge, unity))
+&prereq-text.rite.communion_of_the_flesh dd=Rituals 2+ & Lodge of Unity only
+
+&page.rite.communion_of_the_flesh sr=LoF.125-126
+
+
+
+
+
+
+@@ -- MERITS: LODGES OF THE FAITHFUL -------------------------------------------
+
+&merit.prophet's_voice dd=3
+&tags.merit.prophet's_voice dd=werewolf.prophecy
+&prerequisite.merit.prophet's_voice dd=u(_is, %0, bio.lodge, prophecy)
+&prereq-text.merit.prophet's_voice dd=Lodge of Prophecy
+
+&page.merit.prophet's_voice sr=LoF.79
+
+
+&merit.ancestral_vessel dd=1.2.3.4.5
+&tags.merit.ancestral_vessel dd=werewolf.voices
+&prerequisite.merit.ancestral_vessel dd=u(_is, %0, bio.lodge, voices)
+&prereq-text.merit.ancestral_vessel dd=Lodge of Voices
+
+&page.merit.ancestral_vessel sr=LoF.104-105

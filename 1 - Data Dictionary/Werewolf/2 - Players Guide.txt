@@ -1,0 +1,225 @@
+@@ =============================================================================
+@@ == WEREWOLF: PLAYER'S GUIDE =================================================
+@@ -- MERITS: PLAYER'S GUIDE ---------------------------------------------------
+
+@@ Auspice Blessing: No, too conditional & too expensive.
+
+&merit.ephemeral_reckoning dd=2.4
+&tags.merit.ephemeral_reckoning dd=mental.werewolf
+&page.merit.ephemeral_reckoning sr=TR.103
+
+&merit.moon_centered dd=2
+&tags.merit.moon_centered dd=mental.werewolf
+&page.merit.moon_centered sr=TR.103
+
+@@ Fighting Style, Tooth & Claw: No fighting styles
+
+&merit.metabolic_control dd=2
+&tags.merit.metabolic_control dd=physical.werewolf
+&prerequisite.merit.metabolic_control dd=u(_at_least, %0, attribute.stamina, 2)
+&prereq-text.merit.metabolic_control dd=Stamina 3+
+&page.merit.metabolic_control sr=TR.105
+
+&merit.animal_magnetism dd=3
+&tags.merit.animal_magnetism dd=social.werewolf
+&page.merit.animal_magnetism sr=TR.105
+
+&merit.predator's_gaze dd=2
+@@ &tags.merit.predator's_gaze dd=social.werewolf
+&tags.merit.predator's_gaze dd=social
+&prerequisite.merit.predator's_gaze dd=u(_at_least_all, %0, attribute.presence:2 skill.intimidation:2)
+&prereq-text.merit.predator's_gaze dd=Presence 2+ and Intimidation 2+
+&page.merit.predator's_gaze sr=TR.105
+&notes.merit.predator's_gaze sr=May be purchased by anyone.
+
+
+
+&merit.pack_affinity dd=1.3
+&tags.merit.pack_affinity dd=social.werewolf
+&page.merit.pack_affinity sr=TR.156
+&notes.merit.pack_affinity sr=Drawback is affected by Iron Stamina. The rolling system does not account for this merit.
+
+@@ Pack Tactics: Probably not going to be added
+
+&merit.synergy dd=2
+&tags.merit.synergy dd=social.werewolf
+&page.merit.synergy sr=TR.156
+&notes.merit.synergy sr=Teamwork rolls involving non-pack members at -1
+
+
+@@ -- GIFTS: PLAYER'S GUIDE ----------------------------------------------------
+
+&gift.alpha dd=1.2.3.4.5|Sense Guilt.Alpha’s Aura.Taste of Flaws.Lordly Will.Alpha’s Howl
+&tags.gift.alpha dd=werewolf.storm lords
+&prerequisite.gift.alpha dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.alpha dd=No Higher than Max Renown
+&class.gift.alpha dd=list
+
+&page.gift.alpha sr=TR.107-108
+&notes.gift.alpha sr=Alpha Gifts 3 (Taste of Flaws) is vs. target's Resolve + Resistance
+
+
+
+&gift.battle dd=1.2.3.4.5|Visage of Fenris.Worry the Prey’s Heels.Savaging.Primal Anger.Heartstopping Howl
+&tags.gift.battle dd=werewolf.blood talons
+&prerequisite.gift.battle dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.battle dd=No Higher than Max Renown
+&class.gift.battle dd=list
+
+&page.gift.battle sr=TR.108-110
+
+
+
+&gift.blending dd=1.2.3.4.5|Shadow Coat.Manytongues.Resist Toxin.Mask the Hunter.Hide the Curse
+&tags.gift.blending dd=werewolf.iron masters
+&prerequisite.gift.blending dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.blending dd=No Higher than Max Renown
+&class.gift.blending dd=list
+
+&page.gift.blending sr=TR.110-111
+
+
+
+&gift.gift_of_darkness dd=1.2.3.4.5|Darksight.Aura of Dread.Shadow Step.Moonlit Talons.Nightblind
+&tags.gift.gift_of_darkness dd=werewolf.general
+&prerequisite.gift.gift_of_darkness dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.gift_of_darkness dd=No Higher than Max Renown
+&class.gift.gift_of_darkness dd=list
+
+&page.gift.gift_of_darkness sr=TR.111-114
+&notes.gift.gift_of_darkness sr=Renamed from "Darkness" to avoid confusion with the contract.
+
+
+
+&gift.ending dd=1.2.3.4.5|Fear of Death.Eyes of the Slain.Death Masque.Bone Hex.Images of Death
+&tags.gift.ending dd=werewolf.bone shadows
+&prerequisite.gift.ending dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.ending dd=No Higher than Max Renown
+&class.gift.ending dd=list
+
+&page.gift.ending sr=TR.114-116
+
+
+
+&gift.endurance dd=1.2.3.4.5|Vigil.Long Running.Eternal Hunter.Rise Beyond.Legacy
+&tags.gift.endurance dd=werewolf.general
+&prerequisite.gift.endurance dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.endurance dd=No Higher than Max Renown
+&class.gift.endurance dd=list
+
+&page.gift.endurance sr=TR.116-118
+
+
+
+&gift.information dd=1.2.3.4.5|Sense the Flow.Tongues.Babel Effect.Steganography.Twisted Words
+&tags.gift.information dd=werewolf.general
+&prerequisite.gift.information dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.information dd=No Higher than Max Renown
+&class.gift.information dd=list
+
+&page.gift.information sr=TR.118-121
+
+
+
+&gift.gift_of_the_pack dd=1.2.3.4.5|Web of Scent.Warning Howl.Brother’s Strength.Synergy.Unity
+&tags.gift.gift_of_the_pack dd=werewolf.general
+&prerequisite.gift.gift_of_the_pack dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.gift_of_the_pack dd=No Higher than Max Renown
+&class.gift.gift_of_the_pack dd=list
+
+&page.gift.gift_of_the_pack sr=TR.121-123
+&notes.gift.gift_of_the_pack sr=Renamed from "Pack" to avoid confusion with the basic trait.
+
+
+@@ Predator 3 (Savage Hunt) far too abusive
+@@ 
+@@ &gift.predator dd=1.2.3.4.5|Bestial Fellowship.Hunter’s Fortitude.Savage Hunt.Harry.Predator’s Kin
+@@ &tags.gift.predator dd=werewolf.general
+@@ &prerequisite.gift.predator dd=u(_gifts_check, %0, %2)
+@@ &prereq-text.gift.predator dd=No Higher than Max Renown
+@@ &class.gift.predator dd=list
+@@ 
+@@ &page.gift.predator sr=TR.123-125
+
+
+
+&gift.stalking dd=1.2.3.4.5|Night Sight.Heaven’s Guidance.Scent the Supernatural.Shadow Strike.Shadow Pack
+&tags.gift.stalking dd=werewolf.hunters in darkness
+&prerequisite.gift.stalking dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.stalking dd=No Higher than Max Renown
+&class.gift.stalking dd=list
+
+&page.gift.stalking sr=TR.125-127
+
+
+@@ Weakness 3 can and Weakness 5 does force a morality check
+@@ 
+@@ &gift.weakness dd=1.2.3.4.5|Reflection.Shallow Heart.Coward’s Soul.Hidden Self.Wrack
+@@ &tags.gift.weakness dd=werewolf.general
+@@ &prerequisite.gift.weakness dd=u(_gifts_check, %0, %2)
+@@ &prereq-text.gift.weakness dd=No Higher than Max Renown
+@@ &class.gift.weakness dd=list
+@@ 
+@@ &page.gift.weakness sr=TR.127-129
+
+
+@@ -- GIFTS: PLAYER'S GUIDE ----------------------------------------------------
+
+&rite.call_the_cloudless_sky dd=2
+&tags.rite.call_the_cloudless_sky dd=werewolf.hunt
+&prerequisite.rite.call_the_cloudless_sky dd=u(_rites_check, %0, 2)
+&prereq-text.rite.call_the_cloudless_sky dd=Rituals 2+
+
+&page.rite.call_the_cloudless_sky sr=TR.130
+
+
+&rite.call_the_empty_road dd=3
+&tags.rite.call_the_empty_road dd=werewolf.hunt
+&prerequisite.rite.call_the_empty_road dd=u(_rites_check, %0, 3)
+&prereq-text.rite.call_the_empty_road dd=Rituals 3+
+
+&page.rite.call_the_empty_road sr=TR.130-131
+
+
+
+&rite.binding_of_locks dd=4
+&tags.rite.binding_of_locks dd=werewolf.hunt
+&prerequisite.rite.binding_of_locks dd=u(_rites_check, %0, 4)
+&prereq-text.rite.binding_of_locks dd=Rituals 4+
+
+&page.rite.binding_of_locks sr=TR.131
+
+
+&rite.blood_communion_of_spring dd=3
+&tags.rite.blood_communion_of_spring dd=werewolf.season
+&prerequisite.rite.blood_communion_of_spring dd=u(_rites_check, %0, 3)
+&prereq-text.rite.blood_communion_of_spring dd=Rituals 3+
+
+&page.rite.blood_communion_of_spring sr=TR.131-132
+
+
+
+&rite.bone_fires_of_summer dd=4
+&tags.rite.bone_fires_of_summer dd=werewolf.season
+&prerequisite.rite.bone_fires_of_summer dd=u(_rites_check, %0, 4)
+&prereq-text.rite.bone_fires_of_summer dd=Rituals 4+
+
+&page.rite.bone_fires_of_summer sr=TR.132-133
+
+
+
+&rite.darkest_night_of_winter dd=4
+&tags.rite.darkest_night_of_winter dd=werewolf.season
+&prerequisite.rite.darkest_night_of_winter dd=u(_rites_check, %0, 4)
+&prereq-text.rite.darkest_night_of_winter dd=Rituals 4+
+
+&page.rite.darkest_night_of_winter sr=TR.133-134
+
+
+
+&rite.spirit_lamps_of_autumn dd=4
+&tags.rite.spirit_lamps_of_autumn dd=werewolf.season
+&prerequisite.rite.spirit_lamps_of_autumn dd=u(_rites_check, %0, 4)
+&prereq-text.rite.spirit_lamps_of_autumn dd=Rituals 4+
+
+&page.rite.spirit_lamps_of_autumn sr=TR.134-135

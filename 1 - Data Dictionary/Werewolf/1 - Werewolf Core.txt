@@ -1,0 +1,472 @@
+@@ =============================================================================
+@@ == WEREWOLF CORE ============================================================
+@@ -- BIO: WEREWOLF CORE -------------------------------------------------------
+
+@fo me=&bio.template DD=[u(dd/bio.template)].Werewolf
+
+&bio.auspice dd=Rahu.Cahalith.Elodoth.Ithaeur.Irraka
+&tags.bio.auspice dd=werewolf
+&class.bio.auspice dd=string
+
+&bio.tribe dd=Blood Talons.Iron Masters.Storm Lords.Bone Shadows.Hunters in Darkness.Ghost Wolves
+&tags.bio.tribe dd=werewolf
+&class.bio.tribe dd=string
+
+
+@@ Simple "Pack" below
+&bio.pack dd=*
+@@ &tags.bio.pack dd=werewolf.human
+@@ &prereq-text.bio.pack dd=Wolf Blooded if Human
+@@ &prerequisite.bio.pack dd=or(u(_list_has, %0, bio.template, werewolf), u(_has, %0, merit.wolf_blooded))
+@@ &class.bio.pack dd=string
+
+@@ +Faction-based Pack here:
+
+&bio.pack dd=[u(#2883/f.player.factions-of-type.names, %0, pack)]
+&tags.bio.pack DD=derived
+&default.bio.pack DD=[u(#data_dictionary/bio.pack, %!)]
+&class.bio.pack dd=string
+
+&bio.deed_name dd=*
+&tags.bio.deed_name dd=werewolf
+&class.bio.deed_name dd=string
+
+@@ No Crows (core)
+&bio.lodge dd=Garm.Harbingers.Season (Spring).Season (Summer).Season (Autumn).Season (Winter).Lightning.The Hunt
+&tags.bio.lodge dd=werewolf
+&class.bio.lodge dd=string
+
+&page.bio.lodge sr=WtF.199-204
+
+@@ -- ADVANTAGE: WEREWOLF CORE -------------------------------------------------
+
+&advantage.primal_urge dd=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.primal_urge dd=power level.werewolf
+&default.advantage.primal_urge dd=1
+
+
+@@ Werewolf + Skinthief Essence:
+&advantage.essence dd=[switch(u(%0/_bio.template), human.skinthief, if(u(_has, %0, aspect.increased_essence), 6, 3), extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.primal_urge), .), 1))]
+&tags.advantage.essence dd=derived.energy.werewolf.skinthief
+&default.advantage.essence dd=[u(#188/advantage.essence, %!)]
+
+@@ Werewolf-Only Essence:
+@@ &advantage.essence dd=[extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.primal_urge), .), 1)]
+@@ &tags.advantage.essence dd=derived.energy.werewolf
+@@ &default.advantage.essence dd=[u(#188/advantage.essence, %!)]
+
+&advantage.harmony dd=1.2.3.4.5.6.7.8.9.10
+&tags.advantage.harmony dd=morality.werewolf
+&default.advantage.harmony dd=7
+
+&advantage.honorary_rank dd=[switch(ladd(iter(lattr(%0/_renown.*), first(u(%0/%i0), .))), >23, 5, >15, 4, >7, 3, >0, 2, 0)]
+&tags.advantage.honorary_rank dd=werewolf
+&default.advantage.honorary_rank dd=[u(#188/advantage.honorary_rank, %!)]
+
+&page.advantage.honorary_rank sr=WtF.272
+
+
+
+@@ -- RENOWN: WEREWOLF CORE ----------------------------------------------------
+
+&renown.purity dd=1.2.3.4.5
+&tags.renown.purity dd=werewolf.rahu.hunters in darkness
+&prereq-text.renown.purity dd=May not be higher than a primary renown
+&prerequisite.renown.purity dd=[u(_renown_check, %0, renown.purity, %2)]
+
+&renown.glory dd=1.2.3.4.5
+&tags.renown.glory dd=werewolf.cahalith.blood talons
+&prereq-text.renown.glory dd=May not be higher than a primary renown
+&prerequisite.renown.glory dd=[u(_renown_check, %0, renown.glory, %2)]
+
+&renown.honor dd=1.2.3.4.5
+&tags.renown.honor dd=werewolf.elodoth.storm lords
+&prereq-text.renown.honor dd=May not be higher than a primary renown
+&prerequisite.renown.honor dd=[u(_renown_check, %0, renown.honor, %2)]
+
+&renown.wisdom dd=1.2.3.4.5
+&tags.renown.wisdom dd=werewolf.ithaeur.bone shadows
+&prereq-text.renown.wisdom dd=May not be higher than a primary renown
+&prerequisite.renown.wisdom dd=[u(_renown_check, %0, renown.wisdom, %2)]
+
+&renown.cunning dd=1.2.3.4.5
+&tags.renown.cunning dd=werewolf.irraka.iron masters
+&prereq-text.renown.cunning dd=May not be higher than a primary renown
+&prerequisite.renown.cunning dd=[u(_renown_check, %0, renown.cunning, %2)]
+
+
+@@ -- MERIT: WEREWOLF CORE -----------------------------------------------------
+
+&merit.wolf_blooded dd=2.3.4.5
+&tags.merit.wolf_blooded dd=human.chargen-only
+@@ house rule:
+&prereq-text.merit.wolf_blooded dd=Cannot be Fae-Touched
+&prerequisite.merit.wolf_blooded dd=not(u(_is_full, %0, bio.template, human.fae-touched))
+
+&merit.lunatic_glare dd=2
+@@ &tags.merit.lunatic_glare dd=human
+&prereq-text.merit.lunatic_glare dd=Wolf Blooded 3+
+&prerequisite.merit.lunatic_glare dd=u(_at_least, %0, merit.wolf_blooded, 3)
+
+&merit.watched dd=1.2.3.4.5
+&prereq-text.merit.watched dd=Wolf Blooded
+&prerequisite.merit.watched dd=u(_has, %0, merit.wolf_blooded)
+
+&merit.fetish dd=#|*
+&tags.merit.fetish dd=chargen-only.item
+&prereq-text.merit.fetish dd=Werewolf or Wolf Blooded
+&prerequisite.merit.fetish dd=or(u(_list_has, %0, Werewolf), u(_has, %0, merit.wolf_blooded))
+&notes.merit.fetish sr=May also be bought with xp during chargen.
+
+&merit.rituals dd=1.2.3.4.5
+&tags.merit.rituals dd=werewolf
+
+&merit.cursed_item dd=1.2.3.4.5|*
+&tags.merit.cursed_item dd=chargen-only.item
+&notes.merit.cursed_item sr=May also be bought with xp during chargen.
+
+&merit.difficult_to_ride dd=4
+&prereq-text.merit.difficult_to_ride dd=Composure 3+ and Resolve 3+
+&prerequisite.merit.difficult_to_ride dd=u(_at_least_all, %0, attribute.composure:3 attribute.resolve:3)
+
+&merit.easy_ride dd=2
+&prereq-text.merit.easy_ride dd=Wits 3+
+&prerequisite.merit.easy_ride dd=u(_at_least, %0, attribute.wits, 3)
+
+&merit.locus_drinker dd=3
+&tags.merit.locus_drinker dd=human
+
+&merit.pack_totem_() dd=#|*
+&tags.merit.pack_totem_() dd=werewolf.location
+&prerequisite.merit.pack_totem_() dd=lte(words(setunion(_MERIT.PACK_TOTEM_(%1), lattr(%0/_merit.pack_totem_(*)))), 1)
+&prereq-text.merit.pack_totem_() dd=One Totem Only
+&notes.merit.pack_totem_() sr=Cost is flat 3 xp per dot
+
+
+&merit.pleasing_aura dd=3
+
+&merit.residual_spirit_energy dd=2
+&tags.merit.residual_spirit_energy dd=human
+@@ &prereq-text.merit.residual_spirit_energy dd=No Minor Template
+@@ &prerequisite.merit.residual_spirit_energy dd=words(u(_value_full, %0, bio.template), .)
+
+&merit.saintly dd=3
+
+&merit.shadow_contacts dd=3.4.5
+
+&merit.shadowless_chambers_() dd=1.2.3.4.5|*
+
+&merit.spirit_communication dd=1.2.3
+
+&merit.hollow_soul dd=2
+&prereq-text.merit.hollow_soul dd=Easy Ride (Merit)
+&prerequisite.merit.hollow_soul dd=u(_has, %0, merit.easy_ride)
+
+
+@@ -- GIFTS: WEREWOLF CORE -----------------------------------------------------
+
+&gift.crescent_moon dd=1.2.3.4.5|Two-World Eyes.Read Spirit.Gauntlet Cloak.Between the Weave.Crash the Gates
+&tags.gift.crescent_moon dd=werewolf.ithaeur
+&prerequisite.gift.crescent_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, ithaeur))
+&prereq-text.gift.crescent_moon dd=No Higher than Max Renown & Ithaeur Only
+&class.gift.crescent_moon dd=list
+<<< ithaeur only >>>
+
+&gift.death dd=1.2.3.4.5|Death Sight.Ghost Knife.Corpse Witness.Word of Quiet.Vengeance of the Slain
+&tags.gift.death dd=werewolf.bone shadows.season (winter)
+&prerequisite.gift.death dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.death dd=No Higher than Max Renown
+&class.gift.death dd=list
+
+&gift.dominance dd=1.2.3.4.5|Warning Growl.Luna's Dictum.Voice of Command.Break the Defiant.Tug the Soul's Strings
+&tags.gift.dominance dd=werewolf.rahu.storm lords
+&prerequisite.gift.dominance dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.dominance dd=No Higher than Max Renown
+&class.gift.dominance dd=list
+
+&gift.elemental dd=1.2.3.4.5|Call Water.Manipulate Earth.Command Fire.Invoke the Wind's Wrath.Lament of the River
+&tags.gift.elemental dd=werewolf.ithaeur.hunters in darkness
+&prerequisite.gift.elemental dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.elemental dd=No Higher than Max Renown
+&class.gift.elemental dd=list
+
+&notes.gift.elemental sr=For Lodge of the Maelstrom, see 'Maelstrom'
+
+&gift.evasion dd=1.2.3.4.5|Loose Tongue.Sand in the Eyes.Playing Possum.Double Back.Fog of War
+&tags.gift.evasion dd=werewolf.irraka.storm lords
+&prerequisite.gift.evasion dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.evasion dd=No Higher than Max Renown
+&class.gift.evasion dd=list
+
+&gift.father_wolf's dd=1.2.3.4.5|Wolf-blood's lure.Father Wolf's Speed.Primal Howl.Savage Rending.Spirit Pack
+&tags.gift.father_wolf's dd=werewolf.general
+&prerequisite.gift.father_wolf's dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.father_wolf's dd=No Higher than Max Renown
+&class.gift.father_wolf's dd=list
+
+&gift.full_moon dd=1.2.3.4.5|Clarity.Attunement.Death Maul.Rage Armor.Luna's Fury
+&tags.gift.full_moon dd=werewolf.rahu
+&prerequisite.gift.full_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, rahu))
+&prereq-text.gift.full_moon dd=No Higher than Max Renown & Rahu Only
+&class.gift.full_moon dd=list
+<<< rahu only >>>
+
+&gift.gibbous_moon dd=1.2.3.4.5|Pack Awareness.Resist Pain.Rallying Cry.Unspoken Communication.Call of Glory
+&tags.gift.gibbous_moon dd=werewolf.cahalith
+&prerequisite.gift.gibbous_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, cahalith))
+&prereq-text.gift.gibbous_moon dd=No Higher than Max Renown & Cahalith Only
+&class.gift.gibbous_moon dd=list
+<<< cahalith only >>>
+
+&gift.half_moon dd=1.2.3.4.5|Scent Beneath the Surface.Snarl of Command.Aura of Truce.Fuel Rage.Bind or Sunder
+&tags.gift.half_moon dd=werewolf.elodoth
+&prerequisite.gift.half_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, elodoth))
+&prereq-text.gift.half_moon dd=No Higher than Max Renown & Elodoth Only
+&class.gift.half_moon dd=list
+<<< elodoth only >>>
+
+&gift.insight dd=1.2.3.4.5|Sense Malice.Scent of Taint.Echo Dream.Soul Read.Omen Gazing
+&tags.gift.insight dd=werewolf.elodoth.bone shadows.season (autumn)
+&prerequisite.gift.insight dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.insight dd=No Higher than Max Renown
+&class.gift.insight dd=list
+
+&gift.inspiration dd=1.2.3.4.5|The Right Words.Camaraderie.True Leader.Spirit Skin.Victor's Song
+&tags.gift.inspiration dd=werewolf.cahalith.blood talons
+&prerequisite.gift.inspiration dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.inspiration dd=No Higher than Max Renown
+&class.gift.inspiration dd=list
+
+&gift.knowledge dd=1.2.3.4.5|Know Name.Traveler's Blessing.Sagacity.Know the Path.Communion with the Land
+&tags.gift.knowledge dd=werewolf.cahalith.iron masters
+&prerequisite.gift.knowledge dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.knowledge dd=No Higher than Max Renown
+&class.gift.knowledge dd=list
+
+&gift.mother_luna's dd=1.2.3.4.5|Partial Change.Anybeast.Silver Jaws.Skin-Stealing.Primal Form
+&tags.gift.mother_luna's dd=werewolf.general
+&prerequisite.gift.mother_luna's dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.mother_luna's dd=No Higher than Max Renown
+&class.gift.mother_luna's dd=list
+
+&gift.nature dd=1.2.3.4.5|Speak with Beasts.Plant Growth.Forest Communion.Beast Ride.Nature's Vengeance
+&tags.gift.nature dd=werewolf.hunters in darkness
+&prerequisite.gift.nature dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.nature dd=No Higher than Max Renown
+&class.gift.nature dd=list
+
+&gift.new_moon dd=1.2.3.4.5|Sense Weakness.Slip Away.Distractions.Blend In.Ghost Step
+&tags.gift.new_moon dd=werewolf.irraka
+&prerequisite.gift.new_moon dd=and(u(_gifts_check, %0, %2), u(_is, %0, bio.auspice, irraka))
+&prereq-text.gift.new_moon dd=No Higher than Max Renown & Irraka Only
+&class.gift.new_moon dd=list
+<<< irraka only >>>
+
+&gift.rage dd=1.2.3.4.5|Mask of Rage.Hone Rage.Leach Rage.Rekindled Rage.Soured Rage
+&tags.gift.rage dd=werewolf.blood talons.season (summer)
+&prerequisite.gift.rage dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.rage dd=No Higher than Max Renown
+&class.gift.rage dd=list
+
+&gift.shaping dd=1.2.3.4.5|Straighten.Ruin.Sculpt.Shatter.Condense or Expand
+&tags.gift.shaping dd=werewolf.ithaeur.iron masters.ruin
+&prerequisite.gift.shaping dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.shaping dd=No Higher than Max Renown
+&class.gift.shaping dd=list
+
+@@ &gift.stealth dd=1.2.3.4.5|Feet of Mist.Blending.Running Shadow.Shadow Flesh.Vanish
+@@ &tags.gift.stealth dd=werewolf.irraka.hunters in darkness
+@@ &prerequisite.gift.stealth dd=u(_gifts_check, %0, %2)
+@@ &prereq-text.gift.stealth dd=No Higher than Max Renown
+@@ &class.gift.stealth dd=list
+
+&gift.gift_of_stealth dd=1.2.3.4.5|Feet of Mist.Blending.Running Shadow.Shadow Flesh.Vanish
+&tags.gift.gift_of_stealth dd=werewolf.irraka.hunters in darkness.harbingers
+&prerequisite.gift.gift_of_stealth dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.gift_of_stealth dd=No Higher than Max Renown
+&class.gift.gift_of_stealth dd=list
+&notes.gift.gift_of_stealth sr=Renamed from "stealth" to avoid confusion with the skill.
+
+@@ &gift.strength dd=1.2.3.4.5|Crushing Blood.Mighting Bound.Iron-Rending.Legendary Arm.Savage Might
+@@ &tags.gift.strength dd=werewolf.rahu.blood talons
+@@ &prerequisite.gift.strength dd=u(_gifts_check, %0, %2)
+@@ &prereq-text.gift.strength dd=No Higher than Max Renown
+@@ &class.gift.strength dd=list
+
+&gift.gift_of_strength dd=1.2.3.4.5|Crushing Blow.Mighty Bound.Iron-Rending.Legendary Arms.Savage Might
+&tags.gift.gift_of_strength dd=werewolf.rahu.blood talons
+&prerequisite.gift.gift_of_strength dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.gift_of_strength dd=No Higher than Max Renown
+&class.gift.gift_of_strength dd=list
+&notes.gift.gift_of_strength dd=Renamed from "strength" to avoid confusion with the attribute.
+
+&gift.technology dd=1.2.3.4.5|Left-handed Spanner.Nightfall.Iron Treachery.Maschinegeist.Create Techology
+&tags.gift.technology dd=werewolf.iron masters
+&prerequisite.gift.technology dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.technology dd=No Higher than Max Renown
+&class.gift.technology dd=list
+
+&gift.warding dd=1.2.3.4.5|Ward Versus Predators.Ward Versus Humans.Technology Wards.Shadow Ward.Ward of Spirit Slumber
+&tags.gift.warding dd=werewolf.elodoth.bone shadows
+&prerequisite.gift.warding dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.warding dd=No Higher than Max Renown
+&class.gift.warding dd=list
+
+&gift.weather dd=1.2.3.4.5|Call the Breeze.Silent Fog.Deluge.Killing Frost.Thunderbolt
+&tags.gift.weather dd=werewolf.storm lords.season (spring).lightning
+&prerequisite.gift.weather dd=u(_gifts_check, %0, %2)
+&prereq-text.gift.weather dd=No Higher than Max Renown
+&class.gift.weather dd=list
+
+
+@@ -- RITE: WEREWOLF CORE ------------------------------------------------------
+
+&rite.banish_human dd=1
+&tags.rite.banish_human dd=werewolf
+&prerequisite.rite.banish_human dd=u(_rites_check, %0, 1)
+&prereq-text.rite.banish_human dd=Rituals 1+
+
+&rite.funeral_rite dd=1
+&tags.rite.funeral_rite dd=werewolf
+&prerequisite.rite.funeral_rite dd=u(_rites_check, %0, 1)
+&prereq-text.rite.funeral_rite dd=Rituals 1+
+
+&rite.rite_of_dedication dd=1
+&tags.rite.rite_of_dedication dd=werewolf
+&prerequisite.rite.rite_of_dedication dd=u(_rites_check, %0, 1)
+&prereq-text.rite.rite_of_dedication dd=Rituals 1+
+
+&rite.rite_of_renunciation dd=1
+&tags.rite.rite_of_renunciation dd=werewolf
+&prerequisite.rite.rite_of_renunciation dd=u(_rites_check, %0, 1)
+&prereq-text.rite.rite_of_renunciation dd=Rituals 1+
+
+&rite.shared_scent dd=1
+&tags.rite.shared_scent dd=werewolf
+&prerequisite.rite.shared_scent dd=u(_rites_check, %0, 1)
+&prereq-text.rite.shared_scent dd=Rituals 1+
+
+&rite.rite_of_the_spirit_brand dd=1
+&tags.rite.rite_of_the_spirit_brand dd=werewolf
+&prerequisite.rite.rite_of_the_spirit_brand dd=u(_rites_check, %0, 1)
+&prereq-text.rite.rite_of_the_spirit_brand dd=Rituals 1+
+
+&rite.banish_spirit dd=2
+&tags.rite.banish_spirit dd=werewolf
+&prerequisite.rite.banish_spirit dd=u(_rites_check, %0, 2)
+&prereq-text.rite.banish_spirit dd=Rituals 2+
+
+&rite.blessing_of_the_spirit_hunt dd=2
+&tags.rite.blessing_of_the_spirit_hunt dd=werewolf
+&prerequisite.rite.blessing_of_the_spirit_hunt dd=u(_rites_check, %0, 2)
+&prereq-text.rite.blessing_of_the_spirit_hunt dd=Rituals 2+
+
+&rite.call_gaffling dd=2
+&tags.rite.call_gaffling dd=werewolf
+&prerequisite.rite.call_gaffling dd=u(_rites_check, %0, 2)
+&prereq-text.rite.call_gaffling dd=Rituals 2+
+
+&rite.call_human dd=2
+&tags.rite.call_human dd=werewolf
+&prerequisite.rite.call_human dd=u(_rites_check, %0, 2)
+&prereq-text.rite.call_human dd=Rituals 2+
+
+&rite.fortify_the_border_marches dd=2
+&tags.rite.fortify_the_border_marches dd=werewolf
+&prerequisite.rite.fortify_the_border_marches dd=u(_rites_check, %0, 2)
+&prereq-text.rite.fortify_the_border_marches dd=Rituals 2+
+
+&rite.hallow_touchstone dd=2
+&tags.rite.hallow_touchstone dd=werewolf
+&prerequisite.rite.hallow_touchstone dd=u(_rites_check, %0, 2)
+&prereq-text.rite.hallow_touchstone dd=Rituals 2+
+
+&rite.rite_of_contrition dd=2
+&tags.rite.rite_of_contrition dd=werewolf
+&prerequisite.rite.rite_of_contrition dd=u(_rites_check, %0, 2)
+&prereq-text.rite.rite_of_contrition dd=Rituals 2+
+
+&rite.rite_of_dormancy dd=2
+&tags.rite.rite_of_dormancy dd=werewolf
+&prerequisite.rite.rite_of_dormancy dd=u(_rites_check, %0, 2)
+&prereq-text.rite.rite_of_dormancy dd=Rituals 2+
+
+&rite.bar_to_birth dd=2
+&tags.rite.bar_to_birth dd=werewolf
+&prerequisite.rite.bar_to_birth dd=u(_rites_check, %0, 2)
+&prereq-text.rite.bar_to_birth dd=Rituals 2+
+
+&rite.bind_human dd=3
+&tags.rite.bind_human dd=werewolf
+&prerequisite.rite.bind_human dd=u(_rites_check, %0, 3)
+&prereq-text.rite.bind_human dd=Rituals 3+
+
+&rite.bind_spirit dd=3
+&tags.rite.bind_spirit dd=werewolf
+&prerequisite.rite.bind_spirit dd=u(_rites_check, %0, 3)
+&prereq-text.rite.bind_spirit dd=Rituals 3+
+
+&rite.call_jaggling dd=3
+&tags.rite.call_jaggling dd=werewolf
+&prerequisite.rite.call_jaggling dd=u(_rites_check, %0, 3)
+&prereq-text.rite.call_jaggling dd=Rituals 3+
+
+&rite.rite_of_healing dd=3
+&tags.rite.rite_of_healing dd=werewolf
+&prerequisite.rite.rite_of_healing dd=u(_rites_check, %0, 3)
+&prereq-text.rite.rite_of_healing dd=Rituals 3+
+
+&rite.rite_of_initiation dd=3
+&tags.rite.rite_of_initiation dd=werewolf
+&prerequisite.rite.rite_of_initiation dd=u(_rites_check, %0, 3)
+&prereq-text.rite.rite_of_initiation dd=Rituals 3+
+
+&rite.rite_of_the_moon's_love dd=3
+&tags.rite.rite_of_the_moon's_love dd=werewolf
+&prerequisite.rite.rite_of_the_moon dd=u(_rites_check, %0, 3)
+&prereq-text.rite.rite_of_the_moon dd=Rituals 3+
+
+&rite.sacred_hunt dd=3
+&tags.rite.sacred_hunt dd=werewolf
+&prerequisite.rite.sacred_hunt dd=u(_rites_check, %0, 3)
+&prereq-text.rite.sacred_hunt dd=Rituals 3+
+
+&rite.wake_the_spirit dd=3
+&tags.rite.wake_the_spirit dd=werewolf
+&prerequisite.rite.wake_the_spirit dd=u(_rites_check, %0, 3)
+&prereq-text.rite.wake_the_spirit dd=Rituals 3+
+
+&rite.bestowing_the_shadowblind_cloak dd=3
+&tags.rite.bestowing_the_shadowblind_cloak dd=werewolf
+&prerequisite.rite.bestowing_the_shadowblind_cloak dd=u(_rites_check, %0, 3)
+&prereq-text.rite.bestowing_the_shadowblind_cloak dd=Rituals 3+
+
+&rite.fetish_rite dd=4
+&tags.rite.fetish_rite dd=werewolf
+&prerequisite.rite.fetish_rite dd=u(_rites_check, %0, 4)
+&prereq-text.rite.fetish_rite dd=Rituals 4+
+
+&rite.rite_of_the_chosen_ground dd=4
+&tags.rite.rite_of_the_chosen_ground dd=werewolf
+&prerequisite.rite.rite_of_the_chosen_ground dd=u(_rites_check, %0, 4)
+&prereq-text.rite.rite_of_the_chosen_ground dd=Rituals 4+
+
+&rite.drawing_down_the_shadow dd=5
+&tags.rite.drawing_down_the_shadow dd=werewolf
+&prerequisite.rite.drawing_down_the_shadow dd=u(_rites_check, %0, 5)
+&prereq-text.rite.drawing_down_the_shadow dd=Rituals 5+
+
+&rite.rending_the_gauntlet dd=5
+&tags.rite.rending_the_gauntlet dd=werewolf
+&prerequisite.rite.rending_the_gauntlet dd=u(_rites_check, %0, 5)
+&prereq-text.rite.rending_the_gauntlet dd=Rituals 5+
+
+&rite.return_to_the_borderland dd=werewolf
+&tags.rite.return_to_the_borderland dd=werewolf
+&prerequisite.rite.return_to_the_borderland dd=u(_rites_check, %0, 5)
+&prereq-text.rite.return_to_the_borderland dd=Rituals 5+
+
+&rite.risen_the_wardens_closed_the_gates dd=5
+&tags.rite.risen_the_wardens_closed_the_gates dd=werewolf
+&prerequisite.rite.risen_the_wardens_closed_the_gates dd=u(_rites_check, %0, 5)
+&prereq-text.rite.risen_the_wardens_closed_the_gates dd=Rituals 5+
