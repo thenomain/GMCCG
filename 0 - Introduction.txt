@@ -313,15 +313,3 @@ Stats:
 	<number>.	- starting text this way looks like a numeric stat to the system
 	`			- we're using the backtick to columnize
 
-
-@@ =============================================================================
-@@ == NOTES TO SELF ============================================================
-@@ =============================================================================
-
-You know what?  Why don't we have a function() staging attribute and a full-on usable attribute?  For instance:
-
-	&f.getstat: Prep stuff, some error-check, pass it off to...
-	&f.getstat.workhorse: Meat of code that can be called by any attribute.
-
-Kind of like how f.statname doesn't (er, didn't) need it.
-
