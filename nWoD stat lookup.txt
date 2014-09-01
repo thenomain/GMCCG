@@ -311,7 +311,7 @@ Names:
 
 Stats:
 	<number>.	- starting text this way looks like a numeric stat to the system
-	`			- at the moment we're using the backtick to columnize
+	`			-  we're using the backtick to columnize
 
 
 @@ =============================================================================
