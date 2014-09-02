@@ -26,7 +26,7 @@ q4: Final outcome
 
 qz, qa, qb: Regmatch results
 
---
+--------------------------------------------------------------------------------
 
 &f.statpath-validate-name sfp=
 localize(
