@@ -1,10 +1,6 @@
-
-
-
-
-
-================================================================================
-== PREREQUITE FUNCTIONS ========================================================
+################################################################################
+## PREREQUITE FUNCTIONS ########################################################
+################################################################################
 
 We check format, stat path, and roughly check the value.  Here we also check the types of prerequisites imposed upon us by ourselves in &prerequisite.<statpath>, but also by the Storytelling system.  I'll try to be careful to notate which is which.
 
@@ -13,8 +9,8 @@ These functions do minimal error-checking.
 Failed prerequisites should always return #-3 <reason> and be checked after value-checking.
 
 
---------------------------------------------------------------------------------
--- PREREQ: OTHER ---------------------------------------------------------------
+================================================================================
+== PREREQ: OTHER ===============================================================
 
 We'll start with the most generic of prerequisite checks, stored on &prerequisite.<statpath>.  The error message when this check fails are pulled from &prereq-text.<statpath>
 
@@ -27,8 +23,7 @@ returns: 1 if valid, #-1 <reason> if not
 
 p: return for &prerequisite.<statpath>
 
---
-
+--------------------------------------------------------------------------------
 
 &f.prereq-check-other sfp=
 
@@ -45,7 +40,7 @@ localize(
 	)]
 )
 
---
+--------------------------------------------------------------------------------
 
 think u(sfp/f.prereq-check-other, pmatch(dog), merit.mantle_(), spring)
 think u(sfp/f.prereq-check-other, pmatch(dog), merit.court_goodwill_(), spring)
@@ -63,8 +58,8 @@ think u(sfp/f.prereq-check-other, pmatch(jade), merit.workshop_(), Washington's_
 think u(sfp/f.prereq-check-other, pmatch(jade), merit.workshop_(), Washington's_Obsequy, 1)
 
 
---------------------------------------------------------------------------------
--- PREREQ: CGEN ----------------------------------------------------------------
+================================================================================
+== PREREQ: CGEN ================================================================
 
 Some stats are cgen-only.  We are not going to enforce this, but add this function to the stat system for completeness.
 
@@ -75,7 +70,7 @@ may use zones in the future
 1: full.statpath
 returns: 1 if valid, #-1 <reason> if not
 
---
+--------------------------------------------------------------------------------
 
 &f.prereq-check-cgen sfp=
 	if(
@@ -95,8 +90,8 @@ think u(sfp/f.prereq-check-cgen, pmatch(thenomain), attribute.presence)
 think u(sfp/f.prereq-check-cgen, pmatch(thenomain), merit.encyclopedic_knowledge)
 
 
---------------------------------------------------------------------------------
--- PREREQ: TEMPLATE ------------------------------------------------------------
+================================================================================
+== PREREQ: TEMPLATE ============================================================
 
 I know the stat system as a whole doesn't normally care about this, but to validate setstat(), we'll need this.
 
@@ -116,7 +111,7 @@ d: data dictionary dbref (we use it that often)
 b: bio.templates
 t: templates used in tags.<statpath>
 
---
+--------------------------------------------------------------------------------
 
 &f.prereq-check-template sfp=
 localize(
@@ -135,7 +130,7 @@ localize(
 	)]	
 )
 
---
+--------------------------------------------------------------------------------
 
 think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.unseen_sense_())
 think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.mantle_())
@@ -143,23 +138,27 @@ think u(sfp/f.prereq-check-template, pmatch(thenomain), attribute.strength)
 
 
 
-@@ =============================================================================
-@@ == AFTER-THOUGHTS ===========================================================
-@@ =============================================================================
+
+################################################################################
+## FUNCTIONS ABOUT TAGS ########################################################
+################################################################################
 
 
+================================================================================
 == List of Stats Based on Tags =================================================
 
 Returns only the stats of a certain category (* for 'all') with a certain tag ('*' for 'don't filter', in which case don't use this function, use lattr(<sheet>/_<category>.*) and leave it at that).
 
+0: dbref of sheet
+1: category (may be *)
+2: tags.list (all required, if any, for 'mental', etc., * for 'all')
+3: 'or' for the default behavior of hastag? (defaults to 'and')
+
+returns: character sheet statpaths
+
+--------------------------------------------------------------------------------
+
 &f.list-stats-tags sfp=
-@@ list of stats on a sheet, based on passed tags
-@@ 0: dbref of sheet
-@@ 1: category (may be *)
-@@ 2: tags.list (all required, if any, for 'mental', etc., * for 'all')
-@@ 3: 'or' for the default behavior of hastag? (defaults to 'and')
-@@ 
-@@ returns: character sheet statpaths
 
 	filter(
 		fil.list-stats-tags, 
@@ -172,19 +171,19 @@ Returns only the stats of a certain category (* for 'all') with a certain tag ('
 		not(strmatch(%3, or))
 	)
 
---
-
-&f.list-stats-tags sfp=filter(fil.list-stats-tags, rest(edit(lattr(%0/_%1.*), %b_, %b), _), , , %2, not(strmatch(%3, or)))
 
 
+================================================================================
 == Filter: Does this stat have these tags? =====================================
 
-&fil.list-stats-tags sfp=
-@@ Filter based on a tags list 
-@@ 0: stat.path_(with or without instance)
-@@ 1: tags.to.check.against
-@@ 2: "0" for or, "1" for and
+Filter based on a tags list 
+0: stat.path_(with or without instance)
+1: tags.to.check.against
+2: "0" for or, "1" for and
 
+--------------------------------------------------------------------------------
+
+&fil.list-stats-tags sfp=
 	ulocal(
 		f.hastag?.workhorse,
 		ulocal(f.statpath-without-instance, %0), 
@@ -192,29 +191,25 @@ Returns only the stats of a certain category (* for 'all') with a certain tag ('
 		%2
 	)
 
---
-
-&fil.list-stats-tags sfp=ulocal(f.hastag?.workhorse,ulocal(f.statpath-without-instance, %0), %1, %2)
 
 
+================================================================================
 == Filter: Is This Stat One of These Types? ====================================
 
-Probably duplicitous.
+Probably duplicitous. Filter based on a tags list 
+
+0: stat.path_(with or without instance)
+1: types to check against
+
+--------------------------------------------------------------------------------
 
 &fil.list-stats-types sfp=
-@@ Filter based on a tags list 
-@@ 0: stat.path_(with or without instance)
-@@ 1: types to check against
-
 	t(match(%1, first(%0, .)))
 
---
-
-&fil.list-stats-types sfp=t(match(%1, first(%0, .)))
 
 
+================================================================================
 == Filter: Does This Stat Have One of These Values? ============================
-
 
 Filter based on values list (value.value 2.value 3)
 
@@ -228,8 +223,7 @@ Filter based on values list (value.value 2.value 3)
 		.
 	)
 
-
----
+--------------------------------------------------------------------------------
 
 think filter(sfp/fil.list-stats-tags, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , changeling)
 
@@ -238,24 +232,37 @@ think filter(sfp/fil.list-stats-types, trim(edit(lattr(me/_*.*), %b_, %b), b, _)
 think [setq(0, merit)][setq(1, changeling)][filter(sfp/fil.list-stats-tags, lattr(dd/%q0.*), , , %q1, not(strmatch(%q2, or)))]
 
 
-
 think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , 4)
 
 think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , Changeling)
 
 
---------------------------------------------------------------------------------
--- THE PRETTYSTAT FUNCTION FOR CHARSHEET ---------------------------------------
+
+
+################################################################################
+## PRETTYSTAT FUNCTIONS ########################################################
+################################################################################
+
+These functions are designed to help the character sheet make things look pretty 
+and neat.
+
+
+
+================================================================================
+== PRETTYSTAT: NUMBER ==========================================================
 
 This is out of place, but it takes the value and offset of a number, and outputs either stars or a number for that stat, prettified.
 
+0: <base>.<offset>
+1: stars?, 1 for stars, 0 for number
+output: Either **** or Value, with color representing if offset is + or -
+
+qb: base
+qo: offset
+
+--------------------------------------------------------------------------------
+
 &f.pretty-stat-num sfp=
-@@ 0: <base>.<offset>
-@@ 1: stars?, 1 for stars, 0 for number
-@@ output: Either **** or Value, with color representing if offset is + or -
-@@ 
-@@ qb: base
-@@ qo: offset
 
 localize(switch(
 	[setq(b, first(%0, .))]
@@ -280,11 +287,7 @@ localize(switch(
 	ansi(w, %0)
 ))
 
----
-
-&f.prettify-stat-num sfp=localize(switch([setq(b, first(%0, .))][setq(o, rest(%0, .))]1, not(and(isnum(%qb), or(isnum(%qo), not(t(%qo))))), ansi(w, %0), and(t(%1), gte(%qo, 0)), ansi(w, [repeat(o, %qb)], h, [repeat(*, %qo)]), and(t(%1), lt(%qo, 0)), ansi(w, [repeat(o, add(%qb, %qo))], hx, [repeat(., min(abs(%qo), %qb))]), gt(%qo, 0), ansi(ng, add(%qb, %qo)), lt(%qo, 0), ansi(hy, add(%qb, %qo)), ansi(w, %0)))
-
----
+--------------------------------------------------------------------------------
 
 think [ansi(c, statname(setr(0, thenomain/str)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)] ([u(sfp/f.prettify-stat-num, %q1)])
 
@@ -306,61 +309,22 @@ think iter(str glam spee cont.rep, >> [ansi(g, statname(setr(0, thenomain/##)))]
 
 
 
-== THE COMMAND ================================================================
+################################################################################
+## HELP FILES ##################################################################
+################################################################################
 
-+setstat <player>/<stat>=[+|-]<value>
+These attributes were made for Thenomain's softcode +help file system and are 
+left here for reference.
 
-illegal characters for value: : ` <number>. (but only at the start)
+--------------------------------------------------------------------------------
 
-
-
-
-
-
-
+&HELP~stat_topics~+STAT ##Normal +Help##=About Stats~+stat is a multi-functional command that lists information about stats available on the game. It only lists stats available to the players, which are almost all, but not all, stats on +sheet. (XP and health are notable exceptions.) Additionally, the staff version of this command allows staff to set the values on characters.%r%r[ansi(h, +stat)] : Does nothing.%r%r[ansi(h, +stat <stat>)] : Detailed information about <stat>. %r%r[ansi(h, +stat <stat>*)] : List of stats matching the wildcard and their stat category.%r%rFor a list of all stats available, [ansi(h, +stat *)].
 
 
-Sets a player's stat to <value> or returns it to the default chargen value, which may be null or derived.
-
-(Once I get the default value for the chargen object filled.)
-(have +command use stattag to allow only for 'derived' tagged stats.)
-
-Code Flow:
-
-* validate sheet
-* validate stat name
-* validate stat value (or if it has a default).
-
-Hmm.  Validate Value should be simple once we've Validated the Stat (and boy have we validated the fuck out of it.)
-
-How do I best set up so they can set the offset ("boost") in this, or do I?
-
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=--==--=-=-=-=-=-=-=-=-==-==--=-=-==--
-
-DATA DICTIONARY THOUGHTS: 
-
-You say, “If your seeming or kith matches something in the tag list, affinity. If goblin matches something in the tag list, goblin. Else, non-affinity.”
-
-Blue says, “Very near, though they don't scale in cost the same way. You just pay for the rank, straight up, without worrying about any ranks that came before.”
-
-You say, “Werewolf's gifts are also bought at level, like goblin contracts, I think.”
-
-You say, “I believe this is done because you can jump around.”
-
--- a reason to make "goblin_contract" just "contract" in the DD.
-
-&xp.<type>: <value>??? - Willpower is always 8xp/dot.
-
-May not be so important if I keep stat-lookup & character-advancement DDs separate. ---
+&SHELP~STAT_COMMANDS~+STAT ##Staff +Help##=Manipulating Stats~In addition to the commands listed in +help stat, staff may perform the following:%r%r[ansi(h, +stat/template <player>=<template>)] : Sets <player> up with the proper template. Right now we only have Human and Changeling.%r%r[ansi(h, +stat/wipe <player>)] : Wipes all stats from a player's sheet. Spams you with what they were set at. %r%r[ansi(h, +stat/set <player>/<stat> = <value>)] : Set a stat to that value. If value is "default", re-sets to initial and derived value.%r%r[ansi(h, +stat/set <player>/<stat> +|- <value>)] : Increase/decrease a stat by that amount. Numeric stats only.%r%r[ansi(h, +stat/offset <player>/<stat> = <value>)] : Same thing as /set, but plays with the offset. Numeric stats only. + and - also work.%r%r[ansi(h, +stat/override <player>/<stat> = <value>)] : Overrides the entire check system. Set any stat to anything.%r%rFor information about offset and override, see [ansi(h, +shelp setstat%(%))], which this command mainly calls.
 
 
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-=-=--=-=-==-=--=-=-==---=-=-==-=--=-=-=
-
-&HELP~stat_topics~+STAT #96=About Stats~+stat is a multi-functional command that lists information about stats available on the game. It only lists stats available to the players, which are almost all, but not all, stats on +sheet. (XP and health are notable exceptions.) Additionally, the staff version of this command allows staff to set the values on characters.%r%r[ansi(h, +stat)] : Does nothing.%r%r[ansi(h, +stat <stat>)] : Detailed information about <stat>. %r%r[ansi(h, +stat <stat>*)] : List of stats matching the wildcard and their stat category.%r%rFor a list of all stats available, [ansi(h, +stat *)].
-
-&SHELP~STAT_COMMANDS~+STAT #102=Manipulating Stats~In addition to the commands listed in +help stat, staff may perform the following:%r%r[ansi(h, +stat/template <player>=<template>)] : Sets <player> up with the proper template. Right now we only have Human and Changeling.%r%r[ansi(h, +stat/wipe <player>)] : Wipes all stats from a player's sheet. Spams you with what they were set at. %r%r[ansi(h, +stat/set <player>/<stat> = <value>)] : Set a stat to that value. If value is "default", re-sets to initial and derived value.%r%r[ansi(h, +stat/set <player>/<stat> +|- <value>)] : Increase/decrease a stat by that amount. Numeric stats only.%r%r[ansi(h, +stat/offset <player>/<stat> = <value>)] : Same thing as /set, but plays with the offset. Numeric stats only. + and - also work.%r%r[ansi(h, +stat/override <player>/<stat> = <value>)] : Overrides the entire check system. Set any stat to anything.%r%rFor information about offset and override, see [ansi(h, +shelp setstat%(%))], which this command mainly calls.
+&SHELP~CHARGEN~SETSTAT() ##Staff +Help##=Setting the Stat, the Complex Way~[ansi(h, setstat%(<player>/<stat>%, <value>|default%[%, <behavior>%]%))]%r%rThis is the end-result of all other functions and stat code and will do all the validation needed to set almost anything on almost anyone. It won't allow you to set stats in categories that aren't in the search list (such as health), and it will give you a descriptive #-1 error message if it doesn't like what you did. As usual, it will name-complete as much as it can.%r%r> Setting a stat to "default" will set it to the default, if there is one. (Attributes default at "1", derived stats default at their derived formula.) %r%r> Setting the <behavior> to "offset" will, for numeric stats (think pools, including Clarity and Morality), create a temporary boost or decline without destroying the base stat. %r%r> Setting the <behavior> to "override" will ignore the value-check for stats. That is, you can set someone's Strength to "-1", "50", or "peanut brittle".%r%r> Default only works with the permanent stat value. Offset only works with numeric values. You can't override to default, you can't override an offset. If you want to do either of these things, override the entire stat.~[ansi(h, Examples)]%r%r%b think setstat(thenotest/willpo, 5)%r%b think setstat(thenotest/willpo, 2, off)%r%b think setstat(thenotest/willpo, peanut brittle, overr)%r%b think setstat(thenotest/willpo, default)%r%r%b think setstat(thenotest/fleeting summer, 5)
 
 
-&SHELP~CHARGEN~SETSTAT() #102=Setting the Stat, the Complex Way~[ansi(h, setstat%(<player>/<stat>%, <value>|default%[%, <behavior>%]%))]%r%rThis is the end-result of all other functions and stat code and will do all the validation needed to set almost anything on almost anyone. It won't allow you to set stats in categories that aren't in the search list (such as health), and it will give you a descriptive #-1 error message if it doesn't like what you did. As usual, it will name-complete as much as it can.%r%r> Setting a stat to "default" will set it to the default, if there is one. (Attributes default at "1", derived stats default at their derived formula.) %r%r> Setting the <behavior> to "offset" will, for numeric stats (think pools, including Clarity and Morality), create a temporary boost or decline without destroying the base stat. %r%r> Setting the <behavior> to "override" will ignore the value-check for stats. That is, you can set someone's Strength to "-1", "50", or "peanut brittle".%r%r> Default only works with the permanent stat value. Offset only works with numeric values. You can't override to default, you can't override an offset. If you want to do either of these things, override the entire stat.~[ansi(h, Examples)]%r%r%b think setstat(thenotest/willpo, 5)%r%b think setstat(thenotest/willpo, 2, off)%r%b think setstat(thenotest/willpo, peanut brittle, overr)%r%b think setstat(thenotest/willpo, default)%r%r%b think setstat(thenotest/fleeting summer, 5)
-
-&SHELP~STAT_COMMANDS~+XP #102=Adding and Spending a Player's XP~>>> This is a purely temporary solution. <<<%r%r[ansi(h, +xp)] : See your own XP, open to all.%r[ansi(h, +xp <player>)] : See <player>'s XP.%r[ansi(h, +xp/add <player>=<amt>)] : Add <amt> to <player>'s total XP.%r[ansi(h, +xp/spend <player>=<amt>)] : "Spend" <amt> of <player>'s XP.%r%rTechnically, this last one subtracts to the offset of the player's XP stat, so it can act a bit touchy. At the moment, you can "give back" Spent XP with a +xp/spend player=-amt.%r%rThis does not increase stats at all. See [ansi(h, +shelp stat)] and use that in conjunction with +xp/spend for now.
+&SHELP~STAT_COMMANDS~+XP ##Staff +Help##=Adding and Spending a Player's XP~>>> This is a purely temporary solution. <<<%r%r[ansi(h, +xp)] : See your own XP, open to all.%r[ansi(h, +xp <player>)] : See <player>'s XP.%r[ansi(h, +xp/add <player>=<amt>)] : Add <amt> to <player>'s total XP.%r[ansi(h, +xp/spend <player>=<amt>)] : "Spend" <amt> of <player>'s XP.%r%rTechnically, this last one subtracts to the offset of the player's XP stat, so it can act a bit touchy. At the moment, you can "give back" Spent XP with a +xp/spend player=-amt.%r%rThis does not increase stats at all. See [ansi(h, +shelp stat)] and use that in conjunction with +xp/spend for now.
