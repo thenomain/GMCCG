@@ -11,8 +11,8 @@ nWoD Chargen.  God save us all.
 ================================================================================
 == DATA ========================================================================
 
-&d.data-dictionary cg=#188
-&d.stat-functions cg=#204
+@fo me=&d.data-dictionary cg=num( data dictionary <dd> )
+@fo me=&d.stat-functions cg=num( stat functions prototype <sfp> )
 
 
 --
