@@ -50,7 +50,7 @@ No, it's not ideal. Yes, it will have to do.
 		
 
 
-*** NOTE: Change 'f.cost.xxx' to simply 'cost.xxx'.
+*** NOTE: Change 'cost.xxx' to simply 'cost.xxx'.
 
 
 
@@ -105,19 +105,19 @@ think [setq(f, 3)][setq(t, 4)][setq(x, 2)][setq(f, inc(%qf))][mul(add(power(%qt,
 
 --
 
-&f.cost.standard XP Cost Databse <xpcd>=mul(add(power(%2, 2), mul(power(inc(%1), 2), -1), inc(%1), %2), .5, %0)
+&cost.standard XP Cost Databse <xpcd>=mul(add(power(%2, 2), mul(power(inc(%1), 2), -1), inc(%1), %2), .5, %0)
 
 
 --------------------------------------------------------------------------------
 -- nWoD Standard Without Phantom Dots XP Cost ----------------------------------
 
-Needs to know the entire costs list. If cost is '#', send to 'f.cost.standard' instead.
+Needs to know the entire costs list. If cost is '#', send to 'cost.standard' instead.
 
 think [setq(v, 1.3.4.5)][setq(f, 1)][setq(l, 4)][setq(x, 2)][ladd(iter(setinter(%qv, lnum(inc(%qf), %ql, .), .), mul(%qx, %i0), ., .), .)]
 
 --
 
-&f.cost.no-phantom-dots XP Cost Databse <xpcd>=ladd(iter(setinter(%3, lnum(inc(%1), %2, .), .), mul(%0, %i0), ., .), .)
+&cost.no-phantom-dots XP Cost Databse <xpcd>=ladd(iter(setinter(%3, lnum(inc(%1), %2, .), .), mul(%0, %i0), ., .), .)
 
 
 --------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ think [setq(t, 4)][setq(x, 2)][mul(%qt, %qx)]
 
 --
 
-&f.cost.direct XP Cost Databse <xpcd>=mul(%1, %0)
+&cost.direct XP Cost Databse <xpcd>=mul(%1, %0)
 
 
 --------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ think [setq(f, 4)][setq(t, 5)][setq(x, 8)][mul(%qx, sub(%qt, %qf))]
 
 --
 
-&f.cost.single XP Cost Databse <xpcd>=mul(%0, sub(%2, %1))
+&cost.single XP Cost Databse <xpcd>=mul(%0, sub(%2, %1))
 
 
 --------------------------------------------------------------------------------

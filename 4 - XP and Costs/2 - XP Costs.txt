@@ -17,13 +17,13 @@ For all of these:
 --------------------------------------------------------------------------------
 -- Attributes ------------------------------------------------------------------
 
-&xp.attribute XP Cost Databse <xpcd>=u(f.cost.standard, 5, %1, %2)
+&xp.attribute XP Cost Databse <xpcd>=u(cost.standard, 5, %1, %2)
 
 
 --------------------------------------------------------------------------------
 -- Skills ----------------------------------------------------------------------
 
-&xp.skill XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
+&xp.skill XP Cost Databse <xpcd>=u(cost.standard, 3, %1, %2)
 &xp.skill.?.? XP Cost Databse <xpcd>=3
 
 
@@ -35,7 +35,7 @@ From Skinchangers, p. 33:
 >> point. Increasing an Aspect with variable levels
 >> is increased in the manner of other Merits
 
-&xp.aspect XP Cost Databse <xpcd>=u(f.cost.standard, 5, %1, %2)
+&xp.aspect XP Cost Databse <xpcd>=u(cost.standard, 5, %1, %2)
 
 &xp.aspect.imitate_gift.? XP Cost Databse <xpcd>=0
 
@@ -43,8 +43,8 @@ From Skinchangers, p. 33:
 --------------------------------------------------------------------------------
 -- Advantages ------------------------------------------------------------------
 
-&xp.advantage.willpower XP Cost Databse <xpcd>=u(f.cost.single, 8, %1, %2)
-&xp.advantage.morality XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)	
+&xp.advantage.willpower XP Cost Databse <xpcd>=u(cost.single, 8, %1, %2)
+&xp.advantage.morality XP Cost Databse <xpcd>=u(cost.standard, 3, %1, %2)	
 
 
 --------------------------------------------------------------------------------
@@ -58,16 +58,16 @@ From Second Sight, p. 83
 &xp.advantage.morality~thaumaturge XP Cost Databse <xpcd>=
 case(1, 
 	u(.is, %0, bio.tradition, Apostle of the Dark One), 
-	u(f.cost.standard, 4, %1, %2), 
+	u(cost.standard, 4, %1, %2), 
 
-	u(f.cost.standard, 3, %1, %2)	
+	u(cost.standard, 3, %1, %2)	
 )
 
 
 --------------------------------------------------------------------------------
 -- Merits ----------------------------------------------------------------------
 
-&xp.merit XP Cost Databse <xpcd>=u(f.cost.standard, 2, %1, %2)
+&xp.merit XP Cost Databse <xpcd>=u(cost.standard, 2, %1, %2)
 
 
 
@@ -88,8 +88,8 @@ From Winter Masques, p.107
 --------------------------------------------------------------------------------
 -- Advantages: Changeling ------------------------------------------------------
 
-&xp.advantage.clarity XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
-&xp.advantage.wyrd XP Cost Databse <xpcd>=u(f.cost.standard, 8, %1, %2)
+&xp.advantage.clarity XP Cost Databse <xpcd>=u(cost.standard, 3, %1, %2)
+&xp.advantage.wyrd XP Cost Databse <xpcd>=u(cost.standard, 8, %1, %2)
 
 
 --------------------------------------------------------------------------------
@@ -100,15 +100,15 @@ From Winter Masques, p.107
 &xp.merit.contacts~changeling XP Cost Databse <xpcd>=
 	case(1, 
 		u(.at_least, %0, merit.mantle_(spring), 3), 
-		u(f.cost.standard, 1, %1, %2), 
-		u(f.cost.standard, 2, %1, %2)
+		u(cost.standard, 1, %1, %2), 
+		u(cost.standard, 2, %1, %2)
 	)
 
 &xp.merit.allies_()~changeling XP Cost Databse <xpcd>=
 	case(1, 
 		u(.at_least, %0, merit.mantle_(spring), 3), 
-		u(f.cost.standard, 1, %1, %2), 
-		u(f.cost.standard, 2, %1, %2)
+		u(cost.standard, 1, %1, %2), 
+		u(cost.standard, 2, %1, %2)
 	)
 
 @@ Milestone Merits cannot be bought, so setting their xp to 0
@@ -129,7 +129,7 @@ From Lords of Summer, p. 45
 --------------------------------------------------------------------------------
 -- Contracts -------------------------------------------------------------------
 
-&xp.goblin_contract XP Cost Databse <xpcd>=u(f.cost.direct, 3, %2)
+&xp.goblin_contract XP Cost Databse <xpcd>=u(cost.direct, 3, %2)
 
 --
 
@@ -144,14 +144,14 @@ From Lords of Summer, p. 45
 			hastag?(%3, [u(.value, %0, bio.seeming)].general), 
 			hastag?(%3, u(.value, %0, bio.court))
 		), 
-		u(f.cost.standard, 4, %1, %2), 
+		u(cost.standard, 4, %1, %2), 
 
 @@ .. semi-affinity: kiths that allow access to a contract
 		hastag?(%3, getstat(%0/kith)), 
-		u(f.cost.standard, 5, %1, %2), 
+		u(cost.standard, 5, %1, %2), 
 
 @@ .. non-affinity: everything else
-		u(f.cost.standard, 6, %1, %2)
+		u(cost.standard, 6, %1, %2)
 	)
 
 --
@@ -176,29 +176,29 @@ From Lords of Summer, p. 45
 -- Skills: Werewolf ------------------------------------------------------------
 
 @@ Certain Lodges: New Dots x 2 instead of x 3
-&xp.skill.brawl~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.weaponry~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.athletics~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.persuasion~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.brawl~werewolf XP Cost Databse <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.weaponry~werewolf XP Cost Databse <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.athletics~werewolf XP Cost Databse <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.persuasion~werewolf XP Cost Databse <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
 
-&xp.skill.intimidation~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
-&xp.skill.streetwise~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
-&xp.skill.survival~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.intimidation~werewolf XP Cost Databse <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.streetwise~werewolf XP Cost Databse <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.survival~werewolf XP Cost Databse <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
 
 
 --------------------------------------------------------------------------------
 -- Advantages: Werewolf --------------------------------------------------------
 
-&xp.advantage.harmony XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
-&xp.advantage.primal_urge XP Cost Databse <xpcd>=u(f.cost.standard, 8, %1, %2)
+&xp.advantage.harmony XP Cost Databse <xpcd>=u(cost.standard, 3, %1, %2)
+&xp.advantage.primal_urge XP Cost Databse <xpcd>=u(cost.standard, 8, %1, %2)
 
 --------------------------------------------------------------------------------
 -- Merits: Werewolf ------------------------------------------------------------
 
-&xp.merit.pack_totem_() XP Cost Databse <xpcd>=u(f.cost.single, 3, %1, %2)
+&xp.merit.pack_totem_() XP Cost Databse <xpcd>=u(cost.single, 3, %1, %2)
 
 @@ x5 for most, x4 for Ithaeur (an auspice)
-&xp.merit.rituals XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
+&xp.merit.rituals XP Cost Databse <xpcd>=u(cost.standard, if(u(.is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
 
 
 --------------------------------------------------------------------------------
@@ -206,7 +206,7 @@ From Lords of Summer, p. 45
 
 @@ 'Ithaeur' auspice (crescent-moon) gets rites for 1 instead of 2
 
-&xp.rite XP Cost Databse <xpcd>=u(f.cost.direct, if(u(.is, %0, bio.auspice, ithaeur), 1, 2), %2)
+&xp.rite XP Cost Databse <xpcd>=u(cost.direct, if(u(.is, %0, bio.auspice, ithaeur), 1, 2), %2)
 
 
 --------------------------------------------------------------------------------
@@ -224,14 +224,14 @@ From Lords of Summer, p. 45
 			[u(.value, %0, bio.auspice)].
 			general
 		), 
-		u(f.cost.standard, 6, %1, %2), 
+		u(cost.standard, 6, %1, %2), 
 
 @@ .. semi-affinity: lodges that allow access
 		hastag?(%3, getstat(%0/lodge)), 
-		u(f.cost.standard, 7, %1, %2), 
+		u(cost.standard, 7, %1, %2), 
 
 @@ .. non-affinity: everything else
-		u(f.cost.standard, 8, %1, %2)
+		u(cost.standard, 8, %1, %2)
 	)
 
 
@@ -257,14 +257,14 @@ From Lords of Summer, p. 45
 				hastag?(%3, u(.value, %0, bio.tribe)), 
 				hastag?(%3, u(.value, %0, bio.lodge)), 
 			), 
-			u(f.cost.direct, 5, %2), 
+			u(cost.direct, 5, %2), 
 
 @@ .. "out of sync" affinity: lodges that allow access
 			hastag?(%3, getstat(%0/lodge)), 
-			u(f.cost.direct, 6, %2), 
+			u(cost.direct, 6, %2), 
 
 @@ .. non-affinity: everything else
-			u(f.cost.direct, 7, %2)
+			u(cost.direct, 7, %2)
 		), 
 @@ >> + skipped levels
 		mul(3, words(setdiff(lnum(1, %2), [edit(%1, ., %b)] %2)))
@@ -319,7 +319,7 @@ Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 			), 
 			.
 		)), 
-		u(f.cost.standard, 6, %1, %2), 
+		u(cost.standard, 6, %1, %2), 
 
 @@ minor
 		t(match(
@@ -333,10 +333,10 @@ Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 			), 
 			.
 		)), 
-		u(f.cost.standard, 8, %1, %2), 
+		u(cost.standard, 8, %1, %2), 
 
 @@ other
-		u(f.cost.standard, 7, %1, %2)
+		u(cost.standard, 7, %1, %2)
 	)
 
 
