@@ -1,7 +1,7 @@
 ################################################################################
 ## XP COST DATABASE ############################################################
 
-xp.<approximate stat path>
+xp.<stat category>
 xp.<specific stat path>
 If there's no general or no specific, it cannot be bought.
 If the XP path's value is set to 0, it cannot be bought.
@@ -33,8 +33,8 @@ Or the like? So:
 Might be easier:
 	setq( x, 
 		case( 
-			hasattr( xp.<statpath>~<template> ), xp.<statpath>:<template>, 
-			hasattr( xp.<category>~<template> ), xp.<category>:<template>, 
+			hasattr( xp.<statpath>~<template> ), xp.<statpath>~<template>, 
+			hasattr( xp.<category>~<template> ), xp.<category>~<template>, 
 			hasattr( xp.<statpath> ), xp.<statpath>, 
 			hasattr( xp.<category> ), xp.<category>, 
 			
@@ -46,6 +46,23 @@ Might be easier:
 If multiple templates need to be checked, make one attribute per template.
 No, it's not ideal. Yes, it will have to do.
 		
+
+
+================================================================================
+== LMAX/LMIN ===================================================================
+
+This version of lmax/lmin would need wiz-privileged, and I don't feel like exposing it to side-effect functions
+
+At this point the game should have lmax() and lmin() anyhow.
+
+--
+
+&.lmax XP Cost Databse <xpcd>=fold(.lmax.fold, %0)
+&.lmax.fold XP Cost Databse <xpcd>=max(%0, %1)
+
+&.lmin XP Cost Databse <xpcd>=fold(.lmin.fold, %0)
+&.lmin.fold XP Cost Databse <xpcd>=min(%0, %1)
+
 
 
 ================================================================================
@@ -444,20 +461,3 @@ Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 @@ other
 		u(f.cost.standard, 7, %1, %2)
 	)
-
-
-
-================================================================================
-== LMAX/LMIN ===================================================================
-
-This version of lmax/lmin would need wiz-privileged, and I don't feel like exposing it to side-effect functions
-
-At this point the game should have lmax() and lmin() anyhow.
-
---
-
-&.lmax XP Cost Databse <xpcd>=fold(.lmax.fold, %0)
-&.lmax.fold XP Cost Databse <xpcd>=max(%0, %1)
-
-&.lmin XP Cost Databse <xpcd>=fold(.lmin.fold, %0)
-&.lmin.fold XP Cost Databse <xpcd>=min(%0, %1)
