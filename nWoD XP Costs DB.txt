@@ -1,5 +1,5 @@
-================================================================================
-== XP COST DATABASE ============================================================
+################################################################################
+## XP COST DATABASE ############################################################
 
 xp.<approximate stat path>
 xp.<specific stat path>
@@ -17,32 +17,71 @@ Following is sent from XP:
 
 XP Cost Databse <xpcd>: #388 
 
---------------------------------------------------------------------------------
--- Set-Up Work -----------------------------------------------------------------
+The exceptions would be much easier if we could break them down by template!
+Perhaps:
+	xp.merit.contacts~changeling
+
+Or the like? So:
+	udefault( xp.<statpath>~<template>, 
+		udefault( xp.<category>~<template>, 
+			udefault( xp.<statpath>, 
+				u( xp.<category> )
+			)
+		)
+	)
+
+Might be easier:
+	setq( x, 
+		case( 
+			hasattr( xp.<statpath>~<template> ), xp.<statpath>:<template>, 
+			hasattr( xp.<category>~<template> ), xp.<category>:<template>, 
+			hasattr( xp.<statpath> ), xp.<statpath>, 
+			hasattr( xp.<category> ), xp.<category>, 
+			
+		)
+	)
+	
+	u( %qx, ... )
+
+If multiple templates need to be checked, make one attribute per template.
+No, it's not ideal. Yes, it will have to do.
+		
+
+
+================================================================================
+== CALCULATION FUNCTIONS =======================================================
 
 These mimic the functions on the DD.
+(why only mimic? why aren't we using those functions?)
 
-&f._value #388=first(u(%0/_%1), .)
-&f._at_least #388=gte(add(u(f._value, %0, %1), %3), %2)
-&f._is #388=strmatch(%2, u(f._value, %0, %1))
+--
+
+&.value XP Cost Databse <xpcd>=first(u(%0/_%1), .)
+&.at_least XP Cost Databse <xpcd>=gte(add(u(.value, %0, %1), %3), %2)
+&.is XP Cost Databse <xpcd>=strmatch(%2, u(.value, %0, %1))
+
+
+================================================================================
+== COSTS CALCULATIONS ==========================================================
+
+For all of these:
+
+	0: xp cost
+	1: from
+	2: to
+	3: stat's numeric value list (e.g., 2.4)
 
 
 --------------------------------------------------------------------------------
 -- nWoD Standard XP Cost -------------------------------------------------------
 
-think [setq(f, 0)][setq(t, 4)][setq(x, 2)][ladd(iter(lnum(inc(%qf), %qt), mul(%i0, %qx)))]
-
-@@ &f.cost.standard #388=ladd(iter(lnum(inc(%1), %2), mul(%i0, %0)))
+	( L² - F² + F + L ) / 2
 
 think [setq(f, 3)][setq(t, 4)][setq(x, 2)][setq(f, inc(%qf))][mul(add(power(%qt, 2), -[power(%qf, 2)], %qf, %qt), .5, %qx)]
 
-The formula above, ( L² - F² + F + L ) / 2, should work better.
-
 --
 
-@@ %0: xp cost, %1: from, %2: to
-
-&f.cost.standard #388=mul(add(power(%2, 2), -[power(inc(%1), 2)], inc(%1), %2), .5, %0)
+&f.cost.standard XP Cost Databse <xpcd>=mul(add(power(%2, 2), mul(power(inc(%1), 2), -1), inc(%1), %2), .5, %0)
 
 
 --------------------------------------------------------------------------------
@@ -52,19 +91,13 @@ Needs to know the entire costs list. If cost is '#', send to 'f.cost.standard' i
 
 think [setq(v, 1.3.4.5)][setq(f, 1)][setq(l, 4)][setq(x, 2)][ladd(iter(setinter(%qv, lnum(inc(%qf), %ql, .), .), mul(%qx, %i0), ., .), .)]
 
+--
 
-0: xp cost
-1: from
-2: to
-3: stat's numeric value list (e.g., 2.4)
+&f.cost.no-phantom-dots XP Cost Databse <xpcd>=ladd(iter(setinter(%3, lnum(inc(%1), %2, .), .), mul(%0, %i0), ., .), .)
 
 --
 
-&f.cost.no-phantom-dots #388=ladd(iter(setinter(%3, lnum(inc(%1), %2, .), .), mul(%0, %i0), ., .), .)
-
---
-
-think u(#388/f.cost.no-phantom-dots, 2, 0, 4, 2.4)
+think u(xpcd/f.cost.no-phantom-dots, 2, 0, 4, 2.4)
 
 
 --------------------------------------------------------------------------------
@@ -72,9 +105,9 @@ think u(#388/f.cost.no-phantom-dots, 2, 0, 4, 2.4)
 
 think [setq(t, 4)][setq(x, 2)][mul(%qt, %qx)]
 
-@@ %0: xp cost, %1: to
+--
 
-&f.cost.direct #388=mul(%1, %0)
+&f.cost.direct XP Cost Databse <xpcd>=mul(%1, %0)
 
 
 --------------------------------------------------------------------------------
@@ -82,17 +115,26 @@ think [setq(t, 4)][setq(x, 2)][mul(%qt, %qx)]
 
 think [setq(f, 4)][setq(t, 5)][setq(x, 8)][mul(%qx, sub(%qt, %qf))]
 
-@@ %0: xp cost, %1: from, %2: t0
+--
 
-&f.cost.single #388=mul(%0, sub(%2, %1))
+&f.cost.single XP Cost Databse <xpcd>=mul(%0, sub(%2, %1))
 
 
---------------------------------------------------------------------------------
--- Costs -----------------------------------------------------------------------
+
+================================================================================
+== COSTS =======================================================================
+
+For all of these:
+	0: sheet dbref
+	1: from
+	2: to
+	3: ??
+	4: list of valid values from data dictionary (e.g., 1.3.5)
+
 
 -- Simple Costs ----------------------------------------------------------------
 
-&xp.attribute #388=u(f.cost.standard, 5, %1, %2)
+&xp.attribute XP Cost Databse <xpcd>=u(f.cost.standard, 5, %1, %2)
 
 From Winter Masques, p.107
 >> Coyote: if the character possesses the Vice of Gluttony, Greed 
@@ -100,18 +142,18 @@ From Winter Masques, p.107
 >> experience point rate (new dots x 4).
 >> NOTE: House Rule has negated this benefit.
 
-&xp.skill #388=u(f.cost.standard, 3, %1, %2)
-&xp.skill.?.? #388=3
+&xp.skill XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
+&xp.skill.?.? XP Cost Databse <xpcd>=3
 
 @@ Certain Lodges: New Dots x 2 instead of x 3
-&xp.skill.brawl #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.weaponry #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.athletics #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.persuasion #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.brawl~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.weaponry~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.athletics~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.persuasion~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
 
-&xp.skill.intimidation #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
-&xp.skill.streetwise #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
-&xp.skill.survival #388=u(f.cost.standard, if(u(f._is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.intimidation~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.streetwise~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.survival~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
 
 
 
@@ -119,73 +161,63 @@ From Skinchangers, p. 33:
 >> Other Aspects cost five experience points per
 >> point. Increasing an Aspect with variable levels
 >> is increased in the manner of other Merits
-&xp.aspect #388=u(f.cost.standard, 5, %1, %2)
+&xp.aspect XP Cost Databse <xpcd>=u(f.cost.standard, 5, %1, %2)
 
-&xp.aspect.imitate_gift.? #388=0
+&xp.aspect.imitate_gift.? XP Cost Databse <xpcd>=0
 
 
 -- Advantage Costs -------------------------------------------------------------
 
-&xp.advantage.willpower #388=u(f.cost.single, 8, %1, %2)
+&xp.advantage.willpower XP Cost Databse <xpcd>=u(f.cost.single, 8, %1, %2)
 
 --
 
-@@ &xp.advantage.morality #388=u(f.cost.standard, 3, %1, %2)
+@@ &xp.advantage.morality XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
 
-&xp.advantage.morality #388=
-case(1, 
-	u(f._is, %0, bio.tradition, Apostle of the Dark One), 
-	u(f.cost.standard, 4, %1, %2), 
-
-	u(f.cost.standard, 3, %1, %2)	
-)
+&xp.advantage.morality XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)	
 
 From Second Sight, p. 83
 >> Regaining lost Morality is challenging for apostles. Experience points
 >> required to raise Morality equal new dots x 4 rather than the usual three
 >> multiplier.
 
+&xp.advantage.morality~thaumaturge XP Cost Databse <xpcd>=
+case(1, 
+	u(.is, %0, bio.tradition, Apostle of the Dark One), 
+	u(f.cost.standard, 4, %1, %2), 
+
+	u(f.cost.standard, 3, %1, %2)	
+)
+
 --
 
-&xp.advantage.clarity #388=u(f.cost.standard, 3, %1, %2)
-
-&xp.advantage.wyrd #388=u(f.cost.standard, 8, %1, %2)
+&xp.advantage.clarity XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
+&xp.advantage.wyrd XP Cost Databse <xpcd>=u(f.cost.standard, 8, %1, %2)
 
 --
 
-&xp.advantage.harmony #388=u(f.cost.standard, 3, %1, %2)
-
-&xp.advantage.primal_urge #388=u(f.cost.standard, 8, %1, %2)
+&xp.advantage.harmony XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
+&xp.advantage.primal_urge XP Cost Databse <xpcd>=u(f.cost.standard, 8, %1, %2)
 
 
 -- Merit Costs -----------------------------------------------------------------
 
-&xp.merit #388=u(f.cost.standard, 2, %1, %2)
-
---
-
-'Skip Phantom Dots' merit costs:
-
-&xp.merit #388=
-	if(strmatch(%4, #), 
-		u(f.cost.standard, 2, %1, %2), 
-		u(f.cost.no-phantom-dots, 2, %1, %2, %4)
-	)
+&xp.merit XP Cost Databse <xpcd>=u(f.cost.standard, 2, %1, %2)
 
 --
 
 @@ spring mantle 3+ has a discount on contacts 
 
-&xp.merit.contacts #388=
+&xp.merit.contacts~changeling XP Cost Databse <xpcd>=
 	case(1, 
-		u(f._at_least, %0, merit.mantle_(spring), 3), 
+		u(.at_least, %0, merit.mantle_(spring), 3), 
 		u(f.cost.standard, 1, %1, %2), 
 		u(f.cost.standard, 2, %1, %2)
 	)
 
-&xp.merit.allies_() #388=
+&xp.merit.allies_()~changeling XP Cost Databse <xpcd>=
 	case(1, 
-		u(f._at_least, %0, merit.mantle_(spring), 3), 
+		u(.at_least, %0, merit.mantle_(spring), 3), 
 		u(f.cost.standard, 1, %1, %2), 
 		u(f.cost.standard, 2, %1, %2)
 	)
@@ -194,7 +226,7 @@ From Second Sight, p. 83
 
 @@ Milestone Merits cannot be bought, so setting their xp to 0
 
-&xp.merit.milestone #388=0
+&xp.merit.milestone XP Cost Databse <xpcd>=0
 
 --
 
@@ -207,25 +239,25 @@ From Lords of Summer, p. 45
 
 --
 
-&xp.merit.pack_totem_() #388=u(f.cost.single, 3, %1, %2)
+&xp.merit.pack_totem_() XP Cost Databse <xpcd>=u(f.cost.single, 3, %1, %2)
 
 --
 
 @@ x5 for most, x4 for Ithaeur (an auspice)
-&xp.merit.rituals #388=u(f.cost.standard, if(u(f._is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
+&xp.merit.rituals XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
 
 --
 
 @@ Wyrd Evolution is Dual Kith post-chargen
 @@ 1st new kith is 10 xp, 2nd new kith is 15 xp
 
-&xp.merit.wyrd_evolution #388=ladd(iter(lnum(inc(%1), %2), add(5, mul(%i0, 5))))
+&xp.merit.wyrd_evolution XP Cost Databse <xpcd>=ladd(iter(lnum(inc(%1), %2), add(5, mul(%i0, 5))))
 
 
 
 -- Contract Costs --------------------------------------------------------------
 
-&xp.goblin_contract #388=u(f.cost.direct, 3, %2)
+&xp.goblin_contract XP Cost Databse <xpcd>=u(f.cost.direct, 3, %2)
 
 --
 
@@ -233,12 +265,12 @@ From Lords of Summer, p. 45
 @@ kith = semi-affinity (a house-rule based on Manikin and Shadowsoul)
 @@ otherwise = non-affinity
 
-&xp.contract #388=
+&xp.contract XP Cost Databse <xpcd>=
 	case(1, 
 @@ .. affinity: seeming, general (universal), or court mantle
 		or(
-			hastag?(%3, [u(f._value, %0, bio.seeming)].general), 
-			hastag?(%3, u(f._value, %0, bio.court))
+			hastag?(%3, [u(.value, %0, bio.seeming)].general), 
+			hastag?(%3, u(.value, %0, bio.court))
 		), 
 		u(f.cost.standard, 4, %1, %2), 
 
@@ -252,17 +284,17 @@ From Lords of Summer, p. 45
 
 --
 
-@@ "semi-affinity" on the half-price rule rounds up
 @@ this only works 1 dot at a time, so we need to hit it a number of times
 @@ We concentrate on the 'to' numbers.  1 -> 3 would look at 2 then 3.
+@@ "out-of-sync" or "semi-affinity" on the half-price rule rounds up
 
-&xp.contract.elements_() #388=
+%cost.contract-with-instance XP Cost Databse <xpcd>=
 ladd(iter(
 	lnum(inc(%1), %2), 
 	case(1, 
 		lte(%i0, 
-			u(f.lmax, 
-				iter(lattr(%0/_contract.elements_(*)), first(u(%0/%i0), .))
+			u(.lmax, 
+				iter(lattr(%0/_contract.%4_(*)), first(u(%0/%i0), .))
 			)
 		), 
 		ceil(fdiv(u(xp.contract, %0, dec(%i0), %i0, %3), 2)), 
@@ -271,37 +303,14 @@ ladd(iter(
 ))
 
 
-&xp.contract.fang_and_talon_() #388=
-ladd(iter(
-	lnum(inc(%1), %2), 
-	case(1, 
-		lte(%i0, 
-			u(f.lmax, 
-				iter(
-					lattr(%0/_contract.fang_and_talon_(*)), 
-					first(u(%0/%i0), .)
-				)
-			)
-		), 
-		ceil(fdiv(u(xp.contract, %0, dec(%i0), %i0, %3), 2)), 
-		u(xp.contract, %0, dec(%i0), %i0, %3)
-	)
-))
+&xp.contract.elements_() XP Cost Databse <xpcd>=
+	u( cost.contract-with-instance, %0, %1, %2, %3, elements )
 
-&xp.contract.communion_() #388=
-ladd(iter(
-	lnum(inc(%1), %2), 
-	case(1, 
-		lte(%i0, 
-			u(f.lmax, 
-				iter(lattr(%0/_contract.communion_(*)), first(u(%0/%i0), .))
-			)
-		), 
-		ceil(fdiv(u(xp.contract, %0, dec(%i0), %i0, %3), 2)), 
-		u(xp.contract, %0, dec(%i0), %i0, %3)
-	)
-))
+&xp.contract.fang_and_talon_() XP Cost Databse <xpcd>=
+	u( cost.contract-with-instance, %0, %1, %2, %3, fang_and_talon )
 
+&xp.contract.communion_() XP Cost Databse <xpcd>=
+	u( cost.contract-with-instance, %0, %1, %2, %3, communion )
 
 @@ maybe we can do this as: xp.contract.?_(), but we'll see
 
@@ -311,7 +320,7 @@ ladd(iter(
 
 @@ 'Ithaeur' auspice (crescent-moon) gets rites for 1 instead of 2
 
-&xp.rite #388=u(f.cost.direct, if(u(f._is, %0, bio.auspice, ithaeur), 1, 2), %2)
+&xp.rite XP Cost Databse <xpcd>=u(f.cost.direct, if(u(.is, %0, bio.auspice, ithaeur), 1, 2), %2)
 
 
 -- Renown Costs ----------------------------------------------------------------
@@ -320,12 +329,12 @@ ladd(iter(
 @@ Semi-Affinity: Some Lodges
 @@ Non-Affinity: All others
 
-&xp.renown #388=
+&xp.renown XP Cost Databse <xpcd>=
 	case(1, 
 @@ .. affinity: tribe, auspice, or general (universal)
 		hastag?(%3, 
-			[u(f._value, %0, bio.tribe)].
-			[u(f._value, %0, bio.auspice)].
+			[u(.value, %0, bio.tribe)].
+			[u(.value, %0, bio.auspice)].
 			general
 		), 
 		u(f.cost.standard, 6, %1, %2), 
@@ -351,14 +360,14 @@ ladd(iter(
 2: level bought
 3: stat name to find tags for
 
-&xp.gift #388=
+&xp.gift XP Cost Databse <xpcd>=
 	add(
 		case(1, 
 @@ .. affinity: tribe, auspice, lodge, or general (universal)
 			or(
-				hastag?(%3, [u(f._value, %0, bio.auspice)].general), 
-				hastag?(%3, u(f._value, %0, bio.tribe)), 
-				hastag?(%3, u(f._value, %0, bio.lodge)), 
+				hastag?(%3, [u(.value, %0, bio.auspice)].general), 
+				hastag?(%3, u(.value, %0, bio.tribe)), 
+				hastag?(%3, u(.value, %0, bio.lodge)), 
 			), 
 			u(f.cost.direct, 5, %2), 
 
@@ -378,12 +387,12 @@ ladd(iter(
 
 Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 
-&xp.gift.insight #388=
+&xp.gift.insight XP Cost Databse <xpcd>=
 	sub(
 		u(xp.gift, %0, %1, %2, %3), 
 		if(
 			and(
-				strmatch(u(f._value, %0, bio.lodge), Prophecy), 
+				strmatch(u(.value, %0, bio.lodge), Prophecy), 
 				eq(%2, 5)
 			), 
 			5, 
@@ -402,7 +411,7 @@ Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 
 @@ 1 if arcana (%0) is major/minor, 0 otherwise
 
-&xp.arcanum #388=
+&xp.arcanum XP Cost Databse <xpcd>=
 	case(1, 
 @@ major
 		t(match(
@@ -437,13 +446,18 @@ Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 	)
 
 
--=-=-=-=-=-=-=-=-=-=-=-=-=
 
+================================================================================
+== LMAX/LMIN ===================================================================
 
 This version of lmax/lmin would need wiz-privileged, and I don't feel like exposing it to side-effect functions
 
-&f.lmax #388=fold(f.lmax.fold, %0)
-&f.lmax.fold #388=max(%0, %1)
+At this point the game should have lmax() and lmin() anyhow.
 
-&f.lmin #388=fold(f.lmin.fold, %0)
-&f.lmin.fold #388=min(%0, %1)
+--
+
+&.lmax XP Cost Databse <xpcd>=fold(.lmax.fold, %0)
+&.lmax.fold XP Cost Databse <xpcd>=max(%0, %1)
+
+&.lmin XP Cost Databse <xpcd>=fold(.lmin.fold, %0)
+&.lmin.fold XP Cost Databse <xpcd>=min(%0, %1)
