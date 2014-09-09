@@ -1,0 +1,342 @@
+################################################################################
+## XP COSTS ####################################################################
+
+For all of these:
+	0: sheet dbref
+	1: from
+	2: to
+	3: ??
+	4: list of valid values from data dictionary (e.g., 1.3.5) (????)
+	(are we sure that %4 isn't really supposed to be %3?)
+
+
+================================================================================
+== COSTS: CORE =================================================================
+
+
+--------------------------------------------------------------------------------
+-- Attributes ------------------------------------------------------------------
+
+&xp.attribute XP Cost Databse <xpcd>=u(f.cost.standard, 5, %1, %2)
+
+
+--------------------------------------------------------------------------------
+-- Skills ----------------------------------------------------------------------
+
+&xp.skill XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
+&xp.skill.?.? XP Cost Databse <xpcd>=3
+
+
+--------------------------------------------------------------------------------
+-- Aspects ---------------------------------------------------------------------
+
+From Skinchangers, p. 33:
+>> Other Aspects cost five experience points per
+>> point. Increasing an Aspect with variable levels
+>> is increased in the manner of other Merits
+
+&xp.aspect XP Cost Databse <xpcd>=u(f.cost.standard, 5, %1, %2)
+
+&xp.aspect.imitate_gift.? XP Cost Databse <xpcd>=0
+
+
+--------------------------------------------------------------------------------
+-- Advantages ------------------------------------------------------------------
+
+&xp.advantage.willpower XP Cost Databse <xpcd>=u(f.cost.single, 8, %1, %2)
+&xp.advantage.morality XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)	
+
+
+--------------------------------------------------------------------------------
+-- Advantages: Second Sight ----------------------------------------------------
+
+From Second Sight, p. 83
+>> Regaining lost Morality is challenging for apostles. Experience points
+>> required to raise Morality equal new dots x 4 rather than the usual three
+>> multiplier.
+
+&xp.advantage.morality~thaumaturge XP Cost Databse <xpcd>=
+case(1, 
+	u(.is, %0, bio.tradition, Apostle of the Dark One), 
+	u(f.cost.standard, 4, %1, %2), 
+
+	u(f.cost.standard, 3, %1, %2)	
+)
+
+
+--------------------------------------------------------------------------------
+-- Merits ----------------------------------------------------------------------
+
+&xp.merit XP Cost Databse <xpcd>=u(f.cost.standard, 2, %1, %2)
+
+
+
+================================================================================
+== COSTS: CHANGELING ===========================================================
+
+
+--------------------------------------------------------------------------------
+-- Skills: Changeling ----------------------------------------------------------
+
+From Winter Masques, p.107
+>> Coyote: if the character possesses the Vice of Gluttony, Greed 
+>> or Lust, the character may then buy Manipulation dots at a reduced
+>> experience point rate (new dots x 4).
+>> NOTE: House Rule has negated this benefit.
+
+
+--------------------------------------------------------------------------------
+-- Advantages: Changeling ------------------------------------------------------
+
+&xp.advantage.clarity XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
+&xp.advantage.wyrd XP Cost Databse <xpcd>=u(f.cost.standard, 8, %1, %2)
+
+
+--------------------------------------------------------------------------------
+-- Merits: Changeling ----------------------------------------------------------
+
+@@ spring mantle 3+ has a discount on contacts 
+
+&xp.merit.contacts~changeling XP Cost Databse <xpcd>=
+	case(1, 
+		u(.at_least, %0, merit.mantle_(spring), 3), 
+		u(f.cost.standard, 1, %1, %2), 
+		u(f.cost.standard, 2, %1, %2)
+	)
+
+&xp.merit.allies_()~changeling XP Cost Databse <xpcd>=
+	case(1, 
+		u(.at_least, %0, merit.mantle_(spring), 3), 
+		u(f.cost.standard, 1, %1, %2), 
+		u(f.cost.standard, 2, %1, %2)
+	)
+
+@@ Milestone Merits cannot be bought, so setting their xp to 0
+&xp.merit.milestone XP Cost Databse <xpcd>=0
+
+@@ Wyrd Evolution is Dual Kith post-chargen
+@@ 1st new kith is 10 xp, 2nd new kith is 15 xp
+&xp.merit.wyrd_evolution XP Cost Databse <xpcd>=ladd(iter(lnum(inc(%1), %2), add(5, mul(%i0, 5))))
+
+From Lords of Summer, p. 45
+>> Bodhisattvas of the Broken Cage: Because of the entitlement’s reputation as
+>> flighty, gaining Court Goodwill with other Courts is difficult for the
+>> Bodhisattvas. Court Goodwill gained after joining the Bodhisattvas of the
+>> Broken Cage costs 3 experience points per new dot level rather than two.
+>> NOTE: This Entitlement is not yet in.
+
+
+--------------------------------------------------------------------------------
+-- Contracts -------------------------------------------------------------------
+
+&xp.goblin_contract XP Cost Databse <xpcd>=u(f.cost.direct, 3, %2)
+
+--
+
+@@ seeming/general/court = affinity
+@@ kith = semi-affinity (a house-rule based on Manikin and Shadowsoul)
+@@ otherwise = non-affinity
+
+&xp.contract XP Cost Databse <xpcd>=
+	case(1, 
+@@ .. affinity: seeming, general (universal), or court mantle
+		or(
+			hastag?(%3, [u(.value, %0, bio.seeming)].general), 
+			hastag?(%3, u(.value, %0, bio.court))
+		), 
+		u(f.cost.standard, 4, %1, %2), 
+
+@@ .. semi-affinity: kiths that allow access to a contract
+		hastag?(%3, getstat(%0/kith)), 
+		u(f.cost.standard, 5, %1, %2), 
+
+@@ .. non-affinity: everything else
+		u(f.cost.standard, 6, %1, %2)
+	)
+
+--
+
+&xp.contract.elements_() XP Cost Databse <xpcd>=
+	u( cost.contract-with-instance, %0, %1, %2, %3, elements )
+
+&xp.contract.fang_and_talon_() XP Cost Databse <xpcd>=
+	u( cost.contract-with-instance, %0, %1, %2, %3, fang_and_talon )
+
+&xp.contract.communion_() XP Cost Databse <xpcd>=
+	u( cost.contract-with-instance, %0, %1, %2, %3, communion )
+
+@@ maybe we can do this as: xp.contract.?_(), but we'll see
+
+
+
+================================================================================
+== COSTS: WEREWOLF =============================================================
+
+--------------------------------------------------------------------------------
+-- Skills: Werewolf ------------------------------------------------------------
+
+@@ Certain Lodges: New Dots x 2 instead of x 3
+&xp.skill.brawl~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.weaponry~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.athletics~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.persuasion~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+
+&xp.skill.intimidation~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.streetwise~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.survival~werewolf XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+
+
+--------------------------------------------------------------------------------
+-- Advantages: Werewolf --------------------------------------------------------
+
+&xp.advantage.harmony XP Cost Databse <xpcd>=u(f.cost.standard, 3, %1, %2)
+&xp.advantage.primal_urge XP Cost Databse <xpcd>=u(f.cost.standard, 8, %1, %2)
+
+--------------------------------------------------------------------------------
+-- Merits: Werewolf ------------------------------------------------------------
+
+&xp.merit.pack_totem_() XP Cost Databse <xpcd>=u(f.cost.single, 3, %1, %2)
+
+@@ x5 for most, x4 for Ithaeur (an auspice)
+&xp.merit.rituals XP Cost Databse <xpcd>=u(f.cost.standard, if(u(.is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
+
+
+--------------------------------------------------------------------------------
+-- Rites -----------------------------------------------------------------------
+
+@@ 'Ithaeur' auspice (crescent-moon) gets rites for 1 instead of 2
+
+&xp.rite XP Cost Databse <xpcd>=u(f.cost.direct, if(u(.is, %0, bio.auspice, ithaeur), 1, 2), %2)
+
+
+--------------------------------------------------------------------------------
+-- Renown ----------------------------------------------------------------------
+
+@@ Affinity: Tribe or Auspice
+@@ Semi-Affinity: Some Lodges
+@@ Non-Affinity: All others
+
+&xp.renown XP Cost Databse <xpcd>=
+	case(1, 
+@@ .. affinity: tribe, auspice, or general (universal)
+		hastag?(%3, 
+			[u(.value, %0, bio.tribe)].
+			[u(.value, %0, bio.auspice)].
+			general
+		), 
+		u(f.cost.standard, 6, %1, %2), 
+
+@@ .. semi-affinity: lodges that allow access
+		hastag?(%3, getstat(%0/lodge)), 
+		u(f.cost.standard, 7, %1, %2), 
+
+@@ .. non-affinity: everything else
+		u(f.cost.standard, 8, %1, %2)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Gifts -----------------------------------------------------------------------
+
+@@ Gift levels can be purchased directly.
+@@ Affinity: Tribe or Auspice
+@@ Semi-Affinity: Some Lodges
+@@ Non-Affinity: All others
+
+0: (player ?) dbref
+1: level from (used for determining 'out of order')
+2: level bought
+3: stat name to find tags for
+
+&xp.gift XP Cost Databse <xpcd>=
+	add(
+		case(1, 
+@@ .. affinity: tribe, auspice, lodge, or general (universal)
+			or(
+				hastag?(%3, [u(.value, %0, bio.auspice)].general), 
+				hastag?(%3, u(.value, %0, bio.tribe)), 
+				hastag?(%3, u(.value, %0, bio.lodge)), 
+			), 
+			u(f.cost.direct, 5, %2), 
+
+@@ .. "out of sync" affinity: lodges that allow access
+			hastag?(%3, getstat(%0/lodge)), 
+			u(f.cost.direct, 6, %2), 
+
+@@ .. non-affinity: everything else
+			u(f.cost.direct, 7, %2)
+		), 
+@@ >> + skipped levels
+		mul(3, words(setdiff(lnum(1, %2), [edit(%1, ., %b)] %2)))
+	)
+
+
+--
+
+Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
+
+&xp.gift.insight XP Cost Databse <xpcd>=
+	sub(
+		u(xp.gift, %0, %1, %2, %3), 
+		if(
+			and(
+				strmatch(u(.value, %0, bio.lodge), Prophecy), 
+				eq(%2, 5)
+			), 
+			5, 
+			0
+		)
+	)
+
+
+
+================================================================================
+== COSTS: MAGE =================================================================
+
+
+--------------------------------------------------------------------------------
+-- Arcanum ---------------------------------------------------------------------
+
+• Acanthus: Ruling: Fate/Time, Inferior: Forces
+• Mastigos: Ruling: Mind/Space, Inferior: Matter
+• Moros - Ruling: Death/Matter, Inferior: Spirit
+• Obrimos - Ruling: Prime/Forces, Inferior: Death
+• Thyrsus - Ruling: Life/Spirit, Inferior: Mind
+
+@@ 1 if arcana (%0) is major/minor, 0 otherwise
+
+&xp.arcanum XP Cost Databse <xpcd>=
+	case(1, 
+@@ major
+		t(match(
+			%3, 
+			case(get(%0/_bio.path), 
+				Acanthus, Fate.Time, 
+				Mastigos, Mind.Space, 
+				Moros, Death.Matter, 
+				Obrimos, Prime.Forces, 
+				Thyrsus, Life.Spirit
+			), 
+			.
+		)), 
+		u(f.cost.standard, 6, %1, %2), 
+
+@@ minor
+		t(match(
+			%3, 
+			case(get(%0/_bio.path), 
+				Acanthus, Forces, 
+				Mastigos, Matter, 
+				Moros, Spirit, 
+				Obrimos, Death, 
+				Thyrsus, Mind
+			), 
+			.
+		)), 
+		u(f.cost.standard, 8, %1, %2), 
+
+@@ other
+		u(f.cost.standard, 7, %1, %2)
+	)
+
+

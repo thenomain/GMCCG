@@ -1,3 +1,6 @@
+DEPRECIATED -- look in the 'xp and costs' folder.
+
+
 ################################################################################
 ## XP COST DATABASE ############################################################
 
@@ -6,7 +9,7 @@ xp.<specific stat path>
 If there's no general or no specific, it cannot be bought.
 If the XP path's value is set to 0, it cannot be bought.
 
-Buying XP must also follow Prerequeisites.
+Buying stats must also follow Prerequeisites.
 
 Following is sent from XP: 
 	%0: dbref of sheet
@@ -46,6 +49,10 @@ Might be easier:
 If multiple templates need to be checked, make one attribute per template.
 No, it's not ideal. Yes, it will have to do.
 		
+
+
+*** NOTE: Change 'f.cost.xxx' to simply 'cost.xxx'.
+
 
 
 ================================================================================
