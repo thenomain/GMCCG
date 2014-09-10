@@ -42,14 +42,14 @@
 
 &merit.predator's_bearing DD=2
 &tags.merit.predator's_bearing DD=social
-&prerequisite.merit.predator's_bearing DD=u(_has_not, %0, merit.socially_small)
+&prerequisite.merit.predator's_bearing DD=u(.has_not, %0, merit.socially_small)
 &prereq-text.merit.predator's_bearing DD=Does not have the Socially Small merit
 @@ always on: add to +look
 &page.merit.predator's_bearing SR=Skin.20
 
 &merit.socially_small DD=2
 &tags.merit.socially_small DD=social
-&prerequisite.merit.socially_small DD=u(_has_not, %0, merit.predator's_bearing)
+&prerequisite.merit.socially_small DD=u(.has_not, %0, merit.predator's_bearing)
 &prereq-text.merit.socially_small DD=Does not have the Predator's Bearing merit
 @@ always on: add to +look
 &page.merit.socially_small SR=Skin.21
@@ -66,7 +66,7 @@
 &tags.advantage.supernatural_tolerance DD=power level.skinthief
 &default.advantage.supernatural_tolerance DD=1
 
-&advantage.essence DD=[if(u(_has, %0, aspect.increased_essence), 6, 3)]
+&advantage.essence DD=[if(u(.has, %0, aspect.increased_essence), 6, 3)]
 &tags.advantage.essence DD=derived.energy.skinthief
 &default.advantage.essence DD=[u(#188/advantage.essence, %!)]
 

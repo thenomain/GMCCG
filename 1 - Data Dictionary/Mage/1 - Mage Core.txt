@@ -58,7 +58,7 @@ Work in progress.
 @@ 1-10: table on p.76
 @@ a: arcana levels
 
-&_arcana_check dd=
+&.arcana_check dd=
 localize(
 
 @@ >> the table, by gnosis
@@ -99,62 +99,57 @@ localize(
 	[gte(r(right(u(%0/_advantage.gnosis), 1)), %qa)]
 )
 
---
-
-@@ .. setting to null must always be ok in "prereq-other" check ..
-
-&_arcana_check dd=[localize([setq(1, 3333222111)][setq(2, 4433322211)][setq(3, 5443332221)][setq(4, 5544333222)][setq(5, 5554433322)][setq(6, 6555443332)][setq(7, 6655544333)][setq(8, 6665554433)][setq(9, 6666555443)][setq(0, 6666655544)][setq(a, ljust(edit(revwords(sort([add(first(u(%0/_%1), .), %2)] [iter(setdiff(lattr(%0/_arcanum.*), _%1), first(u(%0/%i0), .))])), %b, ), 10, 0))][gte(r(right(u(%0/_advantage.gnosis), 1)), %qa)])]
 
 @@ -- ARCANUM: MAGE CORE -------------------------------------------------------
 
 &arcanum.death dd=1.2.3.4.5.6
 &tags.arcanum.death dd=mage
-&prerequisite.arcanum.death dd=u(_arcana_check, %0, arcanum.death, %2)
+&prerequisite.arcanum.death dd=u(.arcana_check, %0, arcanum.death, %2)
 &prereq-text.arcanum.death dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.fate dd=1.2.3.4.5.6
 &tags.arcanum.fate dd=mage
-&prerequisite.arcanum.fate dd=u(_arcana_check, %0, arcanum.fate, %2)
+&prerequisite.arcanum.fate dd=u(.arcana_check, %0, arcanum.fate, %2)
 &prereq-text.arcanum.fate dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.forces dd=1.2.3.4.5.6
 &tags.arcanum.forces dd=mage
-&prerequisite.arcanum.forces dd=u(_arcana_check, %0, arcanum.forces, %2)
+&prerequisite.arcanum.forces dd=u(.arcana_check, %0, arcanum.forces, %2)
 &prereq-text.arcanum.forces dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.life dd=1.2.3.4.5.6
 &tags.arcanum.life dd=mage
-&prerequisite.arcanum.life dd=u(_arcana_check, %0, arcanum.life, %2)
+&prerequisite.arcanum.life dd=u(.arcana_check, %0, arcanum.life, %2)
 &prereq-text.arcanum.life dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.matter dd=1.2.3.4.5.6
 &tags.arcanum.matter dd=mage
-&prerequisite.arcanum.matter dd=u(_arcana_check, %0, arcanum.matter, %2)
+&prerequisite.arcanum.matter dd=u(.arcana_check, %0, arcanum.matter, %2)
 &prereq-text.arcanum.matter dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.mind dd=1.2.3.4.5.6
 &tags.arcanum.mind dd=mage
-&prerequisite.arcanum.mind dd=u(_arcana_check, %0, arcanum.mind, %2)
+&prerequisite.arcanum.mind dd=u(.arcana_check, %0, arcanum.mind, %2)
 &prereq-text.arcanum.mind dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.prime dd=1.2.3.4.5.6
 &tags.arcanum.prime dd=mage
-&prerequisite.arcanum.prime dd=u(_arcana_check, %0, arcanum.prime, %2)
+&prerequisite.arcanum.prime dd=u(.arcana_check, %0, arcanum.prime, %2)
 &prereq-text.arcanum.prime dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.spirit dd=1.2.3.4.5.6
 &tags.arcanum.spirit dd=mage
-&prerequisite.arcanum.spirit dd=u(_arcana_check, %0, arcanum.spirit, %2)
+&prerequisite.arcanum.spirit dd=u(.arcana_check, %0, arcanum.spirit, %2)
 &prereq-text.arcanum.spirit dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.space dd=1.2.3.4.5.6
 &tags.arcanum.space dd=mage
-&prerequisite.arcanum.space dd=u(_arcana_check, %0, arcanum.space, %2)
+&prerequisite.arcanum.space dd=u(.arcana_check, %0, arcanum.space, %2)
 &prereq-text.arcanum.space dd=Arcana levels must conform to chart on p. 76
 
 &arcanum.time dd=1.2.3.4.5.6
 &tags.arcanum.time dd=mage
-&prerequisite.arcanum.time dd=u(_arcana_check, %0, arcanum.time, %2)
+&prerequisite.arcanum.time dd=u(.arcana_check, %0, arcanum.time, %2)
 &prereq-text.arcanum.time dd=Arcana levels must conform to chart on p. 76
 
 
@@ -198,8 +193,8 @@ localize(
 @fo me=&tags.merit.library_() dd=mage.[get(dd/tags.merit.library_())]
 &prerequisite.merit.library_() dd=
 	or(
-		u(_is, %0, bio.template, Mage), 
-		u(_at_most, %0, merit.library, 3, %2)
+		u(.is, %0, bio.template, Mage), 
+		u(.at_most, %0, merit.library, 3, %2)
 	)
 &prereq-text.merit.library_() dd=Thaumaturges may take only to 3
 

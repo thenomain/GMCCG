@@ -15,7 +15,7 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.astral_projection dd=3
 &tags.merit.astral_projection dd=psychic.esp
-&prerequisite.merit.astral_projection dd=and(u(_has, %0, merit.clairvoyance), u(_has_not, %0, merit.clairvoyance.uncontrolled))
+&prerequisite.merit.astral_projection dd=and(u(.has, %0, merit.clairvoyance), u(.has_not, %0, merit.clairvoyance.uncontrolled))
 &prereq-text.merit.astral_projection dd=Clairvoyance but not if Uncontrolled
 
 
@@ -25,19 +25,19 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.dowsing dd=1
 &tags.merit.dowsing dd=psychic.esp
-&prerequisite.merit.dowsing dd=u(_has_one_of, %0, merit.clairvoyance merit.channeling_(cayce) merit.channeling_(spirit))
+&prerequisite.merit.dowsing dd=u(.has_one_of, %0, merit.clairvoyance merit.channeling_(cayce) merit.channeling_(spirit))
 &prereq-text.merit.dowsing dd=Clairvoyance, Channeling (Cayce), or Channeling (Spirit)
 
 
 &merit.dream_travel dd=1.2.3.4.5
 &tags.merit.dream_travel dd=psychic.esp
-&prerequisite.merit.dream_travel dd=u(_has_all_of, %0, merit.astral_projection merit.mind_reading merit.thought_projection)
+&prerequisite.merit.dream_travel dd=u(.has_all_of, %0, merit.astral_projection merit.mind_reading merit.thought_projection)
 &prereq-text.merit.dream_travel dd=Astral Projection, Mind Reading, and Thought Projection
 
 
 &merit.postcognition dd=1.3
 &tags.merit.postcognition dd=psychic.esp
-&prerequisite.merit.postcognition dd=or(u(_at_least, %0, merit.postcognition, 3, %2), u(_has, %0, merit.precognition))
+&prerequisite.merit.postcognition dd=or(u(.at_least, %0, merit.postcognition, 3, %2), u(.has, %0, merit.precognition))
 &prereq-text.merit.postcognition dd=1 if Precognition, 3 otherwise
 
 
@@ -56,7 +56,7 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.channeling_() dd=3|Cayce.Past Life.Spirit
 &tags.merit.channeling_() dd=psychic.mediumist
-&prerequisite.merit.channeling_() dd=or(not(strmatch(%1, Spirit)), u(_has, %0, merit.ghost_calling))
+&prerequisite.merit.channeling_() dd=or(not(strmatch(%1, Spirit)), u(.has, %0, merit.ghost_calling))
 &prereq-text.merit.channeling_() dd=Ghost-Calling for Spirit, otherwise none
 
 
@@ -75,25 +75,25 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.cryokinesis dd=1.2.3.4.5|Emotional Cryokinesis
 &tags.merit.cryokinesis dd=psychic.psychokinetic
-&prerequisite.merit.cryokinesis dd=u(_at_most, %0, merit.cryokinesis, u(_min_of, %0, attribute.resolve attribute.stamina), %2)
+&prerequisite.merit.cryokinesis dd=u(.at_most, %0, merit.cryokinesis, u(.min_of, %0, attribute.resolve attribute.stamina), %2)
 &prereq-text.merit.cryokinesis dd=No more than the lower of Resolve or Stamina
 
 
 &merit.plant_empathy dd=1
 &tags.merit.plant_empathy dd=psychic.psychokinetic
-&prerequisite.merit.plant_empathy dd=u(_has, %0, merit.biokinesis)
+&prerequisite.merit.plant_empathy dd=u(.has, %0, merit.biokinesis)
 &prereq-text.merit.plant_empathy dd=Biokinesis 1+
 
 
 &merit.psychic_healing dd=3.5|Empathic Healing.Faith Healer.New Age Healing
 &tags.merit.psychic_healing dd=psychic.psychokinetic
-&prerequisite.merit.psychic_healing dd=u(_at_least, %0, merit.biokinesis)
+&prerequisite.merit.psychic_healing dd=u(.at_least, %0, merit.biokinesis)
 &prereq-text.merit.psychic_healing dd=Biokinesis 3+
 
 
 &merit.psychic_vampirism dd=4.5
 &tags.merit.psychic_vampirism dd=psychic.psychokinetic
-&prerequisite.merit.psychic_vampirism dd=u(_at_most_stat, %0, merit.psychic_vampirism, merit.biokinesis, %2)
+&prerequisite.merit.psychic_vampirism dd=u(.at_most_stat, %0, merit.psychic_vampirism, merit.biokinesis, %2)
 &prereq-text.merit.psychic_vampirism dd=May not be higher than Biokinesis
 
 
@@ -103,26 +103,26 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.pyrokinetic_immunity dd=2.4
 &tags.merit.pyrokinetic_immunity dd=psychic.psychokinetic
-&prerequisite.merit.pyrokinetic_immunity dd=u(_has, %0, merit.pyrokinesis)
+&prerequisite.merit.pyrokinetic_immunity dd=u(.has, %0, merit.pyrokinesis)
 &prereq-text.merit.pyrokinetic_immunity dd=Pyrokinesis 1+
 
 
 &merit.pyrokinetic_shaping dd=5
 &tags.merit.pyrokinetic_shaping dd=psychic.psychokinetic
-&prerequisite.merit.pyrokinetic_shaping dd=u(_at_least_all, %0, merit.pyrokinesis:1 merit.pyrokinetic_immunity:4)
+&prerequisite.merit.pyrokinetic_shaping dd=u(.at_least_all, %0, merit.pyrokinesis:1 merit.pyrokinetic_immunity:4)
 &prereq-text.merit.pyrokinetic_shaping dd=Pyrokinesis 1+ and Pyrokinetic Immunity 4+
 
 
 &merit.telekinesis dd=1.2.3.4.5|Emotional Telekinesis.Limited Telekinesis
 &tags.merit.telekinesis dd=psychic.psychokinetic
-&prerequisite.merit.telekinesis dd=u(_at_most_stat, %0, merit.telekinesis, attribute.resolve, %2)
+&prerequisite.merit.telekinesis dd=u(.at_most_stat, %0, merit.telekinesis, attribute.resolve, %2)
 &prereq-text.merit.telekinesis dd=No more than Resolve
 @@ >> Original: "Cannot use more dots than Resolve". We further limit that.
 
 
 &merit.thermokinesis dd=1.2.3.4.5|Emotional Thermokinesis
 &tags.merit.thermokinesis dd=psychic.psychokinetic
-&prerequisite.merit.thermokinesis dd=u(_at_most, %0, merit.thermokinesis, u(_min_of, %0, attribute.resolve attribute.stamina), %2)
+&prerequisite.merit.thermokinesis dd=u(.at_most, %0, merit.thermokinesis, u(.min_of, %0, attribute.resolve attribute.stamina), %2)
 &prereq-text.merit.thermokinesis dd=No more than the lower of Resolve or Stamina
 
 @@ -- Telepathic Merits --
@@ -133,13 +133,13 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.animal_possession dd=4
 &tags.merit.animal_possession dd=psychic.telepathic
-&prerequisite.merit.animal_possession dd=u(_at_least, %0, merit.animal_empathy, 2)
+&prerequisite.merit.animal_possession dd=u(.at_least, %0, merit.animal_empathy, 2)
 &prereq-text.merit.animal_possession dd=Animal Empathy 2+
 
 
 &merit.animal_rapport_() dd=3.4.5|*
 &tags.merit.animal_rapport dd=psychic.telepathic
-&prerequisite.merit.animal_rapport dd=u(_at_least, %0, merit.animal_ken, 2)
+&prerequisite.merit.animal_rapport dd=u(.at_least, %0, merit.animal_ken, 2)
 &prereq-text.merit.animal_rapport dd=Animal Ken 2+
 
 
@@ -150,13 +150,13 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 &merit.mental_blast dd=5
 &tags.merit.mental_blast dd=psychic.telepathic
 &prerequisite.merit.mental_blast dd=gte(first(u(%0/_merit.thought_projection), .), 4)
-&prerequisite.merit.mental_blast dd=u(_at_least, %0, merit.thought_projection, 4)
+&prerequisite.merit.mental_blast dd=u(.at_least, %0, merit.thought_projection, 4)
 &prereq-text.merit.mental_blast dd=Thought Projection 4+
 
 
 &merit.mind_breaker dd=5
 &tags.merit.mind_breaker dd=psychic.telepathic
-&prerequisite.merit.mind_breaker dd=u(_at_least, %0, merit.thought_projection, 4)
+&prerequisite.merit.mind_breaker dd=u(.at_least, %0, merit.thought_projection, 4)
 &prereq-text.merit.mind_breaker dd=Thought Projection 4+
 
 
@@ -170,45 +170,45 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.psychic_empathy dd=4.5|Limited Empath.Touch Only.Uncontrolled
 &tags.merit.psychic_empathy dd=psychic.telepathic
-&prerequisite.merit.psychic_empathy dd=u(_has_one_of, %0, merit.aura_reading, merit.thought_projection)
+&prerequisite.merit.psychic_empathy dd=u(.has_one_of, %0, merit.aura_reading, merit.thought_projection)
 &prereq-text.merit.psychic_empathy dd=Aura Reading or Thought Projection
 
 
 &merit.psychic_illusions dd=5
 &tags.merit.psychic_illusions dd=psychic.telepathic
-&prerequisite.merit.psychic_illusions dd=u(_has_all_of, %0, merit.mind_control merit.thought_projection)
+&prerequisite.merit.psychic_illusions dd=u(.has_all_of, %0, merit.mind_control merit.thought_projection)
 &prereq-text.merit.psychic_illusions dd=Mind Control and Thought Projection
 
 
 &merit.psychic_invisibility dd=5
 &tags.merit.psychic_invisibility dd=psychic.telepathic
 &prerequisite.merit.psychic_invisibility dd=or(t(first(u(%0/_merit.mind_control), .)), t(first(u(%0/_merit.thought_projection), .)))
-&prerequisite.merit.psychic_invisibility dd=u(_has_one_of, %0, merit.mind_control, merit.thought_projection)
+&prerequisite.merit.psychic_invisibility dd=u(.has_one_of, %0, merit.mind_control, merit.thought_projection)
 &prereq-text.merit.psychic_invisibility dd=Mind Control or Thought Projection
 
 
 &merit.telepathic_communication dd=4
 &tags.merit.telepathic_communication dd=psychic.telepathic
-&prerequisite.merit.telepathic_communication dd=u(_at_least, %0, merit.thought_projection, 4)
+&prerequisite.merit.telepathic_communication dd=u(.at_least, %0, merit.thought_projection, 4)
 &prereq-text.merit.telepathic_communication dd=Thought Projection 4+
 
 
 &merit.telepathic_rapport dd=3
 &tags.merit.telepathic_rapport dd=psychic.telepathic
-&prerequisite.merit.telepathic_rapport dd=u(_has, %0, merit.telepathic_communication)
+&prerequisite.merit.telepathic_rapport dd=u(.has, %0, merit.telepathic_communication)
 &prereq-text.merit.telepathic_rapport dd=Telepathic Communication
 
 
 &merit.thought_projection dd=3.4
 &tags.merit.thought_projection dd=psychic.telepathic
-&prerequisite.merit.thought_projection dd=u(_at_least, %0, merit.mind_reading, 5)
+&prerequisite.merit.thought_projection dd=u(.at_least, %0, merit.mind_reading, 5)
 &prereq-text.merit.thought_projection dd=Mind Reading 5
 
 @@ -- Others --
 
 &merit.anti_psi dd=5
 &tags.merit.anti_psi dd=human
-&prerequisite.merit.anti_psi dd=and(eq(words(u(_value_full, %0, bio.template), .), 1), not(t(lattr(%0/_merit.unseen_sense_(*)))))
+&prerequisite.merit.anti_psi dd=and(eq(words(u(.value_full, %0, bio.template), .), 1), not(t(lattr(%0/_merit.unseen_sense_(*)))))
 &prereq-text.merit.anti_psi dd=No minor template, no Unseen Sense
 
 
@@ -220,7 +220,7 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.doubting_thomas dd=1
 &tags.merit.lucid_dreamer dd=human.mental
-&prerequisite.merit.doubting_thomas dd=and(eq(words(u(_value_full, %0, bio.template), .), 1), not(t(lattr(%0/_merit.unseen_sense_(*)))))
+&prerequisite.merit.doubting_thomas dd=and(eq(words(u(.value_full, %0, bio.template), .), 1), not(t(lattr(%0/_merit.unseen_sense_(*)))))
 &prereq-text.merit.doubting_thomas dd=No minor template, no Unseen Sense
 
 
@@ -230,7 +230,7 @@ It's up to you to decide if, for instance, "Ritual Library" belongs under
 
 &merit.hypnotic_voice dd=4
 &tags.merit.hypnotic_voice dd=mental
-&prerequisite.merit.hypnotic_voice dd=u(_is_one_of, %0, skill.persuasion:3 skill.science:3)
+&prerequisite.merit.hypnotic_voice dd=u(.is_one_of, %0, skill.persuasion:3 skill.science:3)
 &prereq-text.merit.hypnotic_voice dd=Persuasion 3+ or Science 3+
 
 
@@ -272,8 +272,8 @@ heavy than previous sections.
 &tags.bio.tradition dd=thaumaturge
 &prerequisite.bio.tradition dd=
 	and(
-		lte(words(u(_value_full, %0, bio.tradition), .), 1), 
-		u(_at_least, %0, skill.occult, 1)
+		lte(words(u(.value_full, %0, bio.tradition), .), 1), 
+		u(.at_least, %0, skill.occult, 1)
 	)
 &prereq-text.bio.tradition dd=One tradition only, Occult 1+
 
@@ -303,18 +303,18 @@ Alchemy Internal
 @@ >> external
 		external,
 		and(
-			u(_at_least_one, %0, skill.occult:2 skill.science:2), 
-			u(_is_one_of, %0, bio.tradition, Ceremonial Magician.Taoist Alchemist)
+			u(.at_least_one, %0, skill.occult:2 skill.science:2), 
+			u(.is_one_of, %0, bio.tradition, Ceremonial Magician.Taoist Alchemist)
 		), 
 @@ >> internal
 		internal, 
 		and(
-			u(_at_least_all, %0, skill.occult:2 skill.medicine:1), 
+			u(.at_least_all, %0, skill.occult:2 skill.medicine:1), 
 			or(
-				u(_is, %0, bio.tradition, Taoist Alchemist), 
+				u(.is, %0, bio.tradition, Taoist Alchemist), 
 				and(
-					u(_at_most, %0, merit.ritual_alchemy_(internal), 2, %2), 
-					u(_is_one_of, %0, bio.tradition, Ceremonial Magician.Shaman)
+					u(.at_most, %0, merit.ritual_alchemy_(internal), 2, %2), 
+					u(.is_one_of, %0, bio.tradition, Ceremonial Magician.Shaman)
 				)
 			)
 		)
@@ -335,10 +335,10 @@ Communion
 &tags.merit.ritual_communion dd=thaumaturge.Ceremonial Magician.Taoist Alchemist.Apostle of the Dark One
 &prerequisite.merit.ritual_communion dd=
 	or(
-		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Taoist Alchemist), 
+		u(.is_one_of, %0, bio.tradition, Apostle of the Dark One.Taoist Alchemist), 
 		and(
-			u(_at_most, %0, merit.ritual_communion, 2, %2), 
-			u(_is, %0, bio.tradition, Ceremonial Magician)
+			u(.at_most, %0, merit.ritual_communion, 2, %2), 
+			u(.is, %0, bio.tradition, Ceremonial Magician)
 		)
 	)
 
@@ -376,9 +376,9 @@ Curse of Ill Fortune
 &tags.merit.ritual_curse_of_ill_fortune dd=thaumaturge.Apostle of the Dark One.Ceremonial Magician.Hedge Witch.Vodoun
 &prerequisite.merit.ritual_curse_of_ill_fortune dd=
 	and(
-		u(_at_least, %0, skill.persuasion, 1), 
-		u(_has, %0, merit.ritual_luck_magic), 
-		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch.Vodoun)
+		u(.at_least, %0, skill.persuasion, 1), 
+		u(.has, %0, merit.ritual_luck_magic), 
+		u(.is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch.Vodoun)
 	)
 
 &prereq-text.merit.ritual_curse_of_ill_fortune dd=Must be Apostle, Magician, Witch, or Vodoun; Persuasion 1+; Ritual Luck Magic
@@ -422,7 +422,7 @@ Dream Travel
 &merit.ritual_dream_travel dd=3
 &tags.merit.ritual_dream_travel dd=thaumaturge.Hedge Witch.Shaman
 &prerequisite.merit.ritual_dream_travel dd=
-	u(_is_one_of, %0, bio.tradition, Hedge Witch.Shaman)
+	u(.is_one_of, %0, bio.tradition, Hedge Witch.Shaman)
 &prereq-text.merit.ritual_dream_travel dd=Must be Witch or Shaman
 
 
@@ -437,7 +437,7 @@ Enchantment
 &merit.ritual_enchantment dd=2.4
 &tags.merit.ritual_enchantment dd=thaumaturge.Apostle of the Dark One.Ceremonial Magician.Hedge Witch
 &prerequisite.merit.ritual_enchantment dd=
-	u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch)
+	u(.is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch)
 &prereq-text.merit.ritual_enchantment dd=Must be Apostle, Magician, or Witch
 
 
@@ -455,9 +455,9 @@ Evocation
 	switch(
 		%1, 
 		Ghosts, 
-		u(_is, %0, bio.tradition, Vodoun), 
+		u(.is, %0, bio.tradition, Vodoun), 
 		Spirits, 
-		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Shaman)
+		u(.is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Shaman)
 	)
 &prereq-text.merit.ritual_evocation_() dd=Vodoun only for ghosts; Apostle, Magician and Shaman only for spirits
 
@@ -478,24 +478,24 @@ Familiar
 &prerequisite.merit.ritual_familiar dd=
 	case(
 @@ if new value is...
-		add(u(_value, %0, merit.ritual_familiar), %2), 
+		add(u(.value, %0, merit.ritual_familiar), %2), 
 @@ .. 3: Twilight: Apostle with Communion 4 or Shaman with Visionary Trances 4
 		3, 
 		or(
 			and(
-				u(_is, %0, bio.tradition, Apostle of the Dark One), 
-				u(_at_least, %0, merit.ritual_communion, 4)
+				u(.is, %0, bio.tradition, Apostle of the Dark One), 
+				u(.at_least, %0, merit.ritual_communion, 4)
 			), 
 			and(
-				u(_is, %0, bio.tradition, Shaman), 
-				u(_at_least, %0, merit.ritual_visionary_trances, 4)
+				u(.is, %0, bio.tradition, Shaman), 
+				u(.at_least, %0, merit.ritual_visionary_trances, 4)
 			)
 		), 
 @@ .. 4: Embodied: Witch with Enchantment 4.
 		4, 
 		and(
-			u(_is, %0, bio.tradition, Hedge Witch), 
-			u(_at_least, %0, merit.ritual_enchantment, 4)
+			u(.is, %0, bio.tradition, Hedge Witch), 
+			u(.at_least, %0, merit.ritual_enchantment, 4)
 		)
 	)
 &prereq-text.merit.ritual_familiar dd=Twilight (3): Apostle w/ Communion 4 or Shaman w/ Visionary Trances 4; Embodied (4): Witch w/ Enchantment 4
@@ -514,8 +514,8 @@ Favorable Fortune
 &tags.merit.ritual_favorable_fortune dd=thaumaturge.Ceremonial Magician
 &prerequisite.merit.ritual_favorable_fortune dd=
 	and(
-		u(_at_least, %0, merit.ritual_luck_magic, 4), 
-		u(_is, %0, bio.tradition, Ceremonial Magician)
+		u(.at_least, %0, merit.ritual_luck_magic, 4), 
+		u(.is, %0, bio.tradition, Ceremonial Magician)
 	)
 &prereq-text.merit.ritual_favorable_fortune dd=Magician w/ Luck Magic 4
 
@@ -533,8 +533,8 @@ Geomancy
 &tags.merit.ritual_geomancy dd=thaumaturge.Taoist Alchemist
 &prerequisite.merit.ritual_geomancy dd=
 	and(
-		u(_at_least_all, %0, attribute.intelligence:2 skill.crafts:1), 
-		u(_is, %0, bio.tradition, Taoist Alchemist)
+		u(.at_least_all, %0, attribute.intelligence:2 skill.crafts:1), 
+		u(.is, %0, bio.tradition, Taoist Alchemist)
 	)
 &prereq-text.merit.ritual_geomancy dd=Alchemist w/ Luck Magic 4
 
@@ -550,8 +550,8 @@ Healing
 &tags.merit.ritual_healing dd=thaumaturge.Ceremonial Magician.Hedge Witch.Shaman.Taoist Alchemist.Vodoun
 &prerequisite.merit.ritual_healing dd=
 	and(
-		u(_at_least_all, %0, attribute.composure:2 skill.medicine:1), 
-		u(_is_one_of, %0, bio.tradition, Ceremonial Magician.Hedge Witch.Shaman.Taoist Alchemist.Vodoun)
+		u(.at_least_all, %0, attribute.composure:2 skill.medicine:1), 
+		u(.is_one_of, %0, bio.tradition, Ceremonial Magician.Hedge Witch.Shaman.Taoist Alchemist.Vodoun)
 	)
 
 &prereq-text.merit.ritual_healing dd=Magician, Witch, Shaman, Alchemist or Vodoun w/ Composure 2+ and Medicine 1+
@@ -570,9 +570,9 @@ Invocation (Ghosts or Spirits)
 	switch(
 		%1, 
 		Ghosts, 
-		u(_is, %0, bio.tradition, Vodoun), 
+		u(.is, %0, bio.tradition, Vodoun), 
 		Spirits, 
-		u(_is_one_of, %0, bio.tradition, Hedge Witch.Shaman) 
+		u(.is_one_of, %0, bio.tradition, Hedge Witch.Shaman) 
 	)
 
 &prereq-text.merit.ritual_invocation_() dd=Vodoun for Ghosts, Witch or Shaman for Spirits
@@ -606,9 +606,9 @@ Longevity
 &tags.merit.ritual_longevity dd=thaumaturge.Taoist Alchemist
 &prerequisite.merit.ritual_longevity dd=
 	and(
-		u(_at_least, %0, skill.medicine, 3), 
-		u(_at_least_one, %0, merit.ritual_alchemistry_(external):4, merit.ritual_alchemistry_(internal):4), 
-		u(_is, %0, bio.tradition, Taoist Alchemist)
+		u(.at_least, %0, skill.medicine, 3), 
+		u(.at_least_one, %0, merit.ritual_alchemistry_(external):4, merit.ritual_alchemistry_(internal):4), 
+		u(.is, %0, bio.tradition, Taoist Alchemist)
 	)
 &prereq-text.merit.ritual_longevity dd=Alchemist, Medicine 3+, Alchemistry (External or Internal) 4+
 
@@ -626,10 +626,10 @@ Luck Magic
 
 &prerequisite.merit.ritual_luck_magic dd=
 	or(
-		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Taoist Alchemist.Vodoun), 
+		u(.is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Taoist Alchemist.Vodoun), 
 		and(
-			u(_is, %0, bio.tradition, Hedge Witch), 
-			u(_at_most, %0, merit.ritual_luck_magic, 2, %2)
+			u(.is, %0, bio.tradition, Hedge Witch), 
+			u(.at_most, %0, merit.ritual_luck_magic, 2, %2)
 		)
 	)
 
@@ -662,8 +662,8 @@ Psychic Projection
 &tags.merit.ritual_psychic_projection dd=thaumaturge.Shaman
 &prerequisite.merit.ritual_psychic_projection dd=
 	and(
-		u(_at_least, %0, merit.ritual_visionary_trances, 4), 
-		u(_is, %0, bio.tradition, Shaman)
+		u(.at_least, %0, merit.ritual_visionary_trances, 4), 
+		u(.is, %0, bio.tradition, Shaman)
 	)
 &prereq-text.merit.ritual_psychic_projection dd=Shaman w/ Visionary Trances 4
 
@@ -680,13 +680,13 @@ Sacrifice
 &tags.merit.ritual_sacrifice_() dd=thaumaturge.Apostle of the Dark One.Shaman.Vodoun
 &prerequisite.merit.ritual_sacrifice_() dd=
 	or(
-		u(_is, %0, bio.tradition, Shaman), 
+		u(.is, %0, bio.tradition, Shaman), 
 		switch(
 			%1, 
 			Ghosts, 
-			u(_is, %0, bio.tradition, Vodoun), 
+			u(.is, %0, bio.tradition, Vodoun), 
 			Spirits, 
-			u(_is, %0, bio.tradition, Apostle of the Dark One)
+			u(.is, %0, bio.tradition, Apostle of the Dark One)
 		)
 	)
 &prereq-text.merit.ritual_sacrifice_() dd=Ghosts only for Vodoun, Spirits only for Apostles, either for Shamans
@@ -705,8 +705,8 @@ Scrying
 &tags.merit.ritual_scrying dd=thaumaturge.Apostle of the Dark One.Ceremonial Magician.Hedge Witch
 &prerequisite.merit.ritual_scrying dd=
 	and(
-		u(_at_least, %0, attribute.wits, 2), 
-		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch)
+		u(.at_least, %0, attribute.wits, 2), 
+		u(.is_one_of, %0, bio.tradition, Apostle of the Dark One.Ceremonial Magician.Hedge Witch)
 	)
 &prereq-text.merit.ritual_scrying dd=Wits 2+ & Apostle, Magician, or Witch
 
@@ -726,8 +726,8 @@ Second Sight
 &tags.merit.ritual_second_sight dd=thaumaturge.Taoist Alchemist.Vodoun
 &prerequisite.merit.ritual_second_sight dd=
 	and(
-		u(_at_least, %0, attribute.wits, 2), 
-		u(_is_one_of, %0, bio.tradition, Taoist Alchemist.Vodoun)
+		u(.at_least, %0, attribute.wits, 2), 
+		u(.is_one_of, %0, bio.tradition, Taoist Alchemist.Vodoun)
 	)
 &prereq-text.merit.ritual_second_sight dd=Wits 2+ & Alchemist or Vodoun
 
@@ -743,8 +743,8 @@ See Auras
 &tags.merit.ritual_see_auras dd=thaumaturge.Ceremonial Magician.Hedge Witch.Taoist Alchemist
 &prerequisite.merit.ritual_see_auras dd=
 	and(
-		u(_at_least, %0, skill.empathy, 2), 
-		u(_is_one_of, %0, bio.tradition, Ceremonial Magician.Hedge Witch.Taoist Alchemist)
+		u(.at_least, %0, skill.empathy, 2), 
+		u(.is_one_of, %0, bio.tradition, Ceremonial Magician.Hedge Witch.Taoist Alchemist)
 	)
 &prereq-text.merit.ritual_see_auras dd=Empathy 2+, Magician, Witch or Alchemist
 
@@ -764,8 +764,8 @@ See Spirits
 &tags.merit.ritual_see_spirits dd=thaumaturge.Apostle of the Dark One.Hedge Witch.Shaman
 &prerequisite.merit.ritual_see_spirits dd=
 	and(
-		u(_has, %0, merit.ritual_visionary_trances), 
-		u(_is_one_of, %0, bio.tradition, Apostle of the Dark One.Hedge Witch.Shaman)
+		u(.has, %0, merit.ritual_visionary_trances), 
+		u(.is_one_of, %0, bio.tradition, Apostle of the Dark One.Hedge Witch.Shaman)
 	)
 &prereq-text.merit.ritual_see_spirits dd=Visionary Trances, Apostle, Witch or Shaman
 
@@ -783,8 +783,8 @@ Soul Jar
 &tags.merit.ritual_soul_jar dd=thaumaturge.Vodoun
 &prerequisite.merit.ritual_soul_jar dd=
 	and(
-		u(_has, %0, merit.ritual_second_sight), 
-		u(_is, %0, bio.tradition, Vodoun)
+		u(.has, %0, merit.ritual_second_sight), 
+		u(.is, %0, bio.tradition, Vodoun)
 	)
 &prereq-text.merit.ritual_soul_jar dd=Vodoun w/ Second Sight
 
@@ -802,12 +802,12 @@ Visionary Trances
 &tags.merit.ritual_visionary_trances dd=thaumaturge.Apostle of the Dark One.Hedge Witch.Shaman
 &prerequisite.merit.ritual_visionary_trances dd=
 	and(
-		u(_at_least, %0, attribute.resolve, 2), 
+		u(.at_least, %0, attribute.resolve, 2), 
 		or(
-			u(_is_one_of, bio.tradition, Apostle of the Dark One.Shaman), 
+			u(.is_one_of, bio.tradition, Apostle of the Dark One.Shaman), 
 			and(
-				u(_is, %0, bio.tradition, Hedge Witch), 
-				u(_at_most, %0, ritual_visionary_trances, 2, %2)
+				u(.is, %0, bio.tradition, Hedge Witch), 
+				u(.at_most, %0, ritual_visionary_trances, 2, %2)
 			)
 		)
 	)
@@ -826,7 +826,7 @@ Warding
 
 &merit.ritual_warding dd=3
 &tags.merit.ritual_warding dd=thaumaturge.[u(bio.tradition)]
-&prerequisite.merit.ritual_warding dd=u(_at_least, %0, attribute.resolve, 2)
+&prerequisite.merit.ritual_warding dd=u(.at_least, %0, attribute.resolve, 2)
 &prereq-text.merit.ritual_warding dd=Resolve 2+
 
 
@@ -841,5 +841,5 @@ Weather Control
 &merit.ritual_weather_control dd=4
 &tags.merit.ritual_weather_control dd=thaumaturge.Hedge Witch.Shaman.Vodoun
 &prerequisite.merit.ritual_weather_control dd=
-	u(_is_one_of, %0, bio.tradition, Hedge Witch.Shaman.Vodoun)
+	u(.is_one_of, %0, bio.tradition, Hedge Witch.Shaman.Vodoun)
 &prereq-text.merit.ritual_weather_control dd=Witch, Shaman, Vodoun

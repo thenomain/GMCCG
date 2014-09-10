@@ -16,7 +16,7 @@
 
 &merit.metabolic_control dd=2
 &tags.merit.metabolic_control dd=physical.werewolf
-&prerequisite.merit.metabolic_control dd=u(_at_least, %0, attribute.stamina, 2)
+&prerequisite.merit.metabolic_control dd=u(.at_least, %0, attribute.stamina, 2)
 &prereq-text.merit.metabolic_control dd=Stamina 3+
 &page.merit.metabolic_control sr=TR.105
 
@@ -27,7 +27,7 @@
 &merit.predator's_gaze dd=2
 @@ &tags.merit.predator's_gaze dd=social.werewolf
 &tags.merit.predator's_gaze dd=social
-&prerequisite.merit.predator's_gaze dd=u(_at_least_all, %0, attribute.presence:2 skill.intimidation:2)
+&prerequisite.merit.predator's_gaze dd=u(.at_least_all, %0, attribute.presence:2 skill.intimidation:2)
 &prereq-text.merit.predator's_gaze dd=Presence 2+ and Intimidation 2+
 &page.merit.predator's_gaze sr=TR.105
 &notes.merit.predator's_gaze sr=May be purchased by anyone.
@@ -51,7 +51,7 @@
 
 &gift.alpha dd=1.2.3.4.5|Sense Guilt.Alpha’s Aura.Taste of Flaws.Lordly Will.Alpha’s Howl
 &tags.gift.alpha dd=werewolf.storm lords
-&prerequisite.gift.alpha dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.alpha dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.alpha dd=No Higher than Max Renown
 &class.gift.alpha dd=list
 
@@ -62,7 +62,7 @@
 
 &gift.battle dd=1.2.3.4.5|Visage of Fenris.Worry the Prey’s Heels.Savaging.Primal Anger.Heartstopping Howl
 &tags.gift.battle dd=werewolf.blood talons
-&prerequisite.gift.battle dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.battle dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.battle dd=No Higher than Max Renown
 &class.gift.battle dd=list
 
@@ -72,7 +72,7 @@
 
 &gift.blending dd=1.2.3.4.5|Shadow Coat.Manytongues.Resist Toxin.Mask the Hunter.Hide the Curse
 &tags.gift.blending dd=werewolf.iron masters
-&prerequisite.gift.blending dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.blending dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.blending dd=No Higher than Max Renown
 &class.gift.blending dd=list
 
@@ -82,7 +82,7 @@
 
 &gift.gift_of_darkness dd=1.2.3.4.5|Darksight.Aura of Dread.Shadow Step.Moonlit Talons.Nightblind
 &tags.gift.gift_of_darkness dd=werewolf.general
-&prerequisite.gift.gift_of_darkness dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.gift_of_darkness dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.gift_of_darkness dd=No Higher than Max Renown
 &class.gift.gift_of_darkness dd=list
 
@@ -93,7 +93,7 @@
 
 &gift.ending dd=1.2.3.4.5|Fear of Death.Eyes of the Slain.Death Masque.Bone Hex.Images of Death
 &tags.gift.ending dd=werewolf.bone shadows
-&prerequisite.gift.ending dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.ending dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.ending dd=No Higher than Max Renown
 &class.gift.ending dd=list
 
@@ -103,7 +103,7 @@
 
 &gift.endurance dd=1.2.3.4.5|Vigil.Long Running.Eternal Hunter.Rise Beyond.Legacy
 &tags.gift.endurance dd=werewolf.general
-&prerequisite.gift.endurance dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.endurance dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.endurance dd=No Higher than Max Renown
 &class.gift.endurance dd=list
 
@@ -113,7 +113,7 @@
 
 &gift.information dd=1.2.3.4.5|Sense the Flow.Tongues.Babel Effect.Steganography.Twisted Words
 &tags.gift.information dd=werewolf.general
-&prerequisite.gift.information dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.information dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.information dd=No Higher than Max Renown
 &class.gift.information dd=list
 
@@ -123,7 +123,7 @@
 
 &gift.gift_of_the_pack dd=1.2.3.4.5|Web of Scent.Warning Howl.Brother’s Strength.Synergy.Unity
 &tags.gift.gift_of_the_pack dd=werewolf.general
-&prerequisite.gift.gift_of_the_pack dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.gift_of_the_pack dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.gift_of_the_pack dd=No Higher than Max Renown
 &class.gift.gift_of_the_pack dd=list
 
@@ -135,7 +135,7 @@
 @@ 
 @@ &gift.predator dd=1.2.3.4.5|Bestial Fellowship.Hunter’s Fortitude.Savage Hunt.Harry.Predator’s Kin
 @@ &tags.gift.predator dd=werewolf.general
-@@ &prerequisite.gift.predator dd=u(_gifts_check, %0, %2)
+@@ &prerequisite.gift.predator dd=u(.gifts_check, %0, %2)
 @@ &prereq-text.gift.predator dd=No Higher than Max Renown
 @@ &class.gift.predator dd=list
 @@ 
@@ -145,7 +145,7 @@
 
 &gift.stalking dd=1.2.3.4.5|Night Sight.Heaven’s Guidance.Scent the Supernatural.Shadow Strike.Shadow Pack
 &tags.gift.stalking dd=werewolf.hunters in darkness
-&prerequisite.gift.stalking dd=u(_gifts_check, %0, %2)
+&prerequisite.gift.stalking dd=u(.gifts_check, %0, %2)
 &prereq-text.gift.stalking dd=No Higher than Max Renown
 &class.gift.stalking dd=list
 
@@ -156,7 +156,7 @@
 @@ 
 @@ &gift.weakness dd=1.2.3.4.5|Reflection.Shallow Heart.Coward’s Soul.Hidden Self.Wrack
 @@ &tags.gift.weakness dd=werewolf.general
-@@ &prerequisite.gift.weakness dd=u(_gifts_check, %0, %2)
+@@ &prerequisite.gift.weakness dd=u(.gifts_check, %0, %2)
 @@ &prereq-text.gift.weakness dd=No Higher than Max Renown
 @@ &class.gift.weakness dd=list
 @@ 
@@ -167,7 +167,7 @@
 
 &rite.call_the_cloudless_sky dd=2
 &tags.rite.call_the_cloudless_sky dd=werewolf.hunt
-&prerequisite.rite.call_the_cloudless_sky dd=u(_rites_check, %0, 2)
+&prerequisite.rite.call_the_cloudless_sky dd=u(.rites_check, %0, 2)
 &prereq-text.rite.call_the_cloudless_sky dd=Rituals 2+
 
 &page.rite.call_the_cloudless_sky sr=TR.130
@@ -175,7 +175,7 @@
 
 &rite.call_the_empty_road dd=3
 &tags.rite.call_the_empty_road dd=werewolf.hunt
-&prerequisite.rite.call_the_empty_road dd=u(_rites_check, %0, 3)
+&prerequisite.rite.call_the_empty_road dd=u(.rites_check, %0, 3)
 &prereq-text.rite.call_the_empty_road dd=Rituals 3+
 
 &page.rite.call_the_empty_road sr=TR.130-131
@@ -184,7 +184,7 @@
 
 &rite.binding_of_locks dd=4
 &tags.rite.binding_of_locks dd=werewolf.hunt
-&prerequisite.rite.binding_of_locks dd=u(_rites_check, %0, 4)
+&prerequisite.rite.binding_of_locks dd=u(.rites_check, %0, 4)
 &prereq-text.rite.binding_of_locks dd=Rituals 4+
 
 &page.rite.binding_of_locks sr=TR.131
@@ -192,7 +192,7 @@
 
 &rite.blood_communion_of_spring dd=3
 &tags.rite.blood_communion_of_spring dd=werewolf.season
-&prerequisite.rite.blood_communion_of_spring dd=u(_rites_check, %0, 3)
+&prerequisite.rite.blood_communion_of_spring dd=u(.rites_check, %0, 3)
 &prereq-text.rite.blood_communion_of_spring dd=Rituals 3+
 
 &page.rite.blood_communion_of_spring sr=TR.131-132
@@ -201,7 +201,7 @@
 
 &rite.bone_fires_of_summer dd=4
 &tags.rite.bone_fires_of_summer dd=werewolf.season
-&prerequisite.rite.bone_fires_of_summer dd=u(_rites_check, %0, 4)
+&prerequisite.rite.bone_fires_of_summer dd=u(.rites_check, %0, 4)
 &prereq-text.rite.bone_fires_of_summer dd=Rituals 4+
 
 &page.rite.bone_fires_of_summer sr=TR.132-133
@@ -210,7 +210,7 @@
 
 &rite.darkest_night_of_winter dd=4
 &tags.rite.darkest_night_of_winter dd=werewolf.season
-&prerequisite.rite.darkest_night_of_winter dd=u(_rites_check, %0, 4)
+&prerequisite.rite.darkest_night_of_winter dd=u(.rites_check, %0, 4)
 &prereq-text.rite.darkest_night_of_winter dd=Rituals 4+
 
 &page.rite.darkest_night_of_winter sr=TR.133-134
@@ -219,7 +219,7 @@
 
 &rite.spirit_lamps_of_autumn dd=4
 &tags.rite.spirit_lamps_of_autumn dd=werewolf.season
-&prerequisite.rite.spirit_lamps_of_autumn dd=u(_rites_check, %0, 4)
+&prerequisite.rite.spirit_lamps_of_autumn dd=u(.rites_check, %0, 4)
 &prereq-text.rite.spirit_lamps_of_autumn dd=Rituals 4+
 
 &page.rite.spirit_lamps_of_autumn sr=TR.134-135

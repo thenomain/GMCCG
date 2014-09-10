@@ -13,7 +13,7 @@
 &bio.bloodline DD=*|*
 &tags.bio.bloodline DD=vampire
 &prereq-text.bio.bloodline DD=Bloodline must be allowed for Clan.
-&prerequisite.bio.bloodline DD=t(match(u(special.bloodline.[u(_value, %0, bio.clan)]), if(t(%2), %2, u(_value, %0, bio.clan)), .))
+&prerequisite.bio.bloodline DD=t(match(u(special.bloodline.[u(.value, %0, bio.clan)]), if(t(%2), %2, u(.value, %0, bio.clan)), .))
 
 &special.bloodline.daeva DD=Toreador
 &special.bloodline.gangrel DD=Bruja
@@ -32,8 +32,13 @@
 &tags.advantage.blood_potency DD=power level.vampire
 &default.advantage.blood_potency DD=1
 
-&advantage.vitae DD=[if(match(u(%0/_bio.template), fae-touched, .), u(_value, %0, attribute.stamina), extract(10 11 12 13 14 15 20 30 50 100, u(%0/_advantage.blood_potency), 1))]
+&advantage.vitae DD=ladd( u( .value_full, %0, vitae_maximum ), . )
 &tags.advantage.vitae DD=derived.energy.vampire.ghoul
+&default.advantage.vitae DD=derived
+
+&advantage.vitae_maximum DD=if( match( u( %0/_bio.template ), ghoul, . ), ladd( get( %0/_attribute.stamina ), . ), extract( 10 11 12 13 14 15 20 30 50 100, ladd( get( %0/_advantage.blood_potency ), . ), 1 ))
+&tags.advantage.vitae_maximum DD=derived.energy.vampire.ghoul
+&default.advantage.vitae_maximum DD=derived
 
 &advantage.humanity DD=1.2.3.4.5.6.7.8.9.10|*
 &tags.advantage.humanity DD=morality.vampire
