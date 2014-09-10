@@ -23,6 +23,7 @@ Class - Numeric, String, List, or Peppermint.
 Value - Current value of a stat,.
 	.Value			Numeric. Unadjusted value.
 	.Value_Full		Any. Untouched attribute.
+	.Value_Stats	Numeric. Summed value of a list of statpaths.
 
 At Least - Numeric. Statpath(s) passed are >= ("at least") value(s) passed.
 	.At_Least		This stat is at least value.
@@ -102,6 +103,19 @@ Full text on a stat ("both" for numeric stats)
 
 &.Value_Full dd=
 	u(%0/_%1)
+
+
+--
+
+Total value of a numeric trait
+	0: sheet dbref
+	1: list.of stat.paths
+	e.g.:
+		u(.value_stats, %0, attribute.strength skill.brawl)
+
+&.Value_Stats dd=
+	ladd( iter( %1 , u( .value_full, %0, %i0 ), , . ), . )
+
 
 
 --------------------------------------------------------------------------------
