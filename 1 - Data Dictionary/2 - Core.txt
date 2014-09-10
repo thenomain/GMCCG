@@ -366,29 +366,29 @@
 &tags.advantage.willpower DD=derived.pool
 &default.advantage.willpower DD=derived
 
-&advantage.willpower_maximum DD=ladd( [u( %0/_attribute.resolve )].[u( %0/_attribute.composure )] )
+&advantage.willpower_maximum DD=u( .value_stats, %0, attribute.resolve attribute.composure )
 &tags.advantage.willpower_maximum DD=derived.pool
 &default.advantage.willpower_maximum DD=derived
 
 @@ -- Other Advantages --
 
-&advantage.defense DD=min(ladd(u(%0/_attribute.wits), .), ladd(u(%0/_attribute.dexterity), .))
+&advantage.defense DD=min( ladd( u( .value_full, %0, _attribute.wits ), . ), ladd( u( .value_full, %0, _attribute.dexterity ), . ))
 &tags.advantage.defense DD=derived
-&default.advantage.defense DD=[u(#data_dictionary/advantage.defense, %!)]
+&default.advantage.defense DD=derived
 
-&advantage.size DD=add( ladd( u( %0/_special.size ), . ), t( ladd( u( %0/_merit.giant ), . )))]
+&advantage.size DD=add( ladd( u( .value_full, %0, _special.size ), . ), t( ladd( u( .value_full, %0, _merit.giant ), . )))]
 &tags.advantage.size DD=derived
 &default.advantage.size DD=derived
 
-&advantage.speed DD=ladd( [u( %0/_attribute.strength )].[u( %0/_attribute.dexterity )].[u( %0/_special.species_factor )].[u( %0/_merit.fleet_of_foot )], . )
+&advantage.speed DD=u( .value_stats, %0, attribute.strength attribute.dexterity special.species_factor merit.fleet_of_foot )
 &tags.advantage.speed DD=derived
 &default.advantage.speed DD=derived
 
-&advantage.initiative DD=ladd( [u( %0/_attribute.dexterity )].[u( %0/_attribute.composure )].[u( %0/_merit.fast_reflexes )], . )
+&advantage.initiative DD=u( .value_stats, %0, attribute.dexterity attribute.composure merit.fast_reflexes )
 &tags.advantage.initiative DD=derived
 &default.advantage.initiative DD=derived
 
-&advantage.perception DD=ladd( [u( %0/_attribute.wits )].[u( %0/_attribute.composure )], . )
+&advantage.perception DD=u( .value_stats, %0, attribute.wits attribute.composure )
 &tags.advantage.perception DD=derived
 &default.advantage.perception DD=derived
 
@@ -424,7 +424,7 @@
 
 @@ -- HEALTH (BELONGS IN HEALTH SYSTEM WRITEUP) --------------------------------
 
-&health.maximum DD=ladd( [u( %0/_attribute.stamina )].[u( %0/_advantage.size )] )
+&health.maximum DD=u( .value_stats, %0, attribute.stamina advantage.size )
 &tags.health.maximum DD=derived
 &default.health.maximum DD=derived
 
@@ -438,11 +438,11 @@
 &default.health.lethal DD=0
 &default.health.aggravated DD=0
 
-&health.damage DD=ladd( iter( u( health.types ), u( %0/_health.%i0 )))]
+&health.damage DD=ladd( iter( u( health.types ), u( .value, %0, health.%i0 )))]
 &tags.health.damage DD=derived
 &default.health.damage DD=derived
 
-&health.penalty DD=min( 0, ladd( [u(%0/_health.maximum)] -[u(%0/_health.damage)] -3 ))]
+&health.penalty DD=min( 0, ladd( [u( %0/_health.maximum )] -[u( %0/_health.damage )] -3 ))]
 &tags.health.penalty DD=derived
 &default.health.penalty DD=derived
 
