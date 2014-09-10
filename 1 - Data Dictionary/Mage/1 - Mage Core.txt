@@ -39,9 +39,15 @@ Work in progress.
 &tags.advantage.gnosis dd=power level.mage
 &default.advantage.gnosis dd=1
 
-&advantage.mana dd=[extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.gnosis), .), 1)]
+@@ -- Mana (a pool) --
+
+&advantage.mana dd=ladd( u( .value_full, %0, mana_maximum ), . )
 &tags.advantage.mana DD=derived.energy.mage
-&default.advantage.mana DD=[u(#data_dictionary/advantage.mana, %!)]
+&default.advantage.mana DD=derived
+
+&advantage.mana_maximum dd=extract( 10 11 12 13 14 15 20 30 50 100, ladd( u( %0/_advantage.gnosis ), . ), 1 )
+&tags.advantage.mana_maximum DD=derived.energy.mage
+&default.advantage.mana_maximum DD=derived
 
 --
 
