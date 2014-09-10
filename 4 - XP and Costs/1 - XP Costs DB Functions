@@ -111,7 +111,8 @@ think [setq(f, 3)][setq(t, 4)][setq(x, 2)][setq(f, inc(%qf))][mul(add(power(%qt,
 --------------------------------------------------------------------------------
 -- nWoD Standard Without Phantom Dots XP Cost ----------------------------------
 
-Needs to know the entire costs list. If cost is '#', send to 'cost.standard' instead.
+Needs to know the entire costs list. If cost is '#', send to 'cost.standard' 
+instead of here.
 
 think [setq(v, 1.3.4.5)][setq(f, 1)][setq(l, 4)][setq(x, 2)][ladd(iter(setinter(%qv, lnum(inc(%qf), %ql, .), .), mul(%qx, %i0), ., .), .)]
 

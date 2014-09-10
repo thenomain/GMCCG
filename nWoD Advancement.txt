@@ -1,3 +1,9 @@
+
+THIS XP SYSTEM SHOULD LOG TO A TABLE AND CALL THROUGH SQL.
+THAT MEANS WE NEED GUID(), A FUNCTION THAT CAN BE PASSED A DBREF
+AND RETURN DBREF.SECS TO GUARANTEE A UNIQUE CALLER.
+
+
 =--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=--=-=-=-=-=-=-==-=--==--==-=-=-=--=
 
 HERE IS THE ACTUAL CODE SO FAR
@@ -348,10 +354,6 @@ uses: logtext()
 
 		[footer()]
 	)]
-
---
-
-&f.xp/history ss=[setq(n, if(t(%0), %0, 10))][case(0, isstaff(%#), [alert(+xp/log)] Staff only., and(isint(%qn), gt(%qn, 0)), [alert(+xp/log)] Number of entries must be a positive integer., lte(%qn, 20), [alert(+xp/log)] Number of entries must 20 or fewer., [setq(m, logtext(tail, xp_spend, %qn))][setq(l, rest(logtext(list, xp_spend), :))][header(+xp/history)]%r[if(eq(words(%qm, ::), 0), %b [ansi(h, No Entries Found)], iter(%qm, [setq(s, first(%i0, |))]%b [timefmt($d $b '$g, %qs)]%b %b [ljust(name(extract(%i0, 3, 1, |)), 18)] [ljust(extract(%i0, 4, 1, |), 20)] [ljust([if(t(setr(x, extract(%i0, 5, 1, |))), %qx, 0)] -> [if(t(setr(x, extract(%i0, 6, 1, |))), %qx, 0)], 7)] [setq(x, extract(%i0, 7, 1, |))][rjust(abs(%qx), 3)] xp [if(gte(%qx, 0), spent, refunded)], ::, %r))]%r[footer()])]
 
 
 ================================================================================
