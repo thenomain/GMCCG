@@ -64,11 +64,15 @@
 &tags.advantage.wyrd DD=power level.changeling
 &default.advantage.wyrd DD=1
 
-@@ -- "glamour" is its energy stat --
+@@ -- "glamour" is its energy stat (pool) --
 
-&advantage.glamour DD=[if(match(u(%0/_bio.template), fae-touched, .), 1, extract(10 11 12 13 14 15 20 30 50 100, ladd(u(%0/_advantage.wyrd), .), 1))]
+&advantage.glamour DD=ladd( u( .value_full, %0, willpower_maximum ), . )
 &tags.advantage.glamour DD=derived.energy.changeling.fae-touched
-&default.advantage.glamour DD=[u(#data_dictionary/advantage.glamour, %!)]
+&default.advantage.glamour DD=derived
+
+&advantage.glamour_maximum DD=if( match( u( %0/_bio.template ), fae-touched, .), 1, extract( 10 11 12 13 14 15 20 30 50 100, ladd( u( %0/_advantage.wyrd ), . ), 1 ))
+&tags.advantage.glamour_maximum DD=derived.energy.changeling.fae-touched
+&default.advantage.glamour_maximum DD=derived
 
 @@ -- "clarity" is its morality stat --
 
@@ -79,7 +83,7 @@
 @@ -- Changes to Advantage: Speed --
 @@ -- (Need a better way to do this add-on) --
 
-&advantage.speed DD=[ladd([u(%0/_attribute.strength)]. [u(%0/_attribute.dexterity)]. [u(%0/_special.species_factor)]. [u(%0/_merit.fleet_of_foot)]. [mul(2, u(.list_has, %0, bio.kith, runnerswift))], .)]
+&advantage.speed DD=ladd( [u(%0/_attribute.strength )].[u( %0/_attribute.dexterity )].[u( %0/_special.species_factor )].[u( %0/_merit.fleet_of_foot )].[mul( 2, u(.list_has, %0, bio.kith, runnerswift ))], .)
 
 
 @@ -- CHANGELING MERITS --------------------------------------------------------
