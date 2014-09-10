@@ -20,8 +20,8 @@
 &prerequisite.bio.kith dd=
 	t(
 		match(
-			u(special.kith.[u(_value, %0, bio.seeming)]), 
-			if(t(%2), first(%2, .), u(_value, %0, bio.kith)), 
+			u(special.kith.[u(.value, %0, bio.seeming)]), 
+			if(t(%2), first(%2, .), u(.value, %0, bio.kith)), 
 			.
 		)
 	)
@@ -79,14 +79,14 @@
 @@ -- Changes to Advantage: Speed --
 @@ -- (Need a better way to do this add-on) --
 
-&advantage.speed DD=[ladd([u(%0/_attribute.strength)]. [u(%0/_attribute.dexterity)]. [u(%0/_special.species_factor)]. [u(%0/_merit.fleet_of_foot)]. [mul(2, u(_list_has, %0, bio.kith, runnerswift))], .)]
+&advantage.speed DD=[ladd([u(%0/_attribute.strength)]. [u(%0/_attribute.dexterity)]. [u(%0/_special.species_factor)]. [u(%0/_merit.fleet_of_foot)]. [mul(2, u(.list_has, %0, bio.kith, runnerswift))], .)]
 
 
 @@ -- CHANGELING MERITS --------------------------------------------------------
 
 &merit.court_goodwill_() DD=1.2.3.4.5|Spring.Summer.Autumn.Winter
 &tags.merit.court_goodwill_() DD=changeling
-&prerequisite.merit.court_goodwill_() dd=u(_is_not, %0, bio.court, %1)
+&prerequisite.merit.court_goodwill_() dd=u(.is_not, %0, bio.court, %1)
 &prereq-text.merit.court_goodwill_() dd=Goodwill must be different than Court
 
 @@ -- to allow fae-touched to take court goodwill, remove the comment below --
@@ -94,7 +94,7 @@
 
 &merit.harvest_() DD=1.2.3.4.5|Emotions.Pledges.Dreams.Hedge Bounty
 &tags.merit.harvest_() DD=changeling
-&prerequisite.merit.harvest_() DD=or(u(_is, %0, bio.template, changeling), strmatch(%1, Hedge_Bounty))
+&prerequisite.merit.harvest_() DD=or(u(.is, %0, bio.template, changeling), strmatch(%1, Hedge_Bounty))
 &prereq-text.merit.harvest_() DD=Fae-Touched may only take Hedge Bounty
 
 @@ -- "proper" hollow, one main stat bought up 1+ and "spent" anywhere. --
@@ -107,7 +107,7 @@
 
 &merit.mantle_() DD=1.2.3.4.5|Spring.Summer.Autumn.Winter
 &tags.merit.mantle_() DD=changeling
-&prerequisite.merit.mantle_() dd=u(_is, %0, bio.court, %1)
+&prerequisite.merit.mantle_() dd=u(.is, %0, bio.court, %1)
 &prereq-text.merit.mantle_() dd=Mantle must match Court
 							
 &merit.new_identity_() DD=1.2.4|*
@@ -119,7 +119,7 @@
 
 &merit.lucid_dreaming DD=2
 &tags.merit.lucid_dreaming DD=Human.mental
-&prerequisite.merit.lucid_dreaming dd=u(_at_least, %0, attribute.resolve, 3)
+&prerequisite.merit.lucid_dreaming dd=u(.at_least, %0, attribute.resolve, 3)
 &prereq-text.merit.lucid_dreaming dd=Resolve 3+
 
 @@ -- Milestone Merits --
@@ -171,7 +171,7 @@
 &contract.fleeting_spring DD=1.2.3.4.5
 &tags.contract.fleeting_spring DD=changeling.court.spring
 
-&prerequisite.contract.fleeting_spring dd=or(u(_at_most_stat, %0, contract.fleeting_spring, merit.mantle_(spring)+1, %2), u(_at_most_stat, %0, contract.fleeting_spring, merit.court_goodwill_(spring)-1, %2))
+&prerequisite.contract.fleeting_spring dd=or(u(.at_most_stat, %0, contract.fleeting_spring, merit.mantle_(spring)+1, %2), u(.at_most_stat, %0, contract.fleeting_spring, merit.court_goodwill_(spring)-1, %2))
 
 &prereq-text.contract.fleeting_spring dd=No greater than Mantle (Spring) + 1 or Court Goodwill (Spring) - 1; lvl 1 always ok
 
@@ -179,7 +179,7 @@
 &contract.eternal_spring DD=1.2.3.4.5
 &tags.contract.eternal_spring DD=changeling.court.spring
 
-&prerequisite.contract.eternal_spring dd=or(u(_at_most_stat, %0, contract.eternal_spring, merit.mantle_(spring)+1, %2), u(_at_most_stat, %0, contract.eternal_spring, merit.court_goodwill_(spring)-1, %2))
+&prerequisite.contract.eternal_spring dd=or(u(.at_most_stat, %0, contract.eternal_spring, merit.mantle_(spring)+1, %2), u(.at_most_stat, %0, contract.eternal_spring, merit.court_goodwill_(spring)-1, %2))
 
 &prereq-text.contract.eternal_spring dd=No greater than Mantle (Spring) + 1 or Court Goodwill (Spring) - 1; lvl 1 always ok
 
@@ -188,7 +188,7 @@
 &contract.fleeting_summer DD=1.2.3.4.5
 &tags.contract.fleeting_summer DD=changeling.court.summer
 
-&prerequisite.contract.fleeting_summer dd=or(u(_at_most_stat, %0, contract.fleeting_summer, merit.mantle_(summer)+1, %2), u(_at_most_stat, %0, contract.fleeting_summer, merit.court_goodwill_(summer)-1, %2))
+&prerequisite.contract.fleeting_summer dd=or(u(.at_most_stat, %0, contract.fleeting_summer, merit.mantle_(summer)+1, %2), u(.at_most_stat, %0, contract.fleeting_summer, merit.court_goodwill_(summer)-1, %2))
 
 &prereq-text.contract.fleeting_summer dd=No greater than Mantle (Summer) + 1 or Court Goodwill (Summer) - 1; lvl 1 always ok
 
@@ -196,7 +196,7 @@
 &contract.eternal_summer DD=1.2.3.4.5
 &tags.contract.eternal_summer DD=changeling.court.summer
 
-&prerequisite.contract.eternal_summer dd=or(u(_at_most_stat, %0, contract.eternal_summer, merit.mantle_(summer)+1, %2), u(_at_most_stat, %0, contract.eternal_summer, merit.court_goodwill_(summer)-1, %2))
+&prerequisite.contract.eternal_summer dd=or(u(.at_most_stat, %0, contract.eternal_summer, merit.mantle_(summer)+1, %2), u(.at_most_stat, %0, contract.eternal_summer, merit.court_goodwill_(summer)-1, %2))
 
 &prereq-text.contract.eternal_summer dd=No greater than Mantle (Summer) + 1 or Court Goodwill (Summer) - 1; lvl 1 always ok
 
@@ -204,7 +204,7 @@
 
 &contract.fleeting_autumn DD=1.2.3.4.5
 &tags.contract.fleeting_autumn DD=changeling.court.autumn
-&prerequisite.contract.fleeting_autumn dd=or(u(_at_most_stat, %0, contract.fleeting_autumn, merit.mantle_(autumn)+1, %2), u(_at_most_stat, %0, contract.fleeting_autumn, merit.court_goodwill_(autumn)-1, %2))
+&prerequisite.contract.fleeting_autumn dd=or(u(.at_most_stat, %0, contract.fleeting_autumn, merit.mantle_(autumn)+1, %2), u(.at_most_stat, %0, contract.fleeting_autumn, merit.court_goodwill_(autumn)-1, %2))
 
 &prereq-text.contract.fleeting_autumn dd=No greater than Mantle (Autumn) + 1 or Court Goodwill (Autumn) - 1; lvl 1 always ok
 
@@ -212,7 +212,7 @@
 &contract.eternal_autumn DD=1.2.3.4.5
 &tags.contract.eternal_autumn DD=changeling.court.autumn
 
-&prerequisite.contract.eternal_autumn dd=or(u(_at_most_stat, %0, contract.eternal_autumn, merit.mantle_(autumn)+1, %2), u(_at_most_stat, %0, contract.eternal_autumn, merit.court_goodwill_(autumn)-1, %2))
+&prerequisite.contract.eternal_autumn dd=or(u(.at_most_stat, %0, contract.eternal_autumn, merit.mantle_(autumn)+1, %2), u(.at_most_stat, %0, contract.eternal_autumn, merit.court_goodwill_(autumn)-1, %2))
 
 &prereq-text.contract.eternal_autumn dd=No greater than Mantle (Autumn) + 1 or Court Goodwill (Autumn) - 1; lvl 1 always ok
 
@@ -221,7 +221,7 @@
 &contract.fleeting_winter DD=1.2.3.4.5
 &tags.contract.fleeting_winter DD=changeling.court.winter
 
-&prerequisite.contract.fleeting_winter dd=or(u(_at_most_stat, %0, contract.fleeting_winter, merit.mantle_(winter)+1, %2), u(_at_most_stat, %0, contract.fleeting_winter, merit.court_goodwill_(winter)-1, %2))
+&prerequisite.contract.fleeting_winter dd=or(u(.at_most_stat, %0, contract.fleeting_winter, merit.mantle_(winter)+1, %2), u(.at_most_stat, %0, contract.fleeting_winter, merit.court_goodwill_(winter)-1, %2))
 
 &prereq-text.contract.fleeting_winter dd=No greater than Mantle (Winter) + 1 or Court Goodwill (Winter) - 1; lvl 1 always ok
 
@@ -229,7 +229,7 @@
 &contract.eternal_winter DD=1.2.3.4.5
 &tags.contract.eternal_winter DD=changeling.court.winter
 
-&prerequisite.contract.eternal_winter dd=or(u(_at_most_stat, %0, contract.eternal_winter, merit.mantle_(winter)+1, %2), u(_at_most_stat, %0, contract.eternal_winter, merit.court_goodwill_(winter)-1, %2))
+&prerequisite.contract.eternal_winter dd=or(u(.at_most_stat, %0, contract.eternal_winter, merit.mantle_(winter)+1, %2), u(.at_most_stat, %0, contract.eternal_winter, merit.court_goodwill_(winter)-1, %2))
 
 &prereq-text.contract.eternal_winter dd=No greater than Mantle (Winter) + 1 or Court Goodwill (Winter) - 1; lvl 1 always ok
 

@@ -15,6 +15,7 @@
 &attribute.manipulation DD=1.2.3.4.5.6.7.8.9.10
 &attribute.composure DD=1.2.3.4.5.6.7.8.9.10
 
+
 @@ -- Core Attributes: Tags --
 
 &tags.attribute.intelligence DD=mental.power
@@ -65,7 +66,6 @@
 
 &prerequisite.attribute.stamina DD=u(_trait_check, %0, attribute.stamina, %2)
 &prereq-text.attribute.stamina DD=Limited by power level stat
-
 
 &prerequisite.attribute.presence DD=u(_trait_check, %0, attribute.presence, %2)
 &prereq-text.attribute.presence DD=Limited by power level stat
@@ -358,28 +358,41 @@
 &default.advantage.morality DD=7
 &tags.advantage.morality dd=morality.human
 
-&advantage.willpower DD=[ladd([u(%0/_attribute.resolve)]. [u(%0/_attribute.composure)], .)]
-&tags.advantage.willpower DD=derived.pool
-&default.advantage.willpower DD=[u(#data_dictionary/advantage.willpower, %!)]
+@@ -- pools like "willpower" need a separate "max" trait which may go up & down
+@@ -- the current pool trait is pulled from the max trait & applied an offset
+@@ -- spending "a dot of willpower" is an offset applied to the maximum
 
-&advantage.defense DD=[min(ladd(u(%0/_attribute.wits), .), ladd(u(%0/_attribute.dexterity), .))]
+&advantage.willpower DD=ladd( u( .value_full, %0, willpower_maximum ), . )
+&tags.advantage.willpower DD=derived.pool
+&default.advantage.willpower DD=derived
+
+&advantage.willpower_maximum DD=ladd( [u( %0/_attribute.resolve )].[u( %0/_attribute.composure )] )
+&tags.advantage.willpower_maximum DD=derived.pool
+&default.advantage.willpower_maximum DD=derived
+
+@@ -- Other Advantages --
+
+&advantage.defense DD=min(ladd(u(%0/_attribute.wits), .), ladd(u(%0/_attribute.dexterity), .))
 &tags.advantage.defense DD=derived
 &default.advantage.defense DD=[u(#data_dictionary/advantage.defense, %!)]
 
-&advantage.size DD=[add(ladd(u(%0/_special.size), .), t(ladd(u(%0/_merit.giant), .)))]
+&advantage.size DD=add( ladd( u( %0/_special.size ), . ), t( ladd( u( %0/_merit.giant ), . )))]
 &tags.advantage.size DD=derived
-&default.advantage.size DD=[u(#data_dictionary/advantage.size, %!)]
+&default.advantage.size DD=derived
 
-&advantage.speed DD=[ladd([u(%0/_attribute.strength)]. [u(%0/_attribute.dexterity)]. [u(%0/_special.species_factor)].  [u(%0/_merit.fleet_of_foot)], .)]
+&advantage.speed DD=ladd( [u( %0/_attribute.strength )].[u( %0/_attribute.dexterity )].[u( %0/_special.species_factor )].[u( %0/_merit.fleet_of_foot )], . )
 &tags.advantage.speed DD=derived
-&default.advantage.speed DD=[u(#data_dictionary/advantage.speed, %!)]
+&default.advantage.speed DD=derived
 
-&advantage.initiative DD=[ladd([u(%0/_attribute.dexterity)]. [u(%0/_attribute.composure)]. [u(%0/_merit.fast_reflexes)], .)]
+&advantage.initiative DD=ladd( [u( %0/_attribute.dexterity )].[u( %0/_attribute.composure )].[u( %0/_merit.fast_reflexes )], . )
 &tags.advantage.initiative DD=derived
-&default.advantage.initiative DD=[u(#data_dictionary/advantage.initiative, %!)]
+&default.advantage.initiative DD=derived
+
+&advantage.perception DD=ladd( [u( %0/_attribute.wits )].[u( %0/_attribute.composure )], . )
+&tags.advantage.perception DD=derived
+&default.advantage.perception DD=derived
 
 &advantage.virtue DD=Charity.Faith.Fortitude.Hope.Justice.Prudence.Temperance
-
 &advantage.vice DD=Envy.Gluttony.Greed.Lust.Pride.Sloth.Wrath
 
 &bio.full_name DD=*
@@ -411,11 +424,12 @@
 
 @@ -- HEALTH (BELONGS IN HEALTH SYSTEM WRITEUP) --------------------------------
 
-&health.maximum DD=[add(u(%0/_attribute.stamina), u(%0/_advantage.size))]
+&health.maximum DD=ladd( [u( %0/_attribute.stamina )].[u( %0/_advantage.size )] )
 &tags.health.maximum DD=derived
-&default.health.maximum DD=[u(#data_dictionary/health.maximum, %!)]
+&default.health.maximum DD=derived
 
 &health.types DD=bashing lethal aggravated
+
 &health.bashing DD=#
 &health.lethal DD=#
 &health.aggravated DD=#
@@ -424,13 +438,13 @@
 &default.health.lethal DD=0
 &default.health.aggravated DD=0
 
-&health.damage DD=[ladd(iter(u(health.types), u(%0/_health.##)))]
+&health.damage DD=ladd( iter( u( health.types ), u( %0/_health.%i0 )))]
 &tags.health.damage DD=derived
-&default.health.damage DD=[u(#data_dictionary/health.damage, %!)]
+&default.health.damage DD=derived
 
-&health.penalty DD=[min(0, ladd([u(%0/_health.maximum)] -[u(%0/_health.damage)] -3))]
+&health.penalty DD=min( 0, ladd( [u(%0/_health.maximum)] -[u(%0/_health.damage)] -3 ))]
 &tags.health.penalty DD=derived
-&default.health.penalty DD=[u(#data_dictionary/health.penalty, %!)]
+&default.health.penalty DD=derived
 
 
 @@ =============================================================================
