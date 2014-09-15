@@ -1,4 +1,14 @@
 ================================================================================
+== SETUP =======================================================================
+
+@create Data Dictionary <dd>
+@set dd=inherit safe
+
+@parent dd=codp
+&prefix.functions dd=.
+
+
+================================================================================
 == FUNCTIONS ===================================================================
 
 Data Dictionary Prerequisite Shortcut Functions
@@ -179,7 +189,7 @@ localize(
 	[setq(t, trim(first(edit(%2, -, +-), +)))]
 	[setq(a, iter(rest(edit(edit(%2, -%b, -), -, %b+-), +), %i0, +))]
 	[u(
-		_at_least, 
+		.at_least, 
 		%0, 
 		%1, 
 		ladd(
@@ -256,7 +266,7 @@ localize(
 	[setq(t, trim(first(edit(%2, -, +-), +)))]
 	[setq(a, iter(rest(edit(edit(%2, -%b, -), -, %b+-), +), %i0, +))]
 	[u(
-		_at_most, 
+		.at_most, 
 		%0, 
 		%1, 
 		ladd(
@@ -482,12 +492,12 @@ Else, assumes translating name->value
 	case(1, 
 @@ .. number value -> name
 		isnum(%1), 
-		extract(rest(v(%0), |), %1, 1, .), 
+		elements(rest(v(%0), |), %1, .), 
 @@ .. text value -> name
 		t(match(first(v(%0), |), %1, .)), 
-		extract(rest(v(%0), |), match(first(v(%0), |), %1, .), 1, .), 
+		elements(rest(v(%0), |), match(first(v(%0), |), %1, .), .), 
 @@ .. name -> value
-		extract(first(v(%0), |), match(rest(v(%0), |), %1*, .), 1, .)
+		elements(first(v(%0), |), match(rest(v(%0), |), %1*, .), .)
 	)
 
 
