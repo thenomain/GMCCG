@@ -870,50 +870,42 @@ qf: first portion of stat (permanent)
 qr: rest of stat (offset)
 qa: sum of %qf and %2, if 0 then <null> (to erase value with setstat)
 qi: statpath without instance (because of the validate system)
-
-q1: Contents if permanent stat is [...], empty if not
-q0-3: Used in above determination
+qc: stat class (must be numeric)
 
 --------------------------------------------------------------------------------
 
 &f.shiftstat.workhorse sfp=
 
 localize(
+	[setq( d, u( %0/_%1 ))]
+	[setq( f, first( %qd, . ))]
+	[setq( r, rest( %qd, . ))]
+	[setq( a, if( setr( a, add( %qf, %2 )), %qa, ))]
+	[setq( i, u( f.statpath-without-instance, %1 ))]
+	[setq( c, u( f.get-class, %1 ))]
 
-[setq(d, u(%0/_%1))]
-[setq(f, first(%qd, .))]
-[setq(r, rest(%qd, .))]
-[setq(a, if(setr(a, add(%qf, %2)), %qa, ))]
-[setq(i, u(f.statpath-without-instance, %1))]
+	[case( 1, 
+		not( strmatch( %qc, numeric )), 
+		#-1 STAT CLASS MUST BE NUMERIC, 
 
-@@ Break up the actual stat, like setstat does
-@@ (I have to warn you, this is silly, but we just need %q1)
-[setq(0, regmatch(get(%0/_%1), %(%\%[.*%\%]%)%(%\..*%)?|%(.*%), 0 1 2 3))]
+		strmatch( %3, ov* ), 
+		ulocal( f.setstat.workhorse, %0, %1, %qa, ov ), 
 
-@@ current stat must be numeric or empty
-[if(
-	or(
-		not(comp(%qd, )), 
-		isnum(%qf)
-	), 
-@@ .. ok, continue
-	switch(%3, 
-		ov*, ulocal(f.setstat.workhorse, %0, %1, %qa, ov), 
-		of*, ulocal(f.setstat.workhorse, %0, %1, add(%qr, %2), of), 
-@@ .. .. validate new stat, if current stat is [...] then error
-		switch(
-			1, 
-			t(%q1), #-1 CANNOT SHIFT DERIVED STAT WITHOUT OVERRIDE, 
-			not(t(ulocal(f.statvalidate.workhorse, %qi, %qa))), 
-				#-1 SHIFT MAKES STAT INVALID, 
-			ulocal(f.setstat.workhorse, %0, %1, %qa)
-		)
-	), 
-@@ .. else, error
-	#-1 STAT VALUE MUST BE NUMERIC OR EMPTY
-)]
+		strmatch( %3, of* ), 
+		ulocal( f.setstat.workhorse, %0, %1, add( %qr, %2 ), of ), 
 
-)
+@@ >> not offset nor override, so check if primary value is 'derived'
+		strmatch( %qf, derived ), 
+		#-1 CANNOT SHIFT DERIVED STAT WITHOUT OVERRIDE, 
+
+@@ >> check validation for primary value
+		not( t( ulocal( f.statvalidate.workhorse, %qi, %qa ))), 
+		#-1 SHIFT MAKES STAT INVALID, 
+
+@@ >> set that stat!
+		ulocal( f.setstat.workhorse, %0, %1, %qa )
+	)]
+
 
 --------------------------------------------------------------------------------
 -- Shiftstat Tests -------------------------------------------------------------
