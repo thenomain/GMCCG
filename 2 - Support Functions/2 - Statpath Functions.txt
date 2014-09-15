@@ -60,12 +60,7 @@ returns: dbref of sheet
 &f.find-sheet sfp=
 @@ if the "sheet location" stat is on the passed item, pass that back
 @@ else assume the sheet is on the player
-	if(
-		hasattr(%0, _special.sheet_location), 
-		u(%0/_special.sheet_location),
-		%0
-	)
-
+	udefault( %0/_special.sheet_location, %0 )
 
 
 ================================================================================
@@ -84,57 +79,9 @@ Returns: 1 if instance is there but null, 0 otherwise
 
 
 ================================================================================
-== GET CLASS ===================================================================
-
-Get what kind of class a <statpath> is.  If only we did this in a more object-oriented manner.
-
-0: full stat path (may include substat!)
-returns: class.<statpath> or "numeric" if null
-
---------------------------------------------------------------------------------
-
-&f.get-class sfp=
-	udefault(
-		[u(d.data-dictionary)]/
-		class.[u(f.statpath-without-instance, extract(%0, 1, 2, .))], 
-		numeric
-	)
-
---------------------------------------------------------------------------------
-
-think u(sfp/f.get-class, attribute.strength)
-think u(sfp/f.get-class, bio.template)
-think u(sfp/f.get-class, bio.full_name)
-
-
-
-================================================================================
-== ISCLASS? ====================================================================
-
-Does the class of the stat path match any of the passed parameters?
-
-0: full stat path (may include substat!)
-1: space-delimited class types to find
-returns: 1 or 0
-
---------------------------------------------------------------------------------
-
-&f.isclass? sfp=t(match(%1, ulocal(f.get-class, %0)))
-
---------------------------------------------------------------------------------
-
-think u(sfp/f.isclass?, attribute.strength, string)
-think u(sfp/f.isclass?, attribute.strength, numeric string)
-
-think u(sfp/f.isclass?, gift.full_moon, list)
-
-
-
-================================================================================
 == STATVALUE-GOOD ==============================================================
 
 It occurred to me, a bit late, that I could use a function that does nothing but check to see if the value someone is trying to set for a stat is bad.  Bad values are: 
-	<value>.	- because the system thinks this is a numeric value
 	`			- because the charsheet uses this as a delimiter
 
 That's it for now.
@@ -392,6 +339,8 @@ qz: temp holder to grab just the name portion of a stapath
 
 --------------------------------------------------------------------------------
 
+think u(sfp/f.statpath-without-instance, u(sfp/f.statpath-lookup-dd, lang (sumerian)))
+
 think u(sfp/f.statpath-without-instance, statpath(strength))
 think u(sfp/f.statpath-without-instance, statpath(cour(sp)))
 think u(sfp/f.statpath-without-instance, statpath(lang (spanish)))
@@ -484,4 +433,53 @@ think u(sfp/f.statpath-lookup-sheet, %!, cont.rep)
 think u(sfp/f.statpath-lookup-sheet, %!, lang (fr))
 
 think [setq(0, lit(str|l (French)|athl.quick r|mantle (sp)))][setq(1, pmatch(thenomain))][iter(%q0, ==> [ljust(%q1/##, 15)] --> [statname(%q1/##)], |, %r)]
+
+
+
+================================================================================
+== GET CLASS ===================================================================
+
+Get what kind of class a <statpath> is.  If only we did this in a more object-oriented manner.
+
+0: full stat path (may include substat!)
+returns: class.<statpath> or "numeric" if null
+
+--------------------------------------------------------------------------------
+
+&f.get-class sfp=
+	udefault(
+		[u(d.data-dictionary)]/
+		class.[u(f.statpath-without-instance, extract(%0, 1, 2, .))], 
+		numeric
+	)
+
+--------------------------------------------------------------------------------
+
+think u(sfp/f.get-class, attribute.strength)
+think u(sfp/f.get-class, bio.template)
+think u(sfp/f.get-class, bio.full_name)
+
+
+
+================================================================================
+== ISCLASS? ====================================================================
+
+Does the class of the stat path match any of the passed parameters?
+
+0: full stat path (may include substat!)
+1: space-delimited class types to find
+returns: 1 or 0
+
+--------------------------------------------------------------------------------
+
+&f.isclass? sfp=t(match(%1, ulocal(f.get-class, %0)))
+
+--------------------------------------------------------------------------------
+
+think u(sfp/f.isclass?, attribute.strength, string)
+think u(sfp/f.isclass?, attribute.strength, numeric string)
+
+think u(sfp/f.isclass?, gift.full_moon, list)
+
+
 
