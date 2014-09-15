@@ -438,11 +438,11 @@
 &default.health.lethal DD=0
 &default.health.aggravated DD=0
 
-&health.damage DD=ladd( iter( u( health.types ), u( .value, %0, health.%i0 )))]
+&health.damage DD=ladd( iter( u( health.types ), u( .value, %0, health.%i0 )))
 &tags.health.damage DD=derived
 &default.health.damage DD=derived
 
-&health.penalty DD=min( 0, ladd( [u( %0/_health.maximum )] -[u( %0/_health.damage )] -3 ))]
+&health.penalty DD=min( 0, ladd( [u( %0/_health.maximum )] -[u( %0/_health.damage )] -3 ))
 &tags.health.penalty DD=derived
 &default.health.penalty DD=derived
 

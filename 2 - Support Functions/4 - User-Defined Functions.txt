@@ -202,26 +202,60 @@ qc: class of <stat path>: numeric, string, list
 @@ .. Stat Location Valid & Found
 	case(
 		%qc, 
-@@ >> Statpath's Class: String (ignore %3, give all)
-		string, %qd, 
-@@ >> Statpath's Class: List (ignore %3, give all)
-		list, %qd, 
-@@ >> Statpath's Class: Number (follow %3)
+@@ >> Class: String (ignore %3, give all)
+		string, 
+		%qd, 
+@@ >> Class: List (ignore %3, give all)
+		list, 
+		%qd, 
+@@ >> Class: Number (follow %3's directive)
+@@ .. first, convert 'derived' to value
 		numeric, 
-		switch(
+		[setq( d, ulocal( f.getstat.workhorse.numeric, %0, %qd, %qs ))]
+		[switch(
 			%3, 
-			p*, first(%qd, .), 
-			o*, rest(%qd, .), 
+			p*, first( %qd, . ), 
+			o*, rest( %qd, . ), 
 			b*, %qd, 
-			t*, ladd(%qd, .), 
-			ladd(%qd, .)
-		), 
+			t*, ladd( %qd, . ), 
+			ladd( %qd, . )
+		)], 
 @@ >> Else: Panic and return full stat
 		%qd
 	), 
 @@ .. Error Looking Up Stat
 	%qs
 )]
+
+
+--------------------------------------------------------------------------------
+-- Getstat add-on for "derived" ------------------------------------------------
+
+0: sheet dbref
+1: current values from sheet
+2: sheet statpath (to pull 'instance' from, if appropriate)
+returns:  value list
+
+i: instance (if exists) with underscores
+s: statpath without instance
+
+At the moment, we have no derived stats that require instance, but I'm adding 
+this code to it at the moment, anyhow. You never know.
+--
+
+&f.getstat.workhorse.numeric sfp=
+localize( strcat( 
+@@ 	setq( i, crumple( before( rest( %2, %( ), %) ))), 
+	setq( s, u( f.statpath-without-instance, trim( %2, b, _ ))), 
+	iter( %1, 
+		if( 
+			strmatch( %i0, derived ), 
+			ulocal( u( d.data-dictionary )/%qs, %0, %qi ), 
+		), 
+		., . 
+	)
+))
+
 
 
 --------------------------------------------------------------------------------
@@ -625,15 +659,20 @@ qu: "un-add" these list items (for type:class only)
 
 @@ .. oh yeah, if class:list + type.stat.substat, strip the substat
 [if(
-	and(strmatch(%qc, list), strmatch(%1, *.*.*)), setq(s, extract(%1, 1, 2, .)), 
-	setq(s, %1)
+	cand( 
+		strmatch( %qc, list ), 
+		strmatch( %1, *.*.* )), 
+		setq( s, extract(%1, 1, 2, . )
+	), 
+	setq( s, %1 )
 )]
 
-[setq(d, get(%0/_%qs))]
-[setq(0, regmatch(%qd, %(%\%[.*%\%]%)%(%\..*%)?|%(.*%), 0 1 2 3))]
+@@ >> (\[.*\])(\..*)?|(.*) -> <derived>.<substat> | <other>
+[setq( d, get( %0/_%qs ))]
+[setq( 0, regmatch( %qd, %(%\%[.*%\%]%)%(%\..*%)?|%(.*%), 0 1 2 3 ))]
 [if(
-	t(%q3), [setq(f, first(%qd, .))][setq(r, rest(%qd, .))], 
-	[setq(f, %q1)][setq(r, rest(%q2, .))]
+	t( %q3 ), [setq( f, first( %qd, . ))][setq( r, rest( %qd, . ))], 
+	[setq( f, %q1 )][setq( r, rest( %q2, . ))]
 )]
 
 
@@ -794,7 +833,7 @@ qr: prerequisites check, 'template' and 'other' only
 				f.prereq-check-other, 
 				%qw, 
 				%qi, 
-@@ >>> >>> >>> What is the next line doing? <<< <<< <<<
+@@ >> the line below is the 'instance' for that stat
 				before(rest(%qs, %(), %)), 
 				%qv
 			)
