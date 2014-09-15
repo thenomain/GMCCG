@@ -48,32 +48,32 @@
 
 @@ -- Core Attributes: Prereqs for Supernatural Power Level --
 
-&prerequisite.attribute.intelligence DD=u(_trait_check, %0, attribute.intelligence, %2)
+&prerequisite.attribute.intelligence DD=u(.trait_check, %0, attribute.intelligence, %2)
 &prereq-text.attribute.intelligence DD=Limited by power level stat
 
-&prerequisite.attribute.wits DD=u(_trait_check, %0, attribute.wits, %2)
+&prerequisite.attribute.wits DD=u(.trait_check, %0, attribute.wits, %2)
 &prereq-text.attribute.wits DD=Limited by power level stat
 
-&prerequisite.attribute.resolve DD=u(_trait_check, %0, attribute.resolve, %2)
+&prerequisite.attribute.resolve DD=u(.trait_check, %0, attribute.resolve, %2)
 &prereq-text.attribute.resolve DD=Limited by power level stat
 
 
-&prerequisite.attribute.strength DD=u(_trait_check, %0, attribute.strength, %2)
+&prerequisite.attribute.strength DD=u(.trait_check, %0, attribute.strength, %2)
 &prereq-text.attribute.strength DD=Limited by power level stat
 
-&prerequisite.attribute.dexterity DD=u(_trait_check, %0, attribute.dexterity, %2)
+&prerequisite.attribute.dexterity DD=u(.trait_check, %0, attribute.dexterity, %2)
 &prereq-text.attribute.dexterity DD=Limited by power level stat
 
-&prerequisite.attribute.stamina DD=u(_trait_check, %0, attribute.stamina, %2)
+&prerequisite.attribute.stamina DD=u(.trait_check, %0, attribute.stamina, %2)
 &prereq-text.attribute.stamina DD=Limited by power level stat
 
-&prerequisite.attribute.presence DD=u(_trait_check, %0, attribute.presence, %2)
+&prerequisite.attribute.presence DD=u(.trait_check, %0, attribute.presence, %2)
 &prereq-text.attribute.presence DD=Limited by power level stat
 
-&prerequisite.attribute.manipulation DD=u(_trait_check, %0, attribute.manipulation, %2)
+&prerequisite.attribute.manipulation DD=u(.trait_check, %0, attribute.manipulation, %2)
 &prereq-text.attribute.manipulation DD=Limited by power level stat
 
-&prerequisite.attribute.composure DD=u(_trait_check, %0, attribute.composure, %2)
+&prerequisite.attribute.composure DD=u(.trait_check, %0, attribute.composure, %2)
 &prereq-text.attribute.composure DD=Limited by power level stat
 
 
@@ -99,21 +99,21 @@
 &tags.skill.politics DD=mental
 &tags.skill.science DD=mental
 
-&prerequisite.skill.academics DD=u(_trait_check, %0, skill.academics, %2)
+&prerequisite.skill.academics DD=u(.trait_check, %0, skill.academics, %2)
 &prereq-text.skill.academics DD=Limited by power level stat
-&prerequisite.skill.computer DD=u(_trait_check, %0, skill.computer, %2)
+&prerequisite.skill.computer DD=u(.trait_check, %0, skill.computer, %2)
 &prereq-text.skill.computer DD=Limited by power level stat
-&prerequisite.skill.crafts DD=u(_trait_check, %0, skill.crafts, %2)
+&prerequisite.skill.crafts DD=u(.trait_check, %0, skill.crafts, %2)
 &prereq-text.skill.crafts DD=Limited by power level stat
-&prerequisite.skill.investigation DD=u(_trait_check, %0, skill.investigation, %2)
+&prerequisite.skill.investigation DD=u(.trait_check, %0, skill.investigation, %2)
 &prereq-text.skill.investigation DD=Limited by power level stat
-&prerequisite.skill.medicine DD=u(_trait_check, %0, skill.medicine, %2)
+&prerequisite.skill.medicine DD=u(.trait_check, %0, skill.medicine, %2)
 &prereq-text.skill.medicine DD=Limited by power level stat
-&prerequisite.skill.occult DD=u(_trait_check, %0, skill.occult, %2)
+&prerequisite.skill.occult DD=u(.trait_check, %0, skill.occult, %2)
 &prereq-text.skill.occult DD=Limited by power level stat
-&prerequisite.skill.politics DD=u(_trait_check, %0, skill.politics, %2)
+&prerequisite.skill.politics DD=u(.trait_check, %0, skill.politics, %2)
 &prereq-text.skill.politics DD=Limited by power level stat
-&prerequisite.skill.science DD=u(_trait_check, %0, skill.science, %2)
+&prerequisite.skill.science DD=u(.trait_check, %0, skill.science, %2)
 &prereq-text.skill.science DD=Limited by power level stat
 
 @@ -- Core Skills: Physical --
@@ -136,21 +136,21 @@
 &tags.skill.survival DD=physical
 &tags.skill.weaponry DD=physical
 
-&prerequisite.skill.athletics DD=u(_trait_check, %0, skill.athletics, %2)
+&prerequisite.skill.athletics DD=u(.trait_check, %0, skill.athletics, %2)
 &prereq-text.skill.athletics DD=Limited by power level stat
-&prerequisite.skill.brawl DD=u(_trait_check, %0, skill.brawl, %2)
+&prerequisite.skill.brawl DD=u(.trait_check, %0, skill.brawl, %2)
 &prereq-text.skill.brawl DD=Limited by power level stat
-&prerequisite.skill.drive DD=u(_trait_check, %0, skill.drive, %2)
+&prerequisite.skill.drive DD=u(.trait_check, %0, skill.drive, %2)
 &prereq-text.skill.drive DD=Limited by power level stat
-&prerequisite.skill.firearms DD=u(_trait_check, %0, skill.firearms, %2)
+&prerequisite.skill.firearms DD=u(.trait_check, %0, skill.firearms, %2)
 &prereq-text.skill.firearms DD=Limited by power level stat
-&prerequisite.skill.larceny DD=u(_trait_check, %0, skill.larceny, %2)
+&prerequisite.skill.larceny DD=u(.trait_check, %0, skill.larceny, %2)
 &prereq-text.skill.larceny DD=Limited by power level stat
-&prerequisite.skill.stealth DD=u(_trait_check, %0, skill.stealth, %2)
+&prerequisite.skill.stealth DD=u(.trait_check, %0, skill.stealth, %2)
 &prereq-text.skill.stealth DD=Limited by power level stat
-&prerequisite.skill.survival DD=u(_trait_check, %0, skill.survival, %2)
+&prerequisite.skill.survival DD=u(.trait_check, %0, skill.survival, %2)
 &prereq-text.skill.survival DD=Limited by power level stat
-&prerequisite.skill.weaponry DD=u(_trait_check, %0, skill.weaponry, %2)
+&prerequisite.skill.weaponry DD=u(.trait_check, %0, skill.weaponry, %2)
 &prereq-text.skill.weaponry DD=Limited by power level stat
 
 @@ -- Core Skills: Social --
@@ -173,21 +173,21 @@
 &tags.skill.streetwise DD=social
 &tags.skill.subterfuge DD=social
 
-&prerequisite.skill.animal_ken DD=u(_trait_check, %0, skill.animal_ken, %2)
+&prerequisite.skill.animal_ken DD=u(.trait_check, %0, skill.animal_ken, %2)
 &prereq-text.skill.animal_ken DD=Limited by power level stat
-&prerequisite.skill.empathy DD=u(_trait_check, %0, skill.empathy, %2)
+&prerequisite.skill.empathy DD=u(.trait_check, %0, skill.empathy, %2)
 &prereq-text.skill.empathy DD=Limited by power level stat
-&prerequisite.skill.expression DD=u(_trait_check, %0, skill.expression, %2)
+&prerequisite.skill.expression DD=u(.trait_check, %0, skill.expression, %2)
 &prereq-text.skill.expression DD=Limited by power level stat
-&prerequisite.skill.intimidation DD=u(_trait_check, %0, skill.intimidation, %2)
+&prerequisite.skill.intimidation DD=u(.trait_check, %0, skill.intimidation, %2)
 &prereq-text.skill.intimidation DD=Limited by power level stat
-&prerequisite.skill.persuasion DD=u(_trait_check, %0, skill.persuasion, %2)
+&prerequisite.skill.persuasion DD=u(.trait_check, %0, skill.persuasion, %2)
 &prereq-text.skill.persuasion DD=Limited by power level stat
-&prerequisite.skill.socialize DD=u(_trait_check, %0, skill.socialize, %2)
+&prerequisite.skill.socialize DD=u(.trait_check, %0, skill.socialize, %2)
 &prereq-text.skill.socialize DD=Limited by power level stat
-&prerequisite.skill.streetwise DD=u(_trait_check, %0, skill.streetwise, %2)
+&prerequisite.skill.streetwise DD=u(.trait_check, %0, skill.streetwise, %2)
 &prereq-text.skill.streetwise DD=Limited by power level stat
-&prerequisite.skill.subterfuge DD=u(_trait_check, %0, skill.subterfuge, %2)
+&prerequisite.skill.subterfuge DD=u(.trait_check, %0, skill.subterfuge, %2)
 &prereq-text.skill.subterfuge DD=Limited by power level stat
 
 
@@ -218,7 +218,7 @@
 
 &merit.unseen_sense_() DD=3|Wyrd.Twilight.Essence
 &tags.merit.unseen_sense_() DD=human.mental
-&prerequisite.merit.unseen_sense_() dd=u(_at_least, %0, attribute.wits, 2)
+&prerequisite.merit.unseen_sense_() dd=u(.at_least, %0, attribute.wits, 2)
 &prereq-text.merit.unseen_sense_() DD=Wits 2+
 
 @@ -- Core Merits: Physical --
@@ -228,7 +228,7 @@
 
 &merit.brawling_dodge DD=1
 &tags.merit.brawling_dodge DD=physical
-&prerequisite.merit.brawling_dodge DD=u(_at_least_all, %0, attribute.strength:2 skill.brawl:1)
+&prerequisite.merit.brawling_dodge DD=u(.at_least_all, %0, attribute.strength:2 skill.brawl:1)
 &prereq-text.merit.brawling_dodge DD=Strength 2+, Brawl 1+
 
 &merit.direction_sense DD=1
@@ -236,27 +236,27 @@
 
 &merit.disarm DD=2
 &tags.merit.disarm DD=physical
-&prerequisite.merit.disarm DD=u(_at_least_all, %0, attribute.dexterity:3 skill.weaponry:2)
+&prerequisite.merit.disarm DD=u(.at_least_all, %0, attribute.dexterity:3 skill.weaponry:2)
 &prereq-text.merit.disarm DD=Dexterity 3+ & Weaponry 2+
 
 &merit.fast_reflexes DD=1.2
 &tags.merit.fast_reflexes DD=physical
-&prerequisite.merit.fast_reflexes DD=u(_at_least, %0, attribute.dexterity, 3)
+&prerequisite.merit.fast_reflexes DD=u(.at_least, %0, attribute.dexterity, 3)
 &prereq-text.merit.fast_reflexes DD=Dexterity 3+
 
 &merit.fighting_finesse_() DD=2|*
 &tags.merit.fighting_finesse_() DD=physical
-&prerequisite.merit.fighting_finesse_() DD=u(_at_least_all, %0, attribute.dexterity:3 skill.weaponry:2)
+&prerequisite.merit.fighting_finesse_() DD=u(.at_least_all, %0, attribute.dexterity:3 skill.weaponry:2)
 &prereq-text.merit.fighting_finesse_() DD=Dexterity 3+ & Weaponry 2+
 
 &merit.fleet_of_foot DD=1.2.3.4
 &tags.merit.fleet_of_foot DD=physical
-&prerequisite.merit.fleet_of_foot DD=u(_at_least, %0, attribute.strength, 2)
+&prerequisite.merit.fleet_of_foot DD=u(.at_least, %0, attribute.strength, 2)
 &prereq-text.merit.fleet_of_foot DD=Strength 2+
 
 &merit.fresh_start DD=1
 &tags.merit.fresh_start DD=physical
-&prerequisite.merit.fresh_start DD=u(_at_least, %0, merit.fast_reflexes, 2)
+&prerequisite.merit.fresh_start DD=u(.at_least, %0, merit.fast_reflexes, 2)
 &prereq-text.merit.fresh_start DD=Fast Reflexes 2+
 
 &merit.giant DD=4
@@ -264,57 +264,57 @@
 
 &merit.gunslinger DD=3
 &tags.merit.gunslinger DD=physical
-&prerequisite.merit.gunslinger DD=u(_at_least_all, %0, attribute.dexterity:3 skill.firearms:3)
+&prerequisite.merit.gunslinger DD=u(.at_least_all, %0, attribute.dexterity:3 skill.firearms:3)
 &prereq-text.merit.gunslinger DD=Dexterity 3+ & Firearms 3+
 
 &merit.iron_stamina DD=1.2.3
 &tags.merit.iron_stamina DD=physical
-&prerequisite.merit.iron_stamina DD=u(_at_least_one, %0, attribute.stamina:3 attribute.resolve:3)
+&prerequisite.merit.iron_stamina DD=u(.at_least_one, %0, attribute.stamina:3 attribute.resolve:3)
 &prereq-text.merit.iron_stamina DD=Stamina 3+ or Resolve 3+
 
 &merit.iron_stomach DD=2
 &tags.merit.iron_stomach DD=physical
-&prerequisite.merit.iron_stomach DD=u(_at_least, %0, attribute.stamina, 2)
+&prerequisite.merit.iron_stomach DD=u(.at_least, %0, attribute.stamina, 2)
 &prereq-text.merit.iron_stomach DD=Stamina 2+
 
 &merit.natural_immunity DD=1
 &tags.merit.natural_immunity DD=physical
-&prerequisite.merit.natural_immunity DD=u(_at_least, %0, attribute.stamina, 2)
+&prerequisite.merit.natural_immunity DD=u(.at_least, %0, attribute.stamina, 2)
 &prereq-text.merit.natural_immunity DD=Stamina 2+
 
 &merit.quick_draw_() DD=1|Weaponry.Firearms
 &tags.merit.quick_draw_() DD=physical
-&prerequisite.merit.quick_draw_() DD=u(_at_least, %0, attribute.dexterity, 3)
+&prerequisite.merit.quick_draw_() DD=u(.at_least, %0, attribute.dexterity, 3)
 &prereq-text.merit.quick_draw_() DD=Dexterity 3+
 
 &merit.quick_healer DD=4
 &tags.merit.quick_healer DD=physical
-&prerequisite.merit.quick_healer DD=u(_at_least, %0, attribute.stamina, 4)
+&prerequisite.merit.quick_healer DD=u(.at_least, %0, attribute.stamina, 4)
 &prereq-text.merit.quick_healer DD=Stamina 4+
 
 &merit.strong_back DD=1
 &tags.merit.strong_back DD=physical
-&prerequisite.merit.strong_back DD=u(_at_least, %0, attribute.strength, 2)
+&prerequisite.merit.strong_back DD=u(.at_least, %0, attribute.strength, 2)
 &prereq-text.merit.strong_back DD=Strength 2+
 
 &merit.strong_lungs DD=3
 &tags.merit.strong_lungs DD=physical
-&prerequisite.merit.strong_lungs DD=u(_at_least, %0, skill.athletics, 3)
+&prerequisite.merit.strong_lungs DD=u(.at_least, %0, skill.athletics, 3)
 &prereq-text.merit.strong_lungs DD=Athletics 3+
 
 &merit.stunt_driver DD=3
 &tags.merit.stunt_driver DD=physical
-&prerequisite.merit.stunt_driver DD=u(_at_least, %0, attribute.dexterity, 3)
+&prerequisite.merit.stunt_driver DD=u(.at_least, %0, attribute.dexterity, 3)
 &prereq-text.merit.stunt_driver DD=Dexterity 3+
 
 &merit.toxin_resistance DD=2
 &tags.merit.toxin_resistance DD=physical
-&prerequisite.merit.toxin_resistance DD=u(_at_least, %0, attribute.stamina, 3)
+&prerequisite.merit.toxin_resistance DD=u(.at_least, %0, attribute.stamina, 3)
 &prereq-text.merit.toxin_resistance DD=Stamina 3+
 
 &merit.weaponry_dodge DD=1
 &tags.merit.weaponry_dodge DD=physical
-&prerequisite.merit.weaponry_dodge DD=u(_at_least_all, %0, attribute.strength:2 skill.weaponry:1)
+&prerequisite.merit.weaponry_dodge DD=u(.at_least_all, %0, attribute.strength:2 skill.weaponry:1)
 &prereq-text.merit.weaponry_dodge DD=Strength 2+ & Weaponry 1+
 
 @@ -- Core Merits: Social --
@@ -410,8 +410,8 @@
 
 @@ -- CORE SPECIAL TYPES -------------------------------------------------------
 
-&special.xp DD=#
-&default.special.xp DD=0.0
+@@ &special.xp DD=#
+@@ &default.special.xp DD=0.0
 @@ &default.special.xp DD=35.0
 @@ &default.special.xp DD=128.0
 
@@ -455,7 +455,7 @@
 
 &merit.eod dd=4
 &tags.merit.eod dd=mental
-&prerequisite.merit.eod dd=and(u(_at_least_one, %0, attribute.wits:3|attribute.dexterity:3), u(_at_least, %0, skill.crafts, 3), u(_has, %0, skill.crafts.demolitions))
+&prerequisite.merit.eod dd=and(u(.at_least_one, %0, attribute.wits:3|attribute.dexterity:3), u(.at_least, %0, skill.crafts, 3), u(.has, %0, skill.crafts.demolitions))
 &prereq-text.merit.eod dd=Wits or Dex 3+, Crafts 3+, Demolitions specialty in Crafts
 @@ &page.merit.eod #382=Arm.208
 
@@ -485,18 +485,18 @@
 
 &merit.outdoorsman dd=2
 &tags.merit.outdoorsman dd=physical
-&prerequisite.merit.outdoorsman dd=u(_at_least, %0, skill.survival, 3)
+&prerequisite.merit.outdoorsman dd=u(.at_least, %0, skill.survival, 3)
 &prereq-text.merit.outdoorsman dd=Survival 3+
 @@ &page.merit.outdoorsman sr=MR.59
 
 &merit.steady_driver dd=1
 &tags.merit.steady_driver dd=physical
-&prerequisite.merit.steady_driver dd=u(_at_least, %0, skill.drive, 2)
+&prerequisite.merit.steady_driver dd=u(.at_least, %0, skill.drive, 2)
 &prereq-text.merit.steady_driver dd=Drive 2+
 @@ &page.merit.steady_driver sr=MR.59
 
 &merit.wheelman dd=2
 &tags.merit.wheelman dd=physical
-&prerequisite.merit.wheelman dd=u(_at_least_all, %0, attribute.dexterity:2 skill.drive:2)
+&prerequisite.merit.wheelman dd=u(.at_least_all, %0, attribute.dexterity:2 skill.drive:2)
 &prereq-text.merit.wheelman dd=Dexterity 2+, Drive 2+
 @@ &page.merit.wheelman sr=MR.59
