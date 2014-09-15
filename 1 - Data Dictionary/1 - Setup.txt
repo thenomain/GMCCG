@@ -6,6 +6,13 @@
 
 @parent dd=codp
 &prefix.functions dd=.
+&prefix.attributes dd=attribute.
+&prefix.skills dd=skill.
+&prefix.merits dd=merit.
+&prefix.advantages dd=advantage.
+&prefix.bio dd=bio.
+&prefix.specials dd=special.
+&prefix.health dd=health.
 
 
 ================================================================================
