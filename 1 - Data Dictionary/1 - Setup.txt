@@ -119,8 +119,11 @@ Full text on a stat ("both" for numeric stats)
 		u(.value_full, %0, bio.template)
 
 &.Value_Full dd=
-	u(%0/_%1)
-
+	case( u( .class, %1 ), 
+		numeric, 
+		u( [u( d.sfp )]/f.getstat.workhorse.numeric, %0, u( %0/_%1 ), _%1 ), 
+		u( %0/_%1 )
+	)
 
 --
 

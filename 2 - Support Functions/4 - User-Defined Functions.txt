@@ -234,13 +234,16 @@ qc: class of <stat path>: numeric, string, list
 0: sheet dbref
 1: current values from sheet
 2: sheet statpath (to pull 'instance' from, if appropriate)
-returns:  value list
+returns: value list
 
 i: instance (if exists) with underscores
 s: statpath without instance
 
+uses: crumple -- squish + trim
+
 At the moment, we have no derived stats that require instance, but I'm adding 
 this code to it at the moment, anyhow. You never know.
+
 --
 
 &f.getstat.workhorse.numeric sfp=
@@ -255,7 +258,6 @@ localize( strcat(
 		., . 
 	)
 ))
-
 
 
 --------------------------------------------------------------------------------
