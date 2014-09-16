@@ -11,6 +11,7 @@
 @fo me=&d.data-dictionary sfp=[num( data dictionary <dd> )]
 @fo me=&d.sfp dd=[num( stat functions prototype <sfp> )]
 
+&d.chargen sfp=<< location of character generation, may be obsolete >>
 
 ================================================================================
 == SEARCH ORDER ================================================================
