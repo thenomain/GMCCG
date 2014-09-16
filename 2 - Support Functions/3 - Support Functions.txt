@@ -1,4 +1,103 @@
 ################################################################################
+## FUNCTIONS ABOUT TAGS ########################################################
+################################################################################
+
+
+================================================================================
+== List of Stats Based on Tags =================================================
+
+Returns only the stats of a certain category (* for 'all') with a certain tag ('*' for 'don't filter', in which case don't use this function, use lattr(<sheet>/_<category>.*) and leave it at that).
+
+0: dbref of sheet
+1: category (may be *)
+2: tags.list (all required, if any, for 'mental', etc., * for 'all')
+3: 'or' for the default behavior of hastag? (defaults to 'and')
+
+returns: character sheet statpaths
+
+--------------------------------------------------------------------------------
+
+&f.list-stats-tags sfp=
+	filter(
+		fil.list-stats-tags, 
+@@ .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
+@@ .. so we can use the filter for non-sheet matches
+		rest(edit(lattr(%0/_%1.*), %b_, %b), _), 
+		, 
+		, 
+		%2, 
+		not(strmatch(%3, or))
+	)
+
+
+
+================================================================================
+== Filter: Does this stat have these tags? =====================================
+
+Filter based on a tags list 
+0: stat.path_(with or without instance)
+1: tags.to.check.against
+2: "0" for or, "1" for and
+
+--------------------------------------------------------------------------------
+
+&fil.list-stats-tags sfp=
+	ulocal(
+		f.hastag?.workhorse, 
+		ulocal(f.statpath-without-instance, %0), 
+		%1, 
+		%2
+	)
+
+
+
+================================================================================
+== Filter: Is This Stat One of These Types? ====================================
+
+Probably duplicitous. Filter based on a tags list 
+
+0: stat.path_(with or without instance)
+1: types to check against
+
+--------------------------------------------------------------------------------
+
+&fil.list-stats-types sfp=
+	t(match(%1, first(%0, .)))
+
+
+
+================================================================================
+== Filter: Does This Stat Have One of These Values? ============================
+
+Filter based on values list (value.value 2.value 3)
+
+0: stat.path_(with or without instance)
+1: values to check against
+
+&fil.list-stats-values sfp=
+	setunion(
+		get([u(d.data-dictionary)]/[ulocal(f.statpath-without-instance, %0)]), 
+		%1, 
+		.
+	)
+
+--------------------------------------------------------------------------------
+
+think filter(sfp/fil.list-stats-tags, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , changeling)
+
+think filter(sfp/fil.list-stats-types, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , attribute merit)
+
+think [setq(0, merit)][setq(1, changeling)][filter(sfp/fil.list-stats-tags, lattr(dd/%q0.*), , , %q1, not(strmatch(%q2, or)))]
+
+
+think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , 4)
+
+think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , Changeling)
+
+
+
+
+################################################################################
 ## PREREQUITE FUNCTIONS ########################################################
 ################################################################################
 
@@ -42,6 +141,8 @@ localize(
 
 --------------------------------------------------------------------------------
 
+@@ these will be hard to check without a sheet, won't they
+
 think u(sfp/f.prereq-check-other, pmatch(dog), merit.mantle_(), spring)
 think u(sfp/f.prereq-check-other, pmatch(dog), merit.court_goodwill_(), spring)
 
@@ -76,7 +177,7 @@ returns: 1 if valid, #-1 <reason> if not
 	if(
 		or(
 @@ .. player is in chargen
-			strmatch(loc(%0), #xxx), 
+			strmatch(loc(%0), u( d.chargen )), 
 @@ .. stat is not cg-only
 			not(u(f.hastag?.workhorse, %1, chargen-only))
 		), 
@@ -85,6 +186,8 @@ returns: 1 if valid, #-1 <reason> if not
 	)
 
 ---
+
+@@ NOTE: test won't work until 'hastag?' is in.
 
 think u(sfp/f.prereq-check-cgen, pmatch(thenomain), attribute.presence)
 think u(sfp/f.prereq-check-cgen, pmatch(thenomain), merit.encyclopedic_knowledge)
@@ -135,106 +238,6 @@ localize(
 think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.unseen_sense_())
 think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.mantle_())
 think u(sfp/f.prereq-check-template, pmatch(thenomain), attribute.strength)
-
-
-
-
-################################################################################
-## FUNCTIONS ABOUT TAGS ########################################################
-################################################################################
-
-
-================================================================================
-== List of Stats Based on Tags =================================================
-
-Returns only the stats of a certain category (* for 'all') with a certain tag ('*' for 'don't filter', in which case don't use this function, use lattr(<sheet>/_<category>.*) and leave it at that).
-
-0: dbref of sheet
-1: category (may be *)
-2: tags.list (all required, if any, for 'mental', etc., * for 'all')
-3: 'or' for the default behavior of hastag? (defaults to 'and')
-
-returns: character sheet statpaths
-
---------------------------------------------------------------------------------
-
-&f.list-stats-tags sfp=
-
-	filter(
-		fil.list-stats-tags, 
-@@ .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
-@@ .. so we can use the filter for non-sheet matches
-		rest(edit(lattr(%0/_%1.*), %b_, %b), _), 
-		, 
-		, 
-		%2, 
-		not(strmatch(%3, or))
-	)
-
-
-
-================================================================================
-== Filter: Does this stat have these tags? =====================================
-
-Filter based on a tags list 
-0: stat.path_(with or without instance)
-1: tags.to.check.against
-2: "0" for or, "1" for and
-
---------------------------------------------------------------------------------
-
-&fil.list-stats-tags sfp=
-	ulocal(
-		f.hastag?.workhorse,
-		ulocal(f.statpath-without-instance, %0), 
-		%1, 
-		%2
-	)
-
-
-
-================================================================================
-== Filter: Is This Stat One of These Types? ====================================
-
-Probably duplicitous. Filter based on a tags list 
-
-0: stat.path_(with or without instance)
-1: types to check against
-
---------------------------------------------------------------------------------
-
-&fil.list-stats-types sfp=
-	t(match(%1, first(%0, .)))
-
-
-
-================================================================================
-== Filter: Does This Stat Have One of These Values? ============================
-
-Filter based on values list (value.value 2.value 3)
-
-0: stat.path_(with or without instance)
-1: values to check against
-
-&fil.list-stats-values sfp=
-	setunion(
-		get([u(d.data-dictionary)]/[ulocal(f.statpath-without-instance, %0)]), 
-		%1, 
-		.
-	)
-
---------------------------------------------------------------------------------
-
-think filter(sfp/fil.list-stats-tags, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , changeling)
-
-think filter(sfp/fil.list-stats-types, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , attribute merit)
-
-think [setq(0, merit)][setq(1, changeling)][filter(sfp/fil.list-stats-tags, lattr(dd/%q0.*), , , %q1, not(strmatch(%q2, or)))]
-
-
-think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , 4)
-
-think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , Changeling)
 
 
 
