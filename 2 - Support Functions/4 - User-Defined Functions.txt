@@ -266,6 +266,7 @@ localize( strcat(
 		if( 
 			strmatch( %i0, derived ), 
 			ulocal( u( d.data-dictionary )/%qs, %0, %qi ), 
+			%i0 
 		), 
 		., . 
 	)
@@ -312,12 +313,16 @@ think getstat(thenomain/cont.rep, total)
 
 Or/Default: Does <stat> have a tag in <tag.list>? And: Does <stat> have all tags in <tag.list>?
 
-@@ 0: stat
-@@ 1: tag.list (not case sensitive)
-@@ 2: or/and, if there.  Assume or-check
-@@ output: 1 or 0 (invalid stat names will always return 0)
-@@ 
-@@ qs: stat path
+0: stat
+1: tag.list (not case sensitive)
+2: or/and, if there.  Assume or-check
+output: 1 or 0 (invalid stat names will always return 0)
+
+qs: stat path
+
+--------------------------------------------------------------------------------
+
+@fo me=&ufunc.hastag? sfp=u\\( [num( sfp )]/f.hastag?, \\\%0, \\\%1, \\\%2 \\)
 
 --------------------------------------------------------------------------------
 
@@ -334,14 +339,16 @@ Or/Default: Does <stat> have a tag in <tag.list>? And: Does <stat> have all tags
 --------------------------------------------------------------------------------
 -- Hastag? Workhorse -----------------------------------------------------------
 
-&f.hastag?.workhorse sfp=
-@@ 0: stat path
-@@ 1: tag.list (not case sensitive)
-@@ 2: 1 if "and", 0/null if "or"
-@@ 
-@@ qt: tags for stat
-@@ qb: boolean list of matches
+0: stat path
+1: tag.list (not case sensitive)
+2: 1 if "and", 0/null if "or"
 
+qt: tags for stat
+qb: boolean list of matches
+
+--------------------------------------------------------------------------------
+
+&f.hastag?.workhorse sfp=
 [setq(t, lcstr(u(v(d.data-dictionary)/tags.%0)))]
 [setq(b, iter(%1, match(%qt, ##, .), .))]
 
@@ -365,6 +372,9 @@ think hastag?(wyrd, CHORNGEling.derived)
 think hastag?(wyrd, CHORNGEling.derived, and)
 think hastag?(wyrd)
 
+think hastag?( speed, derived )
+think hastag?( speed, derived.pool )
+think hastag?( speed, derived.pool, and )
 
 
 ================================================================================
@@ -373,6 +383,10 @@ think hastag?(wyrd)
 The point of this function is to take a statpath and a (possibly partial) value, or the value of "default", and return the full value if valid, #-1 if not.
 
 UPDATE: Now we're adding list stats, <num>.<num>.<num> is valid input for class.<statpath>: list
+
+--------------------------------------------------------------------------------
+
+@fo me=&ufunc.statvalidate sfp=u\\( [num( sfp )]/f.statvalidate, \\\%0, \\\%1 \\)
 
 --------------------------------------------------------------------------------
 
@@ -495,7 +509,11 @@ Probably not needed
 
 --------------------------------------------------------------------------------
 
-&f.statvalidate? sfp=[t(ulocal(f.statvalidate, %0, %1))]
+@fo me=&ufunc.statvalidate? sfp=u\\( [num( sfp )]/f.statvalidate?, \\\%0, \\\%1 \\)
+
+--------------------------------------------------------------------------------
+
+&f.statvalidate? sfp=t( ulocal( f.statvalidate, %0, %1 ))
 
 
 
@@ -529,6 +547,10 @@ qs: stat path
 qi: statpath without instance
 qv: value to set, validated
 qr: prerequisite checks
+
+--------------------------------------------------------------------------------
+
+@fo me=&ufunc.setstat sfp=u\\( [num( sfp )]/f.setstat, \\\%0, \\\%1, \\\%2 \\)
 
 --------------------------------------------------------------------------------
 
@@ -749,6 +771,13 @@ qu: "un-add" these list items (for type:class only)
 
 @@ ---
 @@ Start by cleaning the slate
+
+think [setstat(thenomain/willpower, default)] 
+think willpower -> [getstat(thenomain/willpower, both)] 
+think willpower max -> [getstat(thenomain/willpower_maximum, both)] 
+
+@@ --
+
 think [setstat(thenotest/willpo, 0, offset)] -> [getstat(thenotest/willp, b)]
 think [setstat(thenotest/willpo, default)] -> [getstat(thenotest/willp, b)]
 
