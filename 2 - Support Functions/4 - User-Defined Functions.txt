@@ -223,7 +223,7 @@ qc: class of <stat path>: numeric, string, list
 @@ >> Class: Number (follow %3's directive)
 @@ .. first, convert 'derived' to value
 		numeric, 
-		[setq( d, ulocal( f.getstat.workhorse.numeric, %0, %qd, %qs ))]
+		[setq( d, ulocal( f.getstat.workhorse.numeric, %0, _%qs ))]
 		[switch(
 			%3, 
 			p*, first( %qd, . ), 
@@ -244,28 +244,29 @@ qc: class of <stat path>: numeric, string, list
 -- Getstat add-on for "derived" ------------------------------------------------
 
 0: sheet dbref
-1: current values from sheet
-2: sheet statpath (to pull 'instance' from, if appropriate)
+1: _sheet statpath (to pull 'instance' from, if appropriate)
 returns: value list
 
 i: instance (if exists) with underscores
 s: statpath without instance
 
-uses: crumple -- squish + trim
+uses: crumple() -- squish + trim
 
 At the moment, we have no derived stats that require instance, but I'm adding 
 this code to it at the moment, anyhow. You never know.
 
 --
 
+
 &f.getstat.workhorse.numeric sfp=
 localize( strcat( 
-@@ 	setq( i, crumple( before( rest( %2, %( ), %) ))), 
-	setq( s, u( f.statpath-without-instance, trim( %2, b, _ ))), 
-	iter( %1, 
+@@ 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
+	setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
+	iter( 
+		u( %0/%1 ), 
 		if( 
 			strmatch( %i0, derived ), 
-			ulocal( u( d.data-dictionary )/%qs, %0, %qi ), 
+			ulocal( [u( d.data-dictionary )]/%qs, %0, %qi ), 
 			%i0 
 		), 
 		., . 
@@ -275,6 +276,10 @@ localize( strcat(
 
 --------------------------------------------------------------------------------
 -- Getstat Tests ---------------------------------------------------------------
+
+
+think getstat( thenomain/willpower, both )
+think getstat( thenomain/willpower max, both )
 
 @@ General Test
 think [statname(thenomain/cont.rep)]: [getstat(thenomain/cont.rep)]
@@ -772,9 +777,11 @@ qu: "un-add" these list items (for type:class only)
 @@ ---
 @@ Start by cleaning the slate
 
+think [setstat(thenomain/willpower_maximum, default)] 
+think willpower max -> [getstat(thenomain/willpower_maximum, both)] 
+
 think [setstat(thenomain/willpower, default)] 
 think willpower -> [getstat(thenomain/willpower, both)] 
-think willpower max -> [getstat(thenomain/willpower_maximum, both)] 
 
 @@ --
 
