@@ -537,7 +537,6 @@ Overwrites current values.
 
 Text is determined by stat's current value.
 
-THIS STUFF IS WORK IN PROCESS,  A LOT.
 NOTE THIS SOMEWHERE: Offsets must always be numeric, 0 = null = erase
 
 --
