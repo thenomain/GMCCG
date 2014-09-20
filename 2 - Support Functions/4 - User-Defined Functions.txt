@@ -783,6 +783,12 @@ think willpower max -> [getstat(thenomain/willpower_maximum, both)]
 think [setstat(thenomain/willpower, default)] 
 think willpower -> [getstat(thenomain/willpower, both)] 
 
+think [setstat(thenomain/willpower max, 2, off)] -> [getstat(thenomain/willpower max, b)]
+
+think [setstat(thenomain/willpo, 2, off)] -> [getstat(thenomain/willp, b)]
+think [setstat(thenomain/willpo, 7, override)] -> [getstat(thenomain/willp, b)]
+think [setstat(thenomain/willpo, default)] -> [getstat(thenomain/willp, b)]
+
 @@ --
 
 think [setstat(thenotest/willpo, 0, offset)] -> [getstat(thenotest/willp, b)]
@@ -843,6 +849,10 @@ qc: stat class (numeric, string, list - we only accept numeric, here)
 qv: value to shift by, validated
 qa: amount to offset by
 qr: prerequisites check, 'template' and 'other' only
+
+--------------------------------------------------------------------------------
+
+@fo me=&ufunc.shiftstat sfp=u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
 
 --------------------------------------------------------------------------------
 
@@ -955,16 +965,17 @@ localize(
 @@ >> set that stat!
 		ulocal( f.setstat.workhorse, %0, %1, %qa )
 	)]
+)
 
 
 --------------------------------------------------------------------------------
 -- Shiftstat Tests -------------------------------------------------------------
 
-think [shiftstat(thenotest/strength, 1)] -> [getstat(thenotest/strength, b)]
-think [shiftstat(thenotest/stren, 1, off)] -> [getstat(thenotest/strength, b)]
-think [shiftstat(thenotest/strength, -1)] -> [getstat(thenotest/strength, b)]
-think [shiftstat(thenotest/stren, 0, off)] -> [getstat(thenotest/strength, b)]
-think [shiftstat(thenotest/stre, -1, off)] -> [getstat(thenotest/strength, b)]
+think [shiftstat(thenomain/strength, 1)] -> [getstat(thenomain/strength, b)]
+think [shiftstat(thenomain/stren, 1, off)] -> [getstat(thenomain/strength, b)]
+think [shiftstat(thenomain/strength, -1)] -> [getstat(thenomain/strength, b)]
+think [shiftstat(thenomain/stren, 0, off)] -> [getstat(thenomain/strength, b)]
+think [shiftstat(thenomain/stre, -1, off)] -> [getstat(thenomain/strength, b)]
 
 think setstat(thenotest/full name, Jack Fireheart)
 think [shiftstat(thenotest/full name, Jack Fireheart)] -> [getstat(thenotest/full name)]
