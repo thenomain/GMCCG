@@ -362,7 +362,7 @@
 @@ -- the current pool trait is pulled from the max trait & applied an offset
 @@ -- spending "a dot of willpower" is an offset applied to the maximum
 
-&advantage.willpower DD=ladd( u( .value_full, %0, willpower_maximum ), . )
+&advantage.willpower DD=ladd( u( .value_full, %0, advantage.willpower_maximum ), . )
 &tags.advantage.willpower DD=derived.pool
 &default.advantage.willpower DD=derived
 
