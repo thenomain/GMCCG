@@ -405,7 +405,7 @@
 @@ &bio.apparent_birthdate DD=*
 
 &bio.template DD=Human
-&class.bio.template DD=list
+&class.bio.template DD=string
 
 
 @@ -- CORE SPECIAL TYPES -------------------------------------------------------

@@ -24,11 +24,22 @@ The rest are sheet-setting functions.
 
 
 ================================================================================
+== SETUP =======================================================================
+
+@create Stat Setter <ss>
+@set Stat Setter <ss>=inherit safe
+
+@parent Stat Setter <ss>=codp
+
+
+
+================================================================================
 == DATA ========================================================================
 
 @fo me=&d.stat-funcs Stat Setter <ss>=num( Stat Functions Prototype <sfp> )
 @fo me=&d.data-dictionary Stat Setter <ss>=num( Data Dictionary <dd> )
-&d.stat-reference Stat Setter <ss>=#382
+
+@@ &d.stat-reference Stat Setter <ss>=#382
 
 &f.find-sheet Stat Setter <ss>=u([u(d.stat-funcs)]/f.find-sheet, %0)
 
@@ -44,9 +55,9 @@ input.
 --------------------------------------------------------------------------------
 -- Command: Origin -------------------------------------------------------------
 
-&c.stat Stat Setter <ss>=$+stat*:@pemit %#=
-@@ [setq(0, secure(%0))] << this kills stat (instance)
-[setq(0, %0)]
+&c.stat Stat Setter <ss>=$^\+?stat(.*)$:@pemit %#=
+@@ [setq(0, secure(%1))] << this kills stat (instance)
+[setq(0, %1)]
 [switch(
 	%q0, 
 @@ No Entry (+stat)
@@ -56,8 +67,12 @@ input.
 @@ Just Args (+stat <arg>)
 	%b*, u(f.stat-specific, trim(%q0)), 
 @@ Crapola (+statblablabla)
-	Error: Command is '+stat%[/<switch>%] %[<other stuff>%]'
+	Error: Command is 'stat%[/<switch>%] %[<other stuff>%]'
 )]
+
+--
+
+@set ss/c.stat=regex
 
 
 --------------------------------------------------------------------------------
@@ -72,7 +87,7 @@ input.
 @@ Yes, I know it, hit it
 		u(%q0, %1), 
 @@ No, I don't know it.  Waa. 
-		No such switch for +stat.  Valid switches are: 
+		No such switch for 'stat'.  Valid switches are: 
 		[itemize(lcstr(iter(lattr(me/f.stat/*), after(##, /))))]
 	)
 
@@ -82,13 +97,13 @@ input.
 
 +Stat, alone, does nothing.
 
-&f.stat-default Stat Setter <ss>=Error: +stat alone does nothing  Try +stat <stat>
+&f.stat-default Stat Setter <ss>=Error: 'stat' alone does nothing  Try 'stat <stat>'
 
 
 --------------------------------------------------------------------------------
 -- Command: Specific -----------------------------------------------------------
 
-We're putting an alias down to +stat/v here to make the command more non-staff friendly.
+We're putting an alias down to 'stat/v' here to make the command more non-staff friendly.
 
 &f.stat-specific Stat Setter <ss>=u(f.stat/values, %0)
 
@@ -200,7 +215,7 @@ case(
 	), 
 @@ .. uncaught error (it happens)
 	I couldn't tell what you typed.  
-	The format is: +stat/set <player>/<stat> <operator> <value>
+	The format is: 'stat/set <player>/<stat> <operator> <value>'
 )
 
 
@@ -232,9 +247,13 @@ Stat-specific, override everything
 
 Set an un-templated player up with a new template.
 
-Yes, it only checks to see if they have a template stat, so you can "+stat/override <player>/template=" then use this command, bypassing wiping their entire sheet.  It still does overwrite any stat with a default value in the data-dictionary.
+Yes, it only checks to see if they have a template stat, so you can 'stat/override <player>/template=' then use this command, bypassing wiping their entire sheet.  It still does overwrite any stat with a default value in the data-dictionary.
 
-+stat/template <player>=<template>
+	stat/template <player>=<template>
+
+IMPORTANT NOTE: We have changed it so that you set one template, major or minor.
+Minor templates are assumed to have a major template of 'human'.
+This may change quite a few prerequsite checks in the DD.
 
 --
 
@@ -252,71 +271,107 @@ ql: list of stats to set
 
 &f.stat/template Stat Setter <ss>=
 
-[if(
+if(
 	not(isstaff(%#)), 
 	Staff Only., 
 
-	[setq(0, before(%0, =))]
-	[setq(1, after(%0, =))]
-	[setq(p, pmatch(%q0))]
-	[setq(w, u(f.find-sheet, %qp))]
+	strcat( 
+		setq( 0, before( %0, = )), 
+		setq( 1, after( %0, = )), 
+		setq( p, pmatch( %q0 )), 
+		setq( w, u( f.find-sheet, %qp )), 
 
-	[switch(
-		0, 
-		t(%qp), Player Not Found., 
+		switch( 0, 
+			t( %qp ), 
+			Player Not Found., 
 
-		not(hasattr(%qw, _bio.template)), 
-		Player already has a template. 
-		+stat/wipe %q0 to erase their stats., 
+			not(hasattr(%qw, _bio.template)), 
+			Player already has a template. 
+			'stat/wipe %q0' to erase their stats., 
 
-@@ .. it's possible someone is setting up a major.minor template
-@@ .. like human.ghoul or human.thaumaturge
-		[setq(v, iter(%q1, statvalidate(template, %i0), ., .))]
-		[not(match(%qv, #-*, .))], 
-		One or more templates did not validate., 
+			t( setr( v, statvalidate( template, %q1 ))), 
+			Template '%q1' could not be found., 
 
-@@ .. okay, set 'er!
-@@ .. .. which default stats?
-@@ .. .. (defaults with no template or match the template passed)
-@@ .. .. (setunion because we'll be getting no-template defaults multiple times)
-		[setq(
-			l, 
-			setunion(
-				iter(
-					%qv, 
-					filter(
-						filter.stat-allowed-for-template, 
-						iter(lattr([u(d.data-dictionary)]/default.*), rest(%i0, .))
-						, , , %i0
-					), 
-					.
+@@ OK! Find all stat.paths to be set with this template
+			strcat( 
+				setq( l, 
+					setunion( 
+						filter( filter.stat-allowed-for-template, 
+							iter( 
+								lattr( [u( d.data-dictionary )]/default.* ), 
+								rest( %i0, . )
+							), 
+							, , %qv 
+						), 
+					)
 				), 
+
+@@ .. .. output what we're setting
+				u( display.statpath_defaults, %qp, %qv, %ql ), 
+
+@@ .. .. and set it
+				null( set( %qw, _BIO.TEMPLATE:%qv )), 
+
+				null( 
+					iter( %ql, 
+						set( %qw, 
+							_%i0:
+							[get( [u( d.data-dictionary )]/default.%i0 )] 
+						)
+					)
+				)
 			)
-		)]
-
-@@ .. .. output and set
-		[header(Setup [name(%qp)] as a [edit(%qv, ., /)])] %r
-
-		%b [ansi(h, Sheet Location)]: %qs %r
-		%b [ansi(h, Template)]: %qv[null(set(%qw, _BIO.TEMPLATE:%qv))] %r
-		%b [iter(
-			%ql, 
-			[ansi(h, ulocal([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))]: [get([u(d.data-dictionary)]/default.%i0)]
-			[null(set(%qw, _%i0:[get([u(d.data-dictionary)]/default.%i0)]))], , %r %b
-		)] %r
-
-		[footer(+sheet [name(%qp)])]
-	)]
-)]
+		)
+	)
+)
 
 ---
 
+stat/template thenomain=ch
+stat/template thenomain=hum
+stat/wipe thenomain=YES
+stat/template thenomain=hum
+stat/wipe thenomain=YES
 
-+stat/template thenotest=ch
-+stat/template thenotest=hum
-+stat/wipe thenotest=YES
-+stat/template thenotest=hum
-+stat/wipe thenotest=YES
+
+------------------------------------------------------------------------------
+-- Display: Template Default Settings ----------------------------------------
+
+0: dbref of target (not their sheet location!)
+1: template
+2: list of (dd) statpaths that are being set
+
+--
+
+&display.statpath_defaults ss=
+
+strcat( 
+	header( Set up [name( %0 )] with template '%1' ), %r %b, 
+	ansi( h, Sheet Location ), : [u( f.find-sheet, %0 )] %r %b, 
+	ansi( h, Template ), : %1 %r, 
+
+	setq( m, setunion( iter( %2, first( %i0, . )), )), 
+	iter( %qm, 
+		[divider( titlestr( edit( %i0, _, %b ) ))]%r
+		[iter( graball( %2, %i0.* ), 
+			strcat( 
+				%b%b, 
+				ansi( h, 
+					ulocal( 
+						[u( d.stat-funcs )]/f.statname.workhorse, 
+						rest( %i0, . )
+					)
+				), 
+				:%b, 
+				get( [u( d.data-dictionary )]/default.%i0 )
+			), 
+			, %r 
+		)], 
+		, %r 
+	), %r, 
+
+	footer( sheet [name( %0 )] )
+)
 
 
 ------------------------------------------------------------------------------
@@ -324,11 +379,14 @@ ql: list of stats to set
 
 Filter for all items that have either passed template(s) in their tags, or none.
 
-&filter.stat-allowed-for-template Stat Setter <ss>=
-@@ 0: <statpath>
-@@ 1: template (Human, Changeling), or .-delimited list (human.thaumaturge)
+0: <statpath>
+1: template (Human, Changeling, Thaumaturge, Ghoul)
 
-or(
+--
+
+&filter.stat-allowed-for-template Stat Setter <ss>=
+
+cor(
 @@ .. tag matches template(s)?
 	u([u(d.stat-funcs)]/f.hastag?.workhorse, %0, %1), 
 @@ .. tag has no templates?
