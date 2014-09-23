@@ -7,6 +7,7 @@ nWOD Health:
 &health.aggravated: current aggravated damage
 
 
+
 ================================================================================
 == WORKSPACE ===================================================================
 
@@ -20,48 +21,53 @@ CHECKED DAMAGE: The damage dealt, if any, beyond max health
 simple damage = min(DMG, MAX - CURR)
 checked damage = max(0, DMG - (MAX - CURR))
 
-We add simple damage directly to that damage type, no need to step through each time to check.
+We add simple damage directly to that damage type, no need to step through each 
+time to check.
 
-For checked damage, we have to step through each point of damage to push/wrap the damage, in preparation for the next point.
+For checked damage, we have to step through each point of damage to push/wrap 
+the damage, in preparation for the next point.
 
 * ADD: Simple damage is simply added to the damage type.
 
-* PUSH: Damage type done is greater than least existing damage type. (Lethal over Bashing, Agg over Lethal and Bashing.)  The lesser damage type is subtracted (pushed off the health track and ignored), the damage type is added. (/ + X = X)
+* PUSH: Damage type done is greater than least existing damage type. (Lethal 
+over Bashing, Agg over Lethal and Bashing.)  The lesser damage type is 
+subtracted (pushed off the health track and ignored), the damage type is added. 
+(/ + X = X)
 
-* WRAP: Damage type done is equal or less than least existing damage type.  (Bashing to Any, Lethal to Lethal or Agg.  Agg to Agg.)  Least existing damage type is upgraded, done damage type is ignored.  (X + / = *)  * cannot be upgraded; spit out a loud notice?
+* WRAP: Damage type done is equal or less than least existing damage type. 
+(Bashing to Any, Lethal to Lethal or Agg. Agg to Agg.)  Least existing damage 
+type is upgraded, done damage type is ignored. (X + / = *)  * cannot be 
+upgraded; spit out a loud notice?
+
 
 
 ================================================================================
 == DATA DICTIONARY =============================================================
 
-&health.maximum DD=[ladd([u(%0/_attribute.stamina)].[u(%0/_advantage.size)], .)]
-&tags.health.maximum DD=derived
-&default.health.maximum DD=[u(#data_dictionary/health.maximum, %!)]
+@@ -- HEALTH (BELONGS IN HEALTH SYSTEM WRITEUP) --------------------------------
 
-@@ For WoD this order is important!
+&health.maximum DD=u( .value_stats, %0, attribute.stamina advantage.size )
+&tags.health.maximum DD=derived
+&default.health.maximum DD=derived
+
 &health.types DD=bashing lethal aggravated
 
 &health.bashing DD=#
 &health.lethal DD=#
 &health.aggravated DD=#
 
-@@ System only works with default values of 0
-@@ (the cg system will pick up on this
-&default.health.basthing DD=0
+&default.health.bashing DD=0
 &default.health.lethal DD=0
 &default.health.aggravated DD=0
 
-&health.damage DD=[ladd(iter(u(health.types), u(%0/_health.##)))]
+&health.damage DD=ladd( iter( u( health.types ), u( .value, %0, health.%i0 )))
 &tags.health.damage DD=derived
-&default.health.damage DD=[u(#data_dictionary/health.damage, %!)]
+&default.health.damage DD=derived
 
-&health.penalty DD=[min(0, ladd([ladd(u(%0/_health.maximum), .)] -[u(%0/_health.damage)] [u(_value, %0, merit.iron_stamina)] -3))]
+&health.penalty DD=min( 0, ladd( [u( %0/_health.maximum )] -[u( %0/_health.damage )] -3 ))
 &tags.health.penalty DD=derived
-&default.health.penalty DD=[u(#data_dictionary/health.penalty, %!)]
+&default.health.penalty DD=derived
 
--- put in explicit dbrefs --
-
-@fo me=@edit dd/*=#data_dictionary, [num(dd)]
 
 
 ================================================================================
@@ -70,41 +76,62 @@ For checked damage, we have to step through each point of damage to push/wrap th
 THE GOAL, COMPLEX DAMAGE:
 foreach (dmg-done): if (dmg-type < min-dmg) then (push 1 pt) else (wrap 1 pt)
 
-@@ &d.data-dictionary health=#188
 
-&d.health-types health=u(#188/health.types)
+
+
+
+================================================================================
+== SETUP =======================================================================
+
+
+
+================================================================================
+== DATA ========================================================================
+
+@fo me=&d.data-dictionary health=[num( data dictionary <dd> )]
+@fo me=&d.stat-funcs health=[num( stat function prototype <sfp> )]
+
+&d.health-types health=u( [u( d.data-dictionary )]/health.types )
+
+
+
+
+
+================================================================================
+== FUNCTIONS ===================================================================
+
+
 
 
 --------------------------------------------------------------------------------
--- HEALTH TYPE NAME <-> VALUE --------------------------------------------------
+-- Function: Health Type Name <-> Value ----------------------------------------
+
+0: rank-value or type name, partial-matched but not error-checked
+returns: if %0 is a value, return name. If %0 is name, return value
+
+--
 
 &f.conv-type health=
-@@ 0: rank-value or type name, partial-matched but not error-checked
-@@ returns: if %0 is a value, return name.  If %0 is name, return value
-
 if(
 	isnum(%0), 
 	extract(u(d.health-types), %0, 1), 
 	match(u(d.health-types), %0*)
 )
 
---- 
-
-&f.conv-type health=if(isnum(%0), extract(u(d.health-types), %0, 1), match(u(d.health-types), %0*))
-
 
 --------------------------------------------------------------------------------
--- MIN "TYPE" OF DMG -----------------------------------------------------------
+-- Function: Lowest "Type" of Damage -------------------------------------------
+
+0: bashing
+1: lethal
+2: aggravated
+returns: value (place on &health.types) of min type of health
+
+We use this to control the damage loop, determining PUSH or WRAP.
+
+--
 
 &f.min-dmg health=
-@@ 0: bashing
-@@ 1: lethal
-@@ 2: aggravated
-@@ basically, each thing passed matches up to DD/health.types
-@@ output: value (place on &health.types) of min type of health
-@@ 
-@@ We use this to control the damage loop, determining PUSH or WRAP.
-
 localize(
 	[setq(z, )]
 	[iter(
@@ -120,37 +147,39 @@ localize(
 	%qz
 )
 
---- 
 
-&f.min-dmg health=localize([setq(z, )][iter(u(d.health-types), if(and(t(v(dec(inum(0)))), not(t(%qz))), setq(z, inum(0))), , @@)]%qz)
+
 
 ================================================================================
 == DO SOME DAMAGE ==============================================================
 
+NO ERROR CHECKING DONE
+0: Max health
+1: starting dmg, <bashing> <lethal> <agg>
+2: Damage amount done
+3: Damage type done
+Output: <bashing> <lethal> <agg>
+
+damage ->
+qh: starting dmg (%1) run through code if dmg > max health
+q1: bashing dmg
+q2: lethal dmg
+q3: agg dmg
+
+damage pointers ->
+qt: type, numeric value of type of damage being done, %2
+qm: min dmg type currently have, numeric, grabbed in "complex" loop
+
+others ->
+qs: total simple dmg done
+qu: undamage, amount of dmg the person can still take
+qc: complex, amount of damage done that's complex
+
+This is the biggie
+
+--
+
 &f.do-some-dmg health=
-@@ NO ERROR CHECKING DONE
-@@ 0: Max health
-@@ 1: starting dmg, <bashing> <lethal> <agg>
-@@ 2: Damage amount done
-@@ 3: Damage type done
-@@ Output: <bashing> <lethal> <agg>
-@@ 
-@@ damage ->
-@@ qh: starting dmg (%1) run through code if dmg > max health
-@@ q1: bashing dmg
-@@ q2: lethal dmg
-@@ q3: agg dmg
-@@ 
-@@ damage pointers ->
-@@ qt: type, numeric value of type of damage being done, %2
-@@ qm: min dmg type currently have, numeric, grabbed in "complex" loop
-@@ 
-@@ others ->
-@@ qs: total simple dmg done
-@@ qu: undamage, amount of dmg the person can still take
-@@ qc: complex, amount of damage done that's complex
-@@ 
-@@ This is the biggie
 
 @@ Get type of min dmg.
 [setq(t, u(f.conv-type, %3))]
@@ -198,19 +227,22 @@ localize(
 @@ Output results as sent in: Bashing Lethal Aggravated
 %q1 %q2 %q3 
 
---- 
-
-&f.do-some-dmg health=[setq(t, u(f.conv-type, %3))][setq(h, if(lt(%0, ladd(%1)), u(f.reverse-max-health, %0, %1), %1))][iter(u(d.health-types), setq(inum(0), extract(%qh, inum(0), 1)), , @@)][setq(s, min(%2, setr(u, sub(%0, ladd(%qh)))))][setq(%qt, add(r(%qt), %qs))][setq(c, max(0, sub(%2, %qu)))][iter(lnum(%qc), [setq(m, u(f.min-dmg, %q1, %q2, %q3))][if(gt(%qt, %qm), u(f.do-some-dmg-push), u(f.do-some-dmg-wrap))], , @@)]%q1 %q2 %q3 
-
 
 --------------------------------------------------------------------------------
 -- DO SOME DAMAGE: PUSH --------------------------------------------------------
 
-@@ PUSH: Damage type done is greater than least existing damage type. (Lethal over Bashing, Agg over Lethal and Bashing.)  The lesser damage type is subtracted (pushed off the health track and ignored), the damage type is added. (/ + X = X)
+PUSH: Damage type done is greater than least existing damage type. 
+(Lethal over Bashing, Agg over Lethal and Bashing.)  The lesser damage type is 
+subtracted (pushed off the health track and ignored), the damage type is added. 
+
+	(/ + X = X)
+
+not actually a separate function, just separated for legibility's sake
+see f.do-some-dmg for registers explanation
+
+--
 
 &f.do-some-dmg-push health=
-@@ not actually a separate function, just separated for legibility's sake
-@@ see f.do-some-dmg for registers explanation
 
 @@ Drop min dmg type
 [setq(%qm, dec(r(%qm)))]
@@ -218,19 +250,22 @@ localize(
 @@ Add done dmg type
 [setq(%qt, inc(r(%qt)))]
 
---- 
-
-&f.do-some-dmg-push health=[setq(%qm, dec(r(%qm)))][setq(%qt, inc(r(%qt)))]
-
 
 --------------------------------------------------------------------------------
 -- DO SOME DAMAGE: WRAP --------------------------------------------------------
 
-@@ WRAP: Damage type done is equal or less than least existing damage type.  (Bashing to Any, Lethal to Lethal or Agg.  Agg to Agg.)  Least existing damage type is upgraded, done damage type is ignored.  (X + / = *)  * cannot be upgraded; min(<dmg type>, words(<available types>))
+WRAP: Damage type done is equal or less than least existing damage type. 
+(Bashing to Any, Lethal to Lethal or Agg. Agg to Agg.)  Least existing damage 
+type is upgraded, done damage type is ignored. 
+	(X + / = *)  
+	* cannot be upgraded; min(<dmg type>, words(<available types>))
+
+not actually a separate function, just separated for legibility's sake
+see f.do-some-dmg for registers explanation
+
+--
 
 &f.do-some-dmg-wrap health=
-@@ not actually a separate function, just separated for legibility's sake
-@@ see f.do-some-dmg for registers explanation
 
 if(
 	lte(inc(%qm), words(u(d.health-types))), 
@@ -238,28 +273,25 @@ if(
 	[setq(inc(%qm), inc(r(inc(%qm))))]
 )
 
----
-
-&f.do-some-dmg-wrap health=if(lte(inc(%qm), words(u(d.health-types))), [setq(%qm, dec(r(%qm)))][setq(inc(%qm), inc(r(inc(%qm))))])
-
 
 --------------------------------------------------------------------------------
 -- SHRINK MAX-HEALTH -----------------------------------------------------------
 
 if wounds > max health, remove wounds until wounds = max health and re-apply them as, you know, wounds.
 	
---> Returns final health, 0 0 0.
+0: (New) Max health
+1: <bashing> <lethal> <agg>
+Returns: New: <bashing> <lethal> <agg>
+
+qi: Points we have to strip, works as a counter.
+qd: Points we add back on, or original counter value.
+qh: <bashing> <lethal> <agg> stripped down from %1
+
 --> Calls Do-Some-Dmg for each dmg type it needs to re-apply
 
-&f.reverse-max-health health=
-@@ 0: (New) Max health
-@@ 1: <bashing> <lethal> <agg>
-@@ Returns: New <bashing> <lethal> <agg>
-@@ 
-@@ qi: Points we have to strip, works as a counter.
-@@ qd: Points we add back on, or original counter value.
-@@ qh: <bashing> <lethal> <agg> stripped down from %1
+--
 
+&f.reverse-max-health health=
 localize(
 
 @@ Prime the counter
@@ -285,25 +317,104 @@ localize(
 
 )
 
----
-
-&f.reverse-max-health health=localize([setq(d, setr(i, sub(ladd(%1), %0)))][setq(h, iter(%1, [sub(##, min(%qi, ##))][setq(i, sub(%qi, min(%qi, ##)))]))][u(f.do-some-dmg, %0, %qh, %qd, bashing)])
-
 
 
 ================================================================================
-== COMMANDS ====================================================================
+== DISPLAYS ====================================================================
 
-Health is not technically a "stat" so we need to make the commands to heal and hurt over here in the health system.
+The prettifiers.
 
 
--- +health -----------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Display: Health Bar ---------------------------------------------------------
 
-Information about health
+Stolen from +sheet, no lookups, in "proper" nWoD order.
 
-================================================================================
-== THE PRETTIFIERS =============================================================
--- f.display-health-descr ------------------------------------------------------
+&display.health-bar hf=
+@@ 0: <bashing> <lethal> <agg>
+@@ 1: max health
+@@ Output: [X][/][/][/][/][ ][ ]
+
+@@ .. * X / inversely related to <b> <l> <a>
+	[iter(
+		* X /, 
+		iter(
+@@ .. .. count the wound levels represented by which outer loop we're on
+@@ .. .. (here's where we invert, too)
+			lnum(extract(%0, sub(inc(words(%0)), inum(0)), 1)), 
+@@ .. .. output the symbol on the outer loop we're on
+			ansi(xh, %[, nh, %i1, xh, %]), 
+			, 
+			@@
+		), 
+		, 
+		@@
+	)]
+
+@@ .. undamaged (max - damage)
+	[iter(
+		lnum(sub(%1, ladd(%0))), 
+		ansi(xh, %[%b%]), , @@
+	)]
+
+--
+
+think u(hf/display.health-bar, 0 3 2, 7)
+
+
+--------------------------------------------------------------------------------
+-- Display: Health Detail ------------------------------------------------------
+
+detail-level output of a hurt or heal, does grab wound penalty from sheet
+** remember to convert "victim" to "sheet" for looking up the penalty! **
+
+0: dbref of victim
+1: dmg type or "healing" for healing
+2: amt hurt. if negative, amt healed
+3: max health of victim
+4: Initial <bash> <lethal> <agg>
+5: Final <bash> <lethal> <agg>
+6: dbref of person who did this
+
+--
+
+&display.health-detail hf=
+
+	[if(
+		strmatch(%2, -*), 
+		[header([name(%0)] receives healing for [abs(%2)] [capstr(%1)])],
+		[header([name(%0)] takes %2 [capstr(%1)])]
+	)]%r
+	%b[ansi(h, Initial Health)]: [u(display.health-bar, %4, %3)] 
+		 - [ladd(%4)] of %3 %r
+	%b[ansi(h, Final Health)]: %b [u(display.health-bar, %5, %3)] 
+		 - [ladd(%5)] of %3
+		 [if(neq(u(%0/_health.penalty), 0), %([u(%0/_health.penalty)] dice%))]%r
+	%b %r
+	[trim(wrap(
+		ulocal(display.health-descr, %0, %1, %2, %5, %3), 
+		78, left, %b
+	), r)]%r
+@@ .. if someone else did this to you, you both get to see it
+	[footer(
+		if(
+			t(comp(%0, %6)), 
+			[if(strmatch(%2, -*), healed, dealt)] 
+			by [name(%6)]
+		)
+	)]
+
+--
+
+think u(hf/display-health-detail, pmatch(thenomain), bashing, 2, 7, 3 0 0, 5 0 0, %#)
+
+think u(hf/display-health-detail, pmatch(thenomain), lethal, 2, 7, 5 0 0, 5 2 0, pmatch(tributary))
+
+think u(hf/display-health-detail, pmatch(thenomain), lethal, -2, 7, 5 2 0, 5 0 0, pmatch(tributary))
+
+
+--------------------------------------------------------------------------------
+-- Display: Health Description -------------------------------------------------
 
 damage dealt/healed: some (1-2), significant (3-4), extreme (5-6)
 total damage: lightly (25%), noticibly (50%), badly (75%), severely (100%), critical (full at lethal or agg)
@@ -312,21 +423,25 @@ total damage: lightly (25%), noticibly (50%), badly (75%), severely (100%), crit
 
 Chcked by the heal/hurt code above, at least one point of damage dealt/healed.
 
-&f.display-health-descr hf=
-@@ 0: dbref of victim
-@@ 1: dmg type or "healing" for healing
-@@ 2: amt hurt. if negative, amt healed
-@@ 3: final dmg: <bash> <lethal> <agg>
-@@ 4: max health of victim
-@@ 
-@@ qh: 0 if hurting, 1 if healing
-@@ 
-@@ qm: takes/recieves message
-@@ qd: "damage dealt/healed" descriptor chart
-@@ qn: is now/still
-@@ qt: "total damage" descriptors
-@@ qi: inventory of wound types
+--
 
+0: dbref of victim
+1: dmg type or "healing" for healing
+2: amt hurt. if negative, amt healed
+3: final dmg: <bash> <lethal> <agg>
+4: max health of victim
+
+qh: 0 if hurting, 1 if healing
+
+qm: takes/recieves message
+qd: "damage dealt/healed" descriptor chart
+qn: is now/still
+qt: "total damage" descriptors
+qi: inventory of wound types
+
+--
+
+&display.health-descr hf=
 [setq(h, strmatch(%2, -*))]
 
 @@ -- player
@@ -395,112 +510,15 @@ Chcked by the heal/hurt code above, at least one point of damage dealt/healed.
 
 --
 
-&f.display-health-descr #205=[setq(h, strmatch(%2, -*))][setq(m, if(%qh, receives, takes))][setq(d, switch(abs(%2), >6, ungodly, >4, extreme, >2, significant, >0, some, no))][setq(n, if(comp(%qd, no), now, still))][setq(t, lightly.noticeably.badly.severely)][setq(t, case(1, and(gte(ladd(%3), %4), comp(u(f.min-dmg, first(%3), extract(%3, 2, 1), last(%3)), 1)), critically, eq(ladd(%3), 0), fine, extract(%qt, round(mul(fdiv(ladd(%3), %4), words(%qt, .)), 0), 1, .)))][setq(i, bruised.bleeding.mangled)][setq(i, itemize(trim(iter(%3, if(gt(%i0, 0), [extract(%qi, inum(0), 1, .)].), , @@),b, .), .))][name(%0)] %qm %qd [if(%qh, healing for %1, %1)] and is %qn [trim(%qt %qi)].
-
---
-
-think u(#205/f.display-health-descr, pmatch(thenomain), bashing, 1, 3 0 0, 7)
-
-think u(#205/f.display-health-descr, pmatch(thenomain), bashing, 2, 0 5 3, 7)
-
-think u(#205/f.display-health-descr, pmatch(thenomain), bashing, -3, 0 0 0, 7)
+think u(hf/display-health-descr, pmatch(thenomain), bashing, 1, 3 0 0, 7)
+think u(hf/display-health-descr, pmatch(thenomain), bashing, 2, 0 5 3, 7)
+think u(hf/display-health-descr, pmatch(thenomain), bashing, -3, 0 0 0, 7)
 
 
--- f.display-health-detail ---------------------------------------------
+--------------------------------------------------------------------------------
+-- Display: Current Health Description -----------------------------------------
 
-detail-level output of a hurt or heal, does grab wound penalty from sheet
-** remember to convert "victim" to "sheeet" for looking up the penalty! **
-
-&f.display-health-detail hf=
-@@ 0: dbref of victim
-@@ 1: dmg type or "healing" for healing
-@@ 2: amt hurt.  if negative, amt healed
-@@ 3: max health of victim
-@@ 4: Initial <bash> <lethal> <agg>
-@@ 5: Final <bash> <lethal> <agg>
-@@ 6: dbref of person who did this
-
-	[if(
-		strmatch(%2, -*), 
-		[header([name(%0)] receives healing for [abs(%2)] [capstr(%1)])],
-		[header([name(%0)] takes %2 [capstr(%1)])]
-	)]%r
-	%b[ansi(h, Initial Health)]: [u(f.display-health-bar, %4, %3)] 
-		 - [ladd(%4)] of %3 %r
-	%b[ansi(h, Final Health)]: %b [u(f.display-health-bar, %5, %3)] 
-		 - [ladd(%5)] of %3
-		 [if(neq(u(%0/_health.penalty), 0), %([u(%0/_health.penalty)] dice%))]%r
-	%b %r
-	[trim(wrap(
-		ulocal(f.display-health-descr, %0, %1, %2, %5, %3), 
-		78, left, %b
-	), r)]%r
-@@ .. if someone else did this to you, you both get to see it
-	[footer(
-		if(
-			t(comp(%0, %6)), 
-			[if(strmatch(%2, -*), healed, dealt)] 
-			by [name(%6)]
-		)
-	)]
-
---
-
-&f.display-health-detail hf=[if(strmatch(%2, -*), [header([name(%0)] receives healing for [abs(%2)] [capstr(%1)])], [header([name(%0)] takes %2 [capstr(%1)])])]%r%b[ansi(h, Initial Health)]: [u(f.display-health-bar, %4, %3)]  - [ladd(%4)] of %3 %r%b[ansi(h, Final Health)]: %b [u(f.display-health-bar, %5, %3)] - [ladd(%5)] of %3 [if(neq(u(%0/_health.penalty), 0), %([u(%0/_health.penalty)] dice%))]%r%b %r[trim(wrap(ulocal(f.display-health-descr, %0, %1, %2, %5, %3), 78, left, %b), r)]%r[footer(if(t(comp(%0, %6)), [if(strmatch(%2, -*), healed, dealt)] by [name(%6)]))]
-
---
-
-think u(hf/f.display-health-detail, pmatch(thenomain), bashing, 2, 7, 3 0 0, 5 0 0, %#)
-
-think u(hf/f.display-health-detail, pmatch(thenomain), lethal, 2, 7, 5 0 0, 5 2 0, pmatch(tributary))
-
-
-think u(hf/f.display-health-detail, pmatch(thenomain), lethal, -2, 7, 5 2 0, 5 0 0, pmatch(tributary))
-
-
--- f.display-health-bar -------------------------------------------------
-
-Stolen from +sheet, no lookups, in "proper" nWoD order.
-
-&f.display-health-bar hf=
-@@ 0: <bashing> <lethal> <agg>
-@@ 1: max health
-@@ Output: [X][/][/][/][/][ ][ ]
-
-@@ .. * X / inversely related to <b> <l> <a>
-	[iter(
-		* X /, 
-		iter(
-@@ .. .. count the wound levels represented by which outer loop we're on
-@@ .. .. (here's where we invert, too)
-			lnum(extract(%0, sub(inc(words(%0)), inum(0)), 1)), 
-@@ .. .. output the symbol on the outer loop we're on
-			ansi(xh, %[, nh, %i1, xh, %]), 
-			, 
-			@@
-		), 
-		, 
-		@@
-	)]
-
-@@ .. undamaged (max - damage)
-	[iter(
-		lnum(sub(%1, ladd(%0))), 
-		ansi(xh, %[%b%]), , @@
-	)]
-
---
-
-&f.display-health-bar hf=[iter(* X /, iter(lnum(extract(%0, sub(inc(words(%0)), inum(0)), 1)), ansi(xh, %[, nh, %i1, xh, %]), , @@), , @@)][iter(lnum(sub(%1, ladd(%0))), ansi(xh, %[%b%]), , @@)]
-
---
-
-think u(hf/f.display-health-bar, 0 3 2, 7)
-
-
--- f.display-current-health-descr ----------------------------------------------
-
-The "pretty description" of someone's current health condition.  It's the other "descriptive" health, without the 'takes xxx and is now'
+The "pretty description" of someone's current health condition. It's the other "descriptive" health, without the 'takes xxx and is now'
 
 0: dbref of victim
 1: current dmg: <bash> <lethal> <agg>
@@ -509,8 +527,9 @@ The "pretty description" of someone's current health condition.  It's the other 
 qt: "total damage" descriptors
 qi: inventory of wound types
 
+--
 
-&f.display-current-health-descr #205=
+&display.current-health-descr hf=
 
 @@ -- player
 @@ -- is "badly"
@@ -559,15 +578,33 @@ qi: inventory of wound types
 
 --
 
-&f.display-current-health-descr #205=[setq(t, lightly.noticeably.badly.severely)][setq(t, case(1, and(gte(ladd(%1), %2), comp(u(f.min-dmg, first(%1), extract(%1, 2, 1), last(%1)), 1)), critically, eq(ladd(%1), 0), fine, extract(%qt, round(mul(fdiv(ladd(%1), %2), words(%qt, .)), 0), 1, .)))][setq(i, bruised.bleeding.mangled)][setq(i, itemize(trim(iter(%1, if(gt(%i0, 0), [extract(%qi, inum(0), 1, .)].), , @@),b, .), .))][name(%0)] is [trim(%qt %qi)].
-
---
-
-think u(#205/f.display-current-health-descr, pmatch(thenomain), 4 1 0, 7)
+think u(hf/display.current-health-descr, pmatch(thenomain), 4 1 0, 7)
 
 
-== THE HARD-WORKERS ==================================================
--- +hurt (aka +health/hurt) ------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+================================================================================
+== COMMANDS ====================================================================
+
+Health is not technically a "stat" so we need to make the commands to heal and hurt over here in the health system.
 
 	+hurt [<player>/]<type>[=<amt>|all]
 	+heal [<player>/]<type>[=<amt>|all]
@@ -578,29 +615,34 @@ think u(#205/f.display-current-health-descr, pmatch(thenomain), 4 1 0, 7)
 &c.hurt hf=$+hurt*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 0)
 &c.heal hf=$+heal*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 1)
 
-&d.stat-funcs #205=#204
 
--- The Heal/Hurt Worhorse --------------------------------------------
+--------------------------------------------------------------------------------
+-- The Heal/Hurt Worhorse ------------------------------------------------------
 
-Hurting and basic healing are essentially the same with one major difference: healing is a negative-damage-add up to the damage of that type.  The push/wrap system isn't smart enough to know how to negative-push or negative-wrap.
+Hurting and basic healing are essentially the same with one major difference: healing is a negative-damage-add up to the damage of that type. The push/wrap system isn't smart enough to know how to negative-push or negative-wrap.
 
-With this basic system, you can hurt to your heart's content ("all" does 99 damage, which even of bashing will put all but gods fully aggravated damage), but healing only heals that damage type.  There will/may be an additional function for dealing with degrading a damage type, say, from aggravated to lethal.
+With this basic system, you can hurt to your heart's content ("all" does 99 damage, which even of bashing will put all but gods fully aggravated damage), but healing only heals that damage type. There will/may be an additional function for dealing with degrading a damage type, say, from aggravated to lethal.
+
+--
+
+0: [<player>/]<type>=<amt>
+1: damage? (0 if hurt, 1 if heal)
+
+qp: player dbref
+qs: location of sheet (we're cheating for now, because I'm lazy)
+
+qt: damage type to cause/heal (or null if doesn't match)
+qa: amt (or error if non-numeric, negative, or other chicanery)
+qm: max health of victim
+
+qe: error message, if any
+
+q0: Existing damage: <bashing> <lethal> <agg>
+q1: New Damage: <same>
+
+--
 
 &f.healhurt-workhorse hf=
-@@ 0: [<player>/]<type>=<amt>
-@@ 1: damage? (0 if hurt, 1 if heal)
-@@ 
-@@ qp: player dbref
-@@ qs: location of sheet (we're cheating for now, because I'm lazy)
-@@ 
-@@ qt: damage type to cause/heal (or null if doesn't match)
-@@ qa: amt (or error if non-numeric, negative, or other chicanery)
-@@ qm: max health of victim
-@@ 
-@@ qe: error message, if any
-@@ 
-@@ q0: Existing damage: <bashing> <lethal> <agg>
-@@ q1: New Damage: <same>
 
 @@ For these we do have to check to match */* or not
 @@ (%qt is a temporary thing until the end)
@@ -671,18 +713,14 @@ With this basic system, you can hurt to your heart's content ("all" does 99 dama
 @@ .. .. .. detail: To self and, if target, them too
 	[pemit(
 		if(t(comp(%#, %qp)), %# %qp, %#), 
-		ulocal(f.display-health-detail, %qp, %qt, %qa, %qm, %q0, %q1, %#)
+		ulocal(display.health-detail, %qp, %qt, %qa, %qm, %q0, %q1, %#)
 	)]
 @@ .. .. .. descriptive: To everyone in target's location but self and target
 	[pemit(
 		setdiff(lcon(loc(%qp), connect), %# %qp), 
-		ulocal(f.display-health-descr, %qp, %qt, %qa, %q1, %qm)
+		ulocal(display.health-descr, %qp, %qt, %qa, %q1, %qm)
 	)]
 )]
-
----
-
-&f.healhurt-workhorse hf=[if(t(setr(t, rest(%0, /))), [setq(p, pmatch(before(%0, /)))], [setq(p, %#)][setq(t, %0)])][setq(a, switch(trim(after(%qt, =)), a*, 99, >0, #$, , 1, 0))][setq(t, grab(u(d.health-types), [trim(before(%qt, =))]*))][setq(s, u([u(d.stat-funcs)]/f.find-sheet, %qp))][setq(e, u(f.healhurt-errorcheck, %qp, %qs, %qt, %qa))][if(t(%qe), %qe, [setq(0, iter(u(d.health-types), u(%qs/_health.%i0)))][if(t(%1), setq(a, -[min(extract(%q0, match(u(d.health-types), %qt), 1), %qa)]))][setq(1, ulocal(f.do-some-dmg, setr(m, ladd(u(%qs/_health.maximum), .)), %q0, %qa, %qt))][null(iter(%q1, set(%qs, _health.[extract(u(d.health-types), inum(0), 1)]:%i0)))][pemit(if(t(comp(%#, %qp)), %# %qp, %#), ulocal(f.display-health-detail, %qp, %qt, %qa, %qm, %q0, %q1, %#))][pemit(setdiff(lcon(loc(%qp), connect), %# %qp), ulocal(f.display-health-descr, %qp, %qt, %qa, %q1, %qm))])]
 
 ---
 
@@ -705,7 +743,6 @@ think u(hf/f.healhurt-workhorse, agg=all, 1)
 think u(hf/f.health/hurt, bash = 9)
 think u(hf/f.health/hurt, tributary/bash=1)
 
-
 think u(hf/f.healhurt-workhorse, leth=3, 1)
 think u(hf/f.healhurt-workhorse, leth, 1)
 think u(hf/f.healhurt-workhorse, leth=a, 1)
@@ -715,14 +752,18 @@ think u(hf/f.healhurt-workhorse, bash=1, 1)
 think u(hf/f.healhurt-workhorse, bash=all, 1)
 
 
--- healhurt-errorcheck -----------------------------------------------
+--------------------------------------------------------------------------------
+-- healhurt-errorcheck ---------------------------------------------------------
+
+0: Player to search dbref
+1: Sheet dbref
+2: Damage type (for healing, always f.min-dmg)
+3: Amount
+Returns: Error message or null if none
+
+--
 
 &f.healhurt-errorcheck hf=
-@@ 0: Player to search dbref
-@@ 1: Sheet dbref
-@@ 2: Damage type (for healing, always f.min-dmg)
-@@ 3: Amount
-@@ Returns: Error message or null if none
 
 case(
 	0, 
@@ -739,11 +780,10 @@ case(
 		Error: Amount must be a postive integer.
 )
 
---
 
-&f.healhurt-errorcheck hf=[case(0, t(%0), Error: Unknown player., isapproved(%0), Error: Player not approved., or(isstaff(%#), not(t(comp(%#, %0)))), Error: Only staff may hurt or heal others., t(%1), Error: [name(%0)] doesn't have a sheet so can't be hurt., t(%2), Error: Don't know that kind of damage., and(gt(%3, 0), isint(%3)), Error: Amount must be a postive integer.)]
 
---=-=-=-=-=-=-=-=-==---=-==-=-
+================================================================================
+== HELP FILES ==================================================================
 
 &help~ic_commands~damage #96=Healing and Hurting~
 +hurt: Hurt yourself (one bashing)
@@ -758,7 +798,7 @@ case(
 +hurt <type>=all: Hurt yourself 99 points of <type> - a suicide switch
 +heal <type>=all: Heals all damage of <type>
 
-Damage type may be shortened as much as you want.  Damage penalties will affect all standard dice rolls.
+Damage type may be shortened as much as you want. Damage penalties will affect all standard dice rolls.
 
 (Next page: Explained details.)
 
@@ -782,8 +822,5 @@ A descriptive line of text. The code rules are listed below.
 
 Staff can +hurt <target>/<etc> and +heal <target>/<etc>. The staffer and the player will get the same detailed notification, and others in the target's location will get the same notification as if the player used hurt/heal on himself.
 
-There is no quiet option.  Staff are highly discouraged from trying to hand-set anyone.  There is no guarantee what might happen if you use this command on someone who doesn't have a template.
+There is no quiet option. Staff are highly discouraged from trying to hand-set anyone. There is no guarantee what might happen if you use this command on someone who doesn't have a template.
 
----
-
-&help~stat_topics~damage #96=Healing and Hurting~+hurt: Hurt yourself (one bashing) %r+heal: Heal yourself (one bashing) %r %r+hurt <type>: Hurt yourself one point of <type> %r+heal <type>: Heal yourself one point of <type> %r %r+hurt <type>=<amt>: Hurt yourself <amt> points of <type> %r+heal <type>=<amt>: Heal yourself <amt> points of <type> %r %r+hurt <type>=all: Hurt yourself 99 points of <type> - a suicide switch %r+heal <type>=all: Heals all damage of <type> %r %rDamage type may be shortened as much as you want.  Damage penalties will affect all standard dice rolls.  %r %r(Next page: Explained details.) %r %r[ansi(h, See Also)]: +help stat, +shelp stat, +help roll~* What You See: %r %rYou get a detailed explanation of your health track before and after, as well as a warning of any dice penalty you'll be getting due to the damage. (I can't remember if this is part of the dice system yet. It will be.) You'll also see... %r %r* What Others In the Room See: %r %rA descriptive line of text. The code rules are listed below.%r %r> For every two points of damage or healing: no, some, significant, extreme, ungodly.  %r %r> Then it will say how damaged you are, for a percentage of your total health bar: fine, lightly, noticeably, badly, and severely if bruised or critically if lethal or agg. %r %r> Finally, it will also report the types of damage you have, reporting bashing as "bruised", lethal as "bleeding", and aggravated as "mangled". It doesn't differentiate the levels of the types of damage, so if you have 5 bashing and 1 agg, you're still "badly bruised and mangled". %r %r(Next page: Staff options.)~* Hurting and Healing Someone Else: %r %rStaff can +hurt <target>/<etc> and +heal <target>/<etc>. The staffer and the player will get the same detailed notification, and others in the target's location will get the same notification as if the player used hurt/heal on himself. %r %rThere is no quiet option.  Staff are highly discouraged from trying to hand-set anyone.  There is no guarantee what might happen if you use this command on someone who doesn't have a template.
