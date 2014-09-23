@@ -422,29 +422,9 @@
 &default.special.species_factor dd=5
 
 
-@@ -- HEALTH (BELONGS IN HEALTH SYSTEM WRITEUP) --------------------------------
+@@ -- HEALTH -------------------------------------------------------------------
+@@ MOVED TO HEALTH SYSTEM
 
-&health.maximum DD=u( .value_stats, %0, attribute.stamina advantage.size )
-&tags.health.maximum DD=derived
-&default.health.maximum DD=derived
-
-&health.types DD=bashing lethal aggravated
-
-&health.bashing DD=#
-&health.lethal DD=#
-&health.aggravated DD=#
-
-&default.health.bashing DD=0
-&default.health.lethal DD=0
-&default.health.aggravated DD=0
-
-&health.damage DD=ladd( iter( u( health.types ), u( .value, %0, health.%i0 )))
-&tags.health.damage DD=derived
-&default.health.damage DD=derived
-
-&health.penalty DD=min( 0, ladd( [u( %0/_health.maximum )] -[u( %0/_health.damage )] -3 ))
-&tags.health.penalty DD=derived
-&default.health.penalty DD=derived
 
 
 @@ =============================================================================
