@@ -44,7 +44,9 @@ upgraded; spit out a loud notice?
 ================================================================================
 == DATA DICTIONARY =============================================================
 
-@@ -- HEALTH (BELONGS IN HEALTH SYSTEM WRITEUP) --------------------------------
+Hey, this is new.
+
+@@ -- HEALTH -------------------------------------------------------------------
 
 &health.maximum DD=u( .value_stats, %0, attribute.stamina advantage.size )
 &tags.health.maximum DD=derived
@@ -77,12 +79,13 @@ THE GOAL, COMPLEX DAMAGE:
 foreach (dmg-done): if (dmg-type < min-dmg) then (push 1 pt) else (wrap 1 pt)
 
 
-
-
-
 ================================================================================
 == SETUP =======================================================================
 
+@create WoD Health System <whs>
+@set WoD Health System <whs>=inherit safe
+
+@parent whs=codp
 
 
 ================================================================================
@@ -92,6 +95,10 @@ foreach (dmg-done): if (dmg-type < min-dmg) then (push 1 pt) else (wrap 1 pt)
 @fo me=&d.stat-funcs health=[num( stat function prototype <sfp> )]
 
 &d.health-types health=u( [u( d.data-dictionary )]/health.types )
+
+
+
+
 
 
 
@@ -330,7 +337,7 @@ The prettifiers.
 
 Stolen from +sheet, no lookups, in "proper" nWoD order.
 
-&display.health-bar hf=
+&display.health-bar wod health system <whs>=
 @@ 0: <bashing> <lethal> <agg>
 @@ 1: max health
 @@ Output: [X][/][/][/][/][ ][ ]
@@ -378,7 +385,7 @@ detail-level output of a hurt or heal, does grab wound penalty from sheet
 
 --
 
-&display.health-detail hf=
+&display.health-detail wod health system <whs>=
 
 	[if(
 		strmatch(%2, -*), 
@@ -441,7 +448,7 @@ qi: inventory of wound types
 
 --
 
-&display.health-descr hf=
+&display.health-descr wod health system <whs>=
 [setq(h, strmatch(%2, -*))]
 
 @@ -- player
@@ -529,7 +536,7 @@ qi: inventory of wound types
 
 --
 
-&display.current-health-descr hf=
+&display.current-health-descr wod health system <whs>=
 
 @@ -- player
 @@ -- is "badly"
@@ -612,8 +619,8 @@ Health is not technically a "stat" so we need to make the commands to heal and h
 	+health/hurt
 	+health/heal
 
-&c.hurt hf=$+hurt*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 0)
-&c.heal hf=$+heal*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 1)
+&c.hurt wod health system <whs>=$+hurt*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 0)
+&c.heal wod health system <whs>=$+heal*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 1)
 
 
 --------------------------------------------------------------------------------
@@ -642,7 +649,7 @@ q1: New Damage: <same>
 
 --
 
-&f.healhurt-workhorse hf=
+&f.healhurt-workhorse wod health system <whs>=
 
 @@ For these we do have to check to match */* or not
 @@ (%qt is a temporary thing until the end)
@@ -763,7 +770,7 @@ Returns: Error message or null if none
 
 --
 
-&f.healhurt-errorcheck hf=
+&f.healhurt-errorcheck wod health system <whs>=
 
 case(
 	0, 

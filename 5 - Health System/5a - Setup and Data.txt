@@ -1,0 +1,142 @@
+nWOD Health:
+
+&health.max: derived, maximum health, stamina + size
+
+&health.bashing: current bashing damage
+&health.lethal: current lethal damage
+&health.aggravated: current aggravated damage
+
+
+
+================================================================================
+== WORKSPACE ===================================================================
+
+DMG = damage being dealt
+MAX = health.max
+CURR = current damage total (health.bashing + health.lethal + health.aggravated)
+
+SIMPLE DAMAGE: The damage dealt up to max health
+CHECKED DAMAGE: The damage dealt, if any, beyond max health
+
+simple damage = min(DMG, MAX - CURR)
+checked damage = max(0, DMG - (MAX - CURR))
+
+We add simple damage directly to that damage type, no need to step through each 
+time to check.
+
+For checked damage, we have to step through each point of damage to push/wrap 
+the damage, in preparation for the next point.
+
+* ADD: Simple damage is simply added to the damage type.
+
+* PUSH: Damage type done is greater than least existing damage type. (Lethal 
+over Bashing, Agg over Lethal and Bashing.)  The lesser damage type is 
+subtracted (pushed off the health track and ignored), the damage type is added. 
+(/ + X = X)
+
+* WRAP: Damage type done is equal or less than least existing damage type. 
+(Bashing to Any, Lethal to Lethal or Agg. Agg to Agg.)  Least existing damage 
+type is upgraded, done damage type is ignored. (X + / = *)  * cannot be 
+upgraded; spit out a loud notice?
+
+
+
+================================================================================
+== DATA DICTIONARY =============================================================
+
+Hey, this is new.
+
+@@ -- HEALTH -------------------------------------------------------------------
+
+&health.maximum DD=u( .value_stats, %0, attribute.stamina advantage.size )
+&tags.health.maximum DD=derived
+&default.health.maximum DD=derived
+
+&health.types DD=bashing lethal aggravated
+
+&health.bashing DD=#
+&health.lethal DD=#
+&health.aggravated DD=#
+
+&default.health.bashing DD=0
+&default.health.lethal DD=0
+&default.health.aggravated DD=0
+
+&health.damage DD=ladd( iter( u( health.types ), u( .value, %0, health.%i0 )))
+&tags.health.damage DD=derived
+&default.health.damage DD=derived
+
+&health.penalty DD=min( 0, ladd( [u( %0/_health.maximum )] -[u( %0/_health.damage )] -3 ))
+&tags.health.penalty DD=derived
+&default.health.penalty DD=derived
+
+
+
+================================================================================
+== CODE ========================================================================
+
+THE GOAL, COMPLEX DAMAGE:
+foreach (dmg-done): if (dmg-type < min-dmg) then (push 1 pt) else (wrap 1 pt)
+
+
+================================================================================
+== SETUP =======================================================================
+
+@create WoD Health System <whs>
+@set WoD Health System <whs>=inherit safe
+
+@parent whs=codp
+
+
+================================================================================
+== DATA ========================================================================
+
+@fo me=&d.data-dictionary health=[num( data dictionary <dd> )]
+@fo me=&d.stat-funcs health=[num( stat function prototype <sfp> )]
+
+&d.health-types health=u( [u( d.data-dictionary )]/health.types )
+
+
+
+================================================================================
+== HELP FILES ==================================================================
+
+&help~ic_commands~damage #96=Healing and Hurting~
++hurt: Hurt yourself (one bashing)
++heal: Heal yourself (one bashing)
+
++hurt <type>: Hurt yourself one point of <type>
++heal <type>: Heal yourself one point of <type>
+
++hurt <type>=<amt>: Hurt yourself <amt> points of <type>
++heal <type>=<amt>: Heal yourself <amt> points of <type>
+
++hurt <type>=all: Hurt yourself 99 points of <type> - a suicide switch
++heal <type>=all: Heals all damage of <type>
+
+Damage type may be shortened as much as you want. Damage penalties will affect all standard dice rolls.
+
+(Next page: Explained details.)
+
+[ansi(h, See Also)]: +help stat, +shelp stat, +help roll
+~* What You See:
+
+You get a detailed explanation of your health track before and after, as well as a warning of any dice penalty you'll be getting due to the damage. (I can't remember if this is part of the dice system yet. It will be.) You'll also see...
+
+* What Others In the Room See:
+
+A descriptive line of text. The code rules are listed below.
+
+> For every two points of damage or healing: no, some, significant, extreme, ungodly. 
+
+> Then it will say how damaged you are, for a percentage of your total health bar: fine, lightly, noticeably, badly, and severely if bruised or critically if lethal or agg.
+
+> Finally, it will also report the types of damage you have, reporting bashing as "bruised", lethal as "bleeding", and aggravated as "mangled". It doesn't differentiate the levels of the types of damage, so if you have 5 bashing and 1 agg, you're still "badly bruised and mangled".
+
+(Next page: Staff options.)
+~* Hurting and Healing Someone Else:
+
+Staff can +hurt <target>/<etc> and +heal <target>/<etc>. The staffer and the player will get the same detailed notification, and others in the target's location will get the same notification as if the player used hurt/heal on himself.
+
+There is no quiet option. Staff are highly discouraged from trying to hand-set anyone. There is no guarantee what might happen if you use this command on someone who doesn't have a template.
+

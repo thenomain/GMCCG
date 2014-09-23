@@ -1,0 +1,180 @@
+================================================================================
+== COMMANDS ====================================================================
+
+Health is not technically a "stat" so we need to make the commands to heal and hurt over here in the health system.
+
+	+hurt [<player>/]<type>[=<amt>|all]
+	+heal [<player>/]<type>[=<amt>|all]
+
+	+health/hurt
+	+health/heal
+
+&c.hurt WoD Health System <whs>=$+hurt*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 0)
+&c.heal WoD Health System <whs>=$+heal*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 1)
+
+
+--------------------------------------------------------------------------------
+-- The Heal/Hurt Worhorse ------------------------------------------------------
+
+Hurting and basic healing are essentially the same with one major difference: healing is a negative-damage-add up to the damage of that type. The push/wrap system isn't smart enough to know how to negative-push or negative-wrap.
+
+With this basic system, you can hurt to your heart's content ("all" does 99 damage, which even of bashing will put all but gods fully aggravated damage), but healing only heals that damage type. There will/may be an additional function for dealing with degrading a damage type, say, from aggravated to lethal.
+
+--
+
+0: [<player>/]<type>=<amt>
+1: damage? (0 if hurt, 1 if heal)
+
+qp: player dbref
+qs: location of sheet (we're cheating for now, because I'm lazy)
+
+qt: damage type to cause/heal (or null if doesn't match)
+qa: amt (or error if non-numeric, negative, or other chicanery)
+qm: max health of victim
+
+qe: error message, if any
+
+q0: Existing damage: <bashing> <lethal> <agg>
+q1: New Damage: <same>
+
+--
+
+&f.healhurt-workhorse WoD Health System <whs>=
+
+@@ For these we do have to check to match */* or not
+@@ (%qt is a temporary thing until the end)
+[if(
+	t(setr(t, rest(%0, /))), 
+@@ .. <player>/<etc>
+	[setq(p, pmatch(before(%0, /)))], 
+@@ .. just <etc>
+	[setq(p, %#)]
+	[setq(t, %0)]
+)]
+
+@@ all: a high number, >0: entered value, null: 1, else: error (0)
+[setq(a, 
+	switch(
+		trim(after(%qt, =)), 
+		a*, 99, 
+		>0, #$, 
+		, 1, 
+		0
+	)
+)]
+[setq(t, grab(u(d.health-types), [trim(before(%qt, =))]*))]
+
+@@ qs: sheet loc
+[setq(s, u([u(d.stat-funcs)]/f.find-sheet, %qp))]
+
+@@ Error-checking time
+[setq(e, u(f.healhurt-errorcheck, %qp, %qs, %qt, %qa))]
+
+[if(
+@@ .. if error was found, report it.
+	t(%qe), %qe, 
+@@ .. grab the important bits, convert them, and dance
+@@ .. .. set the amt to the less of amt or amt that /can/ be healed, may be zero
+@@ .. .. negative it to "negative hurt"
+	[setq(0, iter(u(d.health-types), u(%qs/_health.%i0)))]
+
+@@ .. .. if healing (%1 is true), set %qa to less of damage healed or damage has
+	[if(
+		t(%1), 
+		setq(a, 
+			-[min(
+				extract(%q0, match(u(d.health-types), %qt), 1), 
+				%qa
+			)]
+		)
+	)]
+
+@@ .. .. WHY HEALING (NEGATIVE DAMAGE) WORKS:
+@@ .. .. Amt is constrained, so the damage system won't screw up trying to
+@@ .. .. "negative push" or "negative wrap", it will just "negative add".
+@@ .. .. This is a little abusive of resources, but only a little.
+
+	[setq(1, ulocal(
+		f.do-some-dmg, 
+		setr(m, ladd(u(%qs/_health.maximum), .)), 
+		%q0, 
+		%qa, 
+		%qt
+	))]
+@@ .. .. apply new health levels to attributes
+	[null(iter(
+		%q1, 
+		set(%qs, _health.[extract(u(d.health-types), inum(0), 1)]:%i0)
+	))]
+@@ .. .. output depends on if someone did it to themselves. (1 = not self)
+@@ .. .. .. detail: To self and, if target, them too
+	[pemit(
+		if(t(comp(%#, %qp)), %# %qp, %#), 
+		ulocal(display.health-detail, %qp, %qt, %qa, %qm, %q0, %q1, %#)
+	)]
+@@ .. .. .. descriptive: To everyone in target's location but self and target
+	[pemit(
+		setdiff(lcon(loc(%qp), connect), %# %qp), 
+		ulocal(display.health-descr, %qp, %qt, %qa, %q1, %qm)
+	)]
+)]
+
+---
+
+@@ hurting
+think u(whs/f.healhurt-workhorse, lethal)
+think u(whs/f.healhurt-workhorse, bashing=3, 0)
+think u(whs/f.healhurt-workhorse, thenomain/bashing, 0)
+
+@@ healing
+think u(whs/f.healhurt-workhorse, bashing, 1)
+think u(whs/f.healhurt-workhorse, bash=all, 1)
+think u(whs/f.healhurt-workhorse, thenomain/leth = 4, 1)
+
+@@ hurting to 'all', and back again
+think u(whs/f.healhurt-workhorse, b = all)
+think u(whs/f.healhurt-workhorse, agg=all, 1)
+
+---
+
+think u(whs/f.health/hurt, bash = 9)
+think u(whs/f.health/hurt, tributary/bash=1)
+
+think u(whs/f.healhurt-workhorse, leth=3, 1)
+think u(whs/f.healhurt-workhorse, leth, 1)
+think u(whs/f.healhurt-workhorse, leth=a, 1)
+think u(whs/f.healhurt-workhorse, bash=all, 1)
+
+think u(whs/f.healhurt-workhorse, bash=1, 1)
+think u(whs/f.healhurt-workhorse, bash=all, 1)
+
+
+--------------------------------------------------------------------------------
+-- healhurt-errorcheck ---------------------------------------------------------
+
+0: Player to search dbref
+1: Sheet dbref
+2: Damage type (for healing, always f.min-dmg)
+3: Amount
+Returns: Error message or null if none
+
+--
+
+&f.healhurt-errorcheck WoD Health System <whs>=
+
+case(
+	0, 
+	t(%0), Error: Unknown player., 
+	isapproved(%0), Error: Player not approved., 
+@@ .. isstaff | !different -> returns 0 when !staff & different
+	or(isstaff(%#), not(t(comp(%#, %0)))), 
+		Error: Only staff may hurt or heal others., 
+	t(%1), 
+		Error: [name(%0)] doesn't have a sheet so can't be hurt., 
+	t(%2), 
+		Error: Don't know that kind of damage., 
+	and(gt(%3, 0), isint(%3)), 
+		Error: Amount must be a postive integer.
+)
+
+
