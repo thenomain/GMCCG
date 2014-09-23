@@ -1,0 +1,272 @@
+
+
+Switches for basic setup work, and for completely wiping a character sheet.
+
+
+=============================================================================
+== /TEMPLATE ================================================================
+
+Set an un-templated player up with a new template.
+
+Yes, it only checks to see if they have a template stat, so you can 'stat/override <player>/template=' then use this command, bypassing wiping their entire sheet.  It still does overwrite any stat with a default value in the data-dictionary.
+
+	stat/template <player>=<template>
+
+IMPORTANT NOTE: We have changed it so that you set one template, major or minor.
+Minor templates are assumed to have a major template of 'human'.
+This may change quite a few prerequsite checks in the DD.
+
+--
+
+0: Target=Template
+
+q0: target
+q1: template
+
+qp: pmatch
+qw: where is the sheet location
+qv: validated template(s)
+ql: list of stats to set
+
+--
+
+&f.stat/template Stat Setter <ss>=
+
+if(
+	not(isstaff(%#)), 
+	Staff Only., 
+
+	strcat( 
+		setq( 0, before( %0, = )), 
+		setq( 1, after( %0, = )), 
+		setq( p, pmatch( %q0 )), 
+		setq( w, u( f.find-sheet, %qp )), 
+
+		switch( 0, 
+			t( %qp ), 
+			Player Not Found., 
+
+			not(hasattr(%qw, _bio.template)), 
+			Player already has a template. 
+			'stat/wipe %q0' to erase their stats., 
+
+			t( setr( v, statvalidate( template, %q1 ))), 
+			Template '%q1' could not be found., 
+
+@@ OK! Find all stat.paths to be set with this template
+			strcat( 
+				setq( l, 
+					setunion( 
+						filter( filter.stat-allowed-for-template, 
+							iter( 
+								lattr( [u( d.data-dictionary )]/default.* ), 
+								rest( %i0, . )
+							), 
+							, , %qv 
+						), 
+					)
+				), 
+
+@@ .. .. output what we're setting
+				u( display.statpath_defaults, %qp, %qv, %ql ), 
+
+@@ .. .. and set it
+				null( set( %qw, _BIO.TEMPLATE:%qv )), 
+
+				null( 
+					iter( %ql, 
+						set( %qw, 
+							_%i0:
+							[get( [u( d.data-dictionary )]/default.%i0 )] 
+						)
+					)
+				)
+			)
+		)
+	)
+)
+
+---
+
+stat/template thenomain=ch
+stat/template thenomain=hum
+stat/wipe thenomain=YES
+stat/template thenomain=hum
+stat/wipe thenomain=YES
+
+
+------------------------------------------------------------------------------
+-- Display: Template Default Settings ----------------------------------------
+
+0: dbref of target (not their sheet location!)
+1: template
+2: list of (dd) statpaths that are being set
+
+--
+
+&display.statpath_defaults ss=
+
+strcat( 
+	header( Set up [name( %0 )] with template '%1' ), %r %b, 
+	ansi( h, Sheet Location ), : [u( f.find-sheet, %0 )] %r %b, 
+	ansi( h, Template ), : %1 %r, 
+
+	setq( m, setunion( iter( %2, first( %i0, . )), )), 
+	iter( %qm, 
+		[divider( titlestr( edit( %i0, _, %b ) ))]%r
+		[iter( graball( %2, %i0.* ), 
+			strcat( 
+				%b%b, 
+				ansi( h, 
+					ulocal( 
+						[u( d.stat-funcs )]/f.statname.workhorse, 
+						rest( %i0, . )
+					)
+				), 
+				:%b, 
+				get( [u( d.data-dictionary )]/default.%i0 )
+			), 
+			, %r 
+		)], 
+		, %r 
+	), %r, 
+
+	footer( sheet [name( %0 )] )
+)
+
+
+------------------------------------------------------------------------------
+-- Filter: Stat Allowed For Template -----------------------------------------
+
+Filter for all items that have either passed template(s) in their tags, or none.
+
+0: <statpath>
+1: template (Human, Changeling, Thaumaturge, Ghoul)
+
+--
+
+&filter.stat-allowed-for-template Stat Setter <ss>=
+
+cor(
+@@ .. tag matches template(s)?
+	u([u(d.stat-funcs)]/f.hastag?.workhorse, %0, %1), 
+@@ .. tag has no templates?
+	not(u(
+		[u(d.stat-funcs)]/f.hastag?.workhorse, 
+		rest(%0, .), 
+		get([u(d.data-dictionary)]/bio.template)
+	))
+)
+
+--
+
+@@ .. which "default" stats are ok for 
+
+think filter(ss/filter.stat-allowed-for-template, iter(lattr(dd/default.*), rest(%i0, .)), , , changeling)
+
+@@ .. unseen sense is a human-only stat
+
+think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , changeling)
+
+think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , human)
+
+
+
+=============================================================================
+== /WIPE ====================================================================
+
+No cheeky "unapprove" here; clear 'em out!
+
+0: <player>[=YES]
+
+q0: <player>
+q1: [YES]
+
+qp: pmatch player
+qw: where is the sheet?
+ql: list of stats getting wiped, sorted
+
+--
+
+&f.stat/wipe Stat Setter <ss>=
+
+if(
+	not(isstaff(%#)), 
+	Staff Only., 
+
+	[setq(0, before(%0, =))]
+	[setq(1, after(%0, =))]
+	[case(
+		0, 
+
+		t(setr(p, pmatch(%q0))), Player Not Found., 
+
+		hasattr(setr(w, u(f.find-sheet, %qp)), _bio.template), 
+		Template Not Found., 
+
+@@ wipe the sheet -- of only stats that are valid!
+		comp(%q1, YES), 
+		[setq(
+			l, 
+			edit(
+@@ .. get all possible types
+				iter(
+					[u([u(d.stat-funcs)]/d.type-search-order)] 
+					[u([u(d.stat-funcs)]/d.type-specials)], 
+@@ .. list all attributes matching those types, stripping leading _
+					iter(lattr(%qw/_%i0.*), rest(%i0, _))
+				), 
+@@ .. remove template from the list; we display that first
+				BIO.TEMPLATE, @@(null)
+			)
+		)]
+
+@@ >> wipe and display sheet
+		[header(Wiping [name(%qp)]'s Sheet)] %r
+		%b [iter(
+			BIO.TEMPLATE %ql, 
+			[ansi(h, u([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))]: 
+			[get(%qw/_%i0)] [null(set(%qw, _%i0:))], , %r %b
+		)] %r
+@@		%r CGStamp: [u(%qp/_CGSTAMP)]
+@@		[null(set(%qp, _CGSTAMP:))]%r
+		[footer(Sheet Wiped)], 
+
+@@ default: warning message
+		ansi( 
+			r, >> Are you%b, 
+			rhu, absolutely sure, 
+			r, %byou want to wipe [name(%qp)]'s sheet? <<, 
+			n, %rIf so%, type:%b, 
+			h, stat/wipe [name(%qp)]=YES 
+		)
+	)]
+)
+
+---
+
+stat/wipe thenomain
+stat/template thenomain=h
+stat/wipe thenomain
+stat/wipe thenomain=yes
+stat/wipe thenomain=YES
+
+
+-----------------------------------------------------------------------------
+-- LIST STATS (ALL) ---------------------------------------------------------
+
+Not only does this list the stats in the search order, but those not as well.
+(folded this into the core system after creating it)
+
+>>> I don't think anybody calls this; check for usage across system <<<
+
+--
+
+&f.list-stats-all Stat Setter <ss>=u([u(d.stat-funcs)]/f.stat-list-selected, *)
+
+--
+
+think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.unseen_sense_())
+think u(sfp/f.prereq-check-other, pmatch(dog), merit.mantle_(), spring)
+think u(sfp/f.prereq-check-other, pmatch(dog), bio.kith, , Cleareyes)
+

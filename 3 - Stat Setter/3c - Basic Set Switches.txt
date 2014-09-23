@@ -1,0 +1,139 @@
+
+
+These are switches for the basic trait-setting commands.
+
+
+
+================================================================================
+== /SET ========================================================================
+
+	stat/set <player>/<trait> =+- <value>
+
+
+--------------------------------------------------------------------------------
+-- Splitting the /Set input ----------------------------------------------------
+
+0: The thing to match.  player/stat =+- value 
+q0: Target
+q1: Stat 
+q2: Operator
+q3: Value (allowed to be null)
+returns: the above, through registers, 1 if all registers are full
+
+I hate having to do it like this.  Wanted a regexp, didn't work.
+
+--
+
+&d.regmatch-stat Stat Setter <ss>=
+
+[setq(0, trim(first(%0, /)))]
+[setq(1, after(%0, /))]
+
+[setq(
+	2, 
+	case(
+		1, 
+		strmatch(%q1, *=*), 
+		=, 
+		strmatch(%q1, *+*), 
+		+, 
+		strmatch(%q1, *-*), 
+		-
+	)
+)]
+
+[setq(3, trim(rest(%q1, %q2)))]
+
+[setq(1, trim(first(%q1, %q2)))]
+
+[and(t(%q0), t(%q1), t(%q2))]
+
+
+--------------------------------------------------------------------------------
+-- /SET ------------------------------------------------------------------------
+
+The main switch.
+
+0: target/stat +-= value
+1: <null> | offset | override, as passed by the other switches
+
+q0: target
+q1: stat
+q2: +-=
+q3: value
+ 
+qp: player
+qn: result from validate-name
+qs: result from shift-/setstat
+
+uses: setstat() and shiftstat().
+(stat-setting functions find the sheet for us)
+
+--
+
+&f.stat/set Stat Setter <ss>=
+
+case(
+	0, 
+	isstaff(%#), Staff Only., 
+@@ .. Something broke the match
+	t(u(d.regmatch-stat, %0)), 
+	I couldn't tell what you typed.  
+	The format is: stat/set <player>/<stat> <operator> <value>, 
+@@ .. player not found
+	[t(setr(p, pmatch(%q0)))], 
+	Error: Player not found., 
+@@ .. template not there
+	[t(getstat(%qp/template))], 
+	Error: No Template found., 
+@@ .. removed (no null stats, unless we're doing an /override or /offset)
+@@	or(strmatch(override, %1), strmatch(offset, %1), comp(%q3, )), 
+@@	Error: Must set a value., 
+@@ .. no multi-stat setting here
+	[setq(n, ulocal([u(d.stat-funcs)]/f.statpath-validate-name, %q1))]
+	[or(lte(words(%qn), 1), not(t(%qn)))], 
+	Error: Can only set one stat at a time., 
+@@ .. set that stat!
+@@ .. .. =, setstat
+	comp(%q2, =), 
+	if(
+		t(setr(s, setstat(%qp/%q1, %q3, %1))), 
+		%qs, 
+		Error from Setstat: %qs
+	), 
+@@ .. .. +/-, shiftstat
+	not(xor(comp(%q2, +), comp(%q2, -))), 
+	if(
+		t(setr(s, shiftstat(%qp/%q1, %q2%q3, %1))), 
+		%qs, 
+		Error from Shiftstat: %qs
+	), 
+@@ .. uncaught error (it happens)
+	I couldn't tell what you typed.  
+	The format is: 'stat/set <player>/<stat> <operator> <value>'
+)
+
+
+
+=============================================================================
+== /OFFSET ==================================================================
+
+Stat-specific, but numerics only.
+
+--
+
+&f.stat/offset Stat Setter <ss>=u(f.stat/set, %0, offset)
+
+
+
+=============================================================================
+== /OVERRIDE ================================================================
+
+Stat-specific, override everything
+
+--
+
+&f.stat/override Stat Setter <ss>=u(f.stat/set, %0, override)
+
+
+

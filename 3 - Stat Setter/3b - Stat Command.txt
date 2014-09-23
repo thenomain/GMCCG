@@ -1,0 +1,64 @@
+================================================================================
+== BASIC COMMAND ===============================================================
+
+The "mistress command" style where the command is broken down from a single
+input.
+
+
+--------------------------------------------------------------------------------
+-- Command: Origin -------------------------------------------------------------
+
+&c.stat Stat Setter <ss>=$^\+?stat(.*)$:@pemit %#=
+@@ [setq(0, secure(%1))] << this kills stat (instance)
+[setq(0, %1)]
+[switch(
+	%q0, 
+@@ No Entry (stat)
+	, u(f.stat-default), 
+@@ A Switch, with or without Argument (+money/<switch> [<arg>])
+	/*, u(f.stat-switch, after(first(%q0), /), rest(%q0)), 
+@@ Just Args (stat <arg>)
+	%b*, u(f.stat-specific, trim(%q0)), 
+@@ Crapola (statblablabla)
+	Error: Command is 'stat%[/<switch>%] %[<other stuff>%]'
+)]
+
+--
+
+@set ss/c.stat=regex
+
+
+--------------------------------------------------------------------------------
+-- Command: Switch-Finder ------------------------------------------------------
+
+&f.stat-switch Stat Setter <ss>=
+@@ q0: Partial-name-match the switch.  What the hell.
+
+@@ Do I know the switch?
+	ifelse(
+		setr(0, grab(lattr(me/f.stat/*), f.stat/%0*)), 
+@@ Yes, I know it, hit it
+		u(%q0, %1), 
+@@ No, I don't know it.  Waa. 
+		No such switch for 'stat'.  Valid switches are: 
+		[itemize(lcstr(iter(lattr(me/f.stat/*), after(##, /))))]
+	)
+
+
+--------------------------------------------------------------------------------
+-- Command: Default ------------------------------------------------------------
+
+stat, alone, does nothing.
+
+&f.stat-default Stat Setter <ss>=Error: 'stat' alone does nothing  Try 'stat <stat>'
+
+
+--------------------------------------------------------------------------------
+-- Command: Specific -----------------------------------------------------------
+
+We're putting an alias down to 'stat/v' here to make the command more non-staff friendly.
+
+&f.stat-specific Stat Setter <ss>=u(f.stat/values, %0)
+
+
+

@@ -1,0 +1,87 @@
+################################################################################
+## STAT SETTER #################################################################
+
+stat
+stat/set <target>/<stat>[<+-=><value>|default] -- sets/erases permanent value 
+stat/offset <target>[<+-=><value>] -- sets offset
+stat/override <target>[<+-=><value>] -- overrides check, sets stat literally
+
+stat theno/str = 2 >> sets Strength to 2
+stat theno/str - 1 >> reduces Strength by 1
+stat theno/str + 3 >> increases Strength by 3
+
+stat/values [<flag(s)>/]<stat> -- what values are good for this stat?
+
+stat/template <target>=<template>
+stat/wipe <target> -- devoids them of stats
+
+--
+
+Parts of this command could probably be partially renamed.
+'stat/values' is a lookup function.
+The rest are sheet-setting functions.
+
+There's no command here to switch sheets, even though we set up 
+"_special.sheet_location" specifically for this purpose.
+
+This probably needs to get fixed in this set of code, and not 'sheet'. Not sure.
+
+
+================================================================================
+== SETUP =======================================================================
+
+@create Stat Setter <ss>
+@set Stat Setter <ss>=inherit safe
+
+@parent Stat Setter <ss>=codp
+
+
+
+================================================================================
+== DATA ========================================================================
+
+@fo me=&d.stat-funcs Stat Setter <ss>=num( Stat Functions Prototype <sfp> )
+@fo me=&d.data-dictionary Stat Setter <ss>=num( Data Dictionary <dd> )
+
+@@ &d.stat-reference Stat Setter <ss>=#382
+
+&f.find-sheet Stat Setter <ss>=u([u(d.stat-funcs)]/f.find-sheet, %0)
+
+
+
+================================================================================
+== HELP ========================================================================
+
+&HELP~STAT_TOPICS~stat #96=
+About Stats~
+stat is a multi-functional command that lists information about stats available on the game. It only lists stats available to the players, which not all stats on +sheet. (XP and health are notable exceptions.)
+
+[ansi(h, stat <stat>)] : Detailed information about <stat>. 
+
+[ansi(h, stat <stat>*)] : List of stats matching the wildcard and their stat category.
+
+[ansi(h, stat <filter(s)>/<stat>*)]: Filters a stat list.
+
+Filters and examples on the next page.
+~
+[ansi(h, Useful Tags)]
+
+If you're interested in using the filter for stat, here are a list of useful key words:
+
+* Templates: changeling, fae-touched, human, thaumaturge, psychic, werewolf
+* Stat Types: attribute, skill, merit, contract, goblin contract, gift
+* Stat Groups: physical, mental, social, power, finesse, reistance
+* Others:
+%b %b chargen-only: Stats I can (usually) only buy in chargen.
+%b %b value=<list>: Stat can be set to a <value>, a dot-delimited list.
+
+Examples:
+%b %b stat str 
+%b %b stat str* 
+%b %b stat merit/str* 
+%b %b stat chargen-only/*
+%b %b stat psychic/*kine*
+%b %b stat merit value=5/*
+%b %b stat contract beast/*
+%b %b stat psychic value=4.5/ps*
+
