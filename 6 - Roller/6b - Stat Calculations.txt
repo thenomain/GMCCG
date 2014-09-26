@@ -1,0 +1,243 @@
+================================================================================
+== ROLL PRIMER =================================================================
+
+The following registers are used across the entire system:
+
+    qd: Number: Total number of dice to roll (default 0)
+        0: Use chance roller
+        1+: Use normal roller
+    qa: Number: The "again" to roll (default 10, 11 = "No 10-again")
+    qe: Text: Error.list (default empty)
+    qo: Text: Things.to.add to skill-list output (default empty)
+    qs: Text: Which success system to use. (default "Standard")
+        "Standard": Use the standard system
+        "Weakness": Use the weakness system
+    qz: Text: /Full/on/switches
+    qr: Text: Result of dice throw, <throw>|<throw> if extended/multiple throws
+
+    qt: Times to roll (default 1 unless /extended switch is used)
+
+These registers are to be considered global and should not be touched out of context, for any reason.
+
+See "Roll Switches", below, for details about how to add and include switches to roll.
+
+
+================================================================================
+== REGISTERS ===================================================================
+
+Playing with the registers in a way where I know it will work properly.
+
+In all cases, %0 is what to add.  In all cases, no error checking is done.  In all cases, there is to be no output.
+
+
+--------------------------------------------------------------------------------
+-- Add to Output (qo) ----------------------------------------------------------
+
+0: stat name to add to output
+1: sign (+ if <null>)
+2: "nostat" if we want to error it
+
+--
+
+&f.registers.output-add nWoD Roller <nr>=
+	setq( o, 
+		%qo`
+		[if( comp( %1, ), %1, + )] 
+		[if( strmatch( %2, nostat ), ansi( xh, %[%0%] ), %0 )] 
+	)
+
+
+--------------------------------------------------------------------------------
+-- Add to Dice (qd) ------------------------------------------------------------
+
+&f.registers.dice-add nWoD Roller <nr>=setq( d, add( %qd, %0 ))
+
+
+--------------------------------------------------------------------------------
+-- Add to Errors (qe) ----------------------------------------------------------
+
+&f.registers.error-add nWoD Roller <nr>=setq( e, %qe`%0 )
+
+
+--------------------------------------------------------------------------------
+-- Add to Number of Extended Rolls To Make (qt) --------------------------------
+
+&f.registers.extendednum-add nWoD Roller <nr>=setq( t, add( %qt, %0 ))
+
+
+
+================================================================================
+== STAT CHECKS =================================================================
+
+These functions build the basic what-to-roll list.  Stats, untrained penalties and wound penalties are all added here.
+
+
+--------------------------------------------------------------------------------
+-- Check for Stats -------------------------------------------------------------
+
+Build the what-to-roll list with the stats.  If the system can pull the stat, it will roll it.
+
+Doesn't deal with specialties at the same time as skills, yet, so:
+	+roll dex + fire + fire.pist
+
+
+>> here is where I would put in <player>:<stat>, if we would
+
+--
+
+0: Sheet dbref (player)
+1: Things to roll
+Outputs: Null -- see "roll primer"
+
+q0: Current stat to check
+q1: Current sign (+ or -)
+q2: Current full stat name
+q3: Current full stat path
+q4: Current total stat value
+q5: Current permanent stat value
+q6: Class of current full stat path (%q3)
+
+--
+
+&f.stat-check.stats nWoD Roller <nr>=
+	iter( 
+		edit( %1, -%b, -, -, +- ), 
+		case( 1, 
+
+@@ >> it's a number
+			isint( %i0 ), 
+			[u( f.registers.dice-add, %i0 )]
+			[u( f.registers.output-add, abs( %i0 ), u( .operand, %i0 ))], 
+
+@@ >> it's possibly a stat
+@@ .. (extract the sign if -, y~ay)
+			[setq( 0, 
+				case( setr( 1, u( .operand, %i0 )), 
+					-, 
+					trim( rest( %i0, - )), 
+					trim( %i0 )
+				)
+			)]
+@@ .. set up the functions
+			[setq( 3, 
+				if( comp( %q0, ), 
+					ulocal( [u(d.stat-setter)]/f.statpath.workhorse, %q0, %0 ), 
+					setq( 0, %b )
+				)
+			)]
+			[setq( 2, 
+				ulocal( [u(d.stat-setter)]/f.statname.workhorse, rest( %q3, . ))
+			)]
+@@ >> now check if the stat is valid
+			[t( %q3 )], 
+
+			[setq( 5, getstat( %0/[first( %q0, . )], both ))]
+			[setq( 6, ulocal( [u(d.stat-setter)]/f.get-class, %q3 ))]
+			[case( 1, 
+@@ .. >> class:list or class:string - do not roll
+				t( match( list string, %q6 )), 
+				u( f.registers.output-add, %q2, %q1, nostat ), 
+@@ .. >> if this is a <stat>.<specialty> then do both parts
+				strmatch( %q0, *.* ), 
+@@ .. .. specialty, add the dice as one
+				[setq( 4, add( getstat( %0/%q0 ), ladd( %q5, . )))]
+				[u( f.registers.dice-add, %q4 )]
+@@ .. .. (add results)
+				[u( f.registers.extendednum-add, %q4 )]
+				[u( f.registers.output-add, %q2, %q1 )], 
+@@ .. >> normal, add the dice for that stat
+				[u( f.registers.dice-add, setr( 4, ladd( %q5, . )))]
+@@ .. .. but wait, if it's a skill then check for untrained penalties
+@@ .. .. (this generates output and I have no idea why, so I'm cheating)
+				[null( if( 
+					strmatch( %q3, skill.* ), 
+					u( f.stat-check.untrained, %0, %q0, first( %q5, . ))
+				))]
+@@ .. .. (add results)
+				[u( f.registers.extendednum-add, %q4 )]
+				[u( f.registers.output-add, %q2, %q1 )]
+			)], 
+@@ >> stat is not valid/recognized
+			[u( f.registers.output-add, %q0, %q1, nostat )]
+		), 
+		+, 
+		@@
+	)
+
+
+--------------------------------------------------------------------------------
+-- Check for Untrained ---------------------------------------------------------
+
+0: dbref of sheet
+1: skill (full name is best, skills ONLY)
+2: value of skill
+q0: full stat value
+
+--
+
+&f.stat-check.untrained nWoD Roller <nr>=
+
+@@ .. (messy)
+	if( 
+		not( u( f.hasswitch?, tr )), 
+		if( 
+			t( %2 ), 
+			%q0, 
+			case( 
+				1, 
+@@ untrained physcal or social
+				hastag?( %1, physical.social, or ), 
+				[u( f.registers.dice-add, -1 )]
+				[u( f.registers.output-add, 1 %(untrained %1%), - )], 
+@@ untrained mental
+				hastag?( %1, mental ), 
+				[u( f.registers.dice-add, -3 )]
+				[u( f.registers.output-add, 3 %(untrained %1%), - )], 
+			)
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Check for Specialty ---------------------------------------------------------
+
+So here we are, dealing with nWoD specialties.  In our system it's passed Skill.Specialty.  Specialties normally add just +1 to the roll (we pull the value from the sheet itself).
+
+Due to possible exceptions, I'll (try to) allow Skill.Specialty.Specialty.
+
+Like Untrained, this is Skills Only.
+
+Unlike Untrained, this is slapped onto the normal skill flow
+
+>>>>>>> ALREADY DONE IN f.stat-check.stats <<<<<<<<<
+
+
+--------------------------------------------------------------------------------
+-- Check for Health Penalty ----------------------------------------------------
+
+Add (subtract) health penalty unless passive /nowound switch is included
+
+"now" is "nowounds" shortened
+
+0: sheet dbref
+
+--
+
+&f.stat-check.health nWoD Roller <nr>=
+	if( 
+		cand( 
+			not( u( f.hasswitch?, now )), 
+			lt( setr( 0, ladd( u( .value_full, %0, health.penalty ), . )), 0 )
+		), 
+		[u( f.registers.output-add, [abs( %q0 )] %(wounds%), - )]
+		[u( f.registers.dice-add, %q0 )]
+	)
+
+
+--------------------------------------------------------------------------------
+-- Some Check Conditions -------------------------------------------------------
+
+At the moment we don't have 'f.hasswitch?' in, so we can't check '/nowounds' or 
+'/trained'.
+
+think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult )]Output: %qo -- Dice: %qd -- Errors: %qe -- Again: %qa

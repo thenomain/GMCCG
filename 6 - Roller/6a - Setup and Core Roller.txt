@@ -1,0 +1,136 @@
+ROLLER 3.0
+
+
+
+================================================================================
+== SETUP =======================================================================
+
+@create nWoD Roller <nr>
+@set nWoD Roller <nr>=safe inherit
+
+@parent nWoD Roller <nr>=codp
+
+
+
+================================================================================
+== DATA ========================================================================
+
+@fo me=&d.stat-setter nWoD Roller <nr>=[num( Stat Functions Prototype <sfp> )]
+@fo me=&d.data-dictionary nWoD Roller <nr>=[num( Data Dictionary <dd> )]
+
+
+
+================================================================================
+== CROSS-PLATFORM FUNCTIONS ====================================================
+
+&.operand nWoD Roller <nr>=
+	case( 1, 
+		strmatch( %0, #-* ), %0, 
+		strmatch( %0, -* ), -, 
+		+ 
+	)
+
+--
+
+&.value_full nWoD Roller <nr>=ulocal( [u( d.data-dictionary )]/.value_full, %0,%1 )
+
+
+
+================================================================================
+== CORE ROLLER =================================================================
+
+The n-again checker does not care about any rules, it just sees how many are x or higher and returns that.  You know, to be honest, this is precisely the same as the plain success checker.
+
+
+--------------------------------------------------------------------------------
+-- Roller: Base Code -----------------------------------------------------------
+
+0: number of dice to roll
+1: n-again
+output: list of dice roll results
+
+--
+
+&f.roller nWoD Roller <nr>=
+	strcat( 
+		setr( 0, lrand( 1, 10, %0 )), 
+		if( 
+			setr( 1, u( f.n-again-check, %q0, %1 )), 
+			%b[ulocal( f.roller, %q1, %1 )] 
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Roller: N-Again Check -------------------------------------------------------
+
+counts standard successes or dice to re-roll
+
+0: list of dice roll results
+1: min value to check for
+returns: number of dice that are %1 or higher
+
+--
+
+&f.n-again-check nWoD Roller <nr>=
+	words( regraball( %0, \[^[lnum(1, [sub( %1, 1 )])]\] ))
+
+
+
+================================================================================
+== SUCCESS COUNTERS ============================================================
+
+
+--------------------------------------------------------------------------------
+-- Successes: Plain ------------------------------------------------------------
+
+0: final dice
+1: target # to meet/beat (usually 8)
+
+--
+
+&f.successes.standard nWoD Roller <nr>=u( f.n-again-check, %0, %1 )
+
+
+--------------------------------------------------------------------------------
+-- Successes: Chance Roll ------------------------------------------------------
+
+"chance" means 1 die rolled, but this system auto-detects that
+
+0: list of dice roll results
+1: min value to count as a success (in nWoD, chance dice is always T# 10)
+qs: (global) type of roll this is
+    (for chance rolls, weakness rolls at most 1 die, so we don't switch here)
+returns: number of successes, -1 or f.successes
+
+--
+
+&f.successes.chance nWoD Roller <nr>=
+	if( eq( %0, 1 ), -1, u( f.successes.standard, %0, 10 ))
+
+
+--------------------------------------------------------------------------------
+-- Successes: Weakness ---------------------------------------------------------
+
+"weakness" is from nWoD Vampire, counting a 1 as a "negative success"
+
+0: list of dice roll results
+1: min value to count as a success (in nWoD, usually 8)
+returns: number of successes
+
+--
+
+&f.successes.weakness nWoD Roller <nr>=
+	max( 0, sub( u( f.successes.standard, %0, %1 ), words( graball( %0, 1 ))))
+
+
+--------------------------------------------------------------------------------
+-- Tests -----------------------------------------------------------------------
+
+think [setr( d, u( nr/f.roller, 10, 10 ))] :: [u( nr/f.successes.standard, %qd, 8 )]
+
+think [setr( d, u( nr/f.roller, 1, 10 ))] :: [u( nr/f.successes.chance, %qd, 8 )]
+
+think [setr( d, u( nr/f.roller, 10, 10 ))] :: [u( nr/f.successes.weakness, %qd, 8 )]
+
+
