@@ -9,8 +9,18 @@ Health is not technically a "stat" so we need to make the commands to heal and h
 	+health/hurt
 	+health/heal
 
-&c.hurt WoD Health System <whs>=$+hurt*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 0)
-&c.heal WoD Health System <whs>=$+heal*:@pemit %#=u(f.healhurt-workhorse, trim(%0), 1)
+Where is +health/hurt and +health/heal, anyway?
+
+--
+
+&c.hurt WoD Health System <whs>=$^\+?hurt(.*)$:
+	@pemit %#=u( f.healhurt-workhorse, trim( %1 ), 0 )
+
+&c.heal WoD Health System <whs>=$^+?heal(.*)$:
+	@pemit %#=u(f.healhurt-workhorse, trim(%1), 1)
+
+@set whs/c.hurt=regex
+@set whs/c.heal=regex
 
 
 --------------------------------------------------------------------------------
@@ -96,7 +106,15 @@ q1: New Damage: <same>
 
 	[setq(1, ulocal(
 		f.do-some-dmg, 
-		setr(m, ladd(u(%qs/_health.maximum), .)), 
+		setr( m, 
+			ladd( 
+				ulocal( 
+					[u( d.stat-funcs )]/f.getstat.workhorse.numeric, 
+					%qs, _health.maximum 
+				), 
+				. 
+			)
+		), 
 		%q0, 
 		%qa, 
 		%qt
