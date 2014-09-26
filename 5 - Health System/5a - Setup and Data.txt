@@ -92,7 +92,7 @@ foreach (dmg-done): if (dmg-type < min-dmg) then (push 1 pt) else (wrap 1 pt)
 == DATA ========================================================================
 
 @fo me=&d.data-dictionary health=[num( data dictionary <dd> )]
-@fo me=&d.stat-funcs health=[num( stat function prototype <sfp> )]
+@fo me=&d.stat-funcs health=[num( stat functions prototype <sfp> )]
 
 &d.health-types health=u( [u( d.data-dictionary )]/health.types )
 
