@@ -376,7 +376,7 @@
 &tags.advantage.defense DD=derived
 &default.advantage.defense DD=derived
 
-&advantage.size DD=add( ladd( u( .value_full, %0, _special.size ), . ), t( ladd( u( .value_full, %0, _merit.giant ), . )))]
+&advantage.size DD=add( ladd( u( .value_full, %0, special.size ), . ), t( ladd( u( .value_full, %0, merit.giant ), . )))
 &tags.advantage.size DD=derived
 &default.advantage.size DD=derived
 
