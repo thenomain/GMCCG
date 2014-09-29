@@ -94,7 +94,7 @@ q1: Current sign (+ or -)
 q2: Current full stat name
 q3: Current full stat path
 q4: Current total stat value
-q5: Current permanent stat value
+q5: Current stat value, both
 q6: Class of current full stat path (%q3)
 
 --
@@ -114,7 +114,7 @@ q6: Class of current full stat path (%q3)
 @@ .. q1: current operation (+ or -)
 				setq( 0, 
 					trim(
-						case( setr( 1, u( .operand, %i0 )), 
+						case( setr( 1, u( .sign, %i0 )), 
 							-, 
 							rest( %i0, - ), 
 							%i0
@@ -137,24 +137,19 @@ q6: Class of current full stat path (%q3)
 					)
 				), 
 @@ .. not a valid trait?
-				u( f.stat-check.not-valid-trait, %q0, %q1, %q2, %q3, %q4, %q5 )
+				u( f.stat-check.invalid-trait, %0, %q0, %q1, %q3 )
 			), 
 			@@( not a valid trait ), 
 
-@@ .. skill.spec?
-			strcat( 
-@@ .. .. q5: stat's value (both)
-@@ .. .. q6: stat's class
-				setq( 5, getstat( %0/[first( %q0, . )], both )), 
-				setq( 6, ulocal( [u(d.stat-setter)]/f.get-class, %q3 )), 
-				u( f.stat-chec.skill-and-spec, %q0, %q1, %q2, %q3, %q4, %q5 )
-			), 
+@@ .. check trait
+			u( f.stat-check.trait, %0, %q0, %q1, %q2, %q3 ),
+			@@( we'll see what happens from there ), 
 			
-			@@( skill.specialty ), 
+			#-1 Help I am confused 
+		), , @@ 
+	)
 
-@@ .. just the trait, no spec?
-			u( f.stat-check.just-trait, %q0, %q1, %q2, %q3, %q4, %q5 ), 
-			@@( single trait ), 
+
 
 
 
@@ -287,26 +282,8 @@ think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + ste
 
 think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult.bla )]Output: %qo -- Dice: %qd -- Extended Rolls: %qt
 
-** Bug: Skill+Spec does not check Skill for untrained.
 
 
-
-
-==--=-=-=-=-=-=-=-=-=-=
-
-
-
-
-
-&f.stat-check.invalid-trait nWoD Roller <nr>=
-	if( not( %3 ), 
-		strcat( 
-			u( f.registers.output-add, %0, %1, nostat ), 
-			1 
-		)
-	)
-
---
 
 @@ number -> calculate
 
@@ -315,7 +292,35 @@ think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + ste
 		isint( %0 ), 
 		strcat( 
 			u( f.registers.dice-add, %0 ), 
-			u( f.registers.output-add, abs( %0 ), u( .operand, %0 )), 
+			u( f.registers.output-add, abs( %0 ), u( .sign, %0 )), 
+			1 
+		)
+	)
+
+--
+
+
+==--=-=-=-=-=-=-=-=-=-===--=-=-=-=-=-=-=-=-=-===--=-=-=-=-=-=-=-=-=-=
+
+In all of the following:
+
+0: sheet dbref
+1: trait to check (player requested)
+2: trait's sign (+ or -)
+3: full trait name
+4: full stat path
+
+==--=-=-=-=-=-=-=-=-=-===--=-=-=-=-=-=-=-=-=-===--=-=-=-=-=-=-=-=-=-=
+
+
+0: sheet dbref
+1: trait to check (player requested)
+2: full trait name
+
+&f.stat-check.invalid-trait nWoD Roller <nr>=
+	if( not( %4 ), 
+		strcat( 
+			u( f.registers.output-add, %1, %2, nostat ), 
 			1 
 		)
 	)
@@ -326,16 +331,52 @@ think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + ste
 
 &f.stat-check.trait nWoD Roller <nr>=
 	if( 
-		u( f.stat-check.skill, %0, %q0, first( %q5, . )), 
+		u( f.stat-check.skill, %0, %1, %2, %3, %4 ), 
 		1, 
 
+@@ ** I need to check for non-numerics and what to do with them here **
 		strcat( 
-			u( f.registers.dice-add, setr( 4, ladd( %q5, . ))), 
-			u( f.registers.output-add, %q2, %q1 ), 
-			u( f.registers.extendednum-add, %q4 ), 
-			1 
+@@ .. q5: stat's value (both)
+@@ .. q6: stat's class
+			setq( 5, getstat( %0/[first( %1, . )], both )), 
+			setq( 6, ulocal( [u(d.stat-setter)]/f.get-class, %5 )), 
+
+			udefault( f.stat-check.trait.%q6, 
+				#-1 trait class not recognized, 
+				%0, %1, %2, %3, %4, %q5  
+			)
 		)
 	)
+
+--
+
+@@ trait.numeric -> calculate
+
+&f.stat-check.trait.numeric nWoD Roller <nr>=
+	strcat( 
+		u( f.registers.dice-add, ladd( %5, . )), 
+		u( f.registers.output-add, %2, %3 ), 
+		u( f.registers.extendednum-add, ladd( %5, . )), 
+		1 
+	)
+
+--
+
+&f.stat-check.trait.string nWoD Roller <nr>=
+	strcat( 
+		u( f.registers.output-add, %2, %3, nostat ), 
+		1 
+	)
+
+--
+
+&f.stat-check.trait.list nWoD Roller <nr>=
+	strcat( 
+		u( f.registers.output-add, %2, %3, nostat ), 
+		1 
+	)
+
+
 
 --
 
@@ -345,20 +386,27 @@ think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + ste
 @@ "untrained" does not remove from extened roll total
 @@ specs always add to extended roll total
 
+@@ q0: skill's name
+@@ q1: skill's value 
+@@ q2: specs name(s)
+@@ q3: specs' value(s)
+@@ q4: 1 if 'untrained' (%q1 is null/0)
+
 &f.stat-check.skill nWoD Roller <nr>=
 	if( strmatch( %q3, skill.* ), 
 		strcat( 
-			setq( <skill>, first( <statname>, . )), 
-			setq( <specs>, rest( <statname>, . )), 
-			setq( <specs' values>, <do mathemagic here> ), 
-			setq( <untrained?>, not( %2 )), 
+			setq( 0, first( <statname>, . )), 
+			setq( 1, getstat( %0/%q0 )), 
+			setq( 2, rest( <statname>, . )), 
+			setq( 3, getstat( %0/%q2 )), 
+			setq( <untrained?>, not( %q1 )), 
 			case( 1, 
 @@ >> untrained skill (+ specs)
-				u( f.stat-check.skill.untrained, xxx ), 
+				u( f.stat-check.skill.untrained, %0, %1, %2, %3, %4, %5, %6 ), 
 				1, 
 
 @@ >> skill (+ specs)
-				u( f.stat-check.skill.trained, xxx ), 
+				u( f.stat-check.skill.trained, %0, %1, %2, %3, %4, %5, %6 ), 
 				1, 
 
 				#-1 No Idea How I Got Here
@@ -391,7 +439,7 @@ think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + ste
 		u( f.registers.output-add, 
 			[abs( <dice> )] 
 			%(untrained <statname>[if( t( <specs> ), .<specs> )]%), 
-			u( .operand, mul( <dice>, strmatch( <operand>, - )))
+			u( .sign, mul( <dice>, strmatch( <sign>, - )))
 		), 
 		u( f.registers.extendednum-add, <specs' values> ), 
 
@@ -400,12 +448,12 @@ think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + ste
 
 --
 
-&f.stat-check.skill.trained xxx=
+&f.stat-check.skill.trained nWoD Roller <nr>=
 	strcat( 
 		u( f.registers.dice-add, add( <skill>, <specs' values> ))
 		u( f.registers.output-add, 
 			<skill>[if( t( <specs> ), .<specs>)], 
-			<operand> 
+			<sign> 
 		), 
 		u( f.registers.extendednum-add, 
 			add( <skill's value>, <specs' values> )

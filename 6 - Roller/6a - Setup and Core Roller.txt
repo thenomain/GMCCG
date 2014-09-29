@@ -23,7 +23,7 @@ ROLLER 3.0
 ================================================================================
 == CROSS-PLATFORM FUNCTIONS ====================================================
 
-&.operand nWoD Roller <nr>=
+&.sign nWoD Roller <nr>=
 	case( 1, 
 		strmatch( %0, #-* ), %0, 
 		strmatch( %0, -* ), -, 
