@@ -105,32 +105,72 @@ q6: Class of current full stat path (%q3)
 		case( 1, 
 
 @@ >> it's a number
-			isint( %i0 ), 
-			[u( f.registers.dice-add, %i0 )]
-			[u( f.registers.output-add, abs( %i0 ), u( .operand, %i0 ))], 
+			u( f.stat-check.number, %i0 ), 
+			@@( number ), 
 
 @@ >> it's possibly a stat
-@@ .. (extract the sign if -, y~ay)
-			[setq( 0, 
-				case( setr( 1, u( .operand, %i0 )), 
-					-, 
-					trim( rest( %i0, - )), 
-					trim( %i0 )
+			strcat( 
+@@ .. q0: stat as entered
+@@ .. q1: current operation (+ or -)
+				setq( 0, 
+					trim(
+						case( setr( 1, u( .operand, %i0 )), 
+							-, 
+							rest( %i0, - ), 
+							%i0
+						)
+					)
+				), 
+@@ .. q3: full stat path
+				setq( 3, 
+					if( comp( %q0, ), 
+						ulocal( [u(d.stat-setter)]/f.statpath.workhorse, 
+							%q0, %0 
+						), 
+						setq( 0, %b )
+					)
 				)
-			)]
-@@ .. set up the functions
-			[setq( 3, 
-				if( comp( %q0, ), 
-					ulocal( [u(d.stat-setter)]/f.statpath.workhorse, %q0, %0 ), 
-					setq( 0, %b )
-				)
-			)]
-			[setq( 2, 
-				ulocal( [u(d.stat-setter)]/f.statname.workhorse, rest( %q3, . ))
-			)]
-@@ >> now check if the stat is valid
+@@ .. q2: full stat name
+				setq( 2, 
+					ulocal( [u(d.stat-setter)]/f.statname.workhorse, 
+						rest( %q3, . )
+					)
+				), 
+@@ .. not a valid trait?
+				u( f.stat-check.not-valid-trait, %q0, %q1, %q2, %q3, %q4, %q5 )
+			), 
+			@@( not a valid trait ), 
+
+@@ .. skill.spec?
+			strcat( 
+@@ .. .. q5: stat's value (both)
+@@ .. .. q6: stat's class
+				setq( 5, getstat( %0/[first( %q0, . )], both )), 
+				setq( 6, ulocal( [u(d.stat-setter)]/f.get-class, %q3 )), 
+				u( f.stat-chec.skill-and-spec, %q0, %q1, %q2, %q3, %q4, %q5 )
+			), 
+			
+			@@( skill.specialty ), 
+
+@@ .. just the trait, no spec?
+			u( f.stat-check.just-trait, %q0, %q1, %q2, %q3, %q4, %q5 ), 
+			@@( single trait ), 
+
+
+
+
+
+
+
+
+
+
+
+@@ >> if stat is valid...
 			[t( %q3 )], 
 
+@@ .. .. q5: stat's value (both)
+@@ .. .. q6: stat's class
 			[setq( 5, getstat( %0/[first( %q0, . )], both ))]
 			[setq( 6, ulocal( [u(d.stat-setter)]/f.get-class, %q3 ))]
 			[case( 1, 
@@ -171,30 +211,33 @@ q6: Class of current full stat path (%q3)
 0: dbref of sheet
 1: skill (full name is best, skills ONLY)
 2: value of skill
-q0: full stat value
 
 --
 
-&f.stat-check.untrained nWoD Roller <nr>=
+&f.stat-check.skill nWoD Roller <nr>=
 
-@@ .. (messy)
 	if( 
-		not( u( f.hasswitch?, tr )), 
-		if( 
-			t( %2 ), 
-			%q0, 
-			case( 
-				1, 
+		cand( 
+			not( %2 ), 
+			not( u( f.hasswitch?, tr ))
+		), 
+		case( 1, 
 @@ untrained physcal or social
-				hastag?( %1, physical.social, or ), 
-				[u( f.registers.dice-add, -1 )]
-				[u( f.registers.output-add, 1 %(untrained %1%), - )], 
+			hastag?( %1, physical.social, or ), 
+			strcat( 
+				u( f.registers.dice-add, -1 ), 
+				u( f.registers.output-add, 1 %(untrained %1%), - ), 
+				1 
+			), 
 @@ untrained mental
-				hastag?( %1, mental ), 
-				[u( f.registers.dice-add, -3 )]
-				[u( f.registers.output-add, 3 %(untrained %1%), - )], 
+			hastag?( %1, mental ), 
+			strcat( 
+				u( f.registers.dice-add, -3 ), 
+				u( f.registers.output-add, 1 %(untrained %1%), - ), 
+				1 
 			)
-		)
+		), 
+
 	)
 
 
@@ -241,3 +284,132 @@ At the moment we don't have 'f.hasswitch?' in, so we can't check '/nowounds' or
 '/trained'.
 
 think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult )]Output: %qo -- Dice: %qd -- Errors: %qe -- Again: %qa
+
+think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult.bla )]Output: %qo -- Dice: %qd -- Extended Rolls: %qt
+
+** Bug: Skill+Spec does not check Skill for untrained.
+
+
+
+
+==--=-=-=-=-=-=-=-=-=-=
+
+
+
+
+
+&f.stat-check.invalid-trait nWoD Roller <nr>=
+	if( not( %3 ), 
+		strcat( 
+			u( f.registers.output-add, %0, %1, nostat ), 
+			1 
+		)
+	)
+
+--
+
+@@ number -> calculate
+
+&f.stat-check.number nWoD Roller <nr>=
+	if( 
+		isint( %0 ), 
+		strcat( 
+			u( f.registers.dice-add, %0 ), 
+			u( f.registers.output-add, abs( %0 ), u( .operand, %0 )), 
+			1 
+		)
+	)
+
+--
+
+@@ trait -> skill | calculate
+
+&f.stat-check.trait nWoD Roller <nr>=
+	if( 
+		u( f.stat-check.skill, %0, %q0, first( %q5, . )), 
+		1, 
+
+		strcat( 
+			u( f.registers.dice-add, setr( 4, ladd( %q5, . ))), 
+			u( f.registers.output-add, %q2, %q1 ), 
+			u( f.registers.extendednum-add, %q4 ), 
+			1 
+		)
+	)
+
+--
+
+@@ skill -> skill.spec | untrained.spec | untrained
+@@ this setup will allow 'untrained with specialty'
+@@ it's up to the rest of the system to prevent this if necessary
+@@ "untrained" does not remove from extened roll total
+@@ specs always add to extended roll total
+
+&f.stat-check.skill nWoD Roller <nr>=
+	if( strmatch( %q3, skill.* ), 
+		strcat( 
+			setq( <skill>, first( <statname>, . )), 
+			setq( <specs>, rest( <statname>, . )), 
+			setq( <specs' values>, <do mathemagic here> ), 
+			setq( <untrained?>, not( %2 )), 
+			case( 1, 
+@@ >> untrained skill (+ specs)
+				u( f.stat-check.skill.untrained, xxx ), 
+				1, 
+
+@@ >> skill (+ specs)
+				u( f.stat-check.skill.trained, xxx ), 
+				1, 
+
+				#-1 No Idea How I Got Here
+			)
+		)
+	)
+
+--
+
+@@ if request was '- untrained skill', then result is probably positive
+@@ strange, I know, but should work this way
+@@ if not, here's the place to change it
+
+&f.stat-check.skill.untrained nWoD Roller <nr>=
+	<untrained?>, 
+	strcat( 
+		setq( <penalty>, 
+			case( 1, 
+				hastag?( <statname>, physical.social, or ), 
+				-1, 
+				hastag?( <statname>, mental ), 
+				-3, 
+				-99
+			)
+		), 
+
+		u( f.registers.dice-add, 
+			setr( <dice>, add( <penalty>, <specs' value> ))
+		), 
+		u( f.registers.output-add, 
+			[abs( <dice> )] 
+			%(untrained <statname>[if( t( <specs> ), .<specs> )]%), 
+			u( .operand, mul( <dice>, strmatch( <operand>, - )))
+		), 
+		u( f.registers.extendednum-add, <specs' values> ), 
+
+		1 
+	)
+
+--
+
+&f.stat-check.skill.trained xxx=
+	strcat( 
+		u( f.registers.dice-add, add( <skill>, <specs' values> ))
+		u( f.registers.output-add, 
+			<skill>[if( t( <specs> ), .<specs>)], 
+			<operand> 
+		), 
+		u( f.registers.extendednum-add, 
+			add( <skill's value>, <specs' values> )
+		), 
+		1 
+	)
+
