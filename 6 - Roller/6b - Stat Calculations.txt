@@ -150,56 +150,6 @@ q6: Class of current full stat path (%q3)
 	)
 
 
-
-
-
-
-
-
-
-
-
-
-
-@@ >> if stat is valid...
-			[t( %q3 )], 
-
-@@ .. .. q5: stat's value (both)
-@@ .. .. q6: stat's class
-			[setq( 5, getstat( %0/[first( %q0, . )], both ))]
-			[setq( 6, ulocal( [u(d.stat-setter)]/f.get-class, %q3 ))]
-			[case( 1, 
-@@ .. >> class:list or class:string - do not roll
-				t( match( list string, %q6 )), 
-				u( f.registers.output-add, %q2, %q1, nostat ), 
-@@ .. >> if this is a <stat>.<specialty> then do both parts
-				strmatch( %q0, *.* ), 
-@@ .. .. specialty, add the dice as one
-				[setq( 4, add( getstat( %0/%q0 ), ladd( %q5, . )))]
-				[u( f.registers.dice-add, %q4 )]
-@@ .. .. (add results)
-				[u( f.registers.extendednum-add, %q4 )]
-				[u( f.registers.output-add, %q2, %q1 )], 
-@@ .. >> normal, add the dice for that stat
-				[u( f.registers.dice-add, setr( 4, ladd( %q5, . )))]
-@@ .. .. but wait, if it's a skill then check for untrained penalties
-@@ .. .. (this generates output and I have no idea why, so I'm cheating)
-				[null( if( 
-					strmatch( %q3, skill.* ), 
-					u( f.stat-check.untrained, %0, %q0, first( %q5, . ))
-				))]
-@@ .. .. (add results)
-				[u( f.registers.extendednum-add, %q4 )]
-				[u( f.registers.output-add, %q2, %q1 )]
-			)], 
-@@ >> stat is not valid/recognized
-			[u( f.registers.output-add, %q0, %q1, nostat )]
-		), 
-		+, 
-		@@
-	)
-
-
 --------------------------------------------------------------------------------
 -- Check for Untrained ---------------------------------------------------------
 
@@ -234,20 +184,6 @@ q6: Class of current full stat path (%q3)
 		), 
 
 	)
-
-
---------------------------------------------------------------------------------
--- Check for Specialty ---------------------------------------------------------
-
-So here we are, dealing with nWoD specialties.  In our system it's passed Skill.Specialty.  Specialties normally add just +1 to the roll (we pull the value from the sheet itself).
-
-Due to possible exceptions, I'll (try to) allow Skill.Specialty.Specialty.
-
-Like Untrained, this is Skills Only.
-
-Unlike Untrained, this is slapped onto the normal skill flow
-
->>>>>>> ALREADY DONE IN f.stat-check.stats <<<<<<<<<
 
 
 --------------------------------------------------------------------------------
@@ -390,26 +326,24 @@ In all of the following:
 @@ q1: skill's value 
 @@ q2: specs name(s)
 @@ q3: specs' value(s)
-@@ q4: 1 if 'untrained' (%q1 is null/0)
 
 &f.stat-check.skill nWoD Roller <nr>=
 	if( strmatch( %q3, skill.* ), 
 		strcat( 
-			setq( 0, first( <statname>, . )), 
+			setq( 0, first( %3, . )), 
 			setq( 1, getstat( %0/%q0 )), 
-			setq( 2, rest( <statname>, . )), 
+			setq( 2, rest( %3, . )), 
 			setq( 3, getstat( %0/%q2 )), 
-			setq( <untrained?>, not( %q1 )), 
 			case( 1, 
 @@ >> untrained skill (+ specs)
-				u( f.stat-check.skill.untrained, %0, %1, %2, %3, %4, %5, %6 ), 
+				u( f.stat-check.skill.untrained, %0, %q0, %q1, %q2, %q3, %2 ), 
 				1, 
 
 @@ >> skill (+ specs)
-				u( f.stat-check.skill.trained, %0, %1, %2, %3, %4, %5, %6 ), 
+				u( f.stat-check.skill.trained, xxx ), 
 				1, 
 
-				#-1 No Idea How I Got Here
+				#-1 Issue in Stat-Check Skill
 			)
 		)
 	)
@@ -420,44 +354,59 @@ In all of the following:
 @@ strange, I know, but should work this way
 @@ if not, here's the place to change it
 
+@@ 0: sheet dbref
+@@ 1: skill's name
+@@ 2: skill's value (empty/0/error if 'untrained' )
+@@ 3: specs name(s)
+@@ 4: specs' value(s)
+@@ 5: intended sign (usually +, but you never know)
+
+@@ q6: untrained penalty
+@@ q7: building dice to roll
+
 &f.stat-check.skill.untrained nWoD Roller <nr>=
-	<untrained?>, 
+	not( %2 ), 
 	strcat( 
-		setq( <penalty>, 
+		setq( 6, 
 			case( 1, 
-				hastag?( <statname>, physical.social, or ), 
+				hastag?( %1, physical.social, or ), 
 				-1, 
-				hastag?( <statname>, mental ), 
+				hastag?( %1, mental ), 
 				-3, 
 				-99
 			)
 		), 
 
 		u( f.registers.dice-add, 
-			setr( <dice>, add( <penalty>, <specs' value> ))
+			setr( 7, ladd( %q6.%4, . ))
 		), 
 		u( f.registers.output-add, 
-			[abs( <dice> )] 
-			%(untrained <statname>[if( t( <specs> ), .<specs> )]%), 
-			u( .sign, mul( <dice>, strmatch( <sign>, - )))
+			[abs( %q7 )] 
+			%(untrained %1[if( t( %3 ), .%3 )]%), 
+			u( .sign, mul( %q7, strmatch( %5, - )))
 		), 
-		u( f.registers.extendednum-add, <specs' values> ), 
+		u( f.registers.extendednum-add, ladd( %4, . )), 
 
 		1 
 	)
 
 --
 
+@@ 0: sheet dbref
+@@ 1: skill's name
+@@ 2: skill's value (empty/0/error if 'untrained' )
+@@ 3: specs name(s)
+@@ 4: specs' value(s)
+@@ 5: intended sign (usually +, but you never know)
+
 &f.stat-check.skill.trained nWoD Roller <nr>=
 	strcat( 
-		u( f.registers.dice-add, add( <skill>, <specs' values> ))
+		u( f.registers.dice-add, ladd( %2.%4 ))
 		u( f.registers.output-add, 
-			<skill>[if( t( <specs> ), .<specs>)], 
-			<sign> 
+			%1[if( t( %3 ), .%3 )], 
+			%5 
 		), 
-		u( f.registers.extendednum-add, 
-			add( <skill's value>, <specs' values> )
-		), 
+		u( f.registers.extendednum-add, ladd( %2.%4 )), 
 		1 
 	)
 
