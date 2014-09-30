@@ -32,8 +32,35 @@ ROLLER 3.0
 
 --
 
-&.value_full nWoD Roller <nr>=ulocal( [u( d.data-dictionary )]/.value_full, %0,%1 )
+&.value_full nWoD Roller <nr>=ulocal( [u( d.data-dictionary )]/.value_full, %0, %1 )
 
+--
+
+&.class nWoD Roller <nr>=ulocal( [u( d.data-dictionary )]/.class, %0 )
+
+--
+
+&.statpath nWoD Roller <nr>=
+	ulocal( 
+		[u(d.stat-setter)]/f.statpath.workhorse, 
+		%0, %1 
+	)
+
+--
+
+&.statname nWoD Roller <nr>=
+	ulocal( 
+		[u(d.stat-setter)]/f.statname.workhorse, 
+		%0 
+	)
+
+--
+
+&.hastag? nWoD Roller <nr>=
+	ulocal( 
+		[u(d.stat-setter)]/f.hastag?.workhorse, 
+		%0, %1, strmatch( %2, a* )
+	)
 
 
 ================================================================================
