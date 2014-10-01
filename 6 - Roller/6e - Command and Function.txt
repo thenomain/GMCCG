@@ -15,35 +15,43 @@ q9: target list (names or job #)
 &c.roll nWoD Roller <nr>=$^\+roll(.*) (.*):
 
 	@pemit %#=
+		strcat( 
 @@ .. sanitize input and detach the instance
-		[setq( 0, before( %2, = ))]
-		[setq( 0, 
-			squish( edit( strip( %q0, %%%,;<>%[%] ), %(, %b%( ))
-		)]
+			setq( 0, before( %2, = )), 
+			setq( 0, 
+				squish( edit( 
+					strip( %q0, %%%,;<>%[%] ), 
+					%(, %b%( 
+				))
+			), 
 @@ .. build the to-list
-		[setq( 9, trim( rest( %2, = )))]
-		[setq( 9, case( 1, 
-			strmatch( %q9, job * ), 
-			job|%q9, 
+			setq( 9, trim( rest( %2, = ))), 
+			setq( 9, case( 1, 
+				strmatch( %q9, job * ), 
+				job|%q9, 
 
-			t( %q9 ), 
-			private|
-			[setunion( 
-				iter( %# %q9, if( setr( 9, pmatch( %i0 )), %q9 )), 
-			)], 
+				t( %q9 ), 
+				private|
+				[setunion( 
+					iter( %# %q9, 
+						if( setr( 9, pmatch( %i0 )), %q9 )
+					), 
+				)], 
 
-			public|[lcon( loc( %# ), connect )]
-		))]
+				public|[lcon( loc( %# ), connect )] 
+			)), 
+
 @@ .. run the workhorse
-		[null( u( f.roll.workhorse, %q0, %#, %1 ))]
+			null( u( f.roll.workhorse, %q0, %#, %1 )), 
 
 @@ .. interpret and output - check for errors first
-		[if( 
-			t( words( %qe, ` )), 
-			[alert( +roll, alert )] [u( f.display-list, %qe )], 
+			if( 
+				t( words( %qe, ` )), 
+				[alert( +roll, alert )] [u( f.display-list, %qe )], 
 @@ Roll To ...
-			[u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))]
-		)]
+				u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))
+			)
+		)
 
 
 --------------------------------------------------------------------------------
@@ -174,10 +182,6 @@ may be ignored if internal: items kept in global registers!
 			)
 		)
 	)
-
-
-
-
 
 --
 
