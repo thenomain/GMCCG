@@ -1080,6 +1080,17 @@ THIS IS SET ON THE JOBS FUNCTIONS OBJECT
 
 IT MAY BE DUPLICATING SOMETHING ALREDY THERE - I DON'T KNOW
 
+--
+
+setq(j, u(@@Job Database <JD>@@/FN_FIND-JOB, %5))
+cor(isstaff(%0), t(match(u(%qj/OPENED_BY), %0)))
+
+&D.JOBS-SYSTEM XP Request Validation System <xrvs>=@@Job Global Object <JGO>@@
+&D.JOBS-DATABASE XP Request Validation System <xrvs>=@@Job Database <JD>@@
+
+
+--
+
 &f.has_job_access #15=
 @@ 0: job number
 @@ 1: dbref of player adding to job
