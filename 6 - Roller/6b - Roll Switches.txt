@@ -1,0 +1,139 @@
+================================================================================
+== ROLL SWITCHES ===============================================================
+
+Multiple switches may be given (and, of course, taken out).  Each system adds to what's being rolled and will probably depend upon the dice-to-roll part of it being parsed first.
+
+Spaces may not be in any switch.  Name completion will do its best.
+
+Active Switches (do their own thing):
+	/again=<again type> - roll different types of n-again
+		/<number>[-again]
+		/no[-again]
+		/weakness
+	/willpower - spend a willpower for +3
+
+Passive Switches (used in other parts of the roller):
+	/tr[ained] - ignore untrained modifiers
+	/now[ound] - ignore wound penalties
+	/rote - roll as a rote (failures re-rolled once)
+		(how does this work with Weaknesses?)
+
+@@ thoughts:
+@@ The way this works is that it's on a scale, right? 
+@@ Weakness, Normal, 9-Again, 8-Again, Rote.
+@@ So if you have Weakness, but also 9-again, you get a normal roll.
+@@ So I would say probably something like Weakness + Rote is 8-again.
+
+
+--------------------------------------------------------------------------------
+-- HasSwitch? ------------------------------------------------------------------
+
+Passive switches are used in other parts of the system, usually to stop them from working, or to cause them to work a little differnetly.  For them, the /whole/switch/list is passed, as well as the item to check.  Yeah, it's pretty simple.
+
+
+&f.getswitch nWoD Roller <nr>=
+@@ 0: partial name of switch to check for
+@@ returns: the full item
+	regrabi(%qz, ^%0, /)
+
+
+CODE NOTE: The above works just like grab(%0, %1*, /).  The reason it works is because the list is <null>/item1/item2/item3, so searching for * returns the <null>.  This is VERY USEFUL.
+
+&f.hasswitch? nWoD Roller <nr>=
+@@ 0: partial name of switch to check for
+@@ returns: 1 for true, 0 for false (null returns false)
+	t(u(f.getswitch, %0))
+
+
+--------------------------------------------------------------------------------
+-- /again ----------------------------------------------------------------------
+
+/again=10, 9, 8.  7 is 8 + 2 dice, 6 is 8 + 4 dice, and so on.
+/again=no, converts to 11.
+/again=weakness, rolls the weakness system.
+
+&f.roll/again nWoD Roller <nr>=
+@@ 0: /again=xxx
+@@ q0: the "again" type
+
+	[setq(0, rest(%0, =))]
+	[case(
+		1, 
+@@ .. check an "again" type was actually passed
+		not(t(%q0)), 
+		u(f.registers.error-add, Again type not passed.), 
+@@ .. "w"eakness
+		strmatch(%q0, w*), 
+		[setq(a, 11)]
+		[setq(s, Weakness)], 
+@@ .. "n"o
+		strmatch(%q0, n*), 
+		setq(a, 11), 
+@@ .. must be at least 5 and integer
+		not(and(isint(%q0), gte(%q0, 7))), 
+		u(f.registers.error-add, Again type must be integer of 7 or higher.), 
+@@ .. if below 8, +2 dice per
+		lt(%q0, 8), 
+		[setq(1, mul(2, sub(8, %q0)))]
+		[u(f.registers.dice-add, %q1)]
+		[u(f.registers.output-add, %q1 %(%q0-again%), +)]
+		[setq(a, 8)], 
+@@ .. else just set
+		setq(a, %q0)
+	)]
+
+--
+
+&f.roll/9-again #59=u( f.roll/again, /again=9 )
+&f.roll/8-again #59=u( f.roll/again, again=8 )
+
+
+--------------------------------------------------------------------------------
+-- /extended[=<num>] -----------------------------------------------------------
+
+@@ 0: /extended[=<num>]
+@@ q0: the "extended" value, if any
+@@ qt: a MAJOR REGISTER for number of times to roll
+
+&f.roll/extended nWoD Roller <nr>=
+@@ .. if <num> is there, %q0 = <num>, else %q0 = %qt
+@@ .. this may be redundant, but allows us to check <num> and %qt 
+@@ .. with the same code
+	[setq(0, if(strmatch(%0, *=*), rest(%0, =), %qt))]
+
+	[case(0, 
+@@ .. checks if both %qt and %q0 fail
+		or(t(%qt), t(rest(%0, =))), 
+		u(f.registers.error-add, If no traits in the roll%, you must use /extended=<num>), 
+@@ .. <num> must be > 0 (catches "null")
+		gt(%q0, 0), 
+		u(f.registers.error-add, Extended roll must be a number of times), 
+@@ .. <num> must be int
+		isint(%q0), 
+		u(f.registers.error-add, Extended roll must be an integer), 
+@@ .. else, set %q0 into %qt
+		setq(t, %q0)
+	)]
+
+
+--
+
+&f.roll/extended nWoD Roller <nr>=[setq(0, if(strmatch(%0, *=*), rest(%0, =), %qt))][case(0, or(t(%qt), t(rest(%0, =))), u(f.registers.error-add, If no traits in the roll%, you must use /extended=<num>), gt(%q0, 0), u(f.registers.error-add, Extended roll must be a number of times), isint(%q0), u(f.registers.error-add, Extended roll must be an integer), setq(t, %q0))]
+
+--
+
+think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
+think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended=2)] - errors: %qe - total rolls: %qt
+
+think %%qt: [setr(t, 0)] - [u(#41/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
+think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended=)] - errors: %qe - total rolls: %qt
+
+
+--------------------------------------------------------------------------------
+-- /list -----------------------------------------------------------------------
+
+Roll a list of numbers all at once, like /extended only different.  Ad-hoc system, works like this:
+
+/list=4,3,2 : takes list of numbers only, adds them as if extended
+
+
