@@ -1,0 +1,191 @@
+--------------------------------------------------------------------------------
+-- Command: +Roll --------------------------------------------------------------
+
+Cutting corners for now.
+
+0: /list/of/switches
+1: what to roll[= who to roll to]
+uses: alert(), a formatting doodad
+
+q0: what to roll, massaged
+q9: target list (names or job #)
+
+--
+
+&c.roll nWoD Roller <nr>=$^\+roll(.*) (.*):
+
+	@pemit %#=
+@@ .. sanitize input and detach the instance
+		[setq( 0, before( %2, = ))]
+		[setq( 0, 
+			squish( edit( strip( %q0, %%%,;<>%[%] ), %(, %b%( ))
+		)]
+@@ .. build the to-list
+		[setq( 9, trim( rest( %2, = )))]
+		[setq( 9, case( 1, 
+			strmatch( %q9, job * ), 
+			job|%q9, 
+
+			t( %q9 ), 
+			private|
+			[setunion( 
+				iter( %# %q9, if( setr( 9, pmatch( %i0 )), %q9 )), 
+			)], 
+
+			public|[lcon( loc( %# ), connect )]
+		))]
+@@ .. run the workhorse
+		[null( u( f.roll.workhorse, %q0, %#, %1 ))]
+
+@@ .. interpret and output - check for errors first
+		[if( 
+			t( words( %qe, ` )), 
+			[alert( +roll, alert )] [u( f.display-list, %qe )], 
+@@ Roll To ...
+			[u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))]
+		)]
+
+
+--------------------------------------------------------------------------------
+-- Function: roll() ------------------------------------------------------------
+
+roll(<what to roll>, <who is rolling>[, <list/of/switches>])
+
+0: what to roll
+1: who is rolling
+2: list/of/switches
+
+q0: sanitized what-to-roll
+q1: Sheet of pmatch(%1)
+q2: /list/of/switches (we need this to properly match switches)
+
+uses: 
+	isstaff() - is %# staff?
+
+--
+
+Somehow, registers are being passed into this function set
+(we are creating it @function/preserve/privileged)
+so we clear out all the globals (and "p"?!) before we start
+(no, iter didn't work)
+"e" was adding to the error list, "p" was, I think, changing the player dbref
+
+--
+
+&f.roll nWoD Roller <nr>=
+	strcat( 
+		setq( d, ), setq( a, ), setq( e, ), setq( o, ), setq( s, ), setq( z, ), 
+		setq( r, ), setq( p, ), setq( t, ), 
+
+		setq( 0, squish( edit( strip( %0, %%%,;<>%[%] ), %(, %b%( ))), 
+		setq( 1, u( [u(d.stat-setter)]/f.find-sheet, pmatch( %1 ))), 
+		setq( 2, if( words( trim( %2, l, / ), / ), /[trim( %2, l, / )])), 
+
+		case( 
+			0, 
+			t( words( %q0 )), #-1 Nothing to Roll, 
+			t( %q1 ), %q1, 
+			or( isstaff( %# ), strmatch( %#, %q1 )), #-1 Staff Only, 
+			u( f.roll.workhorse, %q0, %q1, %q2 )
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Roll Workhorse --------------------------------------------------------------
+
+0: what to roll
+1: who is rolling
+2: /list/of/switches
+
+q0: successes
+q1: success interpreted
+q2: die rolls
+
+returns: <successes or #-1>|<pretty output or errors>|<die rolls>
+may be ignored if internal: items kept in global registers!
+
+--
+
+&f.roll.workhorse nWoD Roller <nr>=
+	strcat( 
+@@ .. set up global register defaults
+		setq( z, %2 ), setq( d, 0 ), setq( a, 10 ), setq( s, Standard ), 
+		
+@@ .. run the basic roller setup
+		u( f.stat-check.stats, %1, %0 ), 
+
+@@ .. convert switch aliases to full text
+@@ .. DO IT HERE!
+
+@@ >> Active Adjustments <<
+@@ .. scan for and run "active" switches
+		iter(
+			again extended target, 
+			if( u( f.hasswitch?, %i0 ), u( f.roll/%i0, u( f.getswitch, %i0 )))
+		), 
+
+@@ .. last, check for health penalty
+		u( f.stat-check.health, %1 ), 
+
+@@ >> ROLL
+		if(
+			t( words( %qe, ` )), 
+@@ .. error output
+			#-1|[u( f.display-roll-items, %qe )]|[@@( null )],
+			strcat( 
+
+@@ .. tweak 'n-again' register (qa)
+				setq( a, 
+					case( 1, 
+						strmatch( %qs, weakness), 11, 
+						strmatch( %qs, chance), 10, 
+						%qa
+					)
+				), 
+@@ .. reset 'number of times to roll' register (qt) if not /extended or /target
+				setq( t, 
+					if( 
+						cor( 
+							u( f.hasswitch?, extended ), 
+							u( f.hasswitch?, target )
+						), 
+						%qt, 
+						1 
+					)
+				), 
+@@ .. roll %qt times, at least once (if %qd = 0, roll 1 die -- it's chance)
+@@ .. <'rote' should go here>
+@@ .. <'target' should go here>
+				setq( r, 
+					iter( lnum( max( %qt, 1 )), 
+						ulocal( f.roller, if( lte( %qd, 0 ), 1, %qd ), %qa ), 
+						, |
+					)
+				), 
+
+@@ >> PARSE RESULTS
+@@ .. <'target' should also go here to remove extraneous rolls>
+@@ .. interpret successes -> <# succ>, "Success!", <what rolled>
+				u( f.roll-success-interpreter ), 
+@@ .. and output for the sake of the function 
+@@ .. .. <# succ>[ <# succ>], <what rolled>, <dice>[|<dice>]
+				%q0|%q2|%qr
+			)
+		)
+	)
+
+
+
+
+
+--
+
+think u(nro/f.roll.workhorse, str+2, pmatch(thenomain), /again=8)
+think u(nro/f.roll, str+2, thenomain, /again=8)
+
+think roll(str+2, thenomain, /again=8/extended)
+
+think roll(str+2, thenomain, /again=8/extended=tyyt)
+
+

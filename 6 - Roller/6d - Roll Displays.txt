@@ -1,0 +1,147 @@
+################################################################################
+## DISPLAYS ####################################################################
+
+
+--------------------------------------------------------------------------------
+-- Display: List ---------------------------------------------------------------
+
+0: .list.of.items.to.display, normally one of the global items
+this may seem odd. this is odd, but it's expandable
+
+--
+
+&f.display-list nWoD Roller <nr>=
+	iter( rest( %0, . ), %i0, ., . )
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll Items ---------------------------------------------------------
+
+0: `+list`-of`+items (grabbed probably from %qo or %qe)
+outputs: Something legible (i.e., "Error Error Error")
+
+--
+
+&f.display-roll-items nWoD Roller <nr>=
+	iter( 
+		rest( trim( %0, l, ` ), + ), 
+		%i0, 
+		` 
+	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll Output --------------------------------------------------------
+
+0: dbref of roller
+1: "public" or "private" or "job <num>"
+
+q0: counted successes -- from f.roll-success-interpreter
+q1: prettified success output ("success!") -- from success-interpreter
+q2: prettified display roll output (what rolled) -- from success-interpreter
+
+relies upon global registers
+uses: header(), footer()
+
+--
+
+&f.display-roll-output nWoD Roller <nr>=
+
+@@ .. interpret roll results from global registers
+	[u( f.roll-success-interpreter )]
+@@ .. massage the registers a bit; from here on out they're just for displays
+	[if( lte( %qd, 0 ), [setq( d, 0 )][setq( s, setunion( %qs, Chance ))] )]
+	[if( gte( %qa, 11 ), setq( a, No ))]
+
+@@ >> display!
+@@ .. header, don't display obvious defaults
+	[header(
+		[name( %# )] rolls %qd Dice
+		[if( strmatch( %qs, Standard ), , %b- %qs )]
+		[if( strmatch( %qa, 10 ), , %b- %qa-Again )] 
+	)]%r
+
+@@ .. what are we rolling?
+	%b Roll: 
+	[trim( wrap( %q2, 73, l, , , 8 ), r, %b )] %r
+
+@@ .. what are the results?
+@@ .. >> if there are more than one set in %qr, this was an extended roll!
+	[case( 1, 
+@@ .. >> extended roll: <Total> %r%r <each roll>, and change %q1
+		gt( words( %qr, | ), 1 ), 
+		%b Result: [setr( 1, [ladd( %q0 )] total successes )]%r%r
+		[iter( %qr, 
+			%b Successes: [setr( x, max( extract( %q0, inum( ), 1 ), -1 ))] 
+			-- %i0
+@@ .. .. .. report dramatic failure only; exc. succ was confusing people
+@@			[switch( %qx, >4, %b%(exceptional%), -1, %b%(dramatic failure%) )], 
+			[switch( %qx, -1, %b%(dramatic failure%) )], 
+			|, %r 
+		)], 
+@@ .. >> single roll: show "Result: <success?> -- <dice rolled>
+		%b Result: [trim( wrap( %q1 -- %qr, 68, l, , , 10 ), r, %b )]
+	)]%r
+
+@@ .. footer, reminds us success/failure, and whom to
+	[footer( [trim( lcstr( before( %q1, %( )))]
+	[if( t( %1 ), %b(%1) )] )]
+
+
+
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll To Public -----------------------------------------------------
+
+&display.roll-to-public nWoD Roller <nr>=pemit(%1, u(f.display-roll-output, %0, public))
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll To Private ----------------------------------------------------
+
+&display.roll-to-private nWoD Roller <nr>=
+	pemit(%1, 
+		u(f.display-roll-output, %0, to [iter(%1, name(%i0), , %,%b)])
+	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll To Job --------------------------------------------------------
+
+For #15/trig_myadd: 
+ 0: dbref of job object (Job 6 -> #491)
+ 1: content, I think
+ 2: dbref of the person causing the change
+ 3: the act upon the object (CREate, ADD, NAMe, ASN-assign, MAIl, etc)
+
+For the following:
+ 0: enactor dbref (probably %#)
+ 1: Job <n>
+
+uses: alert(), titlestr()
+
+--
+
+&display.roll-to-job nWoD Roller <nr>=
+	[case( 0, 
+@@ .. job access check failed
+		t(setr(9, ulocal( #15/f.has_job_access, rest( %1 ), %0 ))), 
+		[alert( +roll, alert )] 
+		You can't roll to that job because [titlestr( rest( %q9 ))], 
+
+@@ .. else, show enactor and add it to the job
+		[u( f.display-roll-output, %0, to %1 )]
+		[trigger( #15/trig_myadd, 
+			locate( #15, %1, i ), 
+			%r[u( f.display-roll-output, %0, to %1 )], 
+			%0, 
+			ADD 
+		)]
+@@ .. trigger the jobs system to inform people who can see the bucket
+		[trigger( #15/trig_broadcast, 
+			parent( locate( #15, %1, i )), 
+			+Roll added to [lcstr( %1 )] by %N. 
+		)] 
+	)]
+

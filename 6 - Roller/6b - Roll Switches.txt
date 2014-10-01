@@ -1,5 +1,5 @@
-================================================================================
-== ROLL SWITCHES ===============================================================
+################################################################################
+## ROLL SWITCHES ###############################################################
 
 Multiple switches may be given (and, of course, taken out).  Each system adds to what's being rolled and will probably depend upon the dice-to-roll part of it being parsed first.
 
@@ -16,45 +16,89 @@ Passive Switches (used in other parts of the roller):
 	/tr[ained] - ignore untrained modifiers
 	/now[ound] - ignore wound penalties
 	/rote - roll as a rote (failures re-rolled once)
-		(how does this work with Weaknesses?)
+		weakness + rote: process in that order
 
-@@ thoughts:
-@@ The way this works is that it's on a scale, right? 
-@@ Weakness, Normal, 9-Again, 8-Again, Rote.
-@@ So if you have Weakness, but also 9-again, you get a normal roll.
-@@ So I would say probably something like Weakness + Rote is 8-again.
+
+
+================================================================================
+== Data ========================================================================
+
+
+--------------------------------------------------------------------------------
+-- Switch Aliases --------------------------------------------------------------
+
+Remember to process switch matches before this. 
+'/nowound' should match before '/now' and before '/no'.
+Wildcards are valid.
+
+	<full switch>:<alias>:<alias>:<alias> <full switch 2>:...
+
+--
+
+&d.switch.aliases nWoD Roller <nr>=
+	willpower:wi* 
+	trained:tr* 
+	nowound:now* 
+	rote:r* 
+	again=10:10 
+	again=9:9 
+	again=8:8 
+	again=no:11:no 
+	again=weakness:we* 
+
+
+
+================================================================================
+== Functions ===================================================================
+
+
+--------------------------------------------------------------------------------
+-- GetSwitch -------------------------------------------------------------------
+
+Passive switches are used in other parts of the system, usually to stop them 
+from working, or to cause them to work a little differnetly.  For them, the 
+/whole/switch/list is passed, as well as the item to check.  Yeah, it's pretty 
+simple.
+
+CODE NOTE: This works just like grab(%0, %1*, /).  The reason it works is 
+because the list is <null>/item1/item2/item3, so searching for * returns the 
+<null>.  This is VERY USEFUL.
+
+0: partial name of switch to check for
+returns: the full item
+
+--
+
+&f.getswitch nWoD Roller <nr>=
+	regrabi(%qz, ^%0, /)
 
 
 --------------------------------------------------------------------------------
 -- HasSwitch? ------------------------------------------------------------------
 
-Passive switches are used in other parts of the system, usually to stop them from working, or to cause them to work a little differnetly.  For them, the /whole/switch/list is passed, as well as the item to check.  Yeah, it's pretty simple.
+0: partial name of switch to check for
+returns: 1 for true, 0 for false (null returns false)
 
-
-&f.getswitch nWoD Roller <nr>=
-@@ 0: partial name of switch to check for
-@@ returns: the full item
-	regrabi(%qz, ^%0, /)
-
-
-CODE NOTE: The above works just like grab(%0, %1*, /).  The reason it works is because the list is <null>/item1/item2/item3, so searching for * returns the <null>.  This is VERY USEFUL.
+--
 
 &f.hasswitch? nWoD Roller <nr>=
-@@ 0: partial name of switch to check for
-@@ returns: 1 for true, 0 for false (null returns false)
 	t(u(f.getswitch, %0))
 
 
---------------------------------------------------------------------------------
--- /again ----------------------------------------------------------------------
+
+================================================================================
+== /again ======================================================================
 
 /again=10, 9, 8.  7 is 8 + 2 dice, 6 is 8 + 4 dice, and so on.
 /again=no, converts to 11.
 /again=weakness, rolls the weakness system.
 
+0: /again=xxx
+q0: the "again" type
+
+--
+
 &f.roll/again nWoD Roller <nr>=
-@@ 0: /again=xxx
-@@ q0: the "again" type
 
 	[setq(0, rest(%0, =))]
 	[case(
@@ -88,12 +132,25 @@ CODE NOTE: The above works just like grab(%0, %1*, /).  The reason it works is b
 &f.roll/8-again #59=u( f.roll/again, again=8 )
 
 
---------------------------------------------------------------------------------
--- /extended[=<num>] -----------------------------------------------------------
 
-@@ 0: /extended[=<num>]
-@@ q0: the "extended" value, if any
-@@ qt: a MAJOR REGISTER for number of times to roll
+================================================================================
+== /extended[=<num>] ===========================================================
+
+/extended[=<rolls>] will roll either pool- or <rolls>-number-of-times.
+
+Extended to xx rolls: /extended[=<num>]
+Extended to target: /target=<num>
+Extended to whichever is first: /extended[=<num>]/target=<num>.
+
+Remember, this switch doesn't activate the rolls, but modifies them.
+
+--
+
+0: /extended[=<num>]
+q0: the "extended" value, if any
+qt: a GLOBAL REGISTER for number of times to roll
+
+--
 
 &f.roll/extended nWoD Roller <nr>=
 @@ .. if <num> is there, %q0 = <num>, else %q0 = %qt
@@ -115,11 +172,6 @@ CODE NOTE: The above works just like grab(%0, %1*, /).  The reason it works is b
 		setq(t, %q0)
 	)]
 
-
---
-
-&f.roll/extended nWoD Roller <nr>=[setq(0, if(strmatch(%0, *=*), rest(%0, =), %qt))][case(0, or(t(%qt), t(rest(%0, =))), u(f.registers.error-add, If no traits in the roll%, you must use /extended=<num>), gt(%q0, 0), u(f.registers.error-add, Extended roll must be a number of times), isint(%q0), u(f.registers.error-add, Extended roll must be an integer), setq(t, %q0))]
-
 --
 
 think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
@@ -129,11 +181,21 @@ think %%qt: [setr(t, 0)] - [u(#41/f.roll/extended, /extended)] - errors: %qe - t
 think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended=)] - errors: %qe - total rolls: %qt
 
 
---------------------------------------------------------------------------------
--- /list -----------------------------------------------------------------------
 
-Roll a list of numbers all at once, like /extended only different.  Ad-hoc system, works like this:
+================================================================================
+== /target=<num> ===============================================================
 
-/list=4,3,2 : takes list of numbers only, adds them as if extended
+/target=<target> will roll until <target> successes are reached.
 
+Extended to xx rolls: /extended[=<num>]
+Extended to target: /target=<num>
+Extended to whichever is first: /extended[=<num>]/target=<num>.
+
+Remember, this switch doesn't activate the rolls, but modifies them.
+
+--
+
+0: /target=<num>
+q0: the "target" value
+qt: a GLOBAL REGISTER for number of times to roll
 

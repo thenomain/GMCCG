@@ -112,11 +112,7 @@ Add (subtract) health penalty unless passive /nowound switch is included
 
 Build the what-to-roll list with the stats.  If the system can pull the stat, it will roll it.
 
-Doesn't deal with specialties at the same time as skills, yet, so:
-	+roll dex + fire + fire.pist
-
-
->> here is where I would put in <player>:<stat>, if we would
+>> here is where I would put in <player>:<stat>, if we could
 
 --
 
