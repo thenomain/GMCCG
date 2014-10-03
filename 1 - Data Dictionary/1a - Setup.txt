@@ -225,8 +225,7 @@ localize(
 Same as "At Least", only checks that things are "at most" (equal to or less 
 than) a value.
 
-Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is 
-"this" stat, aka the stat in <statpath>.  This is required to make cgen/xp 
+Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is "this" stat, aka the stat in <statpath>.  This is required to make cgen/xp 
 spends to properly see if the new value of "this stat" meets prerequisites.
 
 --
@@ -586,8 +585,7 @@ localize(
 -- What's My Max Trait? --------------------------------------------------------
 
 The more supers we get, the more generalized we need to make some of these 
-things.  It's important, therefore, to be able to simply ask for the "maximum 
-trait" based on general power level.
+things.  It's important, therefore, to be able to simply ask for the "maximum trait" based on general power level.
 
 >>> When adding or removing spheres from a game, alter this -- for now <<< 
 
@@ -599,25 +597,21 @@ think u(dd/.max_trait, num(*thenomain))
 --
 
 &.max_trait dd=
-	max( 
+	max(
 		5, 
-		u( .value, 
+		u(.value, 
 			%0, 
-			udefault( .max_trait.[u( .value_full, %0, bio.template )], 
-				0 
+			case(last(u(.value_full, %0, bio.template), .), 
+				Changeling, advantage.wyrd, 
+				Werewolf, advantage.primal_urge, 
+@@ 				Vampire, advantage.blood_potency, 
+@@ 				Promethean, advantage.azoth, 
+ 				Mage, advantage.gnosis, 
+@@ 				Geist, advantage.psyche, 
+				Skinthief, advantage.supernatural_tolerance
 			)
 		)
 	)
-
---
-
-&.max_trait.Changeling dd=advantage.wyrd
-&.max_trait.Werewolf dd=advantage.primal_urge
-&.max_trait.Vampire dd=advantage.blood_potency
-&.max_trait.Promethean dd=advantage.azoth
-&.max_trait.Mage dd=advantage.gnosis
-&.max_trait.Geist dd=advantage.psyche
-&.max_trait.Skinthief dd=advantage.supernatural_tolerance
 
 
 --------------------------------------------------------------------------------
