@@ -110,7 +110,7 @@ localize(
 
 think u( nr/f.switch.name-complete, 8/w/no/dsfds/no-/ag=5/t/tr/fd )
 
-think [setr( z, /w/tr/dsfds/e/ta=15 )] --> [setq( z, u( nr/f.switch.name-complete, %qz ))]%qz
+think [setr( z, /w/tr/e/ta=15 )] --> [setq( z, u( nr/f.switch.name-complete, %qz ))]%qz
 
 This being more what it should probably look like when we're done.
 
