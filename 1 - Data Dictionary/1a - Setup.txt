@@ -20,7 +20,10 @@
 
 Data Dictionary Prerequisite Shortcut Functions
 
-We put these on _ for two reasons.  The main one is the DD is @set visual to let the derived stats call on this object from any dbref.  The second is to keep it out of the hands of any code which might troll the Data Dictionary (such as setting up templates).
+We put these on _ for two reasons.  The main one is the DD is @set visual to let 
+the derived stats call on this object from any dbref.  The second is to keep it 
+out of the hands of any code which might troll the Data Dictionary (such as 
+setting up templates).
 
 
 --------------------------------------------------------------------------------
@@ -94,7 +97,9 @@ What is the class of the stat?
 --------------------------------------------------------------------------------
 -- Value -----------------------------------------------------------------------
 
-The "value" directive just pulls the permanent part of a numeric stat (such as Strength) or the first item from a text list (such as Template, which can be Human.Psionic).
+The "value" directive just pulls the permanent part of a numeric stat (such as 
+Strength) or the first item from a text list (such as Template, which can be 
+Human.Psionic).
 
 --
 
@@ -141,9 +146,12 @@ Total value of a numeric trait
 --------------------------------------------------------------------------------
 -- At Least --------------------------------------------------------------------
 
-The "at" directives check that a stat is "at least" (equal to or greater than) another value.  Sometimes that other value is another stat.
+The "at" directives check that a stat is "at least" (equal to or greater than) 
+another value.  Sometimes that other value is another stat.
 
-Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is "this" stat, aka the stat in <statpath>.  This is required to make cgen/xp spends to properly see if the new value of "this stat" meets prerequisites.
+Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is 
+"this" stat, aka the stat in <statpath>.  This is required to make cgen/xp 
+spends to properly see if the new value of "this stat" meets prerequisites.
 
 --
 
@@ -214,9 +222,11 @@ localize(
 --------------------------------------------------------------------------------
 -- At Most ---------------------------------------------------------------------
 
-Same as "At Least", only checks that things are "at most" (equal to or less than) a value.
+Same as "At Least", only checks that things are "at most" (equal to or less 
+than) a value.
 
-Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is "this" stat, aka the stat in <statpath>.  This is required to make cgen/xp spends to properly see if the new value of "this stat" meets prerequisites.
+Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is "this" stat, aka the stat in <statpath>.  This is required to make cgen/xp 
+spends to properly see if the new value of "this stat" meets prerequisites.
 
 --
 
@@ -291,7 +301,9 @@ localize(
 --------------------------------------------------------------------------------
 -- Is --------------------------------------------------------------------------
 
-Intended for list stats, "is" compares the stat's primary (first) value to another or against a list.  Can be used with numeric stats as well if an exact match needs to be found, but it's discouraged.
+Intended for list stats, "is" compares the stat's primary (first) value to 
+another or against a list.  Can be used with numeric stats as well if an exact 
+match needs to be found, but it's discouraged.
 
 --
 
@@ -364,7 +376,8 @@ Stat's "first" text value matches none from a list
 --------------------------------------------------------------------------------
 -- Has -------------------------------------------------------------------------
 
-The "has" directives check to see if a stat (or a list of stats) exists (or don't exist) on someone's sheet.
+The "has" directives check to see if a stat (or a list of stats) exists (or 
+don't exist) on someone's sheet.
 
 --
 
@@ -425,7 +438,8 @@ Sheet has none of the stats from a list
 --------------------------------------------------------------------------------
 -- Min Of/Max Of ---------------------------------------------------------------
 
-Returns the lowst or highest value of a list of stats.  We have to fold our own "lmin" and "lmax" for these, hurrah.
+Returns the lowst or highest value of a list of stats.  We have to fold our own 
+"lmin" and "lmax" for these, hurrah.
 
 	0: sheet dbref
 	1: list.of stat.paths to.check
@@ -462,7 +476,8 @@ Returns the lowst or highest value of a list of stats.  We have to fold our own 
 --------------------------------------------------------------------------------
 -- List Has --------------------------------------------------------------------
 
-Takes a list stat (or, for that matter, any numeric stat) and returns 1 if the item exists in it, 0 if it doesn't.  
+Takes a list stat (or, for that matter, any numeric stat) and returns 1 if the 
+item exists in it, 0 if it doesn't.  
 
 List stats are stored: item.item.item
 
@@ -514,7 +529,8 @@ Else, assumes translating name->value
 --------------------------------------------------------------------------------
 -- Rites, Gifts, & Renown ------------------------------------------------------
 
-In Werewolf, all Rites need to be checked against the Rite merit.  So for each Rite, add this function to the prerequisite.
+In Werewolf, all Rites need to be checked against the Rite merit.  So for each 
+Rite, add this function to the prerequisite.
 
 	0: sheet dbref
 	1: value trying to raise to
@@ -569,8 +585,7 @@ localize(
 -- What's My Max Trait? --------------------------------------------------------
 
 The more supers we get, the more generalized we need to make some of these 
-things.  It's important, therefore, to be able to simply ask for the "maximum 
-trait" based on general power level.
+things.  It's important, therefore, to be able to simply ask for the "maximum trait" based on general power level.
 
 >>> When adding or removing spheres from a game, alter this -- for now <<< 
 
@@ -602,9 +617,11 @@ think u(dd/.max_trait, num(*thenomain))
 --------------------------------------------------------------------------------
 -- Trait Check -----------------------------------------------------------------
 
-Like Gift Check, but for power level -> attribute/skill.  We use this so often that we're making it its own thing.
+Like Gift Check, but for power level -> attribute/skill.  We use this so often 
+that we're making it its own thing.
 
-This is prefered to 'max trait' above and the above may be folded into this function, instead.
+This is prefered to 'max trait' above and the above may be folded into this 
+function, instead.
 
 	0: sheet dbref
 	1: stat.path
