@@ -146,8 +146,8 @@ may be ignored if internal: items kept in global registers!
 @@ .. tweak 'n-again' register (qa)
 				setq( a, 
 					case( 1, 
-						strmatch( %qs, weakness), 11, 
-						strmatch( %qs, chance), 10, 
+						strmatch( %qs, weakness ), 11, 
+						strmatch( %qs, chance ), 10, 
 						%qa
 					)
 				), 

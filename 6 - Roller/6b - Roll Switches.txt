@@ -12,11 +12,23 @@ Active Switches (do their own thing):
 		/weakness
 	/willpower - spend a willpower for +3
 
+
+'Weakness' is a term half made-up from the Vampire book, indicating some clans' 
+weaknesses reminiscent of oWoD's success counter: After counting successes, 
+subtract 1s. 'Weakness' is also always 'no-again'.
+
+
 Passive Switches (used in other parts of the roller):
 	/tr[ained] - ignore untrained modifiers
 	/now[ound] - ignore wound penalties
 	/rote - roll as a rote (failures re-rolled once)
-		weakness + rote: process in that order
+
+
+According to the printed literature that I could find, 'rote' is processed 
+before all n-again rolls, including weakness. This means weakness + rote could 
+take a normal failure ('2') and turn it into a success-eating '1'.
+
+It is what it is.
 
 
 
@@ -35,21 +47,72 @@ Wildcards are valid.
 
 --
 
+&d.switch.passives nWoD Roller <nr>=
+	nowound 
+	trained 
+	weakness 
+	rote 
+
+--
+	
 &d.switch.aliases nWoD Roller <nr>=
-	willpower:wi* 
-	trained:tr* 
-	nowound:now* 
-	rote:r* 
-	again=10:10 
-	again=9:9 
-	again=8:8 
-	again=no:11:no 
-	again=weakness:we* 
+	10-again|again=10 
+	9-again|again=9 
+	8-again|again=8 
+	no-again|again=no 
+	11-again|again=no 
 
 
 
 ================================================================================
 == Functions ===================================================================
+
+
+--------------------------------------------------------------------------------
+-- Name Complete Switches ------------------------------------------------------
+
+Take the switch list /x/w=m/r/g/r and name-complete it.
+
+0: list/of/switches
+returns: name-completed and alias-fixed list/of/switches
+
+a: list of switches as known by the attributes
+b: hey it matched
+
+x: the switch
+y: the switch modifier (after '=')
+
+--
+
+&f.switch.name-complete nWoD Roller <nr>=
+localize( 
+	iter( lcstr( trim( %0, l, / )), 
+		strcat( 
+			setq( a, lcstr( sort( edit( lattr( %!/f.roll/* ), F.ROLL/, )))), 
+			setq( x, before( %i0, = )), 
+			setq( y, rest( %i0, = )), 
+			case( 1, 
+				t( setr( b, grab( %qa, %qx* ))), 
+				/%qb[if( strlen( %qy ), =%qy )], 
+
+				t( setr( b, grab( v( d.switch.passives ), %qx* ))), 
+				/%qb[if( strlen( %qy ), =%qy )], 
+
+				t( setr( b, rest( grab( v( d.switch.aliases ), %qx*|* ), | ))), 
+				/%qb[if( words( %qy ), =%qy )] 
+			)
+		), 
+		/, @@ 
+	)
+)
+
+--
+
+think u( nr/f.switch.name-complete, 8/w/no/dsfds/no-/ag=5/t/tr/fd )
+
+think [setr( z, /w/tr/dsfds/e/ta=15 )] --> [setq( z, u( nr/f.switch.name-complete, %qz ))]%qz
+
+This being more what it should probably look like when we're done.
 
 
 --------------------------------------------------------------------------------
