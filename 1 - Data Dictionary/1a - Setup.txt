@@ -34,7 +34,7 @@ setting up templates).
 For almost all of these, the following variables are passed:
 	0: sheet dbref
 	1: complete.stat.path
-	2: comparison value
+	2: value to check against
 	3: value this stat (with the prereq on it) is being adjusted by
 
 Class - Numeric, String, List, or Peppermint.
@@ -64,24 +64,25 @@ Is - Direct comparison of stat's value.
 	.Is_One_Of		Numeric. Stat's value matches one of a dot-delim list.
 	.Is_None_Of		Numeric. Opposite of "is one of", above.
 
-Has - Any. Checking for existance of stats.
+Has - Checking for existance of stats.
 	.Has			Stat exists on sheet.
 	.Has_Not		Stat doesn't exist on sheet.
+	.Has_One_Of		One of stats listed exists on sheet.
 	.Has_All_Of		Stats listed all exist on sheet.
 	.Has_None_Of	Stats listed all do not exist on sheet.
 
-Min/Max Of - Can't remember right now.	
-	.Min_Of			...
-	.Max_Of			...
+Min/Max Of - Return a high/low value
+	.Min_Of			Lowest value of a list of stats
+	.Max_Of			Highest value of a list of stats
 
-Core Stat Checks - 
-	.Max_Trait		...
-	.Trait_Check	...
+Core Stat Checks - Check against Supernatural Tollerance (power trait)
+	.Max_Trait		How high can they take skills/attributes?
+	.Trait_Check	Can they take "this" skill/attribute "that" high?
 
 Werewolf Stat Checks - 
-	.Rites_Check	...
-	.Gifts_Check	...
-	.Renown_Check	...
+	.Rites_Check	Can they take "this" rite?
+	.Gifts_Check	Can they take "this" gift "that" high?
+	.Renown_Check	Can they take "this" renown "that" high?
 
 
 
