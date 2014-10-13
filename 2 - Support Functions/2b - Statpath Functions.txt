@@ -309,6 +309,7 @@ Used for validating new purchases if sheet-lookup fails.
 @@ return built stat, or error -- for class:list stats, type.name only
 [if(and(t(%qn), strmatch(%qc, list)), extract(%qn, 1, 2, .), %qn)]
 
+
 --------------------------------------------------------------------------------
 -- Statpath: Data Dictionary Lookup Tests --------------------------------------
 
@@ -423,6 +424,7 @@ NOTE: Instances and Substats on sheet are stored with _ for spaces
 
 @@ return built stat, or error -- for class:list stats, type.name only
 [if(and(t(%qn), strmatch(%qc, list)), extract(%qn, 1, 2, .), %qn)]
+
 
 --------------------------------------------------------------------------------
 -- Statpath: Sheet Tests -------------------------------------------------------

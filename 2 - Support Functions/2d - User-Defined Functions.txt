@@ -110,12 +110,15 @@ if(
 	%qr
 )
 
+
 --------------------------------------------------------------------------------
 -- Statname Workhorse ----------------------------------------------------------
 
-&f.statname.workhorse sfp=
-@@ 0: The "rest" of the statpath (that is, just the name portion)
+0: The "rest" of the statpath (that is, just the name portion)
 
+--
+
+&f.statname.workhorse sfp=
 	iter(
 @@ .. .. Step 1: Capitalize Words
 		edit(%0, _, %b), 
@@ -134,7 +137,7 @@ think iter(iter(edit(a_b.c_d, _, %b), capstr(##), ., .), capstr(##))
 think statname(str)
 think statname(cont.rep)
 think statname(thenomain/cont.rep)
-think statname(c(s))
+think statname(un(t))
 think statname(blah)
 
 
@@ -771,7 +774,7 @@ qu: "un-add" these list items (for type:class only)
 --------------------------------------------------------------------------------
 -- Setstat Tests ---------------------------------------------------------------
 
-@@ Thenotest, my test frob.
+@@ thenomain, my test frob.
 
 @@ ---
 @@ Start by cleaning the slate
@@ -790,40 +793,40 @@ think [setstat(thenomain/willpo, default)] -> [getstat(thenomain/willp, b)]
 
 @@ --
 
-think [setstat(thenotest/willpo, 0, offset)] -> [getstat(thenotest/willp, b)]
-think [setstat(thenotest/willpo, default)] -> [getstat(thenotest/willp, b)]
+think [setstat(thenomain/willpo, 0, offset)] -> [getstat(thenomain/willp, b)]
+think [setstat(thenomain/willpo, default)] -> [getstat(thenomain/willp, b)]
 
 @@ set the offset, change the derived stat to just "5", reset the default
-think [setstat(thenotest/willpo, 2, off)] -> [getstat(thenotest/willp, b)]
-think [setstat(thenotest/willpo, 5, override)] -> [getstat(thenotest/willp, b)]
-think [setstat(thenotest/willpo, default)] -> [getstat(thenotest/willp, b)]
+think [setstat(thenomain/willpo, 2, off)] -> [getstat(thenomain/willp, b)]
+think [setstat(thenomain/willpo, 5, override)] -> [getstat(thenomain/willp, b)]
+think [setstat(thenomain/willpo, default)] -> [getstat(thenomain/willp, b)]
 
 @@ clear the stat entirely and try to set an offset
-think [setstat(thenotest/willpo, , overr)] -> [getstat(thenotest/willp, b)]
-think [setstat(thenotest/willpo, 2, off)] -> [getstat(thenotest/willp, b)]
+think [setstat(thenomain/willpo, , overr)] -> [getstat(thenomain/willp, b)]
+think [setstat(thenomain/willpo, 2, off)] -> [getstat(thenomain/willp, b)]
 
 @@ Restore
-think [setstat(thenotest/willpo, default)] -> [getstat(thenotest/willp, b)]
+think [setstat(thenomain/willpo, default)] -> [getstat(thenomain/willp, b)]
 
 @@ ---
 @@ Let's play with Academics
-think [setstat(thenotest/acad, 2)] -> [getstat(thenotest/acad, b)]
+think [setstat(thenomain/acad, 2)] -> [getstat(thenomain/acad, b)]
 
 @@ Try to set a default on a stat that doesn't have one
-think [setstat(thenotest/acad, default)] -> [getstat(thenotest/acad, b)]
+think [setstat(thenomain/acad, default)] -> [getstat(thenomain/acad, b)]
 
 @@ Okay, let's clear it.
-think [setstat(thenotest/acad)] -> [getstat(thenotest/acad, b)]
+think [setstat(thenomain/acad)] -> [getstat(thenomain/acad, b)]
 
 @@ We can give someone a specialty without a stat.
-think [setstat(thenotest/acad.history, 1)] -> [getstat(thenotest/acad.history, b)]
+think [setstat(thenomain/acad.history, 1)] -> [getstat(thenomain/acad.history, b)]
 
 @@ But not for stats that won't allow specialties/secondaries
-think [setstat(thenotest/strength.history, 1)]
+think [setstat(thenomain/strength.history, 1)]
 
 @@ Restore Academics to normal
-think [setstat(thenotest/acad)] -> [getstat(thenotest/acad, b)]
-think [setstat(thenotest/acad.history)] -> [getstat(thenotest/acad.history, b)]
+think [setstat(thenomain/acad)] -> [getstat(thenomain/acad, b)]
+think [setstat(thenomain/acad.history)] -> [getstat(thenomain/acad.history, b)]
 
 
 ================================================================================
@@ -976,8 +979,8 @@ think [shiftstat(thenomain/strength, -1)] -> [getstat(thenomain/strength, b)]
 think [shiftstat(thenomain/stren, 0, off)] -> [getstat(thenomain/strength, b)]
 think [shiftstat(thenomain/stre, -1, off)] -> [getstat(thenomain/strength, b)]
 
-think setstat(thenotest/full name, Jack Fireheart)
-think [shiftstat(thenotest/full name, Jack Fireheart)] -> [getstat(thenotest/full name)]
-think [shiftstat(thenotest/full name, 4)] -> [getstat(thenotest/full name)]
-think setstat(thenotest/full name, )
-think [shiftstat(thenotest/full name, 4)] -> [getstat(thenotest/full name)]
+think setstat(thenomain/full name, Jack Fireheart)
+think [shiftstat(thenomain/full name, Jack Fireheart)] -> [getstat(thenomain/full name)]
+think [shiftstat(thenomain/full name, 4)] -> [getstat(thenomain/full name)]
+think setstat(thenomain/full name, )
+think [shiftstat(thenomain/full name, 4)] -> [getstat(thenomain/full name)]

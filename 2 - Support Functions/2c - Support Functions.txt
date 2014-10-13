@@ -175,7 +175,7 @@ returns: 1 if valid, #-1 <reason> if not
 
 &f.prereq-check-cgen sfp=
 	if(
-		or(
+		cor(
 @@ .. player is in chargen
 			strmatch(loc(%0), u( d.chargen )), 
 @@ .. stat is not cg-only
