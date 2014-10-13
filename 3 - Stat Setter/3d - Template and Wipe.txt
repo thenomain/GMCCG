@@ -153,7 +153,7 @@ cor(
 @@ .. tag has no templates?
 	not(u(
 		[u(d.stat-funcs)]/f.hastag?.workhorse, 
-		rest(%0, .), 
+		%0, 
 		get([u(d.data-dictionary)]/bio.template)
 	))
 )
