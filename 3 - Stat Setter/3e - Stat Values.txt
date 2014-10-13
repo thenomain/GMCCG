@@ -39,19 +39,22 @@ strcat(
 
 @@ >> blank out registers we use to collect data; had some problems without this
 	setq( a, ), setq( t, ), setq( v, ), setq( f, ), 
-	setq( y, u( d.stat-funcs )), setq( x, u( d.data-dictionary )), 
+	setq( y, u( d.stat-funcs )), 
+	setq( q, u( %qy/f.find-sheet, %# )), 
+	setq( x, u( d.data-dictionary )), 
 
 @@ >> search for type(s) and/or tag(s)
 	if( strmatch( %0, */* ), 
 		strcat( 
+			setq( w, rest( %0, / )), 
 			iter( before( %0, / ), 
 				case( 1, 
 
 @@ Removing "prereq/*" ability because it kept hitting iteration limits
 @@ @@ .. .. "prerequisite": flag for the filter, only if player has sheet
-@@ 					and( 
+@@ 					cand( 
 @@ 						strmatch( %i0, pre* ), 
-@@ 						t( setr( q, u( %qy/f.find-sheet, %# )))
+@@ 						t( %qq )
 @@ 					), 
 @@ 					setq( f, 1 ), 
 
@@ -77,8 +80,12 @@ strcat(
 		setq( w, %0 )
 	), 
 
+@@ .. clean-up (no leading periods with tags list)
+	setq( t, trim( %qt, b, . )), 
+
 @@ >> find 'statpath without instance', then filter them as appropriate
 	setq( p, u( %qy/f.statpath-validate-name, %qw )), 
+
 
 @@ @@ >> "prerequisite" flag (qf) was set -- removing functionality 'cause limit
 @@ 	if(
@@ -131,7 +138,6 @@ strcat(
 		Stat Not Found. Try <name>* to find a list of possible matches. 
 	)
 )
-
 
 
 --------------------------------------------------------------------------------
