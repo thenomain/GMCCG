@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Command: +Roll --------------------------------------------------------------
+-- Command: Roll --------------------------------------------------------------
 
 Cutting corners for now.
 
@@ -12,7 +12,7 @@ q9: target list (names or job #)
 
 --
 
-&c.roll nWoD Roller <nr>=$^\+roll(.*) (.*):
+&c.roll nWoD Roller <nr>=$^\+?roll(.*) (.*)$:
 
 	@pemit %#=
 		strcat( 
@@ -47,7 +47,7 @@ q9: target list (names or job #)
 @@ .. interpret and output - check for errors first
 			if( 
 				t( words( %qe, ` )), 
-				[alert( +roll, alert )] [u( f.display-list, %qe )], 
+				[u( .alert, roll )] [u( f.display.list, %qe )], 
 @@ Roll To ...
 				u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))
 			)
@@ -77,6 +77,10 @@ Somehow, registers are being passed into this function set
 so we clear out all the globals (and "p"?!) before we start
 (no, iter didn't work)
 "e" was adding to the error list, "p" was, I think, changing the player dbref
+
+--
+
+@fo me=&ufunc.roll nr=u\\( [num( nr )]/f.roll, \\\%0, \\\%1, \\\%2 \\)
 
 --
 
@@ -118,13 +122,15 @@ may be ignored if internal: items kept in global registers!
 &f.roll.workhorse nWoD Roller <nr>=
 	strcat( 
 @@ .. set up global register defaults
-		setq( z, %2 ), setq( d, 0 ), setq( a, 10 ), setq( s, Standard ), 
+		setq( z, u( f.switch.name-complete, %2 )), 
+		setq( d, 0 ), 
+		setq( a, 10 ), 
+		setq( t, 0 ), 
+		setq( n, ), 
+		setq( s, Standard ), 
 		
 @@ .. run the basic roller setup
 		u( f.stat-check.stats, %1, %0 ), 
-
-@@ .. convert switch aliases to full text
-@@ .. DO IT HERE!
 
 @@ >> Active Adjustments <<
 @@ .. scan for and run "active" switches
@@ -139,11 +145,16 @@ may be ignored if internal: items kept in global registers!
 @@ >> ROLL
 		if(
 			t( words( %qe, ` )), 
-@@ .. error output
-			#-1|[u( f.display-roll-items, %qe )]|[@@( null )],
+@@ .. error output instead of rolling
+			strcat( 
+				#-1, |, 
+				u( f.display.roll-items, %qe ), |, 
+				@@( null )
+			), 
+
 			strcat( 
 
-@@ .. tweak 'n-again' register (qa)
+@@ .. tweak 'n-again' register (qa) if 'weakness' or 'chance' roll
 				setq( a, 
 					case( 1, 
 						strmatch( %qs, weakness ), 11, 
@@ -151,6 +162,7 @@ may be ignored if internal: items kept in global registers!
 						%qa
 					)
 				), 
+
 @@ .. reset 'number of times to roll' register (qt) if not /extended or /target
 				setq( t, 
 					if( 
@@ -185,8 +197,8 @@ may be ignored if internal: items kept in global registers!
 
 --
 
-think u(nro/f.roll.workhorse, str+2, pmatch(thenomain), /again=8)
-think u(nro/f.roll, str+2, thenomain, /again=8)
+think u(nr/f.roll.workhorse, str+2, pmatch(thenomain), /again=8)
+think u(nr/f.roll, str+2, thenomain, /again=8)
 
 think roll(str+2, thenomain, /again=8/extended)
 

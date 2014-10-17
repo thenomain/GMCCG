@@ -163,36 +163,39 @@ q0: the "again" type
 
 &f.roll/again nWoD Roller <nr>=
 
-	[setq(0, rest(%0, =))]
-	[case(
+	[setq( 0, rest( %0, = ))]
+	[case( 
 		1, 
+
 @@ .. check an "again" type was actually passed
-		not(t(%q0)), 
+		not( t( %q0 )), 
 		u(f.registers.error-add, Again type not passed.), 
+
 @@ .. "w"eakness
-		strmatch(%q0, w*), 
-		[setq(a, 11)]
-		[setq(s, Weakness)], 
+		strmatch( %q0, w* ), 
+		[setq( a, 11 )]
+		[setq( s, Weakness )], 
+
 @@ .. "n"o
-		strmatch(%q0, n*), 
-		setq(a, 11), 
-@@ .. must be at least 5 and integer
-		not(and(isint(%q0), gte(%q0, 7))), 
-		u(f.registers.error-add, Again type must be integer of 7 or higher.), 
+		strmatch( %q0, n* ), 
+		setq( a, 11 ), 
+
+@@ .. must be at least 8 and integer
+		not( and( isint( %q0 ), gte( %q0, 8 ))), 
+		u( f.registers.error-add, Again type must be integer of 8 or higher. ), 
+
 @@ .. if below 8, +2 dice per
-		lt(%q0, 8), 
-		[setq(1, mul(2, sub(8, %q0)))]
-		[u(f.registers.dice-add, %q1)]
-		[u(f.registers.output-add, %q1 %(%q0-again%), +)]
-		[setq(a, 8)], 
+@@ .. (change to above makes this impossible to hit)
+@@		lt( %q0, 8 ), 
+@@		[setq( 1, mul( 2, sub( 8, %q0 )))]
+@@		[u( f.registers.dice-add, %q1 )]
+@@		[u( f.registers.output-add, %q1 %(%q0-again%), + )]
+@@		[setq( a, 8 )], 
+
 @@ .. else just set
-		setq(a, %q0)
+		setq( a, %q0 )
+
 	)]
-
---
-
-&f.roll/9-again #59=u( f.roll/again, /again=9 )
-&f.roll/8-again #59=u( f.roll/again, again=8 )
 
 
 
@@ -219,29 +222,30 @@ qt: a GLOBAL REGISTER for number of times to roll
 @@ .. if <num> is there, %q0 = <num>, else %q0 = %qt
 @@ .. this may be redundant, but allows us to check <num> and %qt 
 @@ .. with the same code
-	[setq(0, if(strmatch(%0, *=*), rest(%0, =), %qt))]
+	[setq( 0, if( strmatch( %0, *=* ), rest( %0, = ), %qt ))]
 
-	[case(0, 
+	[case( 0, 
 @@ .. checks if both %qt and %q0 fail
-		or(t(%qt), t(rest(%0, =))), 
-		u(f.registers.error-add, If no traits in the roll%, you must use /extended=<num>), 
-@@ .. <num> must be > 0 (catches "null")
-		gt(%q0, 0), 
-		u(f.registers.error-add, Extended roll must be a number of times), 
-@@ .. <num> must be int
-		isint(%q0), 
-		u(f.registers.error-add, Extended roll must be an integer), 
+		cor( t( %qt ), t( rest( %0, = ))), 
+		u( f.registers.error-add, 
+			If there no traits in the roll%, you must use /extended=<num> 
+		), 
+@@ .. <num> must be an integer > 0 (catches "null")
+		cand( isint( %q0 ), gt( %q0, 0 )), 
+		u( f.registers.error-add, 
+			Extended roll must be an integer greater than zero 
+		), 
 @@ .. else, set %q0 into %qt
-		setq(t, %q0)
+		setq( t, %q0 )
 	)]
 
 --
 
-think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
-think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended=2)] - errors: %qe - total rolls: %qt
+think %%qt: [setr(t, 4)] - [u(nWoD Roller/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
+think %%qt: [setr(t, 4)] - [u(nWoD Roller/f.roll/extended, /extended=2)] - errors: %qe - total rolls: %qt
 
-think %%qt: [setr(t, 0)] - [u(#41/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
-think %%qt: [setr(t, 4)] - [u(#41/f.roll/extended, /extended=)] - errors: %qe - total rolls: %qt
+think %%qt: [setr(t, 0)] - [u(nWoD Roller/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
+think %%qt: [setr(t, 4)] - [u(nWoD Roller/f.roll/extended, /extended=)] - errors: %qe - total rolls: %qt
 
 
 
@@ -262,3 +266,6 @@ Remember, this switch doesn't activate the rolls, but modifies them.
 q0: the "target" value
 qt: a GLOBAL REGISTER for number of times to roll
 
+--
+
+&f.roll/target nWoD Roller <nr>=@@( does nothing right now )

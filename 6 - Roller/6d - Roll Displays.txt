@@ -10,7 +10,7 @@ this may seem odd. this is odd, but it's expandable
 
 --
 
-&f.display-list nWoD Roller <nr>=
+&f.display.list nWoD Roller <nr>=
 	iter( rest( %0, . ), %i0, ., . )
 
 
@@ -22,7 +22,7 @@ outputs: Something legible (i.e., "Error Error Error")
 
 --
 
-&f.display-roll-items nWoD Roller <nr>=
+&f.display.roll-items nWoD Roller <nr>=
 	iter( 
 		rest( trim( %0, l, ` ), + ), 
 		%i0, 
@@ -45,7 +45,7 @@ uses: header(), footer()
 
 --
 
-&f.display-roll-output nWoD Roller <nr>=
+&f.display.roll-output nWoD Roller <nr>=
 
 @@ .. interpret roll results from global registers
 	[u( f.roll-success-interpreter )]
@@ -89,12 +89,10 @@ uses: header(), footer()
 
 
 
-
-
 --------------------------------------------------------------------------------
 -- Display: Roll To Public -----------------------------------------------------
 
-&display.roll-to-public nWoD Roller <nr>=pemit(%1, u(f.display-roll-output, %0, public))
+&display.roll-to-public nWoD Roller <nr>=pemit(%1, u(f.display.roll-output, %0, public))
 
 
 --------------------------------------------------------------------------------
@@ -102,12 +100,17 @@ uses: header(), footer()
 
 &display.roll-to-private nWoD Roller <nr>=
 	pemit(%1, 
-		u(f.display-roll-output, %0, to [iter(%1, name(%i0), , %,%b)])
+		u(f.display.roll-output, %0, to [iter(%1, name(%i0), , %,%b)])
 	)
 
 
 --------------------------------------------------------------------------------
 -- Display: Roll To Job --------------------------------------------------------
+
+This system is not ready for production. '#15' is the jobs system, but I think 
+'f.has_job_access' is mine. I think.
+
+--
 
 For #15/trig_myadd: 
  0: dbref of job object (Job 6 -> #491)
@@ -119,7 +122,7 @@ For the following:
  0: enactor dbref (probably %#)
  1: Job <n>
 
-uses: alert(), titlestr()
+uses: titlestr()
 
 --
 
@@ -127,21 +130,106 @@ uses: alert(), titlestr()
 	[case( 0, 
 @@ .. job access check failed
 		t(setr(9, ulocal( #15/f.has_job_access, rest( %1 ), %0 ))), 
-		[alert( +roll, alert )] 
+		[u( .alert, roll )] 
 		You can't roll to that job because [titlestr( rest( %q9 ))], 
 
 @@ .. else, show enactor and add it to the job
-		[u( f.display-roll-output, %0, to %1 )]
+		[u( f.display.roll-output, %0, to %1 )]
 		[trigger( #15/trig_myadd, 
 			locate( #15, %1, i ), 
-			%r[u( f.display-roll-output, %0, to %1 )], 
+			%r[u( f.display.roll-output, %0, to %1 )], 
 			%0, 
 			ADD 
 		)]
 @@ .. trigger the jobs system to inform people who can see the bucket
 		[trigger( #15/trig_broadcast, 
 			parent( locate( #15, %1, i )), 
-			+Roll added to [lcstr( %1 )] by %N. 
+			Roll added to [lcstr( %1 )] by %N. 
 		)] 
 	)]
 
+
+
+--=-=-=-=-=-=-=-==--=-==--=-=-=-=-=-=-=-=-=
+
+== ONE PART DISPLAY, ONE PART SUCCESS COUNTER =====
+
+--------------------------------------------------------------------------------
+-- Success Interpreter ---------------------------------------------------------
+
+input:
+	qd: number of dice to roll
+	qs: roll type ('standard' by default)
+	qr: ???
+	
+
+output:
+	c: ???
+	x: qs, but is paranoid about chance rolls
+
+	0: 
+	1: 
+	2: 
+
+--
+
+&f.roll-success-interpreter nWoD Roller <nr>=
+
+	strcat( 
+		setq( x, if( lte( %qd, 0 ), chance, %qs )), 
+
+@@ q0: ???
+		setq( 0, 
+			iter( %qr, 
+				strcat( 
+					setq( c, ulocal( f.count-success, %i0, min( %qa, 8 ))), 
+					first( %qc, ` ), 
+					setq( r, 
+						replace( 
+							%qr, 
+							inum( 0 ), 
+							ulocal( f.mark-successes, 
+								%i0`
+								[if( 
+									t( extract( %qc, 2, 1, ` )), 
+									extract( %qc, 2, 1, ` )
+								)], 
+								min( %qa, 8 ), 
+								inum( 0 )
+							), 
+							| 
+						)
+					)
+				), 
+				| 
+			)
+		), 
+
+@@ q1: ???
+		setq( 1, 
+			if( gt( words( %qr, | ), 1 ), 
+				Extended, 
+				switch( ladd( %q0, ~ ), 
+					<0, Dramatic Failure, 
+					<1, Failure, 
+					<5, Success %( %q0% ), 
+					Exceptional Success! %( %q0% )
+				)
+			)
+		), 
+
+@@ q2: ???
+		setq( 2, u( f.display.roll-items, %qo ))
+	)
+
+
+
+	
+
+-==--=-=-=-==-=-=-=-==-=-
+
+&F.COUNT-SUCCESS nr=[setq(7,)][ladd([setr(y, ulocal(f.successes.%qx, %0, %1))]~[if(u(f.hasswitch?, rote), if(and(not(lt(first(%qy,~), 0)), gt(setr(8, sub(words(first(%0, ~)), first(%qy,~))), 0)), [ladd(ulocal(f.successes-[if(strmatch(%qx, chance), rotechance, %qx)], setr(7, u(f.roller, %q8, %qa)), %1),~)], 0), 0)], ~)]`%q7
+
+=--=-=-=-=-=-=-=-=-=-=-=
+
+&F.MARK-SUCCESSES nr=[iter(first(first(%0, `), ~), [case(u(f.issuccess-%qx, %i0, %1), -1, [ansi(r,%i0)], 1, [ansi(h,%i0)], %i0)])]~[iter(rest(first(%0, `), ~), [case(u(f.issuccess-%qx, %i0, %1), -1, [ansi(r,%i0)], 1, [ansi(hc,%i0)], [ansi(c, %i0)])])]`[iter(first(rest(%0, `), ~), [case(u(f.issuccess-[if(strmatch(%qx,chance),rotechance,%qx)], %i0, %1), -1, [ansi(r,%i0)], 1, [ansi(h,%i0)], %i0)])]~[iter(rest(rest(%0, `), ~), [case(u(f.issuccess-[if(strmatch(%qx,chance),rotechance,%qx)], %i0, %1), -1, [ansi(r,%i0)], 1, [ansi(hc,%i0)], [ansi(c,%i0)])])]

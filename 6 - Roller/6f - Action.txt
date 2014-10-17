@@ -9,26 +9,26 @@ The system runs it through objeval(%#, u(action.<name>)).  This is done so the p
 
 I'd like the system to be able to strip the final target, "=job 5" for instance, but /switches use = as well so we'd need to be careful.
 
-	+action[<add'l switches>] <action name>[ <additional roll items>][=<target list>]
+	action[<add'l switches>] <action name>[ <additional roll items>][=<target list>]
 
 e.g.:
 
-	+action/rote perception + 3=thenomain
+	action/rote perception + 3=thenomain
 
-Switches entered by hand should override switches in the macro.  For our system, this is as simple as making sure they're first.  (+roll/again=8/again=9 will roll 8-again.)
+Switches entered by hand should override switches in the macro.  For our system, this is as simple as making sure they're first.  (roll/again=8/again=9 will roll 8-again.)
 
 Basic Logic:
 
 	1. Find and objeval() the attribtue.
 	2. Separate switches from the rest.
 	3. Drop any =<item> from the end.
-	4. @force player to +roll, switches from +Action first.
+	4. @force player to roll, switches from Action first.
 
 Easy! Right?
 
 
 --------------------------------------------------------------------------------
--- +action: priming command ----------------------------------------------------
+-- action: priming command -----------------------------------------------------
 
 Let's do some error checking here, to get it out of the way.
 
@@ -42,7 +42,7 @@ uses: alert(), god help us
 
 --
 
-&c.action nWoD Roller <nr>=$^\+?actions?(.*):@pemit %#=
+&c.action nWoD Roller <nr>=$^\+?actions?(.*)$:@pemit %#=
 
 @@ treat 'actions' as 'action' and go from there
 	[setq( 0, %1 )]
@@ -71,8 +71,8 @@ uses: alert(), god help us
 
 0: dbref of enactor
 1: attribute of the macro (action.<name>)
-2: switches/from/+action
-3: "everything else" from +Action
+2: switches/from/action
+3: "everything else" from Action
 
 e: evaluated content of attribute
 s: switches on %qe, with / on because we've stripped it with rest(xx, /)
@@ -88,13 +88,13 @@ r: rest of %qe, drop =target
 	[setq( r, trim( before( if( t( %qs ), rest( %qe ), %qe ), = )))]
 	[if(t( %qs ), setq( s, /%qs ))]
 
-@@ .. add +action stuff to the macro
+@@ .. add action stuff to the macro
 	[setq( r, %qr %3 )]
 	[setq( s, [if( t( %2 ), /%2 )]%qs )]
 
 @@ .. error check and go
 	[case( 0, 
-		t( %qe ), [alert( Action )] Action has no content%, so use +roll., 
+		t( %qe ), [alert( Action )] Action has no content%, so use roll., 
 @@ .. 'roll' uses %qe to report errors, so we need to clear it
 		[setq( e, )][trigger( tr.action, %0, %qr, %qs )]
 	)]
@@ -111,7 +111,7 @@ Because we're doing everything with functions, we need a trigger for the eventua
 
 --
 
-&tr.action nWoD Roller <nr>=@force %0={ +roll%2 %1 }
+&tr.action nWoD Roller <nr>=@force %0={ roll%2 %1 }
 
 
 --------------------------------------------------------------------------------
@@ -122,18 +122,18 @@ List all actions on %0
 &f.action.list nWoD Roller <nr>=
 	[setq( a, lattr( %0/action.* ))]
 	[if( t( %qa ), 
-		[header( +Actions on [name( %0 )] )]%r
+		[header( Actions on [name( %0 )] )]%r
 		[iter( %qa, 
 			%b [ansi( h, capstr( lcstr( rest(%i0, . ))))]: 
 			[get( %0/%i0 )], 
 			, %r 
 		)]%r
 		[footer( words( %qa ))], 
-		[alert( Action )] No +actions on [name( %0 )]
+		[alert( Action )] No actions on [name( %0 )]
 	)]
 
 
 --------------------------------------------------------------------------------
--- Help: +Action ---------------------------------------------------------------
+-- Help: Action ---------------------------------------------------------------
 
-&help~stat_topics~+action #96=Roll Macros~+action\[/<switches>] <action_name> \[+|- <more items>]\[ = <send to>]%r%rThis command allows you to set up and use your own often-used rolls by setting them on an attribute.  Any switches you use with +action will override any switches you set on the attribute.%r%rYou may shorten <action_name> to the closest unique name. Due to coding shortcuts, you must put a space after <action_name> if anything follows it.%r%r&action.<action_name> me=<+roll format>%r%re.g.: &action.perception me=/again=9 Wits + Composure%r%rYou may also add code to the attribute.  For instance, the perception rolls for werewolves depend upon their form.%r%re.g.: %r%b &form me=gauru%r%b &action.perception me=Wits + Composure + \[case(v(form), gauru, 3, ...)\]%r%r+action: Typed alone will list which action macros you've set.%r%r[ansi(h, See Also)]: +help roll
+&help~stat_topics~action #96=Roll Macros~action\[/<switches>] <action_name> \[+|- <more items>]\[ = <send to>]%r%rThis command allows you to set up and use your own often-used rolls by setting them on an attribute.  Any switches you use with action will override any switches you set on the attribute.%r%rYou may shorten <action_name> to the closest unique name. Due to coding shortcuts, you must put a space after <action_name> if anything follows it.%r%r&action.<action_name> me=<roll format>%r%re.g.: &action.perception me=/again=9 Wits + Composure%r%rYou may also add code to the attribute.  For instance, the perception rolls for werewolves depend upon their form.%r%re.g.: %r%b &form me=gauru%r%b &action.perception me=Wits + Composure + \[case(v(form), gauru, 3, ...)\]%r%raction: Typed alone will list which action macros you've set.%r%r[ansi(h, See Also)]: +help roll
