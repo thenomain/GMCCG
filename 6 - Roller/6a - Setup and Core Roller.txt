@@ -63,6 +63,9 @@ ROLLER 3.0
 		%0, %1, strmatch( %2, a* )
 	)
 
+--
+
+&.alert nWoD Roller <nr>=ansi( c, <%0> )
 
 
 ================================================================================
@@ -76,18 +79,37 @@ The n-again checker does not care about any rules, it just sees how many are x o
 
 0: number of dice to roll
 1: n-again
-output: list of dice roll results
+2: success on 'x' or higher (only include if roll is rote!!!)
+output: <base roll>:<rote re-roll, if exists>:<n-again roll>
 
 --
 
 &f.roller nWoD Roller <nr>=
 	strcat( 
-		setr( 0, lrand( 1, 10, %0 )), 
-		if( 
-			setr( 1, u( f.n-again-check, %q0, %1 )), 
-			%b[ulocal( f.roller, %q1, %1 )] 
-		)
+		setr( 0, lrand( 1, 10, %0 )), :, 
+
+		setr( 1, 
+			lrand( 1, 10, 
+				sub( words( %q0 ), u( f.n-again-check, %q0, %2 ))
+			)
+		), :, 
+
+		trim( u( f.roller.recursive, %q0 %q1, %1 ))
+
 	)
+
+
+--------------------------------------------------------------------------------
+-- Roller: Recursive -----------------------------------------------------------
+
+&f.roller.recursive nWoD Roller <nr>=
+		if( 
+			setr( 2, u( f.n-again-check, %0, %1 )), 
+			cat( 
+				setr( 3, lrand( 1, 10, %q2 )), 
+				ulocal( f.roller.recursive, %q3, %1 )
+			)
+		)
 
 
 --------------------------------------------------------------------------------
@@ -102,7 +124,7 @@ returns: number of dice that are %1 or higher
 --
 
 &f.n-again-check nWoD Roller <nr>=
-	words( regraball( %0, \[^[lnum(1, [sub( %1, 1 )])]\] ))
+	words( regraball( %0, [lnum( %1, 11, | )]))
 
 
 
@@ -156,10 +178,15 @@ returns: number of successes
 --------------------------------------------------------------------------------
 -- Tests -----------------------------------------------------------------------
 
-think [setr( d, u( nr/f.roller, 10, 10 ))] :: [u( nr/f.successes.standard, %qd, 8 )]
 
-think [setr( d, u( nr/f.roller, 1, 10 ))] :: [u( nr/f.successes.chance, %qd, 8 )]
+think u( nr/f.roller, 3, 10 )
+think u( nr/f.roller, 3, 10, 8 )
 
-think [setr( d, u( nr/f.roller, 10, 10 ))] :: [u( nr/f.successes.weakness, %qd, 8 )]
 
+
+think [setr( d, u( nr/f.roller, 10, 10 ))] >> [u( nr/f.successes.standard, %qd, 8 )]
+
+think [setr( d, u( nr/f.roller, 1, 10 ))] >> [u( nr/f.successes.chance, %qd, 8 )]
+
+think [setr( d, u( nr/f.roller, 10, 10 ))] >> [u( nr/f.successes.weakness, %qd, 8 )]
 
