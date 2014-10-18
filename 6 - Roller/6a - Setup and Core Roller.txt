@@ -135,12 +135,13 @@ returns: number of dice that are %1 or higher
 --------------------------------------------------------------------------------
 -- Successes: Plain ------------------------------------------------------------
 
-0: final dice
+0: dice rolled (<base>:<rote>:<n-again>)
 1: target # to meet/beat (usually 8)
 
 --
 
-&f.successes.standard nWoD Roller <nr>=u( f.n-again-check, %0, %1 )
+&f.successes.standard nWoD Roller <nr>=
+	u( f.n-again-check, edit( %0, :, %b ), %1 )
 
 
 --------------------------------------------------------------------------------
@@ -148,16 +149,18 @@ returns: number of dice that are %1 or higher
 
 "chance" means 1 die rolled, but this system auto-detects that
 
-0: list of dice roll results
-1: min value to count as a success (in nWoD, chance dice is always T# 10)
+0: dice rolled (<base>:<rote>:<n-again>)
+1: target # to meet/beat (usually 8)
+
 qs: (global) type of roll this is
     (for chance rolls, weakness rolls at most 1 die, so we don't switch here)
-returns: number of successes, -1 or f.successes
+
+returns: number of successes, -1 or f.successes.standard
 
 --
 
 &f.successes.chance nWoD Roller <nr>=
-	if( eq( %0, 1 ), -1, u( f.successes.standard, %0, 10 ))
+	if( eq( first( %0, : ), 1 ), -1, u( f.successes.standard, %0, 10 ))
 
 
 --------------------------------------------------------------------------------
@@ -167,12 +170,21 @@ returns: number of successes, -1 or f.successes
 
 0: list of dice roll results
 1: min value to count as a success (in nWoD, usually 8)
-returns: number of successes
+returns: number of successes (weakness cannot cause critical failure)
 
 --
 
 &f.successes.weakness nWoD Roller <nr>=
-	max( 0, sub( u( f.successes.standard, %0, %1 ), words( graball( %0, 1 ))))
+	max( 0, 
+		sub( 
+			u( f.successes.standard, %0, %1 ), 
+@@ .. don't count 1's in <base> roll /if/ there is a <rote> section
+			if( strlen( elements( %0, 2, : )), 
+				words( graball( edit( rest( %0, : ), :, %b ), 1 )), 
+				words( graball( edit( %0, :, %b ), 1 ))
+			)
+		)
+	)
 
 
 --------------------------------------------------------------------------------
