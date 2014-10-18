@@ -15,6 +15,13 @@ The following registers are used across the entire system:
     qz: Text: /Full/on/switches
     qr: Text: Result of dice throw, <throw>|<throw> if extended/multiple throws
 
+	qn: Number of times to roll  (default 1 unless /extended switch used)
+	qt: Target number to roll until (default null unless /target switch used)
+
+
+
+
+
     qt: Times to roll (default 1 unless /extended switch used)
     qn: Target number to roll until (default null unless /target switch used)
 
@@ -63,7 +70,7 @@ In all cases, %0 is what to add.  In all cases, no error checking is done.  In a
 --------------------------------------------------------------------------------
 -- Add to Number of Extended Rolls To Make (qt) --------------------------------
 
-&f.registers.extendednum-add nWoD Roller <nr>=setq( t, add( %qt, %0 ))
+&f.registers.extendednum-add nWoD Roller <nr>=setq( t, add( %qn, %0 ))
 
 
 
@@ -472,8 +479,8 @@ At the moment we don't have 'f.hasswitch?' in, so we can't check '/nowounds' or
 
 --
 
-think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult )]Output: %qo -- Dice: %qd -- Extended Rolls: %qt
+think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
 
-think [u( nr/f.stat-check.stats, pmatch(me), full name + str + beauty + will + stealth + occ.bla )]Output: %qo -- Dice: %qd -- Extended Rolls: %qt
+think [u( nr/f.stat-check.stats, pmatch(me), full name + str + beauty + will + stealth + occ.bla )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
 
 

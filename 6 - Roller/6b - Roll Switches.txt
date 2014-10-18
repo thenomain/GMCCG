@@ -214,19 +214,19 @@ Remember, this switch doesn't activate the rolls, but modifies them.
 
 0: /extended[=<num>]
 q0: the "extended" value, if any
-qt: a GLOBAL REGISTER for number of times to roll
+qn: a GLOBAL REGISTER for number of times to roll
 
 --
 
 &f.roll/extended nWoD Roller <nr>=
-@@ .. if <num> is there, %q0 = <num>, else %q0 = %qt
-@@ .. this may be redundant, but allows us to check <num> and %qt 
+@@ .. if <num> is there, %q0 = <num>, else %q0 = %qn
+@@ .. this may be redundant, but allows us to check <num> and %qn 
 @@ .. with the same code
-	[setq( 0, if( strmatch( %0, *=* ), rest( %0, = ), %qt ))]
+	[setq( 0, if( strmatch( %0, *=* ), rest( %0, = ), %qn ))]
 
 	[case( 0, 
-@@ .. checks if both %qt and %q0 fail
-		cor( t( %qt ), t( rest( %0, = ))), 
+@@ .. checks if both %qn and %q0 fail
+		cor( t( %qn ), t( rest( %0, = ))), 
 		u( f.registers.error-add, 
 			If there no traits in the roll%, you must use /extended=<num> 
 		), 
@@ -235,17 +235,17 @@ qt: a GLOBAL REGISTER for number of times to roll
 		u( f.registers.error-add, 
 			Extended roll must be an integer greater than zero 
 		), 
-@@ .. else, set %q0 into %qt
-		setq( t, %q0 )
+@@ .. else, set %q0 into %qn
+		setq( n, %q0 )
 	)]
 
 --
 
-think %%qt: [setr(t, 4)] - [u(nWoD Roller/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
-think %%qt: [setr(t, 4)] - [u(nWoD Roller/f.roll/extended, /extended=2)] - errors: %qe - total rolls: %qt
+think %%qn: [setr( n, 4 )] - [u(nWoD Roller/f.roll/extended, /extended)] - errors: %qe - number rolls: %qn
+think %%qn: [setr( n, 4 )] - [u(nWoD Roller/f.roll/extended, /extended=2)] - errors: %qe - number rolls: %qn
 
-think %%qt: [setr(t, 0)] - [u(nWoD Roller/f.roll/extended, /extended)] - errors: %qe - total rolls: %qt
-think %%qt: [setr(t, 4)] - [u(nWoD Roller/f.roll/extended, /extended=)] - errors: %qe - total rolls: %qt
+think %%qn: [setr( n, 0 )] - [u(nWoD Roller/f.roll/extended, /extended)] - errors: %qe - number rolls: %qn
+think %%qn: [setr( n, 4 )] - [u(nWoD Roller/f.roll/extended, /extended=)] - errors: %qe - number rolls: %qn
 
 
 

@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Command: Roll --------------------------------------------------------------
+-- Command: Roll ---------------------------------------------------------------
 
 Cutting corners for now.
 
@@ -80,14 +80,14 @@ so we clear out all the globals (and "p"?!) before we start
 
 --
 
-@fo me=&ufunc.roll nr=u\\( [num( nr )]/f.roll, \\\%0, \\\%1, \\\%2 \\)
+@fo me=&ufunc/privileged.roll nr=u\\( [num( nr )]/f.roll, \\\%0, \\\%1, \\\%2 \\)
 
 --
 
 &f.roll nWoD Roller <nr>=
 	strcat( 
 		setq( d, ), setq( a, ), setq( e, ), setq( o, ), setq( s, ), setq( z, ), 
-		setq( r, ), setq( p, ), setq( t, ), 
+		setq( r, ), setq( p, ), setq( t, ), setq( n, ), 
 
 		setq( 0, squish( edit( strip( %0, %%%,;<>%[%] ), %(, %b%( ))), 
 		setq( 1, u( [u(d.stat-setter)]/f.find-sheet, pmatch( %1 ))), 
@@ -97,7 +97,7 @@ so we clear out all the globals (and "p"?!) before we start
 			0, 
 			t( words( %q0 )), #-1 Nothing to Roll, 
 			t( %q1 ), %q1, 
-			or( isstaff( %# ), strmatch( %#, %q1 )), #-1 Staff Only, 
+			cor( isstaff( %# ), strmatch( %#, %q1 )), #-1 Staff Only, 
 			u( f.roll.workhorse, %q0, %q1, %q2 )
 		)
 	)
@@ -125,8 +125,8 @@ may be ignored if internal: items kept in global registers!
 		setq( z, u( f.switch.name-complete, %2 )), 
 		setq( d, 0 ), 
 		setq( a, 10 ), 
-		setq( t, 0 ), 
-		setq( n, ), 
+		setq( n, 0 ), 
+		setq( t, ), 
 		setq( s, Standard ), 
 		
 @@ .. run the basic roller setup
@@ -164,21 +164,20 @@ may be ignored if internal: items kept in global registers!
 				), 
 
 @@ .. reset 'number of times to roll' register (qt) if not /extended or /target
-				setq( t, 
+				setq( n, 
 					if( 
 						cor( 
 							u( f.hasswitch?, extended ), 
 							u( f.hasswitch?, target )
 						), 
-						%qt, 
+						%qn, 
 						1 
 					)
 				), 
-@@ .. roll %qt times, at least once (if %qd = 0, roll 1 die -- it's chance)
-@@ .. <'rote' should go here>
+@@ .. roll %qn times, at least once (if %qd = 0, roll 1 die -- it's chance)
 @@ .. <'target' should go here>
 				setq( r, 
-					iter( lnum( max( %qt, 1 )), 
+					iter( lnum( max( %qn, 1 )), 
 						ulocal( f.roller, if( lte( %qd, 0 ), 1, %qd ), %qa ), 
 						, |
 					)
@@ -187,7 +186,7 @@ may be ignored if internal: items kept in global registers!
 @@ >> PARSE RESULTS
 @@ .. <'target' should also go here to remove extraneous rolls>
 @@ .. interpret successes -> <# succ>, "Success!", <what rolled>
-				u( f.roll-success-interpreter ), 
+				@@( f.roll-success-interpreter ), 
 @@ .. and output for the sake of the function 
 @@ .. .. <# succ>[ <# succ>], <what rolled>, <dice>[|<dice>]
 				%q0|%q2|%qr
