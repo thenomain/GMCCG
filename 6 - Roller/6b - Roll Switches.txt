@@ -15,7 +15,7 @@ Active Switches (do their own thing):
 
 'Weakness' is a term half made-up from the Vampire book, indicating some clans' 
 weaknesses reminiscent of oWoD's success counter: After counting successes, 
-subtract 1s. 'Weakness' is also always 'no-again'.
+subtract 1s. 'Weakness' is also always 'no-again' and cannot dramatically fail.
 
 
 Passive Switches (used in other parts of the roller):
@@ -150,11 +150,28 @@ returns: 1 for true, 0 for false (null returns false)
 
 
 ================================================================================
+== /weakness ===================================================================
+
+A vampire weakness roll is always no-again.
+A chance roll takes precident.
+
+--
+
+&f.roll/weakness nWoD Roller <nr>=
+	strcat( 
+		setq( a, 11 ), 
+		if( not( strmatch( %qs, chance ), 
+				setq( s, Weakness )
+		)
+	)
+
+
+
+================================================================================
 == /again ======================================================================
 
 /again=10, 9, 8.  7 is 8 + 2 dice, 6 is 8 + 4 dice, and so on.
 /again=no, converts to 11.
-/again=weakness, rolls the weakness system.
 
 0: /again=xxx
 q0: the "again" type
@@ -170,11 +187,6 @@ q0: the "again" type
 @@ .. check an "again" type was actually passed
 		not( t( %q0 )), 
 		u(f.registers.error-add, Again type not passed.), 
-
-@@ .. "w"eakness
-		strmatch( %q0, w* ), 
-		[setq( a, 11 )]
-		[setq( s, Weakness )], 
 
 @@ .. "n"o
 		strmatch( %q0, n* ), 
@@ -214,6 +226,7 @@ Remember, this switch doesn't activate the rolls, but modifies them.
 
 0: /extended[=<num>]
 q0: the "extended" value, if any
+q1: upper limit of <num>
 qn: a GLOBAL REGISTER for number of times to roll
 
 --
@@ -222,22 +235,32 @@ qn: a GLOBAL REGISTER for number of times to roll
 @@ .. if <num> is there, %q0 = <num>, else %q0 = %qn
 @@ .. this may be redundant, but allows us to check <num> and %qn 
 @@ .. with the same code
-	[setq( 0, if( strmatch( %0, *=* ), rest( %0, = ), %qn ))]
 
-	[case( 0, 
+	strcat( 
+		setq( 0, if( strmatch( %0, *=* ), rest( %0, = ), %qn )), 
+		setq( 1, 200 ), 
+
+		case( 0, 
 @@ .. checks if both %qn and %q0 fail
-		cor( t( %qn ), t( rest( %0, = ))), 
-		u( f.registers.error-add, 
-			If there no traits in the roll%, you must use /extended=<num> 
-		), 
+			cor( t( %qn ), t( rest( %0, = ))), 
+			u( f.registers.error-add, 
+				If there no traits in the roll%, you must use /extended=<num> 
+			), 
 @@ .. <num> must be an integer > 0 (catches "null")
-		cand( isint( %q0 ), gt( %q0, 0 )), 
-		u( f.registers.error-add, 
-			Extended roll must be an integer greater than zero 
-		), 
+			cand( isint( %q0 ), gt( %q0, 0 )), 
+			u( f.registers.error-add, 
+				Extended roll must be an integer greater than zero 
+			), 
+
+@@ .. <num> can't be higher than %q1
+			lte( %0, %q1 ), 
+			u( f.registers.error-add, 
+				Extended roll cannot be higher than %q1
+			), 
 @@ .. else, set %q0 into %qn
-		setq( n, %q0 )
-	)]
+			setq( n, %q0 )
+		)
+	)
 
 --
 
@@ -264,8 +287,34 @@ Remember, this switch doesn't activate the rolls, but modifies them.
 
 0: /target=<num>
 q0: the "target" value
+q1: upper bound for <num> (for code sanity)
 qt: a GLOBAL REGISTER for number of times to roll
 
 --
 
-&f.roll/target nWoD Roller <nr>=@@( does nothing right now )
+&f.roll/target nWoD Roller <nr>=
+
+	strcat( 
+		setq( 0, rest( %0, = )), 
+		setq( 1, 200 ), 
+		
+		case( 0, 
+			cand( t( %q0 ), isint( %q0 ), gt( %q0, 0 )), 
+			u( f.registers.error-add, 
+				Targeted roll must be an integer greater than zero 
+			), 
+			lte( %q0, %q1 ), 
+			u( f.registers.error-add, 
+				Target number cannot be higher than %q1
+			), 
+			setq( t, %q0 )
+		)
+	)
+
+
+
+=--=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-==---==--=-=-=-==-=-=-
+
+@@ Before I forget: can you add a /blind switch for +roll that only shows the
+@@ result to the people you're rolling to?
+

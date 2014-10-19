@@ -160,76 +160,76 @@ uses: titlestr()
 input:
 	qd: number of dice to roll
 	qs: roll type ('standard' by default)
-	qr: ???
+	qr: final rolls, |-delimited
+	qc: final success counter, space-delimited
 	
 
 output:
-	c: ???
-	x: qs, but is paranoid about chance rolls
-
-	0: 
-	1: 
-	2: 
+	q0: successes <-- killed for %qc
+	q1: success/failure type
+	q2: input, prettified 
 
 --
 
 &f.roll-success-interpreter nWoD Roller <nr>=
 
 	strcat( 
-		setq( x, if( lte( %qd, 0 ), chance, %qs )), 
 
-@@ q0: ???
-		setq( 0, 
-			iter( %qr, 
-				strcat( 
-					setq( c, ulocal( f.count-success, %i0, min( %qa, 8 ))), 
-					first( %qc, ` ), 
-					setq( r, 
-						replace( 
-							%qr, 
-							inum( 0 ), 
-							ulocal( f.mark-successes, 
-								%i0`
-								[if( 
-									t( extract( %qc, 2, 1, ` )), 
-									extract( %qc, 2, 1, ` )
-								)], 
-								min( %qa, 8 ), 
-								inum( 0 )
-							), 
-							| 
-						)
-					)
-				), 
-				| 
-			)
-		), 
-
-@@ q1: ???
+@@ q1: success/failure type
 		setq( 1, 
 			if( gt( words( %qr, | ), 1 ), 
 				Extended, 
-				switch( ladd( %q0, ~ ), 
+				switch( ladd( %qc ), 
 					<0, Dramatic Failure, 
 					<1, Failure, 
-					<5, Success %( %q0% ), 
-					Exceptional Success! %( %q0% )
+					<5, Success %(%q0%), 
+					Exceptional Success! %(%q0%)
 				)
 			)
 		), 
 
-@@ q2: ???
-		setq( 2, u( f.display.roll-items, %qo ))
+@@ q2: display style for the inputs (or the error(s)?)
+		setq( 2, trim( u( f.display.roll-items, %qo )))
+
 	)
 
 
 
-	
 
--==--=-=-=-==-=-=-=-==-=-
+=--=-=-==--=-=-=-=-=-==--=
 
-&F.COUNT-SUCCESS nr=[setq(7,)][ladd([setr(y, ulocal(f.successes.%qx, %0, %1))]~[if(u(f.hasswitch?, rote), if(and(not(lt(first(%qy,~), 0)), gt(setr(8, sub(words(first(%0, ~)), first(%qy,~))), 0)), [ladd(ulocal(f.successes-[if(strmatch(%qx, chance), rotechance, %qx)], setr(7, u(f.roller, %q8, %qa)), %1),~)], 0), 0)], ~)]`%q7
+Colorize Dice: 
 
-=--=-=-=-=-=-=-=-=-=-=-=
+Would be much easier with regedit().
 
-&F.MARK-SUCCESSES nr=[iter(first(first(%0, `), ~), [case(u(f.issuccess-%qx, %i0, %1), -1, [ansi(r,%i0)], 1, [ansi(h,%i0)], %i0)])]~[iter(rest(first(%0, `), ~), [case(u(f.issuccess-%qx, %i0, %1), -1, [ansi(r,%i0)], 1, [ansi(hc,%i0)], [ansi(c, %i0)])])]`[iter(first(rest(%0, `), ~), [case(u(f.issuccess-[if(strmatch(%qx,chance),rotechance,%qx)], %i0, %1), -1, [ansi(r,%i0)], 1, [ansi(h,%i0)], %i0)])]~[iter(rest(rest(%0, `), ~), [case(u(f.issuccess-[if(strmatch(%qx,chance),rotechance,%qx)], %i0, %1), -1, [ansi(r,%i0)], 1, [ansi(hc,%i0)], [ansi(c,%i0)])])]
+--
+
+&display.colorize.dice nWoD Roller <nr>= 
+	iter( %0, 
+		case( 1, 
+			u( f.successes.standard, %i0, 8 ), 
+			%xc%i0%xn, 
+
+			cand( eq( %i0, 1 ), strmatch( %qs, chance )), 
+			%xr%i0%xn, 
+
+			cand( eq( %i0, 1 ), u( f.hasswitch?, weakness )), 
+			%xr%i0%xn, 
+
+			%i0 
+		)
+	)
+
+--
+
+think u( nr/display.colorize.dice, 7 3 10 2 10 1 8 3 2 4 9 4 )
+
+think [setq( z, /weakness )][iter( 7 3 10 2::10 1, u( nr/display.colorize.dice, %i0 ), :, : )]
+
+think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /9-again/rote/extended ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )]
+
+think [null( u( nr/f.roll.workhorse, 0, %#, /extended=5 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )]
+
+
+
+think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )] --> %qe

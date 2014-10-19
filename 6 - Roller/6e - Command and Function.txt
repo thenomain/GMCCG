@@ -97,7 +97,10 @@ so we clear out all the globals (and "p"?!) before we start
 			0, 
 			t( words( %q0 )), #-1 Nothing to Roll, 
 			t( %q1 ), %q1, 
-			cor( isstaff( %# ), strmatch( %#, %q1 )), #-1 Staff Only, 
+			cor( 
+				isstaff( %# ), 
+				strmatch( %#, u( [u(d.stat-setter)]/f.find-sheet, %# ))), 
+			#-1 Staff Only, 
 			u( f.roll.workhorse, %q0, %q1, %q2 )
 		)
 	)
@@ -127,6 +130,7 @@ may be ignored if internal: items kept in global registers!
 		setq( a, 10 ), 
 		setq( n, 0 ), 
 		setq( t, ), 
+		setq( c, ), 
 		setq( s, Standard ), 
 		
 @@ .. run the basic roller setup
@@ -135,72 +139,127 @@ may be ignored if internal: items kept in global registers!
 @@ >> Active Adjustments <<
 @@ .. scan for and run "active" switches
 		iter(
-			again extended target, 
-			if( u( f.hasswitch?, %i0 ), u( f.roll/%i0, u( f.getswitch, %i0 )))
+			again weakness extended target, 
+			if( u( f.hasswitch?, %i0 ), u( f.roll/%i0, u( f.getswitch, %i0 ))), 
+			, @@ 
 		), 
 
 @@ .. last, check for health penalty
 		u( f.stat-check.health, %1 ), 
+		if( lte( %qd, 0 ), setq( s, Chance )), 
 
-@@ >> ROLL
+@@ >> ROLL <<
 		if(
 			t( words( %qe, ` )), 
 @@ .. error output instead of rolling
 			strcat( 
 				#-1, |, 
-				u( f.display.roll-items, %qe ), |, 
+				u( f.display-roll-items, %qe ), |, 
 				@@( null )
 			), 
 
 			strcat( 
 
 @@ .. tweak 'n-again' register (qa) if 'weakness' or 'chance' roll
+@@ .. (this may not be necessary, put here in case my logic is flawed)
 				setq( a, 
 					case( 1, 
-						strmatch( %qs, weakness ), 11, 
+						u( f.hasswitch?, weakness ), 11, 
 						strmatch( %qs, chance ), 10, 
 						%qa
 					)
 				), 
 
-@@ .. reset 'number of times to roll' register (qt) if not /extended or /target
+@@ .. reset 'number of times to roll' register (qn) if not /extended or /target
 				setq( n, 
-					if( 
-						cor( 
-							u( f.hasswitch?, extended ), 
-							u( f.hasswitch?, target )
-						), 
-						%qn, 
+					case( 1, 
+						u( f.hasswitch?, extended ), %qn , 
+						u( f.hasswitch?, target ), @@( null ), 
 						1 
 					)
 				), 
+
 @@ .. roll %qn times, at least once (if %qd = 0, roll 1 die -- it's chance)
-@@ .. <'target' should go here>
 				setq( r, 
-					iter( lnum( max( %qn, 1 )), 
-						ulocal( f.roller, if( lte( %qd, 0 ), 1, %qd ), %qa ), 
-						, |
-					)
+					u( f.roll.workhorse.recurisve, 0, 0 )
 				), 
 
 @@ >> PARSE RESULTS
 @@ .. <'target' should also go here to remove extraneous rolls>
 @@ .. interpret successes -> <# succ>, "Success!", <what rolled>
-				@@( f.roll-success-interpreter ), 
+				u( f.roll-success-interpreter ), 
+
 @@ .. and output for the sake of the function 
-@@ .. .. <# succ>[ <# succ>], <what rolled>, <dice>[|<dice>]
-				%q0|%q2|%qr
+@@ .. .. <# succ>[ <# succ>], <what rolled>, <dice>:<rote>:<n-again>[|<dice>:..]
+
+				strcat( 
+					trim( %qc ), |, 
+					%q2, |, 
+					trim( %qr, b, | )
+				)
 			)
 		)
 	)
 
 --
 
-think u(nr/f.roll.workhorse, str+2, pmatch(thenomain), /again=8)
+think u(nr/f.roll.workhorse, str+dex+2, pmatch(thenomain), /again=8)
 think u(nr/f.roll, str+2, thenomain, /again=8)
 
-think roll(str+2, thenomain, /again=8/extended)
+think roll(str+dex+2, thenomain, /again=8/extended)
 
 think roll(str+2, thenomain, /again=8/extended=tyyt)
 
+
+
+================================================================================
+== Extended Roller =============================================================
+
+A recursive roller for /extended and /target switches, 
+otherwise defaults to one roll.
+
+input
+	0: loop counter (pass '0' initially)
+	1: total successes  (pass '0' initially)
+	qn: number of times to roll (default '1') -> /extended
+	qt: target number (default <null>) -> /target
+	qa: 'again' counter
+	qd: dice to roll
+
+output
+	qc: success list/counter
+
+internal
+	q0: this loop's roll
+	q1: this loop's successes
+
+--
+
+&f.roll.workhorse.recurisve nr=
+	if( 
+		cand( 
+			cor( not( %qn ), lt( %0, %qn )), 
+			cor( not( %qt ), lt( %1, %qt )), 
+			cor( t( %qt ), t( %qn ), lt( %0, 1 ))
+		), 
+@@ roll some dice
+		strcat( 
+			setr( 0, 
+				ulocal( f.roller, 
+					if( lte( %qd, 0 ), 1, %qd ), 
+					%qa, 
+					if( u( f.hasswitch?, rote ), 8 )
+				)
+			), |, 
+
+@@ count some successes
+			setq( 1, u( f.successes.%qs, %q0, 8 )), 
+			setq( c, %qc %q1 ), 
+
+@@ do it again
+			u( f.roll.workhorse.recurisve, inc( %0 ), add( %q1, %1 ))
+		), 
+@@ (last loop does nothing)
+
+	)
 
