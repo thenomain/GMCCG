@@ -47,7 +47,7 @@ q9: target list (names or job #)
 @@ .. interpret and output - check for errors first
 			if( 
 				t( words( %qe, ` )), 
-				[u( .alert, roll )] [u( f.display.list, %qe )], 
+				[u( .alert, roll )] [u( display.list, %qe )], 
 @@ Roll To ...
 				u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))
 			)
@@ -154,7 +154,7 @@ may be ignored if internal: items kept in global registers!
 @@ .. error output instead of rolling
 			strcat( 
 				#-1, |, 
-				u( f.display-roll-items, %qe ), |, 
+				u( display.roll-items, %qe ), |, 
 				@@( null )
 			), 
 

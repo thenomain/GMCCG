@@ -10,7 +10,7 @@ this may seem odd. this is odd, but it's expandable
 
 --
 
-&f.display.list nWoD Roller <nr>=
+&display.list nWoD Roller <nr>=
 	iter( rest( %0, . ), %i0, ., . )
 
 
@@ -22,12 +22,53 @@ outputs: Something legible (i.e., "Error Error Error")
 
 --
 
-&f.display.roll-items nWoD Roller <nr>=
+&display.roll-items nWoD Roller <nr>=
 	iter( 
-		rest( trim( %0, l, ` ), + ), 
+		trim( trim( %0, l, ` ), l, + ), 
 		%i0, 
 		` 
 	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Colorize Dice ------------------------------------------------------
+
+Would be much easier with regedit().
+
+--
+
+&display.colorize.dice nWoD Roller <nr>= 
+	iter( %0, 
+		case( 1, 
+			u( f.successes.standard, %i0, 8 ), 
+			%xc%i0%xn, 
+
+			cand( eq( %i0, 1 ), strmatch( %qs, chance )), 
+			%xr%i0%xn, 
+
+			cand( eq( %i0, 1 ), u( f.hasswitch?, weakness )), 
+			%xr%i0%xn, 
+
+			%i0 
+		)
+	)
+
+--
+
+think u( nr/display.colorize.dice, 7 3 10 2 10 1 8 3 2 4 9 4 )
+
+think [setq( z, /weakness )][iter( 7 3 10 2::10 1, u( nr/display.colorize.dice, %i0 ), :, : )]
+
+think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /9-again/rote/extended ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )]
+
+think [null( u( nr/f.roll.workhorse, 0, %#, /extended=5 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )]
+
+think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )] --> %qe
+
+
+
+================================================================================
+== DISPLAY: Main Spammy Output =================================================
 
 
 --------------------------------------------------------------------------------
@@ -45,7 +86,7 @@ uses: header(), footer()
 
 --
 
-&f.display.roll-output nWoD Roller <nr>=
+&display.roll-output nWoD Roller <nr>=
 
 @@ .. interpret roll results from global registers
 	[u( f.roll-success-interpreter )]
@@ -88,11 +129,10 @@ uses: header(), footer()
 	[if( t( %1 ), %b(%1) )] )]
 
 
-
 --------------------------------------------------------------------------------
 -- Display: Roll To Public -----------------------------------------------------
 
-&display.roll-to-public nWoD Roller <nr>=pemit(%1, u(f.display.roll-output, %0, public))
+&display.roll-to-public nWoD Roller <nr>=pemit(%1, u(display.roll-output, %0, public))
 
 
 --------------------------------------------------------------------------------
@@ -100,7 +140,7 @@ uses: header(), footer()
 
 &display.roll-to-private nWoD Roller <nr>=
 	pemit(%1, 
-		u(f.display.roll-output, %0, to [iter(%1, name(%i0), , %,%b)])
+		u(display.roll-output, %0, to [iter(%1, name(%i0), , %,%b)])
 	)
 
 
@@ -134,10 +174,10 @@ uses: titlestr()
 		You can't roll to that job because [titlestr( rest( %q9 ))], 
 
 @@ .. else, show enactor and add it to the job
-		[u( f.display.roll-output, %0, to %1 )]
+		[u( display.roll-output, %0, to %1 )]
 		[trigger( #15/trig_myadd, 
 			locate( #15, %1, i ), 
-			%r[u( f.display.roll-output, %0, to %1 )], 
+			%r[u( display.roll-output, %0, to %1 )], 
 			%0, 
 			ADD 
 		)]
@@ -150,12 +190,11 @@ uses: titlestr()
 
 
 
---=-=-=-=-=-=-=-==--=-==--=-=-=-=-=-=-=-=-=
+================================================================================
+== Success Interpreter =========================================================
 
-== ONE PART DISPLAY, ONE PART SUCCESS COUNTER =====
-
---------------------------------------------------------------------------------
--- Success Interpreter ---------------------------------------------------------
+One part display, one part success counter.
+Not convinced this should go under "roll displays".
 
 input:
 	qd: number of dice to roll
@@ -163,7 +202,6 @@ input:
 	qr: final rolls, |-delimited
 	qc: final success counter, space-delimited
 	
-
 output:
 	q0: successes <-- killed for %qc
 	q1: success/failure type
@@ -189,47 +227,6 @@ output:
 		), 
 
 @@ q2: display style for the inputs (or the error(s)?)
-		setq( 2, trim( u( f.display.roll-items, %qo )))
+		setq( 2, trim( u( display.roll-items, %qo )))
 
 	)
-
-
-
-
-=--=-=-==--=-=-=-=-=-==--=
-
-Colorize Dice: 
-
-Would be much easier with regedit().
-
---
-
-&display.colorize.dice nWoD Roller <nr>= 
-	iter( %0, 
-		case( 1, 
-			u( f.successes.standard, %i0, 8 ), 
-			%xc%i0%xn, 
-
-			cand( eq( %i0, 1 ), strmatch( %qs, chance )), 
-			%xr%i0%xn, 
-
-			cand( eq( %i0, 1 ), u( f.hasswitch?, weakness )), 
-			%xr%i0%xn, 
-
-			%i0 
-		)
-	)
-
---
-
-think u( nr/display.colorize.dice, 7 3 10 2 10 1 8 3 2 4 9 4 )
-
-think [setq( z, /weakness )][iter( 7 3 10 2::10 1, u( nr/display.colorize.dice, %i0 ), :, : )]
-
-think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /9-again/rote/extended ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )]
-
-think [null( u( nr/f.roll.workhorse, 0, %#, /extended=5 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )]
-
-
-
-think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )] --> %qe
