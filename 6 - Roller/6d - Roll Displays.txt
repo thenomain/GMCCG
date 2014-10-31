@@ -38,20 +38,29 @@ Would be much easier with regedit().
 --
 
 &display.colorize.dice nWoD Roller <nr>= 
-	iter( %0, 
-		case( 1, 
-			u( f.successes.standard, %i0, 8 ), 
-			%xc%i0%xn, 
+localize( 
+	strcat( 
+		setq( c, strmatch( %qs, chance )), 
+		setq( w, u( f.hasswitch?, weakness )), 
+		iter( %0, 
+			iter( %i0, 
+				case( 1, 
+					u( f.successes.standard, %i0, 8 ), 
+					%xu%xc%i0%xn, 
 
-			cand( eq( %i0, 1 ), strmatch( %qs, chance )), 
-			%xr%i0%xn, 
+					cand( eq( %i0, 1 ), %qc ), 
+					%xr%i0%xn, 
 
-			cand( eq( %i0, 1 ), u( f.hasswitch?, weakness )), 
-			%xr%i0%xn, 
+					cand( eq( %i0, 1 ), %qw ), 
+					%xr%i0%xn, 
 
-			%i0 
+					%i0 
+				)
+			), 
+			:, : 
 		)
 	)
+)
 
 --
 
@@ -66,6 +75,7 @@ think [null( u( nr/f.roll.workhorse, 0, %#, /extended=5 ))][iter( %qr, iter( %i0
 think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )] --> %qe
 
 
+think u( nr/display.colorize.dice, 2 4 10 9 3 5 10 6 3 3 8 1 3 7 8 8 6 7 10 3 8 2 10 7 5 9 )
 
 ================================================================================
 == DISPLAY: Main Spammy Output =================================================
@@ -75,11 +85,14 @@ think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr,
 -- Display: Roll Output --------------------------------------------------------
 
 0: dbref of roller
-1: "public" or "private" or "job <num>"
+1: "public" or "private" or "hidden" or "job <num>"
 
-q0: counted successes -- from f.roll-success-interpreter
+q0: latest counted successes -- from f.roll-success-interpreter
 q1: prettified success output ("success!") -- from success-interpreter
 q2: prettified display roll output (what rolled) -- from success-interpreter
+
+qd: dice rolled (massaged to '0' if < 0 )
+qa: n-again (massaged to 'No' if > 10)
 
 relies upon global registers
 uses: header(), footer()
@@ -87,61 +100,230 @@ uses: header(), footer()
 --
 
 &display.roll-output nWoD Roller <nr>=
+	strcat( 
+		setq( w, width( %# )), 
 
 @@ .. interpret roll results from global registers
-	[u( f.roll-success-interpreter )]
+		u( f.roll-success-interpreter ), 
+@@		q0: %q0 --- q1: %q1 --- q2: %q2, %r, 
 @@ .. massage the registers a bit; from here on out they're just for displays
-	[if( lte( %qd, 0 ), [setq( d, 0 )][setq( s, setunion( %qs, Chance ))] )]
-	[if( gte( %qa, 11 ), setq( a, No ))]
+		if( lte( %qd, 0 ), setq( d, 0 )), 
+		if( gte( %qa, 11 ), setq( a, No )), 
 
 @@ >> display!
 @@ .. header, don't display obvious defaults
-	[header(
-		[name( %# )] rolls %qd Dice
-		[if( strmatch( %qs, Standard ), , %b- %qs )]
-		[if( strmatch( %qa, 10 ), , %b- %qa-Again )] 
-	)]%r
+		header( 
+			strcat( 
+				%N rolls %qd Dice, 
+				if( strmatch( %qs, Standard ), , %b- %qs ), 
+				if( strmatch( %qa, 10 ), , %b- %qa-Again )
+			), 
+			%qw 
+		), %r, 
 
 @@ .. what are we rolling?
-	%b Roll: 
-	[trim( wrap( %q2, 73, l, , , 8 ), r, %b )] %r
+		%b Roll:%b, 
+		trim( wrap( %q2, sub( %qw, 6 ), l, , , 8 ), r, %b ), %r, 
 
 @@ .. what are the results?
-@@ .. >> if there are more than one set in %qr, this was an extended roll!
-	[case( 1, 
+		case( 1, 
+
 @@ .. >> extended roll: <Total> %r%r <each roll>, and change %q1
-		gt( words( %qr, | ), 1 ), 
-		%b Result: [setr( 1, [ladd( %q0 )] total successes )]%r%r
-		[iter( %qr, 
-			%b Successes: [setr( x, max( extract( %q0, inum( ), 1 ), -1 ))] 
-			-- %i0
-@@ .. .. .. report dramatic failure only; exc. succ was confusing people
-@@			[switch( %qx, >4, %b%(exceptional%), -1, %b%(dramatic failure%) )], 
-			[switch( %qx, -1, %b%(dramatic failure%) )], 
-			|, %r 
-		)], 
+			strmatch( %q1, Extended ), 
+			u( display.roll-output.extended ), 
+
 @@ .. >> single roll: show "Result: <success?> -- <dice rolled>
-		%b Result: [trim( wrap( %q1 -- %qr, 68, l, , , 10 ), r, %b )]
-	)]%r
+			u( display.roll-output.single )
+
+		), %r, 
 
 @@ .. footer, reminds us success/failure, and whom to
-	[footer( [trim( lcstr( before( %q1, %( )))]
-	[if( t( %1 ), %b(%1) )] )]
+		footer( 
+			strcat( 
+				trim( lcstr( before( %q1, %( ))), 
+				if( t( %1 ), %b(%1) )
+			), 
+			%qw 
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll Output, Extended ----------------------------------------------
+
+Show the 'extended' roll results, line by line
+
+--
+
+&display.roll-output.extended nWoD Roller <nr>=
+localize( 
+	strcat( 
+		%b Results:%b, 
+		ladd( %qc ), %b, total successes, %r%r, 
+		iter( %qr, 
+			strcat( 
+				%b Successes:, %b, 
+				setr( x, max( extract( %qc, inum( ), 1 ), -1 )), 
+				%b, --, %b, u( display.interpret-roll-output, %i0 ), 
+@@ .. .. .. report dramatic failure only; exc. succ was confusing people
+				switch( %qx, -1, %b%(dramatic failure%) )
+			), 
+			|, %r 
+		)
+	)
+)
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll Output, Single ------------------------------------------------
+
+Output for a single (non-extended) roll
+
+--
+
+&display.roll-output.single nWoD Roller <nr>=
+	cat( 
+		%b, 
+		Result:, t
+		trim( 
+			wrap( %q1 -- [u( display.interpret-roll-output, %qr )], 
+				sub( width( %# ), 10 ), l, , , 10 
+			), 
+			r, %b 
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Interpret Roll Output ----------------------------------------------
+
+Give it that '(<dice rolled)' look.
+
+&display.interpret-roll-output nWoD Roller <nr>=
+	localize( 
+		strcat( 
+			setq( 9, u( display.colorize.dice, %0 )), 
+			%(, 
+			trim( elements( %q9, 1 3, :, )), 
+			if( 
+				t( setr( 8, trim( elements( %q9, 2, :, )))), 
+				%, Rote: %q8
+			), 
+			%) 
+		)
+	)
 
 
 --------------------------------------------------------------------------------
 -- Display: Roll To Public -----------------------------------------------------
 
-&display.roll-to-public nWoD Roller <nr>=pemit(%1, u(display.roll-output, %0, public))
+&display.roll-to-public nWoD Roller <nr>=
+	pemit( %1, u( display.roll-output, %0, public ))
 
 
 --------------------------------------------------------------------------------
 -- Display: Roll To Private ----------------------------------------------------
 
 &display.roll-to-private nWoD Roller <nr>=
-	pemit(%1, 
-		u(display.roll-output, %0, to [iter(%1, name(%i0), , %,%b)])
+	pemit( %1, 
+		u( display.roll-output, %0, to [iter( %1, name( %i0 ), , %,%b )] )
 	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Roll To Blind ------------------------------------------------------
+
+'Blind' is a roll-to-private without the roller involved. 
+Because of this, we return the message that's to be sent to the roller.
++roll will then send this on
+
+--
+
+&display.roll-to-blind nWoD Roller <nr>=
+	strcat( 
+		u( display.roll-to-private, %0, %1 ), 
+		u( display.blind-roller-output, %1 )
+	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Blind Roll Output --------------------------------------------------
+
+A very quick 'you roll xxx to yyy' 
+inputs:
+	0: list of dbrefs being rolled to 
+	qo: skill listing
+	qz: list of switches
+	qs: which roll system to use (standard, weakness, chance)
+
+internal:
+	q0: hasswitch target?, later a list of switches
+	q1: hasswitch extended?
+
+--
+
+&display.blind-roller-output nWoD Roller <nr>=
+squish( 
+	strcat( 
+		u( .alert, roll/blind ), %b, 
+		You roll, %b, 
+
+@@ chance/weakness and/or extended?
+		itemize( 
+			cat( 
+				if( not( strmatch( %qs, standard )), 
+					lcstr( %qs )
+				), 
+				if( 
+					or( 
+						setr( 0, u( f.hasswitch?, target )), 
+						setr( 1, u( f.hasswitch?, extended ))
+					), 
+					extended
+				)
+			), 
+			, & 
+		), %b, 
+
+@@ if extended, output how it's extended
+		if( 
+			cor( %q0, %q1 ), 
+			strcat( 
+				%(, 
+				if( %q0, target %qt ), 
+				if( cand( %q0, %q1 ), %,%b ), 
+				if( %q1, %qn rolls ), 
+				%) 
+			)
+		), %b, 
+
+@@ output the roll
+		', trim( u( display.roll-items, %qo )), ', 
+		
+
+@@ switches? (ignore the two extended switches, pulled earlier)
+		setq( 0, 
+			trim( 
+				edit( 
+					rest( %qz, / ), 
+					grab( %qz, extended*, / ), @@( null ), 
+					grab( %qz, target*, / ), @@( null )
+				), 
+				b, / 
+			)
+		), 
+		if( strlen( %q0 ), 
+			strcat( 
+				%, using, %b, 
+				iter( %q0, '%i0', /, %,%b ), %b 
+			)
+		), 
+
+@@ roll to whom?
+		%b, to, %b, 
+		iter( %0, name( %i0 ), , %,%b )
+	)
+)
 
 
 --------------------------------------------------------------------------------
@@ -220,8 +402,8 @@ output:
 				switch( ladd( %qc ), 
 					<0, Dramatic Failure, 
 					<1, Failure, 
-					<5, Success %(%q0%), 
-					Exceptional Success! %(%q0%)
+					<5, Success %(%qc%), 
+					Exceptional Success! %(%qc%)
 				)
 			)
 		), 

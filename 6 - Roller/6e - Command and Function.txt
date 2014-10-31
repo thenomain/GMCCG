@@ -3,55 +3,101 @@
 
 Cutting corners for now.
 
-0: /list/of/switches
-1: what to roll[= who to roll to]
-uses: alert(), a formatting doodad
+0: the match
+1: /list/of/switches, if any
+2: what to roll
+3: =<target list>, if any
 
-q0: what to roll, massaged
-q9: target list (names or job #)
+q7: sanitized input (%2)
+q8: temp holder building target list
+q9: target list (dbrefs or job #)
 
 --
 
-&c.roll nWoD Roller <nr>=$^\+?roll(.*) (.*)$:
+
+&c.roll nWoD Roller <nr>=$^\+?roll(/.+?)? (.+?)(\=.*)?$:
 
 	@pemit %#=
 		strcat( 
+
 @@ .. sanitize input and detach the instance
-			setq( 0, before( %2, = )), 
-			setq( 0, 
+			setq( 7, 
 				squish( edit( 
-					strip( %q0, %%%,;<>%[%] ), 
+					strip( %2, %%%,;<>%[%] ), 
 					%(, %b%( 
 				))
 			), 
+
 @@ .. build the to-list
-			setq( 9, trim( rest( %2, = ))), 
-			setq( 9, case( 1, 
-				strmatch( %q9, job * ), 
-				job|%q9, 
-
-				t( %q9 ), 
-				private|
-				[setunion( 
-					iter( %# %q9, 
-						if( setr( 9, pmatch( %i0 )), %q9 )
-					), 
-				)], 
-
-				public|[lcon( loc( %# ), connect )] 
-			)), 
+			setq( 9, u( f.build.to-list, %#, rest( %3, = ), %1 )), 
 
 @@ .. run the workhorse
-			null( u( f.roll.workhorse, %q0, %#, %1 )), 
+@@ .. (remove 'blind' switch, as that is for the 'build to-list' only)
+			null( 
+				u( f.roll.workhorse, 
+					%q7, 
+					%#, 
+					remove( %1, blind, /, / )
+				)
+			), 
 
 @@ .. interpret and output - check for errors first
 			if( 
 				t( words( %qe, ` )), 
-				[u( .alert, roll )] [u( display.list, %qe )], 
+				cat( u( .alert, roll ), u( display.roll-items, %qe )), 
 @@ Roll To ...
-				u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))
+				. u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))
 			)
 		)
+
+--
+
+@set  nWoD Roller <nr>/c.roll=regex
+
+
+--------------------------------------------------------------------------------
+-- Build To-List ---------------------------------------------------------------
+
+This is separated out from &c.roll in order to make sure we don't clober global 
+registers, and to make this list easier to maintain and expand.
+
+0: roller (%#)
+1: target list (names, dbrefs, or 'job'), if exists
+2: switch list, if exists
+
+returns: public, private, or blind|<target dbrefs or 'job #'>
+
+q0: list of %1 as dbrefs (could be messy)
+q1: temp for pmatch() in iter
+
+--
+
+&f.build.to-list nWoD Roller <nr>=
+localize( strcat( 
+	setq( 0, iter( %0 %1, if( setr( 1, pmatch( %i0 )), %q1 ))), 
+	case( 1, 
+
+@@ .. job <num>
+		strmatch( %1, job * ), 
+		job|%1, 
+
+@@ .. blind: a target list including everyone except the roller
+		cand( t( %1 ), match( %2, blind, / )), 
+		strcat( blind|, setdiff( %q0, %0 )), 
+
+@@ .. private: a target list including the roller
+		t( %1 ), 
+		strcat( private|, setunion( %q0, )), 
+
+@@ .. public, default: everyone in the room with the roller
+		strcat( public|, lcon( loc( %0 ), connect ))
+	)
+))
+
+
+
+================================================================================
+== Main Rolling Functions ======================================================
 
 
 --------------------------------------------------------------------------------
@@ -181,19 +227,20 @@ may be ignored if internal: items kept in global registers!
 
 @@ .. roll %qn times, at least once (if %qd = 0, roll 1 die -- it's chance)
 				setq( r, 
-					u( f.roll.workhorse.recurisve, 0, 0 )
+					trim( u( f.roll.workhorse.recurisve, 0, 0 ), b, | )
 				), 
 
 @@ >> PARSE RESULTS
 @@ .. <'target' should also go here to remove extraneous rolls>
 @@ .. interpret successes -> <# succ>, "Success!", <what rolled>
 				u( f.roll-success-interpreter ), 
+				setq( c, trim( %qc )), 
 
 @@ .. and output for the sake of the function 
 @@ .. .. <# succ>[ <# succ>], <what rolled>, <dice>:<rote>:<n-again>[|<dice>:..]
 
 				strcat( 
-					trim( %qc ), |, 
+					%qc, |, 
 					%q2, |, 
 					trim( %qr, b, | )
 				)
