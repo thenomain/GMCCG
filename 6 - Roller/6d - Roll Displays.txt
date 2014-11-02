@@ -35,6 +35,11 @@ outputs: Something legible (i.e., "Error Error Error")
 
 Would be much easier with regedit().
 
+Hilite a standard success.
+Hilite a chance roll of '1'.
+Hilite '1' on a weakness roll, unless it's rote from the first section
+(As a '1' weakness gets re-rolled for rote, we don't want to hilite it.)
+
 --
 
 &display.colorize.dice nWoD Roller <nr>= 
@@ -42,6 +47,7 @@ localize(
 	strcat( 
 		setq( c, strmatch( %qs, chance )), 
 		setq( w, u( f.hasswitch?, weakness )), 
+		setq( r, u( f.hasswitch?, rote )), 
 		iter( %0, 
 			iter( %i0, 
 				case( 1, 
@@ -51,7 +57,11 @@ localize(
 					cand( eq( %i0, 1 ), %qc ), 
 					%xr%i0%xn, 
 
-					cand( eq( %i0, 1 ), %qw ), 
+					cand( 
+						%qw, 
+						eq( %i0, 1 ), 
+						cor( not( %qr ), gt( inum( 1 ), 1 ))
+					), 
 					%xr%i0%xn, 
 
 					%i0 
@@ -74,8 +84,9 @@ think [null( u( nr/f.roll.workhorse, 0, %#, /extended=5 ))][iter( %qr, iter( %i0
 
 think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )] --> %qe
 
-
 think u( nr/display.colorize.dice, 2 4 10 9 3 5 10 6 3 3 8 1 3 7 8 8 6 7 10 3 8 2 10 7 5 9 )
+
+
 
 ================================================================================
 == DISPLAY: Main Spammy Output =================================================
