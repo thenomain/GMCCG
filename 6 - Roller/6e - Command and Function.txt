@@ -46,7 +46,7 @@ q9: target list (dbrefs or job #)
 				t( words( %qe, ` )), 
 				cat( u( .alert, roll ), u( display.roll-items, %qe )), 
 @@ Roll To ...
-				. u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))
+				u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))
 			)
 		)
 
