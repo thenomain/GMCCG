@@ -1,0 +1,270 @@
+The blocks are how the raw data is extracted from the character's sheet object 
+(at this stage that's the character object itself, but it doesn't have to be).
+
+Block attributes in the sheet system are formatted this way:
+
+&<block name>.[<sub-block>.]<template>
+
+If no <tempate> exists, it falls to 'default'. 'Default' may or may not be the 
+human display block; for example, if someone is calling the Vampire sheet but is 
+not a Vampire (for instance, they may be a Ghoul), the 'disciplines.default' 
+block may be shown to them anyhow.
+
+<Sub-block> is important for groups such as Attributes and Skills, but may apply 
+if someone wants to make, e.g., '&merits.status.<template>'.
+
+
+
+================================================================================
+== BLOCK: BIO ==================================================================
+
+The '#-1' is something I'm considering for formatting, guaranteeing breaks.
+Chances are 'Full Name' will be reflected in the header and stripped here.
+
+--
+
+0: sheet dbref
+output: <trait>:<value>[.<offset(s)>]|...
+
+
+--------------------------------------------------------------------------------
+-- Bio.Default -----------------------------------------------------------------
+
+&bio.default nsc=
+	iter( full_name birthdate #-1 virtue vice, 
+		if( t( %i0, ), 
+			ulocal( f.cheat_getstat.with_name, %0, bio.%i0, string ), 
+			%b 
+		), 
+		, | 
+	)
+
+--
+
+think u( nsc/bio.default, %# )
+
+
+
+================================================================================
+== BLOCK: ATTRIBUTES ===========================================================
+
+Default: Mental (attributes), Physical (attributes), Mental (attributes)
+
+If output demands it, there may be '&attributes.<bla>.<template>'.
+
+--
+
+0: sheet dbref
+output: <trait>:<value>[.<offset(s)>]|...
+
+
+--------------------------------------------------------------------------------
+-- Attributes.Mental.Default ---------------------------------------------------
+
+&attributes.mental.default nsc=
+	iter( intelligence wits resolve, 
+		ulocal( f.cheat_getstat.with_name, %0, attribute.%i0, numeric ), 
+		, | 
+	)
+
+--
+
+think u( nsc/attributes.mental.default, %# )
+
+
+--------------------------------------------------------------------------------
+-- Attributes.Physical.Default -------------------------------------------------
+
+&attributes.physical.default nsc=
+	iter( strength dexterity social, 
+		ulocal( f.cheat_getstat.with_name, %0, attribute.%i0, numeric ), 
+		, | 
+	)
+
+--
+
+think u( nsc/attributes.physical.default, %# )
+
+
+--------------------------------------------------------------------------------
+-- Attributes.Social.Default ---------------------------------------------------
+
+&attributes.social.default nsc=
+	iter( presence manipulation composure, 
+		ulocal( f.cheat_getstat.with_name, %0, attribute.%i0, numeric ), 
+		, | 
+	)
+
+--
+
+think u( nsc/attributes.social.default, %# )
+
+
+
+================================================================================
+== BLOCK: SKILLS ===============================================================
+
+Default: Mental (skills), Physical (skills), Mental (skills)
+
+If output demands it, there may be '&skills.<bla>.<template>'.
+
+--
+
+0: sheet dbref
+output: <trait>:<value>[.<offset(s)>]|- <specialty>|...
+
+
+--------------------------------------------------------------------------------
+-- Skills.Mental.Default -------------------------------------------------------
+
+&skills.mental.default nsc=
+	iter( 
+		academics computer crafts investigation medicine occult politics 
+		science, 
+		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), 
+		, | 
+	)
+
+--
+
+think u( nsc/skills.mental.default, %# )
+
+
+--------------------------------------------------------------------------------
+-- Skills.Physical.Default -----------------------------------------------------
+
+&skills.physical.default nsc=
+	iter( 
+		athletics brawl drive firearms larceny stealth survival weaponry, 
+		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), 
+		, | 
+	)
+
+--
+
+think u( nsc/skills.physical.default, %# )
+
+
+--------------------------------------------------------------------------------
+-- Skills.Social.Default -------------------------------------------------------
+
+&skills.social.default nsc=
+	iter( 
+		animal_ken empathy expression intimidation persuasion socialize 
+		streetwise subterfuge, 
+		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), 
+		, | 
+	)
+
+--
+
+think u( nsc/skills.social.default, %# )
+
+
+
+================================================================================
+== BLOCK: MERITS ===============================================================
+
+0: sheet dbref
+output: <trait>:<value>[.<offset(s)>]|...
+
+
+--------------------------------------------------------------------------------
+-- Merits.Default --------------------------------------------------------------
+
+&merits.default nsc=
+	iter( sort( edit( lattr( %0/_merit.* ), _MERIT., )), 
+		ulocal( f.cheat_getstat.with_name, %0, merit.%i0, numeric ), 
+		, | 
+	)
+
+--
+
+think u( nsc/merits.default, %# )
+
+
+
+================================================================================
+== BLOCK: TRAITS ===============================================================
+
+Note to Future Self: I know that "trait" describes all stats in WoD, but here 
+we use it to describe the power-trait/-pool having to do with that template, 
+also Willpower and Morality/Integrity.
+
+--
+
+0: sheet dbref
+output: see 'f.cheat_getstat.willpower', and '.morality'.
+
+
+--------------------------------------------------------------------------------
+-- Traits.Default --------------------------------------------------------------
+
+&traits.default nsc=
+	strcat( 
+		ulocal( f.cheat_getstat.willpower, %0 ), |, 
+		ulocal( f.cheat_getstat.morality, %0, morality )
+	)
+
+--
+
+think u( nsc/traits.default, %# )
+
+
+
+================================================================================
+== BLOCK: ADVANTAGES ===========================================================
+
+0: sheet dbref
+output: <trait>:<value>[.<offset(s)>]|...
+
+
+--------------------------------------------------------------------------------
+-- Advantages.Default ----------------------------------------------------------
+
+&advantages.default nsc=
+	iter( 
+		defense speed initiative perception size, 
+		ulocal( f.cheat_getstat.with_name, %0, advantage.%i0, numeric ), 
+		, | 
+	)
+
+--
+
+think u( nsc/advantages.default, %# )
+
+
+================================================================================
+== BLOCK: HEALTH ===============================================================
+
+More or less using the health system, but cheating a bit and bypassing the 
+data dictionary a little, too.
+
+--
+
+0: sheet dbref
+output: <health boxes>|Penalty:<value>
+
+
+--------------------------------------------------------------------------------
+-- Health.Default --------------------------------------------------------------
+
+&health.default nsc=
+localize( 
+	strcat( 
+		ulocal( v( d.health )/display.health-bar, 
+			iter( 
+				u( v( d.dd )/health.types ), 
+				u( v( d.dd )/.value, %0, health.%i0 )
+			), 
+			ladd( ulocal( f.cheat_getstat.numeric, %0, health.maximum ), . )
+		), |, 
+
+		ulocal( f.cheat_getstat.with_name, %0, health.penalty, numeric )
+	)
+)
+
+--
+
+think u( nsc/health.default, %# )
+

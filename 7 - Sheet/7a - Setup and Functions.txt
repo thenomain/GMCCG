@@ -1,0 +1,170 @@
+Sheet v4
+
+One of the things I was asked for in the new sheet system was the ability to 
+show two different currently popular layouts. This meant a stat lookup 
+divorced from the display, which should have been done from the start.
+
+Traits are pulled up in blocks, a single line of output in a format that makes 
+the most sense for what is being displayed.
+
+Most output will be '<trait>:<value>[.<offset(s)>]|...', but some will be 
+different. Notably: Skill specialties, willpower, and health.
+
+Blocks:
+	Bio
+	Attributes.Mental
+	Attributes.Physical
+	Attributes.Social
+	Skills.Mental
+	Skills.Physical
+	Skills.Social
+	Merits
+	<Supernatural Blocks>
+	Traits (see the Blocks on this for notes)
+	Advantages
+	Health
+
+So a block is formatted '&<block>.<template>'. If there is no <template>, 
+use 'default'.
+
+
+================================================================================
+== SETUP & DATA ================================================================
+
+@create Newest Sheet Code <nsc>=10
+@set nsc=inherit safe
+
+--
+
+@fo me=&d.sfp nsc=num( Stat Functions Prototype <sfp> )
+@fo me=&d.health nsc=num( WoD Health System <whs> )
+@fo me=&d.dd nsc=num( Data Dictionary <dd> )
+
+
+--
+
+@@ Code Parent formatting
+@parent nsc=codp
+&prefix.block_bio nsc=bio.
+&prefix.block_attribute nsc=attributes.
+&prefix.block_skill nsc=skills.
+&prefix.block_merit nsc=merits.
+&prefix.block_traits nsc=traits.
+&prefix.block_advantages nsc=advantages.
+&prefix.block_health nsc=health.
+
+
+
+================================================================================
+== CROSS-PLATFORM FUNCTIONS ====================================================
+
+&.titlestr nsc=titlestr( edit( %0, _, %b ))
+
+
+
+================================================================================
+== CHEATING AT GETSTATS ========================================================
+
+This system is designed to use the getstat system as efficiently as possible
+in order to save function invocation cycles.
+
+
+--------------------------------------------------------------------------------
+-- The Basics: Numeric & String ------------------------------------------------
+
+0: sheet dbref
+1: stat.path_(full)
+output: <value>, but if lookup is null then return something
+
+--
+
+&f.cheat_getstat.numeric nsc=
+	if( 
+		comp( 
+			setr( t, ulocal( v( d.sfp )/f.getstat.workhorse.numeric, %0, _%1 )), 
+			@@( null )
+		), 
+		%qt, 
+		0 
+	)
+	
+
+--
+
+&f.cheat_getstat.string nsc=
+	default( %0/_%1, <not set> )
+
+
+--------------------------------------------------------------------------------
+-- The Basics: Get Name:Value --------------------------------------------------
+
+0: sheet dbref
+1: stat.path_(full)
+2: what 'cheat_getstat.*' type
+
+--
+
+&f.cheat_getstat.with_name nsc=
+	strcat( 
+		u( .titlestr, rest( %1, . )), :, 
+		ulocal( f.cheat_getstat.%2, %0, %1 )
+	)
+
+
+--------------------------------------------------------------------------------
+-- Cheat Getstat Skill and Specs -----------------------------------------------
+
+0: sheet dbref
+1: skill_name
+
+--
+
+&f.cheat_getstat.skill-n-specs nsc=
+	strcat( 
+		ulocal( f.cheat_getstat.with_name, %0, skill.%1, numeric ), 
+		if( words( setr( s, sort( lattr( %0/_skill.%1.* )))), 
+			|[iter( %qs, 
+				- [u( .titlestr, edit( %i0, _SKILL.[ucstr( %1 )]., ))], 
+				, | 
+			)] 
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Cheat Getstat: Willpower ----------------------------------------------------
+
+0: sheet dbref 
+
+--
+
+&f.cheat_getstat.willpower nsc=
+	strcat( 
+		Willpower:, 
+		ladd( 
+			ulocal( f.cheat_getstat.numeric, %0, advantage.willpower ), 
+			. 
+		), 
+		/, 
+		ulocal( f.cheat_getstat.numeric, %0, advantage.willpower_maximum )
+	)
+
+
+--------------------------------------------------------------------------------
+-- Cheat Getstat: Morality -----------------------------------------------------
+
+0: sheet dbref
+1: morality type (morality, humanity, etc.)
+
+--
+
+&f.cheat_getstat.morality nsc=
+	strcat( 
+		ulocal( f.cheat_getstat.with_name, %0, advantage.%1, numeric ), 
+		iter( edit( lattr( %0/_advantage.%1.* ), _ADVANTAGE.[ucstr( %1 )]., ), 
+			strcat( 
+				|-, %b, 
+				u( f.cheat_getstat.string, %0, advantage.%1.%i0 )
+			), , @@ 
+		)
+	)
