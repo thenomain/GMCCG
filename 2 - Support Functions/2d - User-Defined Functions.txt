@@ -266,7 +266,7 @@ localize( strcat(
 @@ 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
 	setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
 	iter( 
-		u( %0/%1 ), 
+		get( %0/%1 ), 
 		if( 
 			strmatch( %i0, derived ), 
 			ulocal( [u( d.data-dictionary )]/%qs, %0, %qi ), 
