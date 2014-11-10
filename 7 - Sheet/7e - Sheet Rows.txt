@@ -1,0 +1,3 @@
+Sheet layout: Rows
+
+(This is the other usual WoD sheet format)

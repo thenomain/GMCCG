@@ -1,0 +1,9 @@
+sheet formatting
+
+Things like:
+	trait ......... value
+
+Or:
+	trait: value       ooooo..x
+
+('x' means 'spent permanent dot' for pools)
