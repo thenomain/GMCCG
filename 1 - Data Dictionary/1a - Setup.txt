@@ -79,7 +79,7 @@ Core Stat Checks - Check against Supernatural Tollerance (power trait)
 	.Max_Trait		How high can they take skills/attributes?
 	.Trait_Check	Can they take "this" skill/attribute "that" high?
 
-Werewolf Stat Checks - 
+Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 	.Rites_Check	Can they take "this" rite?
 	.Gifts_Check	Can they take "this" gift "that" high?
 	.Renown_Check	Can they take "this" renown "that" high?
