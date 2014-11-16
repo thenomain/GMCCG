@@ -13,6 +13,7 @@
 &prefix.bio dd=bio.
 &prefix.specials dd=special.
 &prefix.health dd=health.
+&prefix.conditions dd=condition.
 
 
 ================================================================================
@@ -33,7 +34,7 @@ setting up templates).
 
 For almost all of these, the following variables are passed:
 	0: sheet dbref
-	1: complete.stat.path
+	1: instance (when exists)
 	2: value to check against
 	3: value this stat (with the prereq on it) is being adjusted by
 
@@ -84,6 +85,10 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 	.Gifts_Check	Can they take "this" gift "that" high?
 	.Renown_Check	Can they take "this" renown "that" high?
 
+
+Specialty - Get information about specialties
+	.Specialty_For  Return the skill that has the passed specialty
+	.Specialty_Has  Has the specialty named in a certain or any skill
 
 
 --------------------------------------------------------------------------------
@@ -641,5 +646,31 @@ think u(dd/.max_trait, num(*thenomain))
 
 &.trait_check dd=
 	u(.at_most, %0, %1, u(.max_trait, %0), %2)
+
+
+--------------------------------------------------------------------------------
+-- Specialties -----------------------------------------------------------------
+
+Return the skill that has the passed specialty
+	0: sheet dbref
+	1: specialty to find
+	e.g.:
+		u( .specialty_for, %0, drawing )
+
+
+&.Specialty_For dd=
+	lcstr( first( sort( iter( lattr( %0/_skill.*.%1 ), elements( %i0, 2, . )))))
+
+--
+
+Does the sheet have this specialty?
+	0: sheet dbref
+	1: skill(s) to match, '*' means 'all'
+	2: specialty to find, '*' means 'any'
+	e.g.:
+		u( .specialty_has, %0, Crafts Expression, * )
+
+&.Specialty_Has dd=
+	gt( words( iter( %1, lattr( %0/_skill.%i0.%2 ))), 0 )
 
 
