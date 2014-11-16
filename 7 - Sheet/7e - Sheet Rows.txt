@@ -1,3 +1,283 @@
+
+@create Sheet: Rows
+@set Sheet: Rows=inherit safe
+@parent Sheet: Rows=Newest Sheet Code <nsc>
+
+-=-=-=-=-=-=
+
+I am vastly unsatisfied with how this isn't going as elegantly as I'd like,
+but I'll take it for now.
+
+-=-=-=-=-=-=
+
 Sheet layout: Rows
 
 (This is the other usual WoD sheet format)
+
+header( <full name> (<template>) )
+
+xxx:yyy|xxx:yyy|xxx:yyy
+
+
+think u( nsc/bio.default, %# )
+
+
+&block.bio Sheet: Rows=
+	strcat( 
+		setq( o, ulocal( bio.default, %0 )), 
+		setq( w, 39 ), 
+		setq( t, 12 ), 
+		divider( Bio ), %r, 
+		setq( b, 
+			iter( %qo, 
+				u( display.trait-and-value, %i0, %qt, %qw, string ), 
+				|, | 
+			)
+		), 
+		setq( r, floor( fdiv( setr( c, words( %qb, | )), 2 ))), 
+		vcolumns( 
+			%qw:[elements( %qb, lnum( 1, %qr ), |, | )], 
+			%qw:[elements( %qb, lnum( inc( %qr ), %qc ), |, | )], 
+			|, 
+			%b 
+		)
+	)
+
+--
+
+think u( sheet: rows/block.bio, %# )
+
+
+-==-=--=-=-=-=
+
+0: <trait>:<value>
+1: width for <trait>
+2: width for column
+3: numeric, list, string (default)
+
+output:
+	----- <sub-header> ----
+	<trait>       : <value>
+	* <sub-trait>
+
+--
+
+&display.trait-and-value nsc=
+	strcat( 
+		setq( v, rest( %0, : )), 
+		case( strtrunc( %0, 1 ), 
+@@ .. sub-trait
+			*, %b [trim( rest( %0, * ))], 
+@@ .. sub-header
+			#, u( display.subheader, %2, trim( rest( %0, # ))), 
+@@ .. display them normal thangs
+			strcat( 
+				ljust( first( %0, : ), %1 ), 
+				:, %b, 
+				udefault( display.value.%3, %qv, %qv )
+			)
+		)
+	)
+
+--
+
+&display.value.numeric nsc=
+	if( eq( words( %0, . ), 1 ), 
+		u( display.check-zero, %0), 
+		[u( display.check-zero, ladd( %0, . ))] 
+		([u( display.check-zero, first( %0, . ))])
+	)
+
+--
+
+&display.check-zero nsc=if( eq( %0, 0 ), -, %0 )
+
+--=-=-=-=-=-=-=
+
+&block.attributes sheet: rows=
+	strcat( 
+		setq( w, 26 ), 
+		setq( t, 17 ), 
+		setq( m, 
+			iter( #Mental|[ulocal( attributes.mental.default, %# )], 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
+				|, | 
+			)
+		), 
+		setq( p, 
+			iter( #Physical|[ulocal( attributes.physical.default, %# )], 
+				u( display.trait-and-value, %i0, %qt, dec( %qw ), numeric ), 
+				|, | 
+			)
+		), 
+		setq( s, 
+			iter( #Social|[ulocal( attributes.social.default, %# )], 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
+				|, | 
+			)
+		), 
+		divider( Attributes ), %r, 
+		vcolumns( 
+			%qw:%qm, 
+			[dec( %qw )]:%qp, 
+			%qw:%qs, 
+			|, 
+			%b 
+		)
+	)
+
+--
+
+think u( sheet: rows/block.attributes, %# )
+
+=--=-=-=-=-=-=-=
+
+&display.subheader nsc=center( %b%1%b, %0, %xc.%xn )
+
+-==--=-=-=-==-=-=-
+
+&block.skills sheet: rows=
+	strcat( 
+		setq( w, 26 ), 
+		setq( t, 17 ), 
+		setq( m, 
+			iter( #Mental|[ulocal( skills.mental.default, %# )], 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
+				|, | 
+			)
+		), 
+		setq( p, 
+			iter( #Physical|[ulocal( skills.physical.default, %# )], 
+				u( display.trait-and-value, %i0, %qt, dec( %qw ), numeric ), 
+				|, | 
+			)
+		), 
+		setq( s, 
+			iter( #Social|[ulocal( skills.social.default, %# )], 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
+				|, | 
+			)
+		), 
+		divider( Skills ), %r, 
+		vcolumns( 
+			%qw:%qm, 
+			[dec( %qw )]:%qp, 
+			%qw:%qs, 
+			|, 
+			%b 
+		)
+	)
+
+--
+
+think u( sheet: rows/block.skills, %# )
+
+
+-=-=-=-=-=-=-=-=-=-=-==-
+
+oooo...##
+
+0: pool.values
+1: pool_max.values
+
+--
+
+&display.value.pool nsc=
+	strcat( 
+		repeat( o, ladd( %0, . )), 
+		ansi( xh, repeat( ., mul( -1, ladd( rest( %0, . ), . )))), 
+		ansi( xh, repeat( #, mul( -1, ladd( rest( %1, . ), . ))))
+	)
+
+--
+
+think u( nsc/display.value.pool, 4.-2, 5.-1)
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+&block.traits sheet: rows=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 25 ), 
+
+@@ .. willpower
+		setq( x, ulocal( traits.willpower.default, %0 )), 
+		setq( c, rest( setr( y, first( %qx, | )), : )), 
+		setq( p, last( %qx, : )), 
+
+@@ .. morality
+		setq( z, 
+			iter( u( traits.morality.default, %0 ), 
+				u( display.trait-and-value, %i0, %qt, %qw, string ), 
+				|, | 
+			)
+		), 
+
+@@ .. display
+		divider( Traits ), %r, 
+		vcolumns( 
+			%qw:[u( display.trait-and-value, %qy, %qt, %qw, numeric )]|
+			%b [u( display.value.pool, %qc, %qp )], 
+
+			%qw:%qz, 
+
+			|, 
+			%b 
+		)		
+	)
+
+--
+
+think u( sheet: rows/block.traits, %# )
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+&block.advantages sheet: rows=
+	strcat( 
+		setq( w, 26 ), 
+		setq( t, 17 ), 
+		setq( a, 
+			iter( 
+				u( nsc/advantages.default, %0 ), 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
+				|, | 
+			)
+		), 
+		divider( Advantages ), %r, 
+		columns( 
+			%qa, 
+			%qw, 
+			|
+		)
+	)
+
+--
+
+think u( sheet: rows/block.advantages, %# )
+
+-=-=-=-=-=-==-=--=-=-=-=-=-=
+
+&block.health sheet: rows=
+	strcat( 
+		setq( w, 80 ), 
+		setq( t, 7 ), 
+		setq( c, first( setr( h, u( health.default, %0 )), | )), 
+		setq( p, rest( %qh, | )), 
+		if( neq( last( %qp, : ), 0 ), 
+			setq( p, 
+				strcat( 
+					%b%(, 
+					u( display.trait-and-value, %qp, %qt, %qw, numeric ), 
+					%) 
+				)
+			), 
+			setq( p, )
+		), 
+
+		divider( Health ), %r,
+		vcolumns( 
+			%qw:%b %qc%qp, 
+			|
+		)
+	)
+
