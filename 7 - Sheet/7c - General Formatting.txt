@@ -7,3 +7,67 @@ Or:
 	trait: value       ooooo..x
 
 ('x' means 'spent permanent dot' for pools)
+
+From 7a - Setup:
+	# <sub-header>
+	* <indented text>
+	<trait>:<value(s)>
+
+Outputs:
+	----------- <sub-header> -----------
+	<trait>
+	<trait>: <value>
+	<trait> .................... <value>
+	* <sub-trait>	
+	<trait>: <value>              <pool>
+
+Value:
+	<current>[ (<original>)]
+
+Pool:
+	oooo...x
+	o: spendable point
+	.: used point
+	x: reduced maximum pool
+
+Health:
+	Health is already handled by the health fob.
+
+
+
+e.g.:
+	Willpower: 1 (3)           o..x
+
+This means "1 willpower left out of a total of 3, but we've spent one dot some 
+time ago.
+
+e.g.
+	Contacts .................... 3
+	* Hookers
+	* Models
+	* Pawn Brokers
+
+	Animal Ken .................. 2
+	* Beastiality
+
+e.g.
+	Hollow (Sex Shop) ........... 5
+	* Size: 2
+	* Workshop (Dildos): 2
+	* Doors: 1
+
+
+e.g.:
+	Humanity: 4
+	* (6) Nail-Biting
+	* (5) Bloodlust
+
+This means: Humanity is currently 4. The derangement at 6 is 'Nail-Biting'. The 
+derangement at 5 is 'Bloodlust'.
+
+=--=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=-=-=-=
+
+
+All format needs to go like this:
+
+	item`item`item|newline

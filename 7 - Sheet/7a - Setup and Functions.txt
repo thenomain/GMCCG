@@ -10,22 +10,32 @@ the most sense for what is being displayed.
 Most output will be '<trait>:<value>[.<offset(s)>]|...', but some will be 
 different. Notably: Skill specialties, willpower, and health.
 
-Blocks:
+Blocks examples:
 	Bio
 	Attributes.Mental
-	Attributes.Physical
-	Attributes.Social
-	Skills.Mental
-	Skills.Physical
 	Skills.Social
 	Merits
-	<Supernatural Blocks>
-	Traits (see the Blocks on this for notes)
-	Advantages
-	Health
 
 So a block is formatted '&<block>.<template>'. If there is no <template>, 
 use 'default'.
+
+A complete list of blocks is in '7b - Blocks'
+
+--
+
+We also are going to use a very light markup system. Super-light. This system 
+does not have the ability to handle nesting.
+
+# <block>.<sub-block>
+	A sub-divider. If we are in 'attributes', then '#attributes.mental'.
+
+* <text>
+	Indented text. Almost certainly used for sub-stats such as specialties.
+
+<trait>:<value(s)>
+	A stat to display. We don't process this, so '4.-1' is valid.
+	Let the sheet process it.
+
 
 
 ================================================================================
@@ -124,7 +134,7 @@ output: <value>, but if lookup is null then return something
 		ulocal( f.cheat_getstat.with_name, %0, skill.%1, numeric ), 
 		if( words( setr( s, sort( lattr( %0/_skill.%1.* )))), 
 			|[iter( %qs, 
-				- [u( .titlestr, edit( %i0, _SKILL.[ucstr( %1 )]., ))], 
+				* [u( .titlestr, edit( %i0, _SKILL.[ucstr( %1 )]., ))], 
 				, | 
 			)] 
 		)
@@ -141,11 +151,8 @@ output: <value>, but if lookup is null then return something
 &f.cheat_getstat.willpower nsc=
 	strcat( 
 		Willpower:, 
-		ladd( 
-			ulocal( f.cheat_getstat.numeric, %0, advantage.willpower ), 
-			. 
-		), 
-		/, 
+		ulocal( f.cheat_getstat.numeric, %0, advantage.willpower ), |, 
+		Willpower Maxiumum:, 
 		ulocal( f.cheat_getstat.numeric, %0, advantage.willpower_maximum )
 	)
 
@@ -163,7 +170,8 @@ output: <value>, but if lookup is null then return something
 		ulocal( f.cheat_getstat.with_name, %0, advantage.%1, numeric ), 
 		iter( edit( lattr( %0/_advantage.%1.* ), _ADVANTAGE.[ucstr( %1 )]., ), 
 			strcat( 
-				|-, %b, 
+				|*, %b, 
+				(%i0), %b, 
 				u( f.cheat_getstat.string, %0, advantage.%1.%i0 )
 			), , @@ 
 		)
