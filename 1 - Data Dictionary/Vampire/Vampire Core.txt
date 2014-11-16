@@ -2,6 +2,8 @@
 
 &prefix.vampire_-_disciplines dd=discipline.
 
+&.max_trait.Vampire dd=advantage.blood_potency
+
 
 
 @@ VAMPIRE POWERS: DISCIPLINES -------------------------------------------------

@@ -8,6 +8,9 @@
 &prefix.demon_-_demonic_forms dd=demonic_form.
 
 
+&.max_trait.Demon dd=advantage.<power trait>
+
+
 @@ -- DEMON POWERS -------------------------------------------------------------
 @@ DEMON EMBEDS
 @@ CACOPHONY
