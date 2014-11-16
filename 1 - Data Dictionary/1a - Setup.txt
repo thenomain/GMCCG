@@ -113,12 +113,12 @@ Value of a primary stat, or the first item of a list
 	0: sheet dbref
 	1: stat.path
 	e.g.:
-		u(.value, %0, attribute.strength)
+		u( .value, %0, attribute.strength )
 
 &.Value dd=
-	case(u(.class, %1), 
-		numeric, first(u(.value_full, %0, %1), .), 
-		u(.value_full, %0, %1)
+	case( u( .class, %1 ), 
+		numeric, first( u( .value_full, %0, %1 ), . ), 
+		u( .value_full, %0, %1 )
 	)
 
 --
@@ -127,7 +127,7 @@ Full text on a stat ("both" for numeric stats)
 	0: sheet dbref
 	1: stat.path
 	e.g.:
-		u(.value_full, %0, bio.template)
+		u( .value_full, %0, bio.template )
 
 &.Value_Full dd=
 	udefault( 
@@ -142,7 +142,7 @@ Total value of a numeric trait
 	0: sheet dbref
 	1: list.of stat.paths
 	e.g.:
-		u(.value_stats, %0, attribute.strength skill.brawl)
+		u( .value_stats, %0, attribute.strength skill.brawl )
 
 &.Value_Stats dd=
 	ladd( iter( %1 , u( .value_full, %0, %i0 ), , . ), . )
@@ -167,10 +167,10 @@ Stat is no lower than a value
 	2: min value
 	3: add-offset (send "%2" when stat.path is self)
 	e.g.:
-		u(.at_least, %0, skill.empathy, 2)
+		u( .at_least, %0, skill.empathy, 2 )
 
 &.At_Least dd=
-	gte(add(u(.value, %0, %1), %3), %2)
+	gte( add( u( .value, %0, %1 ), %3 ), %2 )
 
 --
 
@@ -179,10 +179,10 @@ Stats passed are all no lower than values associated ("and _at_least")
 	1: stat.path:value|stat.path:value
 	(cannot be used for "this stat" situations)
 	e.g.:
-		u(.at_least_all, %0, attribute.dexterity:3 skill.athletics:2)
+		u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 )
 
 &.At_Least_All dd=
-	land(iter(%1, u(.at_least, %0, first(%i0, :), rest(%i0, :))))
+	land( iter( %1, u( .at_least, %0, first( %i0, : ), rest( %i0, : ))))
 
 --
 
@@ -191,10 +191,10 @@ One stat passed is no lower than values associated ("or _at_least")
 	1: stat.path:value|stat.path:value
 	(cannot be used for "this stat" situations)
 	e.g.:
-		u(.at_least_one, %0, skill.weaponry:2 skill.firearms:2)
+		u( .at_least_one, %0, skill.weaponry:2 skill.firearms:2 )
 
 &.At_Least_One dd=
-	lor(iter(%1, u(.at_least, %0, first(%i0, :), rest(%i0, :))))
+	lor( iter( %1, u( .at_least, %0, first( %i0, : ), rest( %i0, : ))))
 
 --
 
@@ -204,24 +204,24 @@ This stat is no lower than another stat
 	2: that.statpath
 	3: add-offset (send "%2" always, used in xp-spends)
 	e.g.:
-		u(.at_least_stat, %0, merit.fame, attribute.presence, %2)
-		u(.at_least_stat, %0, merit.hollow_(%1).size, advantage.wyrd + 2, %2)
+		u( .at_least_stat, %0, merit.fame, attribute.presence, %2 )
+		u( .at_least_stat, %0, merit.hollow_(%1).size, advantage.wyrd + 2, %2 )
 
 &.At_Least_Stat dd=
-localize(
+localize( 
 @@ .. sloppy, but gets the job done
-	[setq(t, trim(first(edit(%2, -, +-), +)))]
-	[setq(a, iter(rest(edit(edit(%2, -%b, -), -, %b+-), +), %i0, +))]
-	[u(
+	[setq( t, trim( first( edit( %2, -, +- ), + )))]
+	[setq( a, iter( rest( edit( edit( %2, -%b, - ), -, %b+- ), + ), %i0, + ))]
+	[u( 
 		.at_least, 
 		%0, 
 		%1, 
-		ladd(
-			[u(.value, %0, %qt)] 
-			%qa
+		ladd( 
+			[u( .value, %0, %qt )] 
+			%qa 
 		), 
-		%3
-	)]
+		%3 
+	)] 
 )
 
 
@@ -243,10 +243,10 @@ Stat is no higher than a value
 	2: value
 	3: add-offset (send "%2" when stat.path is self, used in xp-spends)
 	e.g.:
-		u(.at_most, %0, power.fubar, 3, %2)
+		u( .at_most, %0, power.fubar, 3, %2 )
 
 &.At_Most dd=
-	lte(add(u(.value, %0, %1), %3), %2)
+	lte( add( u( .value, %0, %1 ), %3 ), %2 )
 
 --
 
@@ -255,10 +255,10 @@ Stats passed are all no higher than values associated ("and _at_most")
 	1: stat.path:value stat.path:value
 	(cannot be used for "this stat" situations)
 	e.g.:
-		u(.at_most_all, %0, attribute.strength:4 skill.athletics:1)
+		u( .at_most_all, %0, attribute.strength:4 skill.athletics:1 )
 
 &.At_Most_All dd=
-	land(iter(%1, u(.at_most, %0, first(%i0, :), rest(%i0, :))))
+	land( iter( %1, u( .at_most, %0, first( %i0, : ), rest( %i0, : ))))
 
 --
 
@@ -267,10 +267,10 @@ One stat passed is no higher than values associated ("or _at_most")
 	1: stat.path:value|stat.path:value
 	(cannot be used for "this stat" situations)
 	e.g.:
-		u(.at_most_one, %0, merit.fame:3 attribute.presence:3)
+		u( .at_most_one, %0, merit.fame:3 attribute.presence:3 )
 
 &.At_Most_One dd=
-	lor(iter(%1, u(.at_most, %0, first(%i0, :), rest(%i0, :))))
+	lor( iter( %1, u( .at_most, %0, first( %i0, : ), rest( %i0, : ))))
 
 --
 
@@ -284,24 +284,24 @@ This stat is no higher than another stat
 	a: add value(s)
 
 	e.g.:
-		u(.at_most_stat, %0, merit.hidden_life, advantage.wyrd, %2)
-		u(.at_most_stat, %0, skill.academics, advantage.wyrd+1, %2)
+		u( .at_most_stat, %0, merit.hidden_life, advantage.wyrd, %2 )
+		u( .at_most_stat, %0, skill.academics, advantage.wyrd+1, %2 )
 
 &.At_Most_Stat dd=
-localize(
+localize( 
 @@ .. sloppy, but gets the job done
-	[setq(t, trim(first(edit(%2, -, +-), +)))]
-	[setq(a, iter(rest(edit(edit(%2, -%b, -), -, %b+-), +), %i0, +))]
-	[u(
+	[setq( t, trim( first( edit( %2, -, +- ), + )))]
+	[setq( a, iter( rest( edit( edit( %2, -%b, - ), -, %b+- ), + ), %i0, + ))]
+	[u( 
 		.at_most, 
 		%0, 
 		%1, 
-		ladd(
-			[u(.value, %0, %qt)] 
-			%qa
+		ladd( 
+			[u( .value, %0, %qt )] 
+			%qa 
 		), 
-		%3
-	)]
+		%3 
+	)] 
 )
 
 
@@ -320,11 +320,11 @@ Stat's "first" text value matches exactly
 	2: value (text)
 	3: stat being set (ignore sheet value if passed)
 	e.g.:
-		u(.is, %0, bio.kith, shadowsoul)
-		u(.is_full, %0, bio.seeming, seemingless, %2)
+		u( .is, %0, bio.kith, shadowsoul )
+		u( .is_full, %0, bio.seeming, seemingless, %2 )
 
 &.Is dd=
-	strmatch(%2, if(t(%3), %3, u(.value, %0, %1)))
+	strmatch( %2, if( t( %3 ), %3, u( .value, %0, %1 )))
 
 --
 
@@ -334,11 +334,11 @@ Stat's "full" value matches
 	2: value (text)
 	3: stat being set (ignore sheet value if passed)
 	e.g.:
-		u(.is_full, %0, bio.template, human.fae-touched)
-		u(.is_full, %0, bio.template, changeling, %2)
+		u( .is_full, %0, bio.template, human.fae-touched )
+		u( .is_full, %0, bio.template, changeling, %2 )
 
 &.Is_Full dd=
-	strmatch(%2, if(t(%3), %3, u(.value_full, %0, %1)))
+	strmatch( %2, if( t( %3 ), %3, u( .value_full, %0, %1 )))
 
 
 --
@@ -349,11 +349,11 @@ Stat's "first" text value doesn't match
 	2: value (text)
 	3: stat being set (ignore sheet value if passed)
 	e.g.:
-		u(.is_not, %0, advantage.vice, pride)
-		u(.is_not, %0, bio.seeming, seemingless, %2)
+		u( .is_not, %0, advantage.vice, pride )
+		u( .is_not, %0, bio.seeming, seemingless, %2 )
 
 &.Is_Not dd=
-	not(u(.is, %0, %1, %2, %3))
+	not( u( .is, %0, %1, %2, %3 ))
 
 --
 
@@ -362,10 +362,10 @@ Stat's "first" text item matches one from a list
 	1: stat.path
 	2: one.of.list
 	e.g.:
-		u(.is_one_of, %0, bio.template, changeling.human)
+		u( .is_one_of, %0, bio.template, changeling.human )
 
 &.Is_One_Of dd=
-	t(match(%2, first(u(%0/_%1), .), .))
+	t( match(%2, first( u( %0/_%1 ), . ), . ))
 
 --
 
@@ -374,10 +374,10 @@ Stat's "first" text value matches none from a list
 	1: stat.path
 	2: one.of.list
 	e.g.:
-		u(.is_none_of, %0, bio.kith, %1.Kithless)
+		u( .is_none_of, %0, bio.kith, %1.Kithless )
 
 &.Is_None_Of dd=
-	not(u(.is_one_of, %0, %1, %2))
+	not( u( .is_one_of, %0, %1, %2 ))
 
 
 --------------------------------------------------------------------------------
@@ -392,10 +392,10 @@ Sheet has a stat
 	0: sheet dbref
 	1: stat.path
 	e.g.:
-		u(.has, %0, skill.crafts)
+		u( .has, %0, skill.crafts )
 
 &.Has dd=
-	t(u(.value, %0, %1))
+	t( u( .value, %0, %1 ))
 
 --
 
@@ -403,10 +403,10 @@ Sheet doesn't have a stat
 	0: sheet dbref
 	1: stat.path
 	e.g.:
-		u(.has_not, %0, merit.fame)
+		u( .has_not, %0, merit.fame )
 
 &.Has_Not dd=
-	not(u(.value, %0, %1))
+	not( u( .value, %0, %1 ))
 
 --
 
@@ -414,10 +414,10 @@ Sheet has one of the stats from a list
 	0: sheet dbref
 	1: list.of stat.paths to.check
 	e.g.:
-		u(.has_one_of, %0, merit.clairvoyance merit.channeling_(spirit))
+		u( .has_one_of, %0, merit.clairvoyance merit.channeling_(spirit) )
 
 &.Has_One_Of dd=
-	lor(iter(%1, u(.has, %0, %i0)))
+	lor( iter( %1, u( .has, %0, %i0 )))
 
 --
 
@@ -425,10 +425,10 @@ Sheet has all of the stats from a list
 	0: sheet dbref
 	1: list.of stat.paths to.check
 	e.g.:
-		u(.has_all_of, %0, merit.astral_projection merit.thought_projection)
+		u( .has_all_of, %0, merit.astral_projection merit.thought_projection )
 
 &.Has_All_Of dd=
-	land(iter(%1, u(.has, %0, %i0)))
+	land( iter( %1, u( .has, %0, %i0 )))
 
 --
 
@@ -436,10 +436,10 @@ Sheet has none of the stats from a list
 	0: sheet dbref
 	1: list.of stat.paths to.check
 	e.g.:
-		u(.has_none_of, %0, merit.occlusion merit.hidden_life)
+		u( .has_none_of, %0, merit.occlusion merit.hidden_life )
 
 &.Has_None_Of dd=
-	not(u(.has_one_of, %0, %1))
+	not( u( .has_one_of, %0, %1 ))
 
 
 --------------------------------------------------------------------------------
@@ -451,18 +451,18 @@ Returns the lowst or highest value of a list of stats.  We have to fold our own
 	0: sheet dbref
 	1: list.of stat.paths to.check
 	e.g.:
-		u(.min_of, %0, merit.occlusion merit.hidden_life))
-		u(.max_of, %0, merit.occlusion merit.hidden_life))
+		u( .min_of, %0, merit.occlusion merit.hidden_life ))
+		u( .max_of, %0, merit.occlusion merit.hidden_life ))
 
 --
 
 &.Min_Of dd=
-	min(
-		u(.value, %0, first(%1)), 
-		if(
-			dec(words(rest(%1))), 
-			u(.min_of, %0, rest(%1)), 
-			u(.value, %0, rest(%1))
+	min( 
+		u( .value, %0, first( %1 )), 
+		if( 
+			dec( words( rest( %1 ))), 
+			u( .min_of, %0, rest( %1 )), 
+			u( .value, %0, rest( %1 ))
 		)
 	)
 
@@ -470,12 +470,12 @@ Returns the lowst or highest value of a list of stats.  We have to fold our own
 --
 
 &.Max_Of dd=
-	max(
-		u(.value, %0, first(%1)), 
-		if(
-			dec(words(rest(%1))), 
-			u(.max_of, %0, rest(%1)), 
-			u(.value, %0, rest(%1))
+	max( 
+		u( .value, %0, first( %1 )), 
+		if( 
+			dec( words( rest( %1 ))), 
+			u( .max_of, %0, rest( %1 )), 
+			u( .value, %0, rest( %1 ))
 		)
 	)
 
@@ -494,15 +494,15 @@ Item name must be exact or contain its own wildcards.
 	1: stat.path
 	2: value
 	e.g.:
-		u(.list_has, %0, bio.kith, runnerswift)
+		u( .list_has, %0, bio.kith, runnerswift )
 
 --
 
 &.list_has dd=
-	t(match(
-		first(u(%0/_%1), |), 
+	t( match( 
+		first( u( %0/_%1 ), | ), 
 		%2,
-		.
+		. 
 	))
 
 
@@ -521,15 +521,15 @@ Else, assumes translating name->value
 --
 
 &.class_translate_list dd=
-	case(1, 
+	case( 1, 
 @@ .. number value -> name
-		isnum(%1), 
-		elements(rest(v(%0), |), %1, .), 
+		isnum( %1 ), 
+		elements( rest( v( %0 ), | ), %1, . ), 
 @@ .. text value -> name
-		t(match(first(v(%0), |), %1, .)), 
-		elements(rest(v(%0), |), match(first(v(%0), |), %1, .), .), 
+		t( match( first( v( %0), |), %1, . )), 
+		elements( rest( v( %0), | ), match( first( v( %0), | ), %1, . ), . ), 
 @@ .. name -> value
-		elements(first(v(%0), |), match(rest(v(%0), |), %1*, .), .)
+		elements( first( v( %0), | ), match( rest( v( %0), | ), %1*, .), . )
 	)
 
 
@@ -545,10 +545,10 @@ Rite, add this function to the prerequisite.
 --
 
 &.rites_check dd=
-	lte(%1, u(.value, %0, merit.rituals))
+	lte( %1, u( .value, %0, merit.rituals ))
 
 &.gifts_check dd=
-	lte(%1, u(.max_of, %0, iter(lattr(%0/_renown.*), trim(%i0, b, _))))
+	lte( %1, u(.max_of, %0, iter( lattr( %0/_renown.* ), trim( %i0, b, _ ))))
 
 --
 
@@ -569,22 +569,29 @@ in his highest primary Renown.
 --
 
 &.renown_check dd=
-localize(
+localize( 
 
 @@ .. grab auspice and tribe renown's 
-	[setq(a, rest(first(grepi(%!, tags.renown.*, u(.value, %0, bio.auspice))), .))]
-	[setq(t, rest(first(grepi(%!, tags.renown.*, u(.value, %0, bio.tribe))), .))]
-
-@@ .. max of tribe or auspice ("primary") renowns (can't use _max_of)
-	[setq(m, 
-		max(
-@@ .. .. if renown being raised is self, add amt it's being raised by
-			add(u(.value, %0, %qa), if(strmatch(%qa, %1), %2, 0)), 
-			add(u(.value, %0, %qt), if(strmatch(%qt, %1), %2, 0))
+	[setq( a, 
+		rest( 
+			first( grepi( %!, tags.renown.*, u( .value, %0, bio.auspice ))), 
+			. 
 		)
 	)]
+	[setq( t, 
+		rest( first( grepi( %!, tags.renown.*, u( .value, %0, bio.tribe ))), . )
+	)]
 
-	[u(.at_most, %0, %1, %qm, %2)]
+@@ .. max of tribe or auspice ( "primary" ) renowns ( can't use _max_of )
+	[setq( m, 
+		max( 
+@@ .. .. if renown being raised is self, add amt it's being raised by
+			add( u( .value, %0, %qa ), if( strmatch( %qa, %1 ), %2, 0 )), 
+			add( u( .value, %0, %qt ), if( strmatch( %qt, %1 ), %2, 0 ))
+		 )
+	 )]
+
+	[u( .at_most, %0, %1, %qm, %2 )]
 )
 
 
@@ -599,8 +606,8 @@ trait" based on general power level.
 
 	 0: sheet dbref
 
-think u(dd/.max_trait, num(eric russell))
-think u(dd/.max_trait, num(*thenomain))
+think u( dd/.max_trait, num( eric russell))
+think u( dd/.max_trait, num( *thenomain ))
 
 --
 
@@ -619,7 +626,6 @@ think u(dd/.max_trait, num(*thenomain))
 
 &.max_trait.Changeling dd=advantage.wyrd
 &.max_trait.Werewolf dd=advantage.primal_urge
-&.max_trait.Vampire dd=advantage.blood_potency
 &.max_trait.Promethean dd=advantage.azoth
 &.max_trait.Mage dd=advantage.gnosis
 &.max_trait.Geist dd=advantage.psyche
@@ -639,13 +645,13 @@ function, instead.
 	1: stat.path
 	2: adding to stat, if any (pass %2 to this function, as there usually is)
 
-think u(dd/.max_trait, num(eric russell))
-think u(dd/.max_trait, num(*thenomain))
+think u(dd/.max_trait, num( eric russell ))
+think u(dd/.max_trait, num( *thenomain ))
 
 --
 
 &.trait_check dd=
-	u(.at_most, %0, %1, u(.max_trait, %0), %2)
+	u( .at_most, %0, %1, u( .max_trait, %0 ), %2 )
 
 
 --------------------------------------------------------------------------------

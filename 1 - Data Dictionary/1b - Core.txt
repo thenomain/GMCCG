@@ -48,32 +48,32 @@
 
 @@ -- Attributes: Prereqs for Supernatural Power Level -------------------------
 
-&prerequisite.attribute.intelligence DD=u(.trait_check, %0, attribute.intelligence, %2)
+&prerequisite.attribute.intelligence DD=u( .trait_check, %0, attribute.intelligence, %2 )
 &prereq-text.attribute.intelligence DD=Limited by power level stat
 
-&prerequisite.attribute.wits DD=u(.trait_check, %0, attribute.wits, %2)
+&prerequisite.attribute.wits DD=u( .trait_check, %0, attribute.wits, %2 )
 &prereq-text.attribute.wits DD=Limited by power level stat
 
-&prerequisite.attribute.resolve DD=u(.trait_check, %0, attribute.resolve, %2)
+&prerequisite.attribute.resolve DD=u( .trait_check, %0, attribute.resolve, %2 )
 &prereq-text.attribute.resolve DD=Limited by power level stat
 
 
-&prerequisite.attribute.strength DD=u(.trait_check, %0, attribute.strength, %2)
+&prerequisite.attribute.strength DD=u( .trait_check, %0, attribute.strength, %2 )
 &prereq-text.attribute.strength DD=Limited by power level stat
 
-&prerequisite.attribute.dexterity DD=u(.trait_check, %0, attribute.dexterity, %2)
+&prerequisite.attribute.dexterity DD=u( .trait_check, %0, attribute.dexterity, %2 )
 &prereq-text.attribute.dexterity DD=Limited by power level stat
 
-&prerequisite.attribute.stamina DD=u(.trait_check, %0, attribute.stamina, %2)
+&prerequisite.attribute.stamina DD=u( .trait_check, %0, attribute.stamina, %2 )
 &prereq-text.attribute.stamina DD=Limited by power level stat
 
-&prerequisite.attribute.presence DD=u(.trait_check, %0, attribute.presence, %2)
+&prerequisite.attribute.presence DD=u( .trait_check, %0, attribute.presence, %2 )
 &prereq-text.attribute.presence DD=Limited by power level stat
 
-&prerequisite.attribute.manipulation DD=u(.trait_check, %0, attribute.manipulation, %2)
+&prerequisite.attribute.manipulation DD=u( .trait_check, %0, attribute.manipulation, %2 )
 &prereq-text.attribute.manipulation DD=Limited by power level stat
 
-&prerequisite.attribute.composure DD=u(.trait_check, %0, attribute.composure, %2)
+&prerequisite.attribute.composure DD=u( .trait_check, %0, attribute.composure, %2 )
 &prereq-text.attribute.composure DD=Limited by power level stat
 
 
@@ -99,21 +99,21 @@
 &tags.skill.politics DD=mental
 &tags.skill.science DD=mental
 
-&prerequisite.skill.academics DD=u(.trait_check, %0, skill.academics, %2)
+&prerequisite.skill.academics DD=u( .trait_check, %0, skill.academics, %2 )
 &prereq-text.skill.academics DD=Limited by power level stat
-&prerequisite.skill.computer DD=u(.trait_check, %0, skill.computer, %2)
+&prerequisite.skill.computer DD=u( .trait_check, %0, skill.computer, %2 )
 &prereq-text.skill.computer DD=Limited by power level stat
-&prerequisite.skill.crafts DD=u(.trait_check, %0, skill.crafts, %2)
+&prerequisite.skill.crafts DD=u( .trait_check, %0, skill.crafts, %2 )
 &prereq-text.skill.crafts DD=Limited by power level stat
-&prerequisite.skill.investigation DD=u(.trait_check, %0, skill.investigation, %2)
+&prerequisite.skill.investigation DD=u( .trait_check, %0, skill.investigation, %2 )
 &prereq-text.skill.investigation DD=Limited by power level stat
-&prerequisite.skill.medicine DD=u(.trait_check, %0, skill.medicine, %2)
+&prerequisite.skill.medicine DD=u( .trait_check, %0, skill.medicine, %2 )
 &prereq-text.skill.medicine DD=Limited by power level stat
-&prerequisite.skill.occult DD=u(.trait_check, %0, skill.occult, %2)
+&prerequisite.skill.occult DD=u( .trait_check, %0, skill.occult, %2 )
 &prereq-text.skill.occult DD=Limited by power level stat
-&prerequisite.skill.politics DD=u(.trait_check, %0, skill.politics, %2)
+&prerequisite.skill.politics DD=u( .trait_check, %0, skill.politics, %2 )
 &prereq-text.skill.politics DD=Limited by power level stat
-&prerequisite.skill.science DD=u(.trait_check, %0, skill.science, %2)
+&prerequisite.skill.science DD=u( .trait_check, %0, skill.science, %2 )
 &prereq-text.skill.science DD=Limited by power level stat
 
 @@ -- Skills: Physical ---------------------------------------------------------
@@ -136,21 +136,21 @@
 &tags.skill.survival DD=physical
 &tags.skill.weaponry DD=physical
 
-&prerequisite.skill.athletics DD=u(.trait_check, %0, skill.athletics, %2)
+&prerequisite.skill.athletics DD=u( .trait_check, %0, skill.athletics, %2 )
 &prereq-text.skill.athletics DD=Limited by power level stat
-&prerequisite.skill.brawl DD=u(.trait_check, %0, skill.brawl, %2)
+&prerequisite.skill.brawl DD=u( .trait_check, %0, skill.brawl, %2 )
 &prereq-text.skill.brawl DD=Limited by power level stat
-&prerequisite.skill.drive DD=u(.trait_check, %0, skill.drive, %2)
+&prerequisite.skill.drive DD=u( .trait_check, %0, skill.drive, %2 )
 &prereq-text.skill.drive DD=Limited by power level stat
-&prerequisite.skill.firearms DD=u(.trait_check, %0, skill.firearms, %2)
+&prerequisite.skill.firearms DD=u( .trait_check, %0, skill.firearms, %2 )
 &prereq-text.skill.firearms DD=Limited by power level stat
-&prerequisite.skill.larceny DD=u(.trait_check, %0, skill.larceny, %2)
+&prerequisite.skill.larceny DD=u( .trait_check, %0, skill.larceny, %2 )
 &prereq-text.skill.larceny DD=Limited by power level stat
-&prerequisite.skill.stealth DD=u(.trait_check, %0, skill.stealth, %2)
+&prerequisite.skill.stealth DD=u( .trait_check, %0, skill.stealth, %2 )
 &prereq-text.skill.stealth DD=Limited by power level stat
-&prerequisite.skill.survival DD=u(.trait_check, %0, skill.survival, %2)
+&prerequisite.skill.survival DD=u( .trait_check, %0, skill.survival, %2 )
 &prereq-text.skill.survival DD=Limited by power level stat
-&prerequisite.skill.weaponry DD=u(.trait_check, %0, skill.weaponry, %2)
+&prerequisite.skill.weaponry DD=u( .trait_check, %0, skill.weaponry, %2 )
 &prereq-text.skill.weaponry DD=Limited by power level stat
 
 @@ -- Skills: Social -----------------------------------------------------------
@@ -173,21 +173,21 @@
 &tags.skill.streetwise DD=social
 &tags.skill.subterfuge DD=social
 
-&prerequisite.skill.animal_ken DD=u(.trait_check, %0, skill.animal_ken, %2)
+&prerequisite.skill.animal_ken DD=u( .trait_check, %0, skill.animal_ken, %2 )
 &prereq-text.skill.animal_ken DD=Limited by power level stat
-&prerequisite.skill.empathy DD=u(.trait_check, %0, skill.empathy, %2)
+&prerequisite.skill.empathy DD=u( .trait_check, %0, skill.empathy, %2 )
 &prereq-text.skill.empathy DD=Limited by power level stat
-&prerequisite.skill.expression DD=u(.trait_check, %0, skill.expression, %2)
+&prerequisite.skill.expression DD=u( .trait_check, %0, skill.expression, %2 )
 &prereq-text.skill.expression DD=Limited by power level stat
-&prerequisite.skill.intimidation DD=u(.trait_check, %0, skill.intimidation, %2)
+&prerequisite.skill.intimidation DD=u( .trait_check, %0, skill.intimidation, %2 )
 &prereq-text.skill.intimidation DD=Limited by power level stat
-&prerequisite.skill.persuasion DD=u(.trait_check, %0, skill.persuasion, %2)
+&prerequisite.skill.persuasion DD=u( .trait_check, %0, skill.persuasion, %2 )
 &prereq-text.skill.persuasion DD=Limited by power level stat
-&prerequisite.skill.socialize DD=u(.trait_check, %0, skill.socialize, %2)
+&prerequisite.skill.socialize DD=u( .trait_check, %0, skill.socialize, %2 )
 &prereq-text.skill.socialize DD=Limited by power level stat
-&prerequisite.skill.streetwise DD=u(.trait_check, %0, skill.streetwise, %2)
+&prerequisite.skill.streetwise DD=u( .trait_check, %0, skill.streetwise, %2 )
 &prereq-text.skill.streetwise DD=Limited by power level stat
-&prerequisite.skill.subterfuge DD=u(.trait_check, %0, skill.subterfuge, %2)
+&prerequisite.skill.subterfuge DD=u( .trait_check, %0, skill.subterfuge, %2 )
 &prereq-text.skill.subterfuge DD=Limited by power level stat
 
 
@@ -195,11 +195,10 @@
 
 @@ -- Merits: Mental -----------------------------------------------------------
 
-&merit.area_of_expertise_() DD=1|[lcstr( sort( edit(lattr( %!/skill.* ), ), , , . ))]
+&merit.area_of_expertise_() DD=1|*
 &tags.merit.area_of_expertise_() DD=mental
-&prerequisite.merit.area_of_expertise_() DD=cand( u( .at_least, %0, attribute.resolve, 2 ), REQUIRES SKILL SPECIALTY )
+&prerequisite.merit.area_of_expertise_() DD=cand( u( .at_least, %0, attribute.resolve, 2 ), u( .specialty_has, %0, *, %1 ))
 &prereq-text.merit.area_of_expertise_() DD=Resolve 2+ and Expertise must match an existing specialty
-@@ OVERALL NOTE: I need a way to look up specialties, as many merits now need to know
 
 &merit.common_sense DD=3
 &tags.merit.common_sense DD=mental
@@ -241,9 +240,8 @@
 
 &merit.interdisciplinary_specialty_() DD=1|*
 &tags.merit.interdisciplinary_specialty_() DD=mental
-&prerequisite.merit.interdisciplinary_specialty_() DD=?????????? (p. 163)
-@@ spec lookup
-&prereq-text.merit.interdisciplinary_specialty_() DD=Chosen Skill at 3+ with Specialty
+&prerequisite.merit.interdisciplinary_specialty_() DD=u( .at_least, %0, u( .specialty_for, %0, %1 ), 3 )
+&prereq-text.merit.interdisciplinary_specialty_() DD=Chosen specialty must belong to a Skill at 3+
 
 &merit.language_() DD=1|*
 &tags.merit.language_() DD=mental
@@ -314,13 +312,18 @@
 
 &merit.quick_draw_() DD=1|Weaponry.Firearms
 &tags.merit.quick_draw_() DD=physical
-&prerequisite.merit.quick_draw_() DD=u( .at_least, %0, attribute.Wits, 3 )
-&prereq-text.merit.quick_draw_() DD=Wits 3+
-@@ The specifiers for this merit should be “specialty in firearms or weaponry” not just “firearms or weaponry”, but I don’t know how to specify that.
-@@ spec lookup
+&prerequisite.merit.quick_draw_() DD=
+	cand( 
+		u( .at_least, %0, attribute.Wits, 3 ), 
+		cor( 
+			u( .specialty_has, %0, Brawl Melee Firearms, %1 ), 
+			u( .has, %0, merit.[edit( %1, %b, _ )] )
+		)
+	)
+&prereq-text.merit.quick_draw_() DD=Wits 3+, and either the type is a specialty of that weapon or a learned fighting style
 
 &merit.parkour DD=1.2.3.4.5
-&tags.merit.parkour DD=physical
+&tags.merit.parkour DD=physical.style
 &prerequisite.merit.parkour DD=u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 )
 &prereq-text.merit.parkour DD=Dexterity 3+ & Athletics 2+
 
@@ -333,7 +336,7 @@
 &tags.merit.small_framed DD=chargen-only.physical
 
 
-@@ -- Core Merits: Social ------------------------------------------------------
+@@ -- Merits: Social -----------------------------------------------------------
 
 &merit.allies_() DD=1.2.3.4.5|*
 &tags.merit.allies_() DD=social
@@ -351,7 +354,9 @@
 
 &merit.contacts_() DD=1|*
 &tags.merit.contacts DD=social
-@ I made this a 1-dot Merit because in GMC you can’t have more than a single dot per tpye of Contacts and it’s just easier to keep track of if they are 1-dot Merits with specifiers. This is how the Vampire book does it and I prefer it. -- Manu.
+@@ I made this a 1-dot Merit because in GMC you can’t have more than a single 
+@@ dot per tpye of Contacts and it’s just easier to keep track of if they are 
+@@ 1-dot Merits with specifiers. This is how the Vampire book does it.
 
 &merit.etiquette DD=1.2.3.4.5
 &tags.merit.etiquette DD=social
@@ -368,16 +373,17 @@
 
 &merit.fixer DD=2
 &tags.merit.fixer DD=social
-&prerequisite.merit.fixer DD=cand( u( .at_least, %0, attribute.wits, 3 ), <2 or more contacts> )
+&prerequisite.merit.fixer DD=cand( u( .at_least, %0, attribute.wits, 3 ), gte( words( lattr( %0/_merit.contacts_* )), 2 ))
 &prereq-text.merit.fixer DD=Wits 3+ & 2 or more Contacts
-@@So since I made Contacts a 1-dot Merit, and Fixer requires Contacts 2, I’m not sure what the code should be to make sure that the prerequisite is two instances of the Contacts Merit.
+@@ So since I made Contacts a 1-dot Merit, and Fixer requires Contacts 2, I’m not sure what the code should be to make sure that the prerequisite is two instances of the Contacts Merit.
 @@ GENERAL NOTE: Need a way to look up a list of traits by name with wildcard
 
 &merit.hobbyist_clique_() DD=2|*|*
 &tags.merit.hobbyist_clique_() DD=social
 &prerequisite.merit.hobbyist_clique_() DD=u( .at_least_all, %0, attribute.wits:3 merit.contacts:2 )
 &prereq-text.merit.hobbyist_clique_() DD=
-@@Not sure how to code it so that the prerequisite is a 2 in the Skill associated with the Merit.
+@@ Not sure how to code it so that the prerequisite is a 2 in the Skill 
+@@ associated with the Merit.
 @@ Thought: "Hobbyist Clique (Computer Club).Computers"
 
 &merit.inspiring DD=3
@@ -392,8 +398,8 @@
 
 &merit.mentor_() DD=1.2.3.4.5|*
 &tags.merit.mentor_() DD=social
-@@ Mentor requires that the character pick 3 stats to give to the Mentor as fields where the mentor can be helpful; I don’t know how to represent that. I guess probably a +note? Eh.
-@@ +note, yes.
+@@ Mentor requires that the character pick 3 stats to give to the Mentor as 
+@@ fields where the mentor can be helpful; Use +note
 
 &merit.mystery_cult_initiation_() DD=1.2.3.4.5|*
 &tags.merit.mystery_cult_initiation_() DD=social
@@ -409,7 +415,8 @@
 
 &merit.retainer_() DD=1.2.3.4.5|*
 &tags.merit.retainer_() DD=social
-@@ Like Mentor, since we are going to be using Blackjack/Baltimore’s House Rules for Retainers. I’ll get more into it later.
+@@ Like Mentor, since we are going to be using Blackjack/Baltimore’s House Rules 
+@@ for Retainers. I’ll get more into it later.
 
 &merit.safe_place_() DD=1.2.3.4.5|*
 &tags.merit.safe_place_() DD=social
@@ -433,10 +440,8 @@
 
 &merit.taste DD=1
 &tags.merit.taste DD=social
-&prerequisite.merit.taste DD=u( .at_least, %0, skill.crafts, 2 )
+&prerequisite.merit.taste DD=cand( u( .at_least, %0, skill.crafts, 2 ), 		u( .specialty_has, %0, Crafts Expression, * ))
 &prereq-text.merit.taste DD=Crafts 2+ and Specialty in Crafts or Expression
-@@ Dunno how to reconcile this!
-@@ spec lookup
 
 &merit.true_friend_() DD=3|*
 &tags.merit.true_friend_() DD=social
@@ -547,58 +552,58 @@
 @@ -- Core Merits: Supernatural ------------------------------------------------
 
 &merit.aura_reading DD=3
-&tags.merit.aura_reading DD=human.mental
+&tags.merit.aura_reading DD=human.supernatural.mental
 
 &merit.biokinesis DD=1.2.3.4.5
-&tags.merit.biokinesis DD=human.physical
+&tags.merit.biokinesis DD=human.supernatural.physical
 
 &merit.clairvoyance DD=3
-&tags.merit.clairvoyance DD=human.mental
+&tags.merit.clairvoyance DD=human.supernatural.mental
 
 &merit.cursed DD=2
-&tags.merit.cursed DD=human.mental
+&tags.merit.cursed DD=human.supernatural.mental
 
 &merit.medium DD=2
-&tags.merit.medium DD=human.mental
+&tags.merit.medium DD=human.supernatural.mental
 &prerequisite.merit.medium DD=u( .at_least, %0, skill.empathy )
 &prereq-text.merit.medium DD=Empathy 2+
 
 &merit.mind_of_a_madman DD=2
-&tags.merit.mind_of_a_madman DD=human.mental
+&tags.merit.mind_of_a_madman DD=human.supernatural.mental
 &prerequisite.merit.mind_of_a_madman DD=u( .at_least, %0, skill.empathy )
 &prereq-text.merit.mind_of_a_madman DD=Empathy 2+
 
 &merit.omen_sensitivity DD=3
-&tags.merit.omen_sensitivity DD=human.mental
+&tags.merit.omen_sensitivity DD=human.supernatural.mental
 
 &merit.psychokinesis DD=3.5
-&tags.merit.psychokinesis DD=human.mental
+&tags.merit.psychokinesis DD=human.supernatural.mental
 
 &merit.psychometry DD=3
-&tags.merit.psychometry DD=human.mental
+&tags.merit.psychometry DD=human.supernatural.mental
 
 &merit.telekinesis DD=1.2.3.4.5
-&tags.merit.telepathy DD=human.mental
+&tags.merit.telepathy DD=human.supernatural.mental
 
 &merit.telepathy DD=3.5
-&tags.merit.telepathy DD=human.mental
+&tags.merit.telepathy DD=human.supernatural.mental
 
 &merit.thief_of_fate DD=3
-&tags.merit.thief_of_fate DD=human.social
+&tags.merit.thief_of_fate DD=human.supernatural.social
 
 &merit.unseen_sense_() DD=2|Vampires.Werewolves.God Machine.Spirits.Ghosts.Angels
-&tags.merit.unseen_sense_() DD=human.mental
+&tags.merit.unseen_sense_() DD=human.supernatural.mental
 &prerequisite.merit.unseen_sense_() dd=u( .at_least, %0, attribute.wits, 2 )
 &prereq-text.merit.unseen_sense_() DD=Wits 2+
 
 
 @@ == CORE ADVANTAGES ==========================================================
 
-@@ -- "integrity" is the, er, integrity stat for humans --
+@@ -- Integrity: the, er, integrity stat for humans ----------------------------
 
-&advantage.morality DD=1.2.3.4.5.6.7.8.9.10|*
+&advantage.integrity DD=1.2.3.4.5.6.7.8.9.10
 &default.advantage.morality DD=7
-&tags.advantage.morality dd=morality.human
+&tags.advantage.morality dd=integrity.human
 
 @@ -- pools like "willpower" need a separate "max" trait which may go up & down
 @@ -- the current pool trait is pulled from the max trait & applied an offset
@@ -612,7 +617,8 @@
 &tags.advantage.willpower_maximum DD=derived.pool
 &default.advantage.willpower_maximum DD=derived
 
-@@ -- Other Advantages --
+
+@@ -- Other Advantages ---------------------------------------------------------
 
 &advantage.defense DD=min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . ))
 &tags.advantage.defense DD=derived
@@ -652,9 +658,6 @@
 
 &bio.birthdate DD=*
 &class.bio.birthdate DD=string
-
-@@ -- I don't think we need this one --
-@@ &bio.apparent_birthdate DD=*
 
 &bio.template DD=Human
 &class.bio.template DD=string
