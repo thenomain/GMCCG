@@ -602,8 +602,8 @@
 @@ -- Integrity: the, er, integrity stat for humans ----------------------------
 
 &advantage.integrity DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.morality DD=7
-&tags.advantage.morality dd=integrity.human
+&default.advantage.integrity DD=7
+&tags.advantage.integrity dd=integrity.human
 
 @@ -- pools like "willpower" need a separate "max" trait which may go up & down
 @@ -- the current pool trait is pulled from the max trait & applied an offset
