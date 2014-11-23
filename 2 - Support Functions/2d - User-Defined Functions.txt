@@ -263,7 +263,7 @@ this code to it at the moment, anyhow. You never know.
 
 &f.getstat.workhorse.numeric sfp=
 localize( strcat( 
-@@ 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
+ 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
 	setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
 	iter( 
 		get( %0/%1 ), 
