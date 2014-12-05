@@ -4,6 +4,8 @@
 @create Data Dictionary <dd>
 @set dd=inherit safe
 
+@fo me=&d.sfp dd=[num( Stat Functions Prototype <sfp> )]
+
 @parent dd=codp
 &prefix.functions dd=.
 &prefix.attributes dd=attribute.
