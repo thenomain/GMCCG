@@ -21,6 +21,7 @@ xxx:yyy|xxx:yyy|xxx:yyy
 
 think u( nsc/bio.default, %# )
 
+--=-=-=-==-
 
 &block.bio Sheet: Rows=
 	strcat( 
@@ -99,19 +100,19 @@ output:
 		setq( w, 26 ), 
 		setq( t, 17 ), 
 		setq( m, 
-			iter( #Mental|[ulocal( attributes.mental.default, %# )], 
+			iter( #Mental|[ulocal( attributes.mental.default, %0 )], 
 				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
 				|, | 
 			)
 		), 
 		setq( p, 
-			iter( #Physical|[ulocal( attributes.physical.default, %# )], 
+			iter( #Physical|[ulocal( attributes.physical.default, %0 )], 
 				u( display.trait-and-value, %i0, %qt, dec( %qw ), numeric ), 
 				|, | 
 			)
 		), 
 		setq( s, 
-			iter( #Social|[ulocal( attributes.social.default, %# )], 
+			iter( #Social|[ulocal( attributes.social.default, %0 )], 
 				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
 				|, | 
 			)
@@ -141,19 +142,19 @@ think u( sheet: rows/block.attributes, %# )
 		setq( w, 26 ), 
 		setq( t, 17 ), 
 		setq( m, 
-			iter( #Mental|[ulocal( skills.mental.default, %# )], 
+			iter( #Mental|[ulocal( skills.mental.default, %0 )], 
 				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
 				|, | 
 			)
 		), 
 		setq( p, 
-			iter( #Physical|[ulocal( skills.physical.default, %# )], 
+			iter( #Physical|[ulocal( skills.physical.default, %0 )], 
 				u( display.trait-and-value, %i0, %qt, dec( %qw ), numeric ), 
 				|, | 
 			)
 		), 
 		setq( s, 
-			iter( #Social|[ulocal( skills.social.default, %# )], 
+			iter( #Social|[ulocal( skills.social.default, %0 )], 
 				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
 				|, | 
 			)
@@ -205,7 +206,7 @@ think u( nsc/display.value.pool, 4.-2, 5.-1)
 		setq( c, rest( setr( y, first( %qx, | )), : )), 
 		setq( p, last( %qx, : )), 
 
-@@ .. morality
+@@ .. integrity
 		setq( z, 
 			iter( u( traits.morality.default, %0 ), 
 				u( display.trait-and-value, %i0, %qt, %qw, string ), 
@@ -228,7 +229,16 @@ think u( nsc/display.value.pool, 4.-2, 5.-1)
 
 --
 
+&_ADVANTAGE.WILLPOWER me=derived
+&_ADVANTAGE.WILLPOWER_MAXIMUM me=derived
+
 think u( sheet: rows/block.traits, %# )
+
+&_ADVANTAGE.WILLPOWER me=derived.-2
+&_ADVANTAGE.WILLPOWER_MAXIMUM me=derived.-1
+
+think u( sheet: rows/block.traits, %# )
+
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
@@ -236,9 +246,9 @@ think u( sheet: rows/block.traits, %# )
 	strcat( 
 		setq( w, 26 ), 
 		setq( t, 17 ), 
+		setq( d, u( advantages.default, %0 )), 
 		setq( a, 
-			iter( 
-				u( nsc/advantages.default, %0 ), 
+			iter( %qd, 
 				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
 				|, | 
 			)
@@ -281,3 +291,30 @@ think u( sheet: rows/block.advantages, %# )
 		)
 	)
 
+--
+
+think u( sheet: rows/block.health, %# )
+
+-==--==--=-=-=-=-=-=-=
+
+FINAL SHEET:
+
+0: dbref of sheet
+
+&display.sheet sheet: rows=
+	strcat( 
+		header( This is a sheet! ), %r, 
+		u( block.bio, %0 ), %r, 
+		u( block.attributes, %0 ), %r, 
+		u( block.skills, %0 ), %r, 
+		u( block.advantages, %0 ), %r, 
+		u( block.traits, %0 ), %r, 
+		u( block.health, %0 ), %r, 
+		footer( )
+	)
+
+--
+
+think u( sheet: rows/display.sheet, %# )
+
+=--=-==--==-=-=--==-=-
