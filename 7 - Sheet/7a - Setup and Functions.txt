@@ -69,7 +69,47 @@ does not have the ability to handle nesting.
 == CROSS-PLATFORM FUNCTIONS ====================================================
 
 &.titlestr nsc=titlestr( edit( %0, _, %b ))
+&.isstaff nsc=isstaff( %0 )
 
+
+
+================================================================================
+== COMMAND: SHEET ==============================================================
+
+We're putting this at the start, as it does a little checking and calls the 
+specific sheet object's '&display.sheet' attribute.
+
+Here we're starting to use '.sheet.<pref>' as a way to set preferences.
+
+--
+
+&c.sheet nsc=$^\+?sheet( [^ ]+)?$:
+	think cat( 
+		target:, setr( t, if( t( %1 ), trim( %1 ), %# )), %r, 
+		pmatch:, setr( p, pmatch( %qt )), %r, 
+		sheet loc:, setr( s, u( v( d.sfp )/f.find-sheet, %qp )), %r, 
+		which sheet?:, setr( w, default( %#/.sheet.display, rows )), %r, 
+		where sheet display:, setr( a, locate( %!, Sheet: %qw, i ))
+	); 
+
+	@assert t( %qp )={ @pemit %#=Player not found. }; 
+
+	@assert isdbref( %qs )={ @pemit %#=Sheet not found. }; 
+
+@@	@break cor( u( .isstaff, %# ), not( %qt ), not( strmatch( %qp, %# )))={ 
+@@		@pemit %#=Staff only. 
+@@	}; 
+
+	@assert t( %qa )={ 
+		@pemit %#=I can't find the sheet display type you want me to find. 
+		This is a lame error. 
+	}; 
+
+	@pemit %#=u( %qw/display.sheet, %qs ); 
+
+--
+
+@set nsc/c.sheet=regex
 
 
 ================================================================================
