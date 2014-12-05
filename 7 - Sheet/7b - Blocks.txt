@@ -263,7 +263,7 @@ This will probably be one of the most varied blocks, as each splat has its own.
 --
 
 &traits.morality.default nsc=
-		ulocal( f.cheat_getstat.morality, %0, morality )
+		ulocal( f.cheat_getstat.morality, %0, integrity )
 
 
 
