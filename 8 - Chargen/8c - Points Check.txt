@@ -1,0 +1,83 @@
+================================================================================
+== Were Points Spent Correctly? ================================================
+
+This is our generic checker, returning boolean 1/0 (true/false) if the category adds up correctly.
+
+It does NOT check that points were spent correctly, only if they were spent!  For instance, it won't check if 2-point Goblin Contracts were spent.
+
+
+--------------------------------------------------------------------------------
+-- Pts Valid?: Attributes ------------------------------------------------------
+
+Check for: 3/4/5 points
+0: dbref of sheet
+a: attributes
+
+--
+
+&f.pts-valid?.attributes cg=
+	strcat( 
+		setq( a, sort( u( f.allocated.attributes, %0 ), n, / )), 
+		cand( 
+			eq( first( %qa, / ), 3 ), 
+			eq( elements( %qa, 2, / ), 4 ), 
+			eq( last(%qa, / ), 5 )
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Pts Valid?: Skills ----------------------------------------------------------
+
+Check for: 4/7/11 points
+0: dbref of sheet
+s: skills
+
+--
+
+&f.pts-valid?.skills cg=
+	strcat( 
+		setq( s, sort( u( f.allocated.skills, %0 ), n, / )), 
+		and(
+			eq( first( %qs, / ), 4 ), 
+			eq( elements( %qs, 2, / ), 7 ), 
+			eq( last( %qs, / ), 11 )
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Pts Valid?: Specialties -----------------------------------------------------
+
+Check for specialties in a list of yes/no: 
+<standard>`<template>`<specialty>`<sub-specialty>
+<standard> need to be 3, otherwise check based on tempalte
+
+0: dbref of sheet
+s: specialties
+t: template
+
+--
+
+&f.pts-valid?.specialties cg=
+	strcat(
+		setq( s, u( f.allocated.specialties, %0 )), 
+		setq( t, u( %0/_bio.template )), 
+		land( 
+			[eq( words( first( %qs, ` )), 3 )] 
+			[udefault( f.pts-valid?.specialties.%qt, 1, %0, %qs )] 
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Pts Valid?: Merits ----------------------------------------------------------
+
+0: dbref of sheet
+m: merits
+t: template
+
+--
+
+&f.pts-valid?.merits cg=eq( ladd( u( f.allocated.merits, %0 ), / ), 7 )
+

@@ -1,0 +1,127 @@
+Prerequisites Check
+
+================================================================================
+== Check Prerequisites =========================================================
+
+Stat prerequisites come in several forms:
+
+	Character Generation Only: via the tag "cgen-only"
+	Template Only: via a tag matching one of the character's templates
+	Stats/Others: via &prerequisite.<statpath> on the data dictionary
+		(reasons for errors on this are stored on &prereq-text.<statpath>)
+
+	The cg-only prereq is a red herring for cg, but not for xp-spends.
+
+
+--------------------------------------------------------------------------------
+-- Prereq Check: CG-Only -------------------------------------------------------
+
+ c & !a = true
+ c &  a = false
+!c & !a = true
+!c &  a = true
+
+--
+
+0: player dbref
+1: stat (without instance)
+returns: 1 if ok, #-1 <reason> if not
+
+--
+
+&f.prerequsite.cg-only cg=
+	if( 
+		not( cand( 
+			hastag?( rest( %1, . ), chargen-only ), 
+			u( .isapproved, %0 )
+		)), 
+		1, 
+		#-1 Chargen-Only stats cannot be gained after approval
+	)
+
+--
+
+think u( cg/f.prerequsite.cg-only, %#, merit.mantle_%(%) )
+
+
+--------------------------------------------------------------------------------
+-- Prereq Check: Template ------------------------------------------------------
+
+Similar code also exists on +stat/template and +stat/view, but I'm not up to 
+re-writing them all together right now. It will probably also end up in the XP 
+spend system.
+
+--
+
+0: sheet dbref
+1: _sheet.statpath_(possibly_instanced)
+returns: 1 if ok, #-1 <reason> if not
+
+i: instance (if exists)
+s: _sheet.statpath_without_instance_()
+t: templates for this stat
+
+--
+
+&f.prerequsite.template cg=
+localize( strcat( 
+	setq( s, ulocal([u( d.sfp )]/f.statpath-without-instance, %1 )), 
+
+@@ .. pull which templates are in this stat's tags
+	setq( t, 
+		setinter( 
+			lcstr( u( [u(d.dd )]/bio.template )), 
+			lcstr( u( [u(d.dd )]/tags.[rest( %qs, _ )] )), 
+			. 
+		)
+	), 
+
+@@ .. are there any? then compare to character's template(s), 
+	if( 
+		t( %qt ), 
+		if( 
+			t( setinter( lcstr( u( %0/_bio.template )), %qt, . )), 
+			1, 
+			#-1 Character Template Not Allowed For This Stat
+		), 
+@@ .. else return "1" because it passes all template checks
+		1 
+	)
+))
+
+
+--------------------------------------------------------------------------------
+-- Prereq Check: Other ---------------------------------------------------------
+
+That is, the 'Dex 3+, etc.' checks.
+
+--
+
+0: sheet dbref
+1: _sheet.statpath_(possibly_instanced)
+2: value to raise by
+returns: 1 if ok, #-1 <reason> if not
+
+i: instance (if exists)
+s: _sheet.statpath_without_instance_()
+p: return for &prerequisite.<statpath>
+
+--
+
+&f.prerequsite.other cg=
+localize( strcat( 
+	setq( i, before( rest(%1, %( ), %) )), 
+	setq( s, ulocal( [u( d.sfp )]/f.statpath-without-instance, %1 )), 
+	setq( p, 
+		ulocal( [u( d.dd )]/prerequisite.[rest( %qs, _ )], %0, %qi, %2 )
+	), 
+
+@@ .. if null was returned, that's a 1, else check in more detail
+	case( 0, 
+		comp( %qp, ), 1, 
+		%qp, #-1 [u( [u( d.dd )]/prereq-text.[rest( %qs, _ )] )], 
+		1 
+	)
+))
+
+

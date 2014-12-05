@@ -1,0 +1,129 @@
+CHARGEN
+or at least many things chargen
+mainly the "is this sheet chargen-compatible" system
+
+
+
+================================================================================
+== SETUP =======================================================================
+
+@create GMC Chargen <cg>
+@set GMC Chargen <cg>=inherit safe
+
+@parent GMC Chargen <cg>=codp
+
+
+
+================================================================================
+== DATA ========================================================================
+
+@fo me=&d.dd cg=num( data dictionary <dd> )
+@fo me=&d.sfp cg=num( stat functions prototype <sfp> )
+
+
+
+================================================================================
+== FUNCTIONS ===================================================================
+
+
+--------------------------------------------------------------------------------
+-- isapproved ------------------------------------------------------------------
+
+This maybe should be 'is in chargen?', but we work with what we have for now.
+
+This is the testing version. Your game probably should have isapproved().
+
+--
+
+&.isapproved cg=hasattr( %0/_approved )
+
+
+
+================================================================================
+== LIST: Things ================================================================
+
+Functions that provide lists of information that we can use to validate traits.
+
+
+--------------------------------------------------------------------------------
+-- List of Stats Based on Tags -------------------------------------------------
+
+Returns only the stats of a certain category ('*' for 'any') with a certain tag
+or '*' for 'don't filter', in which case don't use this function, 
+use lattr( <sheet>/_<category>.* ) and leave it at that.
+
+List of stats on a sheet, based on passed tags
+	0: sheet dbref
+	1: category (may be *)
+	2: tags.list (all required, if any, for 'mental', etc., * for 'all')
+	3: 'or' for the default behavior of hastag? (defaults to 'and')
+
+	returns: character sheet statpaths
+
+--
+
+&f.list-stats-tags cg=
+	filter( 
+		[v( d.sfp )]/fil.list-stats-tags, 
+@@ .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
+@@ .. so we can use the filter for non-sheet matches
+		rest( edit( lattr( %0/_%1.* ), %b_, %b ), _ ), 
+		, 
+		, 
+		%2, 
+		not( strmatch( %3, or ))
+	)
+
+--
+
+think u( cg/f.list-stats-tags, %#, attribute, mental )
+think u( cg/f.list-stats-tags, %#, attribute, resistance )
+think u( cg/f.list-stats-tags, %#, attribute, resistance.mental )
+think u( cg/f.list-stats-tags, %#, attribute, * )
+
+think u( cg/f.list-stats-tags, %#, skill, physical.mental.social, or )
+
+think u( cg/f.list-stats-tags, %#, merit, human )
+think u( cg/f.list-stats-tags, %#, *, power level )
+think u( cg/f.list-stats-tags, %#, *, energy )
+think u( cg/f.list-stats-tags, %#, *, morality )
+
+
+--------------------------------------------------------------------------------
+-- List Total Points in a Category/Tags Combo ----------------------------------
+
+Does not presently work for List stats
+
+	0: sheet dbref
+	1: category (attribute, skill, merit, etc)
+	2: tags.list (all required, if any, for 'mental', etc., '*' for 'all')
+
+	returns: total number of dots in that category.
+
+	l: list of statpaths (you can see where we're going with this)
+	s: sum of points in each category (primary stats only)
+	b: number
+
+--
+
+&f.points.category cg=
+strcat( 
+	setq( l, u( f.list-stats-tags, %0, %1, %2 )), 
+	setr( 
+		s, 
+		ladd( 
+			iter( 
+				%ql, 
+				first( u( %0/_%i0 ), . )
+			)
+		)
+	)
+)
+
+--
+
+think u( cg/f.points.category, %#, attribute, social )
+think u( cg/f.points.category, %#, skill, social )
+think u( cg/f.points.category, %#, merit, * )
+
+

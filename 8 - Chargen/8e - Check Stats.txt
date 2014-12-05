@@ -1,0 +1,338 @@
+Check Stats
+
+
+================================================================================
+== CHECK STATS =================================================================
+
+Let's check someone's entire sheet to see if there are any prerequisite 
+inconsistencies. Also is THE ONLY PLACE WE VALIDATE SPECIALTY VALUE, due to the 
+data dictionary structure not able to do this.
+
+Without %2: Validates the existing sheet item.
+With %2: Validates a "new" value.
+
+We don't check cg-only here, as it's only meaningful for xp/spend.
+
+
+--------------------------------------------------------------------------------
+-- Statcheck -------------------------------------------------------------------
+
+Validate a single stat.
+
+--
+
+0: sheet dbref
+1: _sheet.statpath
+2: value to raise by/add to list ('null' for a sheet-only check)
+returns: validation for: <stat value>.<cg-only>.<template>.<prereq>
+
+s: dd.statpath (without instance)
+c: stat's class
+v: current perm value for stat if numeric, full stat otherwise
+t: temp validation results, used here and there
+
+--
+
+&f.statcheck cg=
+localize(  strcat(  
+	setq( s, ulocal( [u( d.sfp )]/f.statpath-without-instance, rest( %1, _ ))), 
+	setq( c, u( [u( d.dd )]/.class, %qs )), 
+	setq( v, case( %qc, numeric, first( u( %0/%1 ), . ), u( %0/%1 ))), 
+
+@@ >> check stat value
+	setq( t, 
+		case( 1, 
+
+@@ .. substat: _*.*.*: base item must be at least 1
+			strmatch( %1, _*.*.* ), 
+			u( f.statcheck.substat, %0, %1, %2 ), 
+
+@@ .. derived: dd value matches [*]: check the sheet value is integer
+@@ .. (but only if it's 'numeric' )
+			cand( 
+				strmatch( %qc, numeric ), 
+				u( [u( d.sfp )]/f.hastag?.workhorse, %qs, derived )
+			), 
+			u( f.statcheck.derived, %0, %qs ), 
+
+@@ .. list: stat with class of "list"
+			strmatch( %qc, list ), 
+			u( f.statcheck.list, %qs, %qv, %2 ), 
+
+@@ .. normal: anything else: validate stat as usual ( name then value )
+			u( f.statcheck.normal, %1, %qs, %qv, %2 )
+		)
+	), 
+	if( t( %qt ), 1, %qt ), ., 
+
+@@ >> check prereqs
+	iter( 
+		cg-only template other, 
+		u( f.prerequsite.%i0, %0, %1, %2 ), , . 
+	)
+ ))
+
+--
+
+think u(cg/f.statcheck, pmatch(dog), _merit.unseen_sense_(wyrd))
+think u(cg/f.statcheck, pmatch(dog), _merit.unseen_sense_(wyrd), 3)
+
+think u(cg/f.statcheck, pmatch(thenomain), _merit.status_(freehold))
+think u(cg/f.statcheck, pmatch(thenomain), _skill.flubber)
+
+think u(cg/f.statcheck, pmatch(isolde), _merit.harvest_(hedge_bounty))
+
+think u(cg/f.statcheck, pmatch(dog), _merit.dual_kith_(water_dweller))
+think u(cg/f.statcheck, pmatch(dog), _merit.dual_kith_(water_dweller), 3)
+
+think u(cg/f.statcheck, num(sheet: eric), _gift.half_moon)
+think u(cg/f.statcheck, num(sheet: eric), _gift.half_moon, 3)
+
+think u(cg/f.statcheck, pmatch(thenomain), _gift.rage)
+
+
+--------------------------------------------------------------------------------
+-- Statcheck: Normal -----------------------------------------------------------
+
+Check that a normal stat's value is valid.
+'normal': anything else - validate stat as usual (name then value)
+
+--
+
+0: _sheet.statpath (with instance)
+1: dd.statpath (without instance)
+2: sheet value
+3: value to raise by (otherwise 0/null)
+
+t: temp whatsit
+i: instance
+d: dd's instance list
+v: value to check (if %3, then do a dance for num/non-num)
+
+--
+
+&f.statcheck.normal cg=
+
+localize( strcat( 
+
+@@ >> see if the stat's even on the DD
+	setq( t, 
+		if( 
+			hasattr( [u( d.dd )], %1 ), 1, #-1 Stat not found
+		)
+	), 
+
+@@ >> grab the instance ( if any ) and check it against the dd.
+@@ .. ( shouldn't something like this be on the stat lookup? no? )
+	setq( t, 
+		if( 
+			cand( t( %qt ), strmatch( %0, _*.*_(*) )), 
+
+@@ .. instance is there: process
+			strcat( 
+				setq( i, edit( strip( rest( %0, %( ), %) ), _, %b )), 
+				setq( d, extract( get( [u( d.dd )]/%1 ), 2, 1, | )), 
+				case( 1, 
+					t( member( %qd, * )), 1, 
+					and( member( %qd, # ), isint( %qi )), 1, 
+					t( match( %qd, %qi, . )), 1, 
+					#-1 Instance is not valid %( %qi%) 
+				)
+			), 
+
+@@ .. instance is not there: pass %qt it on
+			%qt
+		)
+	), 
+
+@@ >> now we did THAT dance, let's find the value we're checking
+	setq( v, 
+		case( 1, 
+@@ .. if sheet value is numeric and there's a new value, add them
+			and( isnum( %2 ), t( %3 )), add( %2, %3 ), 
+@@ .. if sheet value is NOT numeric and there's a new value, use the new value
+			t( %3 ), %3, 
+@@ .. else use sheet value
+			%2
+		)
+	), 
+
+@@ >> if instance was valid, check stat value
+	if( 
+		t( %qt ), 
+@@ .. if statpath is ok, validate the value
+		ulocal( [u( d.stat-functions )]/f.statvalidate.workhorse, %1, %qv ), 
+@@ .. if statpath is not ok, pass its error
+		%qt
+	)
+ ))
+
+--
+
+think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, 9)
+think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, 1)
+think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, -2)
+
+think u(cg/f.statcheck.normal, _gift.rage, gift.rage, 1.3.4, 4)
+
+
+--------------------------------------------------------------------------------
+-- Statcheck: Derived ----------------------------------------------------------
+
+Check that a derived stat's value is valid.
+
+'derived': dd has 'derived' tag - check the sheet value is integer
+(derived stat must be integer)
+
+--
+
+0: sheet dbref
+1: _full.statpath_(with_instance)
+
+--
+
+&f.statcheck.derived cg=
+	if(
+		isint( 
+			first( 
+				ulocal( [u( d.sfp )]/f.getstat.workhorse.numeric, %0, %1 ), 
+				. 
+			)
+		), 
+		1, 
+		#-1 Derived stat is non-numeric
+	)
+
+
+--------------------------------------------------------------------------------
+-- Statcheck: Substat ----------------------------------------------------------
+
+Check that a substat's value is valid.
+
+.. substat: _*.*.*: base item must be at least 1/integer
+.. If _skill.*.*, item itself may only be 1.
+
+--
+
+0: sheet dbref
+1: _sheet.statpath_(full).substat
+2: value to raise by (otherwise null, a sheet-only check)
+
+t: temp whatsit
+
+--
+
+&f.statcheck.substat cg=
+localize(
+	case( 1, 
+
+		cand( 
+			isint( setr(t, first( u( %0/[extract( %1, 1, 2, . )] ), . ))), 
+			gt( %qt, 0 )
+		), 
+		#-1 Substat cannot be set if main stat is non-numeric, 
+
+		and( 
+			strmatch( %1, _skill.* ), 
+			gt( add( u( %0/%1 ), %2 ), 1 )
+		), 
+		#-1 Specialty substats value are 1 
+	)
+)
+
+
+--------------------------------------------------------------------------------
+-- Statcheck: List -------------------------------------------------------------
+
+Check that a list stat's value is valid.
+
+Class:List stats are checked similarly to other types, but each element
+.. '1.2' + '3 5' -> '1.2.3.5'
+
+--
+
+0: dd.statpath (without instance)
+1: sheet value
+2: value to add (otherwise 0/null)
+
+--
+
+&f.statcheck.list cg=
+
+localize( strcat( 
+	setq( l, 
+		setinter( 
+@@ .. valid stats vs.
+			first( get( [u(d.dd)]/%0 ), | ), 
+			setunion( 
+@@ .. .. sheet stats +
+				%1, 
+@@ .. .. stat to add
+				edit( %2, %b, . ), 
+				.
+			), 
+			.
+		)
+	), 
+
+@@ Any matches?
+	if(
+		gte(words(%ql, .), 1), 
+		%ql, 
+		#-1 No list items valid 
+	)
+))
+
+
+
+================================================================================
+== CHECKSTAT FUNCTIONS =========================================================
+
+Now that we know how to check a stat, what's there to check?
+
+
+--------------------------------------------------------------------------------
+-- Badstat? --------------------------------------------------------------------
+
+Does this stat pass the statcheck?
+
+0: sheet dbref
+1: _sheet.statpath
+
+--
+
+&f.badstat? cg=
+	not(land(u(f.statcheck, %1, %0), .))
+
+
+--------------------------------------------------------------------------------
+-- Badstats --------------------------------------------------------------------
+
+0: sheet dbref
+output: All invalid stats on the sheet
+
+--
+
+&f.badstats cg=
+	iter(
+		u( [u( d.sfp )]/d.type-search-order ), 
+		filter( f.badstat?, lattr(%0/_%i0.*), , , %0 )
+	)
+
+--------------------------------------------------------------------------------
+-- Sample output for Checkstats ------------------------------------------------
+
+One way to try it out.
+
+--
+
+&f.temp-output-checkstats cg=[setq( 0, pmatch( %0 ))][setq( b, u( f.badstats, %q0 ))][iter( %qb, >> [u( [u( d.sfp )]/f.statname-workhorse, rest( %i0, . ))]: [itemize( trim( iter( u( f.statcheck, %q0, %i0 ), if( not( %i0 ), [titlestr( rest( %i0 ))]| ), ., @@ ), b, | ), | )], , %r )]
+
+--
+
+think u( cg/f.temp-output-checkstats, %# )
+
+--
+
+@dolist [search(eplayer=and(isapproved(##), t(u(#394/f.temp-output-checkstats, ##))))]=think [header([name(##)])]%r[u(#394/f.temp-output-checkstats, ##)]%r[footer()]%r
+
