@@ -665,9 +665,15 @@ Return the skill that has the passed specialty
 	e.g.:
 		u( .specialty_for, %0, drawing )
 
-
 &.Specialty_For dd=
-	lcstr( first( sort( iter( lattr( %0/_skill.*.%1 ), elements( %i0, 2, . )))))
+	lcstr( 
+		rest( 
+			first( 
+				sort( iter( lattr( %0/_skill.*.%1 ), elements( %i0, 1 2, . )))
+			), 
+			_ 
+		)
+	)
 
 --
 
