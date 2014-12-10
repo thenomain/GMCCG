@@ -105,7 +105,7 @@ Here we're starting to use '.sheet.<pref>' as a way to set preferences.
 		This is a lame error. 
 	}; 
 
-	@pemit %#=u( %qw/display.sheet, %qs ); 
+	@pemit %#=u( %qw/display.sheet, %qs, %qp ); 
 
 --
 

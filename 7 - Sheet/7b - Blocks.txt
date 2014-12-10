@@ -49,7 +49,7 @@ output: <trait>:<value>[.<offset(s)>]|...
 -- Bio.Default -----------------------------------------------------------------
 
 &bio.default nsc=
-	iter( full_name birthdate virtue vice, 
+	iter( full_name birthdate template virtue vice, 
 		if( t( %i0, ), 
 			ulocal( f.cheat_getstat.with_name, %0, bio.%i0, string ), 
 			%b 
@@ -279,7 +279,10 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 &advantages.default nsc=
 	iter( 
-		defense speed initiative perception size, 
+		defense 
+		weaponry_defense brawl_defense 
+		speed initiative perception size, 
+
 		ulocal( f.cheat_getstat.with_name, %0, advantage.%i0, numeric ), 
 		, | 
 	)

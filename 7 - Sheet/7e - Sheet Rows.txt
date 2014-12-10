@@ -51,10 +51,15 @@ think u( sheet: rows/block.bio, %# )
 
 -==-=--=-=-=-=
 
-0: <trait>:<value>
+0: <trait>:<the.value>
 1: width for <trait>
 2: width for column
 3: numeric, list, string (default)
+4: padding
+5: <permanent.pool.value>
+
+v: value
+s: spacing (normally space)
 
 output:
 	----- <sub-header> ----
@@ -66,6 +71,7 @@ output:
 &display.trait-and-value nsc=
 	strcat( 
 		setq( v, rest( %0, : )), 
+		setq( s, ansi( xh, if( strmatch( %4, ), %b, %4 ))), 
 		case( strtrunc( %0, 1 ), 
 @@ .. sub-trait
 			*, %b [trim( rest( %0, * ))], 
@@ -73,9 +79,13 @@ output:
 			#, u( display.subheader, %2, trim( rest( %0, # ))), 
 @@ .. display them normal thangs
 			strcat( 
-				ljust( first( %0, : ), %1 ), 
-				:, %b, 
-				udefault( display.value.%3, %qv, %qv )
+				ljust( cat( first( %0, : ), ), %1, %qs), 
+				if( 
+					not( strmatch( %qs, ansi( xh, %b ))), 
+					%qs, : 
+				), 
+				%b, 
+				udefault( display.value.%3, %qv, %qv, %5 )
 			)
 		)
 	)
@@ -88,6 +98,38 @@ output:
 		[u( display.check-zero, ladd( %0, . ))] 
 		([u( display.check-zero, first( %0, . ))])
 	)
+
+--
+
+0: current.values
+1: permanent.values
+
+c: current total
+o: 'out of' total
+m: normal 'max' for pool
+
+&display.value.pool nsc=
+localize( 
+	strcat( 
+		setq( c, ladd( %0, . )), 
+		setq( o, ladd( %1, . )), 
+		setq( m, first( %1, . )), 
+		ladd( %0, . ), 
+		if( cor( neq( %qc, %qo ), neq( %qo, %qm )), 
+			edit( 
+				strcat( 
+					%b%(, 
+					if( neq( %qc, %qo ), out of %qo%b ), 
+					if( neq( %qo, %qm ), %, max %qm ), 
+					%) 
+				), 
+				%b%,, %,, 
+				%(%,%b, , 
+				%b%), %) 
+			)
+		)
+	)
+)
 
 --
 
@@ -199,7 +241,7 @@ think u( nsc/display.value.pool, 4.-2, 5.-1)
 &block.traits sheet: rows=
 	strcat( 
 		setq( w, 38 ), 
-		setq( t, 25 ), 
+		setq( t, 10 ), 
 
 @@ .. willpower
 		setq( x, ulocal( traits.willpower.default, %0 )), 
@@ -217,9 +259,7 @@ think u( nsc/display.value.pool, 4.-2, 5.-1)
 @@ .. display
 		divider( Traits ), %r, 
 		vcolumns( 
-			%qw:[u( display.trait-and-value, %qy, %qt, %qw, numeric )]|
-			%b [u( display.value.pool, %qc, %qp )], 
-
+			%qw:[u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )], 
 			%qw:%qz, 
 
 			|, 
@@ -242,11 +282,38 @@ think u( sheet: rows/block.traits, %# )
 
 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
+&block.merits sheet: rows=
+	strcat( 
+		setq( w, 79 ), 
+		setq( t, 70 ), 
+		setq( d, u( merits.default, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Merits ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		)
+	)
+
+--
+
+think u( sheet: rows/block.merits, %# )
+
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
 &block.advantages sheet: rows=
 	strcat( 
 		setq( w, 26 ), 
 		setq( t, 17 ), 
-		setq( d, u( advantages.default, %0 )), 
+		setq( d, filter( filter.out-zeros, u( advantages.default, %0 ), |, | )), 
 		setq( a, 
 			iter( %qd, 
 				u( display.trait-and-value, %i0, %qt, %qw, numeric ), 
@@ -266,6 +333,14 @@ think u( sheet: rows/block.traits, %# )
 think u( sheet: rows/block.advantages, %# )
 
 -=-=-=-=-=-==-=--=-=-=-=-=-=
+
+&filter.out-zeros nsc=
+	cand( 
+		neq( rest( %0, : ), 0 ), 
+		not( strmatch( rest( %0, : ), ))
+	)
+
+-==--=-=-=-=-=-=-=-=-=-=-=-=-
 
 &block.health sheet: rows=
 	strcat( 
@@ -300,14 +375,23 @@ think u( sheet: rows/block.health, %# )
 FINAL SHEET:
 
 0: dbref of sheet
+1: dbref of target
+
+--
 
 &display.sheet sheet: rows=
 	strcat( 
-		header( This is a sheet! ), %r, 
+		header( 
+			cat( 
+				name( %1 ), 
+				%(%0%) 
+			)
+		), %r, 
 		u( block.bio, %0 ), %r, 
 		u( block.attributes, %0 ), %r, 
 		u( block.skills, %0 ), %r, 
-		u( block.advantages, %0 ), %r, 
+		u( block.merits, %0 ), %r, 
+		u( block.advantages, %0 ), 
 		u( block.traits, %0 ), %r, 
 		u( block.health, %0 ), %r, 
 		footer( )
@@ -315,6 +399,6 @@ FINAL SHEET:
 
 --
 
-think u( sheet: rows/display.sheet, %# )
+think u( sheet: rows/display.sheet, %#, %# )
 
 =--=-==--==-=-=--==-=-
