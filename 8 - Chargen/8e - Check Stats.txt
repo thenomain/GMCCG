@@ -34,7 +34,7 @@ t: temp validation results, used here and there
 --
 
 &f.statcheck cg=
-localize(  strcat(  
+localize( strcat(  
 	setq( s, ulocal( [u( d.sfp )]/f.statpath-without-instance, rest( %1, _ ))), 
 	setq( c, u( [u( d.dd )]/.class, %qs )), 
 	setq( v, case( %qc, numeric, first( u( %0/%1 ), . ), u( %0/%1 ))), 
@@ -53,7 +53,7 @@ localize(  strcat(
 				strmatch( %qc, numeric ), 
 				u( [u( d.sfp )]/f.hastag?.workhorse, %qs, derived )
 			), 
-			u( f.statcheck.derived, %0, %qs ), 
+			u( f.statcheck.derived, %0, %1 ), 
 
 @@ .. list: stat with class of "list"
 			strmatch( %qc, list ), 
@@ -70,25 +70,21 @@ localize(  strcat(
 		cg-only template other, 
 		u( f.prerequsite.%i0, %0, %1, %2 ), , . 
 	)
- ))
+))
 
 --
 
-think u(cg/f.statcheck, pmatch(dog), _merit.unseen_sense_(wyrd))
-think u(cg/f.statcheck, pmatch(dog), _merit.unseen_sense_(wyrd), 3)
+think u( cg/f.statcheck, %#, _merit.medium )
+think u( cg/f.statcheck, %#, _merit.medium, 1 )
+think u( cg/f.statcheck, %#, _merit.medium, 2 )
+think u( cg/f.statcheck, %#, _merit.etiquette )
+think u( cg/f.statcheck, %#, _merit.unseen_sense_(wyrd), 3 )
 
-think u(cg/f.statcheck, pmatch(thenomain), _merit.status_(freehold))
-think u(cg/f.statcheck, pmatch(thenomain), _skill.flubber)
+think u( cg/f.statcheck.normal, _merit.etiquette, merit.etiquette, 1, @@(null) )
 
-think u(cg/f.statcheck, pmatch(isolde), _merit.harvest_(hedge_bounty))
+think u( cg/f.statcheck, %#, _skill.flubber )
 
-think u(cg/f.statcheck, pmatch(dog), _merit.dual_kith_(water_dweller))
-think u(cg/f.statcheck, pmatch(dog), _merit.dual_kith_(water_dweller), 3)
-
-think u(cg/f.statcheck, num(sheet: eric), _gift.half_moon)
-think u(cg/f.statcheck, num(sheet: eric), _gift.half_moon, 3)
-
-think u(cg/f.statcheck, pmatch(thenomain), _gift.rage)
+think u( cg/f.statcheck, %#, _advantage.size )
 
 
 --------------------------------------------------------------------------------
@@ -136,7 +132,7 @@ localize( strcat(
 					t( member( %qd, * )), 1, 
 					and( member( %qd, # ), isint( %qi )), 1, 
 					t( match( %qd, %qi, . )), 1, 
-					#-1 Instance is not valid %( %qi%) 
+					#-1 Instance is not valid %(%qi%) 
 				)
 			), 
 
@@ -161,19 +157,25 @@ localize( strcat(
 	if( 
 		t( %qt ), 
 @@ .. if statpath is ok, validate the value
-		ulocal( [u( d.stat-functions )]/f.statvalidate.workhorse, %1, %qv ), 
+		ulocal( [u( d.sfp )]/f.statvalidate.workhorse, %1, %qv ), 
 @@ .. if statpath is not ok, pass its error
-		%qt
+		%qt 
 	)
  ))
 
 --
 
-think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, 9)
-think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, 1)
-think u(cg/f.statcheck.normal, _merit.mantle_(spring), merit.mantle_(), 2, -2)
+think u( cg/f.statcheck.normal, _merit.etiquette, merit.etiquette, 1, @@(null) )
 
-think u(cg/f.statcheck.normal, _gift.rage, gift.rage, 1.3.4, 4)
+think u( cg/f.statcheck.normal, _merit.unseen_sense_(god_machine), merit.unseen_sense_(), , 3 )
+
+think u( cg/f.statcheck.normal, _merit.unseen_sense_(god_machine), merit.unseen_sense_(), , 2 )
+
+
+--
+
+think u( dd/.specialty_for, %#, Portraiture )
+
 
 
 --------------------------------------------------------------------------------
@@ -203,6 +205,11 @@ Check that a derived stat's value is valid.
 		#-1 Derived stat is non-numeric
 	)
 
+--
+
+think u( sfp/f.getstat.workhorse.numeric, %#, _advantage.size )
+think u( cg/f.statcheck.derived, %#, _advantage.size )
+
 
 --------------------------------------------------------------------------------
 -- Statcheck: Substat ----------------------------------------------------------
@@ -226,17 +233,19 @@ t: temp whatsit
 localize(
 	case( 1, 
 
-		cand( 
-			isint( setr(t, first( u( %0/[extract( %1, 1, 2, . )] ), . ))), 
+		not( cand( 
+			isint( setr( t, first( u( %0/[elements( %1, 1 2, . )] ), . ))), 
 			gt( %qt, 0 )
-		), 
+		)), 
 		#-1 Substat cannot be set if main stat is non-numeric, 
 
-		and( 
+		cand( 
 			strmatch( %1, _skill.* ), 
 			gt( add( u( %0/%1 ), %2 ), 1 )
 		), 
-		#-1 Specialty substats value are 1 
+		#-1 Specialty substats value are 1, 
+
+		1
 	)
 )
 
@@ -302,7 +311,7 @@ Does this stat pass the statcheck?
 --
 
 &f.badstat? cg=
-	not(land(u(f.statcheck, %1, %0), .))
+	not( land( u( f.statcheck, %1, %0 ), . ))
 
 
 --------------------------------------------------------------------------------
@@ -316,8 +325,9 @@ output: All invalid stats on the sheet
 &f.badstats cg=
 	iter(
 		u( [u( d.sfp )]/d.type-search-order ), 
-		filter( f.badstat?, lattr(%0/_%i0.*), , , %0 )
+		filter( f.badstat?, lattr( %0/_%i0.* ), , , %0 )
 	)
+
 
 --------------------------------------------------------------------------------
 -- Sample output for Checkstats ------------------------------------------------
@@ -326,7 +336,29 @@ One way to try it out.
 
 --
 
-&f.temp-output-checkstats cg=[setq( 0, pmatch( %0 ))][setq( b, u( f.badstats, %q0 ))][iter( %qb, >> [u( [u( d.sfp )]/f.statname-workhorse, rest( %i0, . ))]: [itemize( trim( iter( u( f.statcheck, %q0, %i0 ), if( not( %i0 ), [titlestr( rest( %i0 ))]| ), ., @@ ), b, | ), | )], , %r )]
+&f.temp-output-checkstats cg=
+	strcat( 
+		setq( p, pmatch( %0 )), 
+		setq( b, u( f.badstats, %qp )), 
+		list( %qb, 
+			strcat( 
+				>>%b, 
+				u( [u( d.sfp )]/f.statname.workhorse, rest( %i0, . )), 
+				:%b, 
+				itemize( 
+					trim( 
+						iter( 
+							u( f.statcheck, %qp, %i0 ), 
+							if( not( %i0 ), [titlestr( rest( %i0 ))]| ), 
+							., @@ 
+						), 
+						b, | 
+					), 
+					| 
+				)
+			)
+		)
+	)
 
 --
 
