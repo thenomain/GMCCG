@@ -624,13 +624,13 @@
 &tags.advantage.defense DD=derived
 &default.advantage.defense DD=derived
 
-&advantage.weaponry_defense DD=if( u( .has, %0, merit.defensive_combat_(weaponry) ), add( ladd( u( .value_full, %0, skill.weaponry ), . ), min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . ))))
+&advantage.weaponry_defense DD=if( u( .has, %0, merit.defensive_combat_(weaponry) ), add( ladd( u( .value_full, %0, skill.weaponry ), . ), min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . ))), 0 )
 &tags.advantage.weaponry_defense DD=derived
 &default.advantage.weaponry_defense DD=derived
 
-&advantage.brawl_defense DD=if( u( .has, %0, merit.defensive_combat_(brawl) ), add( ladd( u( .value_full, %0, skill.weaponry ), . ), min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . ))))
-&tags.advantage.weaponry_defense DD=derived
-&default.advantage.weaponry_defense DD=derived
+&advantage.brawl_defense DD=if( u( .has, %0, merit.defensive_combat_(brawl) ), add( ladd( u( .value_full, %0, skill.weaponry ), . ), min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . ))), 0 )
+&tags.advantage.brawl_defense DD=derived
+&default.advantage.brawl_defense DD=derived
 
 &advantage.size DD=add( ladd( u( .value_full, %0, special.size ), . ), t( ladd( u( .value_full, %0, merit.giant ), . )))
 &tags.advantage.size DD=derived
