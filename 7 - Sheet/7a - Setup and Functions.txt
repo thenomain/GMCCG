@@ -55,6 +55,7 @@ does not have the ability to handle nesting.
 
 @@ Code Parent formatting
 @parent nsc=codp
+&prefix.dot-functions nsc=.
 &prefix.block_bio nsc=bio.
 &prefix.block_attribute nsc=attributes.
 &prefix.block_skill nsc=skills.
