@@ -34,10 +34,17 @@ d.type-specials:
 
 &d.type-specials sfp=special health
 
-&sortby.types sfp=[comp(match(v(d.type-search-order), first(%0, .)), match(v(d.type-search-order), first(%1, .)))]
+&sortby.types sfp=comp( match( u( d.type-search-order ), first( %0, . )), match( v( d.type-search-order ), first( %1, . )))]
 
 &filter.search-types sfp=t(match(v(d.type-search-order), first(%0, .)))
+
+@@ &d.type-search-order sfp=iter( sort( lattr( %!/d.type-search-order-* )), v( %i0 ))
+@@ &d.type-search-order-01 sfp=attribute skill merit advantage
+@@ &d.type-search-order-02 sfp=contract renown gift aspect goblin_contract rite
+@@ &d.type-search-order-09 sfp=bio
 
 --------------------------------------------------------------------------------
 
 think sortby(sfp/sortby.types, filter(sfp/filter.search-types, sort(lattr(dd/*.s*))))
+
+think sortby(sfp/sortby.types, filter(sfp/filter.search-types, sort(lattr(dd/*.str*))))

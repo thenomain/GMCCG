@@ -663,6 +663,12 @@
 @@ &advantage.aspiration DD=*
 @@ &class.advantage.aspiration DD=string
 
+
+
+@@ == CORE BIO =================================================================
+
+&class.bio.? DD=string
+
 &bio.full_name DD=*
 &class.bio.full_name DD=string
 
@@ -671,6 +677,7 @@
 
 &bio.template DD=Human
 &class.bio.template DD=string
+
 
 
 @@ == CORE SPECIAL TYPES =======================================================
@@ -682,12 +689,20 @@
 &default.special.species_factor dd=5
 
 
+
 @@ == HEALTH ===================================================================
 @@ MOVED TO HEALTH SYSTEM
 
 
+
 @@ == CONDITIONS ===============================================================
 @@ (May get its own system)
+
+@@ All conditions are flags
+
+&class.condition.? dd=flag
+
+@ -- 
 
 &condition.addicted_() dd=1|*
 &tags.condition.addicted_() dd=persistent

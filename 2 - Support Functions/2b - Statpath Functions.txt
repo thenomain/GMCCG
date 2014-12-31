@@ -209,6 +209,7 @@ localize(
 	[if(t(%q4), %q4, #-1 STAT NOT FOUND)]
 )
 
+
 --------------------------------------------------------------------------------
 -- Statpath: Validate Name Tests -----------------------------------------------
 
@@ -256,22 +257,22 @@ Used for validating new purchases if sheet-lookup fails.
 
 @@ validate stat name:
 [if(
-	setr(n, u(f.statpath-validate-name, %q0)), 
+	setr( n, u( f.statpath-validate-name, %q0 )), 
 
 @@ .. get dd entry
-	[setq(s, u(v(d.data-dictionary)/%qn))]
-@@ .. get dd entry's "class" (we're guaranteed no instance here)
-	[setq(c, udefault(v(d.data-dictionary)/class.%qn, numeric))]
+	[setq( s, u( v( d.data-dictionary )/%qn ))]
+@@ .. get dd entry's "class"
+	[setq( c, ulocal( f.get-class, %qn ))]
 
 @@ >> if instance, check dd entry for that instance and if not found, error
 @@ .. we are expecting an instance if validated stat name ends in ()
 	[if(
-		strmatch(%qn, *_%(%)), 
+		strmatch( %qn, *_%(%) ), 
 		switch(
 			1, 
 @@ .. .. instance list is *, return exactly what we were passed
-			strmatch(*, setr(1, extract(%qs, 2, 1, |))), 
-			setq(n, [before(%qn, _%(%))]_%([edit(%qy, %b, _)]%)), 
+			strmatch( *, setr( 1, elements( %qs, 2, | ))), 
+			setq( n, [before(%qn, _%(%))]_%([edit( %qy, %b, _ )]%) ), 
 @@ .. .. expecting specific instance, none passed
 			match(%qy, ), 
 			setq(n, #-2 INSTANCE NOT FOUND), 
@@ -314,6 +315,8 @@ Used for validating new purchases if sheet-lookup fails.
 -- Statpath: Data Dictionary Lookup Tests --------------------------------------
 
 think u(sfp/f.statpath-lookup-dd, str)
+think u(sfp/f.statpath-lookup-dd, lang (test))
+
 think u(sfp/f.statpath-lookup-dd, c (su))
 think u(sfp/f.statpath-lookup-dd, aca.lib)
 
@@ -451,8 +454,15 @@ returns: class.<statpath> or "numeric" if null
 &f.get-class sfp=
 	udefault(
 		[u(d.data-dictionary)]/
-		class.[u(f.statpath-without-instance, extract(%0, 1, 2, .))], 
-		numeric
+		class.
+		[setr( s, u( f.statpath-without-instance, extract( %0, 1, 2, . )))], 
+
+		udefault( 
+			[u(d.data-dictionary)]/
+			class.[setr( s, elements( %qs, 1, . ))].?, 
+
+			numeric
+		)
 	)
 
 --------------------------------------------------------------------------------

@@ -98,7 +98,7 @@ Specialty - Get information about specialties
 What is the class of the stat?
 	0: stat path
 
-&.Class dd=udefault( class.%0, numeric )
+&.Class dd=u( [u( d.sfp )]/f.get-class, %0 )
 
 
 --------------------------------------------------------------------------------
