@@ -83,51 +83,64 @@
 
 &condition.uncalled DD=1
 &tags.condition.uncalled DD=demon.persistent
+&type.condition.uncalled DD=flag
 
 @@ -- agenda conditions --------------------------------------------------------
 
 &condition.prepared_for_anything DD=1
 &default.condition.prepared_for_anything DD=1
 &tags.condition.prepared_for_anything DD=demon.agenda.inquisitor
+&type.condition.prepared_for_anything DD=flag
 
 &condition.angel_empathy DD=1
 &default.condition.angel_empathy DD=1
 &tags.condition.angel_empathy DD=demon.agenda.interagator
+&type.condition.angel_empathy DD=flag
 
 &condition.an_eye_for_disorder DD=1
 &default.condition.an_eye_for_disorder DD=1
 &tags.condition.an_eye_for_disorder DD=demon.agenda.sabateur
+&type.condition.an_eye_for_disorder DD=flag
 
 &condition.i_know_someone DD=1
 &default.condition.i_know_someone DD=1
 &tags.condition.i_know_someone DD=demon.agenda.tempter
+&type.condition.i_know_someone DD=flag
 
 
 @@ -- cover conditions ---------------------------------------------------------
 
 &condition.plugged_in DD=1
 &tags.condition.plugged_in DD=demon.cover
+&type.condition.plugged_in DD=flag
 
 &condition.impostor DD=1
 &tags.condition.impostor DD=demon.cover
+&type.condition.impostor DD=flag
 
 &condition.blown DD=1
 &tags.condition.blown DD=demon.cover.persistent
+&type.condition.blown DD=flag
 
 &condition.betrayed DD=1
 &tags.condition.betrayed DD=demon.cover.persistent
+&type.condition.betrayed DD=flag
 
 &condition.hunted DD=1
-&tags.hunted DD=demon.cover.persistent
+&tags.condition.hunted DD=demon.cover.persistent
+&type.condition.hunted DD=flag
 
 &condition.flagged DD=1
 &tags.condition.flagged DD=demon.cover
+&type.condition.flagged DD=flag
 
 &condition.blackballed DD=1
 &tags.condition.blackballed DD=demon.cover
+&type.condition.blackballed DD=flag
 
 &condition.surveilled DD=1
 &tags.condition.surveilled DD=demon.cover
+&type.condition.surveilled DD=flag
 
 
 @@ -- demonic conditions -------------------------------------------------------
@@ -160,9 +173,6 @@
 
 
 @@ == DEMON MERITS =============================================================
-
-@@ &merit.advanced_form DD=1
-@@ &tags.merit.advanced_form DD=demon
 
 &merit.bolthole_-_arsenal_() DD=1.2.3.4.5|*
 &tags.merit.bolthole_-_arsenal_() DD=demon.location
@@ -235,9 +245,9 @@
 &tags.embed.deafen DD=demon.demon-blooded.cacophony
 &type.embed.deafen DD=flag
 
-&embed.devil’s_advocate DD=Manipulation + Subterfuge - <<room:Resolve>>
-&tags.embed.devil’s_advocate DD=demon.demon-blooded.cacophony
-&type.embed.devil’s_advocate DD=flag
+&embed.devil's_advocate DD=Manipulation + Subterfuge - <<room:Resolve>>
+&tags.embed.devil's_advocate DD=demon.demon-blooded.cacophony
+&type.embed.devil's_advocate DD=flag
 
 &embed.hesitation DD=Manipulation + Intimidation - <<target:Resolve>>
 &tags.embed.hesitation DD=demon.demon-blooded.cacophony
