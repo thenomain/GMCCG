@@ -329,42 +329,378 @@ output: All invalid stats on the sheet
 	)
 
 
---------------------------------------------------------------------------------
--- Sample output for Checkstats ------------------------------------------------
 
-One way to try it out.
+================================================================================
+== CG/CHECK ====================================================================
+
+Here's our old +sheet/check, temporarially called 'cg/check'
+
+This switch is really a part of chargen.  That is, this system goes through a
+sheet validation.  For people who are not yet approved, it will check the cgen 
+point values.  For everyone it will check all stat validations except cgen, 
+which is mostly for the cgen and xp-spend systems.
 
 --
 
-&f.temp-output-checkstats cg=
-	strcat( 
-		setq( p, pmatch( %0 )), 
-		setq( b, u( f.badstats, %qp )), 
-		list( %qb, 
+0: person to check
+
+p: dbref of person to check
+s: sheet dbref
+t: template for sheet
+b: badstat list
+
+--
+
+&c.cg/check cg=$^\+?cg/check(.*):
+
+	think strcat( 
+		player dbref:, %b, 
+		setr( p, if( t( strlen( trim( %1 ))), pmatch( trim( %1 )), %# )), %r, 
+		sheet dbref:, %b, 
+		setr( s, u( u( d.sfp )/f.find-sheet, %qp )), %r, 
+		sheet template:, %b, 
+		setr( t, u( %qs/_bio.template ))
+	); 
+
+	@pemit %#=
+	case( 0, 
+
+		t( %qp ), 
+		u( .msg, cg/check, Player cannot be found ), 
+
+		cor( isstaff( %# ), not( comp( %qp, %# ))), 
+		u( .msg, cg/check, You must be staff or checking yourself ), 
+
+		t( %qs ), 
+		u( .msg, cg/check, Can't find the sheet ), 
+
+		t( %qt ), 
+		u( .msg, cg/check, No template set ), 
+
+		strcat( 
+			header( Checking [name( %qp )]'s Stats, width( %# )), %r, 
+
+@@ .. chargen-level check happens only pre-approval
+			if( not( u( .isapproved, %qp )), 
+				strcat( 
+					ulocal( check.bio, %qp, %qs, %qt ), %r, 
+					ulocal( check.chargen, %qs, %qt ), 
+				), 
+
+				u( display.cgen_stamp, %qp )%r
+			 ), 
+@@ .. valid stats check
+			ulocal( check.badstats, %qs ), %r, 
+
+			footer( , width( %# ))
+		)
+	)
+
+--
+
+@set cg/c.cg/check=regex
+
+
+--------------------------------------------------------------------------------
+-- Display: Check OK/NO --------------------------------------------------------
+
+&display.check.ok-no cg=
+	if( t( %0 ), 
+		ansi( n, \\[, g, OK, n, \\] ), 
+		ansi( n, \\[, r, no, n, \\] )
+	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Cgen Stamp ---------------------------------------------------------
+
+&display.cgen_stamp cg=
+	cat( 
+		%b Chargen Approval Stamp:, 
+		elements( rest( setr( z, u( %0/_cgstamp )), | ), 2 3 5 ), 
+		by, 
+		rest( first( %qz, | ), Approved by%b )
+	)
+
+
+--------------------------------------------------------------------------------
+-- Display: Check Stats --------------------------------------------------------
+
+0: dbref of sheet
+1: category to check
+output: Ob. yes/no in full prismatic color
+
+--
+
+&display.check.stats cg=
+	u( display.check.ok-no, u( f.pts-valid?.%1, %0 ))
+
+
+--------------------------------------------------------------------------------
+-- Check Bio -------------------------------------------------------------------
+
+This is the basic check. '&check.bio.<template>' will continue this.
+
+--
+
+0: dbref of player
+1: dbref of sheet
+2: template of sheet
+
+q1: column`1`list
+q2: column`2`list
+i: item from sheet
+
+uses: vcolumns(), our vertical-column system
+
+--
+
+&check.bio cg=
+strcat( 
+@@ >> column 1: Gender, Concept, Full Name, Birthdate
+	setq( 1, 
+		strcat( 
+			Gender:, %b, 
+				setr( g, get( %0/sex )), %b, 
+				u( display.check.ok-no, match( f m, strtrunc( %qg, 1 ))), 
+				`, 
+			Concept:, %b, 
+				if( 
+					hasattr( %0, FINGER-CONCEPT ), 
+					ansi( g, exists ), 
+					ansi( r, blank )
+				), 
+				`, 
+			iter( 
+				full_name birthdate, 
+				strcat( 
+					titlestr( edit( %i0, _, %b )), :, %b, 
+					setr( i, u( %1/_bio.%i0 )), %b, 
+					u( display.check.ok-no, comp( %qi, ))
+				), 
+				, `
+			)
+		)
+	), 
+
+@@ .. column 2: Virtue, Vice, & Template Foo
+	setq( a, 
+		iter( virtue vice, 
 			strcat( 
-				>>%b, 
-				u( [u( d.sfp )]/f.statname.workhorse, rest( %i0, . )), 
-				:%b, 
+				titlestr( edit( %i0, _, %b )), :, %b, 
+				setr( i, u( %1/_advantage.%i0 )), %b, 
+				u( display.check.ok-no, comp( %qi, ))
+			), 
+			, `
+		)
+	), 
+	setq( b, 
+		iter( u( check.bio.%2 ), 
+			strcat( 
+				titlestr( edit( %i0, _, %b )), :, %b, 
+				setr( i, u( %1/_bio.%i0 )), %b, 
+				u( display.check.ok-no, comp( %qi, ))
+			), 
+			, `
+		)
+	), 
+	setq( 2, if( t( strlen( %qb )), %qa`%qb, %qa )), 
+
+@@ >> display results
+	divider( Biography Check, width( %# )), %r, 
+	vcolumns( 38:%q1, 37:%q2, `, %b, %b%b )
+)
+
+
+--------------------------------------------------------------------------------
+-- Check Bio: Changeling -------------------------------------------------------
+
+This is an example until we get a GMC check in here.
+
+--
+
+&check.bio.changeling cg=seeming kith court
+
+
+--------------------------------------------------------------------------------
+-- Check Chargen ---------------------------------------------------------------
+
+0: dbref of sheet
+1: template contents
+
+--
+
+&check.chargen cg=
+	strcat( 
+		divider( Chargen Levels, width( %# )), %r, 
+		%b Attributes:%b, 
+			u( f.allocated.attributes, %0 ), %b, 
+			u( display.check.stats, %0, attributes ), %r, 
+		%b Skills:%b, 
+			u( f.allocated.skills, %0 ), %b, 
+			u( display.check.stats, %0, skills ), %r, 
+
+		ulocal( check.chargen.specialties, %0, %1 ), %r, 
+
+		%b Merits:%b, 
+			u( f.allocated.merits, %0 ), %b, 
+			u( display.check.stats, %0, merits ), %r, 
+
+@@ .. template chargen checks
+		u( check.chargen.%1, %0 )
+	)
+
+
+--------------------------------------------------------------------------------
+-- Check Chargen: Specialties --------------------------------------------------
+
+0: sheet dbref
+1: template
+
+a: all specialties
+s: standard specialties
+r: template-specific specialties
+
+@@ t: template specs, formatted
+
+--
+
+&check.chargen.specialties cg=
+	strcat(
+		setq( a, ulocal( f.allocated.specialties, %0 )), 
+		setq( s, first( %qa, ` )), 
+		setq( r, rest( %qa, ` )), 
+
+		%b Specialties:, %b, 
+		iter( 
+			%qs, 
+			u( u( d.sfp )/f.statname.workhorse, rest( %i0, . )), 
+			, %,%b
+		), 
+
+@@ check & output template specs
+		u( check.specialties.%1, %qr ), 
+
+		%r%b Final Specialties Check ->, %b, 
+		u( display.check.stats, %0, specialties )
+
+	)
+
+
+--------------------------------------------------------------------------------
+-- List Specialties: Changeling ------------------------------------------------
+
+Another example
+
+Prettifies the output for the Werewolf specialties.
+
+0: <changeling>`<seeming>`<kith(s)>
+
+--
+
+&check.specialties.changeling cg=
+	strcat( 
+@@ .. changeling
+		%b Changeling -%b, 
+		iter( elements( %0, 1, ` ), 
+			u( u( d.sfp )/f.statname-workhorse, rest( %i0, . )), 
+			, %,%b 
+		), 
+
+@@ .. seeming
+		if( strlen( elements( %0, 2, ` ), %r%b Seeming-%b)), 
+		iter( elements( %0, 2, ` ), 
+			u( u( d.sfp )/f.statname-workhorse, rest( %i0, . )), 
+			, %,%b 
+		), 
+
+@@ .. kith(s)
+		if( strlen( elements( %0, 3, ` ), %r%b Kith-%b)), 
+		iter( elements( %0, 3, ` ), 
+			u( u( d.sfp )/f.statname-workhorse, rest( %i0, . )), 
+			, %,%b 
+		)
+	)
+
+--
+
+@@ This is from the old system and needs integrated into the new system
+@@ under the "are these points valid?" system
+
+&f.pts-valid?.specialties.changeling.beast cg=eq( words( extract( %0, 3, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.soldier cg=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.telluric cg=eq( words( extract( %0, 4, 1, ` )), 2 )
+&f.pts-valid?.specialties.changeling.razorhand cg=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.riddleseeker cg=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.nightsinger cg=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.daitya cg=eq( words( extract( %0, 4, 1, ` )), 1 )
+
+
+--------------------------------------------------------------------------------
+-- Check Chargen: Changeling ---------------------------------------------------
+
+More examples
+
+0: dbref of sheet to check
+
+--
+
+&check.chargen.changeling cg=
+	strcat( 
+		%b Contracts:%b, 
+			u( f.allocated.contracts, %0 ), %b, 
+			u( display.check.stats, %0, contracts ), %r
+	)
+
+
+--------------------------------------------------------------------------------
+-- Check: Badstats -------------------------------------------------------------
+
+0: sheet dbref
+
+--
+
+&check.badstats cg=
+strcat( 
+	divider( Invalid Stats, width( %# )), %r, 
+	setq( p, u( f.badstats, %0 )), 
+
+@@ .. (cheat copiously)
+	setq( i, 
+		iter( %qp, 
+			strcat( 
+				%(, 
+				lcstr( first( rest( %i0, _ ), . )), 
+				%)%b, 
+				ansi( 
+					c, u( u( d.sfp )/f.statname.workhorse, rest( %i0, . ))
+				), 
+				:, %b, 
 				itemize( 
 					trim( 
-						iter( 
-							u( f.statcheck, %qp, %i0 ), 
-							if( not( %i0 ), [titlestr( rest( %i0 ))]| ), 
+						iter( u( f.statcheck, %0, %i0 ), 
+							if( not( %i0 ), 
+								[titlestr( rest( %i0 ))]| 
+							), 
 							., @@ 
 						), 
 						b, | 
 					), 
 					| 
 				)
-			)
+			), 
+			, %r
 		)
+	), 
+	if( strlen( %qi ), 
+		trim( wrap( %qi, sub( width( %# ), 4 ), left, %b%b ), r ), 
+		%b All Stats Valid 
 	)
+)
 
 --
 
-think u( cg/f.temp-output-checkstats, %# )
+think u( cg/check.badstats, %# )
 
---
 
-@dolist [search(eplayer=and(isapproved(##), t(u(#394/f.temp-output-checkstats, ##))))]=think [header([name(##)])]%r[u(#394/f.temp-output-checkstats, ##)]%r[footer()]%r
 

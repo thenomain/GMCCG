@@ -87,7 +87,6 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 	.Gifts_Check	Can they take "this" gift "that" high?
 	.Renown_Check	Can they take "this" renown "that" high?
 
-
 Specialty - Get information about specialties
 	.Specialty_For  Return the skill that has the passed specialty
 	.Specialty_Has  Has the specialty named in a certain or any skill

@@ -11,7 +11,8 @@ mainly the "is this sheet chargen-compatible" system
 @set GMC Chargen <cg>=inherit safe
 
 @parent GMC Chargen <cg>=codp
-
+&prefix.dot-functions cg=.
+&prefix.checks cg=check.
 
 
 ================================================================================
@@ -25,6 +26,8 @@ mainly the "is this sheet chargen-compatible" system
 ================================================================================
 == FUNCTIONS ===================================================================
 
+&.msg cg=ansi( h, <%0>, n, %b%1 )
+
 
 --------------------------------------------------------------------------------
 -- isapproved ------------------------------------------------------------------
@@ -36,7 +39,6 @@ This is the testing version. Your game probably should have isapproved().
 --
 
 &.isapproved cg=hasattr( %0/_approved )
-
 
 
 ================================================================================
