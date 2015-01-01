@@ -670,13 +670,10 @@
 &class.bio.? DD=string
 
 &bio.full_name DD=*
-&class.bio.full_name DD=string
 
 &bio.birthdate DD=*
-&class.bio.birthdate DD=string
 
 &bio.template DD=Human
-&class.bio.template DD=string
 
 
 

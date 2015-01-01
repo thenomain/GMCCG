@@ -41,11 +41,9 @@
 
 &bio.incarnation DD=Destroyer.Guardian.Messenger.Psychopomp
 &tags.bio.incarnation DD=demon
-&class.bio.incarnation DD=string
 
 &bio.agenda DD=Inquisitor.Integrator.Saboteur.Tempter.Uncalled
 &tags.bio.agenda DD=demon
-&class.bio.agenda DD=string
 
 
 
@@ -83,6 +81,7 @@
 
 &condition.uncalled DD=1
 &tags.condition.uncalled DD=demon.persistent
+
 
 @@ -- agenda conditions --------------------------------------------------------
 
@@ -205,6 +204,7 @@
 @@ == DEMON EMBEDS =============================================================
 
 &class.embed.? DD=flag
+
 
 @@ -- CACOPHANY ----------------------------------------------------------------
 
