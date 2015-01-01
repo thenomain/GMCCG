@@ -10,6 +10,7 @@
 
 @fo me=&d.data-dictionary sfp=[num( data dictionary <dd> )]
 @fo me=&d.sfp dd=[num( stat functions prototype <sfp> )]
+@fo me=&d.data-tags sfp=[num( data tags <d:t> )]
 
 &d.chargen sfp=<< location of character generation, may be obsolete >>
 

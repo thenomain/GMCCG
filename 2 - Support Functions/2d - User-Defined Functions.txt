@@ -357,28 +357,21 @@ qb: boolean list of matches
 --------------------------------------------------------------------------------
 
 &f.hastag?.workhorse sfp=
-[setq(t, lcstr(u(v(d.data-dictionary)/tags.%0)))]
-[setq(b, iter(%1, match(%qt, ##, .), .))]
+	[setq( t, lcstr( u( v( d.data-tags )/tags.%0 )))]
+	[setq( b, iter( %1, match( %qt, ##, . ), . ))]
 
-[if(
-	%2, 
+	[if( %2, 
 @@ and-check
-	land(%qb), 
+		land( %qb ), 
 @@ else/default: or-check
-	lor(%qb)
-)]
+		lor( %qb )
+	)]
 
 
 --------------------------------------------------------------------------------
 -- Hastag? Tests ---------------------------------------------------------------
 
-think hastag?(wyrd, changeling)
-think hastag?(wyrd, CHangelinG, and)
-think hastag?(wyrd, changeling.DERIVED)
-think hastag?(wyrd, changeling.derived, and)
-think hastag?(wyrd, CHORNGEling.derived)
-think hastag?(wyrd, CHORNGEling.derived, and)
-think hastag?(wyrd)
+think u( sfp/f.hastag?.workhorse, advantage.speed, derived )
 
 think hastag?( speed, derived )
 think hastag?( speed, derived.pool )

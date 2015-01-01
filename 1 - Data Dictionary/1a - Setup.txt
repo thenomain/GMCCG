@@ -16,6 +16,33 @@
 &prefix.specials dd=special.
 &prefix.health dd=health.
 &prefix.conditions dd=condition.
+&prefix.specials dd=special.
+
+
+--------------------------------------------------------------------------------
+-- Data Tags -------------------------------------------------------------------
+
+These are on its own object because the system might flood the poor lookup 
+system.
+
+In the future, notes and page references should go here as well.
+
+--
+
+@create Data Tags <d:t>
+@set d:t=inherit safe
+
+@parent d:t=codp
+&prefix.attributes d:t=tags.attribute.
+&prefix.skills d:t=tags.skill.
+&prefix.merits d:t=tags.merit.
+&prefix.advantages d:t=tags.advantage.
+&prefix.bio d:t=tags.bio.
+&prefix.specials d:t=tags.special.
+&prefix.health d:t=tags.health.
+&prefix.conditions d:t=tags.condition.
+&prefix.specials d:t=tags.special.
+
 
 
 ================================================================================

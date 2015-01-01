@@ -49,7 +49,7 @@ Hey, this is new.
 @@ -- HEALTH -------------------------------------------------------------------
 
 &health.maximum DD=u( .value_stats, %0, attribute.stamina advantage.size )
-&tags.health.maximum DD=derived
+&tags.health.maximum D:T=derived
 &default.health.maximum DD=derived
 
 &health.types DD=bashing lethal aggravated
@@ -63,7 +63,7 @@ Hey, this is new.
 &default.health.aggravated DD=0
 
 &health.damage DD=ladd( iter( u( health.types ), u( .value, %0, health.%i0 )))
-&tags.health.damage DD=derived
+&tags.health.damage D:T=derived
 &default.health.damage DD=derived
 
 &health.penalty DD=min( 0, 
@@ -73,7 +73,7 @@ Hey, this is new.
 		-3 
 	)
 )
-&tags.health.penalty DD=derived
+&tags.health.penalty D:T=derived
 &default.health.penalty DD=derived
 
 

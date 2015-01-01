@@ -211,26 +211,24 @@ See Also: setstat(), where this will be used.
 returns: 1 if valid, #-1 <reason> if not
 
 d: data dictionary dbref (we use it that often)
-b: bio.templates
+b: bio.template
 t: templates used in tags.<statpath>
 
 --------------------------------------------------------------------------------
 
 &f.prereq-check-template sfp=
 localize(
-	[setq(d, u(d.data-dictionary))]
-	[setq(b, lcstr(u(%qd/bio.template)))]
-	[setq(t, setinter(lcstr(u(%qd/tags.%1)), %qb, .))]
-	[case(
-		0, 
+	[setq(b, lcstr( u( [u( d.data-dictionary )]/bio.template )))]
+	[setq(t, setinter( lcstr( u( [u( d.data-tags )]/tags.%1 )), %qb, . ))]
+	[case( 0, 
 @@ .. stat uses no templates, so is valid to all templates
-		comp(%qt, ), 1, 
+		comp( %qt, ), 1, 
 @@ .. check the intersection of stat's templates with sheet's
-		comp(setinter(%qt, lcstr(u(%0/_bio.template)), .), ), 
+		comp( setinter( %qt, lcstr( u( %0/_bio.template )), . ), ), 
 		#-3 Stat Not Allowed For This Template, 
 @@ .. no other errors, so 1
-		1
-	)]	
+		1 
+	)] 
 )
 
 --------------------------------------------------------------------------------

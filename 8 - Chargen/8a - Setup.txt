@@ -19,6 +19,7 @@ mainly the "is this sheet chargen-compatible" system
 == DATA ========================================================================
 
 @fo me=&d.dd cg=num( data dictionary <dd> )
+@fo me=&d.dt cg=num( data tags <d:t> )
 @fo me=&d.sfp cg=num( stat functions prototype <sfp> )
 
 

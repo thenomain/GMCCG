@@ -10,6 +10,10 @@
 &prefix.demon_-_exploits dd=exploit.
 &prefix.demon_-_demonic_forms dd=demonic_form.
 
+&prefix.demon_-_embeds d:t=tags.embed.
+&prefix.demon_-_exploits d:t=tags.exploit.
+&prefix.demon_-_demonic_forms d:t=tags.demonic_form.
+
 &.max_trait.Demon dd=advantage.primium
 
 
@@ -40,10 +44,10 @@
 @@ == DEMON BIO ================================================================
 
 &bio.incarnation DD=Destroyer.Guardian.Messenger.Psychopomp
-&tags.bio.incarnation DD=demon
+&tags.bio.incarnation D:T=demon
 
 &bio.agenda DD=Inquisitor.Integrator.Saboteur.Tempter.Uncalled
-&tags.bio.agenda DD=demon
+&tags.bio.agenda D:T=demon
 
 
 
@@ -53,95 +57,95 @@
 
 &advantage.cover DD=1.2.3.4.5.6.7.8.9.10
 &default.advantage.cover DD=7
-&tags.advantage.cover dd=integrity.demon
+&tags.advantage.cover D:T=integrity.demon
 
 
 &advantage.aether DD=ladd( u( .value_full, %0, advantage.willpower_maximum ), . )
-&tags.advantage.aether DD=derived.pool.demon
+&tags.advantage.aether D:T=derived.pool.demon
 &default.advantage.aether DD=derived
 
 &advantage.aether_maximum DD=element( 10 11 12 13 14 15 20 30 50 100, u( .value, %0, advantage.primium ))
-&tags.advantage.aether_maximum DD=derived.pool.demon
+&tags.advantage.aether_maximum D:T=derived.pool.demon
 &default.advantage.aether_maximum DD=derived
 
 
 &advantage.primium DD=1.2.3.4.5.6.7.8.9.10
 &default.advantage.primium DD=1
-&tags.advantage.primium DD=power.demon
+&tags.advantage.primium D:T=power.demon
 
 @@ ???????????
 
 &special.cover_experiences DD=#
 &default.special.cover_experiences DD=0
-&tags.special.cover_experiences DD=demon
+&tags.special.cover_experiences D:T=demon
 
 
 
 @@ == DEMON CONDITIONS =========================================================
 
 &condition.uncalled DD=1
-&tags.condition.uncalled DD=demon.persistent
+&tags.condition.uncalled D:T=demon.persistent
 
 
 @@ -- agenda conditions --------------------------------------------------------
 
 &condition.prepared_for_anything DD=1
 &default.condition.prepared_for_anything DD=1
-&tags.condition.prepared_for_anything DD=demon.agenda.inquisitor
+&tags.condition.prepared_for_anything D:T=demon.agenda.inquisitor
 
 &condition.angel_empathy DD=1
 &default.condition.angel_empathy DD=1
-&tags.condition.angel_empathy DD=demon.agenda.interagator
+&tags.condition.angel_empathy D:T=demon.agenda.interagator
 
 &condition.an_eye_for_disorder DD=1
 &default.condition.an_eye_for_disorder DD=1
-&tags.condition.an_eye_for_disorder DD=demon.agenda.sabateur
+&tags.condition.an_eye_for_disorder D:T=demon.agenda.sabateur
 
 &condition.i_know_someone DD=1
 &default.condition.i_know_someone DD=1
-&tags.condition.i_know_someone DD=demon.agenda.tempter
+&tags.condition.i_know_someone D:T=demon.agenda.tempter
 
 
 @@ -- cover conditions ---------------------------------------------------------
 
 &condition.plugged_in DD=1
-&tags.condition.plugged_in DD=demon.cover
+&tags.condition.plugged_in D:T=demon.cover
 
 &condition.impostor DD=1
-&tags.condition.impostor DD=demon.cover
+&tags.condition.impostor D:T=demon.cover
 
 &condition.blown DD=1
-&tags.condition.blown DD=demon.cover.persistent
+&tags.condition.blown D:T=demon.cover.persistent
 
 &condition.betrayed DD=1
-&tags.condition.betrayed DD=demon.cover.persistent
+&tags.condition.betrayed D:T=demon.cover.persistent
 
 &condition.hunted DD=1
-&tags.condition.hunted DD=demon.cover.persistent
+&tags.condition.hunted D:T=demon.cover.persistent
 
 &condition.flagged DD=1
-&tags.condition.flagged DD=demon.cover
+&tags.condition.flagged D:T=demon.cover
 
 &condition.blackballed DD=1
-&tags.condition.blackballed DD=demon.cover
+&tags.condition.blackballed D:T=demon.cover
 
 &condition.surveilled DD=1
-&tags.condition.surveilled DD=demon.cover
+&tags.condition.surveilled D:T=demon.cover
 
 
 @@ -- demonic conditions -------------------------------------------------------
 
 &condition.aetheric_bleed DD=1
-&tags.condition.aetheric_bleed DD=demon.demonic
+&tags.condition.aetheric_bleed D:T=demon.demonic
 
 &condition.demonic_disconnect DD=1
-&tags.condition.demonic_disconnect DD=demon.demonic
+&tags.condition.demonic_disconnect D:T=demon.demonic
 
 &condition.demonic_rage DD=1
-&tags.condition.demonic_rage DD=demon.demonic
+&tags.condition.demonic_rage D:T=demon.demonic
 
 &condition.demonic_rage DD=1
-&tags.condition.demonic_rage DD=demon.demonic
+&tags.condition.demonic_rage D:T=demon.demonic
 
 
 @@ -- other conditions ---------------------------------------------------------
@@ -155,19 +159,19 @@
 @@ == DEMON MERITS =============================================================
 
 &merit.bolthole_-_arsenal_() DD=1.2.3.4.5|*
-&tags.merit.bolthole_-_arsenal_() DD=demon.location
+&tags.merit.bolthole_-_arsenal_() D:T=demon.location
 
 &merit.bolthole_-_no_twilight_() DD=1|*
-&tags.merit.bolthole_-_no_twilight_() DD=demon.location
+&tags.merit.bolthole_-_no_twilight_() D:T=demon.location
 
 &merit.bolthole_-_self_destruct_() DD=1|*
-&tags.merit.bolthole_-_self_destruct_() DD=demon.location
+&tags.merit.bolthole_-_self_destruct_() D:T=demon.location
 
 &merit.bolthole_-_cover-linked_() DD=2|*|*
-&tags.merit.bolthole_-_cover-linked_() DD=demon.location
+&tags.merit.bolthole_-_cover-linked_() D:T=demon.location
 
 &merit.bolthole_-_trap_door_() DD=2|*|*
-&tags.merit.bolthole_-_trap_door_() DD=demon.location
+&tags.merit.bolthole_-_trap_door_() D:T=demon.location
 
 &merit.consummate_professional_() DD=2|Inquisitor.Integrator.Saboteur.Tempter
 &prerequisite.merit.consummate_professional_() DD=
@@ -176,10 +180,10 @@
 		u( .has, %0, merit.multiple_agendas_(%1) )
 	)
 &prereq-text.merit.consummate_professional_() DD=Must belong to that agenda
-&tags.merit.consummate_professional DD=demon.mental
+&tags.merit.consummate_professional D:T=demon.mental
 
 &merit.cultists DD=2.3.4.5
-&tags.merit.cultists DD=demon.social
+&tags.merit.cultists D:T=demon.social
 
 &merit.multiple_agendas_() DD=2|Inquisitor.Integrator.Saboteur.Tempter
 &prerequisite.merit.multiple_agendas_() DD=
@@ -188,16 +192,16 @@
 		not( lattr( %0/merit.multiple_agendas_(*) )
 	)
 &prereq-text.merit.multiple_agendas_() DD=Must be different than current agenda, may not have this merit more than once
-&tags.merit.multiple_agendas_() DD=demon.mental
+&tags.merit.multiple_agendas_() D:T=demon.mental
 
 &merit.suborned_infrastructure_() DD=1.2.3
-&tags.merit.suborned_infrastructure_() DD=demon.location
+&tags.merit.suborned_infrastructure_() D:T=demon.location
 
 &merit.terrible_form DD=1.2.3.4
-&tags.merit.terrible_form DD=demon.style.physical
+&tags.merit.terrible_form D:T=demon.style.physical
 
 &merit.versatile_form DD=1
-&tags.merit.versatile_form DD=demon.physical
+&tags.merit.versatile_form D:T=demon.physical
 
 
 
@@ -209,253 +213,253 @@
 @@ -- CACOPHANY ----------------------------------------------------------------
 
 &embed.bystander_effect DD=Manipulation + Intimidation
-&tags.embed.bystander_effect DD=demon.demon-blooded.cacophony
+&tags.embed.bystander_effect D:T=demon.demon-blooded.cacophony
 
 &embed.cause_and_effect DD=Wits + <<self:Skill>>
-&tags.embed.cause_and_effect DD=demon.demon-blooded.cacophony
+&tags.embed.cause_and_effect D:T=demon.demon-blooded.cacophony
 
 &embed.combustion DD=Wits + Science
-&tags.embed.combustion DD=demon.demon-blooded.cacophony
+&tags.embed.combustion D:T=demon.demon-blooded.cacophony
 
 &embed.cool_heads_prevail DD=Manipulation + Empathy - <<room:Composure>>
-&tags.embed.cool_heads_prevail DD=demon.demon-blooded.cacophony
+&tags.embed.cool_heads_prevail D:T=demon.demon-blooded.cacophony
 
 &embed.deafen DD=Manipulation + Medicine - <<target:Stamina>>
-&tags.embed.deafen DD=demon.demon-blooded.cacophony
+&tags.embed.deafen D:T=demon.demon-blooded.cacophony
 
 &embed.devil's_advocate DD=Manipulation + Subterfuge - <<room:Resolve>>
-&tags.embed.devil's_advocate DD=demon.demon-blooded.cacophony
+&tags.embed.devil's_advocate D:T=demon.demon-blooded.cacophony
 
 &embed.hesitation DD=Manipulation + Intimidation - <<target:Resolve>>
-&tags.embed.hesitation DD=demon.demon-blooded.cacophony
+&tags.embed.hesitation D:T=demon.demon-blooded.cacophony
 
 &embed.hush DD=Dexterity + Brawl - <<target:Defense>>
-&tags.embed.hush DD=demon.demon-blooded.cacophony
+&tags.embed.hush D:T=demon.demon-blooded.cacophony
 
 &embed.just_bruised DD=Wits + Medicine
-&tags.embed.just_bruised DD=demon.demon-blooded.cacophony
+&tags.embed.just_bruised D:T=demon.demon-blooded.cacophony
 
 &embed.knockout_punch DD=Dexterity + Brawl - <<target:Defense>>
-&tags.embed.knockout_punch DD=demon.demon-blooded.cacophony
+&tags.embed.knockout_punch D:T=demon.demon-blooded.cacophony
 
 &embed.left_or_right? DD=Manipulation + Science
-&tags.embed.left_or_right? DD=demon.demon-blooded.cacophony
+&tags.embed.left_or_right? D:T=demon.demon-blooded.cacophony
 
 &embed.lucky_break DD=Manipulation + Occult
-&tags.embed.lucky_break DD=demon.demon-blooded.cacophony
+&tags.embed.lucky_break D:T=demon.demon-blooded.cacophony
 
 &embed.merciless_gunman DD=Dexterity + Firearms
-&tags.embed.merciless_gunman DD=demon.demon-blooded.cacophony
+&tags.embed.merciless_gunman D:T=demon.demon-blooded.cacophony
 
 &embed.no_quarter DD=Manipulation + Brawl vs. <<target:Resolve>>
-&tags.embed.no_quarter DD=demon.demon-blooded.cacophony
+&tags.embed.no_quarter D:T=demon.demon-blooded.cacophony
 
 &embed.on_the_mend DD=Wits + Medicine
-&tags.embed.on_the_mend DD=demon.demon-blooded.cacophony
+&tags.embed.on_the_mend D:T=demon.demon-blooded.cacophony
 
 &embed.raw_materials DD=Manipulation + Crafts
-&tags.embed.raw_materials DD=demon.demon-blooded.cacophony
+&tags.embed.raw_materials D:T=demon.demon-blooded.cacophony
 
 &embed.sabotage DD=Dexterity + Crafts
-&tags.embed.sabotage DD=demon.demon-blooded.cacophony
+&tags.embed.sabotage D:T=demon.demon-blooded.cacophony
 
 &embed.shatter DD=Wits + Crafts
-&tags.embed.shatter DD=demon.demon-blooded.cacophony
+&tags.embed.shatter D:T=demon.demon-blooded.cacophony
 
 &embed.shifty_eyes DD=Manipulation + Subterfuge - <<target:Resolve>>
-&tags.embed.shifty_eyes DD=demon.demon-blooded.cacophony
+&tags.embed.shifty_eyes D:T=demon.demon-blooded.cacophony
 
 &embed.special_someone DD=Wits + Empathy
-&tags.embed.special_someone DD=demon.demon-blooded.cacophony
+&tags.embed.special_someone D:T=demon.demon-blooded.cacophony
 
 
 @@ -- INSTRUMENTAL -------------------------------------------------------------
 
 &embed.ambush DD=Wits + Stealth
-&tags.embed.ambush DD=demon.demon-blooded.instrumental
+&tags.embed.ambush D:T=demon.demon-blooded.instrumental
 
 &embed.check_backdrop DD=Manipulation + Firearms
-&tags.embed.check_backdrop DD=demon.demon-blooded.instrumental
+&tags.embed.check_backdrop D:T=demon.demon-blooded.instrumental
 
 &embed.download_knowledge DD=Wits + Computers
-&tags.embed.download_knowledge DD=demon.demon-blooded.instrumental
+&tags.embed.download_knowledge D:T=demon.demon-blooded.instrumental
 
 &embed.efficiency DD=Wits+Academics
-&tags.embed.efficiency DD=demon.demon-blooded.instrumental
+&tags.embed.efficiency D:T=demon.demon-blooded.instrumental
 
 &embed.ellipses DD=Manipulation + Expression
-&tags.embed.ellipses DD=demon.demon-blooded.instrumental
+&tags.embed.ellipses D:T=demon.demon-blooded.instrumental
 
 &embed.freeze_assets DD=Manipulation + Academics - <<target:Resources>>
-&tags.embed.freeze_assets DD=demon.demon-blooded.instrumental
+&tags.embed.freeze_assets D:T=demon.demon-blooded.instrumental
 
 &embed.fulcrum_point DD=Wits + Science
-&tags.embed.fulcrum_point DD=demon.demon-blooded.instrumental
+&tags.embed.fulcrum_point D:T=demon.demon-blooded.instrumental
 
 &embed.fungible_knowledge DD=Wits + Academics
-&tags.embed.fungible_knowledge DD=demon.demon-blooded.instrumental
+&tags.embed.fungible_knowledge D:T=demon.demon-blooded.instrumental
 
 &embed.like_i_built_it DD=Wits + Crafts
-&tags.embed.like_i_built_it DD=demon.demon-blooded.instrumental
+&tags.embed.like_i_built_it D:T=demon.demon-blooded.instrumental
 
 &embed.the_map_is_not_the_territory DD=Manipulation + Academics - <<target:Intelligence>>
-&tags.embed.the_map_is_not_the_territory DD=demon.demon-blooded.instrumental
+&tags.embed.the_map_is_not_the_territory D:T=demon.demon-blooded.instrumental
 
 &embed.miles_away DD=Wits + Expression
-&tags.embed.miles_away DD=demon.demon-blooded.instrumental
+&tags.embed.miles_away D:T=demon.demon-blooded.instrumental
 
 &embed.momentum DD=Wits + Science
-&tags.embed.momentum DD=demon.demon-blooded.instrumental
+&tags.embed.momentum D:T=demon.demon-blooded.instrumental
 
 &embed.read_hostility DD=Wits + Subterfuge
-&tags.embed.read_hostility DD=demon.demon-blooded.instrumental
+&tags.embed.read_hostility D:T=demon.demon-blooded.instrumental
 
 &embed.right_tools_right_job DD=WIts + Crafts
-&tags.embed.right_tools_right_job DD=demon.demon-blooded.instrumental
+&tags.embed.right_tools_right_job D:T=demon.demon-blooded.instrumental
 
 &embed.shift_consequences DD=Manipulation + Occult - <<target:Resolve|target:Composure|target:Stamina>>
-&tags.embed.shift_consequences DD=demon.demon-blooded.instrumental
+&tags.embed.shift_consequences D:T=demon.demon-blooded.instrumental
 
 &embed.strike_first DD=Wits + Brawl
-&tags.embed.strike_first DD=demon.demon-blooded.instrumental
+&tags.embed.strike_first D:T=demon.demon-blooded.instrumental
 
 &embed.synthesis DD=Wits + Investigation
-&tags.embed.synthesis DD=demon.demon-blooded.instrumental
+&tags.embed.synthesis D:T=demon.demon-blooded.instrumental
 
 &embed.tag_and_release DD=Dexterity + Expression
-&tags.embed.tag_and_release DD=demon.demon-blooded.instrumental
+&tags.embed.tag_and_release D:T=demon.demon-blooded.instrumental
 
 &embed.tools_into_toys DD=Manipulation + Crafts
-&tags.embed.tools_into_toys DD=demon.demon-blooded.instrumental
+&tags.embed.tools_into_toys D:T=demon.demon-blooded.instrumental
 
 &embed.turn_blade DD=Wits + Weaponry
-&tags.embed.turn_blade DD=demon.demon-blooded.instrumental
+&tags.embed.turn_blade D:T=demon.demon-blooded.instrumental
 
 
 @@ -- MUNDANE ------------------------------------------------------------------
 
 &embed.alibi DD=Manipulation + Stealth
-&tags.embed.alibi DD=demon.demon-blooded.mundane
+&tags.embed.alibi D:T=demon.demon-blooded.mundane
 
 &embed.authorize DD=Manipulation + Intimidation - <<target:Intelligence>>
-&tags.embed.authorize DD=demon.demon-blooded.mundane
+&tags.embed.authorize D:T=demon.demon-blooded.mundane
 
 &embed.cuckoo's_egg DD=Dexterity + Larceny
-&tags.embed.cuckoo's_egg DD=demon.demon-blooded.mundane
+&tags.embed.cuckoo's_egg D:T=demon.demon-blooded.mundane
 
 &embed.diversion DD=Manipulation + Expression
-&tags.embed.diversion DD=demon.demon-blooded.mundane
+&tags.embed.diversion D:T=demon.demon-blooded.mundane
 
 &embed.don't_i_know_you? DD=Manipulation + Subterfuge - <<target:Resolve>>
-&tags.embed.don't_i_know_you? DD=demon.demon-blooded.mundane
+&tags.embed.don't_i_know_you? D:T=demon.demon-blooded.mundane
 
 &embed.earworm DD=Manipulation+Expression-Composure
-&tags.embed.earworm DD=demon.demon-blooded.mundane
+&tags.embed.earworm D:T=demon.demon-blooded.mundane
 
 &embed.homogenous_memory DD=Manipulation + Subterfuge - <<target:Resolve>>
-&tags.embed.homogenous_memory DD=demon.demon-blooded.mundane
+&tags.embed.homogenous_memory D:T=demon.demon-blooded.mundane
 
 &embed.identity_theft DD=Manipulation + Subterfuge
-&tags.embed.identity_theft DD=demon.demon-blooded.mundane
+&tags.embed.identity_theft D:T=demon.demon-blooded.mundane
 
 &embed.idle_conversation DD=Manipulation + Socialize
-&tags.embed.idle_conversation DD=demon.demon-blooded.mundane
+&tags.embed.idle_conversation D:T=demon.demon-blooded.mundane
 
 &embed.in_my_pocket DD=Dexterity + Larceny
-&tags.embed.in_my_pocket DD=demon.demon-blooded.mundane
+&tags.embed.in_my_pocket D:T=demon.demon-blooded.mundane
 
 &embed.interference DD=Manipulation + Subterfuge
-&tags.embed.interference DD=demon.demon-blooded.mundane
+&tags.embed.interference D:T=demon.demon-blooded.mundane
 
 &embed.last_place_you_look DD=Wits + Larceny
-&tags.embed.last_place_you_look DD=demon.demon-blooded.mundane
+&tags.embed.last_place_you_look D:T=demon.demon-blooded.mundane
 
 &embed.living_recorder DD=Manipulation + Investigation
-&tags.embed.living_recorder DD=demon.demon-blooded.mundane
+&tags.embed.living_recorder D:T=demon.demon-blooded.mundane
 
 &embed.lost_in_the_crowd DD=Wits + Stealth
-&tags.embed.lost_in_the_crowd DD=demon.demon-blooded.mundane
+&tags.embed.lost_in_the_crowd D:T=demon.demon-blooded.mundane
 
 &embed.meaninglessness DD=Manipulation + Academics
-&tags.embed.meaninglessness DD=demon.demon-blooded.mundane
+&tags.embed.meaninglessness D:T=demon.demon-blooded.mundane
 
 &embed.never_here DD=Manipulation + Stealth - <<target:Resolve>>
-&tags.embed.never_here DD=demon.demon-blooded.mundane
+&tags.embed.never_here D:T=demon.demon-blooded.mundane
 
 &embed.occam's_razor DD=Manipulation + Persuasion
-&tags.embed.occam's_razor DD=demon.demon-blooded.mundane
+&tags.embed.occam's_razor D:T=demon.demon-blooded.mundane
 
 &embed.quick_change DD=Manipulation + Subterfuge
-&tags.embed.quick_change DD=demon.demon-blooded.mundane
+&tags.embed.quick_change D:T=demon.demon-blooded.mundane
 
 &embed.unperson DD=Manipulation + Subterfuge - <<target:Composure>>
-&tags.embed.unperson DD=demon.demon-blooded.mundane
+&tags.embed.unperson D:T=demon.demon-blooded.mundane
 
 &embed.without_a_trace DD=Manipulation + Investigation
-&tags.embed.without_a_trace DD=demon.demon-blooded.mundane
+&tags.embed.without_a_trace D:T=demon.demon-blooded.mundane
 
 
 @@ -- VOCAL --------------------------------------------------------------------
 
 &embed.across_a_crowded_room DD=Manipulation + Subterfuge
-&tags.embed.across_a_crowded_room DD=demon.demon-blooded.vocal
+&tags.embed.across_a_crowded_room D:T=demon.demon-blooded.vocal
 
 &embed.animal_communication DD=Manipulation + Animal Ken
-&tags.embed.animal_communication DD=demon.demon-blooded.vocal
+&tags.embed.animal_communication D:T=demon.demon-blooded.vocal
 
 &embed.animal_messenger DD=Manipulation + Animal Ken
-&tags.embed.animal_messenger DD=demon.demon-blooded.vocal
+&tags.embed.animal_messenger D:T=demon.demon-blooded.vocal
 
 &embed.borrowed_expertise DD=Manipulation + <<Skill Granted>>
-&tags.embed.borrowed_expertise DD=demon.demon-blooded.vocal
+&tags.embed.borrowed_expertise D:T=demon.demon-blooded.vocal
 
 &embed.common_misconception DD=Manipulation + Science
-&tags.embed.common_misconception DD=demon.demon-blooded.vocal
+&tags.embed.common_misconception D:T=demon.demon-blooded.vocal
 
 &embed.eavesdrop DD=Wits + Empathy
-&tags.embed.eavesdrop DD=demon.demon-blooded.vocal
+&tags.embed.eavesdrop D:T=demon.demon-blooded.vocal
 
 &embed.everbody_knows DD=Manipulation + Subterfuge
-&tags.embed.everybody_knows DD=demon.demon-blooded.vocal
+&tags.embed.everybody_knows D:T=demon.demon-blooded.vocal
 
 &embed.find_the_leak DD=Wits + Empathy
-&tags.embed.find_the_leak DD=demon.demon-blooded.vocal
+&tags.embed.find_the_leak D:T=demon.demon-blooded.vocal
 
 &embed.freudian_slip DD=Manipulation + Empathy
-&tags.embed.freudian_slip DD=demon.demon-blooded.vocal
+&tags.embed.freudian_slip D:T=demon.demon-blooded.vocal
 
 &embed.heart's_desire DD=Wits + Empathy - <<target:Composure>>
-&tags.embed.heart's_desire DD=demon.demon-blooded.vocal
+&tags.embed.heart's_desire D:T=demon.demon-blooded.vocal
 
 &embed.marco_polo DD=Manipulation + Persuasion - <<target:Composure>>
 &tags.embed. DD=demon.demon-blooded.vocal
 
 &embed.mercury_retrograde DD=Manipulation + Subterfuge - <<room:Wits>>
-&tags.embed.mercury_retrograde DD=demon.demon-blooded.vocal
+&tags.embed.mercury_retrograde D:T=demon.demon-blooded.vocal
 
 &embed.muse DD=Manipulation + Expression - <<target:Resolve>>
-&tags.embed.muse DD=demon.demon-blooded.vocal
+&tags.embed.muse D:T=demon.demon-blooded.vocal
 
 &embed.recurring_hallucinations DD=Manipulations + Occult - Resolve
-&tags.embed.recurring_hallucinations DD=demon.demon-blooded.vocal
+&tags.embed.recurring_hallucinations D:T=demon.demon-blooded.vocal
 
 &embed.social_dynamics DD=Wits + Socialize
-&tags.embed.social_dynamics DD=demon.demon-blooded.vocal
+&tags.embed.social_dynamics D:T=demon.demon-blooded.vocal
 
 &embed.special_message DD=Manipulation + Expression
-&tags.embed.special_message DD=demon.demon-blooded.vocal
+&tags.embed.special_message D:T=demon.demon-blooded.vocal
 
 &embed.tower_of_babel DD=Manipulation + Socialize
-&tags.embed.tower_of_babel DD=demon.demon-blooded.vocal
+&tags.embed.tower_of_babel D:T=demon.demon-blooded.vocal
 
 &embed.trick_of_the_light DD=Manipulation + Investigation - <<target:Wits>>
-&tags.embed.trick_of_the_light DD=demon.demon-blooded.vocal
+&tags.embed.trick_of_the_light D:T=demon.demon-blooded.vocal
 
 &embed.trust_no_one DD=Manipulation + Subterfuge - <<target:Resolve>>
-&tags.embed.trust_no_one DD=demon.demon-blooded.vocal
+&tags.embed.trust_no_one D:T=demon.demon-blooded.vocal
 
 &embed.voice_of_the_machine DD=Wits + Crafts
-&tags.embed.voice_of_the_machine DD=demon.demon-blooded.vocal
+&tags.embed.voice_of_the_machine D:T=demon.demon-blooded.vocal
 
 
 
@@ -467,124 +471,124 @@
 @@ -----------------------------------------------------------------------------
 
 &exploit.addictive_presence DD=Presence + Socialize + Primum
-&tags.exploit.addictive_presence DD=demon
+&tags.exploit.addictive_presence D:T=demon
 
 &exploit.affliction DD=Strength + Medicine + Primum vs. <<target:Stamina|target:Resolve>> + <<target:Supernatural Tolerance>>
-&tags.exploit.affliction DD=demon
+&tags.exploit.affliction D:T=demon
 
 &exploit.allies_into_gold DD=Intelligence + Socialize + Primum
-&tags.exploit.allies_into_gold DD=demon
+&tags.exploit.allies_into_gold D:T=demon
 
 &exploit.animate DD=Presence + Crafts + Primum
-&tags.exploit.animate DD=demon
+&tags.exploit.animate D:T=demon
 
 &exploit.behind_the_curtain DD=Intelligence + Computes + Primum
-&tags.exploit.behind_the_curtain DD=demon
+&tags.exploit.behind_the_curtain D:T=demon
 
 &exploit.break_to_heal DD=Strength + Medicine + Primum
-&tags.exploit.break_to_heal DD=demon
+&tags.exploit.break_to_heal D:T=demon
 
 &exploit.deep_pockets DD=Strength + Larceny + Primum
-&tags.exploit.deep_pockets DD=demon
+&tags.exploit.deep_pockets D:T=demon
 
 &exploit.demon_house DD=Presence + Stealth + Primum
-&tags.exploit.demon_house DD=demon
+&tags.exploit.demon_house D:T=demon
 
 &exploit.disintegrate DD=Strength + Brawl + Primum
-&tags.exploit.disintegrate DD=demon
+&tags.exploit.disintegrate D:T=demon
 
 &exploit.echoing_death DD=Strength + Brawl + Primum
-&tags.exploit.echoing_death DD=demon
+&tags.exploit.echoing_death D:T=demon
 
 &exploit.ephemeral_cover DD=Strength + Occult + Primum - Defense
-&tags.exploit.ephemeral_cover DD=demon
+&tags.exploit.ephemeral_cover D:T=demon
 
 &exploit.everybody_hates_him DD=Intelligence + Intimidation + Primum
-&tags.exploit.everybody_hates_him DD=demon
+&tags.exploit.everybody_hates_him D:T=demon
 
 &exploit.extispicy DD=Intelligence + Occult + Primum
-&tags.exploit.extispicy DD=demon
+&tags.exploit.extispicy D:T=demon
 
 &exploit.force_relationship DD=Presence + Empathy + Primum
-&tags.exploit.force_relationship DD=demon
+&tags.exploit.force_relationship D:T=demon
 
 &exploit.four_minutes_ago DD=Intelligence + Stealth + Primum
-&tags.exploit.four_minutes_ago DD=demon
+&tags.exploit.four_minutes_ago D:T=demon
 
 &exploit.frozen_in_time DD=Intelligence + Science + Primum - Stamina
-&tags.exploit.frozen_in_time DD=demon
+&tags.exploit.frozen_in_time D:T=demon
 
 &exploit.halo DD=Presence + Medicine + Primum
-&tags.exploit.halo DD=demon
+&tags.exploit.halo D:T=demon
 
 &exploit.hellfire DD=Presence + Firearms + Primum
-&tags.exploit.hellfire DD=demon
+&tags.exploit.hellfire D:T=demon
 
 &exploit.hellhounds DD=Intelligence + Animal Ken + Primum
-&tags.exploit.hellhounds DD=demon
+&tags.exploit.hellhounds D:T=demon
 
 &exploit.incendiary DD=Strength + Science + Primum
-&tags.exploit.incendiary DD=demon
+&tags.exploit.incendiary D:T=demon
 
 &exploit.inflict_stigamata DD=Presence + Occult + Primum
-&tags.exploit.inflict_stigamata DD=demon
+&tags.exploit.inflict_stigamata D:T=demon
 
 &exploit.living_shadow DD=Intelligence + Stealth + Primum
-&tags.exploit.living_shadow DD=demon
+&tags.exploit.living_shadow D:T=demon
 
 &exploit.merge DD=Strength + Occult + Primum
-&tags.exploit.merge DD=demon
+&tags.exploit.merge D:T=demon
 
 &exploit.murder_by_improbability DD=Intelligence + Academics + Primum vs. Presence + Supernatural Tolerance
-&tags.exploit.murder_by_improbability DD=demon
+&tags.exploit.murder_by_improbability D:T=demon
 
 &exploit.play_on_words DD=Presence + Expression + Primum
-&tags.exploit.play_on_words DD=demon
+&tags.exploit.play_on_words D:T=demon
 
 &exploit.possession DD=Intelligence + Persuasion + Primum - Resolve
-&tags.exploit.possession DD=demon
+&tags.exploit.possession D:T=demon
 
 &exploit.rain_of_blood DD=Strength + Occult + Primum
-&tags.exploit.rain_of_blood DD=demon
+&tags.exploit.rain_of_blood D:T=demon
 
 &exploit.raise_dead DD=Presence + Medicine + Primum
-&tags.exploit.raise_dead DD=demon
+&tags.exploit.raise_dead D:T=demon
 
 &exploit.raze_infrastructure DD=Presence + Streetwise + Primum
-&tags.exploit.raze_infrastructure DD=demon
+&tags.exploit.raze_infrastructure D:T=demon
 
 &exploit.reality_enforcement DD=Presence + Academics + Primum
-&tags.exploit.reality_enforcement DD=demon
+&tags.exploit.reality_enforcement D:T=demon
 
 &exploit.riot DD=Presence + Persuasion + Primum
-&tags.exploit.riot DD=demon
+&tags.exploit.riot D:T=demon
 
 &exploit.rip_the_gates DD=Strength + Occult + Primum
-&tags.exploit.rip_the_gates DD=demon
+&tags.exploit.rip_the_gates D:T=demon
 
 &exploit.sermon DD=Presence + Persuasion + Primum
-&tags.exploit.sermon DD=demon
+&tags.exploit.sermon D:T=demon
 
 &exploit.solitary_confinement DD=Strength + Occult + Primum - Resolve + Supernatural Tolerance
-&tags.exploit.solitary_confinement DD=demon
+&tags.exploit.solitary_confinement D:T=demon
 
 &exploit.stalking_horse DD=Presence + Expression + Primum vs. Composure + Supernatural Tolerance
-&tags.exploit.stalking_horse DD=demon
+&tags.exploit.stalking_horse D:T=demon
 
 &exploit.stimulus/response DD=Intelligence + Empathy + Primum vs. Resolve + Supernatural Tolerance
-&tags.exploit.stimulus/response DD=demon
+&tags.exploit.stimulus/response D:T=demon
 
 &exploit.summon DD=Presence + Streetwise + Primum
-&tags.exploit.summon DD=demon
+&tags.exploit.summon D:T=demon
 
 &exploit.swarm DD=Presence + Animal Ken + Primum
-&tags.exploit.swarm DD=demon
+&tags.exploit.swarm D:T=demon
 
 &exploit.swift_resolution DD=Intelligence + Academics + Primum
-&tags.exploit.swift_resolution DD=demon
+&tags.exploit.swift_resolution D:T=demon
 
 &exploit.the_word DD=Presence + Intimidation + Primum - Resolve
-&tags.exploit.the_word DD=demon
+&tags.exploit.the_word D:T=demon
 
 
 
@@ -596,177 +600,177 @@
 @@ -- MODIFICATIONS ------------------------------------------------------------
 
 &demonic_form.armored_plates DD=1
-&tags.demonic_form.armored_plates DD=demon.modification
+&tags.demonic_form.armored_plates D:T=demon.modification
 
 &demonic_form.blade_hand DD=1
-&tags.demonic_form.blade_hand DD=demon.modification
+&tags.demonic_form.blade_hand D:T=demon.modification
 
 &demonic_form.claws_and_fangs DD=1
-&tags.demonic_form.claws_and_fangs DD=demon.modification
+&tags.demonic_form.claws_and_fangs D:T=demon.modification
 
 &demonic_form.electrical_sight DD=1
-&tags.demonic_form.electrical_sight DD=demon.modification
+&tags.demonic_form.electrical_sight D:T=demon.modification
 
 &demonic_form.EMP_field DD=1
-&tags.demonic_form.EMP_field DD=demon.modification
+&tags.demonic_form.EMP_field D:T=demon.modification
 
 &demonic_form.fast_attack DD=1
-&tags.demonic_form.fast_attack DD=demon.modification
+&tags.demonic_form.fast_attack D:T=demon.modification
 
 &demonic_form.huge_size DD=1
-&tags.demonic_form.huge_size DD=demon.modification
+&tags.demonic_form.huge_size D:T=demon.modification
 
 &demonic_form.inhuman_intelligence DD=1
 &tags.demonic_form. DD=demon.modification
 
 &demonic_form.inhuman_strength DD=1
-&tags.demonic_form.inhuman_strength DD=demon.modification
+&tags.demonic_form.inhuman_strength D:T=demon.modification
 
 &demonic_form.inhuman_reflexes DD=1
-&tags.demonic_form.inhuman_reflexes DD=demon.modification
+&tags.demonic_form.inhuman_reflexes D:T=demon.modification
 
 &demonic_form.mental_resistance DD=1
-&tags.demonic_form.mental_resistance DD=demon.modification
+&tags.demonic_form.mental_resistance D:T=demon.modification
 
 &demonic_form.night_vision DD=1
-&tags.demonic_form.night_vision DD=demon.modification
+&tags.demonic_form.night_vision D:T=demon.modification
 
 &demonic_form.rivet_arm DD=1
-&tags.demonic_form.rivet_arm DD=demon.modification
+&tags.demonic_form.rivet_arm D:T=demon.modification
 
 &demonic_form.sense_the_angelic DD=1
-&tags.demonic_form.sense_the_angelic DD=demon.modification
+&tags.demonic_form.sense_the_angelic D:T=demon.modification
 
 &demonic_form.slippery_body DD=1
-&tags.demonic_form.slippery_body DD=demon.modification
+&tags.demonic_form.slippery_body D:T=demon.modification
 
 &demonic_form.sonic_acuity DD=1
-&tags.demonic_form.sonic_acuity DD=demon.modification
+&tags.demonic_form.sonic_acuity D:T=demon.modification
 
 &demonic_form.spurs DD=1
-&tags.demonic_form.spurs DD=demon.modification
+&tags.demonic_form.spurs D:T=demon.modification
 
 &demonic_form.tough_as_stone DD=1
-&tags.demonic_form.tough_as_stone DD=demon.modification
+&tags.demonic_form.tough_as_stone D:T=demon.modification
 
 
 @@ -- TECHNOLOGIES -------------------------------------------------------------
 
 &demonic_form.acidic_spit DD=1
-&tags.demonic_form.acidic_spit DD=demon.technology
+&tags.demonic_form.acidic_spit D:T=demon.technology
 
 &demonic_form.aura_sight DD=1
-&tags.demonic_form.aura_sight DD=demon.technology
+&tags.demonic_form.aura_sight D:T=demon.technology
 
 &demonic_form.barbed_tail DD=1
-&tags.demonic_form.barbed_tail DD=demon.technology
+&tags.demonic_form.barbed_tail D:T=demon.technology
 
 &demonic_form.blind_sense DD=1
-&tags.demonic_form.blind_sense DD=demon.technology
+&tags.demonic_form.blind_sense D:T=demon.technology
 
 &demonic_form.clairvoyant_sight DD=1
-&tags.demonic_form.clairvoyant_sight DD=demon.technology
+&tags.demonic_form.clairvoyant_sight D:T=demon.technology
 
 &demonic_form.demonic_horns DD=1
-&tags.demonic_form.demonic_horns DD=demon.technology
+&tags.demonic_form.demonic_horns D:T=demon.technology
 
 &demonic_form.electric_jolt DD=1
-&tags.demonic_form.electric_jolt DD=demon.technology
+&tags.demonic_form.electric_jolt D:T=demon.technology
 
 &demonic_form.electrical_resistance DD=1
-&tags.demonic_form.electrical_resistance DD=demon.technology
+&tags.demonic_form.electrical_resistance D:T=demon.technology
 
 &demonic_form.environmental_resistance DD=1
-&tags.demonic_form.environmental_resistance DD=demon.technology
+&tags.demonic_form.environmental_resistance D:T=demon.technology
 
 &demonic_form.essence_drain DD=1
-&tags.demonic_form.essence_drain DD=demon.technology
+&tags.demonic_form.essence_drain D:T=demon.technology
 
 &demonic_form.fire_resistance DD=1
-&tags.demonic_form.fire_resistance DD=demon.technology
+&tags.demonic_form.fire_resistance D:T=demon.technology
 
 &demonic_form.frost_aura DD=1
-&tags.demonic_form.frost_aura DD=demon.technology
+&tags.demonic_form.frost_aura D:T=demon.technology
 
 &demonic_form.fluid_form DD=1
-&tags.demonic_form.fluid_form DD=demon.technology
+&tags.demonic_form.fluid_form D:T=demon.technology
 
 &demonic_form.inhuman_beauty DD=1
-&tags.demonic_form.inhuman_beauty DD=demon.technology
+&tags.demonic_form.inhuman_beauty D:T=demon.technology
 
 &demonic_form.glory_and_terror DD=1
-&tags.demonic_form.glory_and_terror DD=demon.technology
+&tags.demonic_form.glory_and_terror D:T=demon.technology
 
 &demonic_form.mind_reading DD=1
-&tags.demonic_form.mind_reading DD=demon.technology
+&tags.demonic_form.mind_reading D:T=demon.technology
 
 &demonic_form.mirrored_skin DD=1
-&tags.demonic_form.mirrored_skin DD=demon.technology
+&tags.demonic_form.mirrored_skin D:T=demon.technology
 
 
 @@ -- PROPULSIONS --------------------------------------------------------------
 
 &demonic_form.long_limbs DD=1
-&tags.demonic_form.long_limbs DD=demon.propulsion
+&tags.demonic_form.long_limbs D:T=demon.propulsion
 
 &demonic_form.phasing DD=1
-&tags.demonic_form.phasing DD=demon.propulsion
+&tags.demonic_form.phasing D:T=demon.propulsion
 
 &demonic_form.plasma_drive DD=1
-&tags.demonic_form.plasma_drive DD=demon.propulsion
+&tags.demonic_form.plasma_drive D:T=demon.propulsion
 
 &demonic_form.spatial_distortion DD=1
-&tags.demonic_form.spatial_distortion DD=demon.propulsion
+&tags.demonic_form.spatial_distortion D:T=demon.propulsion
 
 &demonic_form.teleportation DD=1
-&tags.demonic_form.teleportation DD=demon.propulsion
+&tags.demonic_form.teleportation D:T=demon.propulsion
 
 &demonic_form.tether DD=1
-&tags.demonic_form.tether DD=demon.propulsion
+&tags.demonic_form.tether D:T=demon.propulsion
 
 &demonic_form.wings DD=1
-&tags.demonic_form.wings DD=demon.propulsion
+&tags.demonic_form.wings D:T=demon.propulsion
 
 
 @@ -- PROCESSES ----------------------------------------------------------------
 
 &demonic_form.aegis_protocol DD=1
-&tags.demonic_form.aegis_protocol DD=demon.process
+&tags.demonic_form.aegis_protocol D:T=demon.process
 
 &demonic_form.body_modification DD=1
-&tags.demonic_form.body_modification DD=demon.process
+&tags.demonic_form.body_modification D:T=demon.process
 
 &demonic_form.cavernous_maw DD=1
-&tags.demonic_form.cavernous_maw DD=demon.process
+&tags.demonic_form.cavernous_maw D:T=demon.process
 
 &demonic_form.corruption_aura DD=1
-&tags.demonic_form.corruption_aura DD=demon.process
+&tags.demonic_form.corruption_aura D:T=demon.process
 
 &demonic_form.extra_mechanical_limbs DD=1
-&tags.demonic_form.extra_mechanical_limbs DD=demon.process
+&tags.demonic_form.extra_mechanical_limbs D:T=demon.process
 
 &demonic_form.insect_swarm DD=1
-&tags.demonic_form.insect_swarm DD=demon.process
+&tags.demonic_form.insect_swarm D:T=demon.process
 
 &demonic_form.magnesium_flare DD=1
-&tags.demonic_form.magnesium_flare DD=demon.process
+&tags.demonic_form.magnesium_flare D:T=demon.process
 
 &demonic_form.memory_theft DD=1
-&tags.demonic_form.memory_theft DD=demon.process
+&tags.demonic_form.memory_theft D:T=demon.process
 
 &demonic_form.multiple_images DD=1
-&tags.demonic_form.multiple_images DD=demon.process
+&tags.demonic_form.multiple_images D:T=demon.process
 
 &demonic_form.quill_burst DD=1
-&tags.demonic_form.quill_burst DD=demon.process
+&tags.demonic_form.quill_burst D:T=demon.process
 
 &demonic_form.rain_of_fire DD=1
-&tags.demonic_form.rain_of_fire DD=demon.process
+&tags.demonic_form.rain_of_fire D:T=demon.process
 
 &demonic_form.voice_of_the_angel DD=1
-&tags.demonic_form.voice_of_the_angel DD=demon.process
+&tags.demonic_form.voice_of_the_angel D:T=demon.process
 
 &demonic_form.wound_healing DD=1
-&tags.demonic_form.wound_healing DD=demon.process
+&tags.demonic_form.wound_healing D:T=demon.process
 
 

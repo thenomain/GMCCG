@@ -70,8 +70,8 @@ localize( strcat(
 @@ .. pull which templates are in this stat's tags
 	setq( t, 
 		setinter( 
-			lcstr( u( [u(d.dd )]/bio.template )), 
-			lcstr( u( [u(d.dd )]/tags.[rest( %qs, _ )] )), 
+			lcstr( u( [u( d.dd )]/bio.template )), 
+			lcstr( u( [u( d.dt )]/tags.[rest( %qs, _ )] )), 
 			. 
 		)
 	), 
