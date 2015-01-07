@@ -196,7 +196,7 @@ Output for a single (non-extended) roll
 &display.roll-output.single nWoD Roller <nr>=
 	cat( 
 		%b, 
-		Result:, t
+		Result:, 
 		trim( 
 			wrap( %q1 -- [u( display.interpret-roll-output, %qr )], 
 				sub( width( %# ), 10 ), l, , , 10 
