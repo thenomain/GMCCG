@@ -85,16 +85,67 @@ think u( cg/f.pts-valid?.specialties, %# )
 --------------------------------------------------------------------------------
 -- Pts Valid?: Merits ----------------------------------------------------------
 
+Okay, here's the thing with Merits. The core GMC rules expansion (p150) says:
+
+	These rules supplement the character creation rules and replace the 
+	experience point rules in the World of Darkness Rulebook.
+
+Merits are not given any chargen-level changes, yet so far all Supernatural
+templates are given 10 merit dots. WoD 2.0 gives the base chargen 7 merit dots.
+
+However, it would be poor form to not give mortals the same number of merits 
+that supernaturals here, so we are DE-FACTO HOUSE RULING that everyone starts 
+with 10 merit dots, not 7.
+
+--
+
 0: dbref of sheet
 m: merits
 t: template
 
 --
 
-&f.pts-valid?.merits cg=eq( ladd( u( f.allocated.merits, %0 ), / ), 7 )
+&f.pts-valid?.merits cg=eq( ladd( u( f.allocated.merits, %0 ), / ), 10 )
 
 --
 
 think u( cg/f.pts-valid?.merits, %# )
+
+
+
+--------------------------------------------------------------------------------
+-- Pts Valid?: Integrity -------------------------------------------------------
+
+Point validity check for all game lines' Integrity trait at chargen.
+It should be whatever the 'default' is in the system. 
+
+i.e., don't let players change it.
+
+--
+
+t: template
+i: integrity trait, matching trait with both 'integrity' and '<template>' tags
+
+--
+
+&f.pts-valid?.integrity cg=
+	strcat( 
+		setq( t, u( %0/_bio.template )), 
+		udefault( 
+			f.pts-valid?.integrity.%qt, 
+			u( f.pts-valid?.integrity.human, %0 ), 
+			%0 
+		)
+	)
+
+
+--------------------------------------------------------------------------------
+-- Pts Valid?: Integrity, Human ------------------------------------------------
+
+&f.pts-valid?.integrity.human cg=
+	eq( 
+		u( f.allocated.integrity.human, %0 ), 
+		udefault( u( d.dd )/default.advantage.integrity, 7 ) 
+	)
 
 

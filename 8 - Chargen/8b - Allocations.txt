@@ -94,7 +94,6 @@ Returns full stat paths.  The first part of the list are specialties that are no
 think u( cg/f.allocated.specialties, %# )
 
 
-
 --------------------------------------------------------------------------------
 -- Allocated Specialties: Human ------------------------------------------------
 
@@ -112,7 +111,7 @@ Unlike skills' substats (specialties), merit substats are a breakdown of the
 main merit, option add-ons, or other.
 
 	0: dbref of sheet
-	returns: points spent on <merits>/<advantage power level stat(s)>
+	returns: points spent on <merits>/<merit points spent on power level raise>
 
 --
 
@@ -151,4 +150,30 @@ Each template will have their own. Humans? 0. Total 0.
 
 &f.allocated.power-trait.human cg=0
 
+
+--------------------------------------------------------------------------------
+-- Allocated: Points in Integrity ----------------------------------------------
+
+Characters need to start at 'default' Integrity from chargen.
+Add 'f.allocated.integrity.<template>' where appropriate
+
+t: template
+
+--
+
+&f.allocated.integrity cg=
+	strcat( 
+		setq( t, u( %0/_bio.template )), 
+		udefault( 
+			f.allocated.integrity.%qt, 
+			u( f.allocated.integrity.human, %0 ), 
+			%0 
+		)
+	)
+
+--------------------------------------------------------------------------------
+-- Allocated: Integrity, Human -------------------------------------------------
+
+&f.allocated.integrity.human cg=
+	u( u( d.dd )/.value, %0, advantage.integrity )
 
