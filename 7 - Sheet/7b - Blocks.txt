@@ -94,7 +94,7 @@ think u( nsc/attributes.mental.default, %# )
 -- Attributes.Physical.Default -------------------------------------------------
 
 &attributes.physical.default nsc=
-	iter( strength dexterity social, 
+	iter( strength dexterity stamina, 
 		ulocal( f.cheat_getstat.with_name, %0, attribute.%i0, numeric ), 
 		, | 
 	)
