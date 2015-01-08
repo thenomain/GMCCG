@@ -509,7 +509,8 @@
 &advantage.perception DD=u( .value_stats, %0, attribute.wits attribute.composure )
 &default.advantage.perception DD=derived
 
-@@ I replaced the base virtues and vices with the GMC ones rather than appending, yes?
+@@ I replaced the base virtues and vices with the GMC ones rather than 
+@@ appending, yes?
 @@ aren't those mostly suggestions? do we want to list all taken virt/vices?
 @@ yes, they are suggestion. It would be cool to list all taken virtues/vices so we could have a list on the wiki that people could look at for inspiration/choices.
 
