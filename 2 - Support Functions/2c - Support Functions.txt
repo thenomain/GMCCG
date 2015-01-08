@@ -74,6 +74,8 @@ Filter based on values list (value.value 2.value 3)
 0: stat.path_(with or without instance)
 1: values to check against
 
+--------------------------------------------------------------------------------
+
 &fil.list-stats-values sfp=
 	setunion(
 		get([u(d.data-dictionary)]/[ulocal(f.statpath-without-instance, %0)]), 
