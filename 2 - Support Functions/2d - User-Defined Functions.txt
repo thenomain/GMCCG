@@ -207,9 +207,9 @@ qc: class of <stat path>: numeric, string, list
 --------------------------------------------------------------------------------
 
 &f.getstat.workhorse sfp=
-[setq(s, u(f.statpath.workhorse, %1, %0))]
+[setq(s, ulocal(f.statpath.workhorse, %1, %0))]
 [setq(d, u(%2/_%qs))]
-[setq(c, u(f.get-class, %qs))]
+[setq(c, ulocal(f.get-class, %qs))]
 
 
 [if(
