@@ -75,6 +75,7 @@ localize( strcat(
 --
 
 think u( cg/f.statcheck, %#, _merit.hardy )
+think u( cg/f.statcheck, %#, _advantage.willpower )
 
 think u( cg/f.statcheck, %#, _merit.medium )
 think u( cg/f.statcheck, %#, _merit.medium, 1 )
@@ -109,7 +110,7 @@ v: value to check (if %3, then do a dance for num/non-num)
 
 --
 
-&f.statcheck.normal cg=WHAT?
+&f.statcheck.normal cg=
 
 localize( strcat( 
 
