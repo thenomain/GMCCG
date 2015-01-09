@@ -36,10 +36,10 @@ t: temp validation results, used here and there
 &f.statcheck cg=
 localize( strcat(  
 	setq( s, ulocal( [u( d.sfp )]/f.statpath-without-instance, rest( %1, _ ))), 
-	setq( c, u( [u( d.dd )]/.class, %qs )), 
+	setq( c, ulocal( [u( d.dd )]/.class, %qs )), 
 	setq( v, case( %qc, numeric, first( u( %0/%1 ), . ), u( %0/%1 ))), 
 
-@@ >> check stat value
+@@ >> <stat value>
 	setq( t, 
 		case( 1, 
 
@@ -65,7 +65,7 @@ localize( strcat(
 	), 
 	if( t( %qt ), 1, %qt ), ., 
 
-@@ >> check prereqs
+@@ >> <prereq>
 	iter( 
 		cg-only template other, 
 		u( f.prerequsite.%i0, %0, %1, %2 ), , . 
@@ -73,6 +73,8 @@ localize( strcat(
 ))
 
 --
+
+think u( cg/f.statcheck, %#, _merit.hardy )
 
 think u( cg/f.statcheck, %#, _merit.medium )
 think u( cg/f.statcheck, %#, _merit.medium, 1 )
@@ -107,7 +109,7 @@ v: value to check (if %3, then do a dance for num/non-num)
 
 --
 
-&f.statcheck.normal cg=
+&f.statcheck.normal cg=WHAT?
 
 localize( strcat( 
 
@@ -209,6 +211,8 @@ Check that a derived stat's value is valid.
 
 think u( sfp/f.getstat.workhorse.numeric, %#, _advantage.size )
 think u( cg/f.statcheck.derived, %#, _advantage.size )
+think u( cg/f.statcheck.derived, %#, _advantage.willpower )
+think u( cg/f.statcheck.derived, %#, _advantage.willpower_maximum )
 
 
 --------------------------------------------------------------------------------
@@ -700,7 +704,9 @@ strcat(
 
 --
 
-think u( cg/check.badstats, %# )
+think u( cg/check.badstats, udefault( %#/_special.sheet_location, %# ))
+think u( cg/f.badstats, udefault( %#/_special.sheet_location, %# ))
 
+think u( cg/f.statcheck, udefault( %#/_special.sheet_location, %# ), _merit.hardy, )
 
-
+think u( cg/f.statcheck.normal, _merit.hardy, merit.hardy, 1, )
