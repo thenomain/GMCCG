@@ -471,7 +471,7 @@ strcat(
 				`, 
 			Concept:, %b, 
 				if( 
-					hasattr( %0, FINGER-CONCEPT ), 
+					hasattr( %0, _bio.concept ), 
 					ansi( g, exists ), 
 					ansi( r, blank )
 				), 
@@ -706,8 +706,3 @@ strcat(
 --
 
 think u( cg/check.badstats, udefault( %#/_special.sheet_location, %# ))
-think u( cg/f.badstats, udefault( %#/_special.sheet_location, %# ))
-
-think u( cg/f.statcheck, udefault( %#/_special.sheet_location, %# ), _merit.hardy, )
-
-think u( cg/f.statcheck.normal, _merit.hardy, merit.hardy, 1, )
