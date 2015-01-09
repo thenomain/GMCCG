@@ -79,6 +79,7 @@
 &tags.merit.meditative_mind D:T=mental
 &tags.merit.multilingual_() D:T=mental
 &tags.merit.patient D:T=mental
+&tags.merit.professional_training_() DD=mental
 &tags.merit.tolerance_for_biology D:T=mental
 &tags.good_time_management D:T=mental
 

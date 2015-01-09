@@ -201,8 +201,11 @@
 
 &merit.patient DD=1
 
-&merit.professional_training DD=1.2.3.4.5|*
-&tags.merit.professional_training DD=mental
+&merit.professional_training_() DD=1.2.3.4.5|
+	Academic.Artist.Athlete.Cop.Criminal.Detective.Doctor.Engineer.Hacker.
+	Hit Man.Journalist.Laborer.Occultist.Politician.Professional.
+	Religious Leader.Scientist.Socialite.Stuntman.Survivalist.Soldier.
+	Technician.Thug.Vagrant
 
 &merit.tolerance_for_biology DD=1
 &prerequisite.merit.tolerance_for_biology DD=u( .at_least, %0, attribute.resolve, 3 )
@@ -535,6 +538,7 @@
 
 &bio.template DD=Human
 
+&bio.concept DD=*
 
 
 @@ == CORE SPECIAL TYPES =======================================================
