@@ -493,7 +493,7 @@ strcat(
 		iter( virtue vice, 
 			strcat( 
 				titlestr( edit( %i0, _, %b )), :, %b, 
-				setr( i, u( %1/_advantage.%i0 )), %b, 
+				setr( i, u( %1/_bio.%i0 )), %b, 
 				u( display.check.ok-no, comp( %qi, ))
 			), 
 			, `
