@@ -517,11 +517,11 @@
 @@ aren't those mostly suggestions? do we want to list all taken virt/vices?
 @@ yes, they are suggestion. It would be cool to list all taken virtues/vices so we could have a list on the wiki that people could look at for inspiration/choices.
 
-&advantage.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.Loyal.Patient.Peaceful.Righteous.Trustworthy
-&class.advantage.virtue DD=string
+&bio.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.Loyal.Patient.Peaceful.Righteous.Trustworthy
+&class.bio.virtue DD=string
 
-&advantage.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
-&class.advantage.vice DD=string
+&bio.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
+&class.bio.vice DD=string
 
 @@ &advantage.aspiration DD=*
 @@ &class.advantage.aspiration DD=string
