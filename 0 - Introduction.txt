@@ -24,7 +24,8 @@ Some basic definitions:
 	<stat name>: Stat name.
 		Stat names may not contain dashes!  This is because of +roll.
 
-		Stat names may not repeat exactly! The stat name first on the sort order (see below) will always come up first.
+		Stat names may not repeat exactly! The stat name first on the sort order 
+		(see below) will always come up first.
 
 		There is one exception to this: If the repeated stat names are on stat 
 		types NOT checked by the sort-order. These are looked up directly 
@@ -194,7 +195,8 @@ any number of tags, stored on the validation system as:
 e.g.
 	&tags.advantage.clairty DD=morality.changeling
 
-Tag names are not validated. As long as they don't have a "." in them, they are left to the user of this system to give meaning to.
+Tag names are not validated. As long as they don't have a "." in them, they are 
+left to the user of this system to give meaning to.
 
 HOWEVER, PLEASE DO NOT ADD TAGS THAT ARE NOT NECESSARY. Tags are meant to be 
 used by higher game systems to determine validations. <stat type> is a special 
@@ -371,6 +373,5 @@ Names:
 	.	- the period is a delimiter for the stat name
 
 Stats:
-	<number>.	- starting text this way looks like a numeric stat to the system
 	`			- we're using the backtick to columnize
 
