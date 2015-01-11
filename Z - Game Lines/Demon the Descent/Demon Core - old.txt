@@ -1,0 +1,1163 @@
+@@ #############################################################################
+@@ ## DEMON: THE DESCENT #######################################################
+
+@@ == SETUP
+
+&prefix.demon_-_embeds dd=embed.
+&prefix.demon_-_exploits dd=exploit.
+&prefix.demon_-_demonic_forms dd=demonic_form.
+
+
+&.max_trait.Demon dd=advantage.<power trait>
+
+
+@@ -- DEMON POWERS -------------------------------------------------------------
+@@ DEMON EMBEDS
+@@ CACOPHONY
+
+&embed.apple_of_discord DD=Manipulation+Expression vs. Integrity
+&tags.embed.apple_of_discord DD=demon.demon-blooded.cacophony
+&type.embed.apple_of_discord DD=string
+
+&embed.anarchism DD=Manipulation+Politics-Composure
+&tags.embed.anarchism DD=demon.demon-blooded.cacophony
+&type.embed.anarchism DD=string
+
+&embed.breakdown DD=Wits+Medicine-Resolve
+&tags.embed.breakdown DD=demon.demon-blooded.cacophony
+&type.embed.breakdown DD=string
+
+&embed.bystander_effect DD=Manipulation+Intimidation
+&tags.embed.bystander_effect DD=demon.demon-blooded.cacophony
+&type.embed.bystander_effect DD=string
+
+&embed.cause_and_effect DD=Wits+[Any Skill]
+&tags.embed.cause_and_effect DD=demon.demon-blooded.cacophony
+&type.embed.cause_and_effect DD=string
+
+&embed.combustion DD=Wits+Science
+&tags.embed.combustion DD=demon.demon-blooded.cacophony
+&type.embed.combustion DD=string
+
+&embed.cool_heads_prevail DD=Manipulation+Empathy-Composure
+&tags.embed.cool_heads_prevail DD=demon.demon-blooded.cacophony
+&type.embed.cool_heads_prevail DD=string
+
+&embed.deafen DD=Manipulation+Medicine-Stamina
+&tags.embed.deafen DD=demon.demon-blooded.cacophony
+&type.embed.deafen DD=string
+
+&embed.devil’s_advocate DD=Manipulation+Subterfuge-Resolve
+&tags.embed.devil’s_advocate DD=demon.demon-blooded.cacophony
+&type.embed.devil’s_advocate DD=string
+
+&embed.fire_drill DD=Wits+Science
+&tags.embed.fire_drill DD=demon.demon-blooded.cacophony
+&type.embed.fire_drill DD=string
+
+&embed.fractal_reality DD=Wits+Science
+&tags.embed.fractal_reality DD=demon.demon-blooded.cacophony
+&type.embed.fractal_reality DD=string
+
+&embed.hesitation DD=Manipulation+Intimidation-Resolve
+&tags.embed.hesitation DD=demon.demon-blooded.cacophony
+&type.embed.hesitation DD=string
+
+&embed.hush DD=Dexterity+Brawl-Defense
+&tags.embed.hush DD=demon.demon-blooded.cacophony
+&type.embed.hush DD=string
+
+&embed.just_bruised DD=Wits+Medicine
+&tags.embed.just_bruised DD=demon.demon-blooded.cacophony
+&type.embed.just_bruised DD=string
+
+&embed.knockout_punch DD=Dexterity+Brawl-Defense
+&tags.embed.knockout_punch DD=demon.demon-blooded.cacophony
+&type.embed.knockout_punch DD=string
+
+&embed.left_or_right? DD=Manipulation+Science
+&tags.embed.left_or_right? DD=demon.demon-blooded.cacophony
+&type.embed.left_or_right? DD=string
+
+&embed.lucky_break DD=Manipulation+Occult
+&tags.embed.lucky_break DD=demon.demon-blooded.cacophony
+&type.embed.lucky_break DD=string
+
+&embed.merciless_gunman DD=Dexterity+Firearms
+&tags.embed.merciless_gunman DD=demon.demon-blooded.cacophony
+&type.embed.merciless_gunman DD=string
+
+&embed.no_quarter DD=Manipulation+Brawl vs. Resolve
+&tags.embed.no_quarter DD=demon.demon-blooded.cacophony
+&type.embed.no_quarter DD=string
+
+&embed.on_the_mend DD=Wits+Medicine
+&tags.embed.on_the_mend DD=demon.demon-blooded.cacophony
+&type.embed.on_the_mend DD=string
+
+&embed.password_entropy DD=Wits+Computer
+&tags.embed.password_entropy DD=demon.demon-blooded.cacophony
+&type.embed.password_entropy DD=string
+
+&embed.play_possum DD=Manipulation+Medicine
+&tags.embed.play_possum DD=demon.demon-blooded.cacophony
+&type.embed.play_possum DD=string
+
+&embed.raw_materials DD=Manipulation+Crafts
+&tags.embed.raw_materials DD=demon.demon-blooded.cacophony
+&type.embed.raw_materials DD=string
+
+&embed.ripple DD=Wits+Science
+&tags.embed.ripple DD=demon.demon-blooded.cacophony
+&type.embed.ripple DD=string
+
+&embed.sabotage DD=Dexterity+Crafts
+&tags.embed.sabotage DD=demon.demon-blooded.cacophony
+&type.embed.sabotage DD=string
+
+&embed.shatter DD=Wits+Crafts
+&tags.embed.shatter DD=demon.demon-blooded.cacophony
+&type.embed.shatter DD=string
+
+&embed.shifty_eyes DD=Manipulation+Subterfuge-Resolve
+&tags.embed.shifty_eyes DD=demon.demon-blooded.cacophony
+&type.embed.shifty_eyes DD=string
+
+&embed.special_someone DD=Wits+Empathy
+&tags.embed.special_someone DD=demon.demon-blooded.cacophony
+&type.embed.special_someone DD=string
+
+&embed.trip DD=Wits+Athletics-Dexterity
+&tags.embed.trip DD=demon.demon-blooded.cacophony
+&type.embed.trip DD=string
+
+&embed.victory_at_any_price DD=Wits+Science
+&tags.embed.victory_at_any_price DD=demon.demon-blooded.cacophony
+&type.embed.victory_at_any_price DD=string
+
+@@ INSTRUMENTAL
+
+&embed.ambush DD=Wits+Stealth
+&tags.embed.ambush DD=demon.demon-blooded.instrumental
+&type.embed.ambush DD=string
+
+&embed.call_out DD=Manipulation+Intimidation vs. Presence + Supernatural Tolerance
+&tags.embed.call_out DD=demon.demon-blooded.instrumental
+&type.embed.call_out DD=string
+
+&embed.check_backdrop DD=Manipulation+Firearms
+&tags.embed.check_backdrop DD=demon.demon-blooded.instrumental
+&type.embed.check_backdrop DD=string
+
+&embed.data_retrieval DD=Wits+Computers
+&tags.embed.data_retrieval DD=demon.demon-blooded.instrumental
+&type.embed.data_retrieval DD=string
+
+&embed.data_wipe DD=Wits+Copmputers
+&tags.embed.data_wipe DD=demon.demon-blooded.instrumental
+&type.embed.data_wipe DD=string
+
+&embed.download_knowledge DD=Wits+Computers
+&tags.embed.download_knowledge DD=demon.demon-blooded.instrumental
+&type.embed.download_knowledge DD=string
+
+&embed.efficiency DD=Wits+Academics
+&tags.embed.efficiency DD=demon.demon-blooded.instrumental
+&type.embed.efficiency DD=string
+
+&embed.ellipses DD=Manipulation+Expression
+&tags.embed.ellipses DD=demon.demon-blooded.instrumental
+&type.embed.ellipses DD=string
+
+&embed.freeze_assets DD=Manipulation+Academics-Resources
+&tags.embed.freeze_assets DD=demon.demon-blooded.instrumental
+&type.embed.freeze_assets DD=string
+
+&embed.fulcrum_point DD=Wits+Science
+&tags.embed.fulcrum_point DD=demon.demon-blooded.instrumental
+&type.embed.fulcrum_point DD=string
+
+&embed.functional_identity DD=Wits+Crafts
+&tags.embed.functional_identity DD=demon.demon-blooded.instrumental
+&type.embed.functional_identity DD=string
+
+&embed.fungible_knowledge DD=Wits+Academics
+&tags.embed.fungible_knowledge DD=demon.demon-blooded.instrumental
+&type.embed.fungible_knowledge DD=string
+
+&embed.high_of_birth DD=Manipulation+Politics
+&tags.embed.high_of_birth DD=demon.demon-blooded.instrumental
+&type.embed.high_of_birth DD=string
+
+&embed.knock-off DD=Dexterity+Larceny
+&tags.embed.knock-off DD=demon.demon-blooded.instrumental
+&type.embed.knock-off DD=string
+
+&embed.like_i_built_it DD=Wits+Crafts
+&tags.embed.like_i_built_it DD=demon.demon-blooded.instrumental
+&type.embed.like_i_built_it DD=string
+
+&embed.the_map_is_not_the_territory DD=Manipulation+Academics-Intelligence
+&tags.embed.the_map_is_not_the_territory DD=demon.demon-blooded.instrumental
+&type.embed.the_map_is_not_the_territory DD=string
+
+&embed.miles_away DD=Wits+Expression
+&tags.embed.miles_away DD=demon.demon-blooded.instrumental
+&type.embed.miles_away DD=string
+
+&embed.momentum DD=Wits+Science
+&tags.embed.momentum DD=demon.demon-blooded.instrumental
+&type.embed.momentum DD=string
+
+&embed.open_sesame DD=Wits+Larceny-Special Penalties
+&tags.embed.open_sesame DD=demon.demon-blooded.instrumental
+&type.embed.open_sesame DD=string
+
+&embed.read_hostility DD=Wits+Subterfuge
+&tags.embed.read_hostility DD=demon.demon-blooded.instrumental
+&type.embed.read_hostility DD=string
+
+&embed.right_tools,_right_job DD=WIts+Crafts
+&tags.embed.right_tools,_right_job DD=demon.demon-blooded.instrumental
+&type.embed.right_tools,_right_job DD=string
+
+&embed.shift_consequences DD=Manipulation+Occult-Variable
+&tags.embed.shift_consequences DD=demon.demon-blooded.instrumental
+&type.embed.shift_consequences DD=string
+
+&embed.soup_up DD=Dexter+Drive-Special Penalties
+&tags.embed.soup_up DD=demon.demon-blooded.instrumental
+&type.embed.soup_up DD=string
+
+&embed.strike_first DD=Wits+Brawl
+&tags.embed.strike_first DD=demon.demon-blooded.instrumental
+&type.embed.strike_first DD=string
+
+&embed.synthesis DD=Wits+Investigation
+&tags.embed.synthesis DD=demon.demon-blooded.instrumental
+&type.embed.synthesis DD=string
+
+&embed.tag_and_release DD=Dexterity+Expression
+&tags.embed.tag_and_release DD=demon.demon-blooded.instrumental
+&type.embed.tag_and_release DD=string
+
+&embed.tools_into_toys DD=Manipulation+Crafts
+&tags.embed.tools_into_toys DD=demon.demon-blooded.instrumental
+&type.embed.tools_into_toys DD=string
+
+&embed.trivia DD=Manipulation+Expression
+&tags.embed.trivia DD=demon.demon-blooded.instrumental
+&type.embed.trivia DD=string
+
+&embed.turn_blade DD=Wits+Weaponry
+&tags.embed.turn_blade DD=demon.demon-blooded.instrumental
+&type.embed.turn_blade DD=string
+
+&embed.wasted_time DD=Wits+Science
+&tags.embed.wasted_time DD=demon.demon-blooded.instrumental
+&type.embed.wasted_time DD=string
+
+@@ MUNDANE
+
+&embed.alibi DD=Manipulation+Stealth
+&tags.embed.alibi DD=demon.demon-blooded.mundane
+&type.embed.alibi DD=string
+
+&embed.associate_and_integrate DD=Manipulation+Science vs. Resolve + Composure
+&tags.embed.associate_and_integrate DD=demon.demon-blooded.mundane
+&type.embed.associate_and_integrate DD=string
+
+&embed.authorize DD=Manipulation+Intimidation-Intelligence
+&tags.embed.authorize DD=demon.demon-blooded.mundane
+&type.embed.authorize DD=string
+
+&embed.clothes_make_the_man DD=Wits+Persuasion vs. Wits + Target Skill
+&tags.embed.clothes_make_the_man DD=demon.demon-blooded.mundane
+&type.embed.clothes_make_the_man DD=string
+
+&embed.cuckoo’s_egg DD=Dexterity+Larceny
+&tags.embed.cuckoo’s_egg DD=demon.demon-blooded.mundane
+&type.embed.cuckoo’s_egg DD=string
+
+&embed.deep_cover DD=Manipulation+Occult
+&tags.embed.deep_cover DD=demon.demon-blooded.mundane
+&type.embed.deep_cover DD=string
+
+&embed.diversion DD=Manipulation+Expression
+&tags.embed.diversion DD=demon.demon-blooded.mundane
+&type.embed.diversion DD=string
+
+&embed.don’t_i_know_you? DD=Manipulation+Subterfuge-Resolve
+&tags.embed.don’t_i_know_you? DD=demon.demon-blooded.mundane
+&type.embed.don’t_i_know_you? DD=string
+
+&embed.earworm DD=Manipulation+Expression-Composure
+&tags.embed.earworm DD=demon.demon-blooded.mundane
+&type.embed.earworm DD=string
+
+&embed.going_native DD=Wits+Socialize
+&tags.embed.going_native DD=demon.demon-blooded.mundane
+&type.embed.going_native DD=string
+
+&embed.homogenous_memory DD=Manipulation+Subterfuge-Resolve
+&tags.embed.homogenous_memory DD=demon.demon-blooded.mundane
+&type.embed.homogenous_memory DD=string
+
+&embed.identity_theft DD=Manipulation+Subterfuge
+&tags.embed.identity_theft DD=demon.demon-blooded.mundane
+&type.embed.identity_theft DD=string
+
+&embed.idle_conversation DD=Manipulation+Socialize
+&tags.embed.idle_conversation DD=demon.demon-blooded.mundane
+&type.embed.idle_conversation DD=string
+
+&embed.in_my_pocket DD=Dexterity+Larceny
+&tags.embed.in_my_pocket DD=demon.demon-blooded.mundane
+&type.embed.in_my_pocket DD=string
+
+&embed.interference DD=Manipulation+Subterfuge
+&tags.embed.interference DD=demon.demon-blooded.mundane
+&type.embed.interference DD=string
+
+&embed.last_place_you_look DD=Wits+Larceny
+&tags.embed.last_place_you_look DD=demon.demon-blooded.mundane
+&type.embed.last_place_you_look DD=string
+
+&embed.like_the_movies DD=Wits+Academics
+&tags.embed.like_the_movies DD=demon.demon-blooded.mundane
+&type.embed.like_the_movies DD=string
+
+&embed.living_recorder DD=Manipulation+Investigation
+&tags.embed.living_recorder DD=demon.demon-blooded.mundane
+&type.embed.living_recorder DD=string
+
+&embed.lost_in_the_crowd DD=Wits+Stealth
+&tags.embed.lost_in_the_crowd DD=demon.demon-blooded.mundane
+&type.embed.lost_in_the_crowd DD=string
+
+&embed.meaninglessness DD=Manipulation+Academics
+&tags.embed.meaninglessness DD=demon.demon-blooded.mundane
+&type.embed.meaninglessness DD=string
+
+&embed.mistaken_identity DD=Manipulation+Persuasion-Composure
+&tags.embed.mistaken_identity DD=demon.demon-blooded.mundane
+&type.embed.mistaken_identity DD=string
+
+&embed.never_here DD=Manipulation+Stealth-Resolve
+&tags.embed.never_here DD=demon.demon-blooded.mundane
+&type.embed.never_here DD=string
+
+&embed.occam’s_razor DD=Manipulation+Persuasion
+&tags.embed.occam’s_razor DD=demon.demon-blooded.mundane
+&type.embed.occam’s_razor DD=string
+
+&embed.persistent_legend DD=Wits+Academics
+&tags.embed.persistent_legend DD=demon.demon-blooded.mundane
+&type.embed.persistent_legend DD=string
+
+&embed.quick_change DD=Manipulation+Subterfuge
+&tags.embed.quick_change DD=demon.demon-blooded.mundane
+&type.embed.quick_change DD=string
+
+&embed.the_voting_dead DD=Manipulation+Politics
+&tags.embed.the_voting_dead DD=demon.demon-blooded.mundane
+&type.embed.the_voting_dead DD=string
+
+&embed.unperson DD=Manipulation+Subterfuge-Composure
+&tags.embed.unperson DD=demon.demon-blooded.mundane
+&type.embed.unperson DD=string
+
+&embed.wave_function_collapse DD=Dexterity+Brawl vs. Stamina + Supernatural Tolerance
+&tags.embed.wave_function_collapse DD=demon.demon-blooded.mundane
+&type.embed.wave_function_collapse DD=string
+
+&embed.without_a_trace DD=Manipulation+Investigation
+&tags.embed.without_a_trace DD=demon.demon-blooded.mundane
+&type.embed.without_a_trace DD=string
+
+&embed.you_can_tell_me DD=Manipulation+Empathy-Composure
+&tags.embed.you_can_tell_me DD=demon.demon-blooded.mundane
+&type.embed.you_can_tell_me DD=string
+
+@@ VOCAL
+
+&embed.across_a_crowded_room DD=Manipulation+Subterfuge
+&tags.embed.across_a_crowded_room DD=demon.demon-blooded.vocal
+&type.embed.across_a_crowded_room DD=string
+
+&embed.animal_communication DD=Manipulation+Animal Ken
+&tags.embed.animal_communication DD=demon.demon-blooded.vocal
+&type.embed.animal_communication DD=string
+
+&embed.animal_messenger DD=Manipulation+Animal Ken
+&tags.embed.animal_messenger DD=demon.demon-blooded.vocal
+&type.embed.animal_messenger DD=string
+
+&embed.borrowed_expertise DD=Manipulation+[Granted Skill]
+&tags.embed.borrowed_expertise DD=demon.demon-blooded.vocal
+&type.embed.borrowed_expertise DD=string
+
+&embed.common_misconception DD=Manipulation+Science
+&tags.embed.common_misconception DD=demon.demon-blooded.vocal
+&type.embed.common_misconception DD=string
+
+&embed.eavesdrop DD=Wits+Empathy
+&tags.embed.eavesdrop DD=demon.demon-blooded.vocal
+&type.embed.eavesdrop DD=string
+
+&embed.everbody_knows DD=Manipulation+Subterfuge
+&tags.embed.everybody_knows DD=demon.demon-blooded.vocal
+&type.embed.everybody_knows DD=string
+
+&embed.find_the_leak DD=Wits+Empathy
+&tags.embed.find_the_leak DD=demon.demon-blooded.vocal
+&type.embed.find_the_leak DD=string
+
+&embed.freudian_slip DD=Manipulation+Empathy-Composure
+&tags.embed.freudian_slip DD=demon.demon-blooded.vocal
+&type.embed.freudian_slip DD=string
+
+&embed.heart’s_desire DD=Wits+Empathy-Composure
+&tags.embed.heart’s_desire DD=demon.demon-blooded.vocal
+&type.embed.heart’s_desire DD=string
+
+&embed.imagine DD=Manipulation+Persuasion
+&tags.embed.imagine DD=demon.demon-blooded.vocal
+&type.embed.imagine DD=string
+
+&embed.the_look DD=Manipulation+Intimidation-Stamina
+&tags.embed.the_look DD=demon.demon-blooded.vocal
+&type.embed.the_look DD=string
+
+&embed.loose_lips DD=Manipulation+Socialize-Stamina
+&tags.embed.loose_lips DD=demon.demon-blooded.vocal
+&type.embed.loose_lips DD=string
+
+&embed.marco_polo DD=Manipulation+Persuasion-Composure
+&tags.embed. DD=demon.demon-blooded.vocal
+&type.embed. DD=string
+
+&embed.mercury_retrograde DD=Manipulation+Subterfuge-Wits
+&tags.embed.mercury_retrograde DD=demon.demon-blooded.vocal
+&type.embed.mercury_retrograde DD=string
+
+&embed.muse DD=manipulation+Expression-Resolve
+&tags.embed.muse DD=demon.demon-blooded.vocal
+&type.embed.muse DD=string
+
+&embed.the_only_word_that_matters DD=Manipulation+Expression-Composure
+&tags.embed.the_only_word_that_matters DD=demon.demon-blooded.vocal
+&type.embed.the_only_word_that_matters DD=string
+
+&embed.recurring_hallucinations DD=Manipulations+Occult-Resolve
+&tags.embed.recurring_hallucinations DD=demon.demon-blooded.vocal
+&type.embed.recurring_hallucinations DD=string
+
+&embed.remote_link-up DD=Wits+Socialize
+&tags.embed.remote_link-up DD=demon.demon-blooded.vocal
+&type.embed.remote_link-up DD=string
+
+&embed.rhetoric DD=Wits+Subterfuge
+&tags.embed.rhetoric DD=demon.demon-blooded.vocal
+&type.embed.rhetoric DD=string
+
+&embed.social_dynamics DD=Wits+Socialize
+&tags.embed.social_dynamics DD=demon.demon-blooded.vocal
+&type.embed.social_dynamics DD=string
+
+&embed.social_engineering DD=Manipulation+Persuasion
+&tags.embed.social_engineering DD=demon.demon-blooded.vocal
+&type.embed.social_engineering DD=string
+
+&embed.special_message DD=Manipulation+Expression
+&tags.embed.special_message DD=demon.demon-blooded.vocal
+&type.embed.special_message DD=string
+
+&embed.strength_through_adversity DD=Manipulation+Intimidation-Resolve
+&tags.embed.strength_through_adversity DD=demon.demon-blooded.vocal
+&type.embed.strength_through_adversity DD=string
+
+&embed.sum_of_all_fears DD=Wits+Empathy-Composure
+&tags.embed.sum_of_all_fears DD=demon.demon-blooded.vocal
+&type.embed.sum_of_all_fears DD=string
+
+&embed.tower_of_babel DD=Manipulation+Socialize
+&tags.embed.tower_of_babel DD=demon.demon-blooded.vocal
+&type.embed.tower_of_babel DD=string
+
+&embed.trick_of_the_light DD=Manipulation+Investigation-Wits
+&tags.embed.trick_of_the_light DD=demon.demon-blooded.vocal
+&type.embed.trick_of_the_light DD=string
+
+&embed.trust_no_one DD=Manipulation+Subterfuge-Resolve
+&tags.embed.trust_no_one DD=demon.demon-blooded.vocal
+&type.embed.trust_no_one DD=string
+
+&embed.voice_of_the_machine DD=Wits+Crafts
+&tags.embed.voice_of_the_machine DD=demon.demon-blooded.vocal
+&type.embed.voice_of_the_machine DD=string
+
+&embed.vox DD=Manipulation+Expression
+&tags.embed.vox DD=demon.demon-blooded.vocal
+&type.embed.vox DD=string
+
+@@ -- DEMON POWERS -------------------------------------------------------------
+@@ DEMON EXPLOITS
+
+&exploit.addictive_presence DD=Presence + Socialize + Primum
+&tags.exploit.addictive_presence DD=demon
+&type.exploit.addictive_presence DD=string
+
+&exploit.affliction DD=Strength + Medicine + Primum vs. Stamina or Resolve + Supernatural Tolerance
+&tags.exploit.affliction DD=demon
+&type.exploit.affliction DD=string
+
+&exploit.allies_into_gold DD=Intelligence + Socialize + Primum
+&tags.exploit.allies_into_gold DD=demon
+&type.exploit.allies_into_gold DD=string
+
+&exploit.animate DD=Presence + Crafts + Primum
+&tags.exploit.animate DD=demon
+&type.exploit.animate DD=string
+
+&exploit.behind_the_curtain DD=Intelligence + Computes + Primum
+&tags.exploit.behind_the_curtain DD=demon
+&type.exploit.behind_the_curtain DD=string
+
+&exploit.break_the_dam DD=Presence + Science + Primum - Stamina
+&tags.exploit.break_the_dam DD=demon
+&type.exploit.break_the_dam DD=string
+
+&exploit.break_to_heal DD=Strength + Medicine + Primum
+&tags.exploit.break_to_heal DD=demon
+&type.exploit.break_to_heal DD=string
+
+&exploit.context_matters DD=Presence + Persuasion + Primum
+&tags.exploit.context_matters DD=demon
+&type.exploit.context_matters DD=string
+
+&exploit.decoy DD=Presence + Stealth + Primum
+&tags.exploit.decoy DD=demon
+&type.exploit.decoy DD=string
+
+&exploit.deep_pockets DD=Strength + Larceny + Primum
+&tags.exploit.deep_pockets DD=demon
+&type.exploit.deep_pockets DD=string
+
+&exploit.demon_car DD=Strength + Drive + Primum
+&tags.exploit.demon_car DD=demon
+&type.exploit.demon_car DD=string
+
+&exploit.demon_house DD=Presence + Stealth + Primum
+&tags.exploit.demon_house DD=demon
+&type.exploit.demon_house DD=string
+
+&exploit.devour_infrastructure DD=Strength + Survival + Primum
+&tags.exploit.devour_infrastructure DD=demon
+&type.exploit.devour_infrastructure DD=string
+
+&exploit.disintegrate DD=Strength + Brawl + Primum
+&tags.exploit.disintegrate DD=demon
+&type.exploit.disintegrate DD=string
+
+&exploit.echoing_death DD=Strength + Brawl + Primum
+&tags.exploit.echoing_death DD=demon
+&type.exploit.echoing_death DD=string
+
+&exploit.ephemeral_cover DD=Strength + Occult + Primum - Defense
+&tags.exploit.ephemeral_cover DD=demon
+&type.exploit.ephemeral_cover DD=string
+
+&exploit.everybody_hates_him DD=Intelligence + Intimidation + Primum
+&tags.exploit.everybody_hates_him DD=demon
+&type.exploit.everybody_hates_him DD=string
+
+&exploit.extispicy DD=Intelligence + Occult + Primum
+&tags.exploit.extispicy DD=demon
+&type.exploit.extispicy DD=string
+
+&exploit.eye_for_an_eye DD=Strength + Medicine + Primum - Marked Health Boxes
+&tags.exploit.eye_for_an_eye DD=demon
+&type.exploit.eye_for_an_eye DD=string
+
+&exploit.force_relationship DD=Presence + Empathy + Primum
+&tags.exploit.force_relationship DD=demon
+&type.exploit.force_relationship DD=string
+
+&exploit.four_minutes_ago DD=Intelligence + Stealth + Primum
+&tags.exploit.four_minutes_ago DD=demon
+&type.exploit.four_minutes_ago DD=string
+
+&exploit.frozen_in_time DD=Intelligence + Science + Primum - Stamina
+&tags.exploit.frozen_in_time DD=demon
+&type.exploit.frozen_in_time DD=string
+
+&exploit.halo DD=Presence + Medicine + Primum
+&tags.exploit.halo DD=demon
+&type.exploit.halo DD=string
+
+&exploit.hellfire DD=Presence + Firearms + Primum
+&tags.exploit.hellfire DD=demon
+&type.exploit.hellfire DD=string
+
+&exploit.hellhounds DD=Intelligence + Animal Ken + Primum
+&tags.exploit.hellhounds DD=demon
+&type.exploit.hellhounds DD=string
+
+&exploit.incendiary DD=Strength + Science + Primum
+&tags.exploit.incendiary DD=demon
+&type.exploit.incendiary DD=string
+
+&exploit.inflict_stigamata DD=Presence + Occult + Primum
+&tags.exploit.inflict_stigamata DD=demon
+&type.exploit.inflict_stigamata DD=string
+
+&exploit.living_installation DD=Intelligence + Medicine + Primum
+&tags.exploit.living_installation DD=demon
+&type.exploit.living_installation DD=string
+
+&exploit.living_shadow DD=Intelligence + Stealth + Primum
+&tags.exploit.living_shadow DD=demon
+&type.exploit.living_shadow DD=string
+
+&exploit.merge DD=Strength + Occult + Primum
+&tags.exploit.merge DD=demon
+&type.exploit.merge DD=string
+
+&exploit.murder_by_improbability DD=Intelligence + Academics + Primum vs. Presence + Supernatural Tolerance
+&tags.exploit.murder_by_improbability DD=demon
+&type.exploit.murder_by_improbability DD=string
+
+&exploit.newton's_nightmares DD=Intelligence + Science + Primum
+&tags.exploit.newton's_nightmares DD=demon
+&type.exploit.newton's_nightmares DD=string
+
+&exploit.open-and-shut_case DD=Presence + Investigation + Primum
+&tags.exploit.open-and-shut_case DD=demon
+&type.exploit.open-and-shut_case DD=string
+
+&exploit.play_on_words DD=Presence + Expression + Primum
+&tags.exploit.play_on_words DD=demon
+&type.exploit.play_on_words DD=string
+
+&exploit.possession DD=Intelligence + Persuasion + Primum - Resolve
+&tags.exploit.possession DD=demon
+&type.exploit.possession DD=string
+
+&exploit.rain_of_blood DD=Strength + Occult + Primum
+&tags.exploit.rain_of_blood DD=demon
+&type.exploit.rain_of_blood DD=string
+
+&exploit.raise_dead DD=Presence + Medicine + Primum
+&tags.exploit.raise_dead DD=demon
+&type.exploit.raise_dead DD=string
+
+&exploit.raze_infrastructure DD=Presence + Streetwise + Primum
+&tags.exploit.raze_infrastructure DD=demon
+&type.exploit.raze_infrastructure DD=string
+
+&exploit.reality_enforcement DD=Presence + Academics + Primum
+&tags.exploit.reality_enforcement DD=demon
+&type.exploit.reality_enforcement DD=string
+
+&exploit.riot DD=Presence + Persuasion + Primum
+&tags.exploit.riot DD=demon
+&type.exploit.riot DD=string
+
+&exploit.rip_the_gates DD=Strength + Occult + Primum
+&tags.exploit.rip_the_gates DD=demon
+&type.exploit.rip_the_gates DD=string
+
+&exploit.sermon DD=Presence + Persuasion + Primum
+&tags.exploit.sermon DD=demon
+&type.exploit.sermon DD=string
+
+&exploit.show_of_power DD=Presence + Occult + Primum vs. Wits + Supernatural Tolerance
+&tags.exploit.show_of_power DD=demon
+&type.exploit.show_of_power DD=string
+
+&exploit.solitary_confinement DD=Strength + Occult + Primum - Resolve + Supernatural Tolerance
+&tags.exploit.solitary_confinement DD=demon
+&type.exploit.solitary_confinement DD=string
+
+&exploit.soul_brand DD=Presence + Expression + Primum - Supernatural Tolerance
+&tags.exploit.soul_brand DD=demon
+&type.exploit.soul_brand DD=string
+
+&exploit.stalking_horse DD=Presence + Expression + Primum vs. Composure + Supernatural Tolerance
+&tags.exploit.stalking_horse DD=demon
+&type.exploit.stalking_horse DD=string
+
+&exploit.stimulus/response DD=Intelligence + Empathy + Primum vs. Resolve + Supernatural Tolerance
+&tags.exploit.stimulus/response DD=demon
+&type.exploit.stimulus/response DD=string
+
+&exploit.stop DD=Intelligence + Science + Primum
+&tags.exploit.stop DD=demon
+&type.exploit.stop DD=string
+
+&exploit.summon DD=Presence + Streetwise + Primum
+&tags.exploit.summon DD=demon
+&type.exploit.summon DD=string
+
+&exploit.swarm DD=Presence + Animal Ken + Primum
+&tags.exploit.swarm DD=demon
+&type.exploit.swarm DD=string
+
+&exploit.swift_resolution DD=Intelligence + Academics + Primum
+&tags.exploit.swift_resolution DD=demon
+&type.exploit.swift_resolution DD=string
+
+&exploit.terrible_avatar DD=Strength + Occult + Primum
+&tags.exploit.terrible_avatar DD=demon
+&type.exploit.terrible_avatar DD=string
+
+&exploit.two_places_at_once DD=Presence + Science + Primum
+&tags.exploit.two_places_at_once DD=demon
+&type.exploit.two_places_at_once DD=string
+
+&exploit.ultimatum DD=Intelligence + Science + Primum vs. Resolve + Supernatural Tolerance
+&tags.exploit.ultimatum DD=demon
+&type.exploit.ultimatum DD=string
+
+&exploit.urban_legend DD=Intelligence + Expression + Primum
+&tags.exploit.urban_legend DD=demon
+&type.exploit.urban_legend DD=string
+
+&exploit.visions_of_head_and_hell DD=Presence + Intimidation + Primum vs. Resolve + Supernatural Tolerance
+&tags.exploit.visions_of_head_and_hell DD=demon
+&type.exploit.visions_of_head_and_hell DD=string
+
+&exploit.walls_of_jericho DD=Strength + Intimidation + Primum
+&tags.exploit.walls_of_jericho DD=demon
+&type.exploit.walls_of_jericho DD=string
+
+&exploit.the_word DD=Presence + Intimidation + Primum - Resolve
+&tags.exploit.the_word DD=demon
+&type.exploit.the_word DD=string
+
+
+@@ DEMON POWERS ------------------------------------------------------------------------
+
+@@ DEMONIC FORMS
+
+@@ MODIFICATIONS
+
+&demonic_form.advanced_optics DD=1
+&tags.demonic_form.advanced_optics DD=demon.modifications
+&type.demonic_form.advanced_optics DD=flag
+
+&demonic_form.armored_plates DD=1
+&tags.demonic_form.armored_plates DD=demon.modifications
+&type.demonic_form.armored_plates DD=flag
+
+&demonic_form.blade_hand DD=1
+&tags.demonic_form.blade_hand DD=demon.modifications
+&type.demonic_form.blade_hand DD=flag
+
+&demonic_form.claws_and_fangs DD=1
+&tags.demonic_form.claws_and_fangs DD=demon.modifications
+&type.demonic_form.claws_and_fangs DD=flag
+
+&demonic_form.component_indicators DD=1
+&tags.demonic_form.component_indicators DD=demon.modifications
+&type.demonic_form.component_indicators DD=flag
+
+&demonic_form.detachable_limbs DD=1
+&tags.demonic_form.detachable_limbs DD=demon.modifications
+&type.demonic_form.detachable_limbs DD=flag
+
+&demonic_form.electrical_sight DD=1
+&tags.demonic_form.electrical_sight DD=demon.modifications
+&type.demonic_form.electrical_sight DD=flag
+
+&demonic_form.EMP_field DD=1
+&tags.demonic_form.EMP_field DD=demon.modifications
+&type.demonic_form.EMP_field DD=flag
+
+&demonic_form.fast_attack DD=1
+&tags.demonic_form.fast_attack DD=demon.modifications
+&type.demonic_form.fast_attack DD=flag
+
+&demonic_form.huge_size DD=1
+&tags.demonic_form.huge_size DD=demon.modifications
+&type.demonic_form.huge_size DD=flag
+
+&demonic_form.inhuman_intelligence DD=1
+&tags.demonic_form. DD=demon.modifications
+&type.demonic_form. DD=flag
+
+&demonic_form.inhuman_strength DD=1
+&tags.demonic_form.inhuman_strength DD=demon.modifications
+&type.demonic_form.inhuman_strength DD=flag
+
+&demonic_form.inhuman_reflexes DD=1
+&tags.demonic_form.inhuman_reflexes DD=demon.modifications
+&type.demonic_form.inhuman_reflexes DD=flag
+
+&demonic_form.lighting DD=1
+&tags.demonic_form.lighting DD=demon.modifications
+&type.demonic_form.lighting DD=flag
+
+&demonic_form.limb_retractor DD=1
+&tags.demonic_form.limb_retractor DD=demon.modifications
+&type.demonic_form.limb_retractor DD=flag
+
+&demonic_form.low_density DD=1
+&tags.demonic_form.low_density DD=demon.modifications
+&type.demonic_form.low_density DD=flag
+
+&demonic_form.mental_resistance DD=1
+&tags.demonic_form.mental_resistance DD=demon.modifications
+&type.demonic_form.mental_resistance DD=flag
+
+&demonic_form.nauseating_musk DD=1
+&tags.demonic_form.nauseating_musk DD=demon.modifications
+&type.demonic_form.nauseating_musk DD=flag
+
+&demonic_form.night_vision DD=1
+&tags.demonic_form.night_vision DD=demon.modifications
+&type.demonic_form.night_vision DD=flag
+
+&demonic_form.olfactory_enhancements DD=1
+&tags.demonic_form.olfactory_enhancements DD=demon.modifications
+&type.demonic_form.olfactory_enhancements DD=flag
+
+&demonic_form.radio_suite DD=1
+&tags.demonic_form.radio_suite DD=demon.modifications
+&type.demonic_form.radio_suite DD=flag
+
+&demonic_form.resistors DD=1
+&tags.demonic_form.resistors DD=demon.modifications
+&type.demonic_form.resistors DD=flag
+
+&demonic_form.rivet_arm DD=1
+&tags.demonic_form.rivet_arm DD=demon.modifications
+&type.demonic_form.rivet_arm DD=flag
+
+&demonic_form.sense_the_angelic DD=1
+&tags.demonic_form.sense_the_angelic DD=demon.modifications
+&type.demonic_form.sense_the_angelic DD=flag
+
+&demonic_form.slippery_body DD=1
+&tags.demonic_form.slippery_body DD=demon.modifications
+&type.demonic_form.slippery_body DD=flag
+
+&demonic_form.sonic_acuity DD=1
+&tags.demonic_form.sonic_acuity DD=demon.modifications
+&type.demonic_form.sonic_acuity DD=flag
+
+&demonic_form.spurs DD=1
+&tags.demonic_form.spurs DD=demon.modifications
+&type.demonic_form.spurs DD=flag
+
+&demonic_form.steel_frame DD=1
+&tags.demonic_form.steel_frame DD=demon.modifications
+&type.demonic_form.steel_frame DD=flag
+
+&demonic_form.tough_as_stone DD=1
+&tags.demonic_form.tough_as_stone DD=demon.modifications
+&type.demonic_form.tough_as_stone DD=flag
+
+&demonic_form.unyielding_vice DD=1
+&tags.demonic_form.unyielding_vice DD=demon.modifications
+&type.demonic_form.unyielding_vice DD=flag
+
+@@ TECHNOLOGIES
+
+&demonic_form.abruption_jets DD=1
+&tags.demonic_form.abruption_jets DD=demon.technologies
+&type.demonic_form.abruption_jets DD=flag
+
+&demonic_form.acidic_spit DD=1
+&tags.demonic_form.acidic_spit DD=demon.technologies
+&type.demonic_form.acidic_spit DD=flag
+
+&demonic_form.adhesive DD=1
+&tags.demonic_form.adhesive DD=demon.technologies
+&type.demonic_form.adhesive DD=flag
+
+&demonic_form.aura_sight DD=1
+&tags.demonic_form.aura_sight DD=demon.technologies
+&type.demonic_form.aura_sight DD=flag
+
+&demonic_form.barbed_tail DD=1
+&tags.demonic_form.barbed_tail DD=demon.technologies
+&type.demonic_form.barbed_tail DD=flag
+
+&demonic_form.blind_sense DD=1
+&tags.demonic_form.blind_sense DD=demon.technologies
+&type.demonic_form.blind_sense DD=flag
+
+&demonic_form.clairvoyant_sight DD=1
+&tags.demonic_form.clairvoyant_sight DD=demon.technologies
+&type.demonic_form.clairvoyant_sight DD=flag
+
+&demonic_form.collapsible DD=1
+&tags.demonic_form.collapsible DD=demon.technologies
+&type.demonic_form.collapsible DD=flag
+
+&demonic_form.demonic_horns DD=1
+&tags.demonic_form.demonic_horns DD=demon.technologies
+&type.demonic_form.demonic_horns DD=flag
+
+&demonic_form.electric_jolt DD=1
+&tags.demonic_form.electric_jolt DD=demon.technologies
+&type.demonic_form.electric_jolt DD=flag
+
+&demonic_form.electrical_resistance DD=1
+&tags.demonic_form.electrical_resistance DD=demon.technologies
+&type.demonic_form.electrical_resistance DD=flag
+
+&demonic_form.environmental_resistance DD=1
+&tags.demonic_form.environmental_resistance DD=demon.technologies
+&type.demonic_form.environmental_resistance DD=flag
+
+&demonic_form.essence_drain DD=1
+&tags.demonic_form.essence_drain DD=demon.technologies
+&type.demonic_form.essence_drain DD=flag
+
+&demonic_form.fire_resistance DD=1
+&tags.demonic_form.fire_resistance DD=demon.technologies
+&type.demonic_form.fire_resistance DD=flag
+
+&demonic_form.frost_aura DD=1
+&tags.demonic_form.frost_aura DD=demon.technologies
+&type.demonic_form.frost_aura DD=flag
+
+&demonic_form.inhuman_beauty DD=1
+&tags.demonic_form.inhuman_beauty DD=demon.technologies
+&type.demonic_form.inhuman_beauty DD=flag
+
+&demonic_form.glory_and_terror DD=1
+&tags.demonic_form.glory_and_terror DD=demon.technologies
+&type.demonic_form.glory_and_terror DD=flag
+
+&demonic_form.laser_cutter DD=1
+&tags.demonic_form.laser_cutter DD=demon.technologies
+&type.demonic_form.laser_cutter DD=flag
+
+&demonic_form.mantle_of_fire DD=1
+&tags.demonic_form.mantle_of_fire DD=demon.technologies
+&type.demonic_form.mantle_of_fire DD=flag
+
+&demonic_form.mind_reading DD=1
+&tags.demonic_form.mind_reading DD=demon.technologies
+&type.demonic_form.mind_reading DD=flag
+
+&demonic_form.mirrored_skin DD=1
+&tags.demonic_form.mirrored_skin DD=demon.technologies
+&type.demonic_form.mirrored_skin DD=flag
+
+&demonic_form.multiversal_antenna DD=1
+&tags.demonic_form.multiversal_antenna DD=demon.technologies
+&type.demonic_form.multiversal_antenna DD=flag
+
+&demonic_form.savant_core DD=1
+&tags.demonic_form.savant_core DD=demon.technologies
+&type.demonic_form.savant_core DD=flag
+
+&demonic_form.shielded_compartment DD=1
+&tags.demonic_form.shielded_compartment DD=demon.technologies
+&type.demonic_form.shielded_compartment DD=flag
+
+@@PROPULSIONS
+
+&demonic_form.aquatic DD=1
+&tags.demonic_form.aquatic DD=demon.propulsions
+&type.demonic_form.aquatic DD=flag
+
+&demonic_form.burrowing DD=1
+&tags.demonic_form.burrowing DD=demon.propulsions
+&type.demonic_form.burrowing DD=flag
+
+&demonic_form.long_limbs DD=1
+&tags.demonic_form.long_limbs DD=demon.propulsions
+&type.demonic_form.long_limbs DD=flag
+
+&demonic_form.phasing DD=1
+&tags.demonic_form.phasing DD=demon.propulsions
+&type.demonic_form.phasing DD=flag
+
+&demonic_form.plasma_drive DD=1
+&tags.demonic_form.plasma_drive DD=demon.propulsions
+&type.demonic_form.plasma_drive DD=flag
+
+&demonic_form.spatial_distortion DD=1
+&tags.demonic_form.spatial_distortion DD=demon.propulsions
+&type.demonic_form.spatial_distortion DD=flag
+
+&demonic_form.teleportation DD=1
+&tags.demonic_form.teleportation DD=demon.propulsions
+&type.demonic_form.teleportation DD=flag
+
+&demonic_form.tether DD=1
+&tags.demonic_form.tether DD=demon.propulsions
+&type.demonic_form.tether DD=flag
+
+&demonic_form.tread DD=1
+&tags.demonic_form.tread DD=demon.propulsions
+&type.demonic_form.tread DD=flag
+
+&demonic_form.urban_fluidity DD=1
+&tags.demonic_form.urban_fluidity DD=demon.propulsions
+&type.demonic_form.urban_fluidity DD=flag
+
+&demonic_form.wings DD=1
+&tags.demonic_form.wings DD=demon.propulsions
+&type.demonic_form.wings DD=flag
+
+@@PROCESSES
+
+&demonic_form.aegis_protocol DD=1
+&tags.demonic_form.aegis_protocol DD=demon.processes
+&type.demonic_form.aegis_protocol DD=flag
+
+&demonic_form.amorphous DD=1
+&tags.demonic_form.amorphous DD=demon.processes
+&type.demonic_form.amorphous DD=flag
+
+&demonic_form.body_modification DD=1
+&tags.demonic_form.body_modification DD=demon.processes
+&type.demonic_form.body_modification DD=flag
+
+&demonic_form.cavernous_maw DD=1
+&tags.demonic_form.cavernous_maw DD=demon.processes
+&type.demonic_form.cavernous_maw DD=flag
+
+&demonic_form.corruption_aura DD=1
+&tags.demonic_form.corruption_aura DD=demon.processes
+&type.demonic_form.corruption_aura DD=flag
+
+&demonic_form.dataform DD=1
+&tags.demonic_form.dataform DD=demon.processes
+&type.demonic_form.dataform DD=flag
+
+&demonic_form.eliminator_cannon DD=1
+&tags.demonic_form.eliminator_cannon DD=demon.processes
+&type.demonic_form.eliminator_cannon DD=flag
+
+&demonic_form.extra_mechanical_limbs DD=1
+&tags.demonic_form.extra_mechanical_limbs DD=demon.processes
+&type.demonic_form.extra_mechanical_limbs DD=flag
+
+&demonic_form.insect_swarm DD=1
+&tags.demonic_form.insect_swarm DD=demon.processes
+&type.demonic_form.insect_swarm DD=flag
+
+&demonic_form.magnesium_flare DD=1
+&tags.demonic_form.magnesium_flare DD=demon.processes
+&type.demonic_form.magnesium_flare DD=flag
+
+&demonic_form.memory_theft DD=1
+&tags.demonic_form.memory_theft DD=demon.processes
+&type.demonic_form.memory_theft DD=flag
+
+&demonic_form.multiple_images DD=1
+&tags.demonic_form.multiple_images DD=demon.processes
+&type.demonic_form.multiple_images DD=flag
+
+&demonic_form.nanobot_composition DD=1
+&tags.demonic_form.nanobot_composition DD=demon.processes
+&type.demonic_form.nanobot_composition DD=flag
+
+&demonic_form.quill_burst DD=1
+&tags.demonic_form.quill_burst DD=demon.processes
+&type.demonic_form.quill_burst DD=flag
+
+&demonic_form.rain_of_fire DD=1
+&tags.demonic_form.rain_of_fire DD=demon.processes
+&type.demonic_form.rain_of_fire DD=flag
+
+&demonic_form.voice_of_the_angel DD=1
+&tags.demonic_form.voice_of_the_angel DD=demon.processes
+&type.demonic_form.voice_of_the_angel DD=flag
+
+&demonic_form.wound_healing DD=1
+&tags.demonic_form.wound_healing DD=demon.processes
+&type.demonic_form.wound_healing DD=flag
+
+
+
+
+@@ == DEMON MERITS =============================================================
+
+@@ -- Merits: Unchained --------------------------------------------------------
+
+&merit.advanced_form DD=1
+&tags.merit.advanced_form DD=demon
+
+&merit.bolthole DD=1.2.3.4.5.6.7.8.9.10.11.12.13.14
+&tags.merit.bolthole DD=demon
+?!?!?!
+@@ This Merit can go all the way up to 14! if that can’t be done, we’ll figure something else out.
+Originally the merit had a typo, is all.
+
+&merit.consummate_professional DD=2
+&tags.merit.consummate_professional DD=demon
+
+&merit.cultists DD=2.3.4.5
+&tags.merit.cultists DD=demon
+
+&merit.efficient_dealer DD=2
+&tags.merit.efficient_dealer DD=demon
+&prerequisite.merit.efficient_dealer dd=u(.at_least, %0, attribute.wits, 2)
+@@ spec lookup -- doesn't this require a (<type>) ?
+&prereq-text.merit.efficient_dealer DD=Appropriate Specialty in Skill.
+
+&merit.electromagnetic_linguistics DD=2
+&tags.merit.electromagnetic_linguistics DD=demon
+&prerequisite.merit.electromagnetic_linguistics dd=u(.has, %0, skill.computers)
+&prereq-text.merit.electromagnetic_linguistics DD=Computers 1
+
+&merit.high_tolerance DD=1.2
+&tags.merit.high_tolerance DD=demon
+
+&merit.living_the_lie DD=2
+&tags.merit.living_the_lie DD=demon
+&prerequisite.merit.living_the_lie DD=u( .at_least, %0, advantage.primum, 2 )
+&prereq-text.merit.living_the_lie DD=Primum 2
+
+&merit.monkeywrencher DD=2
+&tags.merit.monkeywrencher DD=demon
+&prerequisite.merit.monkeywrencher DD=u( .at_least, %0, advantage.primum, 2 )
+&prereq-text.merit.monkeywrencher DD=Primum 2
+
+
+&merit.multiple_agendas DD=2|*
+&tags.merit.multiple_agendas DD=demon
+
+&merit.resonance_aware DD=1.2.3.4.5
+&tags.merit.resonance_aware DD=demon
+&prerequisite.merit.resonance_aware dd=u(.at_least, %0, attribute.wits, 3)
+&prereq-text.merit.resonance_aware DD=Wits 3
+
+&merit.resonance_sensitive DD=1
+&tags.merit.resonance_sensitive DD=demon
+&prerequisite.merit.resonance_sensitive dd=u(.at_least, %0, attribute.wits, 4)
+&prereq-text.merit.resonance_sensitive DD=Wits 4
+
+&merit.suborned_infrastructure DD=1.2.3
+&tags.merit.suborned_infrastructure DD=demon
+
+&merit.subsumed_gadget DD=2
+&tags.merit.subsumed_gadget DD=demon
+&prerequisite.merit.subsumed_gadget DD=u( .at_least, %0, advantage.primum, 3 )
+&prereq-text.merit.subsumed_gadget DD=Primum 3
+
+&merit.sympathetic_stigmatic DD=2
+&tags.merit.sympathetic_stigmatic DD=demon
+&prerequisite.merit.sympathetic_stigmatic dd=u(.has, %0, merit.true_friend)
+&prereq-text.merit.sympathetic_stigmatic DD=True Friend
+
+&merit.tattooed_gadget DD=2
+&tags.merit.tattooed_gadget DD=demon
+
+&merit.terrible_form DD=1.2.3.4
+&tags.merit.terrible_form DD=demon
+
+&merit.versatile_form DD=1
+&tags.merit.versatile_form DD=demon
+
+
+

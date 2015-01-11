@@ -1,0 +1,37 @@
+@@ -- Demon Merits: Stigmatics --
+
+&merit.potent_blood DD=1
+&tags.merit.potent_blood DD=stigmatic
+
+&merit.sleeve_integrator DD=1.2.3.4.5
+&tags.merit.sleeve_integrator DD=stigmatic
+&prerequisite.merit.sleeve_integrator DD=u( .at_least, %0, advantage.integrity, 5 )
+&prereq-text.merit.sleeve_integrator DD=Integrity 5
+
+&merit.sympathetic_demon DD=2
+&tags.merit.sympathetic_demon DD=stigmatic
+
+@@ -- Demon Merits: Demon-Blooded --
+
+@@ These might need a little work, prerequisites-wise; and I am also going to have to sit down and see how demon-blooded work in-game anyway.
+
+&merit.ambient_aether DD=1.2
+&tags.merit.ambient_aether DD=demon-blooded.offspring.fractal
+
+&merit.aether_pool DD=2
+&tags.merit.aether_pool DD=demon-blooded.fractal
+&prerequisite.merit.aether_pool dd=u(.has, %0, merit.ambient_aether)
+&prereq-text.merit.aether_pool DD=Ambient Aether
+
+&merit.infrastructure_proficiency DD=2.3
+&tags.merit.infrastructure_proficiency DD=demon-blooded
+
+&merit.instinctive_deflection DD=2
+&tags.merit.instinctive_deflection DD=demon-blooded
+
+&merit.quantum_understanding DD=3
+&tags.merit.quantum_understanding DD=demon-blooded.fractal
+
+&merit.unknown DD=1
+&tags.merit.unknown DD=demon-blooded.offspring.fractal
+

@@ -1,0 +1,907 @@
+SOME OTHER DEMON BOOK
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@@ -- EMBEDS from other books (??)
+
+@@ CACOPHANY
+&embed.apple_of_discord DD=Manipulation + Expression - <<target:Integrity>>
+&tags.embed.apple_of_discord DD=demon.demon-blooded.cacophony
+&type.embed.apple_of_discord DD=flag
+
+&embed.anarchism DD=Manipulation+Politics-Composure
+&tags.embed.anarchism DD=demon.demon-blooded.cacophony
+&type.embed.anarchism DD=flag
+
+&embed.breakdown DD=Wits+Medicine-Resolve
+&tags.embed.breakdown DD=demon.demon-blooded.cacophony
+&type.embed.breakdown DD=flag
+
+&embed.fire_drill DD=Wits+Science
+&tags.embed.fire_drill DD=demon.demon-blooded.cacophony
+&type.embed.fire_drill DD=flag
+
+&embed.fractal_reality DD=Wits+Science
+&tags.embed.fractal_reality DD=demon.demon-blooded.cacophony
+&type.embed.fractal_reality DD=flag
+
+&embed.password_entropy DD=Wits+Computer
+&tags.embed.password_entropy DD=demon.demon-blooded.cacophony
+&type.embed.password_entropy DD=flag
+
+&embed.play_possum DD=Manipulation+Medicine
+&tags.embed.play_possum DD=demon.demon-blooded.cacophony
+&type.embed.play_possum DD=flag
+
+&embed.ripple DD=Wits+Science
+&tags.embed.ripple DD=demon.demon-blooded.cacophony
+&type.embed.ripple DD=flag
+
+&embed.trip DD=Wits+Athletics-Dexterity
+&tags.embed.trip DD=demon.demon-blooded.cacophony
+&type.embed.trip DD=flag
+
+&embed.victory_at_any_price DD=Wits+Science
+&tags.embed.victory_at_any_price DD=demon.demon-blooded.cacophony
+&type.embed.victory_at_any_price DD=flag
+
+
+@@ INSTRUMENTAL
+
+&embed.call_out DD=Manipulation+Intimidation vs. Presence + Supernatural Tolerance
+&tags.embed.call_out DD=demon.demon-blooded.instrumental
+&type.embed.call_out DD=flag
+
+&embed.data_retrieval DD=Wits+Computers
+&tags.embed.data_retrieval DD=demon.demon-blooded.instrumental
+&type.embed.data_retrieval DD=flag
+
+&embed.data_wipe DD=Wits+Copmputers
+&tags.embed.data_wipe DD=demon.demon-blooded.instrumental
+&type.embed.data_wipe DD=flag
+
+&embed.functional_identity DD=Wits+Crafts
+&tags.embed.functional_identity DD=demon.demon-blooded.instrumental
+&type.embed.functional_identity DD=flag
+
+&embed.high_of_birth DD=Manipulation+Politics
+&tags.embed.high_of_birth DD=demon.demon-blooded.instrumental
+&type.embed.high_of_birth DD=flag
+
+&embed.knock-off DD=Dexterity+Larceny
+&tags.embed.knock-off DD=demon.demon-blooded.instrumental
+&type.embed.knock-off DD=flag
+
+&embed.open_sesame DD=Wits+Larceny-Special Penalties
+&tags.embed.open_sesame DD=demon.demon-blooded.instrumental
+&type.embed.open_sesame DD=flag
+
+&embed.soup_up DD=Dexter+Drive-Special Penalties
+&tags.embed.soup_up DD=demon.demon-blooded.instrumental
+&type.embed.soup_up DD=flag
+
+&embed.trivia DD=Manipulation+Expression
+&tags.embed.trivia DD=demon.demon-blooded.instrumental
+&type.embed.trivia DD=flag
+
+&embed.wasted_time DD=Wits+Science
+&tags.embed.wasted_time DD=demon.demon-blooded.instrumental
+&type.embed.wasted_time DD=flag
+
+@@ MUNDANE
+
+&embed.associate_and_integrate DD=Manipulation+Science vs. Resolve + Composure
+&tags.embed.associate_and_integrate DD=demon.demon-blooded.mundane
+&type.embed.associate_and_integrate DD=flag
+
+&embed.clothes_make_the_man DD=Wits+Persuasion vs. Wits + Target Skill
+&tags.embed.clothes_make_the_man DD=demon.demon-blooded.mundane
+&type.embed.clothes_make_the_man DD=flag
+
+&embed.deep_cover DD=Manipulation+Occult
+&tags.embed.deep_cover DD=demon.demon-blooded.mundane
+&type.embed.deep_cover DD=flag
+
+&embed.going_native DD=Wits+Socialize
+&tags.embed.going_native DD=demon.demon-blooded.mundane
+&type.embed.going_native DD=flag
+
+&embed.like_the_movies DD=Wits+Academics
+&tags.embed.like_the_movies DD=demon.demon-blooded.mundane
+&type.embed.like_the_movies DD=flag
+
+&embed.mistaken_identity DD=Manipulation+Persuasion-Composure
+&tags.embed.mistaken_identity DD=demon.demon-blooded.mundane
+&type.embed.mistaken_identity DD=flag
+
+&embed.persistent_legend DD=Wits+Academics
+&tags.embed.persistent_legend DD=demon.demon-blooded.mundane
+&type.embed.persistent_legend DD=flag
+
+&embed.the_voting_dead DD=Manipulation+Politics
+&tags.embed.the_voting_dead DD=demon.demon-blooded.mundane
+&type.embed.the_voting_dead DD=flag
+
+&embed.wave_function_collapse DD=Dexterity+Brawl vs. Stamina + Supernatural Tolerance
+&tags.embed.wave_function_collapse DD=demon.demon-blooded.mundane
+&type.embed.wave_function_collapse DD=flag
+
+&embed.you_can_tell_me DD=Manipulation+Empathy-Composure
+&tags.embed.you_can_tell_me DD=demon.demon-blooded.mundane
+&type.embed.you_can_tell_me DD=flag
+
+@@ VOCAL
+
+&embed.imagine DD=Manipulation+Persuasion
+&tags.embed.imagine DD=demon.demon-blooded.vocal
+&type.embed.imagine DD=flag
+
+&embed.the_look DD=Manipulation+Intimidation-Stamina
+&tags.embed.the_look DD=demon.demon-blooded.vocal
+&type.embed.the_look DD=flag
+
+&embed.loose_lips DD=Manipulation+Socialize-Stamina
+&tags.embed.loose_lips DD=demon.demon-blooded.vocal
+&type.embed.loose_lips DD=flag
+
+&embed.the_only_word_that_matters DD=Manipulation+Expression-Composure
+&tags.embed.the_only_word_that_matters DD=demon.demon-blooded.vocal
+&type.embed.the_only_word_that_matters DD=flag
+
+&embed.remote_link-up DD=Wits+Socialize
+&tags.embed.remote_link-up DD=demon.demon-blooded.vocal
+&type.embed.remote_link-up DD=flag
+
+&embed.rhetoric DD=Wits+Subterfuge
+&tags.embed.rhetoric DD=demon.demon-blooded.vocal
+&type.embed.rhetoric DD=flag
+
+&embed.social_engineering DD=Manipulation+Persuasion
+&tags.embed.social_engineering DD=demon.demon-blooded.vocal
+&type.embed.social_engineering DD=flag
+
+&embed.strength_through_adversity DD=Manipulation+Intimidation-Resolve
+&tags.embed.strength_through_adversity DD=demon.demon-blooded.vocal
+&type.embed.strength_through_adversity DD=flag
+
+&embed.sum_of_all_fears DD=Wits+Empathy-Composure
+&tags.embed.sum_of_all_fears DD=demon.demon-blooded.vocal
+&type.embed.sum_of_all_fears DD=flag
+
+&embed.vox DD=Manipulation+Expression
+&tags.embed.vox DD=demon.demon-blooded.vocal
+&type.embed.vox DD=flag
+
+
+
+
+
+
+
+
+@@ -- OTHER MERITS 
+
+
+&merit.advance_form DD=1
+&tags.merit.advance_form DD=demon
+
+&merit.efficient_dealer DD=2
+&tags.merit.efficient_dealer DD=demon
+&prerequisite.merit.efficient_dealer dd=u(.at_least, %0, attribute.wits, 2)
+@@ spec lookup -- doesn't this require a (<type>) ?
+&prereq-text.merit.efficient_dealer DD=Appropriate Specialty in Skill.
+
+&merit.electromagnetic_linguistics DD=2
+&tags.merit.electromagnetic_linguistics DD=demon
+&prerequisite.merit.electromagnetic_linguistics dd=u(.has, %0, skill.computers)
+&prereq-text.merit.electromagnetic_linguistics DD=Computers 1
+
+&merit.high_tolerance DD=1.2
+&tags.merit.high_tolerance DD=demon
+
+&merit.living_the_lie DD=2
+&tags.merit.living_the_lie DD=demon
+&prerequisite.merit.living_the_lie DD=u( .at_least, %0, advantage.primum, 2 )
+&prereq-text.merit.living_the_lie DD=Primum 2
+
+&merit.monkeywrencher DD=2
+&tags.merit.monkeywrencher DD=demon
+&prerequisite.merit.monkeywrencher DD=u( .at_least, %0, advantage.primum, 2 )
+&prereq-text.merit.monkeywrencher DD=Primum 2
+
+
+&merit.resonance_aware DD=1.2.3.4.5
+&tags.merit.resonance_aware DD=demon
+&prerequisite.merit.resonance_aware dd=u(.at_least, %0, attribute.wits, 3)
+&prereq-text.merit.resonance_aware DD=Wits 3
+
+&merit.resonance_sensitive DD=1
+&tags.merit.resonance_sensitive DD=demon
+&prerequisite.merit.resonance_sensitive dd=u(.at_least, %0, attribute.wits, 4)
+&prereq-text.merit.resonance_sensitive DD=Wits 4
+
+&merit.subsumed_gadget DD=2
+&tags.merit.subsumed_gadget DD=demon
+&prerequisite.merit.subsumed_gadget DD=u( .at_least, %0, advantage.primum, 3 )
+&prereq-text.merit.subsumed_gadget DD=Primum 3
+
+&merit.sympathetic_stigmatic DD=2
+&tags.merit.sympathetic_stigmatic DD=demon
+&prerequisite.merit.sympathetic_stigmatic dd=u(.has, %0, merit.true_friend)
+&prereq-text.merit.sympathetic_stigmatic DD=True Friend
+
+&merit.tattooed_gadget DD=2
+&tags.merit.tattooed_gadget DD=demon
+
+
+
+
+
+
+
+
+
+@@ -- Demon Merits: Stigmatics --
+
+&merit.potent_blood DD=1
+&tags.merit.potent_blood DD=stigmatic
+
+&merit.sleeve_integrator DD=1.2.3.4.5
+&tags.merit.sleeve_integrator DD=stigmatic
+&prerequisite.merit.sleeve_integrator DD=u( .at_least, %0, advantage.integrity, 5 )
+&prereq-text.merit.sleeve_integrator DD=Integrity 5
+
+&merit.sympathetic_demon DD=2
+&tags.merit.sympathetic_demon DD=stigmatic
+
+@@ -- Demon Merits: Demon-Blooded --
+
+@@ These might need a little work, prerequisites-wise; and I am also going to have to sit down and see how demon-blooded work in-game anyway.
+
+&merit.ambient_aether DD=1.2
+&tags.merit.ambient_aether DD=demon-blooded.offspring.fractal
+
+&merit.aether_pool DD=2
+&tags.merit.aether_pool DD=demon-blooded.fractal
+&prerequisite.merit.aether_pool dd=u(.has, %0, merit.ambient_aether)
+&prereq-text.merit.aether_pool DD=Ambient Aether
+
+&merit.infrastructure_proficiency DD=2.3
+&tags.merit.infrastructure_proficiency DD=demon-blooded
+
+&merit.instinctive_deflection DD=2
+&tags.merit.instinctive_deflection DD=demon-blooded
+
+&merit.quantum_understanding DD=3
+&tags.merit.quantum_understanding DD=demon-blooded.fractal
+
+&merit.unknown DD=1
+&tags.merit.unknown DD=demon-blooded.offspring.fractal
+
+
+
+@@ -- Vampire Merits: General --
+
+&merit.acute_senses DD=1
+&tags.merit.acute_senses DD=vampire
+
+&merit.altar DD=3
+&tags.merit.altar DD=vampire
+&prerequisite.merit.altar dd=u(.has, %0, merit.status_(circle_of_the_crone))
+&prereq-text.merit.altar DD=Status (Circle of the Crone) 1
+
+&merit.anointed DD=2
+&tags.merit.anointed DD=vampire
+&prerequisite.merit.anointed dd=u(.has, %0, merit.status_(lancea_et_sanctum))
+&prereq-text.merit.anointed DD=Status (Lancea et Sanctum) 1
+
+&merit.atrocious DD=1
+&tags.merit.atrocious DD=vampire
+&prerequisite.merit.atrocious DD=u( .has_none_of, %0, merit.cutthroat merit.enticing )
+&prereq-text.merit.atrocious DD=Cannot have the Cutthroat or Enticing Merits.
+
+&merit.attache DD=1
+&tags.merit.attache DD=vampire
+&prerequisite.merit.attache dd=u(.has, %0, merit.status_(invictus))
+&prereq-text.merit.attache DD=Status (Invictus) 1
+
+&merit.bloodhound DD=2
+&tags.merit.bloodhound DD=vampire
+&prerequisite.merit.bloodhound dd=u(.at_least, %0, attribute.wits, 3)
+&prereq-text.merit.bloodhound DD=Wits 3
+
+&merit.cacophony_savvy DD=1.2.3
+&tags.merit.cacophony_savvy DD=vampire
+&prerequisite.merit.cacophony_savvy dd=u(.has, %0, merit.status_(praxis))
+&prereq-text.merit.cacophony_savvy DD=Status (Praxis) 1
+
+&merit.carthian_pull DD=1
+&tags.merit.carthian_pull DD=vampire
+&prerequisite.merit.carthian_pull dd=u(.has, %0, merit.status_(carthian_movement))
+&prereq-text.merit.carthian_pull DD=Status (Carthian Movement) 1
+
+&merit.claws_of_the_unholy DD=1
+&tags.merit.claws_of_the_unholy DD=vampire
+&prerequisite.merit.carthian_pull dd=u(.at_least, %0, discipline.protean, 4)
+&prereq-text.merit.carthian_pull DD=Protean 4
+
+&merit.close_family DD=1
+&tags.merit.close_family DD=vampire
+
+&merit.cutthroat DD=1
+&tags.merit.cutthroat DD=vampire
+&prerequisite.merit.cutthroat DD=u( .has_none_of, %0, merit.atrocious merit.enticing )
+&prereq-text.merit.cutthroat DD=Cannot have the Atrocious or Enticing Merits.
+
+&merit.distinguished_palate DD=1
+&tags.merit.distinguished_palate DD=vampire
+
+&merit.dream_visions DD=1
+&tags.merit.dream_visions DD=vampire.mekhet
+&prerequisite.merit.dream_visions DD=u( .is, %0, bio.clan, Mekhet )
+&prereq-text.merit.dream_visions DD=Must be Mekhet.
+
+&merit.dynasty_membership DD=1.2.3
+&tags.merit.dynasty_membership DD=vampire
+&prerequisite.merit.dynasty_membership dd=u(.at_least_one, %0, merit.status_(daeva):1 merit.status_(gangrel):1 merit.status_(nosferatu):1 merit.status_(mekhet):1 merit.status_(ventrue):1)
+&prereq-text.merit.dynasty_membership DD=Status (Clan) 1
+
+&merit.enticing DD=1
+&tags.merit.enticing DD=vampire
+&prerequisite.merit.enticing DD=u( .has_none_of, %0, merit.atrocious merit.cutthroat )
+&prereq-text.merit.enticing DD=Cannot have the Atrocious or Cutthroat Merits.
+
+&merit.feeding_grounds DD=1.2.3.4.5
+&tags.merit.feeding_grounds DD=vampire
+
+&merit.friends_in_high_places DD=1
+&tags.merit.friends_in_high_places DD=vampire
+&prerequisite.merit.friends_in_high_places dd=u(.has, %0, merit.status_(invictus))
+&prereq-text.merit.friends_in_high_places DD=Status (Invictus) 1
+
+&merit.haven DD=1.2.3.4.5
+&tags.merit.haven DD=vampire
+&prerequisite.merit.haven dd=u(.has, %0, merit.safe_place)
+&prereq-text.merit.haven DD=Safe Place 1
+
+&merit.herd DD=1.2.3.4.5
+&tags.merit.herd DD=vampire
+
+&merit.honey_trap DD=1
+&tags.merit.honey_trap DD=vampire
+
+&merit.invested DD=1
+&tags.merit.invested DD=vampire
+&prerequisite.merit.invested dd=u(.has, %0, merit.status_(invictus))
+&prereq-text.merit.invested DD=Status (Invictus) 1
+
+&merit.kiss_of_the_succubus DD=1
+&tags.merit.kiss_of_the_succubus DD=vampire.daeva
+&prerequisite.merit.kiss_of_the_succubus DD=u( .is, %0, bio.clan, Daeva )
+&prereq-text.merit.kiss_of_the_succubus DD=Must be Daeva.
+
+&merit.lineage DD=1
+&tags.merit.lineage DD=vampire
+&prerequisite.merit.lineage dd=u( .has_one_of, %0, merit.status_(daeva) merit.status_(gangrel) merit.status_(nosferatu) merit.status_(mekhet) merit.status_(ventrue) )
+&prereq-text.merit.lineage DD=Status (Clan) 1
+
+&merit.lorekeeper DD=1
+&tags.merit.lorekeeper DD=vampire
+&prerequisite.merit.lorekeeper dd=u(.has, %0, merit.status_(lancea_et_sanctum))
+&prereq-text.merit.lorekeeper DD=Status (Lancea et Sanctum) 1
+
+&merit.the_mother_daughter_bond DD=1
+&tags.merit.the_mother_daughter_bond DD=vampire
+&prerequisite.merit.the_mother_daughter_bond dd=u(.has, %0, merit.status_(circle_of_the_crone))
+&prereq-text.merit.the_mother_daughter_bond DD=Status (Circle of the Crone) 1
+
+&merit.night_doctor_surgery DD=3
+&tags.merit.night_doctor_surgery DD=vampire
+&prerequisite.merit.night_doctor_surgery dd=u(.at_least, %0, merit.status_(carthian_movement), 2)
+&prereq-text.merit.night_doctor_surgery DD=Status (Carthian Movement) 2
+
+&merit.speaker_for_the_silent DD=3
+&tags.merit.speaker_for_the_silent DD=vampire
+&prerequisite.merit.speaker_for_the_silent dd=u(.at_least_all, %0, merit.dynasty_membership:1 merit.status_(invictus):1)
+&prereq-text.merit.speaker_for_the_silent DD=Dynasty Membership 1, Status (Invictus) 1
+
+&merit.pack_alpha DD=1
+&tags.merit.pack_alpha DD=vampire.gangrel
+&prerequisite.merit.pack_alpha DD=u( .is, %0, bio.clan, Gangrel )
+&prereq-text.merit.pack_alpha DD=Must be Gangrel.
+
+&merit.unnatural_affinity_() DD=1|*
+&tags.merit.unnatural_affinity_ DD=vampire
+@@ I think we should leave this Merit as a 1-dot Merit with different instances, since that’s a better way than having it be 1-5.
+@@ as long as they can't take it more than 5 times
+@@ I don’t see why they couldn’t, as long as it’s a different type of supernatural each time.
+@@ because that's what '1-5' means in the core rules; changing how it's recorded doesn't change that rule. this applies to all '1-5' merits we're breaking down - house rule time?
+@@ Definitely. if players want to spend a bazillion dots just so they can feed on ghosts or whatever, why limit them?
+@@ house-rule time
+
+&merit.swarm_form DD=1
+&tags.merit.swarm_form DD=vampire
+&prerequisite.merit.swarm_form dd=u(.at_least, %0, discipline.protean, 3)
+&prereq-text.merit.swarm_form DD=Protean 3
+
+&merit.secret_society_junkie DD=1
+&tags.merit.secret_society_junkie DD=vampire
+&prerequisite.merit.secret_society_junkie dd=u(.has, %0, merit.status_(ordo_dracul))
+&prereq-text.merit.secret_society_junkie DD=Status (Ordo Dracul) 1
+
+&merit.sworn DD=1
+&tags.merit.sworn DD=vampire
+&prerequisite.merit.sworn dd=u(.has, %0, merit.status_(ordo_dracul))
+&prereq-text.merit.sworn DD=Status (Ordo Dracul) 1
+
+&merit.i_know_a_guy DD=1
+&tags.merit.i_know_a_guy DD=vampire
+&prerequisite.merit.i_know_a_guy dd=u(.has, %0, merit.status_(carthian_movement))
+&prereq-text.merit.i_know_a_guy DD=Status (Carthian Movement) 1
+
+&merit.touchstone DD=1.2.3.4.5
+&tags.merit.touchstone DD=vampire
+
+&merit.undead_menses DD=2
+&tags.merit.undead_menses DD=vampire
+
+&merit.unsettling_gaze DD=1
+&tags.merit.unsettling_gaze DD=vampire.nosferatu
+&prerequisite.merit.unsettling_gaze DD=u( .is, %0, bio.clan, Nosferatu )
+&prereq-text.merit.unsettling_gaze DD=Must be Nosferatu.
+
+&merit.where_the_bodies_are_buried DD=1
+&tags.merit.where_the_bodies_are_buried DD=vampire
+&prerequisite.merit.where_the_bodies_are_buried dd=u(.at_least, %0, merit.status_(invictus), 2)
+&prereq-text.merit.where_the_bodies_are_buried DD=Status (Invictus) 2
+
+
+
+@@ -- Vampire Merits: Carthian Law --
+
+&merit.lex_terrae DD=1
+&tags.merit.lex_terrae DD=vampire
+&prerequisite.merit.lex_terrae dd=u(.at_least_all, %0, merit.status_(carthian_movement):2)
+&prereq-text.merit.lex_terrae DD=Status (Carthian Movement) 2, Feeding Grounds 1
+
+&merit.mandate_from_the_masses DD=1
+&tags.merit.mandate_from_the_masses DD=vampire
+&prerequisite.merit.mandate_from_the_masses dd=u(.at_least, %0, merit.status_(carthian_movement), 5)
+&prereq-text.merit.mandate_from_the_masses DD=Status (Carthian Movement) 5
+
+&merit.right_of_return DD=1
+&tags.merit.right_of_return DD=vampire
+&prerequisite.merit.right_of_return dd=u(.at_least_all, %0, merit.status_(carthian_movement):2 merit.status_(praxis):1)
+&prereq-text.merit.right_of_return DD=Status (Carthian Movement) 2, Status (Praxis) 1
+
+&merit.strength_of_resolution DD=1
+&tags.merit.strength_of_resolution DD=vampire
+&prerequisite.merit.strength_of_resolution dd=u(.has, %0, merit.status_(carthian_movement))
+&prereq-text.merit.strength_of_resolution DD=Status (Carthian Movement) 1
+
+&merit.plausible_deniability DD=1
+&tags.merit.plausible_deniability DD=vampire
+&prerequisite.merit.plausible_deniability dd=u(.at_least, %0, merit.status_(carthian_movement), 3)
+&prereq-text.merit.plausible_deniability DD=Status (Carthian Movement) 3
+
+
+
+@@ -- Vampire Merits: Invictus Oaths --
+
+&merit.notary DD=2
+&tags.merit.notary DD=vampire
+&prerequisite.merit.notary dd=u(.at_least, %0, merit.status_(invictus), 3)
+&prereq-text.merit.notary DD=Status (Invictus) 3
+
+&merit.oath_of_action DD=4
+&tags.merit.oath_of_action DD=vampire
+
+&merit.oath_of_fealty DD=1
+&tags.merit.oath_of_fealty DD=vampire
+&prerequisite.merit.oath_of_fealty dd=u(.has, %0, merit.status_(invictus))
+&prereq-text.merit.oath_of_fealty DD=Status (Invictus) 1
+
+&merit.oath_of_penance DD=3
+&tags.merit.oath_of_penance DD=vampire
+
+&merit.oath_of_serfdom DD=2
+&tags.merit.oath_of_serfdom DD=vampire
+
+
+
+@@ -- Vampire Merits: Kindred Fighting Styles --
+
+&merit.kindred_dueling DD=1.2.3.4.5
+&tags.merit.kindred_dueling DD=physical.fighting.style
+&prerequisite.merit.kindred_dueling DD=cand( u( .has, %0, merit.fighting_finesse_(*) ), u( .at_least_all, %0, attribute.composure:3 skill.weaponry:2 ))
+@@ not sure that wildcard is going to work
+&prereq-text.merit.kindred_dueling DD=Fighting Finesse, Composure 3, Weaponry 2
+
+&merit.riding_the_wave DD=1.2.3.4.5
+&tags.merit.riding_the_wave DD=physical.fighting.style
+&prerequisite.merit.riding_the_wave DD=u(.at_least_all, %0, attribute.composure:3 attribute.resolve:3)
+&prereq-text.merit.riding_the_wave DD=Composure 3, Resolve 3
+
+
+
+@@ -- Ghoul Merits --
+
+&merit.taste_of_shadow DD=2
+&tags.merit.taste_of_shadow DD=ghoul.mekhet
+&prereq-text.merit.taste_of_shadow DD=Mekhet Regnant
+&prerequisite.merit.taste_of_shadow DD=u( .is, %0, bio.clan, Mekhet )
+
+&merit.taste_of_serpent DD=2
+&tags.merit.taste_of_serpent DD=ghoul.daeva
+&prerequisite.merit.taste_of_serpent DD=u( .is, %0, bio.clan, Daeva )
+&prereq-text.merit.taste_of_serpent DD=Daeva Regnant
+
+&merit.taste_of_the_wild DD=2
+&tags.merit.taste_of_the_wild DD=ghoul.gangrel
+&prerequisite.merit.taste_of_the_wild DD=u( .is, %0, bio.clan, Gangrel )
+&prereq-text.merit.taste_of_the_wild DD=Gangrel Regnant
+
+&merit.taste_of_gold DD=2
+&tags.merit.taste_of_gold DD=ghoul.ventrue
+&prerequisite.merit.taste_of_gold DD=u( .is, %0, bio.clan, Ventrue )
+&prereq-text.merit.taste_of_gold DD=Ventrue Regnant
+
+&merit.taste_of_fear DD=2
+&tags.merit.taste_of_fear DD=ghoul.nosferatu
+&prerequisite.merit.taste_of_fear DD=u( .is, %0, bio.clan, Nosferatu )
+&prereq-text.merit.taste_of_fear DD=Nosferatu Regnant
+
+&merit.producer DD=1
+&tags.merit.producer DD=ghoul.human
+
+&merit.weakened_bond DD=3
+&tags.merit.weakened_bond DD=ghoul.human
+
+&merit.clear-sighted DD=2
+&tags.merit.clear-sighted DD=human.social
+
+&merit.source_sympathy DD=1
+&tags.merit.source_sympathy DD=ghoul
+
+&merit.protected DD=2
+&tags.merit.protected DD=ghoul.human
+
+&merit.empowered_to_speak DD=1
+&tags.merit.empowered_to_speak DD=ghoul.human
+
+&merit.vitae_hound DD=1
+&tags.merit.vitae_hound DD=ghoul
+
+&merit.beast_whispers DD=2
+&tags.merit.beast_whispers DD=ghoul.human
+
+&merit.beloved_() DD=1|*
+&tags.merit.beloved_ DD=ghoul.human
+&prerequisite.merit.beloved_ DD=0
+&prereq-text.merit.beloved_ DD=Touchstone of the one they're beloved of
+@@ There is absolutely no way for code to determine this; with 'prereq' set to 0 it must be set by staff using the /override switch
+
+&merit.watch_dog DD=2
+&tags.merit.watch_dog DD=ghoul
+&prerequisite.merit.watch_dog DD=0
+&prereq-text.merit.watch_dog DD=Regnant with Auspex
+@@ There is absolutely no way for code to determine this; with 'prereq' set to 0 it must be set by staff using the /override switch
+
+
+
+@@ -- CORE ADVANTAGES ----------------------------------------------------------
+
+@@ -- "morality" is the, er, morality stat for humans --
+@@ -- and needs fixed for gmc --
+
+&advantage.morality DD=1.2.3.4.5.6.7.8.9.10|*
+&default.advantage.morality DD=7
+&tags.advantage.morality dd=morality.human
+
+@@ -- pools like "willpower" need a separate "max" trait which may go up & down
+@@ -- the current pool trait is pulled from the max trait & applied an offset
+@@ -- spending "a dot of willpower" is an offset applied to the maximum
+
+&advantage.willpower DD=ladd( u( .value_full, %0, advantage.willpower_maximum ), . )
+&tags.advantage.willpower DD=derived.pool
+&default.advantage.willpower DD=derived
+
+&advantage.willpower_maximum DD=u( .value_stats, %0, attribute.resolve attribute.composure )
+&tags.advantage.willpower_maximum DD=derived.pool
+&default.advantage.willpower_maximum DD=derived
+
+@@ -- Other Advantages --
+
+&advantage.defense DD=min( ladd( u( .value_full, %0, _attribute.wits ), . ), ladd( u( .value_full, %0, _attribute.dexterity ), . ))
+&tags.advantage.defense DD=derived
+&default.advantage.defense DD=derived
+
+&advantage.size DD=add( ladd( u( .value_full, %0, special.size ), . ), t( ladd( u( .value_full, %0, merit.giant ), . )))
+&tags.advantage.size DD=derived
+&default.advantage.size DD=derived
+
+&advantage.speed DD=u( .value_stats, %0, attribute.strength attribute.dexterity special.species_factor merit.fleet_of_foot )
+&tags.advantage.speed DD=derived
+&default.advantage.speed DD=derived
+
+&advantage.initiative DD=u( .value_stats, %0, attribute.dexterity attribute.composure merit.fast_reflexes )
+&tags.advantage.initiative DD=derived
+&default.advantage.initiative DD=derived
+
+&advantage.perception DD=u( .value_stats, %0, attribute.wits attribute.composure )
+&tags.advantage.perception DD=derived
+&default.advantage.perception DD=derived
+
+@@ I replaced the base virtues and vices with the GMC ones rather than appending, yes?
+@@ aren't those mostly suggestions? do we want to list all taken virt/vices?
+@@ yes, they are suggestion. It would be cool to list all taken virtues/vices so we could have a list on the wiki that people could look at for inspiration/choices.
+
+&advantage.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.Loyal.Patient.Peaceful.Righteous.Trustworthy
+&class.advantage.virtue DD=action
+
+&advantage.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
+&class.advantage.vice DD=action
+
+&advantage.aspiration DD=*
+&class.advantage.aspiration DD=action
+
+&bio.full_name DD=*
+&class.bio.full_name DD=action
+
+&bio.birthdate DD=*
+&class.bio.birthdate DD=action
+
+@@ -- I don't think we need this one --
+@@ &bio.apparent_birthdate DD=*
+
+&bio.template DD=Human
+&class.bio.template DD=action
+
+
+@@ -- CORE SPECIAL TYPES -------------------------------------------------------
+
+@@ &special.xp DD=#
+@@ &default.special.xp DD=0.0
+@@ &default.special.xp DD=35.0
+@@ &default.special.xp DD=128.0
+
+&special.size DD=#
+&default.special.size dd=5
+
+&special.species_factor DD=#
+&default.special.species_factor dd=5
+
+
+@@ -- HEALTH -------------------------------------------------------------------
+@@ MOVED TO HEALTH SYSTEM
+
+
+@@ -- DEMON POWERS -------------------------------------------------------------
+@@ DEMON EXPLOITS
+
+
+&exploit.break_the_dam DD=Presence + Science + Primum - Stamina
+&tags.exploit.break_the_dam DD=demon
+&type.exploit.break_the_dam DD=action
+
+&exploit.context_matters DD=Presence + Persuasion + Primum
+&tags.exploit.context_matters DD=demon
+&type.exploit.context_matters DD=action
+
+&exploit.decoy DD=Presence + Stealth + Primum
+&tags.exploit.decoy DD=demon
+&type.exploit.decoy DD=action
+
+&exploit.demon_car DD=Strength + Drive + Primum
+&tags.exploit.demon_car DD=demon
+&type.exploit.demon_car DD=action
+
+&exploit.devour_infrastructure DD=Strength + Survival + Primum
+&tags.exploit.devour_infrastructure DD=demon
+&type.exploit.devour_infrastructure DD=action
+
+&exploit.eye_for_an_eye DD=Strength + Medicine + Primum - Marked Health Boxes
+&tags.exploit.eye_for_an_eye DD=demon
+&type.exploit.eye_for_an_eye DD=action
+
+&exploit.living_installation DD=Intelligence + Medicine + Primum
+&tags.exploit.living_installation DD=demon
+&type.exploit.living_installation DD=action
+
+&exploit.newton's_nightmares DD=Intelligence + Science + Primum
+&tags.exploit.newton's_nightmares DD=demon
+&type.exploit.newton's_nightmares DD=action
+
+&exploit.open-and-shut_case DD=Presence + Investigation + Primum
+&tags.exploit.open-and-shut_case DD=demon
+&type.exploit.open-and-shut_case DD=action
+
+&exploit.show_of_power DD=Presence + Occult + Primum vs. Wits + Supernatural Tolerance
+&tags.exploit.show_of_power DD=demon
+&type.exploit.show_of_power DD=action
+
+&exploit.soul_brand DD=Presence + Expression + Primum - Supernatural Tolerance
+&tags.exploit.soul_brand DD=demon
+&type.exploit.soul_brand DD=action
+
+&exploit.stop DD=Intelligence + Science + Primum
+&tags.exploit.stop DD=demon
+&type.exploit.stop DD=action
+
+&exploit.terrible_avatar DD=Strength + Occult + Primum
+&tags.exploit.terrible_avatar DD=demon
+&type.exploit.terrible_avatar DD=action
+
+&exploit.two_places_at_once DD=Presence + Science + Primum
+&tags.exploit.two_places_at_once DD=demon
+&type.exploit.two_places_at_once DD=action
+
+&exploit.ultimatum DD=Intelligence + Science + Primum vs. Resolve + Supernatural Tolerance
+&tags.exploit.ultimatum DD=demon
+&type.exploit.ultimatum DD=action
+
+&exploit.urban_legend DD=Intelligence + Expression + Primum
+&tags.exploit.urban_legend DD=demon
+&type.exploit.urban_legend DD=action
+
+&exploit.visions_of_head_and_hell DD=Presence + Intimidation + Primum vs. Resolve + Supernatural Tolerance
+&tags.exploit.visions_of_head_and_hell DD=demon
+&type.exploit.visions_of_head_and_hell DD=action
+
+&exploit.walls_of_jericho DD=Strength + Intimidation + Primum
+&tags.exploit.walls_of_jericho DD=demon
+&type.exploit.walls_of_jericho DD=action
+
+
+@@ DEMON POWERS ------------------------------------------------------------------------
+
+@@ DEMONIC FORMS
+
+@@ MODIFICATIONS
+
+&demonic_form.advanced_optics DD=1
+&tags.demonic_form.advanced_optics DD=demon.modification
+&type.demonic_form.advanced_optics DD=flag
+
+&demonic_form.component_indicators DD=1
+&tags.demonic_form.component_indicators DD=demon.modification
+&type.demonic_form.component_indicators DD=flag
+
+&demonic_form.detachable_limbs DD=1
+&tags.demonic_form.detachable_limbs DD=demon.modification
+&type.demonic_form.detachable_limbs DD=flag
+
+&demonic_form.lighting DD=1
+&tags.demonic_form.lighting DD=demon.modification
+&type.demonic_form.lighting DD=flag
+
+&demonic_form.limb_retractor DD=1
+&tags.demonic_form.limb_retractor DD=demon.modification
+&type.demonic_form.limb_retractor DD=flag
+
+&demonic_form.low_density DD=1
+&tags.demonic_form.low_density DD=demon.modification
+&type.demonic_form.low_density DD=flag
+
+&demonic_form.nauseating_musk DD=1
+&tags.demonic_form.nauseating_musk DD=demon.modification
+&type.demonic_form.nauseating_musk DD=flag
+
+&demonic_form.olfactory_enhancements DD=1
+&tags.demonic_form.olfactory_enhancements DD=demon.modification
+&type.demonic_form.olfactory_enhancements DD=flag
+
+&demonic_form.radio_suite DD=1
+&tags.demonic_form.radio_suite DD=demon.modification
+&type.demonic_form.radio_suite DD=flag
+
+&demonic_form.resistors DD=1
+&tags.demonic_form.resistors DD=demon.modification
+&type.demonic_form.resistors DD=flag
+
+&demonic_form.steel_frame DD=1
+&tags.demonic_form.steel_frame DD=demon.modification
+&type.demonic_form.steel_frame DD=flag
+
+&demonic_form.unyielding_vice DD=1
+&tags.demonic_form.unyielding_vice DD=demon.modification
+&type.demonic_form.unyielding_vice DD=flag
+
+@@ TECHNOLOGIES
+
+&demonic_form.abruption_jets DD=1
+&tags.demonic_form.abruption_jets DD=demon.technology
+&type.demonic_form.abruption_jets DD=flag
+
+&demonic_form.adhesive DD=1
+&tags.demonic_form.adhesive DD=demon.technology
+&type.demonic_form.adhesive DD=flag
+
+&demonic_form.collapsible DD=1
+&tags.demonic_form.collapsible DD=demon.technology
+&type.demonic_form.collapsible DD=flag
+
+&demonic_form.laser_cutter DD=1
+&tags.demonic_form.laser_cutter DD=demon.technology
+&type.demonic_form.laser_cutter DD=flag
+
+&demonic_form.mantle_of_fire DD=1
+&tags.demonic_form.mantle_of_fire DD=demon.technology
+&type.demonic_form.mantle_of_fire DD=flag
+
+&demonic_form.multiversal_antenna DD=1
+&tags.demonic_form.multiversal_antenna DD=demon.technology
+&type.demonic_form.multiversal_antenna DD=flag
+
+&demonic_form.savant_core DD=1
+&tags.demonic_form.savant_core DD=demon.technology
+&type.demonic_form.savant_core DD=flag
+
+&demonic_form.shielded_compartment DD=1
+&tags.demonic_form.shielded_compartment DD=demon.technology
+&type.demonic_form.shielded_compartment DD=flag
+
+@@PROPULSIONS
+
+&demonic_form.aquatic DD=1
+&tags.demonic_form.aquatic DD=demon.propulsion
+&type.demonic_form.aquatic DD=flag
+
+&demonic_form.burrowing DD=1
+&tags.demonic_form.burrowing DD=demon.propulsion
+&type.demonic_form.burrowing DD=flag
+
+&demonic_form.tread DD=1
+&tags.demonic_form.tread DD=demon.propulsion
+&type.demonic_form.tread DD=flag
+
+&demonic_form.urban_fluidity DD=1
+&tags.demonic_form.urban_fluidity DD=demon.propulsion
+&type.demonic_form.urban_fluidity DD=flag
+
+@@PROCESSES
+
+&demonic_form.amorphous DD=1
+&tags.demonic_form.amorphous DD=demon.process
+&type.demonic_form.amorphous DD=flag
+
+&demonic_form.dataform DD=1
+&tags.demonic_form.dataform DD=demon.process
+&type.demonic_form.dataform DD=flag
+
+&demonic_form.eliminator_cannon DD=1
+&tags.demonic_form.eliminator_cannon DD=demon.process
+&type.demonic_form.eliminator_cannon DD=flag
+
+&demonic_form.nanobot_composition DD=1
+&tags.demonic_form.nanobot_composition DD=demon.process
+&type.demonic_form.nanobot_composition DD=flag
+

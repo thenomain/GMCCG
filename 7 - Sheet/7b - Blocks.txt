@@ -49,7 +49,7 @@ output: <trait>:<value>[.<offset(s)>]|...
 -- Bio.Default -----------------------------------------------------------------
 
 &bio.default nsc=
-	iter( full_name birthdate template virtue vice, 
+	iter( full_name birthdate concept template virtue vice, 
 		if( t( %i0, ), 
 			ulocal( f.cheat_getstat.with_name, %0, bio.%i0, string ), 
 			%b 
@@ -201,6 +201,15 @@ think u( nsc/skills.social.default, %# )
 
 ================================================================================
 == BLOCK: MERITS ===============================================================
+
+A lot of people have asked that merits be broken up into various categories. 
+'Please put separate my fighting styles!' is a very popular request.
+
+The sad fact is that I don't have time to do it right now, but it's something 
+that should, or even must be done. It won't be hard, considering the tags that 
+merits have, but it should eventually be done.
+
+--
 
 0: sheet dbref
 output: <trait>:<value>[.<offset(s)>]|...
