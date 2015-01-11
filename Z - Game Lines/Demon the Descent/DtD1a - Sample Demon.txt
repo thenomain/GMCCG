@@ -1,0 +1,101 @@
+@@ SAMPLE DEMON
+@@ This is the demon from the core Demon book character sheet
+
+@create Demon Chargen Sheet <cs:dtd>
+@fo me=&_special.sheet_location me=num( Demon Chargen Sheet <cs:dtd> )
+
+&_bio.template cs:dtd=Demon
+
+&_bio.full_name cs:dtd=Gabrielle Washington
+&_bio.concept cs:dtd=Skatebord Courier
+&_bio.virtue cs:dtd=Talkative
+&_bio.vice cs:dtd=Autonomous
+&_bio.incarnation cs:dtd=Messenger
+&_bio.agenda cs:dtd=Inquisitor
+&_bio.catalyst cs:dtd=Saw the Lines
+
+&_advantage.willpower cs:dtd=derived
+&_advantage.willpower_maximum cs:dtd=derived
+&_advantage.weaponry_defense cs:dtd=derived
+&_advantage.brawl_defense cs:dtd=derived
+&_advantage.size cs:dtd=derived
+&_advantage.speed cs:dtd=derived
+&_advantage.initiative cs:dtd=derived
+&_advantage.perception cs:dtd=derived
+
+&_advantage.cover_(gabrielle_washington) cs:dtd=7
+&_advantage.primium cs:dtd=1
+&_advantage.aether cs:dtd=derived
+&_advantage.aether_maximum cs:dtd=derived
+
+&_special.size cs:dtd=5
+&_special.species_factor cs:dtd=5
+
+&_health.maximum cs:dtd=derived
+&_health.damage cs:dtd=derived
+&_health.penalty cs:dtd=derived
+
+&_attribute.intelligence cs:dtd=3
+&_attribute.wits cs:dtd=2
+&_attribute.resolve cs:dtd=3
+&_attribute.strength cs:dtd=3
+&_attribute.dexterity cs:dtd=1
+&_attribute.stamina cs:dtd=2
+&_attribute.presence cs:dtd=3
+&_attribute.manipulation cs:dtd=3
+&_attribute.composure cs:dtd=3
+
+&_skill.academics cs:dtd=1
+&_skill.academics.history cs:dtd=1
+&_skill.computer cs:dtd=
+&_skill.crafts cs:dtd=1
+&_skill.crafts.diy cs:dtd=1
+&_skill.investigation cs:dtd=1
+&_skill.medicine cs:dtd=1
+&_skill.occult cs:dtd=
+&_skill.politics cs:dtd=
+&_skill.science cs:dtd=
+
+&_skill.athletics cs:dtd=2
+&_skill.brawl cs:dtd=1
+&_skill.firearms cs:dtd=
+&_skill.larceny cs:dtd=1
+&_skill.stealth cs:dtd=1
+&_skill.stealth.silent_movement cs:dtd=1
+&_skill.survival cs:dtd=1
+&_skill.weaponry cs:dtd=1
+
+&_skill.animal_ken cs:dtd=1
+&_skill.empathy cs:dtd=1
+&_skill.expression cs:dtd=1
+&_skill.intimidation cs:dtd=2
+@@ &_skill.intimidation.terror_tactics cs:dtd=1
+@@ mentioned in chargen but not as something that's set!
+&_skill.persuasion cs:dtd=1
+&_skill.socailize cs:dtd=2
+&_skill.streetwise cs:dtd=2
+&_skill.subterfuge cs:dtd=2
+&_skill.subterfuge.allay_suspicion cs:dtd=1
+
+&_merit.contacts_(inquisitors) cs:dtd=1
+&_merit.danger_sense cs:dtd=2
+&_merit.fast_reflexes cs:dtd=1
+&_merit.fleet_of_foot cs:dtd=3
+&_merit.resources cs:dtd=1
+
+&_merit.contracts_(gabrielle_washington) cs:dtd=2
+
+&_demonic_form.glory_and_terror cs:dtd=1
+&_demonic_form.inuman_reflexes cs:dtd=1
+&_demonic_form.insect_swarm cs:dtd=1
+&_demonic_form.night_vision cs:dtd=1
+&_demonic_form.slippery_body cs:dtd=1
+&_demonic_form.spatial_distortion cs:dtd=1
+&_demonic_form.voice_of_the_angel cs:dtd=1
+
+&_embed.heart's_desire cs:dtd=xxx
+&_embed.never_here cs:dtd=xxxx
+&_embed.raw_materials cs:dtd=xxxx
+
+&_exploit.four_minutes_ago cs:dtd=xxx
+

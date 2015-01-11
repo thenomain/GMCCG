@@ -1,0 +1,77 @@
+@@ concept: firefighter who sees omens from the fires
+
+@create Human Chargen Sheet <cs:gmc>
+@fo me=&_special.sheet_location me=num( Human Chargen Sheet <cs:gmc> )
+
+
+&_bio.template cs:gmc=Human
+
+&_bio.full_name cs:gmc=Travis MacGuffin
+&_bio.concept cs:gmc=Firefighter
+&_bio.virtue cs:gmc=Enduring
+&_bio.vice cs:gmc=Ambitious
+
+&_advantage.willpower cs:gmc=derived
+&_advantage.willpower_maximum cs:gmc=derived
+&_advantage.weaponry_defense cs:gmc=derived
+&_advantage.brawl_defense cs:gmc=derived
+&_advantage.size cs:gmc=derived
+&_advantage.speed cs:gmc=derived
+&_advantage.initiative cs:gmc=derived
+&_advantage.perception cs:gmc=derived
+
+&_advantage.integrity cs:gmc=7
+
+&_special.size cs:gmc=5
+&_special.species_factor cs:gmc=5
+
+&_health.maximum cs:gmc=derived
+&_health.damage cs:gmc=derived
+&_health.penalty cs:gmc=derived
+
+&_attribute.intelligence cs:gmc=2
+&_attribute.wits cs:gmc=3
+&_attribute.resolve cs:gmc=2
+&_attribute.strength cs:gmc=3
+&_attribute.dexterity cs:gmc=2
+&_attribute.stamina cs:gmc=3
+&_attribute.presence cs:gmc=2
+&_attribute.manipulation cs:gmc=2
+&_attribute.composure cs:gmc=2
+
+&_skill.academics cs:gmc=
+&_skill.computer cs:gmc=
+&_skill.crafts cs:gmc=
+&_skill.investigation cs:gmc=2
+&_skill.medicine cs:gmc=1
+&_skill.medicine.emt cs:gmc=1
+&_skill.occult cs:gmc=1
+&_skill.occult.read_omens cs:gmc=1
+&_skill.politics cs:gmc=
+&_skill.science cs:gmc=
+
+&_skill.athletics cs:gmc=3
+&_skill.brawl cs:gmc=2
+&_skill.firearms cs:gmc=1
+&_skill.larceny cs:gmc=1
+&_skill.stealth cs:gmc=
+&_skill.survival cs:gmc=2
+&_skill.weaponry cs:gmc=2
+&_skill.weaponry.fire_axe cs:gmc=1
+
+&_skill.animal_ken cs:gmc=
+&_skill.empathy cs:gmc=2
+&_skill.expression cs:gmc=
+&_skill.intimidation cs:gmc=2
+&_skill.persuasion cs:gmc=2
+&_skill.socailize cs:gmc=
+&_skill.streetwise cs:gmc=1
+&_skill.subterfuge cs:gmc=
+
+&_merit.fast_reflexes cs:gmc=1
+&_merit.professional_training_(fireman) cs:gmc=2
+&_merit.hardy cs:gmc=2
+&_merit.status_(first_responders) cs:gmc=2
+&_merit.omen_sensitivity cs:gmc=3
+
+
