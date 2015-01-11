@@ -24,6 +24,13 @@ This file includes all additions to the system for Demon: The Descent core rules
 
 
 --------------------------------------------------------------------------------
+-- Search Order ----------------------------------------------------------------
+
+&d.search-order-02-demon sfp=embed exploit
+&d.search-order-03-demon sfp=demonic_form
+
+
+--------------------------------------------------------------------------------
 -- DD: Max Trait ---------------------------------------------------------------
 
 For the 'max trait' calculation
@@ -54,35 +61,28 @@ List all agendas that a demon has.
 	)
 
 
+
+
+
+
 @@ == SOME NOTES FOR CHARGEN ===================================================
 
 @@ .. Add to templates list: demon, stigmatic
-@@ .. let's try this?
-
-&bio.template dd=human[iter( lattr( %!/bio.template.* ), v( %i0 ), . )]
-&bio.template.demon dd=demon.stigmatic
 
 
-@@ .. Add to the search-path here
-@@ .. again, would this work?
-
-&searchpath xx=foo bar blar blee [iter( lattr( %!/searchpath.* ), v( %i0 ))] bio
-&searchpath.demon xx=embed exploit demonic_form
 
 
-@@ Unchained characters start with four Skill Specialties, 
-@@ one of which must be something that would threaten Cover if a human 
-@@ discovered it.
+
 
 
 
 @@ Stigmatics start with Unseen Sense (God Machine)
 @@ and a Major Brand or Tell (a glitch)
 @@ and +3 merit dots for Supernatural Merits.
-@@ e.g., we need to add 'stigmatic' to all the Supernatural Merit tags
 
+@@ Edit `human.supernatural` -> `human.stigmatic.supernatural` 
 
-@dolist <list of supernatural merits>=@edit d:t/##=human., human.stigmatic.
+@dolist [filter( sfp/f.hastag?.workhorse, lattr( dd/merit.* ), , , human.supernatural, 1 )]=@edit d:t/tags.##=human, human.stigmatic
 
 
 
@@ -941,6 +941,9 @@ a: demon's agenda, if any
 
 ================================================================================
 == CHARGEN: SPECIALTIES ========================================================
+
+Unchained characters start with four Skill Specialties, one of which must be 
+something that would threaten Cover if a human discovered it.
 
 
 --------------------------------------------------------------------------------

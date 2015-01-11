@@ -63,7 +63,7 @@ strcat(
 					setq( v, edit( last( %i0, = ), _, %b )), 
 
 @@ .. .. search matches type: look for stat types to search for (name complete)
-					t( setr( z, grab( u( %qy/d.type-search-order ), %i0* ))), 
+					t( setr( z, grab( u( %qy/d.search-order ), %i0* ))), 
 					setq( a, %qa %qz ), 
 
 @@ .. .. search matches template: filter on template-only (name complete)

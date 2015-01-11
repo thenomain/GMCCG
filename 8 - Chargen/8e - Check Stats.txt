@@ -329,7 +329,7 @@ output: All invalid stats on the sheet
 
 &f.badstats cg=
 	iter(
-		u( [u( d.sfp )]/d.type-search-order ), 
+		u( [u( d.sfp )]/d.search-order ), 
 		filter( f.badstat?, lattr( %0/_%i0.* ), , , %0 )
 	)
 

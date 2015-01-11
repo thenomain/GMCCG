@@ -33,7 +33,7 @@ To find middle matches, pass *<name>* or *<name>
 &f.stat-list-selected sfp=
 	setunion(
 		iter(
-			[v(d.type-search-order)] [v(d.type-specials)], 
+			[u(d.search-order)] [v(d.type.specials)], 
 			lattr([u(d.data-dictionary)]/%i0.%0*)
 		), 
 	)

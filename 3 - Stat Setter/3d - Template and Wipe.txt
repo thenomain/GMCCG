@@ -211,8 +211,8 @@ if(
 			edit(
 @@ .. get all possible types
 				iter(
-					[u([u(d.stat-funcs)]/d.type-search-order)] 
-					[u([u(d.stat-funcs)]/d.type-specials)], 
+					[u([u(d.stat-funcs)]/d.search-order)] 
+					[u([u(d.stat-funcs)]/d.type.specials)], 
 @@ .. list all attributes matching those types, stripping leading _
 					iter(lattr(%qw/_%i0.*), rest(%i0, _))
 				), 
