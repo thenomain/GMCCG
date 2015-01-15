@@ -65,6 +65,10 @@ Check for specialties in a list of yes/no:
 s: specialties
 t: template
 
+&f.pts-valid?.specialties.<template> (if exists):
+	input: <template>`<specialty>`<sub-specialty>
+	output: 1 1 1 (a stream of 1 or 0 responses if it's valid)
+
 --
 
 &f.pts-valid?.specialties cg=
@@ -73,13 +77,14 @@ t: template
 		setq( t, u( %0/_bio.template )), 
 		land( 
 			[eq( words( first( %qs, ` )), 3 )] 
-			[udefault( f.pts-valid?.specialties.%qt, 1, %0, %qs )] 
+			[udefault( f.pts-valid?.specialties.%qt, 1, rest( %qs, ` ))] 
 		)
 	)
 
 --
 
 think u( cg/f.pts-valid?.specialties, %# )
+think u( cg/f.pts-valid?.specialties, v( _special.sheet_location ))
 
 
 --------------------------------------------------------------------------------

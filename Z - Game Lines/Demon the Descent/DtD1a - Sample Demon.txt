@@ -35,15 +35,17 @@
 &_health.damage cs:dtd=derived
 &_health.penalty cs:dtd=derived
 
-&_attribute.intelligence cs:dtd=3
-&_attribute.wits cs:dtd=2
-&_attribute.resolve cs:dtd=3
-&_attribute.strength cs:dtd=3
-&_attribute.dexterity cs:dtd=1
-&_attribute.stamina cs:dtd=2
-&_attribute.presence cs:dtd=3
-&_attribute.manipulation cs:dtd=3
-&_attribute.composure cs:dtd=3
+&_attribute.intelligence cs:dtd=2
+&_attribute.wits cs:dtd=3
+&_attribute.resolve cs:dtd=2
+
+&_attribute.strength cs:dtd=2
+&_attribute.dexterity cs:dtd=3
+&_attribute.stamina cs:dtd=3
+
+&_attribute.presence cs:dtd=2
+&_attribute.manipulation cs:dtd=2
+&_attribute.composure cs:dtd=2
 
 &_skill.academics cs:dtd=1
 &_skill.academics.history cs:dtd=1
@@ -72,9 +74,9 @@
 @@ &_skill.intimidation.terror_tactics cs:dtd=1
 @@ mentioned in chargen but not as something that's set!
 &_skill.persuasion cs:dtd=1
-&_skill.socailize cs:dtd=2
+&_skill.socialize cs:dtd=2
 &_skill.streetwise cs:dtd=2
-&_skill.subterfuge cs:dtd=2
+&_skill.subterfuge cs:dtd=1
 &_skill.subterfuge.allay_suspicion cs:dtd=1
 
 &_merit.contacts_(inquisitors) cs:dtd=1

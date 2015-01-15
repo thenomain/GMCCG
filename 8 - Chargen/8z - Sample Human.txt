@@ -64,7 +64,7 @@
 &_skill.expression cs:gmc=
 &_skill.intimidation cs:gmc=2
 &_skill.persuasion cs:gmc=2
-&_skill.socailize cs:gmc=
+&_skill.socialize cs:gmc=
 &_skill.streetwise cs:gmc=1
 &_skill.subterfuge cs:gmc=
 

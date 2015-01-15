@@ -7,6 +7,18 @@ This file includes all additions to the system for Demon: The Descent core rules
 
 
 ################################################################################
+## DEMON: STAT FUNCTIONS #######################################################
+
+--------------------------------------------------------------------------------
+-- SFP: Search Order -----------------------------------------------------------
+
+&d.search-order-02-demon sfp=embed exploit
+&d.search-order-03-demon sfp=demonic_form glitch
+
+
+
+
+################################################################################
 ## DEMON: DATA DICTIONARY ######################################################
 
 
@@ -24,16 +36,15 @@ This file includes all additions to the system for Demon: The Descent core rules
 
 
 --------------------------------------------------------------------------------
--- Search Order ----------------------------------------------------------------
+-- DD: Templates ---------------------------------------------------------------
 
-&d.search-order-02-demon sfp=embed exploit
-&d.search-order-03-demon sfp=demonic_form
+@fo me=&bio.template dd=[get( dd/bio.template )].Demon.Stigmatic
 
 
 --------------------------------------------------------------------------------
 -- DD: Max Trait ---------------------------------------------------------------
 
-For the 'max trait' calculation
+Statpath used for the 'max trait' calculation
 
 --
 
@@ -61,26 +72,12 @@ List all agendas that a demon has.
 	)
 
 
+--------------------------------------------------------------------------------
+-- DD: Tags for Stigmatics -----------------------------------------------------
 
+(Edit `human.supernatural` -> `human.stigmatic.supernatural`)
 
-
-
-@@ == SOME NOTES FOR CHARGEN ===================================================
-
-@@ .. Add to templates list: demon, stigmatic
-
-
-
-
-
-
-
-
-@@ Stigmatics start with Unseen Sense (God Machine)
-@@ and a Major Brand or Tell (a glitch)
-@@ and +3 merit dots for Supernatural Merits.
-
-@@ Edit `human.supernatural` -> `human.stigmatic.supernatural` 
+--
 
 @dolist [filter( sfp/f.hastag?.workhorse, lattr( dd/merit.* ), , , human.supernatural, 1 )]=@edit d:t/tags.##=human, human.stigmatic
 
@@ -195,7 +192,6 @@ List all agendas that a demon has.
 @@ -- other conditions ---------------------------------------------------------
 
 &condition.capitvated DD=1
-
 &condition.disoriented DD=1
 
 
@@ -842,6 +838,13 @@ aether
 primium
 current cover
 
+Stigmatics get +3 merit dots for Supernatural Merits only.
+
+
+
+
+
+
 
 --------------------------------------------------------------------------------
 -- Aether: Point Count ---------------------------------------------------------
@@ -958,20 +961,37 @@ We're doing this by assuming the last specialty is the Demon specialty.
 
 --
 
-&allocated.specialties.demon CG=last( %1 )
-&allocated.specialties.stigmatic CG=last( %1 )
+&f.allocated.specialties.demon CG=last( %1 )
+&f.allocated.specialties.stigmatic CG=last( %1 )
 
 
 --------------------------------------------------------------------------------
 -- Specialties: Point Count ----------------------------------------------------
 
-%0: list of specialties: general specs`template specs
+%0: list of specialties: template specs[`others]
 
 --
 
-&f.pts-valid?.specialties.demon CG=eq( words( elements( %0, 2, ` )), 1 )
-&f.pts-valid?.specialties.stigmatic CG=eq( words( elements( %0, 2, ` )), 1 )
+&f.pts-valid?.specialties.demon CG=eq( words( elements( %0, 1, ` )), 1 )
+&f.pts-valid?.specialties.stigmatic CG=eq( words( elements( %0, 1, ` )), 1 )
 
+
+--------------------------------------------------------------------------------
+-- Specialties: 'Check' output -------------------------------------------------
+
+&check.specialties.demon CG=
+	cat( 
+		%r%b %b Demon (fourth specialty):, 
+		u( u( d.sfp )/f.statname.workhorse, rest( first( %0, ` ), . ))
+	)
+
+--
+
+&check.specialties.stigmatic CG=
+	cat( 
+		%r%b %b Stigmatic (fourth specialty):, 
+		u( u( d.sfp )/f.statname.workhorse, rest( first( %0, ` ), . ))
+	)
 
 
 ================================================================================

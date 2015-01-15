@@ -579,17 +579,21 @@ r: template-specific specialties
 		%b Specialties:, %b, 
 		iter( 
 			%qs, 
-			u( u( d.sfp )/f.statname.workhorse, rest( %i0, . )), 
+			ulocal( u( d.sfp )/f.statname.workhorse, rest( %i0, . )), 
 			, %,%b
 		), 
 
 @@ check & output template specs
-		u( check.specialties.%1, %qr ), 
+		ulocal( check.specialties.%1, %qr ), 
 
 		%r%b Final Specialties Check ->, %b, 
-		u( display.check.stats, %0, specialties )
+		ulocal( display.check.stats, %0, specialties )
 
 	)
+
+--
+
+think u( cg/check.chargen.specialties, v( _special.sheet_location ), Demon ) -- %qa -- %qs -- %qr 
 
 
 --------------------------------------------------------------------------------

@@ -92,6 +92,7 @@ Returns full stat paths.  The first part of the list are specialties that are no
 --
 
 think u( cg/f.allocated.specialties, %# )
+think u( cg/f.allocated.specialties, v( _special.sheet_location ))
 
 
 --------------------------------------------------------------------------------
