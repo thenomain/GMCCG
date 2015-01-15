@@ -24,11 +24,11 @@ d.search-order:
 	This is technically now a function, but for historical reasons we'll 
 	leave it as a data collection.
 
-d.search-order-<##>-<gameline>
+d.search-order-<##>-<gameline>:
 	As long as ## is between 2 and 8, search in that order.
 	`02` should be for powers
-	`03` should be for non-power additions, such as renown
-	`04` should be for social additions, such as entitlements
+	`03` should be for less important additions, such as renown
+	`04` should be for smaller, social additions, such as entitlements
 
 e.g.: 
 	core: (01) attribute skill merit advantage (03) bio
