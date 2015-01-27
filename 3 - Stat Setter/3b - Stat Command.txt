@@ -32,15 +32,15 @@ input.
 -- Command: Switch-Finder ------------------------------------------------------
 
 &f.stat-switch Stat Setter <ss>=
-@@ q0: Partial-name-match the switch.  What the hell.
+@@ q0: Partial-name-match the switch. What the hell.
 
 @@ Do I know the switch?
 	ifelse(
 		setr(0, grab(lattr(me/f.stat/*), f.stat/%0*)), 
 @@ Yes, I know it, hit it
 		u(%q0, %1), 
-@@ No, I don't know it.  Waa. 
-		No such switch for 'stat'.  Valid switches are: 
+@@ No, I don't know it. Waa. 
+		No such switch for 'stat'. Valid switches are: 
 		[itemize(lcstr(iter(lattr(me/f.stat/*), after(##, /))))]
 	)
 

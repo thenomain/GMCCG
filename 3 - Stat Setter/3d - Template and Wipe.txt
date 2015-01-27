@@ -8,7 +8,7 @@ Switches for basic setup work, and for completely wiping a character sheet.
 
 Set an un-templated player up with a new template.
 
-Yes, it only checks to see if they have a template stat, so you can 'stat/override <player>/template=' then use this command, bypassing wiping their entire sheet.  It still does overwrite any stat with a default value in the data-dictionary.
+Yes, it only checks to see if they have a template stat, so you can 'stat/override <player>/template=' then use this command, bypassing wiping their entire sheet. It still does overwrite any stat with a default value in the data-dictionary.
 
 	stat/template <player>=<template>
 

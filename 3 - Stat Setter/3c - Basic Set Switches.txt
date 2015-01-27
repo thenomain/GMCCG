@@ -13,14 +13,14 @@ These are switches for the basic trait-setting commands.
 --------------------------------------------------------------------------------
 -- Splitting the /Set input ----------------------------------------------------
 
-0: The thing to match.  player/stat =+- value 
+0: The thing to match. player/stat =+- value 
 q0: Target
 q1: Stat 
 q2: Operator
 q3: Value (allowed to be null)
 returns: the above, through registers, 1 if all registers are full
 
-I hate having to do it like this.  Wanted a regexp, didn't work.
+I hate having to do it like this. Wanted a regexp, didn't work.
 
 --
 
@@ -78,7 +78,7 @@ case(
 	isstaff(%#), Staff Only., 
 @@ .. Something broke the match
 	t(u(d.regmatch-stat, %0)), 
-	I couldn't tell what you typed.  
+	I couldn't tell what you typed. 
 	The format is: stat/set <player>/<stat> <operator> <value>, 
 @@ .. player not found
 	[t(setr(p, pmatch(%q0)))], 
@@ -109,7 +109,7 @@ case(
 		Error from Shiftstat: %qs
 	), 
 @@ .. uncaught error (it happens)
-	I couldn't tell what you typed.  
+	I couldn't tell what you typed. 
 	The format is: 'stat/set <player>/<stat> <operator> <value>'
 )
 
