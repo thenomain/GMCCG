@@ -73,38 +73,37 @@ uses: setstat() and shiftstat().
 
 &f.stat/set Stat Setter <ss>=
 
-case(
-	0, 
-	isstaff(%#), Staff Only., 
+case( 0, 
+	isstaff( %# ), Staff Only., 
 @@ .. Something broke the match
-	t(u(d.regmatch-stat, %0)), 
+	t( u( d.regmatch-stat, %0 )), 
 	I couldn't tell what you typed. 
 	The format is: stat/set <player>/<stat> <operator> <value>, 
 @@ .. player not found
-	[t(setr(p, pmatch(%q0)))], 
+	[t( setr( p, pmatch( %q0 )))], 
 	Error: Player not found., 
 @@ .. template not there
-	[t(getstat(%qp/template))], 
+	[t( getstat( %qp/template ))], 
 	Error: No Template found., 
 @@ .. removed (no null stats, unless we're doing an /override or /offset)
-@@	or(strmatch(override, %1), strmatch(offset, %1), comp(%q3, )), 
+@@	or( strmatch( override, %1 ), strmatch( offset, %1 ), comp( %q3, )), 
 @@	Error: Must set a value., 
 @@ .. no multi-stat setting here
-	[setq(n, ulocal([u(d.stat-funcs)]/f.statpath-validate-name, %q1))]
-	[or(lte(words(%qn), 1), not(t(%qn)))], 
+	[setq( n, ulocal( [u( d.stat-funcs )]/f.statpath-validate-name, %q1 ))]
+	[or( lte( words( %qn ), 1 ), not( t( %qn )))], 
 	Error: Can only set one stat at a time., 
 @@ .. set that stat!
 @@ .. .. =, setstat
-	comp(%q2, =), 
-	if(
-		t(setr(s, setstat(%qp/%q1, %q3, %1))), 
+	comp( %q2, = ), 
+	if( 
+		t( setr( s, setstat( %qp/%q1, %q3, %1 ))), 
 		%qs, 
 		Error from Setstat: %qs
 	), 
 @@ .. .. +/-, shiftstat
-	not(xor(comp(%q2, +), comp(%q2, -))), 
-	if(
-		t(setr(s, shiftstat(%qp/%q1, %q2%q3, %1))), 
+	not( xor( comp( %q2, + ), comp( %q2, - ))), 
+	if( 
+		t( setr( s, shiftstat( %qp/%q1, %q2%q3, %1 ))), 
 		%qs, 
 		Error from Shiftstat: %qs
 	), 
