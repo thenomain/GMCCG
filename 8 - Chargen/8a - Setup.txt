@@ -15,6 +15,7 @@ mainly the "is this sheet chargen-compatible" system
 &prefix.checks cg=check.
 
 
+
 ================================================================================
 == DATA ========================================================================
 
@@ -25,21 +26,28 @@ mainly the "is this sheet chargen-compatible" system
 
 
 ================================================================================
+== INITIAL COMMAND =============================================================
+
+&c.cg cg=$^\+?cg$:@pemit %#=Yup, it's chargen. See Also: +help chargen
+
+--
+
+@set cg/c.cg=regexp
+
+--------------------------------------------------------------------------------
+
+&c.chargen cg=$^\+?chargen$:@pemit %#=You probably want 'cg'. See Also: +help chargen
+
+--
+
+@set cg/c.chargen=regexp
+
+
+================================================================================
 == FUNCTIONS ===================================================================
 
 &.msg cg=ansi( h, <%0>, n, %b%1 )
 
-
---------------------------------------------------------------------------------
--- isapproved ------------------------------------------------------------------
-
-This maybe should be 'is in chargen?', but we work with what we have for now.
-
-This is the testing version. Your game probably should have isapproved().
-
---
-
-&.isapproved cg=hasattr( %0/_approved )
 
 
 ================================================================================

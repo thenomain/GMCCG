@@ -31,10 +31,10 @@ returns: 1 if ok, #-1 <reason> if not
 
 &f.prerequsite.cg-only cg=
 	if( 
-		not( cand( 
-			hastag?( rest( %1, . ), chargen-only ), 
-			u( .isapproved, %0 )
-		)), 
+		cor( 
+			not( hastag?( rest( %1, . ), chargen-only )), 
+			isapproved( %0, chargen )
+		), 
 		1, 
 		#-1 Chargen-Only stats cannot be gained after approval
 	)

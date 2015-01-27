@@ -1,0 +1,130 @@
+Approval System
+
+================================================================================
+== EXPLANATION =================================================================
+
+Characters tend to go through a number of various states, from completely new to 
+dead. This part of the character generation system keeps track of that.
+
+	Never-Approved: New, lacks any of the other states, 'In Chargen'
+
+	Approved: Can enter the grid, gain XP, your typical Player Character
+	Storyteller: Has most of the abilities of Approved, but is not a PC
+	NPC: Has most of the abilities of Approved, but is not a PC (unused?)
+
+	Unapproved: Was once Approved, is no longer, but is not 'In Chargen'
+	Frozen: Unapproved + cannot interact with anyone
+	Dead: Unapproved + cannot interact with anyone + cannot be re-approved
+
+	Staff: Handled by isstaff(), but is also considered 'Approved' (bad design?)
+
+Chargen (stat-setting commands) can only be used by the Never-Approved or Staff. 
+It's then up to staff to put them into the Approved, Storyteller, or NPC state.
+
+As a common convention, frozen and dead players have '_<dbref>' attached to 
+their names. Care should be taken that they don't remove them.
+
+'Dead' may not be necessary, but some people may want it. We'll see.
+
+
+--------------------------------------------------------------------------------
+-- Attributes ------------------------------------------------------------------
+
+&_log.approval: All approvals and unapprovals and freezings
+	<action>:[secs()]:<name of staffer>:<dbref of staffer>:<reason>
+&_frozen: set with the log entry if currently frozen
+&_dead: set with log entry if currently dead
+
+
+
+================================================================================
+== <GAME>.CONF =================================================================
+
+Put the following in your `<gamename>.conf` file and restart. 
+You may need to change the markers if you're already using them, but keep the 
+names the same.
+
+--
+
+## flags ########################################
+## flags: approval
+flag_name marker0 approved
+flag_name marker1 NPC
+flag_name marker2 unapproved
+flag_name marker3 storyteller
+
+flag_access marker0 wizard
+flag_access marker1 wizard
+flag_access marker2 wizard
+flag_access marker3 wizard
+
+
+
+================================================================================
+== FUNCTION: ISAPPROVED ========================================================
+
+isapproved( <player>[, <status>] )
+
+<player>: What it says on the tin
+<status>: usually null, if not null, matches:
+	staff: isstaff()
+	approved: has 'approved' flag, is staff, npc, or storyteller (default)
+	unapproved: has 'unapproved' flag
+	npc: has 'npc' flag
+	storyteller: has 'storyteller' flag
+	frozen: has 'unapproved' flag, has &_frozen attribute
+	dead: has 'unapproved' flag, has &_dead attribute
+	chargen: is not 'approved' nor is 'unapproved' (staff are always 'chargen')
+	log: output _log.approval, which keeps track of approved/unapproved/dead
+
+
+'Unapproved' specifically means that the person has once been approved and,
+for one reason or another, no longer is.
+
+--	
+
+&ufunc.isapproved cg=
+	strcat( 
+		setq( p, pmatch( %0 )), 
+		setq( s, 
+			grab( 
+				|staff|storyteller|npc|approved|unapproved|frozen|dead|chargen, 
+				%1*, 
+				| 
+			)
+		), 
+
+		case( %qs, 
+			@@( null ), 
+			cor( 
+				isstaff( %qp ), 
+				hasflag( %qp, approved ), 
+				hasflag( %qp, npc ), 
+				hasflag( %qp, storyteller )
+			), 
+
+			approved, 
+			isapproved( %qp ), 
+
+			staff, 
+			isstaff( %qp ), 
+
+			frozen, 
+			cand( not( isapproved( %qp )), hasattr( %qp, _frozen )), 
+
+			dead, 
+			cand( not( isapproved( %qp )), hasattr( %qp, _dead )), 
+			
+			chargen, 
+			cor( 
+				isstaff( %qp ), 
+				not( cor( isapproved( %qp ), hasflag( %qp, unapproved )))
+			), 
+
+			log, 
+			get( %qp/_log.approval ), 
+			
+			hasflag( %qp, %qs )
+		)
+	)
+

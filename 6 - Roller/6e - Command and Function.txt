@@ -14,13 +14,20 @@ q9: target list (dbrefs or job #)
 
 --
 
-
 &c.roll nWoD Roller <nr>=$^\+?roll(/.+?)? (.+?)(\=.*)?$:
+
+@@ .. people 'in chargen' cannot use +roll -- no better place for this
+	@assert cor( isstaff( %# ), not( isapproved( %#, chargen )))={ 
+		@pemit %#=[u( .alert, roll )] You are 'in chargen', and so cannot 
+		use this command. If you need something on your sheet rolled, please 
+		contact a staffer. 
+	}; 
 
 	@pemit %#=
 		strcat( 
 
 @@ .. sanitize input and detach the instance
+@@ .. (don't need to worry if instance already detached; extra spaces are fine)
 			setq( 7, 
 				squish( edit( 
 					strip( %2, %%%,;<>%[%] ), 
