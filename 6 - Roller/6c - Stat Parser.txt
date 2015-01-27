@@ -180,7 +180,8 @@ See if this is a straight-up number.
 --
 
 &f.stat-check.invalid-trait nWoD Roller <nr>=
-	if( not( %2 ), 
+	if( 
+		not( %2 ), 
 		strcat( 
 			u( f.registers.output-add, %0, %1, nostat ), 
 			1 
@@ -190,6 +191,7 @@ See if this is a straight-up number.
 --
 
 think u( nr/f.stat-check.invalid-trait, beauty, +, beauty )
+
 
 --------------------------------------------------------------------------------
 -- Stat Check: What Kind of Trait ----------------------------------------------
