@@ -10,75 +10,98 @@ Set an un-templated player up with a new template.
 
 Yes, it only checks to see if they have a template stat, so you can 'stat/override <player>/template=' then use this command, bypassing wiping their entire sheet. It still does overwrite any stat with a default value in the data-dictionary.
 
-	stat/template <player>=<template>
+	stat/template [<player>=]<template>
 
 IMPORTANT NOTE: We have changed it so that you set one template, major or minor.
 Minor templates are assumed to have a major template of 'human'.
 This may change quite a few prerequsite checks in the DD.
 
+CHARGEN: 
+	Without <player>, it runs it on the player only if they're 'in chargen'.
+	Otherwise, throw 'Staff Only.'
+
+
 --
 
-0: Target=Template
+0: [Target=]Template
 
-q0: target
+q0: target ('%#' if target is missing and 'in chargen') 
 q1: template
 
 qp: pmatch
 qw: where is the sheet location
 qv: validated template(s)
 ql: list of stats to set
+qs: setting self? (1/0)
 
 --
 
 &f.stat/template Stat Setter <ss>=
 
-if(
-	not(isstaff(%#)), 
-	Staff Only., 
+strcat( 
 
-	strcat( 
-		setq( 0, before( %0, = )), 
-		setq( 1, after( %0, = )), 
-		setq( p, pmatch( %q0 )), 
-		setq( w, u( f.find-sheet, %qp )), 
+@@ .. registers
+	if( strmatch( %0, *=* ), 
+		setq( 0, before( %0, = ), 
+		setq( 0, %# ))
+	), 
+	if( strmatch( %0, *=* ), 
+		setq( 1, after( %0, = ), 
+		setq( 1, %0 ))
+	), 
+	setq( p, pmatch( %q0 )), 
+	setq( w, u( f.find-sheet, %qp )), 
+	setq( s, strmatch( %#, %qp )), 
+	setq( v, statvalidate( template, %q1 )), 
 
-		switch( 0, 
-			t( %qp ), 
-			Player Not Found., 
+	case( 0, 
 
-			not(hasattr(%qw, _bio.template)), 
+@@ .. staff can set anything
+@@ .. players can only /template themselves, and only if they're 'in chargen'
+		cor( 
+			isstaff( %# ), 
+			cand( %qs, isapproved( %#, chargen ))
+		), 
+		Staff Only., 
+
+		not( hasattr( %qw, _bio.template )), 
+		if( t( %qs ), 
+			You already have a template. 
+			'stat/wipe' to erase your stats., 
 			Player already has a template. 
 			'stat/wipe %q0' to erase their stats., 
+		), 
 
-			t( setr( v, statvalidate( template, %q1 ))), 
-			Template '%q1' could not be found., 
+		t( %qv ), 
+		Template '%q1' could not be found. Check 'stat template', 
+
+
 
 @@ OK! Find all stat.paths to be set with this template
-			strcat( 
-				setq( l, 
-					setunion( 
-						filter( filter.stat-allowed-for-template, 
-							iter( 
-								lattr( [u( d.data-dictionary )]/default.* ), 
-								rest( %i0, . )
-							), 
-							, , %qv 
+		strcat( 
+			setq( l, 
+				setunion( 
+					filter( filter.stat-allowed-for-template, 
+						iter( 
+							lattr( [u( d.data-dictionary )]/default.* ), 
+							rest( %i0, . )
 						), 
-					)
-				), 
+						, , %qv 
+					), 
+				)
+			), 
 
 @@ .. .. output what we're setting
-				u( display.statpath_defaults, %qp, %qv, %ql ), 
+			u( display.statpath_defaults, %qp, %qv, %ql ), 
 
 @@ .. .. and set it
-				null( set( %qw, _BIO.TEMPLATE:%qv )), 
+			null( set( %qw, _BIO.TEMPLATE:%qv )), 
 
-				null( 
-					iter( %ql, 
-						set( %qw, 
-							_%i0:
-							[get( [u( d.data-dictionary )]/default.%i0 )] 
-						)
+			null( 
+				iter( %ql, 
+					set( %qw, 
+						_%i0:
+						[get( [u( d.data-dictionary )]/default.%i0 )] 
 					)
 				)
 			)
@@ -86,7 +109,7 @@ if(
 	)
 )
 
----
+--
 
 stat/template thenomain=ch
 stat/template thenomain=hum
@@ -177,73 +200,112 @@ think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.un
 
 No cheeky "unapprove" here; clear 'em out!
 
-0: <player>[=YES]
+0: [<player>][=YES]
 
 q0: <player>
 q1: [YES]
 
 qp: pmatch player
 qw: where is the sheet?
+qs: setting self?
 ql: list of stats getting wiped, sorted
 
 --
 
 &f.stat/wipe Stat Setter <ss>=
 
-if(
-	not(isstaff(%#)), 
-	Staff Only., 
+strcat( 
+	if( strmatch( %0, *=* ), 
+		setq( 0, trim( first( %0, = )))
+		setq( 0, %# )	
+	), 
+	setq( 1, trim( rest( %0, = ))), 
 
-	[setq(0, before(%0, =))]
-	[setq(1, after(%0, =))]
-	[case(
-		0, 
+	setq( p, pmatch( %q0 )), 
+	setq( s, strmatch( %qp, %# )), 
+	setq( w, u( f.find-sheet, %qp )), 
 
-		t(setr(p, pmatch(%q0))), Player Not Found., 
+	case( 0, 
 
-		hasattr(setr(w, u(f.find-sheet, %qp)), _bio.template), 
-		Template Not Found., 
+@@ .. staff can set anything
+@@ .. players can only /template themselves, and only if they're 'in chargen'
+		cor( 
+			isstaff( %# ), 
+			cand( %qs, isapproved( %#, chargen ))
+		), 
+		Staff Only., 
 
-@@ wipe the sheet -- of only stats that are valid!
-		comp(%q1, YES), 
-		[setq(
-			l, 
-			edit(
-@@ .. get all possible types
-				iter(
-					[u([u(d.stat-funcs)]/d.search-order)] 
-					[u([u(d.stat-funcs)]/d.type.specials)], 
-@@ .. list all attributes matching those types, stripping leading _
-					iter(lattr(%qw/_%i0.*), rest(%i0, _))
-				), 
-@@ .. remove template from the list; we display that first
-				BIO.TEMPLATE, @@(null)
+		t( %qp ), 
+		Player Not Found., 
+
+		hasattr( %qw , _bio.template ), 
+		Template Not Set. Cannot Wipe Stats., 
+
+@@ >> wipe the sheet -- of only stats that are valid!
+		comp( %q1, YES ), 
+		strcat( 
+@@ .. .. ql: get all possible types
+			setq( l, 
+				edit(
+					iter( 
+						cat( 
+							u( [u( d.stat-funcs )]/d.search-order ), 
+							u( [u( d.stat-funcs )]/d.type.specials )
+						), 
+
+@@ .. .. list all attributes matching those types, stripping leading _
+						iter( lattr( %qw/_%i0.* ), rest( %i0, _ ))
+					), 
+@@ .. .. (remove template from the list; we'll be displaying that first)
+					BIO.TEMPLATE, @@( null )
+				)
+			), 
+
+@@ .. >> wipe and display sheet
+			wheader( Wiping [name(%qp)]'s Sheet ), %r, 
+			%b%b, 
+			iter(
+				BIO.TEMPLATE %ql, 
+				strcat( 
+					ansi( h, 
+						u( 
+							[u(d.stat-funcs)]/f.statname.workhorse, 
+							rest( %i0, . )
+						)
+					), :%b, 
+					get( %qw/_%i0 ), 
+					null( set( %qw, _%i0: ))
+					
+				), , %r %b
+			), 
+			%r, 
+@@			CGStamp:, %b, u(%qp/_CGSTAMP), 
+@@			null(set(%qp, _CGSTAMP:)), %r, 
+			wfooter( Sheet Wiped )
+		), 
+
+
+@@ >> default: warning message
+		if( t( %qs ), 
+			ansi( 
+				r, >> Are you%b, 
+				rhu, absolutely sure, 
+				r, %byou want to wipe your sheet? <<, 
+				n, %rIf so%, type:%b, 
+				h, stat/wipe me=YES 
+			), 
+			ansi( 
+				r, >> Are you%b, 
+				rhu, absolutely sure, 
+				r, %byou want to wipe [name(%qp)]'s sheet? <<, 
+				n, %rIf so%, type:%b, 
+				h, stat/wipe [name(%qp)]=YES 
 			)
-		)]
-
-@@ >> wipe and display sheet
-		[header(Wiping [name(%qp)]'s Sheet)] %r
-		%b [iter(
-			BIO.TEMPLATE %ql, 
-			[ansi(h, u([u(d.stat-funcs)]/f.statname.workhorse, rest(%i0, .)))]: 
-			[get(%qw/_%i0)] [null(set(%qw, _%i0:))], , %r %b
-		)] %r
-@@		%r CGStamp: [u(%qp/_CGSTAMP)]
-@@		[null(set(%qp, _CGSTAMP:))]%r
-		[footer(Sheet Wiped)], 
-
-@@ default: warning message
-		ansi( 
-			r, >> Are you%b, 
-			rhu, absolutely sure, 
-			r, %byou want to wipe [name(%qp)]'s sheet? <<, 
-			n, %rIf so%, type:%b, 
-			h, stat/wipe [name(%qp)]=YES 
 		)
-	)]
+	)
 )
 
----
+--
 
 stat/wipe thenomain
 stat/template thenomain=h
