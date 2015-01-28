@@ -75,7 +75,11 @@ I haven't decompiled the code yet.
 
 &C.TILT +Cond and +Tilt Status Tracker <ctst>=$^\+?tilt(.*)$:@pemit %#=[u( c.status, %1, tilt )]
 
+@set ctst/c.tilt=regexp
+
 &C.COND +Cond and +Tilt Status Tracker <ctst>=$^\+?cond(.*)$:@pemit %#=[u( c.status, %1, cond )]
+
+@set ctst/c.cond=regexp
 
 &CMT.C.STATUS +Cond and +Tilt Status Tracker <ctst>=This is the primary distinction between switched and <inputs> commands. Also distinguishes +<type>s, though they currently do the same thing as base +<type> commands, but if ever desired that +conds does something different than +cond, this could be modified.%r%r%0 is type of status that gets passed through the system.
 
