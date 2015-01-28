@@ -42,12 +42,12 @@ strcat(
 
 @@ .. registers
 	if( strmatch( %0, *=* ), 
-		setq( 0, before( %0, = ), 
-		setq( 0, %# ))
+		setq( 0, before( %0, = )), 
+		setq( 0, %# )
 	), 
 	if( strmatch( %0, *=* ), 
-		setq( 1, after( %0, = ), 
-		setq( 1, %0 ))
+		setq( 1, after( %0, = )), 
+		setq( 1, %0 )
 	), 
 	setq( p, pmatch( %q0 )), 
 	setq( w, u( f.find-sheet, %qp )), 
@@ -200,12 +200,12 @@ think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.un
 
 No cheeky "unapprove" here; clear 'em out!
 
-0: [<player>][=YES]
+0: [<player>[=YES]]
 
 q0: <player>
 q1: [YES]
 
-qp: pmatch player
+qp: pmatch player (%# if %q0 is 'me')
 qw: where is the sheet?
 qs: setting self?
 ql: list of stats getting wiped, sorted
@@ -216,12 +216,12 @@ ql: list of stats getting wiped, sorted
 
 strcat( 
 	if( strmatch( %0, *=* ), 
-		setq( 0, trim( first( %0, = )))
+		setq( 0, trim( first( %0, = ))), 
 		setq( 0, %# )	
 	), 
 	setq( 1, trim( rest( %0, = ))), 
 
-	setq( p, pmatch( %q0 )), 
+	setq( p, if( strmatch( %q0, me ), %#, pmatch( %q0 ))), 
 	setq( s, strmatch( %qp, %# )), 
 	setq( w, u( f.find-sheet, %qp )), 
 
