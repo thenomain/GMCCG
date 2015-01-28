@@ -101,7 +101,7 @@ case( 0,
 
 @@ .. template not there
 	t( getstat( %qp/template )), 
-	No Template set. Use 'set/template'., 
+	No Template set. Use 'stat/template <template>'., 
 
 
 @@ REMOVED: @@ .. no null stats, unless we're doing an /override or /offset
