@@ -51,16 +51,16 @@ localize( strcat(
 @@ .. (but only if it's 'numeric' )
 			cand( 
 				strmatch( %qc, numeric ), 
-				u( [u( d.sfp )]/f.hastag?.workhorse, %qs, derived )
+				ulocal( [u( d.sfp )]/f.hastag?.workhorse, %qs, derived )
 			), 
-			u( f.statcheck.derived, %0, %1 ), 
+			ulocal( f.statcheck.derived, %0, %1 ), 
 
 @@ .. list: stat with class of "list"
 			strmatch( %qc, list ), 
-			u( f.statcheck.list, %qs, %qv, %2 ), 
+			ulocal( f.statcheck.list, %qs, %qv, %2 ), 
 
 @@ .. normal: anything else: validate stat as usual ( name then value )
-			u( f.statcheck.normal, %1, %qs, %qv, %2 )
+			ulocal( f.statcheck.normal, %1, %qs, %qv, %2 )
 		)
 	), 
 	if( t( %qt ), 1, %qt ), ., 
@@ -68,11 +68,13 @@ localize( strcat(
 @@ >> <prereq>
 	iter( 
 		cg-only template other, 
-		u( f.prerequsite.%i0, %0, %1, %2 ), , . 
+		ulocal( f.prerequsite.%i0, %0, %1, %2 ), , . 
 	)
 ))
 
 --
+
+think u( cg/f.statcheck, pmatch( hemi ), _skill.brawl.punching )
 
 think u( cg/f.statcheck, %#, _merit.hardy )
 think u( cg/f.statcheck, %#, _advantage.willpower )
@@ -594,6 +596,8 @@ r: template-specific specialties
 --
 
 think u( cg/check.chargen.specialties, v( _special.sheet_location ), Demon ) -- %qa -- %qs -- %qr 
+
+think u( cg/check.chargen.specialties, pmatch( Hemi ), Human ) --> %qa --> %qs --> %qr 
 
 
 --------------------------------------------------------------------------------
