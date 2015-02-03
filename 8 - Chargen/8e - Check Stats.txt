@@ -237,24 +237,27 @@ t: temp whatsit
 --
 
 &f.statcheck.substat cg=
-localize(
-	case( 1, 
+	localize(
+		case( 1, 
 
-		not( cand( 
-			isint( setr( t, first( u( %0/[elements( %1, 1 2, . )] ), . ))), 
-			gt( %qt, 0 )
-		)), 
-		#-1 Substat cannot be set if main stat is non-numeric, 
+			not( cand( 
+				isint( setr( t, first( u( %0/[elements( %1, 1 2, . )] ), . ))), 
+				gt( %qt, 0 )
+			)), 
+			if( strmatch( %1, _skill.* ), 
+				#-1 Specialties cannot be set if skill is zero or non-numeric, 
+				#-1 Substat cannot be set if main stat is non-numeric 
+			), 
 
-		cand( 
-			strmatch( %1, _skill.* ), 
-			gt( add( u( %0/%1 ), %2 ), 1 )
-		), 
-		#-1 Specialty substats value are 1, 
+			cand( 
+				strmatch( %1, _skill.* ), 
+				gt( add( u( %0/%1 ), %2 ), 1 )
+			), 
+			#-1 Specialty substats must have a value of 1, 
 
-		1
+			1
+		)
 	)
-)
 
 
 --------------------------------------------------------------------------------
@@ -330,7 +333,7 @@ output: All invalid stats on the sheet
 --
 
 &f.badstats cg=
-	iter(
+	iter( 
 		u( [u( d.sfp )]/d.search-order ), 
 		filter( f.badstat?, lattr( %0/_%i0.* ), , , %0 )
 	)
