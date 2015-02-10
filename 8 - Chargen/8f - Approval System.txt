@@ -19,21 +19,24 @@ dead. This part of the character generation system keeps track of that.
 	Staff: Handled by isstaff(), but is also considered 'Approved' (bad design?)
 
 Chargen (stat-setting commands) can only be used by the Never-Approved or Staff. 
-It's then up to staff to put them into the Approved, Storyteller, or NPC state.
+Never Guests. It's then up to staff to put them into the Approved, Storyteller, 
+or NPC state.
 
 As a common convention, frozen and dead players have '_<dbref>' attached to 
 their names. Care should be taken that they don't remove them.
 
 'Dead' may not be necessary, but some people may want it. We'll see.
 
+I wish we had a way to stop frozen and dead people from using @name.
+
 
 --------------------------------------------------------------------------------
 -- Attributes ------------------------------------------------------------------
 
-&_log.approval: All approvals and unapprovals and freezings
-	<action>:[secs()]:<name of staffer>:<dbref of staffer>:<reason>
-&_frozen: set with the log entry if currently frozen
-&_dead: set with log entry if currently dead
+&_approval.log: All approvals and unapprovals and freezings
+	<action>:[secs()]:<name of staffer>:<dbref of staffer>:<reason>|...
+&_approval.frozen: set with the log entry if currently frozen
+&_approval.dead: set with log entry if currently dead
 
 
 
@@ -43,6 +46,9 @@ their names. Care should be taken that they don't remove them.
 Put the following in your `<gamename>.conf` file and restart. 
 You may need to change the markers if you're already using them, but keep the 
 names the same.
+
+We might have been able to use the built-in "uninspected" flag, but left that 
+for other code.
 
 --
 
@@ -61,7 +67,7 @@ flag_access marker3 wizard
 
 
 ================================================================================
-== FUNCTION: ISAPPROVED ========================================================
+== USER FUNCTION: ISAPPROVED ===================================================
 
 isapproved( <player>[, <status>] )
 
@@ -74,6 +80,7 @@ isapproved( <player>[, <status>] )
 	storyteller: has 'storyteller' flag
 	frozen: has 'unapproved' flag, has &_frozen attribute
 	dead: has 'unapproved' flag, has &_dead attribute
+	guest: is a guest
 	chargen: is not 'approved' nor is 'unapproved' (staff are always 'chargen')
 	log: output _log.approval, which keeps track of approved/unapproved/dead
 
@@ -88,7 +95,10 @@ for one reason or another, no longer is.
 		setq( p, pmatch( %0 )), 
 		setq( s, 
 			grab( 
-				|staff|storyteller|npc|approved|unapproved|frozen|dead|chargen, 
+				|chargen|guest
+				|approved|storyteller|npc|staff
+				|unapproved|frozen|dead
+				|status|log, 
 				%1*, 
 				| 
 			)
@@ -110,21 +120,152 @@ for one reason or another, no longer is.
 			isstaff( %qp ), 
 
 			frozen, 
-			cand( not( isapproved( %qp )), hasattr( %qp, _frozen )), 
+			cand( not( isapproved( %qp )), hasattr( %qp, _approval.frozen )), 
 
 			dead, 
-			cand( not( isapproved( %qp )), hasattr( %qp, _dead )), 
+			cand( not( isapproved( %qp )), hasattr( %qp, _approval.dead )), 
 			
 			chargen, 
 			cor( 
 				isstaff( %qp ), 
-				not( cor( isapproved( %qp ), hasflag( %qp, unapproved )))
+				not( cor( 
+					isapproved( %qp ), 
+					hasflag( %qp, unapproved ), 
+					haspower( %qp, guest )
+				))
 			), 
 
+			guest, 
+			haspower( %qp, guest ), 
+
 			log, 
-			get( %qp/_log.approval ), 
-			
+			default( %qp/_approval.log, no approval log ), 
+
+// current approval status. yes, this is a mess. yes, it needs fixed. later.
+			status, 
+			case( 1, 
+				isapproved( %qp, guest ), guest, 
+				isapproved( %qp, staff ), staff, 
+				isapproved( %qp, chargen ), chargen, 
+				isapproved( %qp, approved ), approved, 
+				isapproved( %qp, storyteller ), storyteller, 
+				isapproved( %qp, npc ), npc, 
+				isapproved( %qp, unapproved ), unapproved, 
+				isapproved( %qp, frozen ), frozen, 
+				isapproved( %qp, dead ), dead, 
+				#-1 unknown approval status :: %qs :: %qp 
+			), 
+
 			hasflag( %qp, %qs )
 		)
 	)
+
+
+
+================================================================================
+== COMMANDS & SWITCHES =========================================================
+
+cg/approve
+	when done with cgen, full character status
+	un-unapprove and un-freeze, but not un-kill
+cg/npc
+	done with cgen, turned into an NPC (flag set)
+cg/storyteller
+	when done with cgen, turned into a Storyteller (flag set)
+
+cg/unapprove
+	removes approval, npc, or storyteller status
+	does not reinstate cgen ability
+cg/freeze
+	same as 'unapprove', but also sets frozen
+cg/kill
+	same as 'unapprove', but also sets dead
+
+
+
+--------------------------------------------------------------------------------
+-- cg/approve ------------------------------------------------------------------
+
+// 1: input
+// p: player dbref
+// a: current approval status (should be chargen, unapproved, or frozen)
+
+&c.cg/approve cg=$^\+?cg/approve( .*)$:
+	think strcat( 
+		q1:%b, setr( 1, trim( %1 )), %r, 
+		qp:%b, setr( p, pmatch( %q1 )), %r, 
+		qa:%b, setr( a, isapproved( %qp, status ), %r, 
+	); 
+
+	@assert 
+	cor( 
+		isstaff( %# ), 
+		u( f.approval.not-self, %#, %q1 )
+	)={ 
+		@pemit %#=u( .msg, cg/approve, You can't approve yourself. Nice try. ) 
+	}; 
+
+	@assert isstaff( %# )={ 
+		@pemit %#=u( .msg, cg/approve, Staff only. ) 
+	}; 
+
+	@assert %qp={ 
+		@pemit %#=u( .msg, cg/approve, Character not found. )
+	}; 
+
+	@assert t( grab( chargen|unapproved|frozen, %qa, | ))={ 
+		@pemit %#=u( .msg, cg/approve, 
+			Character must be in chargen%, unapproved%, or frozen. 
+			Character is [lcstr( %qa )]. 
+		)
+	}; 
+
+	think setr( r, 
+		u( f.approval.log.add, %#, %qp, approved, '%qa' -> 'approved' )
+	); 
+
+	@set %qp=approved !unapproved !frozen; 
+	@set %qp=_approval.frozen:;
+
+
+
+==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+// return '1' if target is not enactor
+// 0: %# (enactor)
+// 1: raw input (target)
+
+&f.approval.not-self cg=
+	cor( 
+		strlen( %1 ), 
+		not( strmatch( pmatch( %1 ), %0 )), 
+		not( strmatch( %1, me ))
+	)
+
+=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+// &_log.approval: All approvals and unapprovals and freezings
+//	<action>:[secs()]:<name of staffer>:<dbref of staffer>:<reason>|...
+//
+// 0: enactor
+// 1: target
+// 2: action
+// 3: reason
+
+&f.approval.log.add cg=
+	set( %1, 
+		_approval.log:
+		[trim( 
+			[get( %1/_approval.log )]|
+			%2:[secs()]:[moniker( %0 )]:%0:%3, 
+			l, | 
+		)] 
+	)
+
+--==-=--=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=--==-=-=-=-=-=-=-=-=-=-
+
+
+&_approval.frozen: set with the log entry if currently frozen
+&_approval.dead: set with log entry if currently dead
+
 
