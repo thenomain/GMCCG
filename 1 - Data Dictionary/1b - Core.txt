@@ -1,9 +1,9 @@
-@@ #############################################################################
-@@ ## CORE WOD #################################################################
-@@ 
-@@ And so comes the GMC update
-@@ 
-@@ == CORE ATTRIBUTES ==========================================================
+// #############################################################################
+// ## CORE WOD #################################################################
+// 
+// And so comes the GMC update
+// 
+// == CORE ATTRIBUTES ==========================================================
 
 &attribute.intelligence DD=1.2.3.4.5.6.7.8.9.10
 &attribute.wits DD=1.2.3.4.5.6.7.8.9.10
@@ -18,7 +18,7 @@
 &attribute.composure DD=1.2.3.4.5.6.7.8.9.10
 
 
-@@ -- Attributes: Defaults -----------------------------------------------------
+// -- Attributes: Defaults -----------------------------------------------------
 
 &default.attribute.intelligence DD=1
 &default.attribute.wits DD=1
@@ -33,7 +33,7 @@
 &default.attribute.composure DD=1
 
 
-@@ -- Attributes: Prereqs for Supernatural Power Level -------------------------
+// -- Attributes: Prereqs for Supernatural Power Level -------------------------
 
 &prerequisite.attribute.intelligence DD=u( .trait_check, %0, attribute.intelligence, %2 )
 &prereq-text.attribute.intelligence DD=Limited by power level stat
@@ -64,9 +64,9 @@
 &prereq-text.attribute.composure DD=Limited by power level stat
 
 
-@@ == CORE SKILLS ==============================================================
+// == CORE SKILLS ==============================================================
 
-@@ -- Skills: Mental -----------------------------------------------------------
+// -- Skills: Mental -----------------------------------------------------------
 
 &skill.academics DD=1.2.3.4.5.6.7.8.9.10|*
 &skill.computer DD=1.2.3.4.5.6.7.8.9.10|*
@@ -94,7 +94,7 @@
 &prerequisite.skill.science DD=u( .trait_check, %0, skill.science, %2 )
 &prereq-text.skill.science DD=Limited by power level stat
 
-@@ -- Skills: Physical ---------------------------------------------------------
+// -- Skills: Physical ---------------------------------------------------------
 
 &skill.athletics DD=1.2.3.4.5.6.7.8.9.10|*
 &skill.brawl DD=1.2.3.4.5.6.7.8.9.10|*
@@ -122,7 +122,7 @@
 &prerequisite.skill.weaponry DD=u( .trait_check, %0, skill.weaponry, %2 )
 &prereq-text.skill.weaponry DD=Limited by power level stat
 
-@@ -- Skills: Social -----------------------------------------------------------
+// -- Skills: Social -----------------------------------------------------------
 
 &skill.animal_ken DD=1.2.3.4.5.6.7.8.9.10|*
 &skill.empathy DD=1.2.3.4.5.6.7.8.9.10|*
@@ -151,9 +151,9 @@
 &prereq-text.skill.subterfuge DD=Limited by power level stat
 
 
-@@ == CORE MERITS ==============================================================
+// == CORE MERITS ==============================================================
 
-@@ -- Merits: Mental -----------------------------------------------------------
+// -- Merits: Mental -----------------------------------------------------------
 
 &merit.area_of_expertise_() DD=1|*
 &prerequisite.merit.area_of_expertise_() DD=cand( u( .at_least, %0, attribute.resolve, 2 ), u( .specialty_has, %0, *, %1 ))
@@ -216,7 +216,7 @@
 &prereq-text.trained_observer DD=Resolve 3+ or Composure 3+
 
 
-@@ -- Merits: Physical ---------------------------------------------------------
+// -- Merits: Physical ---------------------------------------------------------
 
 &merit.ambidextrous DD=3
 
@@ -268,7 +268,7 @@
 &merit.small_framed DD=2
 
 
-@@ -- Merits: Social -----------------------------------------------------------
+// -- Merits: Social -----------------------------------------------------------
 
 &merit.allies_() DD=1.2.3.4.5|*
 
@@ -281,9 +281,9 @@
 &prereq-text.merit.barfly DD=Socialize 2+
 
 &merit.contacts_() DD=1|*
-@@ I made this a 1-dot Merit because in GMC you can’t have more than a single 
-@@ dot per tpye of Contacts and it’s just easier to keep track of if they are 
-@@ 1-dot Merits with specifiers. This is how the Vampire book does it.
+// I made this a 1-dot Merit because in GMC you can’t have more than a single 
+// dot per tpye of Contacts and it’s just easier to keep track of if they are 
+// 1-dot Merits with specifiers. This is how the Vampire book does it.
 
 &merit.etiquette DD=1.2.3.4.5
 &prerequisite.merit.etiquette DD=u( .at_least_all, %0, attribute.composure:3 skill.socialize:2 )
@@ -298,15 +298,15 @@
 &merit.fixer DD=2
 &prerequisite.merit.fixer DD=cand( u( .at_least, %0, attribute.wits, 3 ), gte( words( lattr( %0/_merit.contacts_* )), 2 ))
 &prereq-text.merit.fixer DD=Wits 3+ & 2 or more Contacts
-@@ So since I made Contacts a 1-dot Merit, and Fixer requires Contacts 2, I’m not sure what the code should be to make sure that the prerequisite is two instances of the Contacts Merit.
-@@ GENERAL NOTE: Need a way to look up a list of traits by name with wildcard
+// So since I made Contacts a 1-dot Merit, and Fixer requires Contacts 2, I’m not sure what the code should be to make sure that the prerequisite is two instances of the Contacts Merit.
+// GENERAL NOTE: Need a way to look up a list of traits by name with wildcard
 
 &merit.hobbyist_clique_() DD=2|*|*
 &prerequisite.merit.hobbyist_clique_() DD=u( .at_least_all, %0, attribute.wits:3 merit.contacts:2 )
 &prereq-text.merit.hobbyist_clique_() DD=
-@@ Not sure how to code it so that the prerequisite is a 2 in the Skill 
-@@ associated with the Merit.
-@@ Thought: "Hobbyist Clique (Computer Club).Computers"
+// Not sure how to code it so that the prerequisite is a 2 in the Skill 
+// associated with the Merit.
+// Thought: "Hobbyist Clique (Computer Club).Computers"
 
 &merit.inspiring DD=3
 &prerequisite.merit.inspiring DD=u( .at_least, %0, attribute.presence, 3 )
@@ -317,11 +317,11 @@
 &prereq-text.merit.iron_will DD=Resolve 4+
 
 &merit.mentor_() DD=1.2.3.4.5|*
-@@ Mentor requires that the character pick 3 stats to give to the Mentor as 
-@@ fields where the mentor can be helpful; Use +note
+// Mentor requires that the character pick 3 stats to give to the Mentor as 
+// fields where the mentor can be helpful; Use +note
 
 &merit.mystery_cult_initiation_() DD=1.2.3.4.5|*
-@@ Will probably require a +note for all the bennies to be noted.
+// Will probably require a +note for all the bennies to be noted.
 
 &merit.pusher DD=1
 &prerequisite.merit.pusher DD=u( .at_least, %0, skill.persuasion, 2 )
@@ -330,8 +330,8 @@
 &merit.resources DD=1.2.3.4.5
 
 &merit.retainer_() DD=1.2.3.4.5|*
-@@ Like Mentor, since we are going to be using Blackjack/Baltimore’s House Rules 
-@@ for Retainers. I’ll get more into it later.
+// Like Mentor, since we are going to be using Blackjack/Baltimore’s House Rules 
+// for Retainers. I’ll get more into it later.
 
 &merit.safe_place_() DD=1.2.3.4.5|*
 
@@ -354,7 +354,7 @@
 &merit.true_friend_() DD=3|*
 
 
-@@ -- Merits: Fighting Merits --------------------------------------------------
+// -- Merits: Fighting Merits --------------------------------------------------
 
 &merit.armed_defense DD=1.2.3.4.5
 &prerequisite.merit.armed_defense DD=cand( u( .has, %0, defensive_combat_(weaponry) ), u( .at_least_all, %0, attribute.dexterity:3 skill.weaponry:2 ))
@@ -429,14 +429,14 @@
 &prereq-text.merit.unarmed_defense DD=Dexterity 3+, Brawl 2+ & Defensive Combat (Brawl)
 
 
-@@ -- Core Merits: Special -----------------------------------------------------
+// -- Core Merits: Special -----------------------------------------------------
 
 &merit.virtuous_() DD=2|*
 
 &merit.vice-ridden_() DD=2|*
 
 
-@@ -- Core Merits: Supernatural ------------------------------------------------
+// -- Core Merits: Supernatural ------------------------------------------------
 
 &merit.aura_reading DD=3
 
@@ -471,16 +471,16 @@
 &prereq-text.merit.unseen_sense_() DD=Wits 2+
 
 
-@@ == CORE ADVANTAGES ==========================================================
+// == CORE ADVANTAGES ==========================================================
 
-@@ -- Integrity: the, er, integrity stat for humans ----------------------------
+// -- Integrity: the, er, integrity stat for humans ----------------------------
 
 &advantage.integrity DD=1.2.3.4.5.6.7.8.9.10
 &default.advantage.integrity DD=7
 
-@@ -- pools like "willpower" need a separate "max" trait which may go up & down
-@@ -- the current pool trait is pulled from the max trait & applied an offset
-@@ -- spending "a dot of willpower" is an offset applied to the maximum
+// -- pools like "willpower" need a separate "max" trait which may go up & down
+// -- the current pool trait is pulled from the max trait & applied an offset
+// -- spending "a dot of willpower" is an offset applied to the maximum
 
 &advantage.willpower DD=ladd( u( .value_full, %0, advantage.willpower_maximum ), . )
 &default.advantage.willpower DD=derived
@@ -489,7 +489,7 @@
 &default.advantage.willpower_maximum DD=derived
 
 
-@@ -- Other Advantages ---------------------------------------------------------
+// -- Other Advantages ---------------------------------------------------------
 
 &advantage.defense DD=add( ladd( u( .value_full, %0, skill.athletics ), . ), min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . )))
 &default.advantage.defense DD=derived
@@ -512,10 +512,10 @@
 &advantage.perception DD=u( .value_stats, %0, attribute.wits attribute.composure )
 &default.advantage.perception DD=derived
 
-@@ I replaced the base virtues and vices with the GMC ones rather than 
-@@ appending, yes?
-@@ aren't those mostly suggestions? do we want to list all taken virt/vices?
-@@ yes, they are suggestion. It would be cool to list all taken virtues/vices so we could have a list on the wiki that people could look at for inspiration/choices.
+// I replaced the base virtues and vices with the GMC ones rather than 
+// appending, yes?
+// aren't those mostly suggestions? do we want to list all taken virt/vices?
+// yes, they are suggestion. It would be cool to list all taken virtues/vices so we could have a list on the wiki that people could look at for inspiration/choices.
 
 &bio.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.Loyal.Patient.Peaceful.Righteous.Trustworthy
 &class.bio.virtue DD=string
@@ -523,12 +523,12 @@
 &bio.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
 &class.bio.vice DD=string
 
-@@ &advantage.aspiration DD=*
-@@ &class.advantage.aspiration DD=string
+// &advantage.aspiration DD=*
+// &class.advantage.aspiration DD=string
 
 
 
-@@ == CORE BIO =================================================================
+// == CORE BIO =================================================================
 
 &class.bio.? DD=string
 
@@ -541,7 +541,7 @@
 &bio.concept DD=*
 
 
-@@ == CORE SPECIAL TYPES =======================================================
+// == CORE SPECIAL TYPES =======================================================
 
 &special.size DD=#
 &default.special.size dd=5
@@ -551,69 +551,10 @@
 
 
 
-@@ == HEALTH ===================================================================
-@@ MOVED TO HEALTH SYSTEM
+// == HEALTH ===================================================================
+// MOVED TO HEALTH SYSTEM
 
 
 
-@@ == CONDITIONS ===============================================================
-@@ (May get its own system)
-
-@@ All conditions are flags
-
-&class.condition.? dd=flag
-
-@ -- 
-
-&condition.addicted_() dd=1|*
-
-&condition.amnesia dd=1
-
-&condition.blind dd=1
-
-&condition.broken dd=1
-
-&condition.bonded_() dd=1|*
-
-&condition.connected_() dd=1|*
-
-&condition.disabled_() dd=1|*
-
-&condition.deprived dd=1
-
-&condition.embarrassing_secret_() dd=1|*
-
-&condition.fugue dd=1
-
-&condition.guilty dd=1
-
-&condition.informed_() dd=1|*
-
-&condition.inspired_() dd=1|*
-
-&condition.leveraged_() dd=1|*
-
-&condition.lost dd=1
-
-&condition.madness_() dd=1|*
-
-&condition.mute dd=1
-
-&condition.noteriety_() dd=1|*
-
-&condition.obsession_() dd=1|*
-
-&condition.shaken_() dd=1|*
-
-&condition.spooked dd=1
-
-&condition.steadfast dd=1
-
-&condition.swooning_() dd=1|*
-
-&condition.soulless dd=1
-
-&condition.enervated dd=1
-
-&condition.thrall dd=1
-
+// == CONDITIONS ===============================================================
+// Using its own system (Reno's conditions/tilts)
