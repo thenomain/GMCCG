@@ -558,3 +558,63 @@
 
 // == CONDITIONS ===============================================================
 // Using its own system (Reno's conditions/tilts)
+
+/* 
+
+&class.condition.? dd=flag
+
+// -- 
+
+&condition.addicted_() dd=1|*
+
+&condition.amnesia dd=1
+
+&condition.blind dd=1
+
+&condition.broken dd=1
+
+&condition.bonded_() dd=1|*
+
+&condition.connected_() dd=1|*
+
+&condition.disabled_() dd=1|*
+
+&condition.deprived dd=1
+
+&condition.embarrassing_secret_() dd=1|*
+
+&condition.fugue dd=1
+
+&condition.guilty dd=1
+
+&condition.informed_() dd=1|*
+
+&condition.inspired_() dd=1|*
+
+&condition.leveraged_() dd=1|*
+
+&condition.lost dd=1
+
+&condition.madness_() dd=1|*
+
+&condition.mute dd=1
+
+&condition.noteriety_() dd=1|*
+
+&condition.obsession_() dd=1|*
+
+&condition.shaken_() dd=1|*
+
+&condition.spooked dd=1
+
+&condition.steadfast dd=1
+
+&condition.swooning_() dd=1|*
+
+&condition.soulless dd=1
+
+&condition.enervated dd=1
+
+&condition.thrall dd=1
+
+*/
