@@ -13,6 +13,7 @@ mainly the "is this sheet chargen-compatible" system
 @parent GMC Chargen <cg>=codp
 &prefix.dot-functions cg=.
 &prefix.checks cg=check.
+&prefix.display cg=format. display.
 
 
 

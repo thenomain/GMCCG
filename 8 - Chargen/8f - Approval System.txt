@@ -1,3 +1,4 @@
+/*
 Approval System
 
 ================================================================================
@@ -31,12 +32,28 @@ I wish we had a way to stop frozen and dead people from using @name.
 
 
 --------------------------------------------------------------------------------
--- Attributes ------------------------------------------------------------------
+----- Attributes ---------------------------------------------------------------
 
 &_approval.log: All approvals and unapprovals and freezings
 	<action>:[secs()]:<name of staffer>:<dbref of staffer>:<reason>|...
 &_approval.frozen: set with the log entry if currently frozen
 &_approval.dead: set with log entry if currently dead
+
+
+
+================================================================================
+== REQUIRES ====================================================================
+
+Requires TinyMUX 2.10+.
+
+Requires creating user-defined functions, and therefore @restart.
+
+Requires access to the `<game>.conf` file, and therefore @restart.
+	
+Requires the following user-defined functions:
+	wheader()
+	wfooter()
+	isstaff()
 
 
 
@@ -67,7 +84,7 @@ flag_access marker3 wizard
 
 
 ================================================================================
-== USER FUNCTION: ISAPPROVED ===================================================
+===== USER FUNCTION: ISAPPROVED ================================================
 
 isapproved( <player>[, <status>] )
 
@@ -87,8 +104,9 @@ isapproved( <player>[, <status>] )
 
 'Unapproved' specifically means that the person has once been approved and,
 for one reason or another, no longer is.
+*/
 
---	
+// --	
 
 &ufunc.isapproved cg=
 	strcat( 
@@ -139,7 +157,7 @@ for one reason or another, no longer is.
 			haspower( %qp, guest ), 
 
 			log, 
-			default( %qp/_approval.log, no approval log ), 
+			default( %qp/_approval.log, #-1 no approval log ), 
 
 // current approval status. yes, this is a mess. yes, it needs fixed. later.
 			status, 
@@ -150,10 +168,10 @@ for one reason or another, no longer is.
 				isapproved( %qp, approved ), approved, 
 				isapproved( %qp, storyteller ), storyteller, 
 				isapproved( %qp, npc ), npc, 
-				isapproved( %qp, unapproved ), unapproved, 
-				isapproved( %qp, frozen ), frozen, 
 				isapproved( %qp, dead ), dead, 
-				#-1 unknown approval status :: %qs :: %qp 
+				isapproved( %qp, frozen ), frozen, 
+				isapproved( %qp, unapproved ), unapproved, 
+				#-1 unknown approval status :: %qp :: %qs 
 			), 
 
 			hasflag( %qp, %qs )
@@ -162,10 +180,11 @@ for one reason or another, no longer is.
 
 
 
+/* 
 ================================================================================
 == COMMANDS & SWITCHES =========================================================
 
-cg/approve
+cg/approve <name>[=<comment>]
 	when done with cgen, full character status
 	un-unapprove and un-freeze, but not un-kill
 cg/npc
@@ -181,57 +200,319 @@ cg/freeze
 cg/kill
 	same as 'unapprove', but also sets dead
 
+cg/log
+	What happened when. Display newest first. (It's stored newest last.)
+
+*/
 
 
---------------------------------------------------------------------------------
--- cg/approve ------------------------------------------------------------------
-
-// 1: input
-// p: player dbref
-// a: current approval status (should be chargen, unapproved, or frozen)
+// -----------------------------------------------------------------------------
+// -- cg/approve ---------------------------------------------------------------
 
 &c.cg/approve cg=$^\+?cg/approve( .*)$:
+	@trigger %!/trig.approval.switch=
+		%#, 
+		%1, 
+		approve, 
+		approved, 
+		chargen unapproved frozen
+
+// --
+
+@set cg/c.cg/approve=regexp
+
+
+// -----------------------------------------------------------------------------
+// -- cg/approve: triggers -----------------------------------------------------
+
+&trig.approval.switch/approve cg=
+	@set %1=approved !unapproved !frozen; 
+	@set %1=_approval.frozen:; 
+
+
+// -----------------------------------------------------------------------------
+// -- cg/npc -------------------------------------------------------------------
+
+&c.cg/npc cg=$^\+?cg/npc( .*)$:
+	@trigger %!/trig.approval.switch=
+		%#, 
+		%1, 
+		npc, 
+		NPC, 
+		chargen
+
+// --
+
+@set cg/c.cg/npc=regexp
+
+
+// -----------------------------------------------------------------------------
+// -- cg/npc: triggers ---------------------------------------------------------
+
+&trig.approval.switch/npc cg=
+	@set %1=npc !unapproved !frozen; 
+	@set %1=_approval.frozen:; 
+
+
+// -----------------------------------------------------------------------------
+// -- cg/storyteller -----------------------------------------------------------
+
+&c.cg/storyteller cg=$^\+?cg/storyteller( .*)$:
+	@trigger %!/trig.approval.switch=
+		%#, 
+		%1, 
+		storyteller, 
+		storyteller, 
+		chargen
+
+// --
+
+@set cg/c.cg/storyteller=regexp
+
+// -- use '/st' as alias for '/storyteller'
+
+&c.cg/st cg=$^\+?cg/st( .*)$:
+	@trigger %!/trig.approval.switch=
+		%#, 
+		%1, 
+		storyteller, 
+		storyteller, 
+		chargen
+
+// --
+
+@set cg/c.cg/st=regexp
+
+
+// -----------------------------------------------------------------------------
+// -- cg/storyteller: triggers -------------------------------------------------
+
+&trig.approval.switch/storyteller cg=
+	@set %1=storyteller !unapproved !frozen; 
+	@set %1=_approval.frozen:; 
+
+
+// -----------------------------------------------------------------------------
+// -- cg/unapprove -------------------------------------------------------------
+
+&c.cg/unapprove cg=$^\+?cg/unapprove( .*)$:
+	@trigger %!/trig.approval.switch=
+		%#, 
+		%1, 
+		unapprove, 
+		unapproved, 
+		approved NPC storyteller
+
+// --
+
+@set cg/c.cg/unapprove=regexp
+
+
+// -----------------------------------------------------------------------------
+// -- cg/unapprove: triggers ---------------------------------------------------
+
+&trig.approval.switch/unapprove cg=
+	@set %1=unapproved !approved !npc !storyteller; 
+
+
+// -----------------------------------------------------------------------------
+// -- cg/freeze -------------------------------------------------------------
+
+&c.cg/freeze cg=$^\+?cg/freeze( .*)$:
+	@trigger %!/trig.approval.switch=
+		%#, 
+		%1, 
+		freeze, 
+		frozen, 
+		approved unapproved NPC storyteller
+
+// --
+
+@set cg/c.cg/freeze=regexp
+
+
+// -----------------------------------------------------------------------------
+// -- cg/freeze: triggers ------------------------------------------------------
+
+&trig.approval.switch/freeze cg=
+	@set %1=unapproved !approved !npc !storyteller; 
+	@set %1=_approval.frozen:%2; 
+
+
+// -----------------------------------------------------------------------------
+// -- cg/kill ------------------------------------------------------------------
+
+&c.cg/kill cg=$^\+?cg/kill( .*)$:
+	@trigger %!/trig.approval.switch=
+		%#, 
+		%1, 
+		kill, 
+		dead, 
+		approved unapproved frozen
+
+// --
+
+@set cg/c.cg/kill=regexp
+
+
+// -----------------------------------------------------------------------------
+// -- cg/kill: triggers --------------------------------------------------------
+
+&trig.approval.switch/kill cg=
+	@set %1=unapproved !approved !npc !storyteller; 
+	@set %1=_approval.frozen:; 
+	@set %1=_approval.dead:%2; 
+	@pemit %0=u( .msg, cg/kill, Oh my god! You killed [moniker( %1 )]! )
+
+
+// -----------------------------------------------------------------------------
+// -- cg/log -------------------------------------------------------------------
+
+&c.cg/log cg=$^\+?cg/log(\s?.*)$:
 	think strcat( 
 		q1:%b, setr( 1, trim( %1 )), %r, 
-		qp:%b, setr( p, pmatch( %q1 )), %r, 
-		qa:%b, setr( a, isapproved( %qp, status ), %r, 
+		qp:%b, setr( p, if( strlen( %q1 ), pmatch( %q1 ), %# )), %r, 
+		ql:%b, setr( l, revwords( isapproved( %qp, log ), | )), %r, 
+	); 
+
+	@assert t( %qp )={ 
+		@pemit %#=u( .msg, cg/log, Character not found. )
+	}; 
+
+	@assert cor( strmatch( %#, %qp ), isstaff( %# ))={ 
+		@pemit %#=u( .msg, cg/log, You can only look at your own approval log. )
+	}; 
+
+	@assert t( %ql )={ 
+		@pemit %#=u( .msg, cg/log, No approval log to list. )
+	}; 
+
+	@pemit %#=u( display.approval.log, %#, %qp, %ql )
+
+
+// --
+
+@set cg/c.cg/log=regexp
+
+
+// -----------------------------------------------------------------------------
+// -- cg/status ----------------------------------------------------------------
+// What is your/player's current status
+
+&c.cg/status cg=$^\+?cg/status(\s?.*)$:
+	think strcat( 
+		q1:%b, setr( 1, trim( %1 )), %r, 
+		qp:%b, setr( p, if( strlen( %q1 ), pmatch( %q1 ), %# )), %r, 
+		qs:%b, setr( s, isapproved( %qp, status )), %r, 
+	); 
+
+	@assert t( %qp )={ 
+		@pemit %#=u( .msg, cg/status, Character not found. )
+	}; 
+
+	@assert cor( strmatch( %#, %qp ), isstaff( %# ))={ 
+		@pemit %#=u( .msg, cg/status, You can only look at your own status. )
+	}; 
+
+	@pemit %#=u( .msg, cg/status, 
+		cat( 
+			if( strmatch( %#, %qp ), 
+				Your, [moniker( %qp )]'s
+			), 
+			approval status is:, 
+			if( t( %qs ), 
+				titlestr( edit( %qs, _, %b )), 
+				Error %(%qs%) 
+			)
+		)
+	); 
+
+
+// --
+
+@set cg/c.cg/status=regexp
+
+
+
+
+
+
+// =============================================================================
+// == TRIGGERS =================================================================
+
+
+// -----------------------------------------------------------------------------
+// -- Trigger: Do Approval/Unapproval Et al. -----------------------------------
+// 0: %#
+// 1: %1
+// 2: switch name (e.g., 'approve')
+// 3: isapproved() status we're moving to (e.g., 'approved')
+// 4: list of isapproved() statuses that are valid to trigger from
+//   (e.g., 'approved npc storyteller' for unapproving)
+// 
+// p: player dbref
+// c: comment, if any
+// a: current approval status (should be chargen, unapproved, or frozen)
+// r: resulting log entry (may be added to _approval.frozen or *.dead)
+
+&trig.approval.switch cg=
+
+	think strcat( 
+		q1:%b, setr( 1, trim( %1 )), %r, 
+		qp:%b, setr( p, pmatch( before( %q1, = ))), %r, 
+		qc:%b, setr( c, strip( trim( rest( %q1, = )), : )), %r, 
+		qa:%b, setr( a, isapproved( %qp, status )), %r, 
 	); 
 
 	@assert 
 	cor( 
-		isstaff( %# ), 
-		u( f.approval.not-self, %#, %q1 )
+		isstaff( %0 ), 
+		u( f.approval.not-self, %0, %q1 )
 	)={ 
-		@pemit %#=u( .msg, cg/approve, You can't approve yourself. Nice try. ) 
+		@pemit %0=u( .msg, cg/%2, You can't %2 yourself. Nice try. ) 
 	}; 
 
-	@assert isstaff( %# )={ 
-		@pemit %#=u( .msg, cg/approve, Staff only. ) 
+	@assert isstaff( %0 )={ 
+		@pemit %0=u( .msg, cg/%2, Staff only. ) 
 	}; 
 
 	@assert %qp={ 
-		@pemit %#=u( .msg, cg/approve, Character not found. )
+		@pemit %0=u( .msg, cg/%2, Character not found. )
 	}; 
 
-	@assert t( grab( chargen|unapproved|frozen, %qa, | ))={ 
-		@pemit %#=u( .msg, cg/approve, 
-			Character must be in chargen%, unapproved%, or frozen. 
-			Character is [lcstr( %qa )]. 
-		)
+	@assert t( grab( %4, %qa ))={ 
+		@pemit %0=
+			u( .msg, cg/%2, u( display.approve.change.error, %4, %qa ))
 	}; 
 
 	think setr( r, 
-		u( f.approval.log.add, %#, %qp, approved, '%qa' -> 'approved' )
+		u( f.approval.log.add, %0, %qp, %3, 
+			u( format.approve.log-add.comment, %qa, %3, %qc )
+		)
 	); 
 
-	@set %qp=approved !unapproved !frozen; 
-	@set %qp=_approval.frozen:;
+	@pemit %0=u( .msg, cg/%2, u( display.approval.change, %qp, %qa, %3, %qc )); 
+
+	@trig %!/trig.approval.switch/%2=%0, %qp, %qr; 
 
 
 
-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// =============================================================================
+// == FUNCTIONS ================================================================
 
-// return '1' if target is not enactor
+
+// -----------------------------------------------------------------------------
+// -- Global Functions ---------------------------------------------------------
+
+&.msg cg=ansi( h, <%0>, n, %b%1 )
+
+&.plural cg=cat( %0, if( eq( %0, 1 ), %1, %2 ))
+
+
+// -----------------------------------------------------------------------------
+// -- Function: Not Me ---------------------------------------------------------
+
+// return '1' if target is not enactor or 'me'
 // 0: %# (enactor)
 // 1: raw input (target)
 
@@ -242,30 +523,217 @@ cg/kill
 		not( strmatch( %1, me ))
 	)
 
-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-// &_log.approval: All approvals and unapprovals and freezings
-//	<action>:[secs()]:<name of staffer>:<dbref of staffer>:<reason>|...
-//
-// 0: enactor
-// 1: target
-// 2: action
-// 3: reason
+// -----------------------------------------------------------------------------
+// -- Function: Add to Approval Log --------------------------------------------
+
+/* 
+&_log.approval: All approvals and unapprovals and freezings
+	<action>:[secs()]:<name of staffer>:<dbref of staffer>:<reason>|...
+
+0: enactor
+1: target
+2: action
+3: reason
+*/
 
 &f.approval.log.add cg=
-	set( %1, 
-		_approval.log:
-		[trim( 
-			[get( %1/_approval.log )]|
-			%2:[secs()]:[moniker( %0 )]:%0:%3, 
-			l, | 
-		)] 
+	localize( strcat( 
+		set( %1, 
+			_approval.log:
+			[trim( 
+				[get( %1/_approval.log )]|
+				[setr( x, u( format.approval.log-item, %0, %1, %2, %3 ))], 
+				l, | 
+			)] 
+		), 
+		%qx 
+	))
+
+
+
+// =============================================================================
+// == DISPLAYS & FORMATTING ====================================================
+
+
+// -----------------------------------------------------------------------------
+// -- Display: Approval Change Error -------------------------------------------
+
+&display.approve.change.error cg=
+	Character must be [itemize( %0, , or )]. Character is [lcstr( %1 )].
+
+
+// -----------------------------------------------------------------------------
+// -- Display: Approval Change -------------------------------------------------
+
+// 0: target dbref
+// 1: status from (%qa)
+// 2: status to
+// 3: comment, optional (%qc)
+
+&display.approval.change cg=
+	strcat( 
+		moniker( %0 ), %b, 
+		status changed from '%1' to '%2', 
+		if( strlen( %3 ), %bwith comment '%3', )
 	)
 
---==-=--=-=-=-=-=-=-=-=-=-=-=-==-=-=-=-=-=-=-=-=--==-=-=-=-=-=-=-=-=-=-
+
+// -----------------------------------------------------------------------------
+// -- Format: Log Add item -----------------------------------------------------
+
+&format.approve.log-add.comment cg=
+	strcat( '%0' -> '%1', if( %2, %, %2 ))
 
 
-&_approval.frozen: set with the log entry if currently frozen
-&_approval.dead: set with log entry if currently dead
+// -----------------------------------------------------------------------------
+// -- Format: One Log-Item -----------------------------------------------------
+// (will be used by 'log.add', 'freeze', and 'dead'
+
+&format.approval.log-item cg=
+	%2:[secs()]:[moniker( %0 )]:%0:%3
 
 
+// -----------------------------------------------------------------------------
+// -- Display: Approval Log ----------------------------------------------------
+// 0: enactor (%#)
+// 1: target (%qp)
+// 2: log (%ql) : <action>:<timestamp>:<staffer name>:<dbref>:<comments>
+// 
+// a: length of longest action
+// t: length of longest timestamp (from &format.approval.timestamp)
+// s: length of longest staffer name (#dbref)
+
+&display.approval.log cg=
+	localize( strcat( 
+		setq( a, 
+			lmax( iter( %2, strlen( elements( %i0, 1, : )), | ))
+		), 
+
+		setq( t, 
+			lmax( 
+				iter( %2, 
+					strlen( 
+						u( format.approval.timestamp, elements( %i0, 2, : ))
+					), 
+					| 
+				)
+			)
+		), 
+
+		setq( s, 
+			lmax( iter( %2, 
+				add( 
+					strlen( elements( %i0, 3, : )), 
+					strlen( elements( %i0, 4, : )), 
+					3, // for '%b()'
+				), 
+				| 
+			))
+		), 
+		
+		wheader( Approval Log for [moniker( %1 )] ), %r, 
+		iter( %2, 
+			wrap( 
+				u( format.approval.log.line, %i0, %qa, %qt, %qs, * ), 
+				width( %0 ), 
+				@@( just ), 
+				@@( lefttext ), 
+				@@( righttext ), 
+				add( %qa, %qt, %qs, 9 )
+			), 
+			|, %r 
+		), %r, 
+		wfooter( u( .plural, words( %2, | ), entry, entries ))
+	))
+
+
+// -----------------------------------------------------------------------------
+// -- Format: Approval Log, One Line -------------------------------------------
+// 0: line
+// 1: width of cell 1
+// 2: width of cell 2
+// 3: width of cell 3
+// 4: width of cell 4 (ignored)
+
+&format.approval.log.line cg=
+	cat( 
+		ljust( titlestr( edit( elements( %0, 1, : ), _, %b )), %1 ), %b, 
+		ljust( u( format.approval.timestamp, elements( %0, 2, : )), %2 ), %b, 
+		ljust( 
+			[elements( %0, 3, : )] %([elements( %0, 4, : )]%), 
+			%3 
+		), %b, 
+		trim( rest( elements( %0, 5, : ), %, ))
+	)
+
+
+// -----------------------------------------------------------------------------
+// -- Format: Timestamp --------------------------------------------------------
+// 0: timestamp in seconds
+
+&format.approval.timestamp cg=
+	timefmt( $H:$M $d.$m.$y, %0 )
+
+
+
+
+/*
+================================================================================
+== BASIC HELP ==================================================================
+
+All commands have the leading '+' as an option. No harm if you use it.
+
+	cg/status [<character>]
+		What's your/character's approval status?
+	cg/log [<character>]
+		Check your/character's approval log
+
+	cg/approve <character>[=<comment>]
+		Approve <character> for RP.
+		Can be from: Chargen, Unapproved, Frozen
+
+	cg/npc <character>[=<comment>]
+		Make <character> an approved NPC. (For use by other systems.)
+		Can be from: Chargen
+		
+	cg/storyteller <character>[=<comment>]
+	cg/st <character>[=<comment>]
+		Make <character> an approved Storyteller. (For use by other systems.)
+		Can be from: Chargen
+		
+	cg/unapprove <character>[=<comment>]
+		Remove <character>'s approval status.
+		Can be from: Approved, NPC, Storyteller
+
+	cg/freeze <character>[=<comment>]
+		Remove <character>'s approval status and give them 'frozen' status.
+		Can be from: Approved, NPC, Storyteller, Unapproved
+
+	cg/kill <character>[=<comment>]
+		Remove <character>'s approval status and give them 'dead' status.
+		Can be from: Approved, NPC, Storyteller, Unapproved, Frozen
+		NOTES: 
+			No approve/unapprove switches can be done fron a dead character.
+
+	isapproved( <character> )
+		Is character approved?
+
+	isapproved( <character>, status )
+		What is the current approval status of <character>?
+
+	isapproved( <character>, <status> )
+		Would <character> pass a <status> check?
+		NOTES: 
+			NPC and Storyteller pass 'approved'
+			Frozen and Dead pass 'unapproved'
+
+	STATUSES:
+		chargen: never approved
+		approved: fully approved and RPable character
+		npc: RPable NPC, may be limited by other systems, 'approved'
+		storyteller: RPable ST, may be limited by other systems, 'approved'
+		unapproved: once approved but no more
+		frozen: 'unapproved', may be limited by other systems
+		dead: 'unapproved', may be limited by other systems, cannot be undone	
+*/
