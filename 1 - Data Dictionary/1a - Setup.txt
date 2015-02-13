@@ -108,6 +108,7 @@ Min/Max Of - Return a high/low value
 Core Stat Checks - Check against Supernatural Tollerance (power trait)
 	.Max_Trait		How high can they take skills/attributes?
 	.Trait_Check	Can they take "this" skill/attribute "that" high?
+	.Sphere			Which 'sphere' (game line) do you belong to?
 
 Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 	.Rites_Check	Can they take "this" rite?
@@ -680,6 +681,42 @@ think u(dd/.max_trait, num( *thenomain ))
 
 &.trait_check dd=
 	u( .at_most, %0, %1, u( .max_trait, %0 ), %2 )
+
+
+--------------------------------------------------------------------------------
+-- Sphere ----------------------------------------------------------------------
+
+Which game-line is this template from? The game-line is almost certainly the 
+same name as the major template from that game-line.
+(possible exception: The 'Geist' game-line has the major template 'Sin-Eater'.)
+
+	0: sheet dbref
+
+--
+
+&.sphere dd=
+	localize( strcat( 
+		setq( s, 
+			lcstr( 
+				last( 
+					grepi( 
+						%!, 
+						.sphere.*, 
+						edit( u( .value_full, %0, bio.template ), %b, _ )
+					), 
+					. 
+				)
+			)
+		), 
+		if( t( %qs ), %qs )
+	))
+
+--
+
+&.sphere.human dd=Human
+&.sphere.vampire dd=Vampire Ghoul
+&.sphere.demon dd=Demon Stigmatic
+&.sphere.werewolf dd=Werewolf Wolf-Blooded
 
 
 --------------------------------------------------------------------------------

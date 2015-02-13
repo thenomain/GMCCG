@@ -536,9 +536,13 @@
 
 &bio.birthdate DD=*
 
+&bio.concept DD=*
+
 &bio.template DD=Human
 
-&bio.concept DD=*
+&bio.sphere DD=u( .sphere, %0 )
+&default.bio.sphere DD=derived
+
 
 
 // == CORE SPECIAL TYPES =======================================================
