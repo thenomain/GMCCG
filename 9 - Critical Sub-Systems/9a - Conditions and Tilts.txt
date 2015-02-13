@@ -1,16 +1,13 @@
 Conditions and Tilts for GMC
 
 I'm stealing this from Reno (with permission). 
-I haven't decompiled the code yet.
-
-Requires:
-	logtext()
 
 
 
 ================================================================================
 == CHANGE LOG (oldest last) ====================================================
 
+* logtext() -> u( f.logtext ), removes requirement
 * 'this number' divider change: %) -> .
 * alert() -> u( .alert )
 * added prefixes for Code Object Data Parent
@@ -23,16 +20,16 @@ Requires:
 @create +Cond and +Tilt Status Tracker <ctst>=10
 @set +Cond and +Tilt Status Tracker <ctst>=INHERIT SAFE
 
-@create +Cond and +Tilt Status Tracker Database <ctdb>=
-	10
-@set +Cond and +Tilt Status Tracker Database <ctdb>=
-	SAFE
+@create +Cond and +Tilt Status Tracker Database <ctdb>=10
+@set +Cond and +Tilt Status Tracker Database <ctdb>=SAFE
 
-@desc ctst=Originally coded by Bingo@RenoMUX ("the biggest little game on the net"), adapted to the Darkwater GMC Stat System.
+@desc ctst=Originally coded by Bingo@RenoMUX 
+	("the biggest little game on the net"), 
+	adapted to the Darkwater GMC Stat System by Thenomain.
 
 @parent ctst=codp
 &prefix.index ctst=i.
-&prefix.comment ctst=cmt.
+&prefix.comments ctst=cmt.
 
 
 
@@ -40,15 +37,13 @@ Requires:
 == DATA & INDICIES =============================================================
 
 @fo me=&D.DB +Cond and +Tilt Status Tracker <ctst>=[num( ctdb )]
-
 &D.DEFAULT_MAX_LOG_LENGTH +Cond and +Tilt Status Tracker <ctst>=10
 
-&CMT.I.PLAYER +Cond and +Tilt Status Tracker <ctst>=Player attr format is _<type>.<name>.<timestamp> =db_attr | note | title
+&CMT.I.PLAYER +Cond and +Tilt Status Tracker <ctst>=
+	Player attr format is _<type>.<name>.<timestamp> =db_attr | note | title
 
 &I.PLAYER.ATTR +Cond and +Tilt Status Tracker <ctst>=1
-
 &I.PLAYER.NOTE +Cond and +Tilt Status Tracker <ctst>=2
-
 &I.PLAYER.TITLE +Cond and +Tilt Status Tracker <ctst>=3
 
 &CMT.I.STATUS +Cond and +Tilt Status Tracker <ctst>=
@@ -299,8 +294,10 @@ Requires:
 		[set( %qp, _%ql.[secs( )]:[setr( v, %ql|%2| )] )]
 		[if( 
 			strmatch( %qz, condition ), 
-			logtext( add, 
-				conditions, 
+			u( f.logtext, 
+				add, 
+				%#, 
+				cond, 
 				add|%#|%qp|[u( f.format.player.status.title, %qv )]|%2 
 			)
 		)]
@@ -445,16 +442,12 @@ Requires:
 
 		[if( 
 			strmatch( %qz, condition ), 
-			logtext( add, 
-				conditions, 
-				rem|
-
-				%#|
-
-				%qp|
-
+			u( f.logtext,  
+				add, 
+				%#, 
+				cond, 
+				rem|%#|%qp|
 				[u( f.format.player.status.title, %qs )]|
-
 				[u( f.get.player.note, get( %qp/%qa ))] 
 			)
 		)]
@@ -686,8 +679,7 @@ Requires:
 			or( isstaff( %# ), strmatch( %qp, %# )), 
 			[u( .alert, +cond/log )] Can only look up your own cond/log., 
 
-			[setq( m, logtext( search, conditions, |%qp| ))]
-			[setq( l, rest( logtext( list, conditions ), : ))]
+			[setq( m, u( f.logtext, search, %qp, cond ))]
 			[header( +cond/log for [name( %qp )] )]%r
 			[if( 
 				eq( words( %qm, :: ), 0 ), 
@@ -696,8 +688,8 @@ Requires:
 				[ansi( 
 					h, 
 					[ljust( Type, 4 )] 
-					[ljust( Condition,56 )] 
-					[ljust( Time,15 )] 
+					[ljust( Condition, 56 )] 
+					[ljust( Time, 15 )] 
 				)]%r
 				[u( f.status_display_log, 
 					revwords( 
@@ -728,8 +720,7 @@ Requires:
 			or( isstaff( %# ), strmatch( %qp, %# )), 
 			[u( .alert, +cond/log )] Can only look up your own cond/log., 
 
-			[setq( m, logtext( search, conditions, |%qp| ))]
-			[setq( l, rest( logtext( list, conditions ), : ))]
+			[setq( m, u( f.logtext, search, %qp, cond ))]
 			[header( +cond/log for [name( %qp )] )]%r
 			[if( 
 				eq( words( %qm, :: ), 0 ), 
@@ -782,6 +773,62 @@ Requires:
 
 &F.GET.STATUS.REF +Cond and +Tilt Status Tracker <ctst>=
 	extract( %0, v( i.status.ref ), 1, | )
+
+
+// -----------------------------------------------------------------------------
+// -- Function: Handle the Logs ------------------------------------------------
+/*
+
+0: what to do, 'add' or 'search'?
+1: <target dbref>
+2: <status type>, 'cond' or 'tilt'? (default: 'cond')
+3: <stuff to add>: <action>|<set by>|<set for>|<full name>|<notes>
+
+outputs:
+	sort:
+		<timestamp>|<contents of _cond.log.<timestamp>>:: ...
+	add:
+		create `&_<type>.log.<timestamp>`, as per above
+
+looks for:
+	&_cond.log.<timestamp>.<6-digit precision>: ...
+	&_tilt.log.<timestamp>.<6-digit precision>: ...
+*/
+
+&f.logtext +Cond and +Tilt Status Tracker <ctst>=
+	localize( strcat( 
+		setq( s, if( strlen( %qs ), %qs, cond )), 
+		case( %0, 
+			search, 
+			iter( 
+				revwords( sortby( sortby.log.player, lattr( %1/_%qs.log.* ))), 
+				strcat( 
+					elements( %i0, 3 4, . ), 
+					|, 
+					get( %1/_%i0 ), 
+				), 
+				, ::
+			), 
+			
+			add, 
+			set( %1, _%qs.log.[secs( utc, 6 )]: %3 ), 
+		
+			#-1 I don't know what you want me to do
+		)
+	))
+
+
+// -----------------------------------------------------------------------------
+// -- Sortby: Timestamp with 6-digit Precision ---------------------------------
+
+0, 1: <timestamp>.<6-digit precision>
+
+&sortby.log.player +Cond and +Tilt Status Tracker <ctst>=
+	sub( 
+		elements( %0, 3 4, . ), 
+		elements( %1, 3 4, . )
+	)
+
 
 // -----------------------------------------------------------------------------
 
