@@ -1,3 +1,4 @@
+/*
 ################################################################################
 ## DEMON: THE DESCENT ##########################################################
 
@@ -12,12 +13,16 @@ This file includes all additions to the system for Demon: The Descent core rules
 --------------------------------------------------------------------------------
 -- SFP: Search Order -----------------------------------------------------------
 
+Level 2 for powers 
+Level 3 for very minor items
+*/
+
 &d.search-order-02-demon sfp=embed exploit
 &d.search-order-03-demon sfp=demonic_form glitch
 
 
 
-
+/*
 ################################################################################
 ## DEMON: DATA DICTIONARY ######################################################
 
@@ -25,7 +30,9 @@ This file includes all additions to the system for Demon: The Descent core rules
 
 ================================================================================
 == DD: SETUP ===================================================================
+*/
 
+// CODP prefixes
 &prefix.demon_-_embeds dd=embed.
 &prefix.demon_-_exploits dd=exploit.
 &prefix.demon_-_demonic_forms dd=demonic_form.
@@ -35,38 +42,24 @@ This file includes all additions to the system for Demon: The Descent core rules
 &prefix.demon_-_demonic_forms d:t=tags.demonic_form.
 
 
---------------------------------------------------------------------------------
--- DD: Templates ---------------------------------------------------------------
-
+// add to templates
 @fo me=&bio.template dd=[get( dd/bio.template )].Demon.Stigmatic
 
 
---------------------------------------------------------------------------------
--- DD: Max Trait ---------------------------------------------------------------
-
-Statpath used for the 'max trait' calculation
-
---
-
+// register "max trait" statpath
 &.max_trait.demon dd=advantage.primium
 
 
---------------------------------------------------------------------------------
--- DD: Sphere ------------------------------------------------------------------
-
-Which templates are in the 'Demon' game-line/sphere?
-
---
-
+// register "sphere"'s templates (could this be folded into 'templates'?)
 &.sphere.demon dd=Demon Stigmatic
 
 
---------------------------------------------------------------------------------
--- DD: Agendas -----------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- DD: Agendas --------------------------------------------------------------
 
-List all agendas that a demon has.
+// List all agendas that a demon has.
 
---
+// --
 
 &.demon.agendas dd=
 	setunion( 
@@ -82,14 +75,18 @@ List all agendas that a demon has.
 	)
 
 
---------------------------------------------------------------------------------
--- DD: Tags for Stigmatics -----------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- DD: Tags for Stigmatics --------------------------------------------------
 
-(Edit `human.supernatural` -> `human.stigmatic.supernatural`)
+// (Edit `human.supernatural` -> `human.<minor template>.<major template>`)
 
---
+// --
 
-@dolist [filter( sfp/f.hastag?.workhorse, lattr( dd/merit.* ), , , human.supernatural, 1 )]=@edit d:t/tags.##=human, human.stigmatic
+@dolist 
+	[filter( sfp/f.hastag?.workhorse, 
+		lattr( dd/merit.* ), , , human.supernatural, 1 
+	)]=
+	@edit d:t/tags.##=human, human.stigmatic
 
 
 
@@ -827,6 +824,7 @@ List all agendas that a demon has.
 
 
 
+/* 
 ################################################################################
 ## DEMON CHARGEN ###############################################################
 
@@ -849,19 +847,15 @@ primium
 current cover
 
 Stigmatics get +3 merit dots for Supernatural Merits only.
+*/
 
 
+// -----------------------------------------------------------------------------
+// -- Aether: Point Count ------------------------------------------------------
 
+// (merit points for aether)
 
-
-
-
---------------------------------------------------------------------------------
--- Aether: Point Count ---------------------------------------------------------
-
-(merit points for aether)
-
---
+// --
 
 &f.allocated.power-trait.demon CG=
 	max( 
@@ -873,19 +867,19 @@ Stigmatics get +3 merit dots for Supernatural Merits only.
 	)
 
 
---------------------------------------------------------------------------------
--- Integrity, Demon: Allocations -----------------------------------------------
+// -----------------------------------------------------------------------------
+// -- Integrity, Demon: Allocations --------------------------------------------
 
-(aka Cover)
+// (aka Cover)
 
---
+// --
 
 &f.allocated.integrity.demon cg=
 	u( u( d.dd )/.value, %0, advantage.cover_(<current_cover>) )
 
 
---------------------------------------------------------------------------------
--- Integrity, Demon: Point Count -----------------------------------------------
+// -----------------------------------------------------------------------------
+// -- Integrity, Demon: Point Count --------------------------------------------
 
 &f.pts-valid?.integrity.demon cg=
 	eq( 
@@ -894,9 +888,9 @@ Stigmatics get +3 merit dots for Supernatural Merits only.
 	)
 
 
---------------------------------------------------------------------------------
--- Conditions: Allocations -----------------------------------------------------
-
+// -----------------------------------------------------------------------------
+// -- Conditions: Allocations --------------------------------------------------
+/*
 returns: <most conditions>`<agenda conditions>
 
 NOTE TO SELF: Can have multiple agendas, based on the ??? merit.
@@ -905,7 +899,7 @@ a: demon's agenda(s), if any
 c: list of conditions
 f: filtered 'agenda' conditions
 
---
+*/
 
 &allocated.conditions.demon cg=
 	strcat( 
@@ -926,9 +920,9 @@ f: filtered 'agenda' conditions
 	)
 
 
---------------------------------------------------------------------------------
--- Conditions: Point Count -----------------------------------------------------
-
+// -----------------------------------------------------------------------------
+// -- Conditions: Point Count --------------------------------------------------
+/* 
 We don't care how many conditions the person starts with, here, as long as 
 the 'agenda' equals the number of agendas they have. (0, 1, 2)
 
@@ -937,7 +931,7 @@ the 'agenda' equals the number of agendas they have. (0, 1, 2)
 c: conditions on sheet
 a: demon's agenda, if any
 
---
+*/
 
 &f.pts-valid?.conditions.demon cg=
 	strcat( 
@@ -952,6 +946,7 @@ a: demon's agenda, if any
 
 
 
+/* 
 ================================================================================
 == CHARGEN: SPECIALTIES ========================================================
 
@@ -969,25 +964,25 @@ We're doing this by assuming the last specialty is the Demon specialty.
 0: dbref of sheet
 1: current list of specialties (_full.stat.path)
 
---
+*/
 
 &f.allocated.specialties.demon CG=last( %1 )
 &f.allocated.specialties.stigmatic CG=last( %1 )
 
 
---------------------------------------------------------------------------------
--- Specialties: Point Count ----------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- Specialties: Point Count -------------------------------------------------
 
-%0: list of specialties: template specs[`others]
+// %0: list of specialties: template specs[`others]
 
---
+// --
 
 &f.pts-valid?.specialties.demon CG=eq( words( elements( %0, 1, ` )), 1 )
 &f.pts-valid?.specialties.stigmatic CG=eq( words( elements( %0, 1, ` )), 1 )
 
 
---------------------------------------------------------------------------------
--- Specialties: 'Check' output -------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- Specialties: 'Check' output ----------------------------------------------
 
 &check.specialties.demon CG=
 	cat( 
@@ -995,7 +990,7 @@ We're doing this by assuming the last specialty is the Demon specialty.
 		u( u( d.sfp )/f.statname.workhorse, rest( first( %0, ` ), . ))
 	)
 
---
+// --
 
 &check.specialties.stigmatic CG=
 	cat( 
@@ -1004,6 +999,7 @@ We're doing this by assuming the last specialty is the Demon specialty.
 	)
 
 
+/* 
 ================================================================================
 == CHARGEN: EMBEDS & EXPLOITS ==================================================
 
@@ -1022,7 +1018,7 @@ i: incarnation
 e: incarnation's embed
 a: all embeds and exploits
 
---
+*/
 
 &allocated.embeds_and_exploits cg=
 	strcat( 
@@ -1040,7 +1036,7 @@ a: all embeds and exploits
 		setdiff( %qa, %qe ), `, %qe 
 	)
 
---
+// --
 
 &allocated.embeds_and_exploits.destroyer cg=cacophony
 &allocated.embeds_and_exploits.guardian cg=instrumental
@@ -1048,8 +1044,8 @@ a: all embeds and exploits
 &allocated.embeds_and_exploits.psychopomp cg=mundane
 
 
---------------------------------------------------------------------------------
--- Embeds & Explots: Point Count -----------------------------------------------
+// -----------------------------------------------------------------------------
+// -- Embeds & Explots: Point Count --------------------------------------------
 
 &f.pts-valid?.embeds_and_exploits cg=
 	strcat( 
@@ -1062,6 +1058,7 @@ a: all embeds and exploits
 
 
 
+/* 
 ================================================================================
 == CHARGEN: DEMONIC FORM =======================================================
 
@@ -1073,7 +1070,7 @@ output: <modifications>`<technologies>`<propulsions>`<processes>
 
 f: all demonic form foo
 
---
+*/
 
 &allocated.demonic_form cg=
 	strcat( 
@@ -1087,12 +1084,12 @@ f: all demonic form foo
 		)
 	)
 
---------------------------------------------------------------------------------
--- Demonic Form: Point Count ---------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- Demonic Form: Point Count ------------------------------------------------
 
-At character creation, a demon has three Modifications, two Technologies, one Propulsion, and one Process.
+// At character creation, a demon has three Modifications, two Technologies, one // Propulsion, and one Process.
 
---
+// --
 
 &f.pts-valid?.demonic_form cg=
 	strcat( 
