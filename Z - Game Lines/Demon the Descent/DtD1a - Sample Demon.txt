@@ -5,6 +5,7 @@
 @fo me=&_special.sheet_location me=num( Demon Chargen Sheet <cs:dtd> )
 
 &_bio.template cs:dtd=Demon
+&_bio.sphere cs:dtd=derived
 
 &_bio.full_name cs:dtd=Gabrielle Washington
 &_bio.concept cs:dtd=Skatebord Courier
@@ -24,7 +25,7 @@
 &_advantage.perception cs:dtd=derived
 
 &_advantage.cover_(gabrielle_washington) cs:dtd=7
-&_advantage.primium cs:dtd=1
+&_advantage.primum cs:dtd=1
 &_advantage.aether cs:dtd=derived
 &_advantage.aether_maximum cs:dtd=derived
 

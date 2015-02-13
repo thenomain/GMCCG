@@ -5,6 +5,7 @@
 
 
 &_bio.template cs:gmc=Human
+&_bio.sphere cs:gmc=derived
 
 &_bio.full_name cs:gmc=Travis MacGuffin
 &_bio.concept cs:gmc=Firefighter
