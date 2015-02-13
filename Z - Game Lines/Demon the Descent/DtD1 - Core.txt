@@ -52,6 +52,16 @@ Statpath used for the 'max trait' calculation
 
 
 --------------------------------------------------------------------------------
+-- DD: Sphere ------------------------------------------------------------------
+
+Which templates are in the 'Demon' game-line/sphere?
+
+--
+
+&.sphere.demon dd=Demon Stigmatic
+
+
+--------------------------------------------------------------------------------
 -- DD: Agendas -----------------------------------------------------------------
 
 List all agendas that a demon has.
@@ -83,7 +93,7 @@ List all agendas that a demon has.
 
 
 
-@@ == DEMON BIO ================================================================
+// == DEMON BIO ================================================================
 
 &bio.incarnation DD=Destroyer.Guardian.Messenger.Psychopomp
 &tags.bio.incarnation D:T=demon
@@ -93,9 +103,9 @@ List all agendas that a demon has.
 
 
 
-@@ == DEMON ADVANTAGES =========================================================
+// == DEMON ADVANTAGES =========================================================
 
-@@ -- Cover: The Integrity stat for Demons -------------------------------------
+// -- Cover: The Integrity stat for Demons -------------------------------------
 
 &advantage.cover_() DD=1.2.3.4.5.6.7.8.9.10
 &default.advantage.cover_() DD=7
@@ -114,21 +124,21 @@ List all agendas that a demon has.
 &default.advantage.primium DD=1
 &tags.advantage.primium D:T=power.demon
 
-@@ ???????????
+// Cover experiences need to be one-per-cover. This won't work.
+// 
+// &special.cover_experiences DD=#
+// &default.special.cover_experiences DD=0 0
+// &tags.special.cover_experiences D:T=demon
 
-&special.cover_experiences DD=#
-&default.special.cover_experiences DD=0
-&tags.special.cover_experiences D:T=demon
 
 
-
-@@ == DEMON CONDITIONS =========================================================
+// == DEMON CONDITIONS =========================================================
 
 &condition.uncalled DD=1
 &tags.condition.uncalled D:T=demon.persistent
 
 
-@@ -- agenda conditions --------------------------------------------------------
+// -- agenda conditions --------------------------------------------------------
 
 &condition.prepared_for_anything DD=1
 &default.condition.prepared_for_anything DD=1
@@ -147,7 +157,7 @@ List all agendas that a demon has.
 &tags.condition.i_know_someone D:T=demon.agenda.tempter
 
 
-@@ -- cover conditions ---------------------------------------------------------
+// -- cover conditions ---------------------------------------------------------
 
 &condition.plugged_in DD=1
 &tags.condition.plugged_in D:T=demon.cover
@@ -174,7 +184,7 @@ List all agendas that a demon has.
 &tags.condition.surveilled D:T=demon.cover
 
 
-@@ -- demonic conditions -------------------------------------------------------
+// -- demonic conditions -------------------------------------------------------
 
 &condition.aetheric_bleed DD=1
 &tags.condition.aetheric_bleed D:T=demon.demonic
@@ -189,14 +199,14 @@ List all agendas that a demon has.
 &tags.condition.demonic_rage D:T=demon.demonic
 
 
-@@ -- other conditions ---------------------------------------------------------
+// -- other conditions ---------------------------------------------------------
 
 &condition.capitvated DD=1
 &condition.disoriented DD=1
 
 
 
-@@ == DEMON MERITS =============================================================
+// == DEMON MERITS =============================================================
 
 &merit.bolthole_-_arsenal_() DD=1.2.3.4.5|*
 &tags.merit.bolthole_-_arsenal_() D:T=demon.location
@@ -248,12 +258,12 @@ List all agendas that a demon has.
 
 
 
-@@ == DEMON EMBEDS =============================================================
+// == DEMON EMBEDS =============================================================
 
 &class.embed.? DD=flag
 
 
-@@ -- EMBED: CACOPHANY ---------------------------------------------------------
+// -- EMBED: CACOPHANY ---------------------------------------------------------
 
 &embed.bystander_effect DD=Manipulation + Intimidation
 &tags.embed.bystander_effect D:T=demon.demon-blooded.destroyer.cacophony
@@ -316,7 +326,7 @@ List all agendas that a demon has.
 &tags.embed.special_someone D:T=demon.demon-blooded.destroyer.cacophony
 
 
-@@ -- EMBED: INSTRUMENTAL ------------------------------------------------------
+// -- EMBED: INSTRUMENTAL ------------------------------------------------------
 
 &embed.ambush DD=Wits + Stealth
 &tags.embed.ambush D:T=demon.demon-blooded.guardian.instrumental
@@ -379,7 +389,7 @@ List all agendas that a demon has.
 &tags.embed.turn_blade D:T=demon.demon-blooded.guardian.instrumental
 
 
-@@ -- EMBED: MUNDANE -----------------------------------------------------------
+// -- EMBED: MUNDANE -----------------------------------------------------------
 
 &embed.alibi DD=Manipulation + Stealth
 &tags.embed.alibi D:T=demon.demon-blooded.psychopomp.mundane
@@ -442,7 +452,7 @@ List all agendas that a demon has.
 &tags.embed.without_a_trace D:T=demon.demon-blooded.psychopomp.mundane
 
 
-@@ -- EMBED: VOCAL -------------------------------------------------------------
+// -- EMBED: VOCAL -------------------------------------------------------------
 
 &embed.across_a_crowded_room DD=Manipulation + Subterfuge
 &tags.embed.across_a_crowded_room D:T=demon.demon-blooded.messenger.vocal
@@ -506,11 +516,11 @@ List all agendas that a demon has.
 
 
 
-@@ == DEMON EXPLOITS ===========================================================
+// == DEMON EXPLOITS ===========================================================
 
 &class.exploit.? DD=flag
 
-@@ -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 &exploit.addictive_presence DD=Presence + Socialize + Primum
 &tags.exploit.addictive_presence D:T=demon
@@ -634,11 +644,11 @@ List all agendas that a demon has.
 
 
 
-@@ == DEMONIC FORM =============================================================
+// == DEMONIC FORM =============================================================
 
 &class.demonic_form.? DD=flag
 
-@@ -- FORM: MODIFICATIONS ------------------------------------------------------
+// -- FORM: MODIFICATIONS ------------------------------------------------------
 
 &demonic_form.armored_plates DD=1
 &tags.demonic_form.armored_plates D:T=demon.modification
@@ -695,7 +705,7 @@ List all agendas that a demon has.
 &tags.demonic_form.tough_as_stone D:T=demon.modification
 
 
-@@ -- FORM: TECHNOLOGIES -------------------------------------------------------
+// -- FORM: TECHNOLOGIES -------------------------------------------------------
 
 &demonic_form.acidic_spit DD=1
 &tags.demonic_form.acidic_spit D:T=demon.technology
@@ -749,7 +759,7 @@ List all agendas that a demon has.
 &tags.demonic_form.mirrored_skin D:T=demon.technology
 
 
-@@ -- FORM: PROPULSIONS --------------------------------------------------------
+// -- FORM: PROPULSIONS --------------------------------------------------------
 
 &demonic_form.long_limbs DD=1
 &tags.demonic_form.long_limbs D:T=demon.propulsion
@@ -773,7 +783,7 @@ List all agendas that a demon has.
 &tags.demonic_form.wings D:T=demon.propulsion
 
 
-@@ -- FORM: PROCESSES ----------------------------------------------------------
+// -- FORM: PROCESSES ----------------------------------------------------------
 
 &demonic_form.aegis_protocol DD=1
 &tags.demonic_form.aegis_protocol D:T=demon.process
