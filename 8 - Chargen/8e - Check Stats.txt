@@ -48,12 +48,8 @@ localize( strcat(
 			u( f.statcheck.substat, %0, %1, %2 ), 
 
 @@ .. derived: dd value matches [*]: check the sheet value is integer
-@@ .. (but only if it's 'numeric' )
-			cand( 
-				strmatch( %qc, numeric ), 
-				ulocal( [u( d.sfp )]/f.hastag?.workhorse, %qs, derived )
-			), 
-			ulocal( f.statcheck.derived, %0, %1 ), 
+			ulocal( [u( d.sfp )]/f.hastag?.workhorse, %qs, derived ), 
+			ulocal( f.statcheck.derived, %0, %1, %qc ), 
 
 @@ .. list: stat with class of "list"
 			strmatch( %qc, list ), 
@@ -188,27 +184,39 @@ think u( dd/.specialty_for, %#, Portraiture )
 
 Check that a derived stat's value is valid.
 
-'derived': dd has 'derived' tag - check the sheet value is integer
-(derived stat must be integer)
+'derived': dd has 'derived' tag - check the sheet value is integer if 'numeric'
 
 --
 
 0: sheet dbref
 1: _full.statpath_(with_instance)
+2: stat class
 
 --
 
 &f.statcheck.derived cg=
-	if(
-		isint( 
-			first( 
-				ulocal( [u( d.sfp )]/f.getstat.workhorse.numeric, %0, %1 ), 
-				. 
-			)
+	case( %2, 
+		numeric, 
+		if(
+			isint( 
+				first( 
+					ulocal( [u( d.sfp )]/f.getstat.workhorse.numeric, %0, %1 ), 
+					. 
+				)
+			), 
+			1, 
+			#-1 Derived stat is non-numeric
 		), 
-		1, 
-		#-1 Derived stat is non-numeric
+
+		if( 
+			strlen( 
+				ulocal( [u( d.sfp )]/f.getstat.workhorse.%2, %0, %1 )
+			), 
+			1, 
+			#-1 Derived stat returns null
+		) 
 	)
+
 
 --
 

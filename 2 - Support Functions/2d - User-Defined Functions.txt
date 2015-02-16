@@ -219,7 +219,7 @@ qc: class of <stat path>: numeric, string, list
 		%qc, 
 @@ >> Class: String (ignore %3, give all)
 		string, 
-		%qd, 
+		ulocal( f.getstat.workhorse.string, %0, _%qs ), 
 @@ >> Class: List (ignore %3, give all)
 		list, 
 		%qd, 
@@ -244,7 +244,7 @@ qc: class of <stat path>: numeric, string, list
 
 
 --------------------------------------------------------------------------------
--- Getstat add-on for "derived" ------------------------------------------------
+-- Getstat Numeric -------------------------------------------------------------
 
 0: sheet dbref
 1: _sheet statpath (to pull 'instance' from, if appropriate)
@@ -275,6 +275,30 @@ localize( strcat(
 		., . 
 	)
 ))
+
+
+--------------------------------------------------------------------------------
+-- Getstat String --------------------------------------------------------------
+
+0: sheet dbref
+1: _sheet statpath (to pull 'instance' from, if appropriate)
+returns: value
+
+i: instance (if exists) with underscores
+s: statpath without instance
+
+--
+
+&f.getstat.workhorse.string sfp=
+	localize( strcat( 
+	 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
+		setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
+		if( 
+			strmatch( get( %0/%1 ), derived ), 
+			ulocal( [u( d.data-dictionary )]/%qs, %0, %qi ), 
+			get( %0/%1 ) 
+		)
+	))
 
 
 --------------------------------------------------------------------------------
