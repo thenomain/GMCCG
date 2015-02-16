@@ -212,8 +212,8 @@
 &prereq-text.merit.tolerance_for_biology DD=Resolve 3+
 
 &merit.trained_observer DD=1.3
-&prerequisite.merit.trained_observer DD=u( .at_least_one, %0, attribute.resolve:3 attribute.composure:3 )
-&prereq-text.trained_observer DD=Resolve 3+ or Composure 3+
+&prerequisite.merit.trained_observer DD=u( .at_least_one, %0, attribute.wits:3 attribute.composure:3 )
+&prereq-text.merit.trained_observer DD=Wits 3+ or Composure 3+
 
 
 // -- Merits: Physical ---------------------------------------------------------
