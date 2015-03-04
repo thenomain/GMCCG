@@ -1,0 +1,1146 @@
+/*
+
++bucket/create <bucket>=<description>
+Thenomain : +jhelp bconfig3
+  MYJOBS: Determines whether or not +myjobs can access the bucket. Valid
+          <values> are 'yes' and 'no'.
+You say, “So :: +bucket/set <bucket>/myjobs=yes”
+
+train +bucket/create ASP=For pitched and fulfilled aspirations. Snakes also.
+train +bucket/set ASP/myjobs=yes
+
+*/
+
+
+/*
+
+
+1) Player pitches an Aspiration
+2) Staff approves (and processes) or denies the job
+3a) Player requests a job to fullfill the aspiration (asp/fulfill)
+3b) Player requests a job to drop the aspiration (asp/drop)
+4) Staff fulfills/deletes the Aspiration as requested, or doesn't
+
+
++aspirations
+
+* numbered
+* never deleted, only retired (active/inactive)
+
++asp calls up a list of the character's three current aspirations, both short and long, numbered
+
+   e.g.
+   07. Get in a barfight. ST
+   09. Steal a car. ST
+   10. Find my long-lost brother. LT
+
+
+
+--- ?????? ---
++asp/beat <number>=optional justification opens a job to get a beat from a Long-Term aspiration being partially fulfilled.
+(Probably add to the 'fulfilled' section.)
+--- ?????? ---
+
+
+
+
+// Storage Attribute
+
+&_aspiration.<number>: 
+	<status>:<timestamp>|<term length>|<aspiration>|<fulfill text>
+
+<status>: pitched, approved, fulfilled
+<timestamp>: secs()
+<term length>: short-term, long-term
+<aspiration>: the text
+<fulfill text>: more text
+
+--
+
+aspiration/pitch <term>=<aspiration>
+aspiration/approve <player>/<number>[=<reason>]
+aspiration/deny <player>/<number>
+aspiration/fulfill <player>/<number>=<fulfill text>
+aspirations/drop <number>=<reason>
+
+
+aspiration/list <player>[=<number>]
+aspiration/filter [<player>/]<list> <of> <filters>
+aspiration/pitched [<player>]
+
+
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+Aspirations Log System <asp>
+-=-=-=-=-=-=-=-=-==--=-==-=-
+*/
+
+@create Aspirations System <asp>
+@set asp=safe inherit
+
+@parent asp=codp
+
+
+
+
+// -----------------------------------------------------------------------------
+// -- Jobs Request System <jrs> Integration  -----------------------------------
+
+/* 
+   This system is critical. If you want to be able to push pitches and 
+   fulfills to Anomaly Jobs, you need my own code.
+   If possible, I will make it easier for people to code their own.
+*/
+
+@fo me=&d.jrs asp=search( name=Jobs Request System <jrs> )
+&d.bucket asp=u( get( v( d.jrs )/va )/FN_FIND-BUCKET, ASP )
+&d.jgroup asp=u( get( v( d.jrs )/va )/FN_FIND-JGROUP, +allstaff )
+
+
+// -----------------------------------------------------------------------------
+// -- Basic Functions ----------------------------------------------------------
+
+&.msg asp=ansi( h, <%0>, n, %b%1 )
+&.lmax asp=lmax( %0, %1 )
+
+&.wheader asp=wheader( %0 )
+&.wfooter asp=wfooter( %0 )
+&.wdivider asp=wdivider( %0 )
+
+&.titlestr asp=titlestr( %0 )
+
+
+// -----------------------------------------------------------------------------
+// -- Sortby(s) ----------------------------------------------------------------
+
+&sortby.index asp=sub( rest( %0, . ), rest( %1, . ))
+
+
+/*
+================================================================================
+== FILTERS =====================================================================
+
+0: attributes
+1: target dbref
+2: filter item 
+
+e.g. 
+	think filter( asp/filter.term, lattr( %#/_aspiration.* ), , , %#, st )
+
+*/
+
+// .. term: short-term, long-term
+&filter.term asp=strmatch( elements( get( %1/%0 ), 2, | ), %2 )
+
+// .. status: pitched, approved, fulfilled
+&filter.status asp=
+	strmatch( first( elements( get( %1/%0 ), 1, | ), : ), %2 )
+
+// .. find aspiration based on keyword in text
+&filter.aspiration.keyword asp=
+	strmatch( elements( get( %1/%0 ), 3, | ), *%2* )
+
+// .. find fullilled based on keyword in text
+&filter.fulfilled.keyword asp=
+	strmatch( elements( get( %1/%0 ), 4, | ), *%2* )
+
+
+/*
+-----------------------------------------------------------------------------
+-- Function: Filter Everything ----------------------------------------------
+
+Do I need this? It will (may) be used to filter a bunch of things at the 
+same time.
+
+--
+
+0: target's dbref
+1: <filter>:<stuff>|<filter>:<stuff>|...
+	<filter>: term, status, keyword, fulfill
+
+c: current aspirations
+
+t: term length (for filter)
+s: approval status (for filter)
+a: aspiration keyword (for filter)
+f: fulfilled keyword (for filter)
+
+*/
+
+&f.filter.all asp=
+	strcat( 
+		setq( c, lattr( %0/_aspiration.* )), 
+
+		setq( t, trim( edit( grab( %1, term:*, | ), term:, ))), 
+		setq( s, trim( edit( grab( %1, status:*, | ), status:, ))), 
+		setq( a, trim( edit( grab( %1, keyword:*, | ), keyword:, ))), 
+		setq( f, trim( edit( grab( %1, fulfill:*, | ), fulfill:, ))), 
+
+// term length
+		if( strlen( %qt ), 
+			setq( c, filter( filter.term, %qc, , , %0, %qt )), 
+			setq( c, %qc )
+		), 
+
+// approval status
+		if( strlen( %qs ), 
+			setq( c, filter( filter.status, %qc, , , %0, %qs )), 
+			setq( c, %qc )
+		), 
+
+// aspiration keyword
+		if( strlen( %qa ), 
+			setq( c, filter( filter.aspiration.keyword, %qc, , , %0, %qa )), 
+			setq( c, %qc )
+		), 
+
+// fulfillment keyword
+		if( strlen( %qf )
+			setq( c, filter( filter.fulfilled.keyword, %qc, , , %0, %qf )), 
+			setq( c, %qc )
+		), 
+
+		sortby( sortby.index, %qc )
+
+	)
+
+// -- test --
+
+// think u( asp/f.filter.all, %#, term:short-term|status:approved )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Function: Get the next aspiration index -------------------------------------
+
+due to how we're doing this, never 'fill in the blanks' (use empty values).
+0: target dbref
+
+*/
+
+&f.next-index asp=
+	inc( last( sortby( sortby.index, lattr( %0/_aspiration.* )), . ))
+
+
+
+
+/*
+################################################################################
+## MISTRESS COMMANDS ###########################################################
+
+s: switch as entered
+m: matched switch
+c: content
+
+*/
+
+&c.aspiration asp=$^\+?asp(/[^ ]+)?(.*)?$:
+	think strcat( 
+		switch entered:, %b, setr( s, trim( rest( %1, / ))), %r, 
+
+		switches known:, %b, 
+		setr( k, 
+			sort( 
+				iter( lattr( %!/c.aspiration* ), rest( %i0, / ), , | ), 
+				a, |, | 
+			)
+		), %r, 
+
+		switch matched:, %b, 
+		setr( m, grab( |%qk, %qs*, | )), %r, 
+
+		content:, %b, setr( c, trim( %2 )), %r, 
+	); 
+
+	@assert not( haspower( %#, guest ))={ 
+		@pemit %#=
+		u( .msg, asp, I'm sorry%, guest%, but this isn't for you. )
+	}; 
+
+	@assert cor( not( %qs ), t( %qm ))={ 
+		@pemit %#=
+		u( .msg, asp, I don't know the switch '%qs'. 
+			I know: [itemize( lcstr( trim( %qk, b, | )), | )]
+		)
+	}; 
+
+	@pemit %#=case( 1, 
+
+// switch
+		cand( t( %qs ), t( %qm )), 
+		u( c.aspiration/%qm, %qc ), 
+
+// specific: list details (yeah, probably should have its own attribute)
+		t( %qc ), 
+		strcat( 
+			if( strmatch( %qc, */* ), 
+				[setq( p, pmatch( first( %qc, / )))][setq( n, rest( %qc, / ))], 
+				[setq( p, %# )][setq( n, %qc )] 
+			), 
+			case( 0, 
+				cor( isstaff( %# ), strmatch( %#, %qp )), 
+				u( .msg, asp, You cannot check someone else's aspiration. ), 
+				hastype( %qp, player ), 
+				u( .msg, asp, No such player ), 
+				u( display.aspiration.details, %qp, %qn )
+			)
+		), 
+
+// general
+		u( display.aspiration.list, %#, lattr( %#/_aspiration.* ))
+	); 
+
+// --
+
+@set asp/c.aspiration=regex
+@set asp/c.aspiration=no_parse
+
+
+
+/*
+================================================================================
+== SWITCHES ====================================================================
+
+
+--------------------------------------------------------------------------------
+-- Switch: Pitch ---------------------------------------------------------------
+
+	asp/pitch <term length>=<aspiration>
+	asp/pitch [<player>] :: list pitched aspirations [on <player>]
+
+f: first (optional)
+r: rest (optional)
+
+*/
+
+&c.aspiration/pitch asp=
+	strcat( 
+		setq( f, trim( first( %0, = ))), 
+		setq( r, trim( rest( %0, = ))), 
+		if( strlen( %qr ), 
+			u( f.aspiration/pitch.action, %qf, %qr ), 
+			u( f.list.aspirations, 
+				if( strlen( %qf ), %qf, %# ), 
+				pitched, 
+				asp/pitch 
+			)
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Switch: Approve -------------------------------------------------------------
+
+Staff can approve 'pitched' -> 'approved'
+
+	asp/approve <player>=<number>
+	asp/approve [<player>] :: list approved aspirations [on <player>]
+
+*/
+
+&c.aspiration/approve asp=
+	strcat( 
+		setq( p, trim( first( %0, = ))), 
+		setq( r, trim( rest( %0, = ))), 
+
+		if( strlen( %qr ), 
+			u( f.aspiration/approve.action, %qp, %qr ), 
+			u( f.list.aspirations, 
+				if( strlen( %qp ), %qp, %# ), 
+				approved, 
+				asp/approve 
+			)
+		)
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Switch: Deny ----------------------------------------------------------------
+
+Staff can deny 'pitch' and 'fulfill'.
+
+	asp/deny <player>=<number>
+
+*/
+
+&c.aspiration/deny asp=
+	strcat( 
+		setq( p, trim( first( %0, = ))), 
+		setq( n, trim( rest( %0, = ))), 
+		u( f.aspiration/deny.action, %qp, %qn )
+	)
+
+
+
+
+/*
+-----------------------------------------------------------------------------
+-- Switch: Fulfill ----------------------------------------------------------
+
+Player requests staff fulfill their aspiration. Mainly triggers a +request.
+
+	asp/fulfill <number>=<reason> :: player request
+	asp/fulfill <player>/<number>=<reason> :: staff approve
+	asp/fulfill [<player>] :: display
+
+f: first (optional)
+r: rest (optional)
+
+*/
+
+&c.aspiration/fulfill asp=
+	strcat( 
+		setq( f, trim( first( %0, = ))), 
+		setq( r, trim( rest( %0, = ))), 
+
+		case( 0, 
+			strlen( %qr ), 
+			u( f.list.aspirations, 
+				if( strlen( %qf ), %qf, %# ), 
+				fulfilled, 
+				asp/fulfill 
+			), 
+
+			strmatch( %qf, */* ), 
+			u( f.aspiration/fulfill.request, %qf, %qr ), 
+
+			u( f.aspiration/fulfill.approve, 
+				first( %qf, / ), 
+				rest( %qf, / ), 
+				%qr 
+			)
+		)
+	)
+
+
+// -----------------------------------------------------------------------------
+// -- Switch: Filter -----------------------------------------------------------
+// asp/filter [<player>/]filter filter filter 
+
+&c.aspiration/filter asp=
+	u( .msg, planned, asp/list \[<player>/\]filter filter filter )
+
+
+/*
+	strcat( 
+		setq( p, first( %0 , / )), 
+		setq( r, trim( rest( %0, / ))), 
+		if( 
+			not( strlen( %qr )), 
+			[setq( r, %qp )]
+			[setq( p, %# )], 
+			setq( p, pmatch( %qp ))
+		), 
+
+
+// 		u( f.aspiration/list.filter, %qp, %qr )
+	)
+*/
+
+
+/*
+--------------------------------------------------------------------------------
+-- Switch: List ----------------------------------------------------------------
+
+	asp/list <player>[=<number>]
+
+List the player's aspiration(s).
+
+*/
+
+&c.aspiration/list asp=
+	strcat( 
+		setq( p, pmatch( first( %0, = ))), 
+		setq( n, trim( rest( %0, = ))), 
+		case( 0, 
+			isstaff( %# ), 
+			u( .msg, asp/list, Staff only. ), 
+
+			t( %qp ), 
+			u( .msg, asp/list, '[trim( first( %0, = ))]' isn't a player ), 
+
+			isint( %qn ), 
+			u( display.aspiration.list, %qp, lattr( %qp/_aspiration.* )), 
+
+			u( display.aspiration.details, %qp, %qn )
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Switch: Filter --------------------------------------------------------------
+
+	asp/filter [<player>/]<filter> <filter> <filter>
+
+<filter>: short-term, text=blah
+
+*/
+
+&c.aspiration/filter asp=
+	u( .msg, planned, asp/filter \[<player>/\]<filter> <filter> <filter> )
+
+
+
+
+
+// == ACTION FUNCTIONS =========================================================
+
+
+
+
+
+
+
+
+
+
+
+
+// -=-=-=-=-=-=-==--==-==--=-=-=-=-=-=-=-=-=-=-=-==-=--=-=-==--=-=-=-=-=-=-==--=
+
+
+// -----------------------------------------------------------------------------
+// -- Function: Create the job itself ------------------------------------------
+// As a hook for other systems
+
+// 0: enactor (%#)
+// 1: job title
+// 2: job contents
+
+&f.create.job asp=
+	trigger( v( d.jrs )/trig.create.job, 
+		%0, 
+		u( d.bucket ), 
+		2, 
+		%1, 
+		%2, 
+		u( d.jgroup )
+	)
+
+
+
+
+
+
+
+
+
+
+/*
+################################################################################
+## MAKE A PITCH ################################################################
+
+The player pitches an Aspiration.
+
+
+
+--------------------------------------------------------------------------------
+-- Function: Pitch, Action -----------------------------------------------------
+
+A player has pitched a new aspiration 
+
+0: term length
+1: aspiration requested - remove pipes (|)
+
+*/
+
+&f.aspiration/pitch.action asp=
+	strcat( 
+		setq( t, grab( |long-term|short-term, %0*, | )), 
+		setq( a, translate( edit( %1, |, ), p )), 
+		setq( n, u( f.next-index, %# )), 
+		case( 0, 
+			t( %qt ), 
+			u( .msg, asp/pitch, Please pick 'short-term' or 'long-term' ), 
+
+			strlen( %qa ), 
+			u( .msg, asp/pitch, You need to enter an aspiration, at least ), 
+
+// pitch it!
+			strcat( 
+// .. set
+				set( %#, _aspiration.%qn:
+					pitched:[secs( )]|
+					%qt|
+					%qa
+				), 
+
+// .. display message to player
+				u( .msg, asp/pitch,
+					 u( display.pitch.player-message, %#, %qn, %qt, %qa )
+				), 
+
+// .. create the job (via 'job request system')
+				u( f.create.job, 
+					%#, 
+					u( display.pitch.title, %#, %qt ), 
+					u( display.pitch.contents, %#, %qn, %qt, %qa )
+				)
+			)
+		)
+	)
+
+
+/* -- tests --
+
+think u( asp/f.aspiration/pitch.action, , aspiration! )
+think u( asp/f.aspiration/pitch.action, st, aspiration! )
+think u( asp/f.aspiration/pitch.action, short ,  )
+think u( asp/f.aspiration/pitch.action, short ,  finish this stuff! )
+think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [ansi( hc, EVER )]. )
+
+*/
+
+
+// -----------------------------------------------------------------------------
+// -- Display: Pitch: Player Message -------------------------------------------
+// 0: enactor dbref
+// 1: aspiration number
+// 2: long- or short-term
+// 3: aspiration text
+
+&display.pitch.player-message asp=
+	strcat( 
+		You have asked for a new %2 aspiration:, %b, ansi( h, %3 ), %r%r, 
+		It is currently waiting as aspiration #%1., %r, 
+		A job has been created for you concerning it. 
+		Please be patient and wait for staff to approve or deny it. Thanks. 
+	)
+
+
+// -----------------------------------------------------------------------------
+// -- Display: Pitch: Job Title ------------------------------------------------
+// 0: enactor dbref
+// 1: term length
+
+&display.pitch.title asp=PITCH: [capstr( %1 )] aspiration for [name( %0 )]
+
+
+// -----------------------------------------------------------------------------
+// -- Display: Pitch: Job Contents ---------------------------------------------
+// 0: enactor dbref
+// 1: aspiration number
+// 2: long- or short-term
+// 3: aspiration text
+
+&display.pitch.contents asp=
+	strcat( 
+		setr( n, name( %0 )), %b, is pitching a new %2 aspiration:, %r%r, 
+		ansi( h, %3 ), %r%r, 
+		If you approve of this%, type:, %r, 
+		%b %b asp/approve %qn/%1, %r%r, 
+		If not%, type:, %r, 
+		%b %b asp/deny %qn/%1=<reason>, %r%r, 
+		Either way%, be sure to close this job with the reason that you 
+		are closing it. 
+	)
+
+/* -- tests
+
+think u( asp/display.pitch.contents, pmatch( thenomain ), 15, long-term, get this thing done )
+
+*/
+
+
+
+/*
+################################################################################
+## FULFILL AN ASPIRATION #######################################################
+
+Player says that an aspiration has been fulfilled
+
+
+--------------------------------------------------------------------------------
+-- Function: Fulfill, Request --------------------------------------------------
+
+A player has pitched a new aspiration 
+
+0: aspriation number
+1: reason to fulfill
+
+*/
+
+&f.aspiration/fulfill.request asp=
+	strcat( 
+		setq( n, %0 ), 
+		setq( r, translate( edit( %1, |, ), p )), 
+		setq( a, get( %#/_aspiration.%qn )), 
+		setq( s, first( %qa, : )), 
+		setq( a, last( %qa, | )), 
+
+		case( 0, 
+			t( %qa ), 
+			u( .msg, asp/fulfill, You have no such aspiration ), 
+
+			strmatch( %qs, approved ), 
+			u( .msg, asp/fulfill, 
+				The aspiration is '%qs' and can't be fulfilled 
+			), 
+
+			strlen( %qr ), 
+			u( .msg, asp/fulfill, You have no such aspiration ), 
+
+// ask for fulfillment 
+			strcat( 
+
+// .. display message to player
+				u( .msg, asp/fulfill,
+					 u( display.fulfill.player-message, %#, %qn, %qa, %qr )
+				), 
+
+// .. create the job (via 'job request system')
+				u( f.create.job, 
+					%#, 
+					u( display.fulfill.title, %#, %qn ), 
+					u( display.fulfill.contents, %#, %qn, %qa, %qr )
+				)
+			)
+		)
+	)
+
+
+/* -- tests --
+
+think u( asp/f.aspiration/fulfill.request, 0, because I can )
+think u( asp/f.aspiration/fulfill.request, , one more failing test )
+think u( asp/f.aspiration/fulfill.request, 1, this one will succeed! )
+
+
+// -----------------------------------------------------------------------------
+// -- Display: Fulfill: Player Message -----------------------------------------
+// 0: enactor dbref
+// 1: aspiration number
+// 2: aspiration text
+// 3: reason
+
+*/
+
+&display.fulfill.player-message asp=
+	strcat( 
+		You have asked to fulfill aspiration #%1:, %b, 
+		ansi( h, %2 ), %r%r, 
+
+		Your reason:, %b, ansi( h, %3 ), %r%r, 
+
+		A job has been created for you concerning it. 
+		Please be patient and wait for staff to approve or deny it. Thanks. 
+	)
+
+
+// -----------------------------------------------------------------------------
+// -- Display: Pitch: Job Title ------------------------------------------------
+// 0: enactor dbref
+// 1: aspiration number
+
+&display.fulfill.title asp=FULFILL: Aspiration #%1 for [name( %0 )]
+
+
+// -----------------------------------------------------------------------------
+// -- Display: Pitch: Job Contents ---------------------------------------------
+// 0: enactor dbref
+// 1: aspiration number
+// 2: aspiration text
+// 3: reason
+
+&display.fulfill.contents asp=
+	strcat( 
+		setr( n, name( %0 )), %b, is asking to fullfill Aspiration #%1:, %b, 
+		ansi( h, %2 ), %r%r, 
+		The reasoning:, %b, ansi( h, %3 ), %r%r
+		If you approve of this%, type:, %r, 
+		%b %b asp/fulfill %qn/%1=%3, %r%r, 
+		Then close this job., %r%r, 
+		Otherwise%, start a discussion with the player or close this job 
+		with a reason why not. 
+	)
+
+/* -- test --
+
+think u( asp/display.fulfill.contents, pmatch( thenomain ), 15, get this thing done, because I'm done )
+
+
+--------------------------------------------------------------------------------
+-- Function: Fulfill, Approve --------------------------------------------------
+
+Approve a player's request to fulfill an 'approved' aspiration.
+
+This DOES NOT approve the job.
+
+0: player name
+1: aspriation number
+2: reason to fulfill
+
+p: player dbref
+a: aspiration attribute
+a: aspiration status
+n: new attribute
+
+*/
+
+&f.aspiration/fulfill.approve asp=
+	strcat( 
+		setq( p, pmatch( %0 )), 
+		setq( a, get( %qp/_aspiration.%1 )), 
+		setq( s, first( %qa, : )), 
+
+		case( 0, 
+			isstaff( %# ), 
+			u( .msg, asp/fulfill, Staff only. ), 
+
+			t( %qp ), 
+			u( .msg, asp/fulfill, No such player. ), 
+
+			strlen( %qa ), 
+			u( .msg, asp/fulfill, No such aspiration. ), 
+			
+			strmatch( %qs, approved ), 
+			u( .msg, asp/fulfill, 
+				Aspiration #%1 is '%qs'. It must be 'approved' to fulfill. 
+			), 
+
+			strlen( %2 ), 
+			u( .msg, asp/fulfill, 
+				You must fulfill with a reason%, probably given by the player. 
+			), 
+
+// ok: set 'approved' to 'fulfilled', add |<reason> as 4th element
+			strcat( 
+				setq( n, replace( %qa, 1, fulfilled, : )), 
+				setq( n, %qn|[edit( %2, |, )] ), 
+				set( %qp, _aspiration.%1:%qn ), 
+				u( .msg, asp/fulfill, 
+					Fulfilled [name( %qp )]'s Aspiration #%1 with reason: 
+					[edit( %2, |, )]
+				), %r, 
+				u( .msg, asp/fulfill, 
+					Remember to approve their job and give them a Beat!
+				)
+			)
+		)
+	)
+
+
+
+
+
+
+/*
+################################################################################
+## DENY AN ASPIRATION PITCH ####################################################
+
+Staff denies an Aspiration pitch.
+
+
+--------------------------------------------------------------------------------
+-- Function: Deny, Action ------------------------------------------------------
+
+0: player
+1: aspiration number (must be have status 'pitch')
+
+a: aspiration.%1 attribute
+t: aspiration status
+
+*/
+
+&f.aspiration/deny.action asp=
+	strcat( 
+		setq( p, pmatch( %0 )), 
+		setq( a, get( %qp/_aspiration.%1 )), 
+		setq( s, first( %qa, : )), 
+
+		case( 0, 
+			isstaff( %# ), 
+			u( .msg, asp/deny, Staff only. ), 
+
+			t( %qp ), 
+			u( .msg, asp/deny, No such player. ), 
+
+			strlen( %qa ), 
+			u( .msg, asp/deny, No such aspiration. ), 
+
+			strmatch( %qs, pitched ), 
+			u( .msg, asp/deny, 
+				Aspiration #%1 is '%qs'. It needs to be 'pitched'. 
+			), 
+
+			strcat( 
+				u( .msg, asp/deny, 
+					strcat( 
+						Deleting, %b, moniker( %qp ), 's Aspiration #%1 pitch:, 
+						%b, elements( %qa, 3, | )
+					)
+				), %r, 
+				u( .msg, asp/deny, 
+					Remember to process their job with a reason why! 
+				), 
+				set( %qp, _aspiration.%1: )
+			)
+		)
+	)
+
+
+
+
+/* 
+################################################################################
+## APPROVE AN ASPIRATION #######################################################
+
+Staff: pitched -> approved
+
+	asp/approve <player>/<number>
+
+<reason> is for fulfill requests and is to be the same as what the player 
+entered, or close to it.
+
+0: <player>
+1: <number>
+
+p: pmatch( %0 )
+a: aspiration attribute
+s: aspiration status
+
+*/
+
+&f.aspiration/approve.action asp=
+	strcat( 
+		setq( p, pmatch( %0 )), 
+		setq( a, get( %qp/_aspiration.%1 )), 
+		setq( s, first( %qa, : )), 
+
+		case( 0, 
+			isstaff( %# ), 
+			u( .msg, asp/approve, Staff only. ), 
+
+			t( %qp ), 
+			u( .msg, asp/approve, No such player. ), 
+
+			strlen( %qa ), 
+			u( .msg, asp/approve, No such aspiration. ), 
+			
+			strmatch( %qs, pitched ), 
+			u( .msg, asp/approve, 
+				Aspiration #%1 is '%qs'. It must be 'pitched' to fulfill. 
+			), 
+
+// ok: set 'pitched' to 'approved'
+			strcat( 
+				setq( n, replace( %qa, 1, approved, : )), 
+				set( %qp, _aspiration.%1:%qn ), 
+				u( .msg, asp/approve, 
+					Approved [name( %qp )]'s Aspiration #%1. 
+					They may now fulfill it.
+				), %r, 
+				u( .msg, asp/fulfill, 
+					Remember to approve their job! 
+				)
+			)
+		)
+	)
+
+
+
+
+
+
+
+
+
+/*
+################################################################################
+## LIST ASPIRATIONS ############################################################
+
+&f.aspiration/list.action asp=...
+
+So far is directly called by other functions
+
+
+--------------------------------------------------------------------------------
+-- Function: List Aspirations --------------------------------------------------
+
+0: target dbref (not validated)
+1: filter (null is all, otherwise: pitched, approved, fulfilled)
+2: error message header ("where did I come from?")
+
+p: target player dbref 
+
+f: filter for...
+a: aspirations found (list of attributes)
+n: numbers for aspirations to list
+m: length of max aspiration number to list (for output finagling)
+
+o: list to output
+
+*/
+
+&f.list.aspirations asp=
+	case( 0, 
+		t( hastype( setr( p, pmatch( %0 )), player )), 
+		u( .msg, %2, Cannot find '%0'. ), 
+
+		cor( isstaff( %# ), strmatch( %qp, %# )),
+		u( .msg, %2, You may only list your own aspirations. ), 
+
+		strcat( 
+			setq( f, 
+				grab( *|pitched|approved|fulfilled, 
+					%1*, 
+					| 
+				)
+			), 
+			setq( a, 
+				filter( filter.status, 
+					lattr( %0/_aspiration.* ), , , %0, %qf 
+				)
+			), 
+
+			u( display.aspiration.list, 
+				%0, 
+				%qa, 
+				if( dec( strlen( %qf )), %qf ) 
+			)
+		)
+	)
+
+
+
+/*
+================================================================================
+== GENERAL DISPLAYS & FORMATTING ===============================================
+
+
+--------------------------------------------------------------------------------
+-- Display: Aspiration List ----------------------------------------------------
+
+0: target dbref
+1: attributes to display (pre-filtered if important)
+2: type(s) to display, list, space-delim (default: 'approved pitched')
+
+t: types to display (process 'null')
+
+m: max width for '<number>. ' line prefix
+w: first line width
+r: rest lines width
+
+a: current attrs to display
+n: list of aspiration numbers (indecies) for those attrs
+
+
+*/
+
+&display.aspiration.list asp=
+	strcat( 
+		setq( t, if( words( %2 ), %2, approved pitched )), 
+
+		setq( m, 
+			inc( 
+				max( 
+					2, 
+					strlen( u( .lmax, sort( edit( %1, _ASPIRATION., ))))
+				)
+			)
+		), 
+		setq( w, sub( width( %# ), 3 )), 
+		setq( r, sub( %qw, add( %qm, 1 ))), 
+
+		u( .wheader, Aspirations: [itemize( u( .titlestr, %qt ))] ), %r, 
+
+		iter( %qt, 
+			strcat( 
+// .. divider?
+				if( dec( words( %2 )), 
+					u( .wdivider, capstr( %i0 ))%r
+				), 
+// .. display each line, if appropriate
+				setq( a, filter( filter.status, %1, , , %0, %i0 )), 
+				setq( n, sort( edit( %qa, _ASPIRATION., ))), 
+				if( words( %qa ), 
+					iter( %qn, 
+						u( format.aspiration.one-line, %i0, %0, %qm, %qw, %qr ), 
+						, %r 
+					), 
+					ansi( n, space( add( %qm, 2 )), h, Nothing to display. )
+				)
+			), 
+			, %r 
+		), %r, 
+
+		u( .wfooter )
+
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Format: One Massively Confusing Aspiration Line -----------------------------
+
+Massively Confusing Wrap()
+
+0: aspiration number
+1: target dbref
+2: max prefix' width (qm)
+3: first line's width (qw)
+4: other lines' width (qr)
+
+g: get current aspiration's contents
+
+*/
+
+&format.aspiration.one-line asp=
+	wrap( 
+		strcat( 
+			rjust( ansi( h, %i0. ), %2 ), %b, 
+			elements( 
+				setr( g, get( %1/_aspiration.%i0 )), 
+				3, | 
+			), %b, 
+			ansi( xh, %([elements( %qg, 2, | )]%) ), 
+			if( t( setr( g, elements( %qg, 3, | ))), %rFulfilled: %qg )
+		), 
+		%4, left, %b, @@( right ), inc( %2 ), %r, %3 
+	)
+
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Display: Aspiration Details -------------------------------------------------
+
+0: target dbref
+1: aspiration number
+
+*/
+
+&display.aspiration.details asp=
+	strcat( 
+		setq( a, get( %0/_aspiration.%1 )), 
+
+		u( .wheader, Aspiration #%1 ), %r, 
+		case( 0, 
+			t( %qa ), 
+			ansi( h, %b No aspiration to display ), 
+			strcat( 
+				%b%b, %(, 
+				u( .titlestr, first( %qa, : )), 
+				%b-%b, 
+				convsecs( rest( first( %qa, | ), : )), 
+				%b-%b, 
+				u( .titlestr, elements( %qa, 2, | )), 
+				%), %r%r, 
+
+				wrap( 
+					strcat( 
+						elements( %qa, 3, | ), 
+						if( 
+							t( setr( b, elements( %qa, 4, | ))), 
+							%rFulfilled: %qb 
+						)
+					), 
+					sub( width( %# ), 4 ), left, %b%b 
+				)
+			) 
+		), %r, 
+		u( .wfooter )
+	)
+
