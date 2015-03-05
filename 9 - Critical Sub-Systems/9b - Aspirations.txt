@@ -9,6 +9,11 @@ You say, “So :: +bucket/set <bucket>/myjobs=yes”
 train +bucket/create ASP=For pitched and fulfilled aspirations. Snakes also.
 train +bucket/set ASP/myjobs=yes
 
+Requires: 
+
+&TRIG.CREATE.JOB #xx=@trigger %va/TRIG_CREATE=%0, %1, %2, %3, %r%4, , %5, 2
+
+
 */
 
 
