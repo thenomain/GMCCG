@@ -1,3 +1,4 @@
+/*
 Summarize Allocated Traits
 
 ================================================================================
@@ -18,8 +19,7 @@ This looks easy because it doesn't account for free Attributes.
 
 	0: dbref of sheet
 	returns: <mental>/<physical>/<social>
-
---
+*/
 
 &f.allocated.attributes cg=
 	iter( 
@@ -27,7 +27,7 @@ This looks easy because it doesn't account for free Attributes.
 		sub( u( f.points.category, %0, attribute, %i0 ), 3 ), , / 
 	)
 
---
+/* -- test --
 
 think u( cg/f.allocated.attributes, %# )
 
@@ -39,8 +39,7 @@ Specialties are ignored because they don't have tags, so fail the filter.
 
 	0: dbref of sheet
 	returns: <mental>/<physical>/<social>
-
---
+*/
 
 &f.allocated.skills cg=
 	iter( 
@@ -48,7 +47,7 @@ Specialties are ignored because they don't have tags, so fail the filter.
 		u( f.points.category, %0, skill, %i0 ), , / 
 	)
 
---
+/* --tests --
 
 think u( cg/f.allocated.skills, %# )
 
@@ -66,8 +65,7 @@ Returns full stat paths.  The first part of the list are specialties that are no
 	   (free specialties are removed from this list)
 	t: template
 	f: free`specialties`for`template`and`species`et. al
-
---
+*/
 
 &f.allocated.specialties cg=
 	strcat( 
@@ -88,8 +86,7 @@ Returns full stat paths.  The first part of the list are specialties that are no
 		%qs[if( strlen( %qf ), `%qf )]
 	)
 
-
---
+/* -- test --
 
 think u( cg/f.allocated.specialties, %# )
 think u( cg/f.allocated.specialties, v( _special.sheet_location ))
@@ -100,12 +97,12 @@ think u( cg/f.allocated.specialties, pmatch( hemi )) :: %qs :: %qt :: %qf :: %ql
 -- Allocated Specialties: Human ------------------------------------------------
 
 Humans themselves don't get additional specialties, so as a reminder:
-
---
+*/
 
 &f.allocated.specialties.human cg=@@( nothing )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Allocated: Points in Merits -------------------------------------------------
 
@@ -114,8 +111,7 @@ main merit, option add-ons, or other.
 
 	0: dbref of sheet
 	returns: points spent on <merits>/<merit points spent on power level raise>
-
---
+*/
 
 &f.allocated.merits cg=
 	strcat( 
@@ -123,12 +119,12 @@ main merit, option add-ons, or other.
 		ladd( cat( 
 			ulocal( f.points.category, %0, merit, * ), 
 
-@@ .. subtract points in merit substats
+// .. subtract points in merit substats
 			iter( lattr( %0/_merit.*.* ), 
 				mul( -1, first( u( %0/%i0 ), . ))
 			), 
 
-@@ .. add/subtract points given free with template-based things
+// .. add/subtract points given free with template-based things
 			ulocal( f.allocated.merits.%qt, %0 ), 
 			
 		)), 
@@ -138,7 +134,7 @@ main merit, option add-ons, or other.
 		udefault( f.allocated.power-trait.%qt, 0, %0 )
 	)
 
---
+/* -- test --
 
 think u( cg/f.allocated.merits, %# )
 
@@ -148,11 +144,12 @@ think u( cg/f.allocated.merits, %# )
 
 Each template will have their own. Humans? 0. Total 0.
 
---
+*/
 
 &f.allocated.power-trait.human cg=0
 
 
+/*
 --------------------------------------------------------------------------------
 -- Allocated: Points in Integrity ----------------------------------------------
 
@@ -161,7 +158,7 @@ Add 'f.allocated.integrity.<template>' where appropriate
 
 t: template
 
---
+*/
 
 &f.allocated.integrity cg=
 	strcat( 
@@ -173,8 +170,10 @@ t: template
 		)
 	)
 
+/*
 --------------------------------------------------------------------------------
 -- Allocated: Integrity, Human -------------------------------------------------
+*/
 
 &f.allocated.integrity.human cg=
 	u( u( d.dd )/.value, %0, advantage.integrity )

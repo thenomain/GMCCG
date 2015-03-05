@@ -1,3 +1,4 @@
+/*
 Prerequisites Check
 
 ================================================================================
@@ -27,7 +28,7 @@ Stat prerequisites come in several forms:
 1: stat (without instance)
 returns: 1 if ok, #-1 <reason> if not
 
---
+*/
 
 &f.prerequsite.cg-only cg=
 	if( 
@@ -39,7 +40,7 @@ returns: 1 if ok, #-1 <reason> if not
 		#-1 Chargen-Only stats cannot be gained after approval
 	)
 
---
+/* -- test --
 
 think u( cg/f.prerequsite.cg-only, %#, merit.giant )
 
@@ -61,13 +62,13 @@ i: instance (if exists)
 s: _sheet.statpath_without_instance_()
 t: templates for this stat
 
---
+*/
 
 &f.prerequsite.template cg=
 localize( strcat( 
 	setq( s, ulocal([u( d.sfp )]/f.statpath-without-instance, %1 )), 
 
-@@ .. pull which templates are in this stat's tags
+// .. pull which templates are in this stat's tags
 	setq( t, 
 		setinter( 
 			lcstr( u( [u( d.dd )]/bio.template )), 
@@ -76,7 +77,7 @@ localize( strcat(
 		)
 	), 
 
-@@ .. are there any? then compare to character's template(s), 
+// .. are there any? then compare to character's template(s), 
 	if( 
 		t( %qt ), 
 		if( 
@@ -84,12 +85,12 @@ localize( strcat(
 			1, 
 			#-1 Character Template Not Allowed For This Stat
 		), 
-@@ .. else return "1" because it passes all template checks
+// .. else return "1" because it passes all template checks
 		1 
 	)
 ))
 
---
+/* -- test --
 
 think u( cg/f.prerequsite.template, %#, _merit.medium )
 
@@ -110,7 +111,7 @@ i: instance (if exists)
 s: _sheet.statpath_without_instance_()
 p: return for &prerequisite.<statpath>
 
---
+*/
 
 &f.prerequsite.other cg=
 localize( strcat( 
@@ -120,7 +121,7 @@ localize( strcat(
 		ulocal( [u( d.dd )]/prerequisite.[rest( %qs, _ )], %0, %qi, %2 )
 	), 
 
-@@ .. if null was returned, that's a 1, else check in more detail
+// .. if null was returned, that's a 1, else check in more detail
 	case( 0, 
 		comp( %qp, ), 1, 
 		%qp, #-1 [u( [u( d.dd )]/prereq-text.[rest( %qs, _ )] )], 
@@ -128,7 +129,7 @@ localize( strcat(
 	)
 ))
 
---
+/* -- test -- 
 
 think u( cg/f.prerequsite.other, %#, _merit.unarmed_defense )
 think u( cg/f.prerequsite.other, %#, _merit.barfly )

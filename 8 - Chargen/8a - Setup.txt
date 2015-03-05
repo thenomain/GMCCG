@@ -1,3 +1,4 @@
+/*
 CHARGEN
 or at least many things chargen
 mainly the "is this sheet chargen-compatible" system
@@ -6,6 +7,7 @@ mainly the "is this sheet chargen-compatible" system
 
 ================================================================================
 == SETUP =======================================================================
+*/
 
 @create GMC Chargen <cg>
 @set GMC Chargen <cg>=inherit safe
@@ -17,8 +19,10 @@ mainly the "is this sheet chargen-compatible" system
 
 
 
+/*
 ================================================================================
 == DATA ========================================================================
+*/
 
 @fo me=&d.dd cg=num( data dictionary <dd> )
 @fo me=&d.dt cg=num( data tags <d:t> )
@@ -26,31 +30,37 @@ mainly the "is this sheet chargen-compatible" system
 
 
 
+/*
 ================================================================================
 == INITIAL COMMAND =============================================================
+*/
 
 &c.cg cg=$^\+?cg$:@pemit %#=Yup, it's chargen. See Also: +help chargen
 
---
+// --
 
 @set cg/c.cg=regexp
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-&c.chargen cg=$^\+?chargen$:@pemit %#=You probably want 'cg'. See Also: +help chargen
+&c.chargen cg=$^\+?chargen$:@pemit %#=You probably want 'cg'. 
+	See Also: +help chargen
 
---
+// --
 
 @set cg/c.chargen=regexp
 
 
+/*
 ================================================================================
 == FUNCTIONS ===================================================================
+*/
 
 &.msg cg=ansi( h, <%0>, n, %b%1 )
 
 
 
+/*
 ================================================================================
 == LIST: Things ================================================================
 
@@ -71,14 +81,13 @@ List of stats on a sheet, based on passed tags
 	3: 'or' for the default behavior of hastag? (defaults to 'and')
 
 	returns: character sheet statpaths
-
---
+*/
 
 &f.list-stats-tags cg=
 	filter( 
 		[v( d.sfp )]/fil.list-stats-tags, 
-@@ .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
-@@ .. so we can use the filter for non-sheet matches
+// .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
+// .. so we can use the filter for non-sheet matches
 		rest( edit( lattr( %0/_%1.* ), %b_, %b ), _ ), 
 		, 
 		, 
@@ -86,7 +95,7 @@ List of stats on a sheet, based on passed tags
 		not( strmatch( %3, or ))
 	)
 
---
+/* -- test --
 
 think u( cg/f.list-stats-tags, %#, attribute, mental )
 think u( cg/f.list-stats-tags, %#, attribute, resistance )
@@ -115,8 +124,7 @@ Does not presently work for List stats
 	l: list of statpaths (you can see where we're going with this)
 	s: sum of points in each category (primary stats only)
 	b: number
-
---
+*/
 
 &f.points.category cg=
 strcat( 
@@ -132,10 +140,10 @@ strcat(
 	)
 )
 
---
+/* -- test --
 
 think u( cg/f.points.category, %#, attribute, social )
 think u( cg/f.points.category, %#, skill, social )
 think u( cg/f.points.category, %#, merit, * )
 
-
+*/

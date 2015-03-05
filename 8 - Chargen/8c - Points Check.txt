@@ -1,3 +1,4 @@
+/*
 ================================================================================
 == Were Points Spent Correctly? ================================================
 
@@ -13,7 +14,7 @@ Check for: 3/4/5 points
 0: dbref of sheet
 a: attributes
 
---
+*/
 
 &f.pts-valid?.attributes cg=
 	strcat( 
@@ -25,7 +26,7 @@ a: attributes
 		)
 	)
 
---
+/* -- test --
 
 think u( cg/f.pts-valid?.attributes, %# )
 
@@ -37,7 +38,7 @@ Check for: 4/7/11 points
 0: dbref of sheet
 s: skills
 
---
+*/
 
 &f.pts-valid?.skills cg=
 	strcat( 
@@ -49,7 +50,7 @@ s: skills
 		)
 	)
 
---
+/* -- test --
 
 think u( cg/f.pts-valid?.skills, %# )
 
@@ -69,7 +70,7 @@ t: template
 	input: <template>`<specialty>`<sub-specialty>
 	output: 1 1 1 (a stream of 1 or 0 responses if it's valid)
 
---
+*/
 
 &f.pts-valid?.specialties cg=
 	strcat(
@@ -81,7 +82,7 @@ t: template
 		)
 	)
 
---
+/* -- test --
 
 think u( cg/f.pts-valid?.specialties, %# )
 think u( cg/f.pts-valid?.specialties, v( _special.sheet_location ))
@@ -108,11 +109,11 @@ with 10 merit dots, not 7.
 m: merits
 t: template
 
---
+*/
 
 &f.pts-valid?.merits cg=eq( ladd( u( f.allocated.merits, %0 ), / ), 10 )
 
---
+/* -- test --
 
 think u( cg/f.pts-valid?.merits, %# )
 
@@ -131,7 +132,7 @@ i.e., don't let players change it.
 t: template
 i: integrity trait, matching trait with both 'integrity' and '<template>' tags
 
---
+*/
 
 &f.pts-valid?.integrity cg=
 	strcat( 
@@ -144,8 +145,10 @@ i: integrity trait, matching trait with both 'integrity' and '<template>' tags
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Pts Valid?: Integrity, Human ------------------------------------------------
+*/
 
 &f.pts-valid?.integrity.human cg=
 	eq( 
