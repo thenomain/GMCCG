@@ -16,7 +16,7 @@ q9: target list (dbrefs or job #)
 
 &c.roll nWoD Roller <nr>=$^\+?roll(/.+?)? (.+?)(\=.*)?$:
 
-@@ .. people 'in chargen' cannot use +roll -- no better place for this
+// .. people 'in chargen' cannot use +roll -- no better place for this
 	@assert cor( isstaff( %# ), not( isapproved( %#, chargen )))={ 
 		@pemit %#=[u( .alert, roll )] You are 'in chargen', and so cannot 
 		use this command. If you need something on your sheet rolled, please 
@@ -26,8 +26,8 @@ q9: target list (dbrefs or job #)
 	@pemit %#=
 		strcat( 
 
-@@ .. sanitize input and detach the instance
-@@ .. (don't need to worry if instance already detached; extra spaces are fine)
+// .. sanitize input and detach the instance
+// .. (don't need to worry if instance already detached; extra spaces are fine)
 			setq( 7, 
 				squish( edit( 
 					strip( %2, %%%,;<>%[%] ), 
@@ -35,11 +35,8 @@ q9: target list (dbrefs or job #)
 				))
 			), 
 
-@@ .. build the to-list
-			setq( 9, u( f.build.to-list, %#, rest( %3, = ), %1 )), 
-
-@@ .. run the workhorse
-@@ .. (remove 'blind' switch, as that is for the 'build to-list' only)
+// .. run the workhorse
+// .. (remove 'blind' switch, as that is for the 'build to-list' only)
 			null( 
 				u( f.roll.workhorse, 
 					%q7, 
@@ -48,11 +45,14 @@ q9: target list (dbrefs or job #)
 				)
 			), 
 
-@@ .. interpret and output - check for errors first
+// .. build the to-list
+			setq( 9, u( f.build.to-list, %#, rest( %3, = ), %1 )), 
+
+// .. interpret and output - check for errors first
 			if( 
 				t( words( %qe, ` )), 
 				cat( u( .alert, roll ), u( display.roll-items, %qe )), 
-@@ Roll To ...
+// Roll To ...
 				u( display.roll-to-[first( %q9, | )], %#, rest( %q9, | ))
 			)
 		)
