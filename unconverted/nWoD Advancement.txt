@@ -1,7 +1,17 @@
 
 THIS XP SYSTEM SHOULD LOG TO A TABLE AND CALL THROUGH SQL.
-THAT MEANS WE NEED GUID(), A FUNCTION THAT CAN BE PASSED A DBREF
+THAT MEANS WE NEED UUID(), A FUNCTION THAT CAN BE PASSED A DBREF
 AND RETURN DBREF.SECS TO GUARANTEE A UNIQUE CALLER.
+
+Penn calls this 'objid'.
+
+&.objid xxx=localize( 
+		if( t( setr( l, locate( %#, %0, * ))), 
+			[num( %ql )]:[convtime( get( %ql/created ))], 
+			#-1 NOT FOUND 
+		)
+	)
+
 
 
 =--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=--=-=-=-=-=-=-==-=--==--==-=-=-=--=
