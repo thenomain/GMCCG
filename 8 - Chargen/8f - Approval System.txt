@@ -551,6 +551,46 @@ cg/log
 	))
 
 
+/*
+-----------------------------------------------------------------------------
+-- Function: Total Seconds Approved -----------------------------------------
+
+How many seconds has someone been approved, not including unapproval periods?
+
+We are cheating heavily, assuming that '_log.approval' will be formatted:
+	approve/unapprove/approve/unapprove/...
+
+If it's going to include other information, the first segment will need 
+heavily re-coded.
+
+--
+
+0: dbref
+l: length of time (generic register)
+returns: number of seconds
+
+*/
+
+
+&f.total_secs_approved cg=
+	localize( 
+		strcat( 
+			setq( l, get( %0/_log.approval )), 
+			setq( l, iter( %ql, elements( %i0, 2, : ), | )), 
+			if( eq( mod( words( %ql ), 2 ), 1 ), 
+				setq( l, cat( %ql, secs( )))
+			), 
+		
+			ladd( 
+				iter( 
+					lnum( 1, words( %ql ), , 2 ), 
+					sub( element( %ql, inc( %i0 )), element( %ql, %i0 ))
+				)
+			)
+		)
+	)
+
+
 
 // =============================================================================
 // == DISPLAYS & FORMATTING ====================================================
