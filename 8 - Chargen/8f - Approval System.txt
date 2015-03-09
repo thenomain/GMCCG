@@ -99,7 +99,7 @@ isapproved( <player>[, <status>] )
 	dead: has 'unapproved' flag, has &_dead attribute
 	guest: is a guest
 	chargen: is not 'approved' nor is 'unapproved' (staff are always 'chargen')
-	log: output _log.approval, which keeps track of approved/unapproved/dead
+	log: output _approval.log, which keeps track of approved/unapproved/dead
 
 
 'Unapproved' specifically means that the person has once been approved and,
@@ -528,7 +528,7 @@ cg/log
 // -- Function: Add to Approval Log --------------------------------------------
 
 /* 
-&_log.approval: All approvals and unapprovals and freezings
+&_approval.log: All approvals and unapprovals and freezings
 	<action>:[secs()]:<name of staffer>:<dbref of staffer>:<reason>|...
 
 0: enactor
@@ -557,7 +557,7 @@ cg/log
 
 How many seconds has someone been approved, not including unapproval periods?
 
-We are cheating heavily, assuming that '_log.approval' will be formatted:
+We are cheating heavily, assuming that '_approval.log' will be formatted:
 	approve/unapprove/approve/unapprove/...
 
 If it's going to include other information, the first segment will need 
@@ -575,7 +575,7 @@ returns: number of seconds
 &f.total_secs_approved cg=
 	localize( 
 		strcat( 
-			setq( l, get( %0/_log.approval )), 
+			setq( l, get( %0/_approval.log )), 
 			setq( l, iter( %ql, elements( %i0, 2, : ), | )), 
 			if( eq( mod( words( %ql ), 2 ), 1 ), 
 				setq( l, cat( %ql, secs( )))
