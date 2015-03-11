@@ -109,6 +109,8 @@ think u( cg/f.list-stats-tags, %#, *, power level )
 think u( cg/f.list-stats-tags, %#, *, energy )
 think u( cg/f.list-stats-tags, %#, *, morality )
 
+think u( cg/f.list-stats-tags, %#, merit, supernatural )
+
 
 --------------------------------------------------------------------------------
 -- List Total Points in a Category/Tags Combo ----------------------------------

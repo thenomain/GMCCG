@@ -103,15 +103,22 @@ However, it would be poor form to not give mortals the same number of merits
 that supernaturals here, so we are DE-FACTO HOUSE RULING that everyone starts 
 with 10 merit dots, not 7.
 
+Thanks to Demon's Stigmatics, we also have to subtract '.<template>' values.
+
 --
 
 0: dbref of sheet
-m: merits
-t: template
 
 */
 
-&f.pts-valid?.merits cg=eq( ladd( u( f.allocated.merits, %0 ), / ), 10 )
+&f.pts-valid?.merits cg=
+	eq( 
+		sub( 
+			ladd( u( f.allocated.merits, %0 ), / ), 
+			u( f.alloated.merits.[u( %0/_bio.template )], %0 )
+		), 
+		10 
+	)
 
 /* -- test --
 
