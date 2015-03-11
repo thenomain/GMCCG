@@ -1,0 +1,81 @@
+*** RE-DO THIS TO BE A STIGMATIC ***
+
+@@ SAMPLE DEMON
+@@ This is the demon from the core Demon book character sheet
+
+@create Stigmatic Chargen Sheet <cs:dtd:s>
+@fo me=&_special.sheet_location me=num( Stigmatic Chargen Sheet <cs:dtd:s> )
+
+&_bio.template cs:dtd:s=Stigmatic
+&_bio.sphere cs:dtd:s=derived
+
+&_bio.full_name cs:dtd:s=Gabrielle Washington
+&_bio.concept cs:dtd:s=Skatebord Courier
+&_bio.virtue cs:dtd:s=Talkative
+&_bio.vice cs:dtd:s=Autonomous
+
+&_advantage.willpower cs:dtd:s=derived
+&_advantage.willpower_maximum cs:dtd:s=derived
+&_advantage.weaponry_defense cs:dtd:s=derived
+&_advantage.brawl_defense cs:dtd:s=derived
+&_advantage.size cs:dtd:s=derived
+&_advantage.speed cs:dtd:s=derived
+&_advantage.initiative cs:dtd:s=derived
+&_advantage.perception cs:dtd:s=derived
+
+&_advantage.integrity cs:dtd:s=7
+
+&_special.size cs:dtd:s=5
+&_special.species_factor cs:dtd:s=5
+
+&_health.maximum cs:dtd:s=derived
+&_health.damage cs:dtd:s=derived
+&_health.penalty cs:dtd:s=derived
+
+&_attribute.intelligence cs:dtd:s=3
+&_attribute.wits cs:dtd:s=2
+&_attribute.resolve cs:dtd:s=3
+&_attribute.strength cs:dtd:s=3
+&_attribute.dexterity cs:dtd:s=1
+&_attribute.stamina cs:dtd:s=2
+&_attribute.presence cs:dtd:s=3
+&_attribute.manipulation cs:dtd:s=3
+&_attribute.composure cs:dtd:s=3
+
+&_skill.academics cs:dtd:s=1
+&_skill.academics.history cs:dtd:s=1
+&_skill.computer cs:dtd:s=
+&_skill.crafts cs:dtd:s=1
+&_skill.crafts.diy cs:dtd:s=1
+&_skill.investigation cs:dtd:s=1
+&_skill.medicine cs:dtd:s=1
+&_skill.occult cs:dtd:s=
+&_skill.politics cs:dtd:s=
+&_skill.science cs:dtd:s=
+
+&_skill.athletics cs:dtd:s=2
+&_skill.brawl cs:dtd:s=1
+&_skill.firearms cs:dtd:s=
+&_skill.larceny cs:dtd:s=1
+&_skill.stealth cs:dtd:s=1
+&_skill.stealth.silent_movement cs:dtd:s=1
+&_skill.survival cs:dtd:s=1
+&_skill.weaponry cs:dtd:s=1
+
+&_skill.animal_ken cs:dtd:s=1
+&_skill.empathy cs:dtd:s=1
+&_skill.expression cs:dtd:s=1
+&_skill.intimidation cs:dtd:s=2
+&_skill.persuasion cs:dtd:s=1
+&_skill.socialize cs:dtd:s=2
+&_skill.streetwise cs:dtd:s=2
+&_skill.subterfuge cs:dtd:s=2
+&_skill.subterfuge.allay_suspicion cs:dtd:s=1
+
+&_merit.contacts_(inquisitors) cs:dtd:s=1
+&_merit.danger_sense cs:dtd:s=2
+&_merit.fast_reflexes cs:dtd:s=1
+&_merit.fleet_of_foot cs:dtd:s=3
+&_merit.resources cs:dtd:s=1
+
+

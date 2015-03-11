@@ -88,6 +88,7 @@ Level 3 for very minor items
 	)]=
 	@edit d:t/tags.##=human, human.stigmatic
 
+@edit d:t/tags.advantage.integrity=human, human.stigmatic
 
 
 // == DEMON BIO ================================================================
@@ -839,14 +840,51 @@ agenda
 
 
 ================================================================================
+== CHARGEN: MERITS =============================================================
+
+Stigmatics get +3 dots for Supernatural Merits only.
+
+
+--------------------------------------------------------------------------------
+-- Merits: Point Count, Stigmatic ----------------------------------------------
+
+0: sheet dbref
+
+*/
+
+&f.allocated.merits.stigmatic CG=
+	words( 
+		elements( 
+			u( f.list-stats-tags, %0, merit, supernatural ), 
+			1 2 3 
+		)
+	)
+
+/*
+
+--------------------------------------------------------------------------------
+-- Chargen Check: Stigmatic ----------------------------------------------------
+*/
+
+&check.chargen.stigmatic CG=
+	cat( 
+		%b, 
+		Stigmatic Merits:, 
+		setr( 9, u( f.allocated.merits.stigmatic, %0 )), 
+		u( display.check.ok-no, eq( %q9, 3 )), 
+		%r 
+	)
+
+
+
+/*
+================================================================================
 == CHARGEN: ADVANTAGES =========================================================
 
 cover: 7
 aether
 primum
 current cover
-
-Stigmatics get +3 merit dots for Supernatural Merits only.
 */
 
 
@@ -880,6 +918,9 @@ Stigmatics get +3 merit dots for Supernatural Merits only.
 
 // -----------------------------------------------------------------------------
 // -- Integrity, Demon: Point Count --------------------------------------------
+
+// this is aboslutely NOT working, due to the nature of instanced stats '()'
+// maybe we just call it 'cover' and change it when the Cover is changed?
 
 &f.pts-valid?.integrity.demon cg=
 	eq( 
