@@ -1,0 +1,341 @@
+/*
+XP and Advancement System
+
+Performs and logs XP spends and gains.
+
+-=-=-=-=-==-=---==-
+
+* Give Passive XP: gain
+* Be able to determine: not a spend/gain thing
+* Be able to Award XP: gain
+* Be able to spend XP: spend
+* Be able to unaward XP: ungain
+* Be able to unspend: unspend
+
+-=-=-=-=-=-=-=-=-=-=-=
+
+COMMANDS:
+	xp : how much I got? (all types)
+	xp <name> : how much they got?
+
+	xp/award <name>=<amt> for <reason> : give out dem generic goodies
+	xp/award <name>/<xp type>=<amt> for <reason> : give out dem specific goodies
+
+	xp/spend <stat>=<level> : spend some xps on some mad skillz
+	xp/spend <stat>=<level>/<xp type> : spend some specific xpz
+
+	xp/check <stat>=<level>[/<xp type>] : how much it be costin'?
+	xp/check <name>/<stat>=<level> : how much it be costin' for them?
+
+	xp/remove <name>=<amt> for <reason> : take some honey away
+	xp/remove <name>/<xp type>=<amt> for <reason> : a specific kind of honey
+
+	xp/unspend <name>=<amt> for <reason> : reduce stat by <amt>, give xp back
+	xp/unspend <name>/<xp type>=<amt> for <reason> : bla bla bla
+
+
+
+
+################################################################################
+## THE SQL #####################################################################
+
+DROP TABLE IF EXISTS xp_log;
+
+--
+
+CREATE TABLE IF NOT EXISTS xp_log ( 
+	target_objid VARCHAR(255) NOT NULL, 
+	target_name VARCHAR(255) NOT NULL, 
+
+	enactor_objid VARCHAR(255) NOT NULL, 
+	enactor_name VARCHAR(255) NOT NULL, 
+
+	log_time TIMESTAMP NOT NULL DEFAULT NOW(), 
+
+	xp_type VARCHAR(255) NOT NULL, 
+	xp_amt DECIMAL(21,17) NOT NULL,
+
+	reasoning VARCHAR(255) NOT NULL,
+
+	PRIMARY KEY (target_objid, log_time) 
+) ENGINE=INNODB; 
+
+
+
+
+################################################################################
+## THE OBJECT ##################################################################
+
+
+
+================================================================================
+== Setup =======================================================================
+*/
+
+@create XP and Advancement System <xpas>
+@fo me=&d.xpas me=num( XP and Advancement System <xpas> )
+@set xpas=INHERIT SAFE
+
+@parent xpas=codp
+&prefix.sql xpas=sql.
+
+
+
+/*
+================================================================================
+== Commands ====================================================================
+
+	xp : list all xp types (for <name>)
+	xp/award : give out xp
+	xp/remove : remove xp
+	xp/spend : buy stats
+	xp/check : output for 'spend' without buying stat/reducing xp
+
+
+--------------------------------------------------------------------------------
+-- XP : Show me things ---------------------------------------------------------
+
+	xp [<name>] : list all xp types (for <name>)
+
+*/
+
+
+// FILLER FILLER FILLER FILLER FILLER FILLER FILLER 
+
+
+
+
+
+/*
+================================================================================
+== Functions ===================================================================
+
+--------------------------------------------------------------------------------
+-- Short Functions -------------------------------------------------------------
+*/
+
+&.isapproved xpas=isapproved( %0, %1 )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Object ID  ------------------------------------------------------------------
+
+The unique identifier for an object, taken from Penn.
+Outputs: <#dbref>:<creation time in secondss>
+
+*/
+
+&.objid xpas=localize( 
+		if( t( setr( l, locate( %#, %0, * ))), 
+			[num( %ql )]:[convtime( get( %ql/created ))], 
+			#-1 NOT FOUND 
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- SQL Escape ------------------------------------------------------------------
+
+I removed the nested edits, here. Rhost and TinyMUSH will choke here.
+
+(... should ; also be escaped?)
+
+*/
+
+&f.sql.escape xpas=edit( %0, \\, \\\\\\, ', \\\\', ", \\\\", \%, \\\\\\\% )
+
+/* -- test --
+
+think u( xpas/f.sql.escape, lit(She said, "Oh my god!". \\ I said, "Relax; It's only a test."))
+
+
+--------------------------------------------------------------------------------
+-- HTML Escape -----------------------------------------------------------------
+
+	(not needed at this time)
+*/ 
+
+&f.html.escape xpas=
+	edit( edit( edit( edit( %0, &, &amp; ), %%, &#37; ), <, &lt; ), >, &gt; )
+
+
+/*
+--------------------------------------------------------------------------------
+-- HTML Unescape ---------------------------------------------------------------
+
+	(not needed at this time)
+*/
+
+&f.html.unescape xpas=
+	edit( edit( edit( edit( %0, &#37;, %% ), &lt;, < ), &gt;, > ), &amp;, & )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Time: unix2sql --------------------------------------------------------------
+
+0: secs.
+
+*/
+
+&f.time.unix2sql xpas=if( %0, timefmt( $Y-$m-$d $H:$M:$S $z, %0 ), none )
+
+/* -- test --
+
+think u( xpas/f.time.unix2sql, secs())
+
+think sql( SELECT FROM_UNIXTIME( [secs()] ))
+think timefmt( $Y-$m-$d $H:$M:$S $z, secs())
+
+
+--------------------------------------------------------------------------------
+-- Time: sql2unix --------------------------------------------------------------
+
+0: SQL Datetime, string output.
+
+*/
+
+&f.time.sql2unix xpas=sql( SELECT UNIX_TIMESTAMP( '%0' ))
+
+/* -- test --
+
+think u( xpas/f.time.sql2unix, u( sja/f.time.unix2sql, secs() ))
+
+think sql( SELECT UNIX_TIMESTAMP( '[u( xpas/f.time.unix2sql, secs() )]' ))
+think secs()
+
+
+--------------------------------------------------------------------------------
+-- Transaction Begin/End -------------------------------------------------------
+
+Technically an sql.* function, but easier to do this way.
+
+*/
+
+&f.transaction.begin xpas=
+	strcat( 
+		sql( START TRANSACTION ), 
+		sql( SET autocommit = 0 )
+	)
+
+// --
+
+&f.transaction.end xpas=
+	strcat( 
+		sql( COMMIT ), 
+		sql( SET autocommit = 1 )
+	)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+Beat Types:
+	Normal (default, general xp)
+	Player (can be shared among alts)
+
+
+For each 6 months approved, excluding periods of freezing...
+    Period   Beats/Week    Beats/Day
+	   1         10         1.4285714285714286
+	   2         5          0.7142857142857143
+	   3         3          0.42857142857142855
+	   4+        1          0.14285714285714285
+
+Limitations of earning: 
+	20 Beats/week (normal)
+	10 Beats/week (player)
+
+--
+
+Total time active:
+	u( <cg>/f.total_secs_approved, <character dbref> )
+
+[3/8/15, 10:13:06 PM] Manu: Need to decide when XP resets for gaining.
+[3/8/15, 10:13:32 PM] Kent: Tuesday at 4:53 am.
+[3/8/15, 10:13:34 PM] Kent: Eastern.
+[3/8/15, 10:13:34 PM] Manu: Like, when it resets to "you have now gained 0 XP this week".
+[3/8/15, 10:13:50 PM] Manu: Hah.
+[3/8/15, 10:14:08 PM] Kent: I could base it on their most recent approval, but I could also jam a hot poker in my eye.
+
+--
+
+&d.one-day xxx=86400
+
+--
+
+// Week's End calculation: 
+// Every 7th day after most recent Approval, reset the 'earned beats this week'.
+
+&f.at_weeks_end? xxx=
+	localize( strcat( 
+		setq( a, grab( revwords( get( %0/_approval.log ), | ), approved:*, | )), 
+		setq( a, elements( %qa, 2, : )), 
+
+		eq( 
+			mod( idiv( sub( secs( ), %qa ), v( d.one-day )), 7 ), 
+			0 
+		)
+	))
+
+--
+
+if 'u( f.at_weeks_end?, %0 )', reset the 'xp earned this week' attribute
+
+--
+
+&d.beats.max_weekly xxx=40
+
+--
+
+// how many weeks in a 'period' (nearest number to 6 months)
+&d.period.weeks xxx=26
+
+--
+
+// which << 26-week >> period is the character's approval time in? 
+// start a 1
+
+&f.current_period xxx=
+	...
+
+--
+
+&f.weekly_beats.auto xxx=
+	case( u( f.current_period, %0 ), 
+		0, 0, 
+		1, 10, 
+		2, 5, 
+		3, 3, 
+		1 
+	)
+	
+
+--
+
+// max beats per week = 40 - auto beats per week
+&f.weekly_beats.max_earned xxx=
+	sub( v( d.beats.max_weekly ), u( f.weekly_beats.auto, %0 ))
+
+--
+
+
+=--=-=-=-=-=-=-=-=-=-=-==-=-=-=
+
+Cassandra pages: Dunno if you want it to give an error or not when you set something like safe place and don't give something for the ().
+You paged Cassandra with ‘What did you type?’
+Cassandra pages: stat/set safe place=2
+Set Safe Place () to '2'.
+*/
