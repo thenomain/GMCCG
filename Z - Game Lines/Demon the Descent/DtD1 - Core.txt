@@ -88,7 +88,7 @@ Level 3 for very minor items
 	)]=
 	@edit d:t/tags.##=human, human.stigmatic
 
-@edit d:t/tags.advantage.integrity=human, human.stigmatic
+@edit d:t/tags.advantage.integrity=$, .stigmatic
 
 
 // == DEMON BIO ================================================================
@@ -99,6 +99,8 @@ Level 3 for very minor items
 &bio.agenda DD=Inquisitor.Integrator.Saboteur.Tempter.Uncalled
 &tags.bio.agenda D:T=demon
 
+&bio.stigmata DD=*
+&tags.bio.stigmata D:T=stigmatic
 
 
 // == DEMON ADVANTAGES =========================================================
@@ -127,80 +129,6 @@ Level 3 for very minor items
 // &special.cover_experiences DD=#
 // &default.special.cover_experiences DD=0 0
 // &tags.special.cover_experiences D:T=demon
-
-
-
-// == DEMON CONDITIONS =========================================================
-
-&condition.uncalled DD=1
-&tags.condition.uncalled D:T=demon.persistent
-
-
-// -- agenda conditions --------------------------------------------------------
-
-&condition.prepared_for_anything DD=1
-&default.condition.prepared_for_anything DD=1
-&tags.condition.prepared_for_anything D:T=demon.agenda.inquisitor
-
-&condition.angel_empathy DD=1
-&default.condition.angel_empathy DD=1
-&tags.condition.angel_empathy D:T=demon.agenda.interagator
-
-&condition.an_eye_for_disorder DD=1
-&default.condition.an_eye_for_disorder DD=1
-&tags.condition.an_eye_for_disorder D:T=demon.agenda.sabateur
-
-&condition.i_know_someone DD=1
-&default.condition.i_know_someone DD=1
-&tags.condition.i_know_someone D:T=demon.agenda.tempter
-
-
-// -- cover conditions ---------------------------------------------------------
-
-&condition.plugged_in DD=1
-&tags.condition.plugged_in D:T=demon.cover
-
-&condition.impostor DD=1
-&tags.condition.impostor D:T=demon.cover
-
-&condition.blown DD=1
-&tags.condition.blown D:T=demon.cover.persistent
-
-&condition.betrayed DD=1
-&tags.condition.betrayed D:T=demon.cover.persistent
-
-&condition.hunted DD=1
-&tags.condition.hunted D:T=demon.cover.persistent
-
-&condition.flagged DD=1
-&tags.condition.flagged D:T=demon.cover
-
-&condition.blackballed DD=1
-&tags.condition.blackballed D:T=demon.cover
-
-&condition.surveilled DD=1
-&tags.condition.surveilled D:T=demon.cover
-
-
-// -- demonic conditions -------------------------------------------------------
-
-&condition.aetheric_bleed DD=1
-&tags.condition.aetheric_bleed D:T=demon.demonic
-
-&condition.demonic_disconnect DD=1
-&tags.condition.demonic_disconnect D:T=demon.demonic
-
-&condition.demonic_rage DD=1
-&tags.condition.demonic_rage D:T=demon.demonic
-
-&condition.demonic_rage DD=1
-&tags.condition.demonic_rage D:T=demon.demonic
-
-
-// -- other conditions ---------------------------------------------------------
-
-&condition.capitvated DD=1
-&condition.disoriented DD=1
 
 
 
@@ -240,7 +168,7 @@ Level 3 for very minor items
 			setdiff( u( u( d.dd )/.demon.agendas, %0 ), Uncalled, . ), 
 			%1, . 
 		)), 
-		not( lattr( %0/merit.multiple_agendas_(*) )
+		not( lattr( %0/_merit.multiple_agendas_(*) )
 	)
 &prereq-text.merit.multiple_agendas_() DD=Must be different than current agenda, may not have this merit more than once, may not take if Uncalled
 &tags.merit.multiple_agendas_() D:T=demon.mental
@@ -823,6 +751,13 @@ Level 3 for very minor items
 &tags.demonic_form.wound_healing D:T=demon.process
 
 
+// == DEMON GLITCHES ===========================================================
+
+&type.glitch.? DD=string
+
+&glitch.brand_() DD=minor.major.catastrophic|*
+&glitch.tell_() DD=minor.major.catastrophic|*
+&glitch.emanation_() DD=minor.major.catastrophic|*
 
 
 /* 
@@ -838,7 +773,22 @@ incarnation
 agenda
 
 
+--------------------------------------------------------------------------------
+-- Bio Check: Demon ------------------------------------------------------------
+*/
 
+&check.bio.demon cg=incarnation agenda
+
+
+/*
+--------------------------------------------------------------------------------
+-- Bio Check: Stigmatic --------------------------------------------------------
+*/
+
+&check.bio.stigmatic cg=stigmata
+
+
+/*
 ================================================================================
 == CHARGEN: MERITS =============================================================
 
@@ -858,21 +808,6 @@ Stigmatics get +3 dots for Supernatural Merits only.
 			u( f.list-stats-tags, %0, merit, supernatural ), 
 			1 2 3 
 		)
-	)
-
-/*
-
---------------------------------------------------------------------------------
--- Chargen Check: Stigmatic ----------------------------------------------------
-*/
-
-&check.chargen.stigmatic CG=
-	cat( 
-		%b, 
-		Stigmatic Merits:, 
-		setr( 9, u( f.allocated.merits.stigmatic, %0 )), 
-		u( display.check.ok-no, eq( %q9, 3 )), 
-		%r 
 	)
 
 
@@ -1146,6 +1081,30 @@ f: all demonic form foo
 
 
 /*
+================================================================================
+== CHARGEN CHECK: DEMON ========================================================
+
+
+
+================================================================================
+== CHARGEN CHECK: STIGMATIC ====================================================
+
+*/
+
+&check.chargen.stigmatic CG=
+	strcat( 
+		%b, %b, 
+		Stigmatic Merits:, %b, 
+		setr( 9, u( f.allocated.merits.stigmatic, %0 )), %b, 
+		u( display.check.ok-no, eq( %q9, 3 )), %b, 
+		%r, 
+		
+	)
+
+
+
+
+/*
 ################################################################################
 ## DEMON: XP COSTS #############################################################
 */
@@ -1157,6 +1116,16 @@ f: all demonic form foo
 &xp.embed XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
 &xp.exploit XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
 
+
+
+/*
+################################################################################
+## DEMON: SHEET ################################################################
+*/
+
+
+&bio.default.stigmatic Newest Sheet Code <nsc>=
+	birthdate concept stigmata template virtue vice 
 
 
 /* 
