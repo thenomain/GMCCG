@@ -42,6 +42,7 @@ Chances are 'Full Name' will be reflected in the header and stripped here.
 --
 
 0: sheet dbref
+1: sheet template
 output: <trait>:<value>[.<offset(s)>]|...
 
 
@@ -49,7 +50,10 @@ output: <trait>:<value>[.<offset(s)>]|...
 -- Bio.Default -----------------------------------------------------------------
 
 &bio.default nsc=
-	iter( full_name birthdate concept template virtue vice, 
+	iter( 
+		default( %!/bio.default.%1, 
+			full_name birthdate concept template virtue vice 
+		), 
 		if( t( %i0, ), 
 			ulocal( f.cheat_getstat.with_name, %0, bio.%i0, string ), 
 			%b 

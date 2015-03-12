@@ -25,7 +25,7 @@ think u( nsc/bio.default, %# )
 
 &block.bio Sheet: Rows=
 	strcat( 
-		setq( o, ulocal( bio.default, %0 )), 
+		setq( o, ulocal( bio.default, %0, %1 )), 
 		setq( w, 39 ), 
 		setq( t, 12 ), 
 		divider( Bio ), %r, 
@@ -46,7 +46,7 @@ think u( nsc/bio.default, %# )
 
 --
 
-think u( sheet: rows/block.bio, %# )
+think u( sheet: rows/block.bio, %#, get( %#/_bio.template ))
 
 
 -==-=--=-=-=-=
@@ -376,6 +376,7 @@ FINAL SHEET:
 
 0: dbref of sheet
 1: dbref of target
+2: template of sheet
 
 --
 
@@ -387,18 +388,18 @@ FINAL SHEET:
 				%(%0%) 
 			)
 		), %r, 
-		u( block.bio, %0 ), %r, 
-		u( block.attributes, %0 ), %r, 
-		u( block.skills, %0 ), %r, 
-		u( block.merits, %0 ), %r, 
-		u( block.advantages, %0 ), 
-		u( block.traits, %0 ), %r, 
-		u( block.health, %0 ), %r, 
+		u( block.bio, %0, %2 ), %r, 
+		u( block.attributes, %0, %2 ), %r, 
+		u( block.skills, %0, %2 ), %r, 
+		u( block.merits, %0, %2 ), %r, 
+		u( block.advantages, %0, %2 ), 
+		u( block.traits, %0, %2 ), %r, 
+		u( block.health, %0, %2 ), %r, 
 		footer( )
 	)
 
 --
 
-think u( sheet: rows/display.sheet, %#, %# )
+think u( sheet: rows/display.sheet, %#, %#, get( %#/_bio.template ))
 
 =--=-==--==-=-=--==-=-
