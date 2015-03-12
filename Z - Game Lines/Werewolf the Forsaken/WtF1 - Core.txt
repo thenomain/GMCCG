@@ -1,0 +1,417 @@
+/*
+################################################################################
+## WEREWOLF: THE FORSAKEN ######################################################
+
+This file includes all additions to the system for Werewolf: The Forsaken 
+core rules
+
+################################################################################
+## WEREWOLF: STAT FUNCTIONS ####################################################
+
+--------------------------------------------------------------------------------
+-- SFP: Search Order -----------------------------------------------------------
+
+Level 2 for powers 
+Level 3 for very minor items
+*/
+
+&d.search-order-02-werewolf sfp=
+&d.search-order-03-werewolf sfp=
+
+
+
+
+/*
+################################################################################
+## WEREWOLF: DATA DICTIONARY ###################################################
+
+
+
+================================================================================
+== DD: SETUP ===================================================================
+
+Stuff we need to put on the Data Dictionary
+
+*/
+
+// CODP prefixes
+&prefix.werewolf-gifts dd=gift.
+
+&prefix.werewolf_-_gifts d:t=tags.gift.
+
+
+// add to templates
+@fo me=&bio.template dd=[get( dd/bio.template )].Werewolf.Wolf-Blooded
+
+
+// register "max trait" statpath
+&.max_trait.werewolf dd=advantage.primal_urge
+
+
+// register "sphere"'s templates (could this be folded into 'templates'?)
+&.sphere.demon dd=Werewolf Wolf-Blooded
+
+// -- DD: Tags for Wolf-Blooded ------------------------------------------------
+
+@edit d:t/tags.advantage.integrity=$, .wolf-blooded
+
+
+
+/*
+================================================================================
+== WEREWOLF BIO ================================================================
+
+&bio.xxx DD=...
+&tags.bio.xxx D:T=werewolf
+*/
+
+&bio.pack DD=*
+&tags.bio.stigmata D:T=werewolf.wolf-blooded
+
+
+/*
+================================================================================
+== WEREWOLF ADVANTAGES =========================================================
+
+&advantage.xxx DD=
+&tags.advantage.xxx D:T=werewolf
+*/
+
+
+
+/*
+================================================================================
+== WEREWOLF MERITS =============================================================
+*/
+
+
+// -- Merits: Wolf-Blooded -----------------------------------------------------
+
+&merit.pack_bond dd=1.3
+&tags.merit.pack_bond d:t=wolf-blooded
+
+&merit.tell_() dd=3|A Wolf's Meat.Anger Issues.Bite.Bitten.Clever Fingers.Devil Inside.Evil Eye.Exciting.Familiar.Fuck Ugly.Horse.Host-Ache.Liar's Skin.Marker.Moon Marked.Phantom Pack.Piercing Eyes.Second Skin.Shape-Shifted.Shadow Twin.Skinner.Spirit Double.Strong Scent.Third Nipple.Tongues.Waystone.Wolf Sign
+&tags.merit.tell_() d:t=wolf-blooded
+
+&merit.raised_by_wolves dd=1
+&tags.merit.raised_by_wolves d:t=wolf-blooded
+
+// Wolf-Blooded Merits: Tribal Affinity
+
+&merit.fenris-ur's_blood dd=2
+&prerequisite.merit.fenris-ur's_blood dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			tribal affinity, 0 
+		)
+	)
+&prereq-text.merit.fenris-ur's_blood dd=Only one Tribal Affinity merit allowed
+&tags.merit.fenris-ur's_blood d:t=wolf-blooded.tribal affinity
+
+&merit.kamduis-ur's_blood dd=2
+&prerequisite.merit.kamduis-ur's_blood dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			tribal affinity, 0 
+		)
+	)
+&prereq-text.merit.kamduis-ur's_blood dd=Only one Tribal Affinity merit allowed
+&tags.merit.kamduis-ur's_blood d:t=wolf-blooded.tribal affinity
+
+&merit.hikaon-ur's_blood dd=2
+&prerequisite.merit.hikaon-ur's_blood dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			tribal affinity, 0 
+		)
+	)
+&prereq-text.merit.hikaon-ur's_blood dd=Only one Tribal Affinity merit allowed
+&tags.merit.hikaon-ur's_blood d:t=wolf-blooded.tribal affinity
+
+&merit.sagrim-ur's_blood dd=2
+&prerequisite.merit.sagrim-ur's_blood dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			tribal affinity, 0 
+		)
+	)
+&prereq-text.merit.sagrim-ur's_blood dd=Only one Tribal Affinity merit allowed
+&tags.merit.sagrim-ur's_blood d:t=wolf-blooded.tribal affinity
+
+&merit.skolis-ur's_blood dd=2
+&prerequisite.merit.skolis-ur's_blood dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			tribal affinity, 0 
+		)
+	)
+&prereq-text.merit.skolis-ur's_blood dd=Only one Tribal Affinity merit allowed
+&tags.merit.skolis-ur's_blood d:t=wolf-blooded.tribal affinity
+
+&merit.ghost_child dd=2
+&prerequisite.merit.ghost_child dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			tribal affinity, 0 
+		)
+	)
+&prereq-text.merit.ghost_child dd=Only one Tribal Affinity merit allowed
+&tags.merit.ghost_child d:t=wolf-blooded.tribal affinity
+
+
+// Wolf-Blooded Merits: Moon Birth
+
+&merit.crescent_moon's_birth dd=2
+&prerequisite.merit.crescent_moon's_birth dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			moon birth, 0 
+		)
+	)
+&prereq-text.merit.crescent_moon's_birth dd=Only one Moon Birth merit allowed
+&tags.merit.crescent_moon's_birth dd=wolf-blooded.moon birth
+
+&merit.full_moon's_birth dd=2
+&prerequisite.merit.full_moon's_birth dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			moon birth, 0 
+		)
+	)
+&prereq-text.merit.full_moon's_birth dd=Only one Moon Birth merit allowed
+&tags.merit.full_moon's_birth dd=wolf-blooded.moon birth
+
+&merit.gibbous_moon's_birth dd=2
+&prerequisite.merit.gibbous_moon's_birth dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			moon birth, 0 
+		)
+	)
+&prereq-text.merit.gibbous_moon's_birth dd=Only one Moon Birth merit allowed
+&tags.merit.gibbous_moon's_birth dd=wolf-blooded.moon birth
+
+&merit.half_moon's_birth dd=2
+&prerequisite.merit.half_moon's_birth dd=
+	cand( 
+		not( 
+			filter( 
+				u( d.sfp )/f.hastag?.workhorse, 
+				edit( 
+					lattr( %0/_merit.* ), 
+					_MERIT., 
+					MERIT. 
+				), , , 
+				moon birth, 0 
+			)
+		), 
+		t( lattr( %0/_merit.safe_place_(*) ))
+	)
+&prereq-text.merit.half_moon's_birth dd=Only one Moon Birth merit allowed, 
+	Must Have Safe Place 1+
+&tags.merit.half_moon's_birth dd=wolf-blooded.moon birth
+
+&merit.no_moon's_birth dd=2
+&prerequisite.merit.no_moon's_birth dd=
+	not( 
+		filter( 
+			u( d.sfp )/f.hastag?.workhorse, 
+			edit( 
+				lattr( %0/_merit.* ), 
+				_MERIT., 
+				MERIT. 
+			), , , 
+			moon birth, 0 
+		)
+	)
+&prereq-text.merit.no_moon's_birth dd=Only one Moon Birth merit allowed
+&tags.merit.no_moon's_birth dd=wolf-blooded.moon birth
+
+
+
+
+/* 
+################################################################################
+## WEREWOLF CHARGEN ############################################################
+
+
+================================================================================
+== CHARGEN: BIO ================================================================
+
+incarnation
+agenda
+
+
+
+
+--------------------------------------------------------------------------------
+-- Bio Check: Wolf-Blooded -----------------------------------------------------
+
+('pack' doesn't need to be set)
+*/
+
+&check.bio.wolf-blooded cg=
+
+
+
+
+
+
+
+================================================================================
+== CHARGEN CHECK: WEREWOLF =====================================================
+
+
+
+================================================================================
+== CHARGEN CHECK: WOLF-BLOODED =================================================
+
+	n/a (yet)
+*/
+
+
+
+
+/*
+################################################################################
+## WEREWOLF: XP COSTS ##########################################################
+*/
+
+// &xp.advantage.<power> XP Cost Database <xpcd>=u( cost.single, 5, %1, %2 )
+
+// &xp.advantage.<integrity> XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
+
+
+
+/*
+################################################################################
+## DEMON: SHEET ################################################################
+*/
+
+
+&bio.default.wolf-blooded Newest Sheet Code <nsc>=birthdate concept pack template virtue vice 
+
+
+
+
+
+
+
+
+
+
+
+/*
+################################################################################
+## WEREWOLF: ONGOING NOTES #####################################################
+
+Willpower is equal to Resolve + Composure. Harmony is 7. Size is 5. Health is Size + Stamina. Speed is Size + Strength + Dexterity. Defense is the lower of Dexterity and Wits, plus Athletics. Primal Urge is 1, plus any bought with Merits.
+
+Primal Urge starts at 1 dot. Additional dots may be purchased with five Merit dots each. A character cannot start with Primal Urge higher than 3.
+
+Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the second Facet of your Moon Gift if you have two dots in your auspice Renown. You cannot choose a Facet in which your character has no dots of Renown.
+
+--
+
+Auspice :: Auspice Skills :: Renown :: Gifts
+
+Cahalith :: Crafts, Expression, Persuasion :: Glory :: Gibbous Moon, Inspiration, Knowledge
+
+Elodoth :: Empathy, Investigation, Politics :: Honor :: Half Moon, Insight, Warding
+
+Irraka :: Larceny, Stealth, Subterfuge :: Cunning :: New Moon, Evasion, Stealth
+
+Ithaeur :: Animal Ken, Medicine, Occult :: Wisdom :: Crescent Moon, Elemental, Shaping
+
+Rahu :: Brawl, Intimidation, Survival :: Purity :: Full Moon, Dominance, Strength
+
+--
+
+Tribe :: Renown :: Gifts
+
+Blood Talons :: Glory :: Inspiration, Rage, Strength
+Bone Shadows :: Wisdom :: Death, Elemental, Insight
+Hunters in Darkness :: Purity :: Nature, Stealth, Warding
+Iron Masters :: Cunning :: Knowledge, Shaping, Technology
+Storm Lords :: Honor :: Evasion, Dominance, Weather
+Ghost Wolves :: None :: None 
+
+--
+
+Anchors: 
+Anchors keep Uratha grounded. They’re concepts, philos- ophies, people, places, and things that help her find herself when lost. Werewolf: The Forsaken characters have three Anchors: Blood, Bone, and Touchstones
+
+Blood: thingy
+Bone: thingy
+Touchstone: thingy
+
+--
+
+Wolf-Blooded: p. 296
+
+--
+
+Primal Urge chart: p.93
+Shapeshifting chart: p.96
+Renown (& effective rank): p.98-9
+Harmony: p.104
+Merits: pp.105-110
+Gifts: p.114
+
+*/
+
+
