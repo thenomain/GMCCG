@@ -49,7 +49,7 @@ Stuff we need to put on the Data Dictionary
 
 
 // register "sphere"'s templates (could this be folded into 'templates'?)
-&.sphere.demon dd=Werewolf Wolf-Blooded
+&.sphere.werewolf dd=Werewolf Wolf-Blooded
 
 // -- DD: Tags for Wolf-Blooded ------------------------------------------------
 
@@ -311,7 +311,7 @@ agenda
 
 
 
-
+/*
 ================================================================================
 == CHARGEN CHECK: WEREWOLF =====================================================
 
@@ -339,7 +339,7 @@ agenda
 
 /*
 ################################################################################
-## DEMON: SHEET ################################################################
+## WEREWOLF: SHEET #############################################################
 */
 
 
