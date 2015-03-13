@@ -1,61 +1,478 @@
-@@ == SETUP
+/*
+################################################################################
+## VAMPIRE: THE REQUIEM ########################################################
 
+This file includes all additions to the system for Vampire: The Requiem 
+core rules
+
+
+
+
+################################################################################
+## VAMPIRE: STAT FUNCTIONS #####################################################
+
+--------------------------------------------------------------------------------
+-- SFP: Search Order -----------------------------------------------------------
+
+Level 2 for powers 
+Level 3 for very minor items
+*/
+
+&d.search-order-02-vampire sfp=discipline
+&d.search-order-03-vampire sfp=
+
+
+
+/*
+################################################################################
+## VAMPIRE: DATA DICTIONARY ####################################################
+
+
+
+================================================================================
+== DD: SETUP ===================================================================
+*/
+
+// CODP prefixes
 &prefix.vampire_-_disciplines dd=discipline.
 
-&.max_trait.Vampire dd=advantage.blood_potency
+&prefix.vampire_-_disciplines dd=tags.discipline.
+
+
+// add to templates
+@fo me=&bio.template dd=[get( dd/bio.template )].Vampire.Ghoul
+
+
+// register "max trait" statpath
+&.max_trait.vampire dd=advantage.blood_potency
+
+
+// register "sphere"'s templates (could this be folded into 'templates'?)
+&.sphere.vampire dd=Vampire Ghoul
+
+
+// -----------------------------------------------------------------------------
+// -- DD: Tags for Ghouls ------------------------------------------------------
+
+@edit d:t/tags.advantage.integrity=$, .ghoul
+
+
+/*
+================================================================================
+== VAMPIRE BIO =================================================================
+*/
+
+&bio.clan DD=Daeva.Gangrel.Mekhet.Nosferatu.Ventrue
+&tags.bio.clan D:T=vampire.ghoul
+
+&bio.covenant DD=
+	Carthian Movement.Circle of the Crone.Invictus.Lancea Sanctum.Ordo Dracul
+&tags.bio.covenant D:T=vampire
 
 
 
-@@ VAMPIRE POWERS: DISCIPLINES -------------------------------------------------
+/*
+================================================================================
+== VAMPIRE ADVANTAGES ==========================================================
 
+&advantage.xxx DD=
+&tags.advantage.xxx D:T=vampire
+*/
+
+&advantage.blood_potency DD=0.1.2.3.4.5.6.7.8.9.10
+&default.advantage.blood_potency DD=1
+&prerequisite.advantage.blood_potency DD=u( .is_full, %0, bio.template, vampire )
+&prereq-text.advantage.blood_potency DD=Ghouls may not raise this stat.
+&tags.advantage.blood_potency D:T=power.vampire
+
+&advantage.vitae DD=ladd( u( .value_full, %0, advantage.vitae_maximum ), . )
+&default.advantage.vitae DD=derived
+&tags.advantage.vitae D:T=pool.vampire.ghoul
+
+&advantage.vitae_maximum DD=
+	if( u( .is_full, %0, bio.template, vampire ), 
+
+		elements( 
+			10 11 12 13 14 15 20 30 50 100, 
+			u( .value, %0, advantage.blood_potency )
+		), 
+
+		u( .value_stats, %0, attribute.stamina discipline.resilience )
+	)
+&default.advantage.vitae_maximum DD=derived
+&tags.advantage.vitae_maximum D:T=pool.vampire.ghoul
+
+
+
+/*
+================================================================================
+== VAMPIRE MERITS ==============================================================
+*/
+
+// -- Ghoul Merits -------------------------------------------------------------
+
+&merit.taste_of_shadow DD=2
+&tags.merit.taste_of_shadow D:T=ghoul.mekhet
+&prereq-text.merit.taste_of_shadow DD=Mekhet Regnant
+&prerequisite.merit.taste_of_shadow DD=u( .is, %0, bio.clan, Mekhet )
+
+&merit.taste_of_serpent DD=2
+&tags.merit.taste_of_serpent D:T=ghoul.daeva
+&prerequisite.merit.taste_of_serpent DD=u( .is, %0, bio.clan, Daeva )
+&prereq-text.merit.taste_of_serpent DD=Daeva Regnant
+
+&merit.taste_of_the_wild DD=2
+&tags.merit.taste_of_the_wild D:T=ghoul.gangrel
+&prerequisite.merit.taste_of_the_wild DD=u( .is, %0, bio.clan, Gangrel )
+&prereq-text.merit.taste_of_the_wild DD=Gangrel Regnant
+
+&merit.taste_of_gold DD=2
+&tags.merit.taste_of_gold D:T=ghoul.ventrue
+&prerequisite.merit.taste_of_gold DD=u( .is, %0, bio.clan, Ventrue )
+&prereq-text.merit.taste_of_gold DD=Ventrue Regnant
+
+&merit.taste_of_fear DD=2
+&tags.merit.taste_of_fear D:T=ghoul.nosferatu
+&prerequisite.merit.taste_of_fear DD=u( .is, %0, bio.clan, Nosferatu )
+&prereq-text.merit.taste_of_fear DD=Nosferatu Regnant
+
+&merit.producer DD=1
+&tags.merit.producer D:T=ghoul.human
+
+&merit.weakened_bond DD=3
+&tags.merit.weakened_bond D:T=ghoul.human
+
+&merit.clear-sighted DD=2
+&tags.merit.clear-sighted D:T=human
+
+&merit.source_sympathy DD=1
+&tags.merit.source_sympathy D:T=ghoul
+
+&merit.protected DD=2
+&tags.merit.protected D:T=ghoul.human
+
+&merit.empowered_to_speak DD=1
+&tags.merit.empowered_to_speak D:T=ghoul
+
+&merit.vitae_hound DD=1
+&tags.merit.vitae_hound D:T=ghoul
+
+&merit.beast_whispers DD=2
+&tags.merit.beast_whispers D:T=ghoul.human
+
+&merit.beloved_() DD=1|*
+&tags.merit.beloved_() D:T=ghoul.human
+&prerequisite.merit.beloved_() DD=0
+&prereq-text.merit.beloved_() DD=Touchstone of the one they're beloved of
+// There is absolutely no way for code to determine this; with 'prereq' set to 0 it must be set by staff using the /override switch
+
+&merit.watch_dog DD=2
+&tags.merit.watch_dog D:T=ghoul
+&prerequisite.merit.watch_dog DD=0
+&prereq-text.merit.watch_dog DD=Regnant with Auspex
+// There is absolutely no way for code to determine this; with 'prereq' set to 0 it must be set by staff using the /override switch
+
+
+
+/*
+================================================================================
+== VAMPIRE DISCIPLINES =========================================================
+*/
 
 &discipline.animalism DD=1.2.3.4.5
-&tags.discipline.animalism DD=vampire
+&tags.discipline.animalism D:T=vampire.ghoul.gangrel.ventrue
 
 &discipline.auspex DD=1.2.3.4.5
-&tags.discipline.auspex DD=vampire
+&tags.discipline.auspex D:T=vampire.ghoul.mekhet
 
 &discipline.celerity DD=1.2.3.4.5
-&tags.discipline. DD=vampire
+&tags.discipline. D:T=vampire.ghoul.daeva.mekhet
 
 &discipline.dominate DD=1.2.3.4.5
-&tags.discipline.dominate DD=vampire
+&tags.discipline.dominate D:T=vampire.ghoul.ventrue
 
 &discipline.majesty DD=1.2.3.4.5
-&tags.discipline.majesty DD=vampire
+&tags.discipline.majesty D:T=vampire.ghoul.daeva
 
 &discipline.nightmare DD=1.2.3.4.5
-&tags.discipline.nightmare DD=vampire
+&tags.discipline.nightmare D:T=vampire.ghoul.nosferatu
 
 &discipline.obfuscate DD=1.2.3.4.5
-&tags.discipline.obfuscate DD=vampire
+&tags.discipline.obfuscate D:T=vampire.ghoul.mehket.nosferatu
 
 &discipline.protean DD=1.2.3.4.5
-&tags.discipline.protean DD=vampire
+&tags.discipline.protean D:T=vampire.ghoul.gangrel
+
+&discipline.resilience DD=1.2.3.4.5
+&tags.discipline.resilience D:T=vampire.ghoul.gangrel
 
 &discipline.vigor DD=1.2.3.4.5
-&tags.discipline. DD=vampire
+&tags.discipline.vigor D:T=vampire.ghoul.daeva.nosferatu
 
-&discipline.cruac DD=1.2.3.4.5
-&tags.discipline.cruac DD=vampire.crone
+
+// -- Devotions ----------------------------------------------------------------
+// may not be taken by ghouls
+
+
+// -- Blood Sorcery: Theban Sorcery --------------------------------------------
+// not listed as denied to ghouls, but we haven't added them
+// add '.ghoul' to the tags if you want them to be able to take it
 
 &discipline.theban_sorcery DD=1.2.3.4.5
-&tags.discipline.theban_sorcery DD=vampire.sanctified
-
-&coil.ascendant DD=1.2.3.4.5
-&tags.coil.ascendant DD=vampire.dragon
-
-&coil.wyrm DD=1.2.3.4.5
-&tags.coil.wyrm DD=vampire.dragon
-
-&coil.voivode DD=1.2.3.4.5
-&tags.coil.voivode DD=vampire.dragon
+&prerequisite.discipline.theban_sorcery DD=<sanctified only>
+&prereq-text.discipline.theban_sorcery DD=<sanctified only>
+&tags.discipline.theban_sorcery D:T=vampire
 
 
+// -- Blood Sorcery: Cruac -----------------------------------------------------
+// not listed as denied to ghouls, but we haven't added them
+// add '.ghoul' to the tags if you want them to be able to take it
 
-@@ Vampire Merits
+&discipline.cruac DD=1.2.3.4.5
+&prerequisite.discipline.cruac DD=<crone only>
+&prereq-text.discipline.cruac DD=<crone only>
+&tags.discipline.cruac D:T=vampire
 
-@@ -- Vampire Merits: General --
+
+// -- Coils --------------------------------------------------------------------
+// may not be taken by ghouls
+
+&discipline.coil_of_the_ascendant DD=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_ascendant DD=<dragon only>
+&prereq-text.discipline.coil_of_the_ascendant DD=<dragon only>
+&tags.discipline.coil_of_the_ascendant D:T=vampire
+
+&discipline.coil_of_the_wyrm DD=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_wyrm DD=<dragon only>
+&prereq-text.discipline.coil_of_the_wyrm DD=<dragon only>
+&tags.discipline.coil_of_the_wyrm D:T=vampire
+
+&discipline.coil_of_voivode DD=1.2.3.4.5
+&prerequisite.discipline.coil_of_voivode DD=<dragon only>
+&prereq-text.discipline.coil_of_voivode DD=<dragon only>
+&tags.discipline.coil_of_voivode D:T=vampire
+
+
+// -- Etc. ---------------------------------------------------------------------
+
+
+
+
+
+
+
+/* 
+################################################################################
+## VAMPIRE CHARGEN #############################################################
+
+
+
+/*
+================================================================================
+== CHARGEN: ALLOCATIONS ========================================================
+
+
+--------------------------------------------------------------------------------
+-- Allocated Disciplines -------------------------------------------------------
+
+disciplines`in-clan disciplines`in-bloodline disciplines
+
+(we don't have bloodline yet, but you know we will)
+
+*/
+
+&f.allocated.disciplines cg=
+	localize( strcat( 
+		setq( d, lattr( %0/_discipline.* )), 
+		setq( i, u( f.list-stats-tags, %0, discipline, get( %0/_bio.clan ))), 
+//		setq( b, 
+//			u( f.list-stats-tags, %0, discipline, get( %0/_bio.bloodline ))
+//		), 
+		words( setdiff( %qd, %qi )), `, words( %qi ), 
+//		`, words( %qb )
+	))
+
+
+
+/*
+================================================================================
+== CHARGEN: BIO ================================================================
+
+--------------------------------------------------------------------------------
+-- Bio Check: Ghoul ------------------------------------------------------------
+
+*/
+
+&check.bio.ghoul cg=clan
+
+
+
+/* 
+================================================================================
+== CHARGEN CHECK: VAMPIRE ======================================================
+
+
+&check.chargen.vampire CG=
+	strcat( 
+		u( check.disciplines, %0, vampire ), 
+		<whatever else>
+	)
+
+
+================================================================================
+== CHARGEN CHECK: GHOUL ========================================================
+
+- 2 in-clan disciplines
+
+*/
+
+&check.chargen.ghoul CG=
+	u( check.disciplines, %0, ghoul )
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Disciplines --------------------------------------------------
+
+0: sheet dbref
+1: template 
+
+*/
+
+&check.disciplines CG=
+	strcat( 
+		setq( 9, u( f.allocated.disciplines, %0 )),
+		setq( t, ladd( %q9, ` )), 
+		setq( i, elements( %q9, 2, ` )), 
+		setq( o, elements( %q9, 1, ` )), 
+
+		%b, %b, 
+		Total Disciplines:, %b, 
+		if( eq( %qt, 0 ), ansi( xh, <none> ), %qt ), %b, 
+		u( check.disciplines.%1, %qt ), 
+		%r, 
+
+		%b, %b, %b, %b, 
+		In-Clan:, %b, 
+		if( eq( %qi, 0 ), ansi( xh, <none> ), %qi ), %b, 
+		u( check.disciplines.%1.in-clan, %qi ), 
+		%r, 
+
+		%b, %b, %b, %b, 
+		Others:, %b, 
+		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
+		u( check.disciplines.%1.non-clan, %qi ), 
+
+		%r 
+	)
+
+&check.disciplines.vampire CG=u( display.check.ok-no, eq( %0, 3 ))
+&check.disciplines.vampire.in-clan CG=u( display.check.ok-no, gte( %0, 2 ))
+&check.disciplines.vampire.non-clan CG=u( display.check.ok-no, lte( %0, 1 ))
+
+&check.disciplines.ghoul CG=u( display.check.ok-no, eq( %0, 2 ))
+&check.disciplines.ghoul.in-clan CG=u( display.check.ok-no, eq( %0, 2 ))
+&check.disciplines.ghoul.non-clan CG=u( display.check.ok-no, eq( %0, 0 ))
+
+
+
+
+/*
+################################################################################
+## VAMPIRE: XP COSTS ###########################################################
+*/
+
+&xp.advantage.blood_potency XP Cost Database <xpcd>=
+	if( u( .is_full, %0, bio.template, vampire ), 
+		u( cost.single, 5, %1, %2 ), 
+		0 
+	)
+	
+
+// &xp.advantage.<integrity> XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
+
+
+
+/*
+################################################################################
+## VAMPIRE: SHEET ##############################################################
+*/
+
+
+&bio.default.ghoul Newest Sheet Code <nsc>=birthdate concept clan template virtue vice 
+
+
+
+
+
+
+
+
+
+
+/*
+################################################################################
+## VAMPIRE: NOTES TO SELF ######################################################
+
+Ghoul CGen: p.290
+- Clan
+- Disciplines (2 dots, in-clan)
+- Blood Potency: 0
+
+
+
+An in-clan Discipline dot costs three Experiences. Any other Discipline or blood sorcery costs four. As well, Disciplines sometimes require teachers
+
+Choose a Mask and a Dirge for your character. Whereas a mortal character has a Virtue and a Vice, Kindred characters have Masks and Dirges.
+
+Mask & Dirge Archetypes: 
+	Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.
+	Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Jester.Junkie.Martyr.
+	Masochist.Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.
+	Scholar.Social Chameleon.Survivor.Visionary
+
+touchstone
+
+devotions
+
+* Favored Disciplines: 
+
+Daeva Disciplines: *Celerity, *Majesty, *Vigor
+Gangrel Disciplines: *Animalism, *Protean, *Resilience 
+Mekhet Disciplines: *Auspex, *Celerity, *Obfuscate 
+Nosferatu Disciplines: *Nightmare, *Obfuscate, *Vigor 
+Ventrue Disciplines: *Animalism, *Dominate, *Resilience
+
+Blood Potency: p.90
+Humanity:p.106
+
+Coils of the Dragon - Coils, three types
+Crúac - blood sorcery 
+Theban Sorcery - blood sorcery
+
+
+-- Ghoul Cgen Notes ------------------------------------------------------------
+
+Clan: Your ghoul has a regnant, usually the vampire who first gave her Vitae and 
+spent a point of Willpower on her. Think about who this regnant is (maybe one of 
+the other player’s characters), and decide on his clan.
+
+Disciplines: Select two dots of Disciplines that are in-clan for your 
+character’s regnant. At least one physical Discipline dot is recommended, but 
+not required. (You might want to look at the ghoul Discipline rules below 
+first.)
+
+Blood Potency: Your character gains the Blood Potency trait at 0, allowing him 
+to store and spend Vitae. This trait cannot be increased with Experiences or 
+time.
+
+================================================================================
+== VAMPIRE MERITS (NOT ENTERED) ================================================
+
+// Vampire Merits
+
+// -- Vampire Merits: General --
 
 &merit.acute_senses DD=1
 &tags.merit.acute_senses DD=vampire
@@ -187,12 +604,12 @@
 
 &merit.unnatural_affinity_() DD=1|*
 &tags.merit.unnatural_affinity_ DD=vampire
-@@ I think we should leave this Merit as a 1-dot Merit with different instances, since that’s a better way than having it be 1-5.
-@@ as long as they can't take it more than 5 times
-@@ I don’t see why they couldn’t, as long as it’s a different type of supernatural each time.
-@@ because that's what '1-5' means in the core rules; changing how it's recorded doesn't change that rule. this applies to all '1-5' merits we're breaking down - house rule time?
-@@ Definitely. if players want to spend a bazillion dots just so they can feed on ghosts or whatever, why limit them?
-@@ house-rule time
+// I think we should leave this Merit as a 1-dot Merit with different instances, since that’s a better way than having it be 1-5.
+// as long as they can't take it more than 5 times
+// I don’t see why they couldn’t, as long as it’s a different type of supernatural each time.
+// because that's what '1-5' means in the core rules; changing how it's recorded doesn't change that rule. this applies to all '1-5' merits we're breaking down - house rule time?
+// Definitely. if players want to spend a bazillion dots just so they can feed on ghosts or whatever, why limit them?
+// house-rule time
 
 &merit.swarm_form DD=1
 &tags.merit.swarm_form DD=vampire
@@ -232,7 +649,7 @@
 
 
 
-@@ -- Vampire Merits: Carthian Law --
+// -- Vampire Merits: Carthian Law --
 
 &merit.lex_terrae DD=1
 &tags.merit.lex_terrae DD=vampire
@@ -261,7 +678,7 @@
 
 
 
-@@ -- Vampire Merits: Invictus Oaths --
+// -- Vampire Merits: Invictus Oaths --
 
 &merit.notary DD=2
 &tags.merit.notary DD=vampire
@@ -284,12 +701,12 @@
 
 
 
-@@ -- Vampire Merits: Kindred Fighting Styles --
+// -- Vampire Merits: Kindred Fighting Styles --
 
 &merit.kindred_dueling DD=1.2.3.4.5
 &tags.merit.kindred_dueling DD=physical.fighting.style
 &prerequisite.merit.kindred_dueling DD=cand( u( .has, %0, merit.fighting_finesse_(*) ), u( .at_least_all, %0, attribute.composure:3 skill.weaponry:2 ))
-@@ not sure that wildcard is going to work
+// not sure that wildcard is going to work
 &prereq-text.merit.kindred_dueling DD=Fighting Finesse, Composure 3, Weaponry 2
 
 &merit.riding_the_wave DD=1.2.3.4.5
@@ -299,65 +716,5 @@
 
 
 
-@@ -- Ghoul Merits --
 
-&merit.taste_of_shadow DD=2
-&tags.merit.taste_of_shadow DD=ghoul.mekhet
-&prereq-text.merit.taste_of_shadow DD=Mekhet Regnant
-&prerequisite.merit.taste_of_shadow DD=u( .is, %0, bio.clan, Mekhet )
-
-&merit.taste_of_serpent DD=2
-&tags.merit.taste_of_serpent DD=ghoul.daeva
-&prerequisite.merit.taste_of_serpent DD=u( .is, %0, bio.clan, Daeva )
-&prereq-text.merit.taste_of_serpent DD=Daeva Regnant
-
-&merit.taste_of_the_wild DD=2
-&tags.merit.taste_of_the_wild DD=ghoul.gangrel
-&prerequisite.merit.taste_of_the_wild DD=u( .is, %0, bio.clan, Gangrel )
-&prereq-text.merit.taste_of_the_wild DD=Gangrel Regnant
-
-&merit.taste_of_gold DD=2
-&tags.merit.taste_of_gold DD=ghoul.ventrue
-&prerequisite.merit.taste_of_gold DD=u( .is, %0, bio.clan, Ventrue )
-&prereq-text.merit.taste_of_gold DD=Ventrue Regnant
-
-&merit.taste_of_fear DD=2
-&tags.merit.taste_of_fear DD=ghoul.nosferatu
-&prerequisite.merit.taste_of_fear DD=u( .is, %0, bio.clan, Nosferatu )
-&prereq-text.merit.taste_of_fear DD=Nosferatu Regnant
-
-&merit.producer DD=1
-&tags.merit.producer DD=ghoul.human
-
-&merit.weakened_bond DD=3
-&tags.merit.weakened_bond DD=ghoul.human
-
-&merit.clear-sighted DD=2
-&tags.merit.clear-sighted DD=human.social
-
-&merit.source_sympathy DD=1
-&tags.merit.source_sympathy DD=ghoul
-
-&merit.protected DD=2
-&tags.merit.protected DD=ghoul.human
-
-&merit.empowered_to_speak DD=1
-&tags.merit.empowered_to_speak DD=ghoul.human
-
-&merit.vitae_hound DD=1
-&tags.merit.vitae_hound DD=ghoul
-
-&merit.beast_whispers DD=2
-&tags.merit.beast_whispers DD=ghoul.human
-
-&merit.beloved_() DD=1|*
-&tags.merit.beloved_ DD=ghoul.human
-&prerequisite.merit.beloved_ DD=0
-&prereq-text.merit.beloved_ DD=Touchstone of the one they're beloved of
-@@ There is absolutely no way for code to determine this; with 'prereq' set to 0 it must be set by staff using the /override switch
-
-&merit.watch_dog DD=2
-&tags.merit.watch_dog DD=ghoul
-&prerequisite.merit.watch_dog DD=0
-&prereq-text.merit.watch_dog DD=Regnant with Auspex
-@@ There is absolutely no way for code to determine this; with 'prereq' set to 0 it must be set by staff using the /override switch
+*/
