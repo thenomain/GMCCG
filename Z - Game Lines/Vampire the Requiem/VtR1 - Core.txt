@@ -87,7 +87,7 @@ Level 3 for very minor items
 
 &advantage.vitae DD=ladd( u( .value_full, %0, advantage.vitae_maximum ), . )
 &default.advantage.vitae DD=derived
-&tags.advantage.vitae D:T=pool.vampire.ghoul
+&tags.advantage.vitae D:T=derived.vampire.ghoul
 
 &advantage.vitae_maximum DD=
 	if( u( .is_full, %0, bio.template, vampire ), 
@@ -100,7 +100,7 @@ Level 3 for very minor items
 		u( .value_stats, %0, attribute.stamina discipline.resilience )
 	)
 &default.advantage.vitae_maximum DD=derived
-&tags.advantage.vitae_maximum D:T=pool.vampire.ghoul
+&tags.advantage.vitae_maximum D:T=derived.vampire.ghoul
 
 
 
@@ -198,7 +198,7 @@ Level 3 for very minor items
 &tags.discipline.nightmare D:T=vampire.ghoul.nosferatu
 
 &discipline.obfuscate DD=1.2.3.4.5
-&tags.discipline.obfuscate D:T=vampire.ghoul.mehket.nosferatu
+&tags.discipline.obfuscate D:T=vampire.ghoul.mekhet.nosferatu
 
 &discipline.protean DD=1.2.3.4.5
 &tags.discipline.protean D:T=vampire.ghoul.gangrel
@@ -283,7 +283,7 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 
 &f.allocated.disciplines cg=
 	localize( strcat( 
-		setq( d, lattr( %0/_discipline.* )), 
+		setq( d, edit( lattr( %0/_discipline.* ), _DISCIPLINE., DISCIPLINE. )), 
 		setq( i, u( f.list-stats-tags, %0, discipline, get( %0/_bio.clan ))), 
 //		setq( b, 
 //			u( f.list-stats-tags, %0, discipline, get( %0/_bio.bloodline ))
@@ -362,7 +362,7 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 		%b, %b, %b, %b, 
 		Others:, %b, 
 		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
-		u( check.disciplines.%1.non-clan, %qi ), 
+		u( check.disciplines.%1.non-clan, %qo ), 
 
 		%r 
 	)
@@ -399,11 +399,72 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 ## VAMPIRE: SHEET ##############################################################
 */
 
+// -- Bio ----------------------------------------------------------------------
 
-&bio.default.ghoul Newest Sheet Code <nsc>=birthdate concept clan template virtue vice 
+&bio.default.ghoul Newest Sheet Code <nsc>=
+	birthdate concept clan template virtue vice 
 
+// -- Powers -------------------------------------------------------------------
 
+&powers.disciplines Newest Sheet Code <nsc>=
+	iter( sort( edit( lattr( %0/_discipline.* ), _DISCIPLINE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, discipline.%i0, numeric ), 
+		, | 
+	)
 
+&block.powers.vampire sheet: rows=u( block.powers.disciplines, %0, %1 )
+&block.powers.ghouls sheet: rows=u( block.powers.disciplines, %0, %1 )
+
+&block.powers.disciplines sheet: rows=
+	strcat( 
+		setq( w, 79 ), 
+		setq( t, 70 ), 
+		setq( d, u( powers.disciplines, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Disciplines ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r
+
+	)
+
+// -- Advantages ---------------------------------------------------------------
+
+&traits.morality.vampire Newest Sheet Code <nsc>=
+	ulocal( f.cheat_getstat.morality, %0, humanity )
+
+&traits.vitae Newest Sheet Code <nsc>=
+	u( f.cheat_getstat.pool, %0, vitae )
+
+&block.traits.vampire sheet: rows=u( block.traits.vitae, %0 )
+
+&block.traits.ghoul sheet: rows=u( block.traits.vitae, %0 )
+
+&block.traits.vitae sheet: rows=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+
+// .. vitae
+		setq( x, ulocal( traits.vitae, %0 )), 
+		setq( c, rest( setr( y, first( %qx, | )), : )), 
+		setq( p, last( %qx, : )), 
+
+// .. display
+		vcolumns( 
+			%qw:[u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )], 
+
+			|, 
+			%b 
+		), %r 
+	)
 
 
 
