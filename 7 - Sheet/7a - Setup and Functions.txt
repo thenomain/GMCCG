@@ -63,6 +63,7 @@ does not have the ability to handle nesting.
 &prefix.block_traits nsc=traits.
 &prefix.block_advantages nsc=advantages.
 &prefix.block_health nsc=health.
+&prefix.block_powers nsc=powers.
 
 
 
@@ -183,18 +184,21 @@ output: <value>, but if lookup is null then return something
 
 
 --------------------------------------------------------------------------------
--- Cheat Getstat: Willpower ----------------------------------------------------
+-- Cheat Getstat: Pool ---------------------------------------------------------
 
-0: sheet dbref 
+0: sheet dbref
+1: pool name (main; we know to add 'maximum' on the end)
+	e.g., willpower, vitae, etc.
 
 --
 
-&f.cheat_getstat.willpower nsc=
+&f.cheat_getstat.pool nsc=
 	strcat( 
-		Willpower:, 
-		ulocal( f.cheat_getstat.numeric, %0, advantage.willpower ), |, 
-		Willpower Maxiumum:, 
-		ulocal( f.cheat_getstat.numeric, %0, advantage.willpower_maximum )
+		titlestr( edit( %1, _, %b )), :, 
+		ulocal( f.cheat_getstat.numeric, %0, advantage.%1 ), |, 
+
+		titlestr( edit( %1, _, %b )), %b, Maximum:, 
+		ulocal( f.cheat_getstat.numeric, %0, advantage.%1_maximum )
 	)
 
 
@@ -217,3 +221,5 @@ output: <value>, but if lookup is null then return something
 			), , @@ 
 		)
 	)
+
+
