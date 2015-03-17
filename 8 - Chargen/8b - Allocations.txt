@@ -124,8 +124,8 @@ main merit, option add-ons, or other.
 				mul( -1, first( u( %0/%i0 ), . ))
 			), 
 
-// .. add/subtract points given free with template-based things
-			ulocal( f.allocated.merits.%qt, %0 ), 
+// .. subtract points given free with template-based things
+			-[ulocal( f.allocated.merits.%qt, %0 )], 
 			
 		)), 
 
