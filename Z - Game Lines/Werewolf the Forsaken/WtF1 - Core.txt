@@ -15,8 +15,8 @@ Level 2 for powers
 Level 3 for very minor items
 */
 
-&d.search-order-02-werewolf sfp=
-&d.search-order-03-werewolf sfp=
+&d.search-order-02-werewolf sfp=gift
+&d.search-order-03-werewolf sfp=rite
 
 
 
@@ -35,9 +35,11 @@ Stuff we need to put on the Data Dictionary
 */
 
 // CODP prefixes
-&prefix.werewolf-gifts dd=gift.
-
+&prefix.werewolf_-_gifts dd=gift.
 &prefix.werewolf_-_gifts d:t=tags.gift.
+
+&prefix.werewolf_-_rites dd=rite.
+&prefix.werewolf_-_rites d:t=tags.rite.
 
 
 // add to templates
@@ -283,6 +285,51 @@ Stuff we need to put on the Data Dictionary
 
 
 
+/*
+================================================================================
+== WEREWOLF RITES ==============================================================
+*/
+
+// -- Rites: Wolf --------------------------------------------------------------
+
+
+// -- Rites: Pack --------------------------------------------------------------
+
+&rite.banish dd=1
+&tags.rite.banish d:t=werewolf.wolf-blooded.pack
+
+&rite.harness_the_circle dd=1
+&tags.rite.harness_the_circle d:t=werewolf.wolf-blooded.pack
+
+&rite.hunting_ground dd=1
+&tags.rite.hunting_ground d:t=werewolf.wolf-blooded.pack
+
+&rite.moon's_mad_love dd=2
+&tags.rite.moon's_mad_love d:t=werewolf.wolf-blooded.pack
+
+&rite.wellspring dd=1
+&tags.rite.wellspring d:t=werewolf.wolf-blooded.pack
+
+&rite.raiment_of_the_storm dd=3
+&tags.rite.raiment_of_the_storm d:t=werewolf.wolf-blooded.pack
+
+&rite.shadowcall dd=3
+&tags.rite.raiment_of_the_storm d:t=werewolf.wolf-blooded.pack
+
+&rite.supplication dd=3
+&tags.rite.supplication d:t=werewolf.wolf-blooded.pack
+
+&rite.hidden_path dd=4
+&tags.rite.hidden_path d:t=werewolf.wolf-blooded.pack
+
+&rite.expel dd=4
+&tags.rite.expel d:t=werewolf.wolf-blooded.pack
+
+&rite.great_hunt dd=5
+&tags.rite.great_hunt d:t=werewolf.wolf-blooded.pack
+
+
+
 
 /* 
 ################################################################################
@@ -320,9 +367,22 @@ agenda
 ================================================================================
 == CHARGEN CHECK: WOLF-BLOODED =================================================
 
-	n/a (yet)
+one free merit.tell_()
+
 */
 
+&f.allocated.merits.wolf-blooded cg=
+	get( %0/[first( lattr( %0/_merit.tell_(*) ))] )
+
+
+&check.chargen.wolf-blooded cg=
+	strcat( 
+		%b, %b, Free Tell:, %b, 
+		u( display.check.ok-no, 
+			eq( u( f.allocated.merits.wolf-blooded, %0 ), 3 )
+		), 
+		%r 
+	)
 
 
 
@@ -343,7 +403,8 @@ agenda
 */
 
 
-&bio.default.wolf-blooded Newest Sheet Code <nsc>=birthdate concept pack template virtue vice 
+&bio.default.wolf-blooded Newest Sheet Code <nsc>=
+	birthdate concept pack template virtue vice 
 
 
 
