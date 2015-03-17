@@ -115,7 +115,7 @@ Thanks to Demon's Stigmatics, we also have to subtract '.<template>' values.
 	eq( 
 		sub( 
 			ladd( u( f.allocated.merits, %0 ), / ), 
-			u( f.alloated.merits.[u( %0/_bio.template )], %0 )
+			u( f.allocated.merits.[u( %0/_bio.template )], %0 )
 		), 
 		10 
 	)
