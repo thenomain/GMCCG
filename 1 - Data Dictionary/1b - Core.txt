@@ -348,7 +348,7 @@
 &merit.sympathetic DD=2
 
 &merit.taste DD=1
-&prerequisite.merit.taste DD=cand( u( .at_least, %0, skill.crafts, 2 ), 		u( .specialty_has, %0, Crafts Expression, * ))
+&prerequisite.merit.taste DD=cand( u( .at_least, %0, skill.crafts, 2 ), u( .specialty_has, %0, Crafts Expression, * ))
 &prereq-text.merit.taste DD=Crafts 2+ and Specialty in Crafts or Expression
 
 &merit.true_friend_() DD=3|*
@@ -361,7 +361,7 @@
 &prereq-text.merit.armed_defense DD=Dexterity 3+, Weaponry 2+, and Defensive Combat (Weaponry)
 
 &merit.cheap_shot DD=2
-&prerequisite.merit.cheap_shot DD=u( .at_least_one, %0, merit.street_fighting:3 skill.subterfuge:2 )
+&prerequisite.merit.cheap_shot DD=u( .at_least_all, %0, merit.street_fighting:3 skill.subterfuge:2 )
 &prereq-text.merit.cheap_shot DD=Street Fighting 3+ and Subterfuge 2+
 
 &merit.choke_hold DD=2
