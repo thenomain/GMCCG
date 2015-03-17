@@ -202,113 +202,127 @@ Returns Templates (%0) that match tags on Statpath (%1)
 -- Display: One Match ----------------------------------------------------------
 
 &display.stat.values.display.one Stat Setter <ss>=
+	strcat( 
 
-@@ Header: <name> (<type>)
-@@ .. add "<type>" if we see ()
-	[header(
-		[edit(%qn, %(%), %(<type>%))] 
-		%[[ulocal([u(d.stat-funcs)]/f.statname.workhorse, first(%qp, .))]%]
-	)] %r
+// header: <name> (<type>) [<category>]
+		wheader( 
+			[edit( %qn, %(%), %(<type>%) )] 
+			%[[ulocal( 
+				[u( d.stat-funcs )]/f.statname.workhorse, 
+				first( %qp, . )
+			)]%]
+		), %r, 
 
-	[vcolumns(
-@@ >> COLUMN 1, width 42: values, prerequisites
-		42:
-@@ .. Values, and Defaults if they exist
+// derived?
+		setq( x, u( [u( d.stat-funcs )]/f.hastag?.workhorse, %qp, derived )), 
+		
+// values
+		%b, %b, ansi( h, Values ), :, %b, 
+		if( t( %qx ), 
+			Derived Function, 
+			u( display.stat-valuelist, first( %qs, | ))			
+		), 
 
-			[ansi(h, Values)]: [u(display.stat-valuelist, first(%qs, |))]
-@@ Defaults?
-			[if(
-				hasattr(u(d.data-dictionary), default.%qp), 
-				`[ansi(h, Default)]: 
-					[if(
-						strmatch(
-							setr(d, get([u(d.data-dictionary)]/default.%qp)),
-							%[*%]
-						), 
-						Formula, 
-						%qd
-					)]
-			)]
-@@ .. Instances? (called "types" now)  Substats? (called "detail")
-			[case(
-				words(%qs, |), 
-@@ .. .. if 3 validation items, instance & substats
-				3, 
-				`[ansi(h, Type)]: 
-					[u(display.stat-valuelist, extract(%qs, 2, 1, |), or)]
-				`[ansi(h, Details)]: 
-					[u(display.stat-valuelist, last(%qs, |))], 
-@@ .. .. if 2, check if instance, else substats
-				2, 
-				`[if(
-					strmatch(%qp, *%(%)), 
-					[ansi(h, Type)]: [u(display.stat-valuelist, rest(%qs, |), or)], 
-					[ansi(h, Details)]: [u(display.stat-valuelist, rest(%qs, |))]
-				)]
-			)], 
-@@ >> COLUMN 2, width 30: book/page reference
-		30:
-		[iter(
-			u([u(d.stat-reference)]/page.%qp), 
-			[rest(
-				extract(
-					u([u(d.stat-reference)]/d.book-lookup), 
-					match(
-						u([u(d.stat-reference)]/d.book-lookup), 
-						[first(%i0, .)].*, 
-						|
-					), 
-					1, |
+// defaults
+		if( 
+			cand( 
+				hasattr( u( d.data-dictionary ), default.%qp ), 
+				not( %qx )
+			), 
+			strcat( 
+				%r, %b, %b, ansi( h, Default ), :, %b, 
+				get( [u( d.data-dictionary )]/default.%qp ), 
+			)
+		), 
+
+// types & details
+		case(
+			words( %qs, | ), 
+// .. (if 3 validation items, instance & substats)
+			3, 
+			strcat( 
+				%r, %b, %b, ansi( h, Type ), :, %b, 
+				u( display.stat-valuelist, elements( %qs, 2, | ), or ), 
+				%r, %b, %b, ansi( h, Details ), :, %b, 
+				u( display.stat-valuelist, last( %qs, | ))
+			), 
+// .. (if 2, check if instance, else substats)
+			2, 
+			if( strmatch( %qp, *%(%) ), 
+				strcat( 
+					%r, %b, %b, ansi( h, Type ), :, %b, 
+					u( display.stat-valuelist, rest( %qs, | ), or )
 				), 
-				.
-			)]: 
-			[rest(%i0, .)], 
-			,
-			`
-		)], 
-@@ >> vcolumn foo
-		`, %b[ansi(r, |)]%b, %b%b
-	)]%r
+				strcat( 
+					%r, %b, %b, ansi( h, Details ), :, %b, 
+					u( display.stat-valuelist, rest( %qs, | ))
+				)
+			)
+		), 
 
-@@ .. extra return if there's more information to come
-	[setq(r, ulocal(display.stat-prereqlist, %qp))]
-	[setq(n, ulocal([u(d.stat-reference)]/notes.%qp))]
-	[if(or(t(%qr), t(%qn)), %r)]
+// prerequsites and notes
+		setq( r, ulocal( display.stat-prereqlist, %qp )), 
+		setq( n, ulocal( [u(d.stat-reference)]/notes.%qp )), 
+		if( cor( t( trim( %qr, b, | )), t( %qn )), %r ), 
 
-@@ >> Prerequisites: <templates>.<chargen only>.<other>
-@@ .. First: Templates
-	[if(t(setr(x, first(%qr, |))), 
-		[wrap(
-			[ansi(h, Templates)]: [itemize(%qx, ., or)]%r, 
-			76, left, %b%b
-		)]%r
-	)]
-@@ .. Second: Chargen-Only
-	[if(t(setr(x, extract(%qr, 2, 1, |))), 
-		[wrap(
-			[ansi(h, Chargen)]: [itemize(%qx, .)]%r, 
-			76, left, %b%b
-		)]%r
-	)]
+// prerequisites: <templates>
+		if( t( setr( x, first( %qr, | ))), 
+			wrap( 
+				strcat( 
+					%r, ansi( h, Templates ), :, %b, 
+					itemize( %qx, ., or )
+				), 
+				sub( width( %# ), 2 ), 
+				left, %b%b 
+			)
+		), 
 
-@@ .. Third: Other prerequisites
-	[if(t(setr(x, last(%qr, |))), 
-		[wrap(
-			[ansi(h, Prerequisites)]: %qx%r, 
-			76, left, %b%b
-		)]%r
-	)]
+// prerequisites: <chargen only>
+		if( t( setr( x, elements( %qr, 2, | ))), 
+			wrap(
+				strcat( 
+					%r, ansi( h, Chargen ), :, %b, 
+					itemize( %qx, . )
+				), 
+				sub( width( %# ), 2 ), 
+				left, %b%b
+			)
+		), 
 
-@@ >> Notes?
-	[if(t(%qn), 
-		[wrap(
-			[ansi(h, Notes)]: %qn, 
-			76, left, %b%b
-		)]%r
-	)]
+// prerequisites: <other>
+		if( t( setr( x, last( %qr, | ))), 
+			wrap(
+				strcat( 
+					%r, ansi( h, Prerequisites ), :, %b, 
+					%qx 
+				), 
+				sub( width( %# ), 2 ), 
+				left, %b%b
+			)
+		), 
 
-@@ THE END (report if chargen-only)
-	[footer(if(strmatch(get([u(d.data-dictionary)]/tags.%qp), *Chargen-Only*), Chargen Only))]
+// notes?
+		if( cand( t( trim( %qr, b, | )), t( %qn )), %r ), 
+
+		if( t( %qn ), 
+			wrap(
+				strcat( 
+					%r, ansi( h, Notes ), :, %qn 
+				), 
+				sub( width( %# ), 2 ), 
+				left, %b%b
+			)
+		), 
+
+// THE END
+		%r, 
+		wfooter( 
+			if( 
+				u( [u( d.stat-funcs )]/f.hastag?.workhorse, %qp, Chargen-Only ), 
+				Chargen Only 
+			)
+		)
+	)
 
 
 --------------------------------------------------------------------------------
