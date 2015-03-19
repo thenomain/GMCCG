@@ -105,6 +105,8 @@ with 10 merit dots, not 7.
 
 Thanks to Demon's Stigmatics, we also have to subtract '.<template>' values.
 
+>> Note to Self: We already subtract these in 'f.allocated.merits' <<
+
 --
 
 0: dbref of sheet
@@ -113,10 +115,7 @@ Thanks to Demon's Stigmatics, we also have to subtract '.<template>' values.
 
 &f.pts-valid?.merits cg=
 	eq( 
-		sub( 
-			ladd( u( f.allocated.merits, %0 ), / ), 
-			u( f.allocated.merits.[u( %0/_bio.template )], %0 )
-		), 
+		ladd( u( f.allocated.merits, %0 ), / ), 
 		10 
 	)
 
