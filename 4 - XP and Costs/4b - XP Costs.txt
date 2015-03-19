@@ -1,3 +1,4 @@
+/*
 ################################################################################
 ## XP COSTS ####################################################################
 
@@ -9,8 +10,7 @@ For all of these:
 	4: list of valid values from data dictionary (e.g., 1.3.5) (????)
 	(are we sure that %4 isn't really supposed to be %3?)
 
-The God Machine Chronicles (WoD v2) now feature flat payments per dot.
-My old system called this 'cost.single', so we'll do that here.
+The God Machine Chronicles (nWoD2) now features flat payments per dot.
 
 
 
@@ -20,28 +20,67 @@ My old system called this 'cost.single', so we'll do that here.
 
 --------------------------------------------------------------------------------
 -- Attributes ------------------------------------------------------------------
+*/
 
-&xp.attribute XP Cost Database <xpcd>=u( cost.single, 4, %1, %2 )
+&xp.attribute XP Cost Database <xpcd>=u( cost.standard, 4, %1, %2 )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Skills ----------------------------------------------------------------------
+*/
 
-&xp.skill XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
+&xp.skill XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 &xp.skill.?.? XP Cost Database <xpcd>=1
 
 
+/*
 --------------------------------------------------------------------------------
 -- Advantages ------------------------------------------------------------------
 
-&xp.advantage.willpower XP Cost Database <xpcd>=u( cost.single, 1, %1, %2 )
-&xp.advantage.integrity XP Cost Database <xpcd>=u( cost.single, 3, %1, %2 )	
+*/
+&xp.advantage.willpower XP Cost Database <xpcd>=u( cost.standard, 1, %1, %2 )
+&xp.advantage.integrity XP Cost Database <xpcd>=u( cost.standard, 3, %1, %2 )	
 
 
+/*
 --------------------------------------------------------------------------------
 -- Merits ----------------------------------------------------------------------
 
-&xp.merit XP Cost Database <xpcd>=u( cost.single, 1, %1, %2 )
+&xp.merit XP Cost Database <xpcd>=u( cost.standard, 1, %1, %2 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+################################################################################
+## OLD SYSTEM STUFF ############################################################
 
 
 
@@ -171,7 +210,7 @@ From Lords of Summer, p. 45
 --------------------------------------------------------------------------------
 -- Merits: Werewolf ------------------------------------------------------------
 
-&xp.merit.pack_totem_() XP Cost Database <xpcd>=u(cost.single, 3, %1, %2)
+&xp.merit.pack_totem_() XP Cost Database <xpcd>=u(cost.standard, 3, %1, %2)
 
 @@ x5 for most, x4 for Ithaeur (an auspice)
 &xp.merit.rituals XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
@@ -316,3 +355,4 @@ Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 	)
 
 
+*/
