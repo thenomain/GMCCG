@@ -391,9 +391,12 @@ one free merit.tell_()
 ## WEREWOLF: XP COSTS ##########################################################
 */
 
-// &xp.advantage.<power> XP Cost Database <xpcd>=u( cost.single, 5, %1, %2 )
+// &xp.advantage.<power> XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
 
-// &xp.advantage.<integrity> XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
+&xp.advantage.harmony XP Cost Database <xpcd>=0
+
+&d.restricted.types.werewolf xpas=gift
+&d.restricted.stats.werewolf xpas=
 
 
 

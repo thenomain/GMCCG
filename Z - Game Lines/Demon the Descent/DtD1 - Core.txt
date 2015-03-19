@@ -803,12 +803,13 @@ Stigmatics get +3 dots for Supernatural Merits only.
 */
 
 &f.allocated.merits.stigmatic CG=
-	words( 
+	ladd( iter( 
 		elements( 
 			u( f.list-stats-tags, %0, merit, supernatural ), 
 			1 2 3 
-		)
-	)
+		), 
+		get( %0/_%i0 )
+	))
 
 
 
@@ -943,7 +944,7 @@ We're doing this by assuming the last specialty is the Demon specialty.
 */
 
 &f.allocated.specialties.demon CG=last( %1 )
-&f.allocated.specialties.stigmatic CG=last( %1 )
+// &f.allocated.specialties.stigmatic CG=last( %1 )
 
 
 // -----------------------------------------------------------------------------
@@ -954,7 +955,7 @@ We're doing this by assuming the last specialty is the Demon specialty.
 // --
 
 &f.pts-valid?.specialties.demon CG=eq( words( elements( %0, 1, ` )), 1 )
-&f.pts-valid?.specialties.stigmatic CG=eq( words( elements( %0, 1, ` )), 1 )
+// &f.pts-valid?.specialties.stigmatic CG=eq( words( elements( %0, 1, ` )), 1 )
 
 
 // -----------------------------------------------------------------------------
@@ -968,11 +969,13 @@ We're doing this by assuming the last specialty is the Demon specialty.
 
 // --
 
+/*
 &check.specialties.stigmatic CG=
 	cat( 
 		%r%b %b Stigmatic (fourth specialty):, 
 		u( u( d.sfp )/f.statname.workhorse, rest( first( %0, ` ), . ))
 	)
+*/
 
 
 /* 
@@ -1113,13 +1116,15 @@ Still faster than 'f.list-stats-tags'
 ## DEMON: XP COSTS #############################################################
 */
 
-&xp.advantage.primum XP Cost Database <xpcd>=u( cost.single, 5, %1, %2 )
+&xp.advantage.primum XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
 
-&xp.advantage.cover_() XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
+&xp.advantage.cover_() XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 
-&xp.embed XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
-&xp.exploit XP Cost Database <xpcd>=u( cost.single, 2, %1, %2 )
+&xp.embed XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
+&xp.exploit XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 
+&d.restricted.types.demon xpas=exploit embed tell
+&d.restricted.stats.demon xpas=advantage.cover_(*) advantage.aether
 
 
 /*
