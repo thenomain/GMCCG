@@ -557,15 +557,16 @@ cg/log
 
 How many seconds has someone been approved, not including unapproval periods?
 
-We are cheating heavily, assuming that '_approval.log' will be formatted:
-	approve/unapprove/approve/unapprove/...
-
-If it's going to include other information, the first segment will need 
-heavily re-coded.
+1) get approval log
+2) pull the seconds from the approval logs (%ql)
+3) find location of all 'approved:' entries
+4) subtract the next timestamp from each 'approved:' timestamps
+5) add them together: this is total time approved
 
 --
 
 0: dbref
+a: approval periods
 l: length of time (generic register)
 returns: number of seconds
 
@@ -575,20 +576,20 @@ returns: number of seconds
 &f.total_secs_approved cg=
 	localize( 
 		strcat( 
-			setq( l, get( %0/_approval.log )), 
-			setq( l, iter( %ql, elements( %i0, 2, : ), | )), 
-			if( eq( mod( words( %ql ), 2 ), 1 ), 
-				setq( l, cat( %ql, secs( )))
-			), 
-		
+			setq( a, get( %0/_approval.log )), 
+			setq( l, iter( %qa, elements( %i0, 2, : ), | )), 
+			setq( l, if( t( %qa ), cat( %ql, secs( )))), 
+			setq( a, matchall( %qa, approved:*, |  )), 
+
 			ladd( 
 				iter( 
-					lnum( 1, words( %ql ), , 2 ), 
-					sub( element( %ql, inc( %i0 )), element( %ql, %i0 ))
+					%qa, 
+					sub( elements( %ql, inc( %i0 )), elements( %ql, %i0 ))
 				)
 			)
 		)
 	)
+
 
 
 
