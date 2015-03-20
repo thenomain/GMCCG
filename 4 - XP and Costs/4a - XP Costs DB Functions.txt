@@ -50,6 +50,8 @@ Might be easier:
 	
 	u( %qx, ... )
 
+We end up not doing this. Maybe we should.
+
 
 
 ================================================================================
