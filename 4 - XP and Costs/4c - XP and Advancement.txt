@@ -14,8 +14,8 @@ Performs and logs XP spends and gains.
 
 -=-=-=-=-=-=-=-=-=-=-=-=
 
-&_special.xp.<type> :: <total> -<spent>
-&_special.earned_xp.<type> :: <amt earned this week>
+&_special.beats.<type> :: <total> -<spent>
+&_special.earned_beats.<type> :: <amt earned this week>
 
 Illegal characters: | and ` 
 
@@ -128,6 +128,7 @@ CREATE TABLE IF NOT EXISTS xp_log (
 
 &.isapproved xpas=isapproved( %0, %1 )
 &.value xpas=u( v( d.dd )/.value, %0, %1 )
+&.msg xpas=ansi( h, <%0>, n, %b%1 )
 
 
 /*
@@ -371,7 +372,7 @@ f: formula's attribute name
 &f.cost.calculator xpas=
 	localize( strcat( 
 		setq( s, u( v( d.sfp )/f.statpath-without-instance, trim( %3, l, _ ))), 
-		setq( f, u( f.xp.formula.finder, %qs, %0 )), 
+		setq( f, u( f.formula_finder, %qs, %0 )), 
 		setq( v, first( get( v( d.dd )/%qs ), | )), 
 
 		if( t( %qf ), 
@@ -516,15 +517,17 @@ x: current xp attribute
 
 */
 
-&f.xp/cost xpcd=
+&f.xp/cost xpas=
 	strcat( 
 
 // break %0 down to p, n, v
 		setq( p, first( %0, = )), 
 		setq( v, rest( %0, = )), 
-		setq( n, rest( %qp, / ), 
-		if( not( t( %qn ))
-			strcat( setq( n, %qp ), setq( p, %# ))
+		setq( n, rest( %qp, / )), 
+		setq( p, first( %qp, / )), 
+		if( not( t( %qn )), 
+			strcat( setq( n, %qp ), setq( p, %# )),
+			setq( p, pmatch( %qp ))
 		), 
 
 // get sheet location, statpath
@@ -532,7 +535,7 @@ x: current xp attribute
 		setq( s, ulocal( v( d.sfp )/f.statpath.workhorse, %qn, %qp )), 
 
 // current value, next value, estimated cost
-		setq( t, u( .value, %qp, %qn )), 
+		setq( t, ulocal( .value, %qw, %qs )), 
 		if( 
 			not( t( %qv )), 
 			setq( v, ulocal( f.stat.next_rank, %qw, _%qs ))
@@ -540,7 +543,7 @@ x: current xp attribute
 		setq( c, ulocal( f.cost.calculator, %qw, %qt, %qv, %qs )), 
 
 // current 'xp' attribute
-		setq( x, get( %qw/_special.xp.normal )), 
+		setq( x, get( %qw/_special.beats.normal )), 
 
 		case( 1, 
 			t( setr( e, ulocal( validate.player, %qp, %qw, 1 ))), 
@@ -549,18 +552,23 @@ x: current xp attribute
 			t( setr( e, ulocal( validate.stat, %qw, %qs, %qt, %qv ))), 
 			u( .msg, xp/cost, %qe ), 
 
-			t( setr( e, ulocal( validate.cost, %qc ))), 
-			u( .msg, xp/cost, %qe ), 
-
 			t( setr( e, ulocal( validate.value ))), 
 			u( .msg, xp/cost, %qe ), 
 
-			u( display.xp/cost, 
-				%qp, %qn, %qs, %qv, %qt 
+			t( setr( e, ulocal( validate.cost, %qc ))), 
+			u( .msg, xp/cost, %qe ), 
+
+			u( .msg, xp/cost, 
+				u( display.xp/cost, %qp, %qn, %qs, %qv, %qt )
 			)
+
 		)
 	)
 
+// -- test --
+
+think u( xpas/f.xp/cost, strength )
+think u( xpas/f.xp/cost, *vera/strength=1 )
 
 /*
 --------------------------------------------------------------------------------
@@ -573,6 +581,7 @@ x: current xp attribute
 4: trait's current value (qt)
 
 e: error check results
+f: other error check results
 
 */
 
@@ -607,8 +616,13 @@ e: error check results
 		is %qc Experiences., 
 
 // .. can't afford?
-		if( setr( e, u( validate.spend, %qc, %qx )), %b%(%qe%) ), 
-		if( t( setr( e, u( validate.restricted, %qs, %qv ))), %b%(%qe%) )
+		setq( e, u( validate.spend, %qc, %qx )), 
+		setq( f, u( validate.restricted, %qs, %qv )), 
+		case( 1, 
+			cand( %qe, %qf ), %b%(%qe%, %qf.%), 
+			t( %qe ), %b%(%qe.%), 
+			t( %qf ), %b%(%qf.%) 
+		)
 	)
 
 
@@ -721,7 +735,7 @@ v: chargen's stat validation
 			Stat cannot be taken by your template, 
 
 			t( elements(%qv, 4, . )), 
-			capstr( lcstr( rest( elements( %qv, 4, . )))
+			capstr( lcstr( rest( elements( %qv, 4, . ))))
 		)
 	))
 
@@ -788,7 +802,7 @@ To be honest, I'm not sure why this is here.
 			Uncaptured stat class type in 'validate.value' 
 
 		)
-	)
+	))
 
 /*
 --------------------------------------------------------------------------------
@@ -965,7 +979,7 @@ c: current normal xp attribute for <character>
 			search( eplayer=cand( isapproved( ## ), not( isstaff( ## )))), 
 			strcat( 
 				setq( x, u( f.auto.beats.daily, %i0 )), 
-				setq( c, get( %i0/_special.xp.normal )), 
+				setq( c, get( %i0/_special.beats.normal )), 
 				set( %i0, 
 					_special.xp.normal:[add( first( %qc ), %qx )] [rest( %qc )] 
 				), 
@@ -983,7 +997,7 @@ c: current normal xp attribute for <character>
 	@eval 
 		list( 
 			search( eplayer=cand( u( f.at_weeks_end?, ## ), isapproved( ## ))), 
-			set( %i0, _special.earned_xp.normal: )
+			set( %i0, _special.earned_beats.normal: )
 		)
 
 
@@ -1005,7 +1019,7 @@ Beat Types:
 	
 	Cover (for Demon)
 
-	&_special.xp.normal <player object>=<total> -<spent>
+	&_special.beats.normal <player object>=<total> -<spent>
 
 For each 6 months approved, excluding periods of freezing...
     Period   Beats/Week    Beats/Day
