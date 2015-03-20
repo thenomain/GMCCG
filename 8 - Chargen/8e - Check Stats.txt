@@ -195,12 +195,15 @@ Check that a derived stat's value is valid.
 */
 
 &f.statcheck.derived cg=
-	case( %2, 
-		numeric, 
+	case( 0, 
+		hasattr( %0, %1 ), 
+		#-1 Derived stat is not set, 
+
+		strmatch( %2, numeric ), 
 		if(
 			isint( 
 				first( 
-					ulocal( [u( d.sfp )]/f.getstat.workhorse.numeric, %0, %1 ), 
+					ulocal( v( d.sfp )/f.getstat.workhorse.numeric, %0, %1 ), 
 					. 
 				)
 			), 
@@ -210,20 +213,20 @@ Check that a derived stat's value is valid.
 
 		if( 
 			strlen( 
-				ulocal( [u( d.sfp )]/f.getstat.workhorse.%2, %0, %1 )
+				ulocal( v( d.sfp )/f.getstat.workhorse.%2, %0, %1 )
 			), 
 			1, 
-			#-1 Derived stat returns null
-		) 
+			#-1 Derived stat returns null 
+		)
 	)
-
 
 /* -- test --
 
 think u( sfp/f.getstat.workhorse.numeric, %#, _advantage.size )
-think u( cg/f.statcheck.derived, %#, _advantage.size )
-think u( cg/f.statcheck.derived, %#, _advantage.willpower )
-think u( cg/f.statcheck.derived, %#, _advantage.willpower_maximum )
+think u( cg/f.statcheck.derived, %#, _advantage.size, numeric )
+think u( cg/f.statcheck.derived, %#, _advantage.willpower, numeric )
+think u( cg/f.statcheck.derived, %#, _advantage.willpower_maximum, numeric )
+think u( cg/f.statcheck.derived, %#, _advantage.vitae_maximum, numeric )
 
 
 --------------------------------------------------------------------------------
