@@ -102,8 +102,8 @@ Stuff we need to put on the Data Dictionary
 
 &merit.fenris-ur's_blood dd=2
 &prerequisite.merit.fenris-ur's_blood dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -111,15 +111,16 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			tribal affinity, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.fenris-ur's_blood dd=Only one Tribal Affinity merit allowed
 &tags.merit.fenris-ur's_blood d:t=wolf-blooded.tribal affinity
 
 &merit.kamduis-ur's_blood dd=2
 &prerequisite.merit.kamduis-ur's_blood dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -127,15 +128,16 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			tribal affinity, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.kamduis-ur's_blood dd=Only one Tribal Affinity merit allowed
 &tags.merit.kamduis-ur's_blood d:t=wolf-blooded.tribal affinity
 
 &merit.hikaon-ur's_blood dd=2
 &prerequisite.merit.hikaon-ur's_blood dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -143,15 +145,16 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			tribal affinity, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.hikaon-ur's_blood dd=Only one Tribal Affinity merit allowed
 &tags.merit.hikaon-ur's_blood d:t=wolf-blooded.tribal affinity
 
 &merit.sagrim-ur's_blood dd=2
 &prerequisite.merit.sagrim-ur's_blood dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -159,15 +162,16 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			tribal affinity, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.sagrim-ur's_blood dd=Only one Tribal Affinity merit allowed
 &tags.merit.sagrim-ur's_blood d:t=wolf-blooded.tribal affinity
 
 &merit.skolis-ur's_blood dd=2
 &prerequisite.merit.skolis-ur's_blood dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -175,15 +179,16 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			tribal affinity, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.skolis-ur's_blood dd=Only one Tribal Affinity merit allowed
 &tags.merit.skolis-ur's_blood d:t=wolf-blooded.tribal affinity
 
 &merit.ghost_child dd=2
 &prerequisite.merit.ghost_child dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -191,7 +196,8 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			tribal affinity, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.ghost_child dd=Only one Tribal Affinity merit allowed
 &tags.merit.ghost_child d:t=wolf-blooded.tribal affinity
@@ -201,8 +207,8 @@ Stuff we need to put on the Data Dictionary
 
 &merit.crescent_moon's_birth dd=2
 &prerequisite.merit.crescent_moon's_birth dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -210,15 +216,16 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			moon birth, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.crescent_moon's_birth dd=Only one Moon Birth merit allowed
 &tags.merit.crescent_moon's_birth dd=wolf-blooded.moon birth
 
 &merit.full_moon's_birth dd=2
 &prerequisite.merit.full_moon's_birth dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -226,15 +233,16 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			moon birth, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.full_moon's_birth dd=Only one Moon Birth merit allowed
 &tags.merit.full_moon's_birth dd=wolf-blooded.moon birth
 
 &merit.gibbous_moon's_birth dd=2
 &prerequisite.merit.gibbous_moon's_birth dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -242,7 +250,8 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			moon birth, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.gibbous_moon's_birth dd=Only one Moon Birth merit allowed
 &tags.merit.gibbous_moon's_birth dd=wolf-blooded.moon birth
@@ -250,8 +259,8 @@ Stuff we need to put on the Data Dictionary
 &merit.half_moon's_birth dd=2
 &prerequisite.merit.half_moon's_birth dd=
 	cand( 
-		not( 
-			filter( 
+		lte( 
+			words( filter( 
 				u( d.sfp )/f.hastag?.workhorse, 
 				edit( 
 					lattr( %0/_merit.* ), 
@@ -259,7 +268,8 @@ Stuff we need to put on the Data Dictionary
 					MERIT. 
 				), , , 
 				moon birth, 0 
-			)
+			)), 
+			1 
 		), 
 		t( lattr( %0/_merit.safe_place_(*) ))
 	)
@@ -268,9 +278,8 @@ Stuff we need to put on the Data Dictionary
 &tags.merit.half_moon's_birth dd=wolf-blooded.moon birth
 
 &merit.no_moon's_birth dd=2
-&prerequisite.merit.no_moon's_birth dd=
-	not( 
-		filter( 
+	lte( 
+		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
 			edit( 
 				lattr( %0/_merit.* ), 
@@ -278,7 +287,8 @@ Stuff we need to put on the Data Dictionary
 				MERIT. 
 			), , , 
 			moon birth, 0 
-		)
+		)), 
+		1 
 	)
 &prereq-text.merit.no_moon's_birth dd=Only one Moon Birth merit allowed
 &tags.merit.no_moon's_birth dd=wolf-blooded.moon birth
