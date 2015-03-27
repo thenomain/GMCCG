@@ -441,58 +441,58 @@ qv: matched value, if any
 
 &f.statvalidate.workhorse sfp=
 
-localize(switch(
-	0, 
-	u(f.statvalue-good, %1), #-1 VALUE CONTAINS ILLEGAL FORMAT, 
-@@ >> check for and grab "default"
-	comp(lcstr(%1), default), 
-	[setq(v, get(u(d.data-dictionary)/default.%0))]
-	[if(
-		t(%qv), 
-		%qv, 
-		#-1 DEFAULT NOT FOUND
-	)], 
-@@ >> else check for and grab value
-	[setq(s, first(get(u(d.data-dictionary)/%0), |))]
-	[setq(c, get(u(d.data-dictionary)/class.%0))]
-@@	[setq(v, grab(%qs, %1*, .))]
-@@ .. completed value 
-	[setq(v, 
-		case(%qc, 
-@@ .. >> list: set-intersect as a cheap filter, will not name-complete
-@@ .. .. (like setstat.workhorse, make space -> '.')
-			list, 
-@@ .. .. filter out the items that don't match %qs (filter sees !xx as xx)
-			[filter(fil.statvalidate-list, 
-				edit(%1, %b, .), 
-				., ., %qs
-			)], 
-@@ .. >> else: grab the first match
-			grab(%qs, %1*, .)
-		)
-	)]
+	localize( switch( 
+		0, 
+		u( f.statvalue-good, %1 ), #-1 VALUE CONTAINS ILLEGAL FORMAT, 
+// >> check for and grab "default"
+		comp( lcstr( %1 ), default ), 
+		[setq( v, get( u( d.data-dictionary )/default.%0 ))]
+		[if( 
+			t( %qv ), 
+			%qv, 
+			#-1 DEFAULT NOT FOUND
+		)], 
+// >> else check for and grab value
+		[setq( s, first( get( u( d.data-dictionary )/%0 ), | ))]
+		[setq( c, get( u( d.data-dictionary )/class.%0 ))]
+//		[setq( v, grab( %qs, %1*, . ))]
+// .. completed value 
+		[setq( v, 
+			case( %qc, 
+// .. >> list: set-intersect as a cheap filter, will not name-complete
+// .. .. ( like setstat.workhorse, make space -> '.' )
+				list, 
+// .. .. filter out the items that don't match %qs ( filter sees !xx as xx )
+				[filter( fil.statvalidate-list, 
+					edit( %1, %b, . ), 
+					., ., %qs
+				)], 
+// .. >> else: grab the first match
+				grab( %qs, %1*, . )
+			)
+		)]
 
-	[case(%qs, 
-@@ .. .. *: Anything will do, return what was passed (probably "string" class)
-		*, 
-		%1, 
-@@ .. .. #: Any number 1+
-		#, 
-		if(and(gte(%1, 1), isint(%1)), %1, #-1 VALUE NOT A POSITIVE INTEGER), 
-@@ .. >> else: process the value
-		switch(
-			0, 
-@@ .. .. .. passed null
-			comp(%1, ), #-1 VALUE WAS NULL, 
-@@ .. .. .. substats are implied "*"
-			lt(words(%0, .), 3), %1, 
-@@ .. .. .. requested value not in the list
-			t(%qv), #-1 VALUE NOT FOUND,
-@@ .. .. .. else return grabbed value
-			%qv
-		)
-	)]
-))
+		[case( %qs, 
+// .. .. *: Anything will do, return what was passed ( probably "string" class )
+			*, 
+			%1, 
+// .. .. #: Any number 1+
+			#, 
+			if( and( gte( %1, 1 ), isint( %1 )), %1, #-1 VALUE NOT A POSITIVE INTEGER ), 
+// .. >> else: process the value
+			switch( 
+				0, 
+// .. .. .. passed null
+				comp( %1,  ), #-1 VALUE WAS NULL, 
+// .. .. .. substats are implied "*"
+				lt( words( %0, . ), 3 ), %1, 
+// .. .. .. requested value not in the list
+				t( %qv ), #-1 VALUE NOT FOUND,
+// .. .. .. else return grabbed value
+				%qv
+			)
+		)]
+	))
 
 
 --------------------------------------------------------------------------------
@@ -578,118 +578,112 @@ qr: prerequisite checks
 --------------------------------------------------------------------------------
 
 &f.setstat sfp=
-
-if(
-	isstaff(%@), 
-@@ Staff?  OK.
-	[setq(p, pmatch(first(%0, /)))]
-	[setq(w, u(f.find-sheet, %qp))]
-@@ Statpath: If we can grab it from the player, great, else grab it from the dd.
-@@ (Note: "first()" is there in case they're trying to set multiple stats)
-	[setq(
-		s, 
-		if(
-			setr(s, ulocal(f.statpath.workhorse, rest(%0, /), %qp)), 
-			%qs, 
-			ulocal(f.statpath.workhorse, rest(%0, /))
-		)
-	)]
-	[setq(i, ulocal(f.statpath-without-instance, %qs))]
-
-@@ value validation
-	[setq(v, 
-		switch(
-			%2, 
-@@ .. override - whatever we want
-			ov*, 
-			%1, 
-@@ .. offset - must be numeric (we check stat's class in workhorse)
-			of*, 
-			if(
-				or(isnum(%1), not(comp(%1, ))), 
-				%1, 
-				#-1 Non-Numeric Offset
+	if( isstaff( %@ ), 
+// Staff?  OK.
+		strcat( 
+			setq( p, pmatch( first( %0, / ))), 
+			setq( w, u( f.find-sheet, %qp )), 
+// statpath: If we can grab it from the player, great, else grab it from the dd.
+			setq( s, 
+				if( 
+					setr( s, 
+						ulocal( f.statpath.workhorse, rest( %0, / ), %qp )
+					), 
+					%qs, 
+					ulocal( f.statpath.workhorse, rest( %0, / ))
+				)
 			), 
-@@ .. normal - validate completely, if null then default or null
-			if(
-				comp(%1, ), 
-				ulocal(f.statvalidate.workhorse, %qi, %1), 
-@@ >> if get(dd/default.%qi) is null, null will be set, which is fine
-				get(u(d.data-dictionary)/default.%qi)
-			)
-		)
-	)]
+			setq( i, ulocal( f.statpath-without-instance, %qs )), 
 
-
-@@ qr: pre-requisites validation, 'template' and 'other' only
-	[setq(r, 
-		case(0, 
-@@ .. always good if "override" is set
-			not(strmatch(%2, ov*)), 
-			1, 
-@@ .. if template check is bad, pass error
-			t(setr(r, u(f.prereq-check-template, %qw, %qi))), 
-			%qr, 
-@@ .. offset is bad for template (above) but good for other (below)
-			not(strmatch(%2, of*)), 
-			1, 
-@@ .. if other check is bad, pass error
-			t(setr(
-				r, 
-				u(
-					f.prereq-check-other, 
-					%qw, 
-					%qi, 
-					before(rest(%qs, %(), %)), 
-@@ .. (stat being changed by...)
-@@ .. (don't mess with if %qv is non-numeric)
-					if(
-						isnum(%qv), 
-@@ .. .. .. (if numeric, find the change-by: 'qv - stat value')
-						sub(%qv, first(u(%qw/_%qs), .)), 
-						%qv
+// value validation
+			setq( v, 
+				switch( %2, 
+// .. override - whatever we want
+					ov*, 
+					%1, 
+// .. offset - must be numeric ( we check stat's class in workhorse )
+					of*, 
+					if( 
+						or( isnum( %1 ), not( comp( %1,  ))), 
+						%1, 
+						#-1 Non-Numeric Offset
+					), 
+// .. normal - validate completely, if null then default or null
+					if( comp( %1, ), 
+						ulocal( f.statvalidate.workhorse, %qi, %1 ), 
+// .. (if get( dd/default.%qi ) is null, null will be set, which is fine)
+						get( u( d.data-dictionary )/default.%qi )
 					)
 				)
-			)), 
-			%qr, 
+			), 
 
-@@ .. else, all was good
-			1
-		)
-	)]
+// qr: pre-requisites validation, 'template' and 'other' only
+			setq( r, 
+				case( 0, 
+// .. always good if "override" is set
+					not( strmatch( %2, ov* )), 
+					1, 
+// .. if template check is bad, pass error
+					t( setr( r, u( f.prereq-check-template, %qw, %qi ))), 
+					%qr, 
+// .. offset is bad for template (above) but good for other (below)
+					not( strmatch( %2, of* )), 
+					1, 
+// .. if other check is bad, pass error
+					t( setr( r, 
+						u( f.prereq-check-other, 
+							%qw, 
+							%qi, 
+							before( rest( %qs, %(  ), % )), 
+// .. (stat being changed by...)
+// .. (don't mess with if %qv is non-numeric)
+							if( isnum( %qv ), 
+// .. .. .. ( if numeric, find the change-by: 'qv - stat value' )
+								sub( %qv, first( u( %qw/_%qs ), . )), 
+								%qv
+							)
+						)
+					)), 
+					%qr, 
 
-@@ >> make sure qp, qw, qs and qv are all good!
-	[switch(
-		0, 
-		t(%qp), #-1 Player Not Found, 
+// .. else, all was good
+					1
+				)
+			), 
 
-@@ .. must have a template unless "override" switch
-		or(t(get(%qw/_bio.template)), strmatch(%2, ov*)), 
-		#-1 Sheet Template Not Found, 
+// >> make sure qp, qw, qs and qv are all good!
+			switch( 0, 
 
-		comp(rest(%0, /), ), #-1 Stat Name May Not Be Null, 
+				t( %qp ), 
+				#-1 Player Not Found, 
 
-@@ .. stat name check
-		t(%qs), %qs, 
+// .. must have a template unless "override" switch
+				or( t( get( %qw/_bio.template )), strmatch( %2, ov* )), 
+				#-1 Sheet Template Not Found, 
 
-@@ .. stat value check
-		not(strmatch(%qv, #-*)), %qv, 
+				comp( rest( %0, / ),  ), 
+				#-1 Stat Name May Not Be Null, 
 
-@@ .. stat prerequisite check
-		t(%qr), %qr, 
+// .. stat name check
+				t( %qs ), %qs, 
 
-@@ .. else: good!
-		u(f.setstat.workhorse, %qw, edit(%qs, %b, _), %qv, %2)
-	)], 
+// .. stat value check
+				not( strmatch( %qv, #-* )), %qv, 
 
-@@ Not Staff?  NO WAY!
-	#-1 Not Staff
-)
+// .. stat prerequisite check
+				t( %qr ), %qr, 
+
+// .. else: good!
+				u( f.setstat.workhorse, %qw, edit( %qs, %b, _ ), %qv, %2 )
+			) 
+		), 
+// Not Staff? NO WAY!
+		#-1 Not Staff
+	)
 
 
 --------------------------------------------------------------------------------
 -- Setstat Workhorse -----------------------------------------------------------
-
 
 0: Sheet Loc
 1: Full Stat Path
@@ -712,79 +706,82 @@ qu: "un-add" these list items (for type:class only)
 --------------------------------------------------------------------------------
 
 &f.setstat.workhorse sfp=
+	strcat( 
+		setq( v, ), 
+		setq( c, ulocal( f.get-class, %1 )), 
 
-[setq(v, )]
-[setq(c, ulocal(f.get-class, %1))]
+// .. oh yeah, if class:list + type.stat.substat, strip the substat
+		if( 
+			cand( 
+				strmatch( %qc, list ), 
+				strmatch( %1, *.*.* )), 
+				setq( s, extract( %1, 1, 2, . )
+			), 
+			setq( s, %1 )
+		), 
 
-@@ .. oh yeah, if class:list + type.stat.substat, strip the substat
-[if(
-	cand( 
-		strmatch( %qc, list ), 
-		strmatch( %1, *.*.* )), 
-		setq( s, extract(%1, 1, 2, . )
-	), 
-	setq( s, %1 )
-)]
+// >> ( \[.*\] )( \..* )?|( .* ) -> <derived>.<substat> | <other>
+		setq( d, get( %0/_%qs )), 
+		setq( 0, 
+			regmatch( %qd, %( %\%[.*%\%]% )%( %\..*% )?|%( .*% ), 0 1 2 3 )
+		), 
+		if( 
+			t( %q3 ), [setq( f, first( %qd, . ))][setq( r, rest( %qd, . ))], 
+			[setq( f, %q1 )][setq( r, rest( %q2, . ))]
+		), 
 
-@@ >> (\[.*\])(\..*)?|(.*) -> <derived>.<substat> | <other>
-[setq( d, get( %0/_%qs ))]
-[setq( 0, regmatch( %qd, %(%\%[.*%\%]%)%(%\..*%)?|%(.*%), 0 1 2 3 ))]
-[if(
-	t( %q3 ), [setq( f, first( %qd, . ))][setq( r, rest( %qd, . ))], 
-	[setq( f, %q1 )][setq( r, rest( %q2, . ))]
-)]
+		setq( m, case( 1, 
+// >> switch is "offset", replace remove or set - "numeric" type only.
+			strmatch( %3, of* ), 
+			case( 0, 
+// .. .. stat class is not "numeric", deny offset
+				strmatch( %qc, numeric ), 
+				#-1 CANNOT OFFSET NON-NUMERIC STAT, 
+// .. .. offset is null or 0 = erase offset
+				and( comp( %2, ), neq( %2, 0 )), 
+				set( %0, _%qs:%qf ), 
+// .. .. stat doesn't exist, set 0.<offset>
+				comp( %qf, ), 
+				set( %0, _%qs:0.%2 ), 
+// .. .. else set <perm>.<offset>
+				set( %0, _%qs:%qf.%2 )
+			), 
+// >> switch is "override", replace the whole thing without checking anything
+			strmatch( %3, ov* ), 
+			set( %0, _%qs:%2 ), 
+// >> value is null, erase stat ( this could be in the "else", too )
+			not( comp( %2, )), 
+			set( %0, _%qs: ),
+// >> stat class is "numeric", replace permanent
+			strmatch( %qc, numeric ), 
+			set( %0, _%qs:%2[if( %qr, .%qr )] ), 
+// >> stat class is "list", set or un-set ( !value ) each item in list
+// .. right now, lists may be space-delimited, editing space to .
+			strmatch( %qc, list ), 
+			[setq( v, edit( %2, %b, . ))]
+			[setq( u, graball( %qv, !*, ., . ))]
+			[setq( a, setdiff( %qv, %qu, . ))]
+			[setq( u, edit( %qu, !, ))]
+// .. .. qv: remove the remove stuff then add the add stuff
+			[setq( v, setunion( setdiff( %qd, %qu, . ), %qa, . ))]
+			[set( %0, _%qs:%qv )], 
+// >> else, replace all
+			set( %0, _%qs:%2 )
+		)), 
 
-
-[setq(m, case(
-	1, 
-@@ >> switch is "offset", replace remove or set - "numeric" type only.
-	strmatch(%3, of*), 
-	case(0, 
-@@ .. .. stat class is not "numeric", deny offset
-		strmatch(%qc, numeric), 
-		#-1 CANNOT OFFSET NON-NUMERIC STAT, 
-@@ .. .. offset is null or 0 = erase offset
-		and(comp(%2, ), neq(%2, 0)), 
-		set(%0, _%qs:%qf), 
-@@ .. .. stat doesn't exist, set 0.<offset>
-		comp(%qf, ), 
-		set(%0, _%qs:0.%2), 
-@@ .. .. else set <perm>.<offset>
-		set(%0, _%qs:%qf.%2)
-	), 
-@@ >> switch is "override", replace the whole thing without checking anything
-	strmatch(%3, ov*), 
-	set(%0, _%qs:%2), 
-@@ >> value is null, erase stat (this could be in the "else", too)
-	not(comp(%2, )), 
-	set(%0, _%qs:),
-@@ >> stat class is "numeric", replace permanent
-	strmatch(%qc, numeric), 
-	set(%0, _%qs:%2[if(%qr, .%qr)]), 
-@@ >> stat class is "list", set or un-set (!value) each item in list
-@@ .. right now, lists may be space-delimited, editing space to .
-	strmatch(%qc, list), 
-	[setq(v, edit(%2, %b, .))]
-	[setq(u, graball(%qv, !*, ., .))]
-	[setq(a, setdiff(%qv, %qu, .))]
-	[setq(u, edit(%qu, !, ))]
-@@ .. .. qv: remove the remove stuff then add the add stuff
-	[setq(v, setunion(setdiff(%qd, %qu, .), %qa, .))]
-	[set(%0, _%qs:%qv)], 
-@@ >> else, replace all
-	set(%0, _%qs:%2)
-))]
-
-@@ Display (the set() function in Mux returns null).
-[if(
-	comp(%qm, ), 
-@@ .. probably an error
-	%qm, 
-@@ .. show what we set
-	Set 
-	[ulocal(f.statname.workhorse, rest(%qs, .))]
-	[if(strmatch(%3, of*), %boffset)] to '[if(t(%qv), %qv, %2)]'.
-)]
+// Display ( the set( ) function in Mux returns null ).
+		if( comp( %qm, ), 
+// .. probably an error
+			%qm, 
+// .. show what we set
+			strcat( 
+				Set, %b, 
+				ulocal( f.statname.workhorse, rest( %qs, . )), 
+				if( strmatch( %3, of* ), %boffset ), %b, to, %b, 
+				', if( t( %qv ), %qv, %2 ), '.
+			)
+		)
+	)
 
 
 --------------------------------------------------------------------------------
