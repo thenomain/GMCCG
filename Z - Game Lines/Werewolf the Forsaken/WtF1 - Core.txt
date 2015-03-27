@@ -240,7 +240,7 @@ Stuff we need to put on the Data Dictionary
 &tags.merit.full_moon's_birth dd=wolf-blooded.moon birth
 
 &merit.gibbous_moon's_birth_() dd=2|
-	Academics Computer Crafts Investigation Medicine Occult Politics Science
+	Academics.Computer.Crafts.Investigation.Medicine.Occult.Politics.Science
 &prerequisite.merit.gibbous_moon's_birth_() dd=
 	lte( 
 		words( filter( 
