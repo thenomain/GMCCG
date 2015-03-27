@@ -250,65 +250,89 @@ Used for validating new purchases if sheet-lookup fails.
 --------------------------------------------------------------------------------
 
 &f.statpath-lookup-dd sfp=
+	strcat( 
 
-@@ Break down stat into registers x, y, z
-[setq(0, edit(%0, _, %b))]
-[u(f.stat-input-breakdown-registers, %q0)]
+// Break down stat into registers x, y, z
+		setq( 0, edit( %0, _, %b )), 
+		u( f.stat-input-breakdown-registers, %q0 ), 
 
-@@ validate stat name:
-[if(
-	setr( n, u( f.statpath-validate-name, %q0 )), 
+// validate stat name:
+		if( 
+			setr( n, u( f.statpath-validate-name, %q0 )), 
+			strcat( 
 
-@@ .. get dd entry
-	[setq( s, u( v( d.data-dictionary )/%qn ))]
-@@ .. get dd entry's "class"
-	[setq( c, ulocal( f.get-class, %qn ))]
+// .. get dd entry
+				setq( s, u( v( d.data-dictionary )/%qn )), 
+// .. get dd entry's "class"
+				setq( c, ulocal( f.get-class, %qn )), 
 
-@@ >> if instance, check dd entry for that instance and if not found, error
-@@ .. we are expecting an instance if validated stat name ends in ()
-	[if(
-		strmatch( %qn, *_%(%) ), 
-		switch(
-			1, 
-@@ .. .. instance list is *, return exactly what we were passed
-			strmatch( *, setr( 1, elements( %qs, 2, | ))), 
-			setq( n, [before(%qn, _%(%))]_%([edit( %qy, %b, _ )]%) ), 
-@@ .. .. expecting specific instance, none passed
-			match(%qy, ), 
-			setq(n, #-2 INSTANCE NOT FOUND), 
-@@ .. .. instance list is something else and we can find what was passed on it
-			t(setr(0, grab(%q1, %qy*, .))), 
-			setq(n, [before(%qn, _%(%))]_%([edit(%q0, %b, _)]%)), 
-@@ .. .. all other conditions failed: error
-			setq(n, #-2 INSTANCE NOT FOUND)
-		)
-	)]
+// >> if instance, check dd entry for that instance and if not found, error
+// .. we are expecting an instance if validated stat name ends in ()
+				if( 
+					strmatch( %qn, *_%(%) ), 
+					switch( 1, 
+// .. .. expecting specific instance, none passed
+						match( %qy, ), 
+						setq( n, #-2 INSTANCE NOT FOUND ), 
+// .. .. instance list is *, return exactly what we were passed, unless 'null'
+						strmatch( *, setr( 1, elements( %qs, 2, | ))), 
+						setq( n, 
+							strcat( 
+								before( %qn, _%(%)), 
+								_%(, 
+								edit( %qy, %b, _ ), 
+								%)
+							)
+						), 
+// .. .. instance list is something else and we can find what was passed on it
+						t( setr( 0, grab( %q1, %qy*, . ))), 
+						setq( n, 
+							strcat( 
+								before( %qn, _%(%)), 
+								_%(, 
+								edit( %q0, %b, _ ), 
+								%)
+							)
+						), 
+// .. .. all other conditions failed: error
+						setq( n, #-2 INSTANCE NOT FOUND )
+					)
+				), 
 
-@@ >> if substat, check dd entry for that substat and if not found, error
-	[if(
-		and(t(%qz), t(%qn)), 
-		switch(
-			1, 
-@@ .. .. substat-list is *
-@@ .. .. (our dd format shifts the substat-list at instance-list +1)
-@@ .. .. (for dd-lookup, the instance may be null and still valid)
-			setr(1, 
-				strmatch(*, 
-					extract(%qs, add(2, t(regmatch(%qn, .*%\(.*%\)))), 1, |)
+// >> if substat, check dd entry for that substat and if not found, error
+				if( 
+					cand( t( %qz ), t( %qn )), 
+					switch( 1, 
+// .. .. substat-list is *
+// .. .. (our dd format shifts the substat-list at instance-list +1)
+// .. .. (for dd-lookup, the instance may be null and still valid)
+						setr( 1, 
+							strmatch( *, 
+								elements( 
+									%qs, 
+									add( 2, t( regmatch( %qn, .*%\( .*%\ )))), 
+									| 
+								)
+							)
+						), 
+						setq( n, %qn.[edit( %qz, %b, _ )] ), 
+// .. .. substat-list is an actual list
+						t( setr( 0, grab( %q1, %qz*, . ))), 
+						setq( n, %qn.%q0 ), 
+// .. .. no matches
+						setq( n, #-2 SUBSTAT NOT FOUND )
+					)
 				)
-			), 
-			setq(n, %qn.[edit(%qz, %b, _)]), 
-@@ .. .. substat-list is an actual list
-			t(setr(0, grab(%q1, %qz*, .))), 
-			setq(n, %qn.%q0), 
-@@ .. .. no matches
-			setq(n, #-2 SUBSTAT NOT FOUND)
-		)
-	)]
-)]
+			)
+		), 
 
-@@ return built stat, or error -- for class:list stats, type.name only
-[if(and(t(%qn), strmatch(%qc, list)), extract(%qn, 1, 2, .), %qn)]
+// return built stat, or error -- for class:list stats, type.name only
+		if( 
+			cand( t( %qn ), strmatch( %qc, list )), 
+			extract( %qn, 1, 2, . ), 
+			%qn 
+		)
+	)
 
 
 --------------------------------------------------------------------------------
