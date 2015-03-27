@@ -204,7 +204,7 @@ Level 3 for very minor items
 &tags.discipline.protean D:T=vampire.ghoul.gangrel
 
 &discipline.resilience DD=1.2.3.4.5
-&tags.discipline.resilience D:T=vampire.ghoul.gangrel
+&tags.discipline.resilience D:T=vampire.ghoul.gangrel.ventrue
 
 &discipline.vigor DD=1.2.3.4.5
 &tags.discipline.vigor D:T=vampire.ghoul.daeva.nosferatu
