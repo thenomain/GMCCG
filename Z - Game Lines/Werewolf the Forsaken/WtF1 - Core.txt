@@ -239,8 +239,9 @@ Stuff we need to put on the Data Dictionary
 &prereq-text.merit.full_moon's_birth dd=Only one Moon Birth merit allowed
 &tags.merit.full_moon's_birth dd=wolf-blooded.moon birth
 
-&merit.gibbous_moon's_birth dd=2
-&prerequisite.merit.gibbous_moon's_birth dd=
+&merit.gibbous_moon's_birth_() dd=2|
+	Academics Computer Crafts Investigation Medicine Occult Politics Science
+&prerequisite.merit.gibbous_moon's_birth_() dd=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -253,8 +254,8 @@ Stuff we need to put on the Data Dictionary
 		)), 
 		1 
 	)
-&prereq-text.merit.gibbous_moon's_birth dd=Only one Moon Birth merit allowed
-&tags.merit.gibbous_moon's_birth dd=wolf-blooded.moon birth
+&prereq-text.merit.gibbous_moon's_birth_() dd=Only one Moon Birth merit allowed.
+&tags.merit.gibbous_moon's_birth_() dd=wolf-blooded.moon birth
 
 &merit.half_moon's_birth dd=2
 &prerequisite.merit.half_moon's_birth dd=
