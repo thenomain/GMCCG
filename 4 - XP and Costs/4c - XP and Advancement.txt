@@ -1424,7 +1424,7 @@ c: current normal xp attribute for <character>
 					_special.beats.normal:
 					[add( first( %qc ), %qx )] [rest( %qc )] 
 				), 
-				sql( sql.xp_log.auto-add, %i0, %!, normal, %qx ))
+				sql( u( sql.xp_log.auto-add, %i0, %!, normal, %qx ))
 			)
 		), 
 		list( 1, sql( u( f.transaction.end )))
@@ -1438,7 +1438,7 @@ c: current normal xp attribute for <character>
 	@eval 
 		list( 
 			search( eplayer=cand( u( f.at_weeks_end?, ## ), isapproved( ## ))), 
-			set( %i0, _special.earned_beats.normal: )
+			set( %i0, _special.beats_earned.normal: )
 		)
 
 
