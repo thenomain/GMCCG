@@ -33,6 +33,7 @@ think u( cg/f.allocated.attributes, %# )
 
 
 
+/*
 --------------------------------------------------------------------------------
 -- Allocated: Points in Skills -------------------------------------------------
 Specialties are ignored because they don't have tags, so fail the filter.
@@ -100,6 +101,41 @@ Humans themselves don't get additional specialties, so as a reminder:
 */
 
 &f.allocated.specialties.human cg=@@( nothing )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Allocated: Aspirations ------------------------------------------------------
+
+So far, everyone (but Demons) have 2 short-term and 1 long-term aspiration.
+Check for these under 'pitched'.
+
+Outputs: <number of short term>/<number of long-term>
+
+*/
+
+&f.allocated.aspirations cg=
+	localize( strcat( 
+		setq( a, u( v( d.asp )/f.get.aspirations.status, %0, pitched )), 
+		setq( s, filter( v( d.asp )/filter.term, %qa, , , short-term )), 
+		setq( l, filter( v( d.asp )/filter.term, %qa, , , long-term )), 
+
+		words( %qs ), /, words( %ql )
+	))
+
+
+/*
+-- Points Check: Aspirations ---------------------------------------------------
+*/
+
+&f.pts-valid?.aspirations cg=
+	strcat( 
+		setq( a, u( f.allocated.aspirations, %0 )), 
+		cand( 
+			eq( first( %qa, / ), 2 ), 
+			eq( rest( %qa, / ), 1 )
+		)
+	)
 
 
 /*
