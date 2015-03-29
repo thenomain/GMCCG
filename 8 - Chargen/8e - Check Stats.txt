@@ -491,11 +491,11 @@ strcat(
 // >> column 1: Gender, Concept, Full Name, Birthdate
 	setq( 1, 
 		strcat( 
-			Gender:, %b, 
+			ansi( h, Gender ), :, %b, 
 				setr( g, get( %0/sex )), %b, 
 				u( display.check.ok-no, match( f m, strtrunc( %qg, 1 ))), 
 				`, 
-			Concept:, %b, 
+			ansi( h, Concept ), :, %b, 
 				if( 
 					hasattr( %0, _bio.concept ), 
 					ansi( g, exists ), 
@@ -505,7 +505,7 @@ strcat(
 			iter( 
 				full_name birthdate, 
 				strcat( 
-					titlestr( edit( %i0, _, %b )), :, %b, 
+					ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
 					setr( i, u( %1/_bio.%i0 )), %b, 
 					u( display.check.ok-no, comp( %qi, ))
 				), 
@@ -518,7 +518,7 @@ strcat(
 	setq( a, 
 		iter( virtue vice, 
 			strcat( 
-				titlestr( edit( %i0, _, %b )), :, %b, 
+				ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
 				setr( i, u( %1/_bio.%i0 )), %b, 
 				u( display.check.ok-no, comp( %qi, ))
 			), 
@@ -528,7 +528,7 @@ strcat(
 	setq( b, 
 		iter( u( check.bio.%2 ), 
 			strcat( 
-				titlestr( edit( %i0, _, %b )), :, %b, 
+				ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
 				setr( i, u( %1/_bio.%i0 )), %b, 
 				u( display.check.ok-no, comp( %qi, ))
 			), 
@@ -563,20 +563,32 @@ This is an example until we get a GMC check in here.
 
 */
 
+
+Merits: 5/10 (5 on <name of Power Stat>)
+
+
 &check.chargen cg=
 	strcat( 
 		divider( Chargen Levels, width( %# )), %r, 
-		%b Attributes:%b, 
-			u( f.allocated.attributes, %0 ), %b, 
+		%b%b, ansi( h, Attributes ), :%b, 
+			u( f.allocated.attributes, %0 ), %b, %(of 5/4/3%), %b, 
 			u( display.check.stats, %0, attributes ), %r, 
-		%b Skills:%b, 
-			u( f.allocated.skills, %0 ), %b, 
+		%b%b, ansi( h, Skills ), :%b, 
+			u( f.allocated.skills, %0 ), %b, %(of 11/7/4%), %b, 
 			u( display.check.stats, %0, skills ), %r, 
 
 		ulocal( check.chargen.specialties, %0, %1 ), %r, 
 
-		%b Merits:%b, 
-			u( f.allocated.merits, %0 ), %b, 
+		%b%b, ansi( h, Aspirations ), :%b, 
+			setq( a, u( f.allocated.aspirations, %0 )), 
+			Short-Term:, %b, first( %qa, / ), /2%,%b, 
+			Long-Term:, %b, rest( %qa, / ), /1%b, 
+			u( display.check.stats, %0, aspirations ), %r, 
+
+		%b%b, ansi( h, Merits ), :%b, 
+			setq( a, u( f.allocated.merits, %0 )), 
+			ladd( %qa, / ), /10, 
+			%b%(, rest( %qa, / ), %b, on Power Stat%), %b, 
 			u( display.check.stats, %0, merits ), %r, 
 
 // .. template chargen checks
@@ -603,7 +615,7 @@ r: template-specific specialties
 		setq( s, first( %qa, ` )), 
 		setq( r, rest( %qa, ` )), 
 
-		%b Specialties:, %b, 
+		%b%b, ansi( h, Specialties ), :%b, 
 		iter( 
 			%qs, 
 			ulocal( u( d.sfp )/f.statname.workhorse, rest( %i0, . )), 
@@ -613,7 +625,8 @@ r: template-specific specialties
 // check & output template specs
 		ulocal( check.specialties.%1, %qr ), 
 
-		%r%b Final Specialties Check ->, %b, 
+		%r%b%b, ansi( h,  Final Specialties Check ), %b, ->, %b, 
+		words( %qs ), /3, %b, 
 		ulocal( display.check.stats, %0, specialties )
 
 	)
