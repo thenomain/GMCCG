@@ -86,6 +86,14 @@ Stuff we need to put on the Data Dictionary
 == WEREWOLF MERITS =============================================================
 */
 
+// -- Merits: Cross-Sphere -----------------------------------------------------
+
+// Merit.Producer, from Vampire Core
+
+@if hasattr( DD, merit.producer )={ 
+		&tags.merit.producer D:T=[get( D:T/tags.merit.producer )].wolf-blooded
+	}
+
 
 // -- Merits: Wolf-Blooded -----------------------------------------------------
 
@@ -388,7 +396,7 @@ one free merit.tell_()
 
 &check.chargen.wolf-blooded cg=
 	strcat( 
-		%b, %b, Free Tell:, %b, 
+		%b, %b, ansi( h, Free Tell ), :, %b, 
 		u( display.check.ok-no, 
 			eq( u( f.allocated.merits.wolf-blooded, %0 ), 3 )
 		), 

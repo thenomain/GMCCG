@@ -131,6 +131,15 @@ Level 3 for very minor items
 // &tags.special.cover_experiences D:T=demon
 
 
+// -- Merits: Cross-Sphere -----------------------------------------------------
+
+// Merit.Producer, from Vampire Core
+
+@if hasattr( DD, merit.producer )={ 
+		&tags.merit.producer D:T=[get( D:T/tags.merit.producer )].stigmatic 
+	}
+
+
 
 // == DEMON MERITS =============================================================
 
@@ -967,15 +976,6 @@ We're doing this by assuming the last specialty is the Demon specialty.
 		u( u( d.sfp )/f.statname.workhorse, rest( first( %0, ` ), . ))
 	)
 
-// --
-
-/*
-&check.specialties.stigmatic CG=
-	cat( 
-		%r%b %b Stigmatic (fourth specialty):, 
-		u( u( d.sfp )/f.statname.workhorse, rest( first( %0, ` ), . ))
-	)
-*/
 
 
 /* 
@@ -1101,8 +1101,8 @@ Still faster than 'f.list-stats-tags'
 &check.chargen.stigmatic CG=
 	strcat( 
 		%b, %b, 
-		Stigmatic Merits:, %b, 
-		setr( 9, u( f.allocated.merits.stigmatic, %0 )), %b, 
+		ansi( h, Stigmatic Merits ), :, %b, 
+		setr( 9, u( f.allocated.merits.stigmatic, %0 )), /3%b, 
 		u( display.check.ok-no, eq( %q9, 3 )), %b, 
 		%r, 
 		

@@ -136,6 +136,7 @@ Level 3 for very minor items
 &prerequisite.merit.taste_of_fear DD=u( .is, %0, bio.clan, Nosferatu )
 &prereq-text.merit.taste_of_fear DD=Nosferatu Regnant
 
+// all other minor ("human") templates can gain producer, as well
 &merit.producer DD=1
 &tags.merit.producer D:T=ghoul.human
 
