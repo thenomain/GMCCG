@@ -324,7 +324,7 @@ r: rest (optional)
 		if( strlen( %qr ), 
 			u( f.aspiration/pitch.action, %qf, %qr ), 
 			u( f.list.aspirations, 
-				if( strlen( %qf ), %qf, %# ), 
+				if( strlen( %qf ), pmatch( %qf ), %# ), 
 				pitched, 
 				asp/pitch 
 			)
@@ -578,10 +578,13 @@ A player has pitched a new aspiration
 				), 
 
 // .. create the job (via 'job request system')
-				u( f.create.job, 
-					%#, 
-					u( display.pitch.title, %#, %qt ), 
-					u( display.pitch.contents, %#, %qn, %qt, %qa )
+// .. do not create jobs for those in chargen!
+				if( not( isapproved( %#, chargen )), 
+					u( f.create.job, 
+						%#, 
+						u( display.pitch.title, %#, %qt ), 
+						u( display.pitch.contents, %#, %qn, %qt, %qa )
+					)
 				)
 			)
 		)
@@ -608,10 +611,16 @@ think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [an
 
 &display.pitch.player-message asp=
 	strcat( 
-		You have asked for a new %2 aspiration:, %b, ansi( h, %3 ), %r%r, 
-		It is currently waiting as aspiration #%1., %r, 
-		A job has been created for you concerning it. 
-		Please be patient and wait for staff to approve or deny it. Thanks. 
+		You have asked for a new %2 aspiration:, %b, ansi( h, %3 ), 
+		if( not( isapproved( %#, chargen )), 
+			strcat( 
+				%r%r, 
+				It is currently waiting as aspiration #%1., %r, 
+				A job has been created for you concerning it. 
+				Please be patient and wait for staff to approve or deny it. 
+				Thanks. 
+			)
+		)
 	)
 
 
@@ -995,9 +1004,7 @@ o: list to output
 				)
 			), 
 			setq( a, 
-				filter( filter.status, 
-					lattr( %0/_aspiration.* ), , , %0, %qf 
-				)
+				u( f.get.aspirations.status, %0, %qf )
 			), 
 
 			u( display.aspiration.list, 
@@ -1008,7 +1015,13 @@ o: list to output
 		)
 	)
 
+--
 
+0: player dbref
+1: aspiration type (qf)
+
+&f.get.aspirations.status asp=
+	filter( filter.status, lattr( %0/_aspiration.* ), , , %0, %1 )
 
 /*
 ================================================================================
