@@ -187,7 +187,7 @@ Level 3 for very minor items
 &tags.discipline.auspex D:T=vampire.ghoul.mekhet
 
 &discipline.celerity DD=1.2.3.4.5
-&tags.discipline. D:T=vampire.ghoul.daeva.mekhet
+&tags.discipline.celerity D:T=vampire.ghoul.daeva.mekhet
 
 &discipline.dominate DD=1.2.3.4.5
 &tags.discipline.dominate D:T=vampire.ghoul.ventrue
