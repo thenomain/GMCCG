@@ -816,7 +816,7 @@ f: formula's attribute name
 		if( t( %qf ), 
 			u( 
 				v( d.xpcd )/%qf, 
-				%0, %1, %2, last(%q3, .), %qv 
+				%0, %1, %2, rest( %3, . ), %qv 
 			), 
 
 			%qf
