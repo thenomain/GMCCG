@@ -1,0 +1,197 @@
+Timed XP Spends: Cannot raise something based on various criteria.
+
+Almost Everything: 1 level/mo
+Supernatural Tollerance: 1 level/2 mos
+Embed/Exploit: I don't even ...
+	3 Embeds/Exploits per month, no more than 2 of each
+Social Merits do not have to begin at one dot when appropriate to IC situations
+Status and Mystery Cult Initiation cannot be raised for 30 days 
+	after character approval
+
+&timer.<statpath> xpas=<timer nonsense>
+
+================================================================================
+== SETUP =======================================================================
+*/
+
+&prefix.timers xpcd=timer.
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- CREATE TABLE ----------------------------------------------------------------
+
+DROP TABLE IF EXISTS xp_log;
+
+--
+
+CREATE TABLE IF NOT EXISTS xp_log ( 
+	target_objid VARCHAR(255) NOT NULL, 
+	target_name VARCHAR(255) NOT NULL, 
+
+	enactor_objid VARCHAR(255) NOT NULL, 
+	enactor_name VARCHAR(255) NOT NULL, 
+
+	log_time TIMESTAMP NOT NULL DEFAULT NOW(), 
+
+	xp_type VARCHAR(255) NOT NULL, 
+	xp_amt DECIMAL(21,17) NOT NULL,
+
+	trait_category VARCHAR(255),
+	trait_name VARCHAR(255), 
+
+	action VARCHAR(255) NOT NULL, 
+	reason VARCHAR(255), 
+
+	PRIMARY KEY (target_objid, log_time) 
+) ENGINE=INNODB; 
+
+
+================================================================================
+== SQL =========================================================================
+
+	target: The person to whom this applies
+	enactor: The person (or machine) doing this
+
+	log_time: The time this is happening
+	
+	xp_type: Where is the xp coming from/going?
+	xp_amt: Amount of XP applied to character ('spend' must be negative, e.g.)
+
+	trait_category: Merit? Gift? (First part of statpath.) Used for spends.
+	trait_name: The rest of the statpath. Used for spends.
+
+	action: gain, spend, <others to follow>
+	reasoning: Content for this. VAGUELY OPTIONAL
+
+
+--------------------------------------------------------------------------------
+-- SQL Insert: Add by Auto-Award System ----------------------------------------
+
+0: target dbref
+1: enactor dbref
+2: xp type (probably 'normal')
+3: xp amt
+
+*/
+
+&sql.insert.daily-auto xpas=
+	INSERT 
+		INTO xp_log (
+			target_objid, target_name, 
+			enactor_objid, enactor_name, 
+			xp_type, xp_amt, action, reason
+		) 
+		VALUES (
+			'[u( .objid, %0 )]', '[name( %0 )]', 
+			'[u( .objid, %1 )]', 'Auto-Experience System <xpas>', 
+			'%2', %3, 'gain', 'Daily Auto'
+		)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- SQL Insert: Award to XP Log -------------------------------------------------
+
+0: target dbref
+1: enactor dbref
+2: xp type (probably 'normal')
+3: xp amt
+4: reason
+
+We don't use trait_* for awards.
+
+*/
+
+&sql.insert.award xpas=
+	INSERT 
+		INTO xp_log (
+			target_objid, target_name, 
+			enactor_objid, enactor_name, 
+			xp_type, xp_amt, 
+			action, reason
+		) 
+		VALUES (
+			'[u( .objid, %0 )]', '[name( %0 )]', 
+			'[u( .objid, %1 )]', '[name( %1 )]', 
+			'%2', %3, 
+			'gain', '%4'
+		)
+			
+			
+/* 
+--------------------------------------------------------------------------------
+-- SQL Select: Get XP Log of One Type for One Character ------------------------
+
+A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
+
+0: target dbref
+1: xp type
+
+*/
+
+&sql.select.type-character xpas=
+	SELECT enactor_objid, enactor_name, log_time, xp_amt, action, reason 
+	FROM xp_log 
+	WHERE target_objid='[u( .objid, %0 )]' 
+	AND xp_type='[lcstr( %1 )]'
+
+
+/*
+--------------------------------------------------------------------------------
+-- SQL Insert: Spend Some Experience -------------------------------------------
+
+0: target dbref
+1: enactor dbref (may be the same)
+2: xp type (probably 'normal')
+3: xp amt
+4: full statpath (with instance)
+5: reason (probably 'statname old -> new') 
+
+*/
+
+&sql.insert.spend xpas=
+	INSERT 
+		INTO xp_log (
+			target_objid, target_name, 
+			enactor_objid, enactor_name, 
+			xp_type, xp_amt, 
+			trait_category, trait_name, 
+			action, reason
+		) 
+		VALUES (
+			'[u( .objid, %0 )]', '[name( %0 )]', 
+			'[u( .objid, %1 )]', '[name( %1 )]', 
+			'%2', %3, 
+			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', 
+			'spend', '%5'
+		)
+
+
+/*
+--------------------------------------------------------------------------------
+-- SQL Select: Most Recent Touch of Trait for Objid ----------------------------
+
+Checks either trait cateogry (first part of statpath) 
+or trait name (entire statpath). Returns most recent ("latest") date.
+
+Using LIKE so we can search for, e.g., any "Merit.Status_(%)" 
+or "Skill.Academics.%".
+
+Without trait name, searches only trait category.
+
+--
+
+0: target dbref
+1: full statpath (trait name may use % and _ for wildcards, and is optional)
+
+*/
+
+&sql.select.last-touched xpas=
+	SELECT MAX( log_time ) 
+	FROM xp_log 
+	WHERE target_objid = '[u( .objid, %0 )]' 
+	AND trait_category = '[lcstr( first( %1, . ))]' 
+	AND trait_name LIKE 
+		'[if( strlen( rest( %1, . )), lcstr( rest( %1, . )), %% )]'; 

@@ -1,0 +1,123 @@
+/*
+XP Timers
+
+How often can you raise a stat by one level?
+
+If you don't want to use this system, do not install anything here.
+
+Hopefully the system will ignore timers if the data is null.
+
+--
+
+0: target character object dbref
+1: full statpath (with instance)
+returns: - or 0 if OK to buy, + if not
+
+--
+
+Supernatural Tolerance - 8 weeks
+	&timer.<supernatural tolerance> xpas=4838400 - <last purchase>
+
+Demons can only buy 3 Embeds/Exploits per month, no more than 2 of each
+	I think this would work ...
+		&timer.embed xpas=2419200 - <oldest of 3 embeds/exploits> 
+			OR gte( <embeds in that time>, 2 )
+		&timer.explot xpas=2419200 - <oldest of 3 embeds/exploits> 
+			OR gte( <exploits in that time>, 2 )
+
+Status and Mystery Cult Initiation cannot be raised for 30 days after 
+character approval.
+	&timer.merit.status_() xpas=
+		max( 
+			sub( 2419200, u( f.last-purchase, %0, %1 )), 
+			sub( 2419200, u( v( d.cg )/f.total_secs_approved, %0 ))
+		)
+	&timer.merit.mystery_cult_initiation_() xpas=
+		max( 
+			sub( 2419200, u( f.last-purchase, %0, %1 )), 
+			sub( 2419200, u( v( d.cg )/f.total_secs_approved, %0 ))
+		)
+
+*/
+
+// ----------------------------------------------------------------------------
+// 0: character dbref
+// 1: full statpath
+
+&f.last-purchase xpas=
+	u( f.time.sql2unix, 
+		sql( u( sql.select.last-touched, %0, %1 ))
+	)
+
+&f.time-until-next-purchase xpas=
+	min( 0, 
+		
+	)
+
+
+/*
+================================================================================
+== TIMERS ======================================================================
+
+0: target character object dbref
+1: full statpath (with instance)
+returns: - or 0 if OK to buy, + if not
+
+We're putting these on the Costs Database <xpcd>
+
+*/
+
+// Pretty much everything - 4 weeks
+
+&timer.? xpcd=sub( 2419200, u( f.last-purchase, %0, %1 ))
+
+// Status and Mystery Cult Initiation cannot be raised for 
+// 4 weeks after character approval.
+
+&timer.merit.status_() xpcd=
+	max( 
+		sub( 2419200, u( f.last-purchase, %0, %1 )), 
+		sub( 2419200, u( v( d.cg )/f.total_secs_approved, %0 ))
+	)
+
+&timer.merit.mystery_cult_initiation_() xpcd=
+	max( 
+		sub( 2419200, u( f.last-purchase, %0, %1 )), 
+		sub( 2419200, u( v( d.cg )/f.total_secs_approved, %0 ))
+	)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Timer Formula Finder --------------------------------------------------------
+
+Basically the 'XP Formula Finder'.
+
+...
+

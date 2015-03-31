@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS xp_log (
 	xp_type VARCHAR(255) NOT NULL, 
 	xp_amt DECIMAL(21,17) NOT NULL,
 
-	reasoning VARCHAR(255) NOT NULL,
+	reason VARCHAR(255) NOT NULL,
 
 	PRIMARY KEY (target_objid, log_time) 
 ) ENGINE=INNODB; 
@@ -135,6 +135,9 @@ a very temporary thing
 */
 
 &c.xp/cost xpas=$xp/cost *:@pemit %#=[u( f.xp/cost, %0 )]
+
+
+&c.xp/spend xpas=$xp/spend *:@pemit %#=[u( f.xp/spend, %0 )]
 
 
 
@@ -290,7 +293,7 @@ Technically an sql.* function, but easier to do this way.
 		INTO xp_log (
 			target_objid, target_name, 
 			enactor_objid, enactor_name, 
-			xp_type, xp_amt, reasoning
+			xp_type, xp_amt, reason
 		) 
 		VALUES (
 			'[u( .objid, %0 )]', '[name( %0 )]', 
@@ -316,7 +319,7 @@ Technically an sql.* function, but easier to do this way.
 		INTO xp_log (
 			target_objid, target_name, 
 			enactor_objid, enactor_name, 
-			xp_type, xp_amt, reasoning
+			xp_type, xp_amt, reason
 		) 
 		VALUES (
 			'[u( .objid, %0 )]', '[name( %0 )]', 
@@ -324,17 +327,6 @@ Technically an sql.* function, but easier to do this way.
 			'%2', %3, 'Daily Auto'
 		)
 
-
-/* 
---------------------------------------------------------------------------------
--- SQL: Get XP Log for One Character -------------------------------------------
-
-0: target dbref
-
-*/
-
-&sql.xp_log.character xpas=
-	SELECT * FROM xp_log WHERE target_objid='[u( .objid, %0 )]'
 
 /* 
 --------------------------------------------------------------------------------
@@ -348,7 +340,7 @@ A summary used for xp/log
 */
 
 &sql.xp_log.type-character xpas=
-	SELECT enactor_objid, enactor_name, log_time, xp_amt, reasoning 
+	SELECT enactor_objid, enactor_name, log_time, xp_amt, reason 
 	FROM xp_log 
 	WHERE target_objid='[u( .objid, %0 )]' 
 	AND xp_type='[lcstr( %1 )]'
@@ -388,7 +380,7 @@ Important data:
 			iter( v( d.xp_types ), 
 				u( display.xp-and-beats.one-line, %#, %i0 ), 
 				, %r 
-			), 
+			), %r, 
 			wdivider(), %r, 
 
 			if( isapproved( %# ), 
@@ -443,11 +435,11 @@ Important data:
 
 &display.xp-and-beats.one-line xpas=
 	strcat( 
-		setq( b, floor( get( %0/_special.beats.%1 ))), 
-		setq( x, floor( fdiv( %qb, v( d.beat-to-exp )))), 
-		setq( b, mod( %qb, v( d.beat-to-exp ))), 
+		setq( a, floor( ladd( get( %0/_special.beats.%1 )))), 
+		setq( x, floor( fdiv( %qa, v( d.beat-to-exp )))), 
+		setq( b, mod( %qa, v( d.beat-to-exp ))), 
 		ansi( h, titlestr( %1 )), %b, >>, %b, 
-		Experiences: %qx%, Beats: %qb 
+		Experience: %qx%, Beats: %qb 
 	)
 
 think u( xpas/display.xp-and-beats.one-line, *vera, normal )
@@ -509,7 +501,7 @@ p: target (dbref)
 		)
 	); 
 
-	@assert cor( pmatch( %#, %qp ), isstaff( %# ))={ 
+	@assert cor( strmatch( %#, %qp ), isstaff( %# ))={ 
 		@pemit %#=u( .msg, xp/log, Self or staff only )
 	}; 
 
@@ -520,7 +512,7 @@ p: target (dbref)
 	think strcat( 
 		Log:, setr( l, 
 			iter( 
-				sql( u( sql.xp_log.type-character, %qp, normal ), `, | ), 
+				sql( u( sql.select.type-character, %qp, normal ), `, | ), 
 				u( format.xp/log.one-line, %i0 ), 
 				`, `
 			)
@@ -546,14 +538,19 @@ p: target (dbref)
 
 &format.xp/log.one-line xpas=
 	strcat( 
+// who
 		elements( %0, 2, | ), %b, %(, first( elements( %0, 1, | ), : ), %), |, 
+// when
 		elements( 
 			convsecs( u( f.time.sql2unix, elements( %0, 3, | ))), 
 			2 3 5 
 		), |, 
-		trim( fdiv( floor( elements( %0, 4, | )), v( d.beat-to-exp )), b, 0 ), 
+// amt
+		if( strmatch( elements( %0, 5, | ), spend ), - ), 
+		trim( fdiv( floor( elements( %0, 4, | )), v( d.beat-to-exp )), l, 0 ), 
 		|, 
-		elements( %0, 5, | )
+// reason
+		elements( %0, 6, | )
 	)
 
 
@@ -592,7 +589,7 @@ Reason & Entered By are flexible to the viewer's screen width.
 ################################################################################
 ## XP AWARDING #################################################################
 
-Max 4 experiences (20 beats) per week, aka:
+Max 4 experience (20 beats) per week, aka:
 	20 - u( f.auto.beats.weekly, <character> )
 
 Store weekly earned on:
@@ -626,7 +623,6 @@ Valid award:
 	b: current week's earned beats : _special.beats_earned.<type>
 	f: final weekly award attribute (for type)
 	e: total weekly earnable (for type)
-
 
 */
 
@@ -668,7 +664,7 @@ Valid award:
 		@pemit %#=u( .msg, xp/award, Must include reason )
 	};
 
-	@assert cor( strmatch( %qr, *|* ), strmatch( %qr, *`* ))={ 
+	@break cor( strmatch( %qr, *|* ), strmatch( %qr, *`* ))={ 
 		@pemit %#=u( .msg, xp/award, May not use | or ` in reason )
 	};
 	
@@ -677,7 +673,7 @@ Valid award:
 	}; 
 
 	think strcat( 
-		experiences:, setr( x, get( %qp/_special.beats.%qt )), %r, 
+		experience:, setr( x, get( %qp/_special.beats.%qt )), %r, 
 		beats earned:, setr( b, get( %qp/_special.beats_earned.%qt )), %r, 
 		final award attribute:, setr( f, add( %qa, %qb )), %r, 
 		total weekly earnable:, setr( e, u( f.weekly_beats.max_earnable, %qp ))
@@ -707,7 +703,7 @@ Valid award:
 	think strcat( 
 		tranaction begin, u( f.transaction.begin ), %r, 
 		sanitized reason:, setr( s, u( f.sql.escape, %qr )), %r, 
-		add to xp_log:, sql( u( sql.xp_log.add, %qp, %#, %qt, %qa, %qs )), %r, 
+		add to xp_log:, sql( u( sql.insert.award, %qp, %#, %qt, %qa, %qs )), %r, 
 		tranaction end, u( f.transaction.end )
 	); 
 
@@ -848,7 +844,7 @@ think
 	[setr( n, lnum( words( %qs, . ), 2 ))] --> 
 	[setr( n, iter( %qn, setr( t, replace( %qt, %i0, ?, . ))))] --> 
 	[setr( n, [iter( %qn, %i0~%qz )] %qn )] --> 
-	[first( filter( xpas/fil.formula_finder, %qn ))]
+	[first( filter( xpas/fil.formula_finder, %qn, , , xp ))]
 
 &xp.skill.?.?~[get( %#/_bio.template)] xpcd=
 
@@ -876,7 +872,7 @@ x: temp statpaths for the degrading search
 				iter( 
 					lnum( words( %0, . ), 2 ), 
 					setr( s, replace( %qs, %i0, ?, . ))
-				)
+				), , ,xp
 			)
 		), 
 		setq( s, 
@@ -885,7 +881,7 @@ x: temp statpaths for the degrading search
 				%qs
 			)
 		), 
-		setq( s, filter( fil.formula_finder, %qs )), 
+		setq( s, filter( fil.formula_finder, %qs, , , xp )), 
 
 		setq( x, %0 ), 
 		setq( x, 
@@ -893,7 +889,7 @@ x: temp statpaths for the degrading search
 				iter( 
 					lnum( words( %0, . ), 1 ), 
 					setr( x, ldelete( %qx, %i0, . ))
-				)
+				), , , xp
 			)
 		), 
 		setq( x, 
@@ -902,17 +898,17 @@ x: temp statpaths for the degrading search
 				%qx
 			)
 		), 
-		setq( x, filter( fil.formula_finder, %qx )), 
+		setq( x, filter( fil.formula_finder, %qx, , , xp )), 
 
 // TEST
 		case( 1, 
 
 // xp.<statpath>~<template>
-			t( filter( fil.formula_finder, %0~%qt )), 
+			t( filter( fil.formula_finder, %0~%qt, , , xp )), 
 			xp.%0~%qt, 
 
 // xp.<statpath>
-			t( filter( fil.formula_finder, %0 )), 
+			t( filter( fil.formula_finder, %0, , , xp )), 
 			xp.%0, 
 
 // xp.<type>.?[~<template>]
@@ -930,7 +926,7 @@ x: temp statpaths for the degrading search
 
 // --
 
-&fil.formula_finder xpas=hasattr( v( d.xpcd ), xp.%0 )
+&fil.formula_finder xpas=hasattr( v( d.xpcd ), %1.%0 )
 
 // --
 // &xp.skill.?.?~[get( %#/_bio.template)] xpcd=1
@@ -955,7 +951,7 @@ t: trait's value (current, from the sheet)
 c: cost
 
 e: error message, if any
-x: current xp attribute
+x: current 'beats' attribute
 
 */
 
@@ -1041,9 +1037,9 @@ f: other error check results
 			list, 
 			strcat( 
 				to add %3, %b, 
-				%(, u( u( d.dd )/_class_translate_list, %2, %3 ), %), 
+				%(, u( u( d.dd )/.class_translate_list, %2, %3 ), %), 
 				%b, to, %b, 
-				statname ( %0/%1 )
+				statname( %0/%1 )
 			), 
 
 			cat( 
@@ -1055,7 +1051,7 @@ f: other error check results
 			)
 		), %b, 
 
-		is %qc Experiences., 
+		is %qc Experience., 
 
 // .. can't afford?
 		setq( e, u( validate.spend, %qc, %qx )), 
@@ -1103,6 +1099,138 @@ n: next rank, if applicable
 		 )
 	))
 
+/*
+================================================================================
+== XP/SPEND ====================================================================
+
+Extended form of 'xp/cost'
+
+--
+
+0: [<player>/]<stat>[=<value>]
+p: player dbref
+n: stat name
+v: requested value (new)
+
+w: where's the sheet
+s: stat path
+t: trait's value (current, from the sheet)
+c: cost
+
+e: error message, if any
+x: current 'beats' attribute
+
+n: statname
+
+*/
+
+&f.xp/spend xpas=
+	strcat( 
+
+// break %0 down to p, n, v
+		setq( p, first( %0, = )), 
+		setq( v, rest( %0, = )), 
+		setq( n, rest( %qp, / )), 
+		setq( p, first( %qp, / )), 
+		if( not( t( %qn )), 
+			strcat( setq( n, %qp ), setq( p, %# )),
+			setq( p, pmatch( %qp ))
+		), 
+
+// get sheet location, statpath
+		setq( w, ulocal( v( d.sfp )/f.find-sheet, %qp )),
+		setq( s, ulocal( v( d.sfp )/f.statpath.workhorse, %qn, %qp )), 
+
+// current value, next value, estimated cost
+		setq( t, ulocal( .value, %qw, %qs )), 
+		if( 
+			not( t( %qv )), 
+			setq( v, ulocal( f.stat.next_rank, %qw, _%qs ))
+		), 
+		setq( c, ulocal( f.cost.calculator, %qw, %qt, %qv, %qs )), 
+
+// current 'xp' attribute
+		setq( x, get( %qw/_special.beats.normal )), 
+
+		case( 1, 
+
+// TEMPORARY: STAFF-ONLY
+			not( isstaff( %# )), 
+			u( .msg, xp/spend, For now%, please use 'req/xp <title>=<spend>' ), 
+
+// normal checks
+			t( setr( e, ulocal( validate.player, %qp, %qw, 1 ))), 
+			u( .msg, xp/spend, %qe ), 
+
+			t( setr( e, ulocal( validate.stat, %qw, %qs, %qt, %qv ))), 
+			u( .msg, xp/spend, %qe ), 
+
+			t( setr( e, ulocal( validate.value ))), 
+			u( .msg, xp/spend, %qe ), 
+
+			t( setr( e, ulocal( validate.cost, %qc ))), 
+			u( .msg, xp/spend, %qe ), 
+
+			t( setr( e, ulocal( validate.spend, %qc, %qx ))), 
+			u( .msg, xp/spend, %qe ), 
+
+			t( setr( e, ulocal( validate.restricted, %qs, %qv ))), 
+			u( .msg, xp/spend, %qe ), 
+
+
+// spend 1: log to sql and check - stop if failed
+			strmatch( 
+				setr( e, 
+					sql( u( sql.insert.spend, 
+						%qp, %#, normal, mul( %qc, v( d.beat-to-exp )), %qs, 
+						u( f.sql.escape, 
+							Spend: [statname( %qp/%qn )] '%qt' -> '%qv' 
+						)
+					))
+				), 
+				#-* 
+			), 
+			u( .msg, xp/spend, XP log entry failed. Spend not processed. ), 
+
+// spend 2: run setstat and check - stop if failed
+			strmatch( 
+				setr( e, 
+					ulocal( v( d.sfp )/f.setstat.workhorse, %qw, %qs, %qv )
+				), 
+				#-* 
+			), 
+			u( .msg, xp/spend, Error from Setstat: %qe ), 
+
+			strcat( 
+
+// spend 3: adjust xp and check - process even if failed
+				setq( e, set( %qw, 
+					_special.beats.normal:
+					[first( %qx )] 
+					[sub( rest( %qx ), mul( %qc, v( d.beat-to-exp )))] 
+				)), 
+				if( strmatch( %qe, #-* ), 
+					u( .msg, xp/spend, 
+						Error while setting new xp: %qe %r
+						%(Original XP attribute: %qx%) 
+					)
+				), 
+
+// spend 4: message to enactor
+				setq( n, statname( %qp/%qn )), 
+				u( .msg, xp/spend, 
+					strcat( 
+						if( strmatch( %qp, %# ), 
+							Your, 
+							[name( %qp )]'s
+						), %b, 
+						%qn, %b, 
+						has been set to '%qv' for %qc Experience.
+					)
+				), 
+			)
+		)
+	)
 
 
 
@@ -1131,7 +1259,7 @@ Everything there is to validate about a player.  Sheet, approved, staff status, 
 		Could not find a sheet, 
 
 		cor( %2, isapproved( %0, approved ), isstaff( %# )), 
-		Must be approved for play to spend Experiences 
+		Must be approved for play to spend Experience 
 	)
 
 
@@ -1252,15 +1380,15 @@ To be honest, I'm not sure why this is here.
 
 After we've validated everything else, can the person afford it?
 
-0: cost (qc), in experiences
-1: experiences attribute (qx), in beats
+0: cost (qc), in experience
+1: experience attribute (qx), in beats
 
 */
 
 &validate.spend xpas=
 	if( 
 		gt( %0, fdiv( ladd( %1 ), v( d.beat-to-exp ))), 
-		Not enough Experiences 
+		Not enough Experience 
 	)
 
 
@@ -1424,7 +1552,7 @@ c: current normal xp attribute for <character>
 					_special.beats.normal:
 					[add( first( %qc ), %qx )] [rest( %qc )] 
 				), 
-				sql( u( sql.xp_log.auto-add, %i0, %!, normal, %qx ))
+				sql( u( sql.insert.daily-auto, %i0, %!, normal, %qx ))
 			)
 		), 
 		list( 1, sql( u( f.transaction.end )))
