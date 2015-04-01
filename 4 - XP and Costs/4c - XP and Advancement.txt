@@ -431,15 +431,27 @@ Important data:
 /* 
 --------------------------------------------------------------------------------
 -- Display General XP Info -----------------------------------------------------
+
+a: attribute
+x: experiences
+b: beats
+e: earned
+
 */
 
 &display.xp-and-beats.one-line xpas=
 	strcat( 
-		setq( a, floor( ladd( get( %0/_special.beats.%1 )))), 
-		setq( x, floor( fdiv( %qa, v( d.beat-to-exp )))), 
-		setq( b, mod( %qa, v( d.beat-to-exp ))), 
-		ansi( h, titlestr( %1 )), %b, >>, %b, 
-		Experience: %qx%, Beats: %qb 
+		setq( a, get( %0/_special.beats.%1 )), 
+		setq( c, ladd( %qa )), 
+		setq( e, first( %qa )), 
+		setq( s, rest( %qa )),
+
+
+		ansi( h, titlestr( %1 )), :, %b, 
+		Experience:, %b, floor( fdiv( %qc, v( d.beat-to-exp ))), %,%b, 
+		Beats:, %b, mod( %qc, v( d.beat-to-exp )), %r, 
+		%b- Earned:, %b, floor( fdiv( %qe, v( d.beat-to-exp ))), %r, 
+		%b- Spent:, %b, abs( floor( fdiv( %qs, v( d.beat-to-exp )))) 
 	)
 
 think u( xpas/display.xp-and-beats.one-line, *vera, normal )
