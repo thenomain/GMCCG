@@ -1,0 +1,184 @@
+/*
+================================================================================
+== /SETTYPE ====================================================================
+
+A system to add or remove instanced types (<type>) from stats.
+
+	stat/settype <stat>=[!]<type>
+
+Stats with a type of '*' cannot be changed in this way. 
+Last item cannot be removed.
+
+1) determine if stat is instanced
+2) prettify input
+3) add to the end
+
+
+0: <stat>=[!]<type>
+
+s: statpath (without all the extra checking)
+c: stat class
+a: <types> from attribute 
+
+n: not? [!]
+t: type to add/remove
+m: match %qt from %qa
+
+f: final list of types
+a: (again) get full attribute for final edit
+e: error check
+
+*/
+
+&f.stat/settype Stat Setter <ss>=
+	strcat( 
+		setq( s, 
+			u( 
+				v( d.stat-funcs )/f.statpath-validate-name, 
+				first( %0, = )
+			)
+		), 
+		setq( a, elements( get( v( d.data-dictionary )/%qs ), 2, | )), 
+		setq( n, strmatch( setr( t, rest( %0, = )), !* )), 
+		setq( t, titlestr( right( %qt, sub( strlen( %qt ), %qn )))), 
+
+		setq( m, match( %qa, %qt, . )), 
+		ansi( h, <stat/settype>%b, n, 
+			case( 0, 
+				isstaff( %# ), Staff only, 
+
+				t( %qs ), Stat not found, 
+
+				comp( rest( %0, = ), ), 
+				Oh at least enter something to add or remove, 
+
+				strmatch( %qs, *_%(%) ), 
+				Stat cannot take an instanced type, 
+
+				not( member( %qa, * )), 
+				'[u( format.type.into_statpath, %qs )]' can take any type 
+				and so can't be added to or deleted from this way - 
+				change the stat's attribute directly, 
+
+				cor( not( %qn ), t( %qm )), 
+				'[u( format.type.into_statpath, %qs, %qt )]' doesn't exist, 
+
+				cor( %qn, not( %qm )), 
+				'[u( format.type.into_statpath, %qs, %qt )]' already exists, 
+
+// ok
+				strcat( 
+					setq( f, 
+						if( %qn, 
+							ldelete( %qa, %qm, . ), 
+							setunion( %qa, titlestr( %qt ), . )
+						)
+					), 
+					setq( a, get( v( d.data-dictionary )/%qs )), 
+					setq( e, 
+						set( 
+							v( d.data-dictionary ), 
+							%qs:[replace( %qa, 2, %qf, | )]
+						)
+					), 
+					if( strlen( %qe ), 
+						strcat( 
+							Error setting new attribute! Please type: &%qs, %b, 
+							v( d.data-dictionary ), =, 
+							replace( %qa, 2, %qf, | )
+						), 
+
+						strcat( 
+							', u( format.type.into_statpath, %qs, %qt ), ', %b, 
+							if( %qn, removed, added )
+						)
+					)
+				)
+			)
+		)
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Format: Put Type Into Statpath ----------------------------------------------
+
+a quick way to add <type> to <statpath>_() 
+
+0: full.statpath_()
+1: instance to add to it
+
+*/
+
+&format.type.into_statpath Stat Setter <ss>=
+	strcat( 
+		titlestr( edit( before( rest( %0, . ), %(%) ), _, %b )), 
+		%b, %(%1%) 
+	)
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+================================================================================
+== /SETVALUE ===================================================================
+
+
+A system to add or remove values (<value>) from stats.
+
+Last item cannot be removed.
+
+1) determine if stat is instanced
+2) prettify input
+3) add to the end
+
+
+0: <stat>=[!]<value>
+
+s: statpath
+c: stat class
+a: raw attrtibute 
+	'<values>'
+	'<values>|<types>|<substats>'
+	'<list values>|<list names>'
+
+n: not? [!]
+v: value to add/remove
+
+*/
+
+&c.stat/setvalue Stat Setter <ss>=
+	strcat( 
+		setq( s, setr( s, <get statpath -- first( %0, = )> )), 
+		setq( c, <stat class of %qs> ), 
+		setq( a, get( v( d.dd )/%qs )), 
+		setq( n, strmatch( rest( %0, = ), !* )), 
+		setq( v, strtrunc( %qv, sub( strlen( %qv ), %qn ))), 
+		case( 0, 
+			isstaff( %# ), Staff only., 
+
+			t( %qs ), Stat not found., 
+
+// .. add 'list' to grab() when it's done
+			t( grab( %qc, numeric string )), 
+			I only know how to edit the values for Numeric and String stats, 
+
+			not( member( elements( %qa, 1, | ), * )), 
+			Stat can take any value and cannot be adjusted this way., 
+
+			not( strmatch( %qc, Numeric )), xxx, 
+
+			not( strmatch( %qc, String )), xxx, 
+			
+			Unexpected error. It happens.
+		)
+	)
+*/
