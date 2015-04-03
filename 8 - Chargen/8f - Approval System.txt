@@ -809,7 +809,7 @@ The rest is about dancing.
 	%b%b %b %b - asp/list [name( %# )] %r
 	%b%b %b %b - asp/approve [name( %# )]/<number> %r
 	%b %b 3) Checking for your Breaking Points : +notes [name( %# )] %r
-	%b %b 4) Reading your backgrounds : bgview [name( %# )] %r
+	%b %b 4) Reading your backgrounds : bgcheckall [name( %# )] %r
 	%r
 	If they think everything is okay, they will 'cg/approve' you and complete 
 	this job.%r%r
