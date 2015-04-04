@@ -922,7 +922,8 @@ a: aspiration text
 				strcat( 
 					u( .msg, asp/drop, 
 						strcat( 
-							Deleting Aspiration #%qn pitch:, %b, ansi( h, %qa )
+							Deleting Aspiration #%qn pitch:, %b, ansi( h, %qa ), 
+							%r, space( 11 ), Be sure to tell staff in your job! 
 						)
 					), 
 					set( %#, _aspiration.%qn: )
