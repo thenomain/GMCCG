@@ -21,7 +21,7 @@ Requires:
 
 
 1) Player pitches an Aspiration
-2) Staff approves (and processes) or denies the job
+2) Staff completes the job
 3a) Player requests a job to fullfill the aspiration (asp/fulfill)
 3b) Player requests a job to drop the aspiration (asp/drop)
 4) Staff fulfills/deletes the Aspiration as requested, or doesn't
@@ -118,6 +118,8 @@ Aspirations Log System <asp>
 // -- Sortby(s) ----------------------------------------------------------------
 
 &sortby.index asp=sub( rest( %0, . ), rest( %1, . ))
+
+
 
 
 /*
@@ -217,13 +219,27 @@ f: fulfilled keyword (for filter)
 --------------------------------------------------------------------------------
 -- Function: Get the next aspiration index -------------------------------------
 
-due to how we're doing this, never 'fill in the blanks' (use empty values).
 0: target dbref
 
 */
 
 &f.next-index asp=
-	inc( last( sortby( sortby.index, lattr( %0/_aspiration.* )), . ))
+	localize( 
+		first( setdiff(
+			lnum( 1, 
+				inc( 
+					last( 
+						setr( l, 
+							sort( 
+								edit( lattr( %0/_aspiration.* ), _ASPIRATION., )
+							)
+						)
+					)
+				)
+			), 
+			%ql 
+		))
+	)
 
 
 
@@ -258,7 +274,7 @@ c: content
 
 	@assert not( haspower( %#, guest ))={ 
 		@pemit %#=
-		u( .msg, asp, I'm sorry%, guest%, but this isn't for you. )
+		u( .msg, asp, I'm sorry%, guest%, but this isn't *for* you. )
 	}; 
 
 	@assert cor( not( %qs ), t( %qm ))={ 
@@ -376,6 +392,23 @@ Staff can deny 'pitch' and 'fulfill'.
 		u( f.aspiration/deny.action, %qp, %qn )
 	)
 
+
+/*
+--------------------------------------------------------------------------------
+-- Switch: Drop ----------------------------------------------------------------
+
+Players request that a :
+
+	asp/drop <number>=<reason>
+
+*/
+
+&c.aspiration/drop asp=
+	strcat( 
+		setq( n, trim( first( %0, = ))), 
+		setq( r, trim( rest( %0, = ))), 
+		u( f.aspiration/drop.request, %qn, %qr )
+	)
 
 
 
@@ -617,7 +650,7 @@ think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [an
 				%r%r, 
 				It is currently waiting as aspiration #%1., %r, 
 				A job has been created for you concerning it. 
-				Please be patient and wait for staff to approve or deny it. 
+				Please be patient and wait for staff to complete it. 
 				Thanks. 
 			)
 		)
@@ -739,7 +772,7 @@ think u( asp/f.aspiration/fulfill.request, 1, this one will succeed! )
 		Your reason:, %b, ansi( h, %3 ), %r%r, 
 
 		A job has been created for you concerning it. 
-		Please be patient and wait for staff to approve or deny it. Thanks. 
+		Please be patient and wait for staff to complete it. Thanks. 
 	)
 
 
@@ -838,6 +871,138 @@ n: new attribute
 
 
 
+/*
+################################################################################
+## DROP AN ASPIRATION ##########################################################
+
+Player asks that an aspiration be dropped, usually to replace it
+
+--------------------------------------------------------------------------------
+-- Function: Drop, Request -----------------------------------------------------
+
+A player has an aspiration they'd like dropped.
+If the aspiration is 'pitched', just drop it.
+If the aspiration is 'approved', request it.
+
+0: aspriation number
+1: reason to drop
+
+n: aspiration number
+r: reason
+a: aspiration attribute contents
+s: aspiration status
+a: aspiration text
+
+*/
+
+&f.aspiration/drop.request asp=
+	strcat( 
+		setq( n, %0 ), 
+		setq( r, translate( edit( %1, |, ), p )), 
+		setq( a, get( %#/_aspiration.%qn )), 
+		setq( s, first( %qa, : )), 
+		setq( a, last( %qa, | )), 
+
+		case( 0, 
+			t( %qa ), 
+			u( .msg, asp/drop, You have no such aspiration ), 
+
+			cor( strmatch( %qs, pitched ), strmatch( %qs, approved )), 
+			u( .msg, asp/drop, 
+				The aspiration is '%qs' and can't be dropped 
+			), 
+
+			cor( strmatch( %qs, pitched ), strlen( %qr )), 
+			u( .msg, asp/drop, You must include a reason ), 
+
+			case( %qs, 
+
+// pitched: just drop it
+				pitched, 
+				strcat( 
+					u( .msg, asp/drop, 
+						strcat( 
+							Deleting Aspiration #%qn pitch:, %b, ansi( h, %qa )
+						)
+					), 
+					set( %#, _aspiration.%qn: )
+				), 
+
+// approved: ask for a /deny
+				approved, 
+				strcat( 
+					u( .msg, asp/drop,
+						 u( display.drop.player-message, %#, %qn, %qa, %qr )
+					), 
+					u( f.create.job, 
+						%#, 
+						u( display.drop.title, %#, %qn ), 
+						u( display.drop.contents, %#, %qn, %qa, %qr )
+					)
+				)
+			)
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Display: Drop: Player Message -----------------------------------------------
+
+0: enactor dbref
+1: aspiration number
+2: aspiration text
+3: reason
+
+*/
+
+&display.drop.player-message asp=
+	strcat( 
+		You have asked to drop aspiration #%1:, %b, 
+		ansi( h, %2 ), %r%r, 
+
+		Your reason:, %b, ansi( h, %3 ), %r%r, 
+
+		A job has been created for you concerning it. 
+		Please be patient and wait for staff to complete it. Thanks. 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Display: Drop: Job Title ----------------------------------------------------
+
+0: enactor dbref
+1: aspiration number
+
+*/
+
+&display.drop.title asp=DROP: Aspiration #%1 for [name( %0 )]
+
+
+/*
+--------------------------------------------------------------------------------
+-- Display: Drop: Job Contents -------------------------------------------------
+0: enactor dbref
+1: aspiration number
+2: aspiration text
+3: reason
+
+*/
+
+&display.drop.contents asp=
+	strcat( 
+		setr( n, name( %0 )), %b, is asking to drop Aspiration #%1:, %b, 
+		ansi( h, %2 ), %r%r, 
+		The reasoning:, %b, ansi( h, %3 ), %r%r
+		If you approve of this%, type:, %r, 
+		%b %b asp/deny %qn/%1, %r%r, 
+		Then complete this job., %r%r, 
+		Otherwise%, start a discussion with the player or complete this job 
+		with a reason why not. 
+	)
+
+
 
 
 /*
@@ -874,20 +1039,19 @@ t: aspiration status
 			strlen( %qa ), 
 			u( .msg, asp/deny, No such aspiration. ), 
 
-			strmatch( %qs, pitched ), 
+			cor( strmatch( %qs, pitched ), strmatch( %qs, approved )), 
 			u( .msg, asp/deny, 
-				Aspiration #%1 is '%qs'. It needs to be 'pitched'. 
+				Aspiration #%1 is '%qs'. It needs to be 'pitched' or 'approved'. 
 			), 
 
 			strcat( 
 				u( .msg, asp/deny, 
 					strcat( 
 						Deleting, %b, moniker( %qp ), 's Aspiration #%1 pitch:, 
-						%b, elements( %qa, 3, | )
+						%b, elements( %qa, 3, | ), %r, 
+						space( 11 ), 
+						Remember to process their job with a reason why. 
 					)
-				), %r, 
-				u( .msg, asp/deny, 
-					Remember to process their job with a reason why! 
 				), 
 				set( %qp, _aspiration.%1: )
 			)
@@ -946,8 +1110,8 @@ s: aspiration status
 					Approved [name( %qp )]'s Aspiration #%1. 
 					They may now fulfill it.
 				), %r, 
-				u( .msg, asp/fulfill, 
-					Remember to approve their job! 
+				u( .msg, asp/approve, 
+					Remember to complete their job. 
 				)
 			)
 		)
