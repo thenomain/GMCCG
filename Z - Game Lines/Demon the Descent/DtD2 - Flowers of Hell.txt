@@ -1,0 +1,250 @@
+/*
+DtD2: Flowers of Hell
+
+-- MERITS --------
+--- Demon ---
+*/
+
+&merit.advanced_form DD=1
+&tags.merit.advanced_form D:T=demon
+
+&merit.efficient_dealer DD=2
+&tags.merit.efficient_dealer D:T=demon
+&prereq-text.merit.efficient_dealer DD=Specialty in Skill that would be appropriate for screwing someone over.
+
+&merit.electromagnetic_linguistics DD=2
+&tags.merit.electromagnetic_linguistics D:T=demon
+&prerequisite.merit.electromagnetic_linguistics dd=u( .has, %0, skill.computers )
+&prereq-text.merit.electromagnetic_linguistics DD=Computers 1+
+
+&merit.high_tolerance DD=1.2
+&tags.merit.high_tolerance D:T=demon
+
+&merit.living_the_lie DD=2
+&tags.merit.living_the_lie D:T=demon
+&prerequisite.merit.living_the_lie DD=u( .at_least, %0, advantage.primum, 2 )
+&prereq-text.merit.living_the_lie DD=Primum 2+
+
+&merit.monkeywrencher DD=2
+&tags.merit.monkeywrencher D:T=demon
+&prerequisite.merit.monkeywrencher DD=u( .at_least, %0, advantage.primum, 2 )
+&prereq-text.merit.monkeywrencher DD=Primum 2+
+
+&merit.resonance_aware DD=1.2.3.4.5
+&tags.merit.resonance_aware D:T=demon
+&prerequisite.merit.resonance_aware dd=u( .at_least, %0, attribute.wits, 3 )
+&prereq-text.merit.resonance_aware DD=Wits 3+
+
+&merit.resonance_sensitive DD=1
+&tags.merit.resonance_sensitive D:T=demon
+&prerequisite.merit.resonance_sensitive dd=u( .at_least, %0, attribute.wits, 4 )
+&prereq-text.merit.resonance_sensitive DD=Wits 4+
+
+&merit.subsumed_gadget DD=2
+&tags.merit.subsumed_gadget D:T=demon
+&prerequisite.merit.subsumed_gadget DD=u( .at_least, %0, advantage.primum, 3 )
+&prereq-text.merit.subsumed_gadget DD=Primum 3+
+
+&merit.sympathetic_stigmatic_() DD=2
+&tags.merit.sympathetic_stigmatic_() D:T=demon
+&prerequisite.merit.sympathetic_stigmatic dd=u( .has, %0, merit.true_friend_(<name>) )
+&prereq-text.merit.sympathetic_stigmatic DD=True Friend
+
+&merit.tattooed_gadget DD=2
+&tags.merit.tattooed_gadget D:T=demon
+
+// --- Stigmatic ----------------
+
+&merit.potent_blood DD=1
+&tags.merit.potent_blood D:T=stigmatic
+
+&merit.sleeve_integrator DD=1.2.3.4.5
+&tags.merit.sleeve_integrator D:T=stigmatic
+&prerequisite.merit.sleeve_integrator DD=u( .at_least, %0, advantage.integrity, 5 )
+&prereq-text.merit.sleeve_integrator DD=Integrity 5
+
+&merit.sympathetic_demon_() DD=2
+&tags.merit.sympathetic_demon_() D:T=stigmatic
+
+
+
+
+
+
+
+/*
+New Embeds
+
+Cacophony
+*/
+
+&embed.apple_of_discord DD=Manipulation+Expression vs. Integrity
+&tags.embed.apple_of_discord DD=demon.cacophony
+&type.embed.apple_of_discord DD=string
+
+&embed.anarchism DD=Manipulation+Politics-Composure
+&tags.embed.anarchism DD=demon.cacophony
+&type.embed.anarchism DD=string
+
+&embed.breakdown DD=Wits+Medicine-Resolve
+&tags.embed.breakdown DD=demon.cacophony
+&type.embed.breakdown DD=string
+
+&embed.fire_drill DD=Wits+Science
+&tags.embed.fire_drill DD=demon.cacophony
+&type.embed.fire_drill DD=string
+
+&embed.fractal_reality DD=Wits+Science
+&tags.embed.fractal_reality DD=demon.cacophony
+&type.embed.fractal_reality DD=string
+
+&embed.password_entropy DD=Wits+Computer
+&tags.embed.password_entropy DD=demon.cacophony
+&type.embed.password_entropy DD=string
+
+&embed.play_possum DD=Manipulation+Medicine
+&tags.embed.play_possum DD=demon.cacophony
+&type.embed.play_possum DD=string
+
+&embed.ripple DD=Wits+Science
+&tags.embed.ripple DD=demon.cacophony
+&type.embed.ripple DD=string
+
+&embed.trip DD=Wits+Athletics-Dexterity
+&tags.embed.trip DD=demon.cacophony
+&type.embed.trip DD=string
+
+&embed.victory_at_any_price DD=Wits+Science
+&tags.embed.victory_at_any_price DD=demon.cacophony
+&type.embed.victory_at_any_price DD=string
+
+// Instrumental
+
+&embed.call_out DD=Manipulation+Intimidation vs. Presence + Supernatural Tolerance
+&tags.embed.call_out DD=demon.instrumental
+&type.embed.call_out DD=string
+
+&embed.data_retrieval DD=Wits+Computers
+&tags.embed.data_retrieval DD=demon.instrumental
+&type.embed.data_retrieval DD=string
+
+&embed.data_wipe DD=Wits+Copmputers
+&tags.embed.data_wipe DD=demon.instrumental
+&type.embed.data_wipe DD=string
+
+&embed.functional_identity DD=Wits+Crafts
+&tags.embed.functional_identity DD=demon.instrumental
+&type.embed.functional_identity DD=string
+
+&embed.high_of_birth DD=Manipulation+Politics
+&tags.embed.high_of_birth DD=demon.instrumental
+&type.embed.high_of_birth DD=string
+
+&embed.knock-off DD=Dexterity+Larceny
+&tags.embed.knock-off DD=demon.instrumental
+&type.embed.knock-off DD=string
+
+&embed.open_sesame DD=Wits+Larceny-Special Penalties
+&tags.embed.open_sesame DD=demon.instrumental
+&type.embed.open_sesame DD=string
+
+&embed.soup_up DD=Dexter+Drive-Special Penalties
+&tags.embed.soup_up DD=demon.instrumental
+&type.embed.soup_up DD=string
+
+&embed.trivia DD=Manipulation+Expression
+&tags.embed.trivia DD=demon.instrumental
+&type.embed.trivia DD=string
+
+&embed.wasted_time DD=Wits+Science
+&tags.embed.wasted_time DD=demon.instrumental
+&type.embed.wasted_time DD=string
+
+// Mundane
+
+&embed.associate_and_integrate DD=Manipulation+Science vs. Resolve + Composure
+&tags.embed.associate_and_integrate DD=demon.mundane
+&type.embed.associate_and_integrate DD=string
+
+&embed.clothes_make_the_man DD=Wits+Persuasion vs. Wits + Target Skill
+&tags.embed.clothes_make_the_man DD=demon.mundane
+&type.embed.clothes_make_the_man DD=string
+
+&embed.deep_cover DD=Manipulation+Occult
+&tags.embed.deep_cover DD=demon.mundane
+&type.embed.deep_cover DD=string
+
+&embed.going_native DD=Wits+Socialize
+&tags.embed.going_native DD=demon.mundane
+&type.embed.going_native DD=string
+
+&embed.like_the_movies DD=Wits+Academics
+&tags.embed.like_the_movies DD=demon.mundane
+&type.embed.like_the_movies DD=string
+
+&embed.mistaken_identity DD=Manipulation+Persuasion-Composure
+&tags.embed.mistaken_identity DD=demon.mundane
+&type.embed.mistaken_identity DD=string
+
+&embed.persistent_legend DD=Wits+Academics
+&tags.embed.persistent_legend DD=demon.mundane
+&type.embed.persistent_legend DD=string
+
+&embed.the_voting_dead DD=Manipulation+Politics
+&tags.embed.the_voting_dead DD=demon.mundane
+&type.embed.the_voting_dead DD=string
+
+&embed.wave_function_collapse DD=Dexterity+Brawl vs. Stamina + Supernatural Tolerance
+&tags.embed.wave_function_collapse DD=demon.mundane
+&type.embed.wave_function_collapse DD=string
+
+&embed.you_can_tell_me DD=Manipulation+Empathy-Composure
+&tags.embed.you_can_tell_me DD=demon.mundane
+&type.embed.you_can_tell_me DD=string
+
+// Vocal
+
+&embed.imagine DD=Manipulation+Persuasion
+&tags.embed.imagine DD=demon.vocal
+&type.embed.imagine DD=string
+
+&embed.the_look DD=Manipulation+Intimidation-Stamina
+&tags.embed.the_look DD=demon.vocal
+&type.embed.the_look DD=string
+
+&embed.loose_lips DD=Manipulation+Socialize-Stamina
+&tags.embed.loose_lips DD=demon.vocal
+&type.embed.loose_lips DD=string
+
+&embed.the_only_word_that_matters DD=Manipulation+Expression-Composure
+&tags.embed.the_only_word_that_matters DD=demon.vocal
+&type.embed.the_only_word_that_matters DD=string
+
+&embed.remote_link-up DD=Wits+Socialize
+&tags.embed.remote_link-up DD=demon.vocal
+&type.embed.remote_link-up DD=string
+
+&embed.rhetoric DD=Wits+Subterfuge
+&tags.embed.rhetoric DD=demon.vocal
+&type.embed.rhetoric DD=string
+
+&embed.social_engineering DD=Manipulation+Persuasion
+&tags.embed.social_engineering DD=demon.vocal
+&type.embed.social_engineering DD=string
+
+&embed.strength_through_adversity DD=Manipulation+Intimidation-Resolve
+&tags.embed.strength_through_adversity DD=demon.vocal
+&type.embed.strength_through_adversity DD=string
+
+&embed.sum_of_all_fears DD=Wits+Empathy-Composure
+&tags.embed.sum_of_all_fears DD=demon.vocal
+&type.embed.sum_of_all_fears DD=string
+
+&embed.vox DD=Manipulation+Expression
+&tags.embed.vox DD=demon.vocal
+&type.embed.vox DD=string
+
+/*
+-- EXPLOITS ----------------------------------------------------------------
+*/
+

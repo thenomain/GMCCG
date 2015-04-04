@@ -1,0 +1,96 @@
+/*
+DtD3 - Heirs to Hell
+
+Adds template: Demon-Born
+*/
+
+
+// << ADD TEMPLATE: Demon-Born >>
+
+
+/*
+==========================================================================================
+== CHARGEN ===============================================================================
+
+Type: Offspring, Latent or Fractal.
+Compromise (system, p.30, Int + Occult )
+Integrity (as usual)
+Stigmata
+
+* Offspring: 
+	Pick one Embed
+	Get a second from the ST (as 1st Key)
+	Condition: Noted
+
+* Latent: 
+	Nothing extra
+
+* Fractal:
+	Pick one Embed
+	Get a two more from the ST (as 1st and 2nd Key)
+	Condition: Catalogued
+	First Interlock
+
+Access to Supernatural merits. 
+(At this point it might be easier to note who doesn't get access to these!)
+
+*/
+
+
+
+
+
+
+
+
+
+/*
+"Some Fractals can hold small amounts of Aether. Such characters have a maximum Aether pool of 5 and can spend one point of Aether per turn."
+
+EMBEDS
+
+All demon-blooded can learn Embeds. Don't double-tag.
+*/
+
+@dolist setdiff( 
+		lattr( <tags object>/tags.embed.* ), 
+		grepi( <tags object>, tags.embed.*, demon-blooded )
+	)={ 
+		@edit <tags object>/##=demon., demon.demon-blooded. 
+	}
+
+
+/* 
+MERITS
+
+All demon-blooded characters may purchase the Eidetic Memory Merit for one Merit dot 
+instead of two.
+
+*/
+
+// &merit.eidetic_memory DD=1.2, etc. etc.
+
+&merit.ambient_aether DD=1.2
+&prerequisite.merit.ambient_aether DD=<offspring or fractal>
+&prereq-text.merit.ambient_aether DD=Offspring or Fractal
+&tags.merit.ambient_aether DD=demon-blooded
+
+&merit.aether_pool DD=1.2
+&prerequisite.merit.aether_pool DD=u( .has, %0, merit.ambient_aether )
+&prereq-text.merit.aether_pool DD=Offspring or Fractal
+&tags.merit.aether_pool DD=demon-blooded
+
+&merit.instinctive_deflection DD=2
+&tags.merit.aether_pool DD=demon-blooded
+
+// Language and Multi-Lingual are the same as far as code is concerned
+
+&merit.quantum_understanding DD=3
+&prerequisite.merit.quantum_understanding DD=<fractal>
+&prereq-text.merit.quantum_understanding DD=Fractal
+&tags.merit.quantum_understanding DD=demon-blooded
+
+&merit.unknown DD=1
+&prerequisite.merit.unknown DD=<offspring or fractal>
+&prereq-text.merit.unknown DD=Offspring or Fractal
+&tags.merit.unknown DD=demon-blooded
