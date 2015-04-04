@@ -302,6 +302,10 @@ c: content
 				u( .msg, asp, You cannot check someone else's aspiration. ), 
 				hastype( %qp, player ), 
 				u( .msg, asp, No such player ), 
+				isint( %qn ), 
+				u( .msg, asp, 
+					You didn't enter a number%; did you mean 'asp/list %qn'? 
+				), 
 				u( display.aspiration.details, %qp, %qn )
 			)
 		), 
@@ -1169,21 +1173,21 @@ o: list to output
 				)
 			), 
 			setq( a, 
-				u( f.get.aspirations.status, %0, %qf )
+				u( f.get.aspirations.status, %qp, %qf )
 			), 
 
 			u( display.aspiration.list, 
-				%0, 
+				%qp, 
 				%qa, 
 				if( dec( strlen( %qf )), %qf ) 
 			)
 		)
 	)
 
---
+// --
 
-0: player dbref
-1: aspiration type (qf)
+// 0: player dbref
+// 1: aspiration type (qf)
 
 &f.get.aspirations.status asp=
 	filter( filter.status, lattr( %0/_aspiration.* ), , , %0, %1 )
@@ -1249,8 +1253,14 @@ n: list of aspiration numbers (indecies) for those attrs
 			, %r 
 		), %r, 
 
-		u( .wfooter )
-
+		u( .wfooter, 
+			if( not( words( %2 )), 
+				cat( 
+					words( u( f.get.aspirations.status, %0, fulfilled )), 
+					Fulfilled 
+				)
+			)
+		)
 	)
 
 
