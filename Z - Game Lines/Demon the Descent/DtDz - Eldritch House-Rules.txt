@@ -1,0 +1,22 @@
+/* 
+DtDz - Eldritch House-Rules
+
+These are meant to override or replace any existing code in the system.
+
+Demon-Blooded: 
+	Not a Template, treat them as Enhanced Stigmatics.
+	NO EMBEDS!
+
+*/
+
+
+
+/* 
+	Soul Pact
+	http://eldritch.mechanipus.com/w/index.php/Merits/Custom#Soul_Pact
+*/
+
+&merit.soul_pact_() DD=2.3.4.5|*
+&tags.merit.soul_pact_() D:T=demon
+// &notes.merit.soul_pact_() xxxx=
+//	http://eldritch.mechanipus.com/w/index.php/Merits/Custom#Soul_Pact
