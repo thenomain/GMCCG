@@ -87,7 +87,11 @@ This hits the iteration limit and hits it hard.
 &c.census.default cs=
 	strcat( 
 		setq( a, u( f.search.approved )), 
-		setq( u, u( f.search.chargen )), 
+		setq( u, 
+			filter( fil.attr.exists, 
+				u( f.search.chargen ), , , _bio.template 
+			)
+		), 
 		wheader( Census: [words( %qa )] Approved ), %r, 
 
 /* if you care about character gender, uncomment this section
@@ -137,7 +141,7 @@ end - gender census */
 						), 
 						ansi( xh, %b%(+[words( %qx )]%) )
 					)
-				)
+				), 
 				., |
 			)
 		), 
@@ -145,7 +149,7 @@ end - gender census */
 
 // -- template's main census --
 		iter( get( v( d.dd )/bio.template ), 
-			u( display.census.template.%i0 ), 
+			ulocal( display.census.template.%i0 ), 
 			. , @@ 
 		), 
 
@@ -251,10 +255,8 @@ Right now there are no switches.
 		cand( isapproved( ##, approved ), not( isstaff( ## )))
 	)
 
-
 &f.search.chargen cs=
 	search( eplayer=isapproved( ##, chargen ))
-
 
 &f.search.attr cs=search( eplayer=hasattr( ##, %0 ))
 
@@ -285,6 +287,7 @@ After doing a basic search, filter down to the information that you need
 &fil.dead cs=isapproved( %0, dead )
 
 // .. either string 
+&fil.attr.exists cs=hasattr( %0, %1 )
 &fil.attr.string.is cs=strmatch( u( %0/%1 ), %2 )
 &fil.attr.list.contains cs=t( match( u( %0/%1 ), %2, . ))
 
@@ -660,9 +663,14 @@ u: unapproved <list>
 // --
 
 think u( v( d.cs )/display.census.attribute, sex, m*.f* )
+
 think u( v( d.cs )/display.census.attribute, sex, m*:Male.f*:Female )
 
+think u( v( d.cs )/display.census.attribute, _bio.template, first( u( v( d.dd )/bio.template ), | ), 1 )
+
 think [u( v( d.cs )/display.census.attribute, _bio.template, Human.Changeling, 1 )][u( v( d.cs )/display.census.attribute, _bio.template, setdiff( first( u( v( d.dd )/bio.template ), | ), Human.Changeling, . ), 1 )]
+
+
 
 
 /*
