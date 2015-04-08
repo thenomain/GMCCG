@@ -70,12 +70,12 @@ Level 3 for very minor items
 &tags.bio.covenant D:T=vampire
 
 &bio.coterie DD=*
-&tags.bio.coterie D:T=vampire.ghoul
+&tags.bio.coterie D:T=vampire.ghoul.clique
 
-&bio.mask DD=xxx
+&bio.mask DD=Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Junkie.Martyr.Masochist.Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.Scholar.Social Chameleon.Spy.Survivor.Visionary
 &tags.bio.mask D:T=vampire
 
-&bio.dirge DD=xxx
+&bio.dirge DD=Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Junkie.Martyr.Masochist.Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.Scholar.Social Chameleon.Spy.Survivor.Visionary
 &tags.bio.dirge D:T=vampire
 
 
@@ -597,52 +597,75 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 
 */
 
-&check.disciplines CG=
+&check.disciplines [v(d.CG)]=udefault( check.disciplines.[get( %0/_bio.template )], ** check failed **, %0 ) 
+
+&check.disciplines.vampire CG=
 	strcat( 
-		setq( 8, get( %0/_bio.template )), 
 		setq( 9, u( f.allocated.disciplines, %0 )),
 		setq( t, ladd( %q9, ` )), 
 		setq( i, elements( %q9, 2, ` )), 
 		setq( o, elements( %q9, 1, ` )), 
 
 		%b, %b, 
-		Total Disciplines:, %b, 
+		ansi( h, Total Disciplines ), :, %b, 
 		if( eq( %qt, 0 ), ansi( xh, <none> ), %qt ), %b, 
-		%(, v( d.msg.disciplines.%q8 ), %), 
-		u( check.disciplines.%1, %qt ), 
+		%(of 3%), %b, 
+		u( check.disciplines.vampire.total, %qt ), 
 		%r, 
 
 		%b, %b, %b, %b, 
-		In-Clan:, %b, 
+		ansi( h, In-Clan ), :, %b, 
 		if( eq( %qi, 0 ), ansi( xh, <none> ), %qi ), %b, 
-		%(, v( d.msg.disciplines.in-clan.%q8 ), %), 
-		u( check.disciplines.%1.in-clan, %qi ), 
+		%(at least 2%), %b, 
+		u( check.disciplines.vampire.in-clan, %qi ), 
 		%r, 
 
 		%b, %b, %b, %b, 
-		Others:, %b, 
+		ansi( h, Non-Clan ), :, %b, 
 		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
-		%(, v( d.msg.disciplines.non-clan.%q8 ), %), 
-		u( check.disciplines.%1.non-clan, %qo ), 
+		%(at most 1%), %b, 
+		u( check.disciplines.vampire.non-clan, %qo ), 
 
 		%r 
 	)
 
-&check.disciplines.vampire CG=u( display.check.ok-no, eq( %0, 3 ))
+&check.disciplines.vampire.total CG=u( display.check.ok-no, eq( %0, 3 ))
 &check.disciplines.vampire.in-clan CG=u( display.check.ok-no, gte( %0, 2 ))
 &check.disciplines.vampire.non-clan CG=u( display.check.ok-no, lte( %0, 1 ))
 
-&d.msg.disciplines.vampire CG=of 3
-&d.msg.disciplines.in-clan.vampire CG=at least 2
-&d.msg.disciplines.non-clan.vampire CG=at most 1
+&check.disciplines.ghoul CG=
+	strcat( 
+		setq( 9, u( f.allocated.disciplines, %0 )),
+		setq( t, ladd( %q9, ` )), 
+		setq( i, elements( %q9, 2, ` )), 
+		setq( o, elements( %q9, 1, ` )), 
 
-&check.disciplines.ghoul CG=u( display.check.ok-no, eq( %0, 2 ))
+		%b, %b, 
+		ansi( h, Total Disciplines ), :, %b, 
+		if( eq( %qt, 0 ), ansi( xh, <none> ), %qt ), %b, 
+		%(of 2%), %b, 
+		u( check.disciplines.ghoul.total, %qt ), 
+		%r, 
+
+		%b, %b, %b, %b, 
+		ansi( h, In-Clan ), :, %b, 
+		if( eq( %qi, 0 ), ansi( xh, <none> ), %qi ), %b, 
+		%(of 2%), %b, 
+		u( check.disciplines.ghoul.in-clan, %qi ), 
+		%r, 
+
+		%b, %b, %b, %b, 
+		ansi( h, Non-Clan ), :, %b, 
+		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
+		%(of none%), %b, 
+		u( check.disciplines.ghoul.non-clan, %qo ), 
+
+		%r 
+	)
+
+&check.disciplines.ghoul.total CG=u( display.check.ok-no, eq( %0, 2 ))
 &check.disciplines.ghoul.in-clan CG=u( display.check.ok-no, eq( %0, 2 ))
 &check.disciplines.ghoul.non-clan CG=u( display.check.ok-no, eq( %0, 0 ))
-
-&d.msg.disciplines.ghoul CG=of 2
-&d.msg.disciplines.in-clan.ghoul CG=of 2
-&d.msg.disciplines.non-clan.ghoul CG=of none
 
 
 
