@@ -66,23 +66,27 @@ Level 3 for very minor items
 &tags.bio.clan D:T=vampire.ghoul
 
 &bio.covenant DD=
-	Carthian Movement.Circle of the Crone.Invictus.Lancea Sanctum.Ordo Dracul
+	Carthian Movement.Circle of the Crone.Invictus.Lancea et Sanctum.Ordo Dracul
 &tags.bio.covenant D:T=vampire
 
+&bio.coterie DD=*
+&tags.bio.coterie D:T=vampire.ghoul
+
+&bio.mask DD=xxx
+&tags.bio.mask D:T=vampire
+
+&bio.dirge DD=xxx
+&tags.bio.dirge D:T=vampire
 
 
 /*
 ================================================================================
 == VAMPIRE ADVANTAGES ==========================================================
 
-&advantage.xxx DD=
-&tags.advantage.xxx D:T=vampire
 */
 
 &advantage.blood_potency DD=0.1.2.3.4.5.6.7.8.9.10
 &default.advantage.blood_potency DD=1
-&prerequisite.advantage.blood_potency DD=u( .is_full, %0, bio.template, vampire )
-&prereq-text.advantage.blood_potency DD=Ghouls may not raise this stat.
 &tags.advantage.blood_potency D:T=power.vampire
 
 &advantage.vitae DD=ladd( u( .value_full, %0, advantage.vitae_maximum ), . )
@@ -108,6 +112,257 @@ Level 3 for very minor items
 ================================================================================
 == VAMPIRE MERITS ==============================================================
 */
+
+&merit.acute_senses DD=1
+&tags.merit.acute_senses D:T=vampire
+
+&merit.altar DD=3
+&tags.merit.altar D:T=vampire.circle of the crone
+&prerequisite.merit.altar dd=u( .has, %0, merit.status_(circle_of_the_crone) )
+&prereq-text.merit.altar DD=Status (Circle of the Crone) 1
+
+&merit.anointed DD=2
+&tags.merit.anointed D:T=vampire.lancea et sanctum
+&prerequisite.merit.anointed dd=u( .has, %0, merit.status_(lancea_et_sanctum) )
+&prereq-text.merit.anointed DD=Status (Lancea et Sanctum) 1
+
+&merit.atrocious DD=1
+&tags.merit.atrocious D:T=vampire
+&prerequisite.merit.atrocious DD=u( .has_none_of, %0, merit.cutthroat merit.enticing )
+&prereq-text.merit.atrocious DD=Cannot have the Cutthroat or Enticing Merits
+
+&merit.attache DD=1
+&tags.merit.attache D:T=vampire.invictus
+&prerequisite.merit.attache dd=u( .has, %0, merit.status_(invictus) )
+&prereq-text.merit.attache DD=Status (Invictus) 1
+
+&merit.bloodhound DD=2
+&tags.merit.bloodhound D:T=vampire
+&prerequisite.merit.bloodhound dd=u( .at_least, %0, attribute.wits, 3 )
+&prereq-text.merit.bloodhound DD=Wits 3
+
+&merit.cacophony_savvy DD=1.2.3
+&tags.merit.cacophony_savvy D:T=vampire.praxis
+&prerequisite.merit.cacophony_savvy dd=u( .has, %0, merit.status_(praxis) )
+&prereq-text.merit.cacophony_savvy DD=Status (Praxis) 1
+
+&merit.carthian_pull DD=1
+&tags.merit.carthian_pull D:T=vampire.carthian movement
+&prerequisite.merit.carthian_pull dd=u( .has, %0, merit.status_(carthian_movement) )
+&prereq-text.merit.carthian_pull DD=Status (Carthian Movement) 1
+
+&merit.claws_of_the_unholy DD=1
+&tags.merit.claws_of_the_unholy D:T=vampire
+&prerequisite.merit.carthian_pull dd=u( .at_least, %0, discipline.protean, 4 )
+&prereq-text.merit.carthian_pull DD=Protean 4
+
+&merit.close_family DD=1
+&tags.merit.close_family D:T=vampire
+
+&merit.cutthroat DD=1
+&tags.merit.cutthroat D:T=vampire
+&prerequisite.merit.cutthroat DD=u( .has_none_of, %0, merit.atrocious merit.enticing )
+&prereq-text.merit.cutthroat DD=Cannot have the Atrocious or Enticing Merits
+
+&merit.distinguished_palate DD=1
+&tags.merit.distinguished_palate D:T=vampire
+
+&merit.dream_visions DD=1
+&tags.merit.dream_visions D:T=vampire.mekhet
+&prerequisite.merit.dream_visions DD=u( .is_full, %0, bio.clan, Mekhet )
+&prereq-text.merit.dream_visions DD=Must be Mekhet
+
+&merit.dynasty_membership DD=1.2.3
+&tags.merit.dynasty_membership D:T=vampire
+&prerequisite.merit.dynasty_membership DD=
+	u( .has, %0, merit.status_([u( .value_full, %0, bio.clan )]) )
+&prereq-text.merit.dynasty_membership DD=Status (<clan>) 1
+
+&merit.enticing DD=1
+&tags.merit.enticing D:T=vampire
+&prerequisite.merit.enticing DD=u( .has_none_of, %0, merit.atrocious merit.cutthroat )
+&prereq-text.merit.enticing DD=Cannot have the Atrocious or Cutthroat Merits
+
+&merit.feeding_grounds_() DD=1.2.3.4.5
+&tags.merit.feeding_grounds_() D:T=vampire.location
+
+&merit.friends_in_high_places DD=1
+&tags.merit.friends_in_high_places D:T=vampire.invictus
+&prerequisite.merit.friends_in_high_places dd=u( .has, %0, merit.status_(invictus) )
+&prereq-text.merit.friends_in_high_places DD=Status (Invictus) 1
+
+&merit.haven_() DD=1.2.3.4.5
+&tags.merit.haven_() D:T=vampire.location
+&prerequisite.merit.haven_() DD=
+	u( .at_least, %0, merit.haven_(%1), u( .value, %0, merit.safe_place_(%1)), %2 )
+&prereq-text.merit.haven_() DD=Safe Place (<place name>) must be same or higher
+
+&merit.herd DD=1.2.3.4.5
+&tags.merit.herd D:T=vampire
+
+&merit.honey_trap DD=1
+&tags.merit.honey_trap D:T=vampire
+
+&merit.invested DD=1
+&tags.merit.invested D:T=vampire.invictus
+&prerequisite.merit.invested dd=u( .has, %0, merit.status_(invictus) )
+&prereq-text.merit.invested DD=Status (Invictus) 1
+
+&merit.kiss_of_the_succubus DD=1
+&tags.merit.kiss_of_the_succubus D:T=vampire.daeva
+&prerequisite.merit.kiss_of_the_succubus DD=u( .is, %0, bio.clan, Daeva )
+&prereq-text.merit.kiss_of_the_succubus DD=Must be Daeva
+
+&merit.lineage DD=1
+&tags.merit.lineage D:T=vampire
+&prerequisite.merit.lineage DD=
+	u( .has, %0, merit.status_([u( .value_full, %0, bio.clan )]) )
+&prereq-text.merit.lineage DD=Status (<clan>) 1
+
+&merit.lorekeeper DD=1
+&tags.merit.lorekeeper D:T=vampire.lancea et sanctum
+&prerequisite.merit.lorekeeper dd=u( .has, %0, merit.status_(lancea_et_sanctum) )
+&prereq-text.merit.lorekeeper DD=Status (Lancea et Sanctum) 1
+
+&merit.the_mother_daughter_bond DD=1
+&tags.merit.the_mother_daughter_bond D:T=vampire.circle of the crone
+&prerequisite.merit.the_mother_daughter_bond dd=
+	u( .has, %0, merit.status_(circle_of_the_crone) )
+&prereq-text.merit.the_mother_daughter_bond DD=Status (Circle of the Crone) 1
+
+&merit.night_doctor_surgery DD=3
+&tags.merit.night_doctor_surgery D:T=vampire.carthian movement
+&prerequisite.merit.night_doctor_surgery dd=
+	u( .at_least, %0, merit.status_(carthian_movement), 2 )
+&prereq-text.merit.night_doctor_surgery DD=Status (Carthian Movement) 2
+
+&merit.speaker_for_the_silent DD=3
+&tags.merit.speaker_for_the_silent D:T=vampire.invictus
+&prerequisite.merit.speaker_for_the_silent dd=
+	u( .at_least_all, %0, merit.dynasty_membership:1 merit.status_(invictus):1 )
+&prereq-text.merit.speaker_for_the_silent DD=Dynasty Membership 1, Status (Invictus) 1
+
+&merit.pack_alpha DD=1
+&tags.merit.pack_alpha D:T=vampire.gangrel
+&prerequisite.merit.pack_alpha DD=u( .is, %0, bio.clan, Gangrel )
+&prereq-text.merit.pack_alpha DD=Must be Gangrel
+
+&merit.unnatural_affinity_() DD=1|*
+&tags.merit.unnatural_affinity_ D:T=vampire
+
+&merit.swarm_form DD=1
+&tags.merit.swarm_form D:T=vampire
+&prerequisite.merit.swarm_form dd=u( .at_least, %0, discipline.protean, 3 )
+&prereq-text.merit.swarm_form DD=Protean 3
+
+&merit.secret_society_junkie DD=1
+&tags.merit.secret_society_junkie D:T=vampire.ordo dracul
+&prerequisite.merit.secret_society_junkie dd=u( .has, %0, merit.status_(ordo_dracul) )
+&prereq-text.merit.secret_society_junkie DD=Status (Ordo Dracul) 1
+
+&merit.sworn DD=1
+&tags.merit.sworn D:T=vampire.ordo dracul
+&prerequisite.merit.sworn dd=u( .has, %0, merit.status_(ordo_dracul) )
+&prereq-text.merit.sworn DD=Status (Ordo Dracul) 1
+
+&merit.i_know_a_guy DD=1
+&tags.merit.i_know_a_guy D:T=vampire.carthian movement
+&prerequisite.merit.i_know_a_guy dd=u( .has, %0, merit.status_(carthian_movement) )
+&prereq-text.merit.i_know_a_guy DD=Status (Carthian Movement) 1
+
+&merit.touchstone DD=1.2.3.4.5
+&tags.merit.touchstone D:T=vampire
+
+&merit.undead_menses DD=2
+&tags.merit.undead_menses D:T=vampire
+
+&merit.unsettling_gaze DD=1
+&tags.merit.unsettling_gaze D:T=vampire.nosferatu
+&prerequisite.merit.unsettling_gaze DD=u( .is, %0, bio.clan, Nosferatu )
+&prereq-text.merit.unsettling_gaze DD=Must be Nosferatu
+
+&merit.where_the_bodies_are_buried DD=1
+&tags.merit.where_the_bodies_are_buried D:T=vampire.invictus
+&prerequisite.merit.where_the_bodies_are_buried DD=
+	u( .at_least, %0, merit.status_(invictus), 2 )
+&prereq-text.merit.where_the_bodies_are_buried DD=Status (Invictus) 2
+
+
+// -- Vampire Merits: Carthian Law --
+
+&merit.lex_terrae DD=1
+&tags.merit.lex_terrae D:T=vampire.location.carthian movement
+&prerequisite.merit.lex_terrae DD=
+	u( .at_least_all, %0, 
+		merit.status_(carthian_movement):2 merit.feeding_grounds_(%1):1 
+	)
+&prereq-text.merit.lex_terrae DD=
+	Status (Carthian Movement) 2, Feeding Grounds (<place name>) 1
+
+&merit.mandate_from_the_masses DD=1
+&tags.merit.mandate_from_the_masses D:T=vampire.carthian movement
+&prerequisite.merit.mandate_from_the_masses dd=
+	u( .at_least, %0, merit.status_(carthian_movement), 5 )
+&prereq-text.merit.mandate_from_the_masses DD=Status (Carthian Movement) 5
+
+&merit.right_of_return DD=1
+&tags.merit.right_of_return D:T=vampire.carthian movement.praxis
+&prerequisite.merit.right_of_return dd=
+	u( .at_least_all, %0, merit.status_(carthian_movement):2 merit.status_(praxis):1 )
+&prereq-text.merit.right_of_return DD=Status (Carthian Movement) 2, Status (Praxis) 1
+
+&merit.strength_of_resolution DD=1
+&tags.merit.strength_of_resolution D:T=vampire.carthian movement
+&prerequisite.merit.strength_of_resolution dd=
+	u( .has, %0, merit.status_(carthian_movement) )
+&prereq-text.merit.strength_of_resolution DD=Status (Carthian Movement) 1
+
+&merit.plausible_deniability DD=1
+&tags.merit.plausible_deniability D:T=vampire.carthian movement
+&prerequisite.merit.plausible_deniability dd=
+	u( .at_least, %0, merit.status_(carthian_movement), 3 )
+&prereq-text.merit.plausible_deniability DD=Status (Carthian Movement) 3
+
+
+// -- Vampire Merits: Invictus Oaths --
+
+&merit.notary DD=2
+&tags.merit.notary D:T=vampire.invictus
+&prerequisite.merit.notary dd=u( .at_least, %0, merit.status_(invictus), 3 )
+&prereq-text.merit.notary DD=Status (Invictus) 3
+
+&merit.oath_of_action DD=4
+&tags.merit.oath_of_action D:T=vampire
+
+&merit.oath_of_fealty DD=1
+&tags.merit.oath_of_fealty D:T=vampire.invictus
+&prerequisite.merit.oath_of_fealty dd=u(.has, %0, merit.status_(invictus))
+&prereq-text.merit.oath_of_fealty DD=Status (Invictus) 1
+
+&merit.oath_of_penance DD=3
+&tags.merit.oath_of_penance D:T=vampire
+
+&merit.oath_of_serfdom DD=2
+&tags.merit.oath_of_serfdom D:T=vampire
+
+
+// -- Vampire Merits: Kindred Fighting Styles --
+
+&merit.kindred_dueling DD=1.2.3.4.5
+&tags.merit.kindred_dueling D:T=vampire.physical.fighting.style
+&prerequisite.merit.kindred_dueling DD=
+	cand( 
+		t( lattr( %0/_merit.fighting_finesse_(*) )), 
+		u( .at_least_all, %0, attribute.composure:3 skill.weaponry:2 )
+	)
+&prereq-text.merit.kindred_dueling DD=Fighting Finesse (any), Composure 3, Weaponry 2
+
+&merit.riding_the_wave DD=1.2.3.4.5
+&tags.merit.riding_the_wave D:T=vampire.physical.fighting.style
+&prerequisite.merit.riding_the_wave DD=
+	u( .at_least_all, %0, attribute.composure:3 attribute.resolve:3 )
+&prereq-text.merit.riding_the_wave DD=Composure 3, Resolve 3
+
 
 // -- Ghoul Merits -------------------------------------------------------------
 
@@ -220,8 +475,9 @@ Level 3 for very minor items
 // add '.ghoul' to the tags if you want them to be able to take it
 
 &discipline.theban_sorcery DD=1.2.3.4.5
-&prerequisite.discipline.theban_sorcery DD=<sanctified only>
-&prereq-text.discipline.theban_sorcery DD=<sanctified only>
+&prerequisite.discipline.theban_sorcery DD=
+	u( .is_full, %0, bio.covenant, Lancea et Sanctum )
+&prereq-text.discipline.theban_sorcery DD=Lancea et Sanctum only
 &tags.discipline.theban_sorcery D:T=vampire
 
 
@@ -230,8 +486,8 @@ Level 3 for very minor items
 // add '.ghoul' to the tags if you want them to be able to take it
 
 &discipline.cruac DD=1.2.3.4.5
-&prerequisite.discipline.cruac DD=<crone only>
-&prereq-text.discipline.cruac DD=<crone only>
+&prerequisite.discipline.cruac DD=u( .is_full, %0, bio.covenant, Circle of the Crone )
+&prereq-text.discipline.cruac DD=Circle of the Crone only
 &tags.discipline.cruac D:T=vampire
 
 
@@ -239,25 +495,22 @@ Level 3 for very minor items
 // may not be taken by ghouls
 
 &discipline.coil_of_the_ascendant DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_the_ascendant DD=<dragon only>
-&prereq-text.discipline.coil_of_the_ascendant DD=<dragon only>
+&prerequisite.discipline.coil_of_the_ascendant DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.discipline.coil_of_the_ascendant DD=Ordo Dracul only
 &tags.discipline.coil_of_the_ascendant D:T=vampire
 
 &discipline.coil_of_the_wyrm DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_the_wyrm DD=<dragon only>
-&prereq-text.discipline.coil_of_the_wyrm DD=<dragon only>
+&prerequisite.discipline.coil_of_the_wyrm DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.discipline.coil_of_the_wyrm DD=Ordo Dracul only
 &tags.discipline.coil_of_the_wyrm D:T=vampire
 
 &discipline.coil_of_voivode DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_voivode DD=<dragon only>
-&prereq-text.discipline.coil_of_voivode DD=<dragon only>
+&prerequisite.discipline.coil_of_voivode DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.discipline.coil_of_voivode DD=Ordo Dracul only
 &tags.discipline.coil_of_voivode D:T=vampire
-
-
-// -- Etc. ---------------------------------------------------------------------
-
-
-
 
 
 
@@ -306,6 +559,8 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 
 &check.bio.ghoul cg=clan
 
+&check.bio.vampire cg=clan covenant mask dirge
+
 
 
 /* 
@@ -316,7 +571,8 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 &check.chargen.vampire CG=
 	strcat( 
 		u( check.disciplines, %0, vampire ), 
-		<whatever else>
+		%b%b, <whatever else>, 
+		%r 
 	)
 
 
@@ -343,6 +599,7 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 
 &check.disciplines CG=
 	strcat( 
+		setq( 8, get( %0/_bio.template )), 
 		setq( 9, u( f.allocated.disciplines, %0 )),
 		setq( t, ladd( %q9, ` )), 
 		setq( i, elements( %q9, 2, ` )), 
@@ -351,18 +608,21 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 		%b, %b, 
 		Total Disciplines:, %b, 
 		if( eq( %qt, 0 ), ansi( xh, <none> ), %qt ), %b, 
+		%(, v( d.msg.disciplines.%q8 ), %), 
 		u( check.disciplines.%1, %qt ), 
 		%r, 
 
 		%b, %b, %b, %b, 
 		In-Clan:, %b, 
 		if( eq( %qi, 0 ), ansi( xh, <none> ), %qi ), %b, 
+		%(, v( d.msg.disciplines.in-clan.%q8 ), %), 
 		u( check.disciplines.%1.in-clan, %qi ), 
 		%r, 
 
 		%b, %b, %b, %b, 
 		Others:, %b, 
 		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
+		%(, v( d.msg.disciplines.non-clan.%q8 ), %), 
 		u( check.disciplines.%1.non-clan, %qo ), 
 
 		%r 
@@ -372,9 +632,17 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 &check.disciplines.vampire.in-clan CG=u( display.check.ok-no, gte( %0, 2 ))
 &check.disciplines.vampire.non-clan CG=u( display.check.ok-no, lte( %0, 1 ))
 
+&d.msg.disciplines.vampire CG=of 3
+&d.msg.disciplines.in-clan.vampire CG=at least 2
+&d.msg.disciplines.non-clan.vampire CG=at most 1
+
 &check.disciplines.ghoul CG=u( display.check.ok-no, eq( %0, 2 ))
 &check.disciplines.ghoul.in-clan CG=u( display.check.ok-no, eq( %0, 2 ))
 &check.disciplines.ghoul.non-clan CG=u( display.check.ok-no, eq( %0, 0 ))
+
+&d.msg.disciplines.ghoul CG=of 2
+&d.msg.disciplines.in-clan.ghoul CG=of 2
+&d.msg.disciplines.non-clan.ghoul CG=of none
 
 
 
@@ -420,7 +688,7 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 	)
 
 &block.powers.vampire sheet: rows=u( block.powers.disciplines, %0, %1 )
-&block.powers.ghouls sheet: rows=u( block.powers.disciplines, %0, %1 )
+&block.powers.ghoul sheet: rows=u( block.powers.disciplines, %0, %1 )
 
 &block.powers.disciplines sheet: rows=
 	strcat( 
@@ -543,135 +811,135 @@ time.
 // -- Vampire Merits: General --
 
 &merit.acute_senses DD=1
-&tags.merit.acute_senses DD=vampire
+&tags.merit.acute_senses D:T=vampire
 
 &merit.altar DD=3
-&tags.merit.altar DD=vampire
+&tags.merit.altar D:T=vampire
 &prerequisite.merit.altar dd=u(.has, %0, merit.status_(circle_of_the_crone))
 &prereq-text.merit.altar DD=Status (Circle of the Crone) 1
 
 &merit.anointed DD=2
-&tags.merit.anointed DD=vampire
+&tags.merit.anointed D:T=vampire
 &prerequisite.merit.anointed dd=u(.has, %0, merit.status_(lancea_et_sanctum))
 &prereq-text.merit.anointed DD=Status (Lancea et Sanctum) 1
 
 &merit.atrocious DD=1
-&tags.merit.atrocious DD=vampire
+&tags.merit.atrocious D:T=vampire
 &prerequisite.merit.atrocious DD=u( .has_none_of, %0, merit.cutthroat merit.enticing )
 &prereq-text.merit.atrocious DD=Cannot have the Cutthroat or Enticing Merits.
 
 &merit.attache DD=1
-&tags.merit.attache DD=vampire
+&tags.merit.attache D:T=vampire
 &prerequisite.merit.attache dd=u(.has, %0, merit.status_(invictus))
 &prereq-text.merit.attache DD=Status (Invictus) 1
 
 &merit.bloodhound DD=2
-&tags.merit.bloodhound DD=vampire
+&tags.merit.bloodhound D:T=vampire
 &prerequisite.merit.bloodhound dd=u(.at_least, %0, attribute.wits, 3)
 &prereq-text.merit.bloodhound DD=Wits 3
 
 &merit.cacophony_savvy DD=1.2.3
-&tags.merit.cacophony_savvy DD=vampire
+&tags.merit.cacophony_savvy D:T=vampire
 &prerequisite.merit.cacophony_savvy dd=u(.has, %0, merit.status_(praxis))
 &prereq-text.merit.cacophony_savvy DD=Status (Praxis) 1
 
 &merit.carthian_pull DD=1
-&tags.merit.carthian_pull DD=vampire
+&tags.merit.carthian_pull D:T=vampire
 &prerequisite.merit.carthian_pull dd=u(.has, %0, merit.status_(carthian_movement))
 &prereq-text.merit.carthian_pull DD=Status (Carthian Movement) 1
 
 &merit.claws_of_the_unholy DD=1
-&tags.merit.claws_of_the_unholy DD=vampire
+&tags.merit.claws_of_the_unholy D:T=vampire
 &prerequisite.merit.carthian_pull dd=u(.at_least, %0, discipline.protean, 4)
 &prereq-text.merit.carthian_pull DD=Protean 4
 
 &merit.close_family DD=1
-&tags.merit.close_family DD=vampire
+&tags.merit.close_family D:T=vampire
 
 &merit.cutthroat DD=1
-&tags.merit.cutthroat DD=vampire
+&tags.merit.cutthroat D:T=vampire
 &prerequisite.merit.cutthroat DD=u( .has_none_of, %0, merit.atrocious merit.enticing )
 &prereq-text.merit.cutthroat DD=Cannot have the Atrocious or Enticing Merits.
 
 &merit.distinguished_palate DD=1
-&tags.merit.distinguished_palate DD=vampire
+&tags.merit.distinguished_palate D:T=vampire
 
 &merit.dream_visions DD=1
-&tags.merit.dream_visions DD=vampire.mekhet
+&tags.merit.dream_visions D:T=vampire.mekhet
 &prerequisite.merit.dream_visions DD=u( .is, %0, bio.clan, Mekhet )
 &prereq-text.merit.dream_visions DD=Must be Mekhet.
 
 &merit.dynasty_membership DD=1.2.3
-&tags.merit.dynasty_membership DD=vampire
+&tags.merit.dynasty_membership D:T=vampire
 &prerequisite.merit.dynasty_membership dd=u(.at_least_one, %0, merit.status_(daeva):1 merit.status_(gangrel):1 merit.status_(nosferatu):1 merit.status_(mekhet):1 merit.status_(ventrue):1)
 &prereq-text.merit.dynasty_membership DD=Status (Clan) 1
 
 &merit.enticing DD=1
-&tags.merit.enticing DD=vampire
+&tags.merit.enticing D:T=vampire
 &prerequisite.merit.enticing DD=u( .has_none_of, %0, merit.atrocious merit.cutthroat )
 &prereq-text.merit.enticing DD=Cannot have the Atrocious or Cutthroat Merits.
 
 &merit.feeding_grounds DD=1.2.3.4.5
-&tags.merit.feeding_grounds DD=vampire
+&tags.merit.feeding_grounds D:T=vampire
 
 &merit.friends_in_high_places DD=1
-&tags.merit.friends_in_high_places DD=vampire
+&tags.merit.friends_in_high_places D:T=vampire
 &prerequisite.merit.friends_in_high_places dd=u(.has, %0, merit.status_(invictus))
 &prereq-text.merit.friends_in_high_places DD=Status (Invictus) 1
 
 &merit.haven DD=1.2.3.4.5
-&tags.merit.haven DD=vampire
+&tags.merit.haven D:T=vampire
 &prerequisite.merit.haven dd=u(.has, %0, merit.safe_place)
 &prereq-text.merit.haven DD=Safe Place 1
 
 &merit.herd DD=1.2.3.4.5
-&tags.merit.herd DD=vampire
+&tags.merit.herd D:T=vampire
 
 &merit.honey_trap DD=1
-&tags.merit.honey_trap DD=vampire
+&tags.merit.honey_trap D:T=vampire
 
 &merit.invested DD=1
-&tags.merit.invested DD=vampire
+&tags.merit.invested D:T=vampire
 &prerequisite.merit.invested dd=u(.has, %0, merit.status_(invictus))
 &prereq-text.merit.invested DD=Status (Invictus) 1
 
 &merit.kiss_of_the_succubus DD=1
-&tags.merit.kiss_of_the_succubus DD=vampire.daeva
+&tags.merit.kiss_of_the_succubus D:T=vampire.daeva
 &prerequisite.merit.kiss_of_the_succubus DD=u( .is, %0, bio.clan, Daeva )
 &prereq-text.merit.kiss_of_the_succubus DD=Must be Daeva.
 
 &merit.lineage DD=1
-&tags.merit.lineage DD=vampire
+&tags.merit.lineage D:T=vampire
 &prerequisite.merit.lineage dd=u( .has_one_of, %0, merit.status_(daeva) merit.status_(gangrel) merit.status_(nosferatu) merit.status_(mekhet) merit.status_(ventrue) )
 &prereq-text.merit.lineage DD=Status (Clan) 1
 
 &merit.lorekeeper DD=1
-&tags.merit.lorekeeper DD=vampire
+&tags.merit.lorekeeper D:T=vampire
 &prerequisite.merit.lorekeeper dd=u(.has, %0, merit.status_(lancea_et_sanctum))
 &prereq-text.merit.lorekeeper DD=Status (Lancea et Sanctum) 1
 
 &merit.the_mother_daughter_bond DD=1
-&tags.merit.the_mother_daughter_bond DD=vampire
+&tags.merit.the_mother_daughter_bond D:T=vampire
 &prerequisite.merit.the_mother_daughter_bond dd=u(.has, %0, merit.status_(circle_of_the_crone))
 &prereq-text.merit.the_mother_daughter_bond DD=Status (Circle of the Crone) 1
 
 &merit.night_doctor_surgery DD=3
-&tags.merit.night_doctor_surgery DD=vampire
+&tags.merit.night_doctor_surgery D:T=vampire
 &prerequisite.merit.night_doctor_surgery dd=u(.at_least, %0, merit.status_(carthian_movement), 2)
 &prereq-text.merit.night_doctor_surgery DD=Status (Carthian Movement) 2
 
 &merit.speaker_for_the_silent DD=3
-&tags.merit.speaker_for_the_silent DD=vampire
+&tags.merit.speaker_for_the_silent D:T=vampire
 &prerequisite.merit.speaker_for_the_silent dd=u(.at_least_all, %0, merit.dynasty_membership:1 merit.status_(invictus):1)
 &prereq-text.merit.speaker_for_the_silent DD=Dynasty Membership 1, Status (Invictus) 1
 
 &merit.pack_alpha DD=1
-&tags.merit.pack_alpha DD=vampire.gangrel
+&tags.merit.pack_alpha D:T=vampire.gangrel
 &prerequisite.merit.pack_alpha DD=u( .is, %0, bio.clan, Gangrel )
 &prereq-text.merit.pack_alpha DD=Must be Gangrel.
 
 &merit.unnatural_affinity_() DD=1|*
-&tags.merit.unnatural_affinity_ DD=vampire
+&tags.merit.unnatural_affinity_ D:T=vampire
 // I think we should leave this Merit as a 1-dot Merit with different instances, since that’s a better way than having it be 1-5.
 // as long as they can't take it more than 5 times
 // I don’t see why they couldn’t, as long as it’s a different type of supernatural each time.
@@ -680,38 +948,38 @@ time.
 // house-rule time
 
 &merit.swarm_form DD=1
-&tags.merit.swarm_form DD=vampire
+&tags.merit.swarm_form D:T=vampire
 &prerequisite.merit.swarm_form dd=u(.at_least, %0, discipline.protean, 3)
 &prereq-text.merit.swarm_form DD=Protean 3
 
 &merit.secret_society_junkie DD=1
-&tags.merit.secret_society_junkie DD=vampire
+&tags.merit.secret_society_junkie D:T=vampire
 &prerequisite.merit.secret_society_junkie dd=u(.has, %0, merit.status_(ordo_dracul))
 &prereq-text.merit.secret_society_junkie DD=Status (Ordo Dracul) 1
 
 &merit.sworn DD=1
-&tags.merit.sworn DD=vampire
+&tags.merit.sworn D:T=vampire
 &prerequisite.merit.sworn dd=u(.has, %0, merit.status_(ordo_dracul))
 &prereq-text.merit.sworn DD=Status (Ordo Dracul) 1
 
 &merit.i_know_a_guy DD=1
-&tags.merit.i_know_a_guy DD=vampire
+&tags.merit.i_know_a_guy D:T=vampire
 &prerequisite.merit.i_know_a_guy dd=u(.has, %0, merit.status_(carthian_movement))
 &prereq-text.merit.i_know_a_guy DD=Status (Carthian Movement) 1
 
 &merit.touchstone DD=1.2.3.4.5
-&tags.merit.touchstone DD=vampire
+&tags.merit.touchstone D:T=vampire
 
 &merit.undead_menses DD=2
-&tags.merit.undead_menses DD=vampire
+&tags.merit.undead_menses D:T=vampire
 
 &merit.unsettling_gaze DD=1
-&tags.merit.unsettling_gaze DD=vampire.nosferatu
+&tags.merit.unsettling_gaze D:T=vampire.nosferatu
 &prerequisite.merit.unsettling_gaze DD=u( .is, %0, bio.clan, Nosferatu )
 &prereq-text.merit.unsettling_gaze DD=Must be Nosferatu.
 
 &merit.where_the_bodies_are_buried DD=1
-&tags.merit.where_the_bodies_are_buried DD=vampire
+&tags.merit.where_the_bodies_are_buried D:T=vampire
 &prerequisite.merit.where_the_bodies_are_buried dd=u(.at_least, %0, merit.status_(invictus), 2)
 &prereq-text.merit.where_the_bodies_are_buried DD=Status (Invictus) 2
 
@@ -720,27 +988,27 @@ time.
 // -- Vampire Merits: Carthian Law --
 
 &merit.lex_terrae DD=1
-&tags.merit.lex_terrae DD=vampire
+&tags.merit.lex_terrae D:T=vampire
 &prerequisite.merit.lex_terrae dd=u(.at_least_all, %0, merit.status_(carthian_movement):2)
 &prereq-text.merit.lex_terrae DD=Status (Carthian Movement) 2, Feeding Grounds 1
 
 &merit.mandate_from_the_masses DD=1
-&tags.merit.mandate_from_the_masses DD=vampire
+&tags.merit.mandate_from_the_masses D:T=vampire
 &prerequisite.merit.mandate_from_the_masses dd=u(.at_least, %0, merit.status_(carthian_movement), 5)
 &prereq-text.merit.mandate_from_the_masses DD=Status (Carthian Movement) 5
 
 &merit.right_of_return DD=1
-&tags.merit.right_of_return DD=vampire
+&tags.merit.right_of_return D:T=vampire
 &prerequisite.merit.right_of_return dd=u(.at_least_all, %0, merit.status_(carthian_movement):2 merit.status_(praxis):1)
 &prereq-text.merit.right_of_return DD=Status (Carthian Movement) 2, Status (Praxis) 1
 
 &merit.strength_of_resolution DD=1
-&tags.merit.strength_of_resolution DD=vampire
+&tags.merit.strength_of_resolution D:T=vampire
 &prerequisite.merit.strength_of_resolution dd=u(.has, %0, merit.status_(carthian_movement))
 &prereq-text.merit.strength_of_resolution DD=Status (Carthian Movement) 1
 
 &merit.plausible_deniability DD=1
-&tags.merit.plausible_deniability DD=vampire
+&tags.merit.plausible_deniability D:T=vampire
 &prerequisite.merit.plausible_deniability dd=u(.at_least, %0, merit.status_(carthian_movement), 3)
 &prereq-text.merit.plausible_deniability DD=Status (Carthian Movement) 3
 
@@ -749,36 +1017,36 @@ time.
 // -- Vampire Merits: Invictus Oaths --
 
 &merit.notary DD=2
-&tags.merit.notary DD=vampire
+&tags.merit.notary D:T=vampire
 &prerequisite.merit.notary dd=u(.at_least, %0, merit.status_(invictus), 3)
 &prereq-text.merit.notary DD=Status (Invictus) 3
 
 &merit.oath_of_action DD=4
-&tags.merit.oath_of_action DD=vampire
+&tags.merit.oath_of_action D:T=vampire
 
 &merit.oath_of_fealty DD=1
-&tags.merit.oath_of_fealty DD=vampire
+&tags.merit.oath_of_fealty D:T=vampire
 &prerequisite.merit.oath_of_fealty dd=u(.has, %0, merit.status_(invictus))
 &prereq-text.merit.oath_of_fealty DD=Status (Invictus) 1
 
 &merit.oath_of_penance DD=3
-&tags.merit.oath_of_penance DD=vampire
+&tags.merit.oath_of_penance D:T=vampire
 
 &merit.oath_of_serfdom DD=2
-&tags.merit.oath_of_serfdom DD=vampire
+&tags.merit.oath_of_serfdom D:T=vampire
 
 
 
 // -- Vampire Merits: Kindred Fighting Styles --
 
 &merit.kindred_dueling DD=1.2.3.4.5
-&tags.merit.kindred_dueling DD=physical.fighting.style
+&tags.merit.kindred_dueling D:T=physical.fighting.style
 &prerequisite.merit.kindred_dueling DD=cand( u( .has, %0, merit.fighting_finesse_(*) ), u( .at_least_all, %0, attribute.composure:3 skill.weaponry:2 ))
 // not sure that wildcard is going to work
 &prereq-text.merit.kindred_dueling DD=Fighting Finesse, Composure 3, Weaponry 2
 
 &merit.riding_the_wave DD=1.2.3.4.5
-&tags.merit.riding_the_wave DD=physical.fighting.style
+&tags.merit.riding_the_wave D:T=physical.fighting.style
 &prerequisite.merit.riding_the_wave DD=u(.at_least_all, %0, attribute.composure:3 attribute.resolve:3)
 &prereq-text.merit.riding_the_wave DD=Composure 3, Resolve 3
 
