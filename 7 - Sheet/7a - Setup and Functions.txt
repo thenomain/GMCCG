@@ -162,6 +162,11 @@ output: <value>, but if lookup is null then return something
 		ulocal( f.cheat_getstat.%2, %0, %1 )
 	)
 
+--
+
+&f.cheat_getstat.name_only nsc=
+	u( .titlestr, rest( %1, . ))
+
 
 --------------------------------------------------------------------------------
 -- Cheat Getstat Skill and Specs -----------------------------------------------

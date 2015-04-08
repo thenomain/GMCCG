@@ -279,6 +279,48 @@ This will probably be one of the most varied blocks, as each splat has its own.
 	ulocal( f.cheat_getstat.morality, %0, integrity )
 
 
+--------------------------------------------------------------------------------
+-- Traits.Supernatural_Advantage -----------------------------------------------
+
+Grab the supernatural resistance for the passed sheet's template
+	<< get 'attribute' with tags 'power' and '<template>' >>
+
+--
+
+&traits.supernatural_resistance nsc=
+	ulocal( f.cheat_getstat.with_name, 
+		%0, 
+		filter( 
+			v( d.sfp )/fil.list-stats-tags, 
+			lattr( v( d.dd )/advantage.* ), , , 
+			power.[get( %0/_bio.template )], 1 
+		), 
+		numeric 
+	)
+
+
+--------------------------------------------------------------------------------
+-- Traits.Power_Pool -----------------------------------------------------------
+
+Grab the power pool name for the passed sheet's template
+	<< get 'attribute' with tags 'pool' and '<template>' >>
+
+--
+
+&traits.power_pool nsc=
+	ulocal( f.cheat_getstat.pool, 
+		%0, 
+		elements( 
+			filter( 
+				v( d.sfp )/fil.list-stats-tags, 
+				lattr( v( d.dd )/advantage.* ), , ., 
+				pool.[get( %0/_bio.template )], 1 
+			), 
+			2, . 
+		)
+	)
+
+
 
 ================================================================================
 == BLOCK: ADVANTAGES ===========================================================

@@ -3,6 +3,7 @@
 @set Sheet: Rows=inherit safe
 @parent Sheet: Rows=Newest Sheet Code <nsc>
 
+/* 
 -=-=-=-=-=-=
 
 I am vastly unsatisfied with how this isn't going as elegantly as I'd like,
@@ -22,6 +23,7 @@ xxx:yyy|xxx:yyy|xxx:yyy
 think u( nsc/bio.default, %# )
 
 --=-=-=-==-
+*/
 
 &block.bio Sheet: Rows=
 	strcat( 
@@ -54,7 +56,7 @@ think u( sheet: rows/block.bio, %#, get( %#/_bio.template ))
 0: <trait>:<the.value>
 1: width for <trait>
 2: width for column
-3: numeric, list, string (default)
+3: numeric, list, flag, string (default)
 4: padding
 5: <permanent.pool.value>
 
@@ -73,13 +75,16 @@ output:
 		setq( v, rest( %0, : )), 
 		setq( s, ansi( xh, if( strmatch( %4, ), %b, %4 ))), 
 		case( strtrunc( %0, 1 ), 
-@@ .. sub-trait
+
+// .. sub-trait
 			*, %b [trim( rest( %0, * ))], 
-@@ .. sub-header
+
+// .. sub-header
 			#, u( display.subheader, %2, trim( rest( %0, # ))), 
-@@ .. display them normal thangs
+
+// .. display them normal thangs
 			strcat( 
-				ljust( cat( first( %0, : ), ), %1, %qs), 
+				ljust( cat( first( %0, : ), ), %1, %qs ), 
 				if( 
 					not( strmatch( %qs, ansi( xh, %b ))), 
 					%qs, : 
@@ -243,20 +248,25 @@ think u( nsc/display.value.pool, 4.-2, 5.-1)
 		setq( w, 38 ), 
 		setq( t, 10 ), 
 
-@@ .. willpower
+// .. willpower
 		setq( x, ulocal( traits.willpower.default, %0 )), 
 		setq( c, rest( setr( y, first( %qx, | )), : )), 
 		setq( p, last( %qx, : )), 
 
-@@ .. integrity
+// .. integrity
 		setq( z, 
-			iter( u( traits.morality.default, %0 ), 
+			iter( 
+				udefault( 
+					traits.morality.[get( %0/_bio.template )], 
+					u( traits.morality.default, %0 ), 
+					%0 
+				), 
 				u( display.trait-and-value, %i0, %qt, %qw, string ), 
 				|, | 
 			)
 		), 
 
-@@ .. display
+// .. display
 		divider( Traits ), %r, 
 		vcolumns( 
 			%qw:[u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )], 
@@ -264,7 +274,7 @@ think u( nsc/display.value.pool, 4.-2, 5.-1)
 
 			|, 
 			%b 
-		)		
+		)
 	)
 
 --
