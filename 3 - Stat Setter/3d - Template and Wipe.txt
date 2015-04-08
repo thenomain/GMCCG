@@ -69,7 +69,7 @@ strcat(
 			You already have a template. 
 			'stat/wipe' to erase your stats., 
 			Player already has a template. 
-			'stat/wipe %q0' to erase their stats., 
+			'stat/wipe %q0' to erase their stats. 
 		), 
 
 		t( %qv ), 
