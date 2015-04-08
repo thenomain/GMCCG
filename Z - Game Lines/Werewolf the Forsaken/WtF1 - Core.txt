@@ -68,7 +68,7 @@ Stuff we need to put on the Data Dictionary
 */
 
 &bio.pack DD=*
-&tags.bio.pack D:T=werewolf.wolf-blooded
+&tags.bio.pack D:T=werewolf.wolf-blooded.clique
 
 
 /*

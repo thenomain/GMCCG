@@ -105,7 +105,7 @@ List all agendas that a demon has.
 &tags.bio.stigmata D:T=stigmatic
 
 &bio.ring DD=*
-&tags.bio.stigmata D:T=demon.stigmatic
+&tags.bio.stigmata D:T=demon.stigmatic.clique
 
 
 
