@@ -21,7 +21,7 @@ Warning: This is a mess coded in a crunch.
 
 Illegal characters: | and ` 
 
-&d.xp_types xpas=normal
+&d.xp_types xpas=normal player
 
 -=-=-=-=-=-=-=-=-=-=-=
 
