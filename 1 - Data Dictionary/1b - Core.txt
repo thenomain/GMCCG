@@ -446,7 +446,7 @@
 
 &merit.cursed DD=2
 
-&merit.medium DD=2
+&merit.medium DD=3
 &prerequisite.merit.medium DD=u( .at_least, %0, skill.empathy )
 &prereq-text.merit.medium DD=Empathy 2+
 
