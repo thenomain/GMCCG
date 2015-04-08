@@ -1,3 +1,4 @@
+/*
 ################################################################################
 ## DISPLAYS ####################################################################
 
@@ -8,19 +9,20 @@
 0: .list.of.items.to.display, normally one of the global items
 this may seem odd. this is odd, but it's expandable
 
---
+*/
 
 &display.list nWoD Roller <nr>=
 	iter( rest( %0, . ), %i0, ., . )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Roll Items ---------------------------------------------------------
 
 0: `+list`-of`+items (grabbed probably from %qo or %qe)
 outputs: Something legible (i.e., "Error Error Error")
 
---
+*/
 
 &display.roll-items nWoD Roller <nr>=
 	iter( 
@@ -30,6 +32,7 @@ outputs: Something legible (i.e., "Error Error Error")
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Colorize Dice ------------------------------------------------------
 
@@ -40,7 +43,7 @@ Hilite a chance roll of '1'.
 Hilite '1' on a weakness roll, unless it's rote from the first section
 (As a '1' weakness gets re-rolled for rote, we don't want to hilite it.)
 
---
+*/
 
 &display.colorize.dice nWoD Roller <nr>= 
 localize( 
@@ -72,7 +75,7 @@ localize(
 	)
 )
 
---
+// --
 
 think u( nr/display.colorize.dice, 7 3 10 2 10 1 8 3 2 4 9 4 )
 
@@ -87,7 +90,7 @@ think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr,
 think u( nr/display.colorize.dice, 2 4 10 9 3 5 10 6 3 3 8 1 3 7 8 8 6 7 10 3 8 2 10 7 5 9 )
 
 
-
+/*
 ================================================================================
 == DISPLAY: Main Spammy Output =================================================
 
@@ -109,21 +112,21 @@ qa: n-again (massaged to 'No' if > 10)
 relies upon global registers
 uses: header(), footer()
 
---
+*/
 
 &display.roll-output nWoD Roller <nr>=
 	strcat( 
 		setq( w, width( %2 )), 
 
-@@ .. interpret roll results from global registers
+// .. interpret roll results from global registers
 		u( f.roll-success-interpreter ), 
-@@		q0: %q0 --- q1: %q1 --- q2: %q2, %r, 
-@@ .. massage the registers a bit; from here on out they're just for displays
+//		q0: %q0 --- q1: %q1 --- q2: %q2, %r, 
+// .. massage the registers a bit; from here on out they're just for displays
 		if( lte( %qd, 0 ), setq( d, 0 )), 
 		if( gte( %qa, 11 ), setq( a, No )), 
 
-@@ >> display!
-@@ .. header, don't display obvious defaults
+// >> display!
+// .. header, don't display obvious defaults
 		header( 
 			strcat( 
 				%N rolls %qd Dice, 
@@ -133,23 +136,23 @@ uses: header(), footer()
 			%qw 
 		), %r, 
 
-@@ .. what are we rolling?
+// .. what are we rolling?
 		%b Roll:%b, 
 		trim( wrap( %q2, sub( %qw, 6 ), l, , , 8 ), r, %b ), %r, 
 
-@@ .. what are the results?
+// .. what are the results?
 		case( 1, 
 
-@@ .. >> extended roll: <Total> %r%r <each roll>, and change %q1
+// .. >> extended roll: <Total> %r%r <each roll>, and change %q1
 			strmatch( %q1, Extended ), 
 			u( display.roll-output.extended ), 
 
-@@ .. >> single roll: show "Result: <success?> -- <dice rolled>
+// .. >> single roll: show "Result: <success?> -- <dice rolled>
 			u( display.roll-output.single )
 
 		), %r, 
 
-@@ .. footer, reminds us success/failure, and whom to
+// .. footer, reminds us success/failure, and whom to
 		footer( 
 			strcat( 
 				trim( lcstr( before( %q1, %( ))), 
@@ -160,12 +163,13 @@ uses: header(), footer()
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Roll Output, Extended ----------------------------------------------
 
 Show the 'extended' roll results, line by line
 
---
+*/
 
 &display.roll-output.extended nWoD Roller <nr>=
 localize( 
@@ -177,7 +181,7 @@ localize(
 				%b Successes:, %b, 
 				setr( x, max( extract( %qc, inum( ), 1 ), -1 )), 
 				%b, --, %b, u( display.interpret-roll-output, %i0 ), 
-@@ .. .. .. report dramatic failure only; exc. succ was confusing people
+// .. .. .. report dramatic failure only; exc. succ was confusing people
 				switch( %qx, -1, %b%(dramatic failure%) )
 			), 
 			|, %r 
@@ -186,12 +190,13 @@ localize(
 )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Roll Output, Single ------------------------------------------------
 
 Output for a single (non-extended) roll
 
---
+*/
 
 &display.roll-output.single nWoD Roller <nr>=
 	cat( 
@@ -206,10 +211,13 @@ Output for a single (non-extended) roll
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Interpret Roll Output ----------------------------------------------
 
 Give it that '(<dice rolled)' look.
+
+*/
 
 &display.interpret-roll-output nWoD Roller <nr>=
 	localize( 
@@ -226,8 +234,10 @@ Give it that '(<dice rolled)' look.
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Roll To Public -----------------------------------------------------
+*/
 
 &display.roll-to-public nWoD Roller <nr>=
 	iter( %1, 
@@ -235,8 +245,10 @@ Give it that '(<dice rolled)' look.
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Roll To Private ----------------------------------------------------
+*/
 
 &display.roll-to-private nWoD Roller <nr>=
 	iter( %1, 
@@ -249,6 +261,7 @@ Give it that '(<dice rolled)' look.
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Roll To Blind ------------------------------------------------------
 
@@ -256,7 +269,7 @@ Give it that '(<dice rolled)' look.
 Because of this, we return the message that's to be sent to the roller.
 +roll will then send this on
 
---
+*/
 
 &display.roll-to-blind nWoD Roller <nr>=
 	strcat( 
@@ -265,6 +278,7 @@ Because of this, we return the message that's to be sent to the roller.
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Blind Roll Output --------------------------------------------------
 
@@ -279,7 +293,7 @@ internal:
 	q0: hasswitch target?, later a list of switches
 	q1: hasswitch extended?
 
---
+*/
 
 &display.blind-roller-output nWoD Roller <nr>=
 squish( 
@@ -287,7 +301,7 @@ squish(
 		u( .alert, roll/blind ), %b, 
 		You roll, %b, 
 
-@@ chance/weakness and/or extended?
+// chance/weakness and/or extended?
 		itemize( 
 			cat( 
 				if( not( strmatch( %qs, standard )), 
@@ -304,7 +318,7 @@ squish(
 			, & 
 		), %b, 
 
-@@ if extended, output how it's extended
+// if extended, output how it's extended
 		if( 
 			cor( %q0, %q1 ), 
 			strcat( 
@@ -316,11 +330,11 @@ squish(
 			)
 		), %b, 
 
-@@ output the roll
+// output the roll
 		', trim( u( display.roll-items, %qo )), ', 
 		
 
-@@ switches? (ignore the two extended switches, pulled earlier)
+// switches? (ignore the two extended switches, pulled earlier)
 		setq( 0, 
 			trim( 
 				edit( 
@@ -338,13 +352,14 @@ squish(
 			)
 		), 
 
-@@ roll to whom?
+// roll to whom?
 		%b, to, %b, 
 		iter( %0, name( %i0 ), , %,%b )
 	)
 )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Roll To Job --------------------------------------------------------
 
@@ -365,16 +380,16 @@ For the following:
 
 uses: titlestr()
 
---
+*/
 
 &display.roll-to-job nWoD Roller <nr>=
 	[case( 0, 
-@@ .. job access check failed
+// .. job access check failed
 		t(setr(9, ulocal( #15/f.has_job_access, rest( %1 ), %0 ))), 
 		[u( .alert, roll )] 
 		You can't roll to that job because [titlestr( rest( %q9 ))], 
 
-@@ .. else, show enactor and add it to the job
+// .. else, show enactor and add it to the job
 		[u( display.roll-output, %0, to %1 )]
 		[trigger( #15/trig_myadd, 
 			locate( #15, %1, i ), 
@@ -382,7 +397,7 @@ uses: titlestr()
 			%0, 
 			ADD 
 		)]
-@@ .. trigger the jobs system to inform people who can see the bucket
+// .. trigger the jobs system to inform people who can see the bucket
 		[trigger( #15/trig_broadcast, 
 			parent( locate( #15, %1, i )), 
 			Roll added to [lcstr( %1 )] by %N. 
@@ -391,6 +406,7 @@ uses: titlestr()
 
 
 
+/*
 ================================================================================
 == Success Interpreter =========================================================
 
@@ -408,13 +424,13 @@ output:
 	q1: success/failure type
 	q2: input, prettified 
 
---
+*/
 
 &f.roll-success-interpreter nWoD Roller <nr>=
 
 	strcat( 
 
-@@ q1: success/failure type
+// q1: success/failure type
 		setq( 1, 
 			if( gt( words( %qr, | ), 1 ), 
 				Extended, 
@@ -427,7 +443,7 @@ output:
 			)
 		), 
 
-@@ q2: display style for the inputs (or the error(s)?)
+// q2: display style for the inputs (or the error(s)?)
 		setq( 2, trim( u( display.roll-items, %qo )))
 
 	)
