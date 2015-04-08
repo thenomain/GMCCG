@@ -54,12 +54,13 @@ Level 3 for very minor items
 &.sphere.demon dd=Demon Stigmatic
 
 
-// -----------------------------------------------------------------------------
-// -- DD: Agendas --------------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+-- DD: Agendas -----------------------------------------------------------------
 
-// List all agendas that a demon has.
+List all agendas that a demon has.
 
-// --
+*/
 
 &.demon.agendas dd=
 	setunion( 
@@ -75,12 +76,13 @@ Level 3 for very minor items
 	)
 
 
-// -----------------------------------------------------------------------------
-// -- DD: Tags for Stigmatics --------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+-- D:T: Tags for Stigmatics ----------------------------------------------------
 
-// (Edit `human.supernatural` -> `human.<minor template>.<major template>`)
+(Edit `human.supernatural` -> `human.<minor template>.<major template>`)
 
-// --
+*/
 
 @dolist 
 	[filter( sfp/f.hastag?.workhorse, 
@@ -102,23 +104,26 @@ Level 3 for very minor items
 &bio.stigmata DD=*
 &tags.bio.stigmata D:T=stigmatic
 
+&bio.ring DD=*
+&tags.bio.stigmata D:T=demon.stigmatic
+
+
 
 // == DEMON ADVANTAGES =========================================================
 
 // -- Cover: The Integrity stat for Demons -------------------------------------
 
-&advantage.cover_() DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.cover_() DD=7
-&tags.advantage.cover_() D:T=integrity.demon
+&advantage.cover DD=1.2.3.4.5.6.7.8.9.10
+&default.advantage.cover DD=7
+&tags.advantage.cover D:T=integrity.demon
 
-&advantage.aether DD=ladd( u( .value_full, %0, advantage.willpower_maximum ), . )
+&advantage.aether DD=ladd( u( .value_full, %0, advantage.aether_maximum ), . )
 &tags.advantage.aether D:T=derived.pool.demon
 &default.advantage.aether DD=derived
 
 &advantage.aether_maximum DD=elements( 10 11 12 13 14 15 20 30 50 100, u( .value, %0, advantage.primum ))
 &tags.advantage.aether_maximum D:T=derived.pool.demon
 &default.advantage.aether_maximum DD=derived
-
 
 &advantage.primum DD=1.2.3.4.5.6.7.8.9.10
 &default.advantage.primum DD=1
@@ -161,7 +166,7 @@ Level 3 for very minor items
 &merit.consummate_professional_() DD=2|Inquisitor.Integrator.Saboteur.Tempter
 &prerequisite.merit.consummate_professional_() DD=
 	t( match( 
-		setdiff( u( u( d.dd )/.demon.agendas, %0 ), Uncalled, . ), 
+		setdiff( u( v( d.dd )/.demon.agendas, %0 ), Uncalled, . ), 
 		%1, .
 	))
 &prereq-text.merit.consummate_professional_() DD=Must belong to that agenda
@@ -174,7 +179,7 @@ Level 3 for very minor items
 &prerequisite.merit.multiple_agendas_() DD=
 	cor( 
 		not( match( 
-			setdiff( u( u( d.dd )/.demon.agendas, %0 ), Uncalled, . ), 
+			setdiff( u( v( d.dd )/.demon.agendas, %0 ), Uncalled, . ), 
 			%1, . 
 		)), 
 		not( lattr( %0/_merit.multiple_agendas_(*) )
@@ -826,108 +831,56 @@ Stigmatics get +3 dots for Supernatural Merits only.
 ================================================================================
 == CHARGEN: ADVANTAGES =========================================================
 
-cover: 7
+cover
 aether
 primum
-current cover
+
 */
 
 
-// -----------------------------------------------------------------------------
-// -- Aether: Point Count ------------------------------------------------------
+/*
+--------------------------------------------------------------------------------
+-- Aether: Point Count ---------------------------------------------------------
 
-// (merit points for aether)
+Counting Merit points for Aether.
 
-// --
+*/
 
 &f.allocated.power-trait.demon CG=
 	max( 
 		0, 
 		mul( 
 			5, 
-			dec( u( u( d.dd )/.value, %0, advantage.primum ))
+			dec( u( v( d.dd )/.value, %0, advantage.primum ))
 		)
 	)
 
 
-// -----------------------------------------------------------------------------
-// -- Integrity, Demon: Allocations --------------------------------------------
+/* 
+--------------------------------------------------------------------------------
+-- Integrity, Demon: Allocations -----------------------------------------------
 
-// (aka Cover)
+Cover.
 
-// --
+We are using only one 'cover' stat presently. This is not optimal, as the Demon 
+should have one per Cover (e.g., 'Cover (Bob): 4'), but this will have to do for 
+now.
+
+*/
 
 &f.allocated.integrity.demon cg=
-	u( u( d.dd )/.value, %0, advantage.cover_(<current_cover>) )
+	u( v( d.dd )/.value, %0, advantage.cover )
 
 
-// -----------------------------------------------------------------------------
-// -- Integrity, Demon: Point Count --------------------------------------------
-
-// this is aboslutely NOT working, due to the nature of instanced stats '()'
-// maybe we just call it 'cover' and change it when the Cover is changed?
+/*
+--------------------------------------------------------------------------------
+-- Integrity, Demon: Point Count -----------------------------------------------
+*/
 
 &f.pts-valid?.integrity.demon cg=
 	eq( 
 		u( f.allocated.integrity.demon, %0 ), 
-		udefault( u( d.dd )/default.advantage.cover_(), 7 ) 
-	)
-
-
-// -----------------------------------------------------------------------------
-// -- Conditions: Allocations --------------------------------------------------
-/*
-returns: <most conditions>`<agenda conditions>
-
-NOTE TO SELF: Can have multiple agendas, based on the ??? merit.
-
-a: demon's agenda(s), if any
-c: list of conditions
-f: filtered 'agenda' conditions
-
-*/
-
-&allocated.conditions.demon cg=
-	strcat( 
-		setq( a, u( u( d.dd )/.demon.agendas, %0 )), 
-		setq( c, lattr( %0/_conditon.* )), 
-		setq( f, 
-			iter( %qa, 
-				filter( 
-					u( d.sfp )/f.hastag?.workhorse, 
-					%qc, , , 
-					agenda.%i0, 1 
-				), 
-				. 
-			)
-		), 
-
-		setdiff( %qc, %qf ), `, %qf 
-	)
-
-
-// -----------------------------------------------------------------------------
-// -- Conditions: Point Count --------------------------------------------------
-/* 
-We don't care how many conditions the person starts with, here, as long as 
-the 'agenda' equals the number of agendas they have. (0, 1, 2)
-
-'Uncalled' is the lack of an agenda.
-
-c: conditions on sheet
-a: demon's agenda, if any
-
-*/
-
-&f.pts-valid?.conditions.demon cg=
-	strcat( 
-		setq( c, u( allocated.conditions.demon, %0 )), 
-		setq( a, setdiff( u( u( d.dd )/.demon.agendas, %0 ), Uncalled, . )), 
-
-		eq( 
-			words( elements( %qc, 2, ` )), 
-			words( %qa, . )
-		)
+		udefault( v( d.dd )/default.advantage.cover, 7 ) 
 	)
 
 
@@ -1076,7 +1029,7 @@ Still faster than 'f.list-stats-tags'
 
 &f.pts-valid?.demonic_form cg=
 	strcat( 
-		setq( f, u( allocated.embeds_and_exploits, %0 )), 
+		setq( f, u( allocated.demonic_form, %0 )), 
 		cand( 
 			eq( words( elements( %qf, 1, ` )), 3 ), 
 			eq( words( elements( %qf, 2, ` )), 2 ), 
@@ -1091,6 +1044,49 @@ Still faster than 'f.list-stats-tags'
 ================================================================================
 == CHARGEN CHECK: DEMON ========================================================
 
+Check for: Demonic Form, 
+
+&check.chargen.demon CG=
+	strcat( 
+		%b, %b, ansi( h, Embeds & Exploits ), :, %b, 
+		setr( 9, 
+			iter( u( allocated.embeds_and_exploits, %0 ), words( %i0 ), `, / )
+		), %b, %(3 general/1 incarnation%), %b, 
+		u( display.check.ok-no, u( f.pts-valid?.embeds_and_exploits, %0 )), %b, 
+		%r,
+
+		%b, %b, ansi( h, Demonic Form ), :, %b, 
+		setr( 9, 
+			iter( u( allocated.demonic_form, %0 ), 
+				words( %i0 ), `, / 
+			)
+		), %b, (of 3/2/1/1), %b, 
+		u( display.check.ok-no, u( f.pts-valid?.demonic_form, %0 )), %b, %r,
+	)
+
+
+
+
+
+
+
+
+&bio.virtue.demon DD=[get( bio.virtue )].[get( bio.vice )]
+&bio.vice.demon DD=[get( bio.vice )].[get( bio.virtue )]
+
+
+
+
+
+
+
+&bio.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.Loyal.Patient.Peaceful.Righteous.Trustworthy
+&class.bio.virtue DD=string
+
+&bio.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
+&class.bio.vice DD=string
+
+
 
 
 ================================================================================
@@ -1100,12 +1096,9 @@ Still faster than 'f.list-stats-tags'
 
 &check.chargen.stigmatic CG=
 	strcat( 
-		%b, %b, 
-		ansi( h, Stigmatic Merits ), :, %b, 
+		%b, %b, ansi( h, Stigmatic Merits ), :, %b, 
 		setr( 9, u( f.allocated.merits.stigmatic, %0 )), /3%b, 
-		u( display.check.ok-no, eq( %q9, 3 )), %b, 
-		%r, 
-		
+		u( display.check.ok-no, eq( %q9, 3 )), %b, %r, 
 	)
 
 
@@ -1132,9 +1125,84 @@ Still faster than 'f.list-stats-tags'
 ## DEMON: SHEET ################################################################
 */
 
+// -- Bio ----------------------------------------------------------------------
+
+&bio.default.demon Newest Sheet Code <nsc>=
+	birthdate concept virtue vice template incarnation agenda ring
+
 
 &bio.default.stigmatic Newest Sheet Code <nsc>=
-	birthdate concept stigmata template virtue vice 
+	birthdate concept stigmata template virtue vice ring
+
+
+// -- Powers -------------------------------------------------------------------
+
+&powers.embeds Newest Sheet Code <nsc>=
+	iter( sort( edit( lattr( %0/_embed.* ), _EMBED., )), 
+		ulocal( f.cheat_getstat.name_only, %0, embed.%i0, flag ), 
+		, | 
+	)
+
+
+&powers.exploits Newest Sheet Code <nsc>=
+	iter( sort( edit( lattr( %0/_explot.* ), _EXPLOIT., )), 
+		ulocal( f.cheat_getstat.name_only, %0, exploit.%i0, flag ), 
+		, | 
+	)
+
+
+&block.powers.demon sheet: rows=
+	strcat( 
+		setq( w, 79 ), 
+
+		setq( e, u( powers.embeds, %0 )), 
+		setq( x, u( powers.exploits, %0 )), 
+
+		setq( t, inc( lmax( iter( %qe, strlen( %i0 ), | )))), 
+		divider( Embeds ), %r, 
+		table( %qe, %qt, %qw, | ), %r, 
+
+		setq( t, inc( lmax( iter( %qx, strlen( %i0 ), | )))), 
+		divider( Exploits ), %r, 
+		table( %qx, %qt, %qw, | ), %r, 
+	)
+
+
+// -- Traits -------------------------------------------------------------------
+
+&traits.morality.demon nsc=
+	ulocal( f.cheat_getstat.morality, %0, cover )
+
+
+&block.traits.demon sheet: rows=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+
+// .. aether (power pool)
+		setq( x, ulocal( traits.power_pool, %0 )), 
+		setq( c, rest( setr( y, first( %qx, | )), : )), 
+		setq( p, last( %qx, : )), 
+		setq( r, u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )), 
+
+// .. primum (supernatural resistance)
+		setq( z, 
+			u( display.trait-and-value, 
+				u( traits.supernatural_resistance, %0 ), 
+				%qt, %qw, numeric 
+			)
+		), 
+
+// .. display
+		vcolumns( 
+			%qw:%qr, 
+			%qw:%qz, 
+			|, 
+			%b 
+		), %r, 
+	)
+
+
 
 
 /* 
