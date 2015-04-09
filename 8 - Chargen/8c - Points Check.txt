@@ -12,17 +12,18 @@ It does NOT check that points were spent correctly, only if they were spent!  Fo
 
 Check for: 3/4/5 points
 0: dbref of sheet
+1: possible late additions/subtractions (for 'free point' checks)
 a: attributes
 
 */
 
 &f.pts-valid?.attributes cg=
 	strcat( 
-		setq( a, sort( u( f.allocated.attributes, %0 ), n, / )), 
+		setq( a, sort( u( f.allocated.attributes, %0, %1 ), n, / )), 
 		cand( 
 			eq( first( %qa, / ), 3 ), 
 			eq( elements( %qa, 2, / ), 4 ), 
-			eq( last(%qa, / ), 5 )
+			eq( last( %qa, / ), 5 )
 		)
 	)
 

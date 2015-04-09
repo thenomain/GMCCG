@@ -458,12 +458,13 @@ b: badstat list
 
 0: dbref of sheet
 1: category to check
+2: potential late additions/subtractions ('free' points being accounted for)
 output: Ob. yes/no in full prismatic color
 
 */
 
 &display.check.stats cg=
-	u( display.check.ok-no, u( f.pts-valid?.%1, %0 ))
+	u( display.check.ok-no, u( f.pts-valid?.%1, %0, %2 ))
 
 
 /*
@@ -487,23 +488,37 @@ uses: vcolumns(), our vertical-column system
 */
 
 &check.bio cg=
-strcat( 
+	strcat( 
 // >> column 1: Gender, Concept, Full Name, Birthdate
-	setq( 1, 
+		setq( 1, 
 		strcat( 
-			ansi( h, Gender ), :, %b, 
-				setr( g, get( %0/sex )), %b, 
-				u( display.check.ok-no, match( f m, strtrunc( %qg, 1 ))), 
-				`, 
-			ansi( h, Concept ), :, %b, 
-				if( 
-					hasattr( %0, _bio.concept ), 
-					ansi( g, exists ), 
-					ansi( r, blank )
-				), 
-				`, 
+				ansi( h, Gender ), :, %b, 
+					setr( g, get( %0/sex )), %b, 
+					u( display.check.ok-no, match( f m, strtrunc( %qg, 1 ))), 
+					`, 
+				ansi( h, Concept ), :, %b, 
+					if( 
+						hasattr( %0, _bio.concept ), 
+						ansi( g, exists ), 
+						ansi( r, blank )
+					), 
+					`, 
+				iter( 
+					full_name birthdate, 
+					strcat( 
+						ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
+						setr( i, u( %1/_bio.%i0 )), %b, 
+						u( display.check.ok-no, comp( %qi, ))
+					), 
+					, `
+				)
+			)
+		), 
+
+// .. column 2: Template Foo (human default: virtue vice)
+		setq( 2, 
 			iter( 
-				full_name birthdate, 
+				cat( template, udefault( check.bio.%2, u( check.bio.default ))), 
 				strcat( 
 					ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
 					setr( i, u( %1/_bio.%i0 )), %b, 
@@ -511,68 +526,47 @@ strcat(
 				), 
 				, `
 			)
-		)
-	), 
-
-// .. column 2: Virtue, Vice, & Template Foo
-	setq( a, 
-		iter( virtue vice, 
-			strcat( 
-				ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
-				setr( i, u( %1/_bio.%i0 )), %b, 
-				u( display.check.ok-no, comp( %qi, ))
-			), 
-			, `
-		)
-	), 
-	setq( b, 
-		iter( u( check.bio.%2 ), 
-			strcat( 
-				ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
-				setr( i, u( %1/_bio.%i0 )), %b, 
-				u( display.check.ok-no, comp( %qi, ))
-			), 
-			, `
-		)
-	), 
-	setq( 2, if( t( strlen( %qb )), %qa`%qb, %qa )), 
+		), 
 
 // >> display results
-	divider( Biography Check, width( %# )), %r, 
-	vcolumns( 38:%q1, 37:%q2, `, %b, %b%b )
-)
+		divider( Biography Check, width( %# )), %r, 
+		vcolumns( 38:%q1, 37:%q2, `, %b, %b%b )
+	)
 
 
 /*
 --------------------------------------------------------------------------------
--- Check Bio: Changeling -------------------------------------------------------
-
-This is an example until we get a GMC check in here.
+-- Check Bio: Human ------------------------------------------------------------
 
 */
 
-&check.bio.changeling cg=seeming kith court
+&check.bio.default cg=virtue vice
 
 
 /*
 --------------------------------------------------------------------------------
 -- Check Chargen ---------------------------------------------------------------
 
+Merits: 5/10 (5 on <name of Power Stat>)
+
 0: dbref of sheet
-1: template contents
+1: template
 
 */
 
-
-Merits: 5/10 (5 on <name of Power Stat>)
-
-
-&check.chargen cg=
+&check.chargen [v( d.cg )]=
 	strcat( 
 		divider( Chargen Levels, width( %# )), %r, 
+
 		%b%b, ansi( h, Attributes ), :%b, 
-			u( f.allocated.attributes, %0 ), %b, %(of 5/4/3%), %b, 
-			u( display.check.stats, %0, attributes ), %r, 
+		udefault( 
+			check.chargen.attributes.%1, 
+			u( check.chargen.attributes.default, %0 ), 
+			%0 
+		), 
+
+		ulocal( check.chargen.attributes, %0, %1 ), %r, 
+
 		%b%b, ansi( h, Skills ), :%b, 
 			u( f.allocated.skills, %0 ), %b, %(of 11/7/4%), %b, 
 			u( display.check.stats, %0, skills ), %r, 
@@ -595,6 +589,17 @@ Merits: 5/10 (5 on <name of Power Stat>)
 		u( check.chargen.%1, %0 )
 	)
 
+
+/*
+--------------------------------------------------------------------------------
+-- Check Chargen: Attributes ---------------------------------------------------
+*/
+
+&check.chargen.attributes.default [v( d.cg )]=
+	strcat( 
+		u( f.allocated.attributes, %0 ), %b, %(of 5/4/3%), %b, 
+		u( display.check.stats, %0, attributes ), 
+	)
 
 /*
 --------------------------------------------------------------------------------

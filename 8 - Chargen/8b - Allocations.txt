@@ -15,25 +15,36 @@ pulled from within the system.
 --------------------------------------------------------------------------------
 -- Allocated: Points in Attributes ---------------------------------------------
 
-This looks easy because it doesn't account for free Attributes.
+Now we can account for 'free' attributes by trying to remove them.
+
+e.g., if we pass 'attribute.strength:-1', we can see if everything is ok 
+if 'Strength' was the free attribute.
 
 	0: dbref of sheet
+	1: list of stats to add (stat.path:value stat.path:value)
 	returns: <mental>/<physical>/<social>
 */
 
 &f.allocated.attributes cg=
 	iter( 
 		mental physical social, 
-		sub( u( f.points.category, %0, attribute, %i0 ), 3 ), , / 
+		add( 
+			sub( u( f.points.category, %0, attribute, %i0 ), 3 ), 
+			ladd( iter( 
+				filter( fil.stats-to-include, %1, , , attribute, %i0 ), 
+				last( %i0, : )
+			))
+		), 
+		, / 
 	)
 
-/* -- test --
+/* -- tests --
 
 think u( cg/f.allocated.attributes, %# )
+think u( v( d.cg )/f.allocated.attributes, *joseph )
+think u( v( d.cg )/f.allocated.attributes, *joseph, attribute.strength:-1 )
 
 
-
-/*
 --------------------------------------------------------------------------------
 -- Allocated: Points in Skills -------------------------------------------------
 Specialties are ignored because they don't have tags, so fail the filter.
@@ -91,7 +102,7 @@ Returns full stat paths.  The first part of the list are specialties that are no
 
 think u( cg/f.allocated.specialties, %# )
 think u( cg/f.allocated.specialties, v( _special.sheet_location ))
-think u( cg/f.allocated.specialties, pmatch( hemi )) :: %qs :: %qt :: %qf :: %ql
+think u( v( d.cg )/f.allocated.specialties, pmatch( hemi ))
 
 
 --------------------------------------------------------------------------------
