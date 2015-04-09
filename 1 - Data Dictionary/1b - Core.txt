@@ -1,21 +1,29 @@
-// #############################################################################
-// ## CORE WOD #################################################################
-// 
-// And so comes the GMC update
-// 
-// == CORE ATTRIBUTES ==========================================================
+/*
+################################################################################
+## CORE WOD ####################################################################
+ 
+And so comes the GMC update
 
-&attribute.intelligence DD=1.2.3.4.5.6.7.8.9.10
-&attribute.wits DD=1.2.3.4.5.6.7.8.9.10
-&attribute.resolve DD=1.2.3.4.5.6.7.8.9.10
+We expect a few games to want 'favored' Attributes, so we make it a subtype
+in order to keep track of it.
 
-&attribute.strength DD=1.2.3.4.5.6.7.8.9.10
-&attribute.dexterity DD=1.2.3.4.5.6.7.8.9.10
-&attribute.stamina DD=1.2.3.4.5.6.7.8.9.10
+This is mainly meant for `cg/check` but may be needed outside of chargen.
 
-&attribute.presence DD=1.2.3.4.5.6.7.8.9.10
-&attribute.manipulation DD=1.2.3.4.5.6.7.8.9.10
-&attribute.composure DD=1.2.3.4.5.6.7.8.9.10
+================================================================================
+== CORE ATTRIBUTES =============================================================
+*/
+
+&attribute.intelligence DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.wits DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.resolve DD=1.2.3.4.5.6.7.8.9.10|favored
+
+&attribute.strength DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.dexterity DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.stamina DD=1.2.3.4.5.6.7.8.9.10|favored
+
+&attribute.presence DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.manipulation DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.composure DD=1.2.3.4.5.6.7.8.9.10|favored
 
 
 // -- Attributes: Defaults -----------------------------------------------------
