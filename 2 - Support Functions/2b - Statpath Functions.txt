@@ -308,16 +308,21 @@ Used for validating new purchases if sheet-lookup fails.
 // .. .. (for dd-lookup, the instance may be null and still valid)
 						setr( 1, 
 							strmatch( *, 
-								elements( 
-									%qs, 
-									add( 2, t( regmatch( %qn, .*%\( .*%\ )))), 
-									| 
+								setr( 2, 
+									elements( 
+										%qs, 
+										add( 
+											2, 
+											t( regmatch( %qn, .*%\( .*%\ )))
+										), 
+										| 
+									)
 								)
 							)
 						), 
 						setq( n, %qn.[edit( %qz, %b, _ )] ), 
 // .. .. substat-list is an actual list
-						t( setr( 0, grab( %q1, %qz*, . ))), 
+						t( setr( 0, grab( .%q2, %qz*, . ))), 
 						setq( n, %qn.%q0 ), 
 // .. .. no matches
 						setq( n, #-2 SUBSTAT NOT FOUND )
