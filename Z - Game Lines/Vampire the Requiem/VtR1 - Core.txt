@@ -19,7 +19,7 @@ Level 3 for very minor items
 */
 
 &d.search-order-02-vampire sfp=discipline
-&d.search-order-03-vampire sfp=
+&d.search-order-03-vampire sfp=devotion
 
 
 
@@ -466,8 +466,269 @@ Level 3 for very minor items
 &tags.discipline.vigor D:T=vampire.ghoul.daeva.nosferatu
 
 
-// -- Devotions ----------------------------------------------------------------
-// may not be taken by ghouls
+/*
+--------------------------------------------------------------------------------
+-- Devotions -------------------------------------------------------------------
+
+*/
+
+// &tags.devotion.? D:T=vampire
+&class.devotion.? DD=flag
+
+&devotion.Body_of_Will DD=Stamina + Survival + Resilience
+&prerequisite.devotion.Body_of_Will DD=
+	u( .at_least_all, %0, discipline.resilience:3 disciplinevigor:1 )
+&prereq-text.devotion.Body_of_Will DD=Resilience 3, Vigor 1
+&tags.devotion.Body_of_Will D:T=vampire
+&xp.devotion.Body_of_Will XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Chain_of_Command DD=
+	Intelligence + Persuasion + Dominate, vs. Resolve + Blood Potency
+&prerequisite.devotion.Chain_of_Command DD=
+	u( .at_least_all, %0, discipline.Dominate:3 discipline.Vigor:1 )
+&prereq-text.devotion.Chain_of_Command DD=Dominate 3, Vigor 1
+&tags.devotion.Chain_of_Command D:T=vampire
+&xp.devotion.Chain_of_Command XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Cloak_the_Gathering DD=-
+&prerequisite.devotion.Cloak_the_Gathering DD=
+	u( .at_least_all, %0, discipline.Obfuscate:5 )
+&prereq-text.devotion.Cloak_the_Gathering DD=Obfuscate 5
+&tags.devotion.Cloak_the_Gathering D:T=vampire
+&xp.devotion.Cloak_the_Gathering XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Conditioning DD=
+	Wits + Subterfuge + Dominate vs. Resolve + Blood Potency
+&prerequisite.devotion.Conditioning DD=
+	u( .at_least_all, %0, discipline.Dominate:4 )
+&prereq-text.devotion.Conditioning DD=Dominate 4
+&tags.devotion.Conditioning D:T=vampire
+&xp.devotion.Conditioning XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Cross-Contamination DD=
+	Presence + Empathy + Lower of Majesty or Nightmare
+&prerequisite.devotion.Cross-Contamination DD=
+	u( .at_least_all, %0, discipline.Majesty:1 discipline.Nightmare:1 )
+&prereq-text.devotion.Cross-Contamination DD=Majesty 1, Nightmare 1
+&tags.devotion.Cross-Contamination D:T=vampire
+&xp.devotion.Cross-Contamination XP Cost Database <xpcd>=
+	u( cost.standard, 1, %1, %2 )
+
+&devotion.Cult_of_Personality DD=Presence + Socialize + Majesty
+&prerequisite.devotion.Cult_of_Personality DD=
+	u( .at_least_all, %0, discipline.Majesty:4 discipline.Vigor:3 )
+&prereq-text.devotion.Cult_of_Personality DD=Majesty 4, Vigor 3
+&tags.devotion.Cult_of_Personality D:T=vampire
+&xp.devotion.Cult_of_Personality XP Cost Database <xpcd>=
+	u( cost.standard, 4, %1, %2 )
+
+&devotion.Enchantment DD=Manipulation + Empathy + Majesty vs. Composure
+&prerequisite.devotion.Enchantment DD=
+	u( .at_least_all, %0, discipline.Majesty:4 discipline.Obfuscate:2 )
+&prereq-text.devotion.Enchantment DD=Majesty 4, Obfuscate 2
+&tags.devotion.Enchantment D:T=vampire
+&xp.devotion.Enchantment XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Enfeebling_Aura DD=
+	Presence + Intimidation + Majesty vs. Composure + Blood Potency
+&prerequisite.devotion.Enfeebling_Aura DD=
+	u( .at_least_all, %0, discipline.Majesty:1 discipline.Resilience:1 )
+&prereq-text.devotion.Enfeebling_Aura DD=Majesty 1, Resilience 1
+&tags.devotion.Enfeebling_Aura D:T=vampire
+&xp.devotion.Enfeebling_Aura XP Cost Database <xpcd>=
+	u( cost.standard, 3, %1, %2 )
+
+&devotion.Foul_Grave DD=-
+&prerequisite.devotion.Foul_Grave DD=
+	u( .at_least_all, %0, discipline.Protean:1 discipline.Nightmare:1 )
+&prereq-text.devotion.Foul_Grave DD=Protean 1, Nightmare 1
+&tags.devotion.Foul_Grave D:T=vampire
+&xp.devotion.Foul_Grave XP Cost Database <xpcd>=
+	u( cost.standard, 1, %1, %2 )
+
+&devotion.Force_of_Nature DD=
+	Removes limitation of Protean transformations. Shift physical attributes.
+&prerequisite.devotion.Force_of_Nature DD=
+	u( .at_least_all, %0, discipline.Protean:4 discipline.Resilience:4 )
+&prereq-text.devotion.Force_of_Nature DD=Protean 4, Resilience 4
+&tags.devotion.Force_of_Nature D:T=vampire
+&xp.devotion.Force_of_Nature XP Cost Database <xpcd>=
+	u( cost.standard, 5, %1, %2 )
+
+&devotion.Gargoyle's_Vigilance_() DD=-|Basic.Advanced
+&prerequisite.devotion.Gargoyle's_Vigilance_() DD=
+	cand( 
+		u( .at_least_all, %0, discipline.Auspex:1 discipline.Resilience:2 ), 
+		if( strmatch( %1, Advanced ), 
+			u( .at_least, %0, discipline.protean, 5 )
+		)
+	)
+&prereq-text.devotion.Gargoyle's_Vigilance_() DD=
+	Auspex 1, Resilience 2, Advanced form takes Protean 5, Basic version must be 
+	upgraded to Advanced version
+&tags.devotion.Gargoyle's_Vigilance_() D:T=vampire
+&xp.devotion.Gargoyle's_Vigilance_() XP Cost Database <xpcd>=
+	case( 1, 
+		strmatch( %3, devotion.Gargoyle's_Vigilance_(Basic) ), 
+		u( cost.standard, 1, %1, %2 ), 
+
+		cand( 
+			strmatch( %3, devotion.Gargoyle's_Vigilance_(Advanced) ), 
+			u( .has, %0, devotion.Gargoyle's_Vigilance_(Basic) )
+		), 
+		u( cost.standard, 3, %1, %2 ), 
+
+		strmatch( %3, devotion.Gargoyle's_Vigilance_(Advanced) ), 
+		u( cost.standard, 4, %1, %2 )
+	)
+
+&devotion.Hint_of_Fear DD=-
+&prerequisite.devotion.Hint_of_Fear DD=
+	u( .at_least_all, %0, discipline.Celerity:2 discipline.Nightmare:2 )
+&prereq-text.devotion.Hint_of_Fear DD=Celerity 2, Nightmare 2
+&tags.devotion.Hint_of_Fear D:T=vampire
+&xp.devotion.Hint_of_Fear XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Juggernaut's_Gait DD=-
+&prerequisite.devotion.Juggernaut's_Gait DD=
+	u( .at_least_all, %0, discipline.Resilience:5 discipline.Vigor:2 )
+&prereq-text.devotion.Juggernaut's_Gait DD=Resilience 5, Vigor 2
+&tags.devotion.Juggernaut's_Gait D:T=vampire
+&xp.devotion.Juggernaut's_Gait XP Cost Database <xpcd>=
+	u( cost.standard, 4, %1, %2 )
+
+&devotion.Quicken_Sight DD=-
+&prerequisite.devotion.Quicken_Sight DD=
+	u( .at_least_all, %0, discipline.Auspex:1 discipline.Celerity:1 )
+&prereq-text.devotion.Quicken_Sight DD=Auspex 1, Celerity 1
+&tags.devotion.Quicken_Sight D:T=vampire
+&xp.devotion.Quicken_Sight XP Cost Database <xpcd>=
+	u( cost.standard, 1, %1, %2 )
+
+&devotion.Reason's_Salon DD=-
+&prerequisite.devotion.Reason's_Salon DD=
+	u( .at_least_all, %0, discipline.Animalism:4 discipline.Resilience:2 )
+&prereq-text.devotion.Reason's_Salon DD=Animalism 4, Resilience 2
+&tags.devotion.Reason's_Salon D:T=vampire
+&xp.devotion.Reason's_Salon XP Cost Database <xpcd>=
+	u( cost.standard, 3, %1, %2 )
+
+&devotion.Riot DD=
+	Imposes Bestial, Competitive and Wanton conditions on everyone in half mile.
+&prerequisite.devotion.Riot DD=
+	u( .at_least_all, %0, discipline.Animalism:4 discipline.Majesty:5 )
+&prereq-text.devotion.Riot DD=Animalism 4, Majesty 5
+&tags.devotion.Riot D:T=vampire
+&xp.devotion.Riot xpcd=
+	u( cost.standard, 5, %1, %2 )
+
+&devotion.Shared_Sight DD=Intelligence + Empathy + Auspex
+&prerequisite.devotion.Shared_Sight DD=
+	u( .at_least_all, %0, discipline.Auspex:4 discipline.Dominate:1 )
+&prereq-text.devotion.Shared_Sight DD=Auspex 4, Dominate 1
+&tags.devotion.Shared_Sight D:T=vampire
+&xp.devotion.Shared_Sight XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Shatter_the_Shroud DD=-
+&prerequisite.devotion.Shatter_the_Shroud DD=
+	u( .at_least_all, %0, discipline.Auspex:2 discipline.Vigor:1 )
+&prereq-text.devotion.Shatter_the_Shroud DD=Auspex 2, Vigor 1
+&tags.devotion.Shatter_the_Shroud D:T=vampire
+&xp.devotion.Shatter_the_Shroud XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Stalwart_Servant DD=-
+&prerequisite.devotion.Stalwart_Servant DD=
+	u( .at_least_all, %0, discipline.Dominate:3 discipline.Resilience:1 )
+&prereq-text.devotion.Stalwart_Servant DD=Dominate 3, Resilience 1
+&tags.devotion.Stalwart_Servant D:T=vampire
+&xp.devotion.Stalwart_Servant XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Subsume_the_Lesser_Beast DD=
+	Manipulation + Animal Ken + Animalism – animal’s Resolve
+&prerequisite.devotion.Subsume_the_Lesser_Beast DD=
+	u( .at_least_all, %0, discipline.Animalism:4 discipline.Dominate:2 )
+&prereq-text.devotion.Subsume_the_Lesser_Beast DD=Animalism 4, Dominate 2
+&tags.devotion.Subsume_the_Lesser_Beast D:T=vampire
+&xp.devotion.Subsume_the_Lesser_Beast XP Cost Database <xpcd>=
+	u( cost.standard, 3, %1, %2 )
+
+&devotion.Summoning DD=
+	Manipulation + Persuasion + (Dominate or Majesty) 
+	vs. Composure + Blood Potency
+&prerequisite.devotion.Summoning DD=
+	u( .at_least_one, %0, discipline.Dominate:4 discipline.Majesty:4 )
+&prereq-text.devotion.Summoning DD=Dominate 4 or Majesty 4
+&tags.devotion.Summoning D:T=vampire
+&xp.devotion.Summoning XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Suns_Brutal_Dreamscape DD=
+	Manipulation + Empathy + Nightmare, vs. Composure + Blood Potency
+&prerequisite.devotion.Suns_Brutal_Dreamscape DD=u( .at_least_all, %0, discipline.Nightmare:5 discipline.Resilience:2 )
+&prereq-text.devotion.Suns_Brutal_Dreamscape DD=Nightmare 5, Resilience 2
+&tags.devotion.Suns_Brutal_Dreamscape D:T=vampire
+&xp.devotion.Suns_Brutal_Dreamscape XP Cost Database <xpcd>=
+	u( cost.standard, 4, %1, %2 )
+
+&devotion.Touch_of_Deprivation DD=
+	Intelligence + Medicine + Auspex vs. Resolve + Blood Potency
+&prerequisite.devotion.Touch_of_Deprivation DD=
+	u( .at_least_all, %0, discipline.Obfuscate:4 discipline.Dominate:2 )
+&prereq-text.devotion.Touch_of_Deprivation DD=Obfuscate 4, Dominate 2
+&tags.devotion.Touch_of_Deprivation D:T=vampire
+&xp.devotion.Touch_of_Deprivation XP Cost Database <xpcd>=
+	u( cost.standard, 3, %1, %2 )
+
+&devotion.Undying_Familiar DD=-
+&prerequisite.devotion.Undying_Familiar DD=
+	u( .at_least_all, %0, discipline.Animalism:2 discipline.Resilience:2 )
+&prereq-text.devotion.Undying_Familiar DD=Animalism 2, Resilience 2
+&tags.devotion.Undying_Familiar D:T=vampire
+&xp.devotion.Undying_Familiar XP Cost Database <xpcd>=
+	u( cost.standard, 1, %1, %2 )
+
+&devotion.Wet_Dreams DD=
+	Manipulation + Empathy + Majesty, vs. Composure + Blood Potency
+&prerequisite.devotion.Wet_Dreams DD=
+	u( .at_least_all, %0, discipline.Majesty:2 discipline.Nightmare:2 )
+&prereq-text.devotion.Wet_Dreams DD=Majesty 2, Nightmare 2
+&tags.devotion.Wet_Dreams D:T=vampire
+&xp.devotion.Wet_Dreams XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.The_Wish DD=Manipulation + Persuasion + Majesty
+&prerequisite.devotion.The_Wish DD=
+	u( .at_least_all, %0, discipline.Celerity:2 discipline.Majesty:4 )
+&prereq-text.devotion.The_Wish DD=Celerity 2, Majesty 4
+&tags.devotion.The_Wish D:T=vampire
+&xp.devotion.The_Wish XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
+
+&devotion.Vermin_Flood DD=
+	Summons massive swarm of vermin. Do lethal damage to everything in an area.
+&prerequisite.devotion.Vermin_Flood DD=
+	u( .at_least_all, %0, discipline.Animalism:3 discipline.Celerity:2 )
+&prereq-text.devotion.Vermin_Flood DD=Animalism 3, Celerity 2
+&tags.devotion.Vermin_Flood D:T=vampire
+&xp.devotion.Vermin_Flood xpcd=
+	u( cost.standard, 4, %1, %2 )
+
+&devotion.Wraith's_Presence DD=Wits + Subterfuge + Obfuscate
+&prerequisite.devotion.Wraith's_Presence DD=
+	u( .at_least_all, %0, discipline.Obfuscate:3 discipline.Nightmare:1 )
+&prereq-text.devotion.Wraith's_Presence DD=Obfuscate 3, Nightmare 1
+&tags.devotion.Wraith's_Presence D:T=vampire
+&xp.devotion.Wraith's_Presence XP Cost Database <xpcd>=
+	u( cost.standard, 2, %1, %2 )
 
 
 // -- Blood Sorcery: Theban Sorcery --------------------------------------------
@@ -520,6 +781,19 @@ Level 3 for very minor items
 ## VAMPIRE CHARGEN #############################################################
 
 
+/* 
+================================================================================
+== CHARGEN: ATTRIBUTES =========================================================
+
+Doing something slightly different here until the chargen system can handle it.
+Instead we will be reporting in cg/check, 'what if we reduce each 
+Favored Attribute by 1? Then what would it look like?'
+
+It is wildly substandard.
+
+*/
+
+
 
 /*
 ================================================================================
@@ -553,22 +827,74 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 == CHARGEN: BIO ================================================================
 
 --------------------------------------------------------------------------------
--- Bio Check: Ghoul ------------------------------------------------------------
+-- Bio Check -------------------------------------------------------------------
 
 */
 
-&check.bio.ghoul cg=clan
-
-&check.bio.vampire cg=clan covenant mask dirge
+&check.bio.ghoul cg=virtue vice clan
+&check.bio.vampire cg=mask dirge clan
 
 
 
 /* 
 ================================================================================
-== CHARGEN CHECK: VAMPIRE ======================================================
+== CHARGEN CHECK ===============================================================
 
 
-&check.chargen.vampire CG=
+--------------------------------------------------------------------------------
+-- Favored Attribute -----------------------------------------------------------
+
+currently: 
+	stat/set <attribute>.favored=1
+
+(I hope to get this changed.)
+
+1. check that attributes with 'favored' subtype are allowed
+2. check that there's only one
+3. check what happens if we -1 that from the system
+
+*/
+
+&check.chargen.attributes.vampire [v( d.cg )]=
+	strcat( 
+		setq( f, v( d.vampire.favored_attributes.[get( %0/_bio.clan )] )), 
+		setq( a, 
+			lcstr( 
+				iter( lattr( %0/_attribute.*.favored ), elements( %i0, 2, . ))
+			)
+		), 
+		setq( i, setinter( %qa, %qf )), 
+		setq( c, ulocal( f.pts-valid?.attributes, %0, attribute.%q1:-1 )), 
+
+		ulocal( f.allocated.attributes, %0 ), %b, %(of 5/4/3 + favored%), %b, 
+		ulocal( display.check.stats, %0, attributes, attribute.%qa:-1 ), %r, 
+
+		%b %b%b, ansi( h, Favored Attribute ), :, %b, 
+		titlestr( itemize( %qa )), %b, 
+		%[, 
+		case( 1, 
+			eq( words( %qa ), 0 ), ansi( r, none set ), 
+			gt( words( %qa ), 1 ), ansi( r, too many set ), 
+			neq( words( %qi ), 1 ), ansi( r, not allowed for your clan ), 
+			not( %qc ), ansi( r, bonus point not spent ), 
+			ansi( gh, OK )
+		), 
+		%]
+	)
+
+&d.vampire.favored_attributes.daeva cg=dexterity manipulation
+&d.vampire.favored_attributes.gangrel cg=composure stamina
+&d.vampire.favored_attributes.mekhet cg=intelligence wits
+&d.vampire.favored_attributes.nosferatu cg=composure strength
+&d.vampire.favored_attributes.ventrue cg=presence resolve
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Vampire ------------------------------------------------------
+
+*/
+
+&check.chargen.vampire cg=
 	strcat( 
 		u( check.disciplines, %0, vampire ), 
 		%b%b, <whatever else>, 
@@ -576,10 +902,11 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 	)
 
 
-================================================================================
-== CHARGEN CHECK: GHOUL ========================================================
 
-- 2 in-clan disciplines
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Ghoul --------------------------------------------------------
 
 */
 
@@ -587,10 +914,12 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 	u( check.disciplines, %0, ghoul )
 
 
-
 /*
 --------------------------------------------------------------------------------
 -- Chargen Check: Disciplines --------------------------------------------------
+
+vampire: 3 disc, 2 in-clan
+ghoul: 2 disc, 2 in-clan
 
 0: sheet dbref
 1: template 
@@ -833,6 +1162,20 @@ Mask & Dirge Archetypes:
 touchstone
 
 devotions
+
+* Favored Attributes:
+Daeva: Dexterity or Manipulation
+Gangrel: Composure or Stamina
+Mekhet: Intelligence or Wits
+Nosferatu: Composure or Strength
+Ventrue: Presence or Resolve
+
+if ( group total = group total + 1 )
+	if ( group section = group section + 1 )
+		if( attribute - 1 sets everything right )
+			ok!
+
+
 
 * Favored Disciplines: 
 
