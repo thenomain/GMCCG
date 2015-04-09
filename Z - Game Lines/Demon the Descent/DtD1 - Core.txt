@@ -788,18 +788,12 @@ agenda
 
 
 --------------------------------------------------------------------------------
--- Bio Check: Demon ------------------------------------------------------------
+-- Bio Check -------------------------------------------------------------------
 */
 
-&check.bio.demon cg=incarnation agenda
+&check.bio.stigmatic cg=virtue vice stigmata
+&check.bio.demon cg=virtue vice incarnation agenda
 
-
-/*
---------------------------------------------------------------------------------
--- Bio Check: Stigmatic --------------------------------------------------------
-*/
-
-&check.bio.stigmatic cg=stigmata
 
 
 /*
@@ -1092,6 +1086,9 @@ Check for: Demonic Form,
 ================================================================================
 == CHARGEN CHECK: STIGMATIC ====================================================
 
+When I can, replace the in-line display-check with a discrete attribute 
+to check from
+
 */
 
 &check.chargen.stigmatic CG=
@@ -1111,7 +1108,7 @@ Check for: Demonic Form,
 
 &xp.advantage.primum XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
 
-&xp.advantage.cover_() XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
+&xp.advantage.cover XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 
 &xp.embed XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 &xp.exploit XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
