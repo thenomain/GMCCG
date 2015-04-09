@@ -6,7 +6,7 @@ For all of these:
 	0: sheet dbref
 	1: from
 	2: to
-	3: ??
+	3: ?? -- seems to be the full statpath
 	4: list of valid values from data dictionary (e.g., 1.3.5) (????)
 	(are we sure that %4 isn't really supposed to be %3?)
 
