@@ -98,9 +98,9 @@ Here we're starting to use '.sheet.<pref>' as a way to set preferences.
 
 	@assert isdbref( %qs )={ @pemit %#=Sheet not found. }; 
 
-@@	@break cor( u( .isstaff, %# ), not( %qt ), not( strmatch( %qp, %# )))={ 
-@@		@pemit %#=Staff only. 
-@@	}; 
+	@assert cor( u( .isstaff, %# ), not( %qt ), strmatch( %qp, %# ))={ 
+		@pemit %#=Staff only. 
+	}; 
 
 	@assert t( %qa )={ 
 		@pemit %#=I can't find the sheet display type you want me to find. 
