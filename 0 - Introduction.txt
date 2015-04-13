@@ -170,6 +170,27 @@ For any list validation, # means any non-zero integer, * means any value
 			&_bio.kith: 
 			&_gift.shaping: 2.4
 
+7) Flag.
+	Flag classes aren't set to anything. On the sheet, they are set to whatever 
+	value is set on the Data Dictionary.
+
+	stat/set player/flag=<anything> : set
+	stat/set player/flag=<null> : unset
+	
+	Validated:
+		&<stat type>.<stat name>: <value list>
+		&class.<stat type>.<stat name>: flag
+		e.g.
+			&key.boneyard: true
+			&class.key.boneyard: flag
+	Stored:
+		&_<stat type>.<stat name>: <value>
+		<value>...
+			is not validated
+			will not be offset
+		e.g.:
+			&_key.boneyard: true
+
 NOTE:
 	Though I could have added &class.<stat path> to &tags instead, I am starting 
 	to get concerned with the amount of lookups I am doing. The class of stat 

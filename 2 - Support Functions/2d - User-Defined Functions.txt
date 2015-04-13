@@ -192,6 +192,7 @@ requires: isstaff(<dbref>)
 )]
 
 
+/*
 --------------------------------------------------------------------------------
 -- Getstat Workhorse -----------------------------------------------------------
 
@@ -202,45 +203,52 @@ requires: isstaff(<dbref>)
 
 qs: <stat path>, then <stat>'s location if character would have it
 qd: <stat> details if on sheet
-qc: class of <stat path>: numeric, string, list
+qc: class of <stat path>: numeric, string, list, flag
 
---------------------------------------------------------------------------------
+*/
 
 &f.getstat.workhorse sfp=
-[setq(s, ulocal(f.statpath.workhorse, %1, %0))]
-[setq(d, u(%2/_%qs))]
-[setq(c, ulocal(f.get-class, %qs))]
+	strcat( 
+		setq( s, ulocal( f.statpath.workhorse, %1, %0 )), 
+		setq( d, u( %2/_%qs )), 
+		setq( c, ulocal( f.get-class, %qs )), 
 
+		if( t( %qs ), 
+// If Stat Location Valid & Found ...
+			case( %qc, 
+// Class: Flag (ignore %2, give 1/<null> for set/not set)
+				flag, 
+				ulocal( f.getstat.workhorse.flag, %0, _%qs ), 
 
-[if(
-	t(%qs), 
-@@ .. Stat Location Valid & Found
-	case(
-		%qc, 
-@@ >> Class: String (ignore %3, give all)
-		string, 
-		ulocal( f.getstat.workhorse.string, %0, _%qs ), 
-@@ >> Class: List (ignore %3, give all)
-		list, 
-		%qd, 
-@@ >> Class: Number (follow %3's directive)
-@@ .. first, convert 'derived' to value
-		numeric, 
-		[setq( d, ulocal( f.getstat.workhorse.numeric, %0, _%qs ))]
-		[switch(
-			%3, 
-			p*, first( %qd, . ), 
-			o*, rest( %qd, . ), 
-			b*, %qd, 
-			t*, ladd( %qd, . ), 
-			ladd( %qd, . )
-		)], 
-@@ >> Else: Panic and return full stat
-		%qd
-	), 
-@@ .. Error Looking Up Stat
-	%qs
-)]
+// Class: String (ignore %3, give all)
+				string, 
+				ulocal( f.getstat.workhorse.string, %0, _%qs ), 
+
+// Class: List (ignore %3, give all)
+				list, 
+				%qd, 
+
+// Class: Number (follow %3's directive)
+// .. first, convert 'derived' to value
+				numeric, 
+				strcat( 
+					setq( d, ulocal( f.getstat.workhorse.numeric, %0, _%qs )), 
+					switch(
+						%3, 
+						p*, first( %qd, . ), 
+						o*, rest( %qd, . ), 
+						b*, %qd, 
+						t*, ladd( %qd, . ), 
+						ladd( %qd, . )
+					)
+				), 
+// Else: Panic and return full stat
+				%qd
+			), 
+// .. Error Looking Up Stat
+			%qs 
+		)
+	)
 
 
 --------------------------------------------------------------------------------
@@ -298,6 +306,32 @@ s: statpath without instance
 			get( %0/%1 ) 
 		)
 	))
+
+
+/*
+--------------------------------------------------------------------------------
+-- Getstat Flag ----------------------------------------------------------------
+
+0: sheet dbref
+1: _sheet statpath (to pull 'instance' from, if appropriate)
+returns: value
+
+i: instance (if exists) with underscores
+s: statpath without instance
+
+*/
+
+&f.getstat.workhorse.flag sfp=
+	localize( strcat( 
+	 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
+		setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
+		if( 
+			strmatch( get( %0/%1 ), derived ), 
+			ulocal( [u( d.data-dictionary )]/%qs, %0, %qi ), 
+			hasattr( %0, %1 ) 
+		)
+	))
+
 
 
 --------------------------------------------------------------------------------
@@ -426,6 +460,7 @@ UPDATE: Now we're adding list stats, <num>.<num>.<num> is valid input for class.
 	)]
 
 
+/*
 --------------------------------------------------------------------------------
 -- Statvalidate Workhorse ------------------------------------------------------
 
@@ -437,61 +472,77 @@ qs: stat's value validation list (grabbed from DD)
 qc: stat's  class
 qv: matched value, if any
 
---------------------------------------------------------------------------------
+*/
 
 &f.statvalidate.workhorse sfp=
+	localize( switch( 0, 
 
-	localize( switch( 
-		0, 
-		u( f.statvalue-good, %1 ), #-1 VALUE CONTAINS ILLEGAL FORMAT, 
-// >> check for and grab "default"
+// error
+		u( f.statvalue-good, %1 ), 
+		#-1 VALUE CONTAINS ILLEGAL FORMAT, 
+
+// 'default'
 		comp( lcstr( %1 ), default ), 
-		[setq( v, get( u( d.data-dictionary )/default.%0 ))]
-		[if( 
-			t( %qv ), 
-			%qv, 
-			#-1 DEFAULT NOT FOUND
-		)], 
-// >> else check for and grab value
-		[setq( s, first( get( u( d.data-dictionary )/%0 ), | ))]
-		[setq( c, get( u( d.data-dictionary )/class.%0 ))]
-//		[setq( v, grab( %qs, %1*, . ))]
-// .. completed value 
-		[setq( v, 
-			case( %qc, 
-// .. >> list: set-intersect as a cheap filter, will not name-complete
-// .. .. ( like setstat.workhorse, make space -> '.' )
-				list, 
-// .. .. filter out the items that don't match %qs ( filter sees !xx as xx )
-				[filter( fil.statvalidate-list, 
-					edit( %1, %b, . ), 
-					., ., %qs
-				)], 
-// .. >> else: grab the first match
-				grab( %qs, %1*, . )
+		strcat( 
+			setq( v, get( u( d.data-dictionary )/default.%0 )), 
+			if( t( %qv ), 
+				%qv, 
+				@@( default of <null> will clear stat )
 			)
-		)]
+		), 
 
-		[case( %qs, 
-// .. .. *: Anything will do, return what was passed ( probably "string" class )
-			*, 
-			%1, 
-// .. .. #: Any number 1+
-			#, 
-			if( and( gte( %1, 1 ), isint( %1 )), %1, #-1 VALUE NOT A POSITIVE INTEGER ), 
-// .. >> else: process the value
-			switch( 
-				0, 
-// .. .. .. passed null
-				comp( %1,  ), #-1 VALUE WAS NULL, 
-// .. .. .. substats are implied "*"
-				lt( words( %0, . ), 3 ), %1, 
-// .. .. .. requested value not in the list
-				t( %qv ), #-1 VALUE NOT FOUND,
-// .. .. .. else return grabbed value
-				%qv
+// grab value
+		strcat( 
+			setq( s, first( get( u( d.data-dictionary )/%0 ), | )), 
+			setq( c, ulocal( f.get-class, %0 )), 
+			setq( v, 
+				case( %qc, 
+
+// flag: the value becomes the value on the data dictionary or <null>
+					flag, 
+					if( strmatch( %1, ), @@( <null> ), %qs ), 
+
+// list: set-intersect as a cheap filter, will not name-complete
+// .. (like setstat.workhorse, make space -> '.')
+					list, 
+// .. filter out the items that don't match %qs (filter sees !xx as xx)
+					filter( fil.statvalidate-list, 
+						edit( %1, %b, . ), 
+						., ., %qs
+					), 
+// other classes: grab the first match
+					grab( %qs, %1*, . )
+				)
+			), 
+
+// validate value
+			case( %qs, 
+// '*': Anything will do, return what was passed ( probably "string" class )
+				*, 
+				%1, 
+
+// '#': Any number 1+
+				#, 
+				if( cand( gte( %1, 1 ), isint( %1 )), 
+					%1, 
+					#-1 VALUE NOT A POSITIVE INTEGER 
+				), 
+// else: other validations
+				switch( 0, 
+// .. passed null
+					comp( %1,  ), 
+					#-1 VALUE WAS NULL, 
+// .. substats are implied '*'
+					lt( words( %0, . ), 3 ), 
+					%1, 
+// .. requested value not in the list
+					t( %qv ), 
+					#-1 VALUE NOT FOUND, 
+// .. else: return grabbed value
+					%qv 
+				)
 			)
-		)]
+		)
 	))
 
 
@@ -541,6 +592,7 @@ Probably not needed
 
 
 
+/*
 ================================================================================
 == setstat(<player>/<stat>, <value>|default[, <behavior>]) =====================
 
@@ -560,7 +612,7 @@ NOTE THIS SOMEWHERE: Offsets must always be numeric, 0 = null = erase
 
 --
 
-0: player/stat
+0: player/[!]stat 					<--- I hate this now
 1: value - if null, erase stat or reset default
 2: [of]fset, [ov]erride validation
 
@@ -571,11 +623,12 @@ qi: statpath without instance
 qv: value to set, validated
 qr: prerequisite checks
 
---------------------------------------------------------------------------------
+*/
 
 @fo me=&ufunc.setstat sfp=u\\( [num( sfp )]/f.setstat, \\\%0, \\\%1, \\\%2 \\)
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+
 
 &f.setstat sfp=
 	if( isstaff( %@ ), 
@@ -682,12 +735,13 @@ qr: prerequisite checks
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Setstat Workhorse -----------------------------------------------------------
 
 0: Sheet Loc
 1: Full Stat Path
-2: <value>
+2: <value> -- for 'flag' type, ignore %2 for setting, honor if <null>
 3: [of]ffset  ([ov]veride may be passed, but ignored)
 
 q0 - q3: regexp results
@@ -703,7 +757,11 @@ qv: processed value to set (if complex processing needs done, like lists)
 qa: "add" these list items (for type:class only)
 qu: "un-add" these list items (for type:class only)
 
+* 'derived' for setstat, the [..] nonsense, no longer applies
+	remember to remove this
+
 --------------------------------------------------------------------------------
+*/
 
 &f.setstat.workhorse sfp=
 	strcat( 
@@ -714,21 +772,24 @@ qu: "un-add" these list items (for type:class only)
 		if( 
 			cand( 
 				strmatch( %qc, list ), 
-				strmatch( %1, *.*.* )), 
-				setq( s, extract( %1, 1, 2, . )
+				strmatch( %1, *.*.* )
 			), 
+			setq( s, extract( %1, 1, 2, . )), 
 			setq( s, %1 )
 		), 
+		setq( d, get( %0/_%qs )), 
 
 // >> ( \[.*\] )( \..* )?|( .* ) -> <derived>.<substat> | <other>
-		setq( d, get( %0/_%qs )), 
-		setq( 0, 
-			regmatch( %qd, %( %\%[.*%\%]% )%( %\..*% )?|%( .*% ), 0 1 2 3 )
-		), 
-		if( 
-			t( %q3 ), [setq( f, first( %qd, . ))][setq( r, rest( %qd, . ))], 
-			[setq( f, %q1 )][setq( r, rest( %q2, . ))]
-		), 
+//		setq( 0, 
+//			regmatch( %qd, %( %\%[.*%\%]% )%( %\..*% )?|%( .*% ), 0 1 2 3 )
+//		), 
+//		if( 
+//			t( %q3 ), 
+//			[setq( f, first( %qd, . ))][setq( r, rest( %qd, . ))], 
+//			[setq( f, %q1 )][setq( r, rest( %q2, . ))]
+//		), 
+		setq( f, first( %qd, . )), 
+		setq( r, rest( %qd, . )), 
 
 		setq( m, case( 1, 
 // >> switch is "offset", replace remove or set - "numeric" type only.
@@ -769,16 +830,26 @@ qu: "un-add" these list items (for type:class only)
 			set( %0, _%qs:%2 )
 		)), 
 
-// Display ( the set( ) function in Mux returns null ).
-		if( comp( %qm, ), 
-// .. probably an error
-			%qm, 
-// .. show what we set
+// Display
+		case( 1, 
+
+// error from 'set()'
+			comp( %qm, ), %qm, 
+
+// 
+			t( setr( v, if( t( %qv ), %qv, %2 ))), 
 			strcat( 
 				Set, %b, 
 				ulocal( f.statname.workhorse, rest( %qs, . )), 
-				if( strmatch( %3, of* ), %boffset ), %b, to, %b, 
-				', if( t( %qv ), %qv, %2 ), '.
+				if( strmatch( %3, of* ), %boffset ), 
+				if( not( strmatch( %qc, flag )), 
+					%bto '%qv'
+				), .
+			), 
+			strcat( 
+				Unset, %b, 
+				ulocal( f.statname.workhorse, rest( %qs, . )), 
+				if( strmatch( %3, of* ), %boffset ), . 
 			)
 		)
 	)
