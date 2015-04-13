@@ -388,6 +388,15 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &prerequisite.merit.fighting_finesse_() DD=u( .at_least_all, %0, attribute.dexterity:3 skill.weaponry:2 )
 &prereq-text.merit.fighting_finesse_() DD=Dexterity 3+ and Weaponry 2+
 
+&merit.fighting_finesse_() DD=2|*
+&prerequisite.merit.fighting_finesse_() DD=
+	cand( 
+		u( .at_least, %0, attribute.dexterity:3 ), 
+		match( brawl weaponry, u( .specialty_for, %0, %1 ))
+	)
+&prereq-text.merit.fighting_finesse_() DD=Dexterity 3+, 'type' is an 
+	existing specialty you have in Weaponry or Brawl
+
 &merit.firefight DD=1.2.3
 &prerequisite.merit.firefight DD=u( .at_least_all, %0, attribute.composure:3 attribute.dexterity:3 skill.firearms:2 skill.athletics:2 )
 &prereq-text.merit.firefight DD=Composure 3+, Dexterity 3+, Athletics 2+, and Firearms 2+
