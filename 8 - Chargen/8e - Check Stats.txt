@@ -518,7 +518,10 @@ uses: vcolumns(), our vertical-column system
 // .. column 2: Template Foo (human default: virtue vice)
 		setq( 2, 
 			iter( 
-				cat( template, udefault( check.bio.%2, u( check.bio.default ))), 
+				cat( 
+					template, 
+					udefault( check.bio.%2, u( check.bio.default ), %1 )
+				), 
 				strcat( 
 					ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
 					setr( i, u( %1/_bio.%i0 )), %b, 
