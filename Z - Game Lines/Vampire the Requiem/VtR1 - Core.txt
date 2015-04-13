@@ -781,6 +781,559 @@ Level 3 for very minor items
 
 
 /* 
+page 107), and simply knowing the Discipline caps Humanity at 10 – Crúac dots.
+
+Could you not just make the Miracles have a prerequisite of their level in Humanity?
+
+A Dragon can have no more dots in each non-Mystery Coil than he possesses dots in the Status (Ordo Dracul) Merit
+
+Ritualist characters may buy rites and miracles separately from the Ritual Discipline itself for two Experiences each. Every dot of Crúac or Theban Sorcery (including the first) also comes with a “free” rite or miracle, taught by the covenant as part of ongoing training. If a ritualist has lost the status needed to learn new rituals, he can still buy new dots of the Ritual Discipline, but does not receive free rituals.
+
+--------------------------------------------------------------------------------
+-- Cruac -----------------------------------------------------------------------
+*/
+
+&discipline.cruac DD=1.2.3.4.5
+&prerequisite.discipline.cruac DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, merit.status_(circle_of_the_crone), 1 )
+	)
+&prereq-text.discipline.cruac DD=
+	Circle of the Crone, 
+	Status (Circle of the Crone) 1
+&tags.discipline.cruac D:T=vampire.circle of the crone
+
+
+// -- Rites --
+
+&class.rite.? DD=flag
+
+&rite.pangs_of_proserpina DD=1
+&prerequisite.rite.pangs_of_proserpina DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.pangs_of_proserpina )
+	)
+&prereq-text.rite.pangs_of_proserpina DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.pangs_of_proserpina D:T=vampire.circle of the crone
+
+&rite.rigor_mortis DD=1
+&prerequisite.rite.rigor_mortis DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.rigor_mortis )
+	)
+&prereq-text.rite.rigor_mortis DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.rigor_mortis D:T=vampire.circle of the crone
+
+&rite.cheval DD=2
+&prerequisite.rite.cheval DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.cheval )
+	)
+&prereq-text.rite.cheval DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.cheval D:T=vampire.circle of the crone
+
+&rite.the_hydra's_vitae DD=2
+&prerequisite.rite.the_hydra's_vitae DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.the_hydra's_vitae )
+	)
+&prereq-text.rite.the_hydra's_vitae DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.the_hydra's_vitae D:T=vampire.circle of the crone
+
+&rite.deflection_of_wooden_doom DD=3
+&prerequisite.rite.deflection_of_wooden_doom DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.deflection_of_wooden_doom )
+	)
+&prereq-text.rite.deflection_of_wooden_doom DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.deflection_of_wooden_doom D:T=vampire.circle of the crone
+
+&rite.touch_of_the_morrigan DD=3
+&prerequisite.rite.touch_of_the_morrigan DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
+	)
+&prereq-text.rite.touch_of_the_morrigan DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.touch_of_the_morrigan D:T=vampire.circle of the crone
+
+&rite.blood_price DD=4
+&prerequisite.rite.blood_price DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.blood_price )
+	)
+&prereq-text.rite.blood_price DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.blood_price D:T=vampire.circle of the crone
+
+&rite.willful_vitae DD=4
+&prerequisite.rite.rigor_mortis DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.rigor_mortis )
+	)
+&prereq-text.rite.rigor_mortis DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.rigor_mortis D:T=vampire.circle of the crone
+
+&rite.blood_blight DD=4
+&prerequisite.rite.blood_blight DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.blood_blight )
+	)
+&prereq-text.rite.blood_blight DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.blood_blight D:T=vampire.circle of the crone
+
+&rite.feeding_the_crone DD=4
+&prerequisite.rite.feeding_the_crone DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.feeding_the_crone )
+	)
+&prereq-text.rite.feeding_the_crone DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.feeding_the_crone D:T=vampire.circle of the crone
+
+
+/*
+--------------------------------------------------------------------------------
+-- Theban Sorcery --------------------------------------------------------------
+*/
+
+&discipline.theban_sorcery DD=1.2.3.4.5
+&prerequisite.discipline.theban_sorcery DD=
+	cand( 
+		u( .is, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, merit.status_(lancea_et_sanctum), 1 )
+	)
+&prereq-text.discipline.theban_sorcery DD=Lancea et Sanctum, 
+	Status (Lancea et Sanctum) 1
+&tags.discipline.theban_sorcery D:T=vampire.lancea et sanctum
+
+// -- Mircales --
+
+&class.miracle.? DD=flag
+
+&miracle.blood_scourge DD=1
+&prerequisite.miracle.blood_scourge DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.blood_scourge )
+		), 
+		u( .at_least, %0, advantage.humanity, v( rite.blood_scourge ))
+	)
+&prereq-text.miracle.blood_scourge DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.feeding_the_crone D:T=vampire.lancea et sanctum
+
+
+&miracle.vitae_reliquary DD=1
+&prerequisite.miracle.vitae_reliquary DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.vitae_reliquary )
+		), 
+		u( .at_least, %0, advantage.humanity, v( miracle.vitae_reliquary ))
+	)
+&prereq-text.miracle.vitae_reliquary DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.vitae_reliquary D:T=vampire.lancea et sanctum
+
+
+&miracle.blandishment_of_sin DD=1
+&prerequisite.miracle.blandishment_of_sin DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.blandishment_of_sin )
+		), 
+		u( .at_least, %0, advantage.humanity, v( miracle.blandishment_of_sin ))
+	)
+&prereq-text.miracle.blandishment_of_sin DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.blandishment_of_sin D:T=vampire.lancea et sanctum
+
+
+&miracle.curse_of_babel DD=2
+&prerequisite.miracle.curse_of_babel DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.curse_of_babel )
+		), 
+		u( .at_least, %0, advantage.humanity, v( miracle.curse_of_babel ))
+	)
+&prereq-text.miracle.curse_of_babel DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.curse_of_babel D:T=vampire.lancea et sanctum
+
+
+&miracle.liar's_plague DD=2
+&prerequisite.miracle.liar's_plague DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.liar's_plague )
+		), 
+		u( .at_least, %0, advantage.humanity, v( miracle.liar's_plague ))
+	)
+&prereq-text.miracle.liar's_plague DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.liar's_plague D:T=vampire.lancea et sanctum
+
+
+&miracle.malediction_of_despair DD=3
+&prerequisite.miracle.malediction_of_despair DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.malediction_of_despair )
+		), 
+		u( .at_least, %0, 
+			advantage.humanity, 
+			v( miracle.malediction_of_despair )
+		)
+	)
+&prereq-text.miracle.malediction_of_despair DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.malediction_of_despair D:T=vampire.lancea et sanctum
+
+
+&miracle.gift_of_lazarus DD=4
+&prerequisite.miracle.gift_of_lazarus DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.gift_of_lazarus )
+		), 
+		u( .at_least, %0, advantage.humanity, v( miracle.gift_of_lazarus ))
+	)
+&prereq-text.miracle.gift_of_lazarus DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.gift_of_lazarus D:T=vampire.lancea et sanctum
+
+
+&miracle.stigmata DD=4
+&prerequisite.miracle.stigmata DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.stigmata )
+		), 
+		u( .at_least, %0, advantage.humanity, v( miracle.stigmata ))
+	)
+&prereq-text.miracle.stigmata DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.stigmata D:T=vampire.lancea et sanctum
+
+
+&miracle.transubstatiation DD=4
+&prerequisite.miracle.transubstatiation DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
+		u( .at_least, %0, 
+			discipline.theban_sorcery, 
+			v( miracle.transubstatiation )
+		), 
+		u( .at_least, %0, advantage.humanity, v( miracle.transubstatiation ))
+	)
+&prereq-text.miracle.transubstatiation DD=
+	Lancea et Sanctum, 
+	Theban Sorcery at this level or higher, 
+	Humanity at this level or higher
+&tags.miracle.transubstatiation D:T=vampire.lancea et sanctum
+
+/* 
+--------------------------------------------------------------------------------
+-- Coils & Scales --------------------------------------------------------------
+
+Remember to make 'Mystery Coil' mandatory for Ordo's bio section.
+
+A Dragon can have no more dots in each non-Mystery Coil than he possesses dots in the Status (Ordo Dracul) Merit
+
+*/
+
+&bio.mystery_coil DD=Coil of the Ascendant.Coil of the Wyrm.Coil of the Voivode
+&prerequisite.bio.mystery_coil DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.bio.mystery_coil DD=Covenant is Ordo Dracul
+&tags.bio.mystery_coil D:T=vampire.ordo dracul
+
+
+&discipline.coil_of_the_ascendant DD=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_ascendant DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
+		cor( 
+			strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Ascendant ), 
+			u( .at_most_stat, %0, 
+				discipline.coil_of_the_ascendant, 
+				merit.status_(ordo_dracul), 
+				%2 
+			)
+		)
+	)
+&prereq-text.discipline.coil_of_the_ascendant DD=Covenant is Ordo Dracul, 
+	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
+&tags.discipline.coil_of_the_ascendant D:T=vampire.coil
+&xp.discipline.coil_of_the_ascendant xpcd=
+	if( 
+		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Ascendant ), 
+		u( cost.standard, 3, %1, %2 ), 
+		u( cost.standard, 4, %1, %2 )
+	)
+
+
+&discipline.coil_of_the_wyrm DD=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_wyrm DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
+		cor( 
+			strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Wyrm ), 
+			u( .at_most_stat, %0, 
+				discipline.coil_of_the_wyrm, 
+				merit.status_(ordo_dracul), 
+				%2 
+			)
+		)
+	)
+&prereq-text.discipline.coil_of_the_wyrm DD=Covenant is Ordo Dracul, 
+	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
+&tags.discipline.coil_of_the_wyrm D:T=vampire.coil
+&xp.discipline.coil_of_the_wyrm xpcd=
+	if( 
+		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Wyrm ), 
+		u( cost.standard, 3, %1, %2 ), 
+		u( cost.standard, 4, %1, %2 )
+	)
+
+
+&discipline.coil_of_voivode DD=1.2.3.4.5
+&prerequisite.discipline.coil_of_voivode DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
+		cor( 
+			strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Voivode ), 
+			u( .at_most_stat, %0, 
+				discipline.coil_of_the_wyrm, 
+				merit.status_(ordo_dracul), 
+				%2 
+			)
+		)
+	)
+&prereq-text.discipline.coil_of_voivode DD=Covenant is Ordo Dracul, 
+	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
+&tags.discipline.coil_of_voivode D:T=vampire.coil
+&xp.discipline.coil_of_voivode xpcd=
+	if( 
+		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Voivode ), 
+		u( cost.standard, 3, %1, %2 ), 
+		u( cost.standard, 4, %1, %2 )
+	)
+
+// -- scales --
+
+&class.scale.? DD=flag
+
+&scale.Day-Wake_Conditioning DD=Coil of the Ascendant:1
+&prerequisite.scale.Day-Wake_Conditioning DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Day-Wake_Conditioning DD=Ordo Dracul
+&tags.scale.Day-Wake_Conditioning D:T=vampire.ordo dracul
+&xp.scale.Day-Wake_Conditioning xpcd=
+	if( 
+		u( .at_least, %0, discipline.coil_of_the_ascendant, 1 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Epidermal_Shielding_Bath DD=Coil of the Ascendant:5
+&prerequisite.scale.Epidermal_Shielding_Bath DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Epidermal_Shielding_Bath DD=Ordo Dracul
+&tags.scale.Epidermal_Shielding_Bath D:T=vampire.ordo dracul
+&xp.scale.Epidermal_Shielding_Bath xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil of the Ascendant, 5 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Flesh_Graft_Treatment DD=Coil of the Ascendant:4
+&prerequisite.scale.Flesh_Graft_Treatment DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Flesh_Graft_Treatment DD=Ordo Dracul
+&tags.scale.Flesh_Graft_Treatment D:T=vampire.ordo dracul
+&xp.scale.Flesh_Graft_Treatment xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil_of_the_Ascendant, 4 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Augmented_Vitae_Draught DD=Coil of the Wyrm:4
+&prerequisite.scale.Augmented_Vitae_Draught DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Augmented_Vitae_Draught DD=Ordo Dracul
+&tags.scale.Augmented_Vitae_Draught D:T=vampire.ordo dracul
+&xp.scale.Augmented_Vitae_Draught xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil_of_the_Wyrm, 4 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Kindred_Sense_Endowment DD=Coil of the Wyrm:2
+&prerequisite.scale.Kindred_Sense_Endowment DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Kindred_Sense_Endowment DD=Ordo Dracul
+&tags.scale.Kindred_Sense_Endowment D:T=vampire.ordo dracul
+&xp.scale.Kindred_Sense_Endowment xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil_of_the_Wyrm, 2 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Surgical_Heart_Removal DD=Coil of the Wyrm:5
+&prerequisite.scale.Surgical_Heart_Removal DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Surgical_Heart_Removal DD=Ordo Dracul
+&tags.scale.Surgical_Heart_Removal D:T=vampire.ordo dracul
+&xp.scale.Surgical_Heart_Removal xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil_of_the_Wyrm, 5 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Blood_Cleansing_Ritual DD=Coil of the Voivode:1
+&prerequisite.scale.Blood_Cleansing_Ritual DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Blood_Cleansing_Ritual DD=Ordo Dracul
+&tags.scale.Blood_Cleansing_Ritual D:T=vampire.ordo dracul
+&xp.scale.Blood_Cleansing_Ritual xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil_of_the_Voivode, 1 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Fealty's_Reward DD=Coil of the Voivode:3
+&prerequisite.scale.Fealty's_Reward DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Fealty's_Reward DD=Ordo Dracul
+&tags.scale.Fealty's_Reward D:T=vampire.ordo dracul
+&xp.scale.Fealty's_Reward xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil_of_the_Voivode, 3 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Mass_Embrace DD=Coil of the Voivode:5
+&prerequisite.scale.Mass_Embrace DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Mass_Embrace DD=Ordo Dracul
+&tags.scale.Mass_Embrace D:T=vampire.ordo dracul
+&xp.scale.Mass_Embrace xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil_of_the_Voivode, 5 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+&scale.Sanguinary_Invigoration DD=Coil of the Voivode:2
+&prerequisite.scale.Sanguinary_Invigoration DD=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.scale.Sanguinary_Invigoration DD=Ordo Dracul
+&tags.scale.Sanguinary_Invigoration D:T=vampire.ordo dracul
+&xp.scale.Sanguinary_Invigoration xpcd=
+	if( 
+		u( .at_least, %0, discipline.Coil_of_the_Voivode, 2 ), 
+		u( cost.standard, 1, %1, %2 ), 
+		u( cost.standard, 2, %1, %2 )
+	)
+
+
+
+
+/*
+
+--=-=-=-=-=-=-=-=-=-=
+
+
+System: A Dragon learns new tiers in his Mystery Coil for three Experiences per dot, and during character creation a player may spend one of his starting Discipline dots to take a dot in his Mystery Coil. Learning Coils outside a Dragon's chosen Mystery is possible, but the ideological and personal differences between the adherents of different mysteries mean that a Dragon from a different path may have to prove himself. A Dragon can have no more dots in each non-Mystery Coil than he possesses dots in the Status (Ordo Dracul) Merit. Non- Mystery Coils cost four Experiences per new dot, and cannot be learned during character creation.
+
+System: All Scales have a prerequisite Coil, a particular tier with which the Scale resonates. For Dragons who do not meet this prerequisite Scales cost two Experiences, if the prerequisite is met the Experience cost drops to one.
+
+--
+
+
+*/
+
+
+/* 
 ################################################################################
 ## VAMPIRE CHARGEN #############################################################
 
@@ -838,7 +1391,8 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 */
 
 &check.bio.ghoul cg=virtue vice clan
-&check.bio.vampire cg=mask dirge clan
+&check.bio.vampire cg=mask dirge clan 
+	[if( u( v( d.dd )/.is_full, %0, bio.covenant, Ordo Dracul ), mystery_coil )]
 
 
 
@@ -903,11 +1457,18 @@ currently:
 &check.chargen.vampire cg=
 	strcat( 
 		u( check.disciplines, %0, vampire ), 
-		%b%b, <whatever else>, 
-		%r 
+		case( get( %0/_bio.covenant ), 
+			Circle of the Crone, 
+			if( hasattr( %0, _discipline.cruac ), 
+				u( check.disciplines.cruac, %0 )
+			), 
+
+			Lancea et Sanctum, 
+			if( hasattr( %0, _discipline.theban_sorcery ), 
+				u( check.disciplines.theban_sorcery, %0 )
+			)
+		)
 	)
-
-
 
 
 /*
@@ -1005,6 +1566,74 @@ ghoul: 2 disc, 2 in-clan
 &check.disciplines.ghoul.total CG=u( display.check.ok-no, eq( %0, 2 ))
 &check.disciplines.ghoul.in-clan CG=u( display.check.ok-no, eq( %0, 2 ))
 &check.disciplines.ghoul.non-clan CG=u( display.check.ok-no, eq( %0, 0 ))
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Cruac --------------------------------------------------------
+
+For each dot in Cruac, one dot of that level (or lower) in Rite
+
+*/
+
+&check.disciplines.cruac cg=
+	strcat( 
+		setq( r, lattr( %0/_rite.* )), 
+		setq( n, iter( %qr, get( %0/%i0 ))), 
+		setq( l, first( get( %0/_discipline.cruac ), . )), 
+		setq( t, ladd( %qn )), 
+		setq( o, ladd( lnum( 1, %ql ))), 
+
+		%b%b, ansi( h, Rites ), :, %b, 
+		iter( %qr, 
+			strcat( 
+				rest( %i0, . ), 
+				%b%(, 
+				get( %0/%i0 ), 
+				%) 
+			), 
+			, %,%b 
+		), 
+		%r, 
+		%b %b%b, Rite Count:, %b, words( %qr ), %b, %(of %ql%), %b, 
+		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
+		%b %b%b, Rite Levels:, %b, %qt %(of %qo%), %b, 
+		u( display.check.ok-no, eq( %qt, %qo )), %r, 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Theban Sorcery  ----------------------------------------------
+
+For each dot in Theban Sorcery, one dot of that level (or lower) in Miracle
+
+*/
+
+&check.disciplines.theban_sorcery cg=
+	strcat( 
+		setq( r, lattr( %0/_miracle.* )), 
+		setq( n, iter( %qr, get( %0/%i0 ))), 
+		setq( l, first( get( %0/_discipline.theban_sorcery ), . )), 
+		setq( t, ladd( %qn )), 
+		setq( o, ladd( lnum( 1, %ql ))), 
+
+		%b%b, ansi( h, Miracles ), :, %b, 
+		iter( %qr, 
+			strcat( 
+				rest( %i0, . ), 
+				%b%(, 
+				get( %0/%i0 ), 
+				%) 
+			), 
+			, %,%b 
+		), 
+		%r, 
+		%b %b%b, Miracle Count:, %b, words( %qr ), %b, %(of %ql%), %b, 
+		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
+		%b %b%b, Miracle Levels:, %b, %qt %(of %qo%), %b, 
+		u( display.check.ok-no, eq( %qt, %qo )), %r, 
+	)
 
 
 
