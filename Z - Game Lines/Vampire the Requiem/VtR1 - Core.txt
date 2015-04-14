@@ -1487,6 +1487,11 @@ currently:
 			Lancea et Sanctum, 
 			if( hasattr( %0, _discipline.theban_sorcery ), 
 				u( check.disciplines.theban_sorcery, %0 )
+			), 
+
+			Ordo Dracul, 
+			if( t( lattr( %0/_scale.* )), 
+				u( check.disciplines.coils, %0 )
 			)
 		)
 	)
@@ -1608,7 +1613,7 @@ For each dot in Cruac, one dot of that level (or lower) in Rite
 		%b%b, ansi( h, Rites ), :, %b, 
 		iter( %qr, 
 			strcat( 
-				rest( %i0, . ), 
+				titlestr( edit( rest( %i0, . ), _, %b )), 
 				%b%(, 
 				get( %0/%i0 ), 
 				%) 
@@ -1616,9 +1621,9 @@ For each dot in Cruac, one dot of that level (or lower) in Rite
 			, %,%b 
 		), 
 		%r, 
-		%b %b%b, Rite Count:, %b, words( %qr ), %b, %(of %ql%), %b, 
+		%b %b%b, ansi( h, Rite Count ), :, %b, words( %qr ), %b, %(of %ql%), %b, 
 		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
-		%b %b%b, Rite Levels:, %b, %qt %(of %qo%), %b, 
+		%b %b%b, ansi( h, Rite Levels ), :, %b, %qt %(of %qo%), %b, 
 		u( display.check.ok-no, eq( %qt, %qo )), %r, 
 	)
 
@@ -1642,7 +1647,7 @@ For each dot in Theban Sorcery, one dot of that level (or lower) in Miracle
 		%b%b, ansi( h, Miracles ), :, %b, 
 		iter( %qr, 
 			strcat( 
-				rest( %i0, . ), 
+				titlestr( edit( rest( %i0, . ), _, %b )), 
 				%b%(, 
 				get( %0/%i0 ), 
 				%) 
@@ -1650,10 +1655,40 @@ For each dot in Theban Sorcery, one dot of that level (or lower) in Miracle
 			, %,%b 
 		), 
 		%r, 
-		%b %b%b, Miracle Count:, %b, words( %qr ), %b, %(of %ql%), %b, 
+		%b %b%b, ansi( h, Miracle Count ), :, 
+		%b, words( %qr ), %b, %(of %ql%), %b, 
 		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
-		%b %b%b, Miracle Levels:, %b, %qt %(of %qo%), %b, 
+		%b %b%b, ansi( h, Miracle Levels ), :, %b, %qt %(of %qo%), %b, 
 		u( display.check.ok-no, eq( %qt, %qo )), %r, 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Coils  -------------------------------------------------------
+
+Character should have no Scales
+
+*/
+
+&check.disciplines.coils cg=
+	strcat( 
+		setq( r, lattr( %0/_scale.* )), 
+
+		%b%b, ansi( h, Scales ), :, %b, 
+		iter( %qr, 
+			strcat( 
+				titlestr( edit( rest( %i0, . ), _, %b )), 
+				%b%(, 
+				get( %0/%i0 ), 
+				%) 
+			), 
+			, %,%b 
+		), 
+		%r, 
+		%b %b%b, ansi( h, Scale Count ), :, %b, words( %qr ), %b, 
+		%[, ansi( r, no scales at chargen ), %], 
+		%r, 
 	)
 
 
