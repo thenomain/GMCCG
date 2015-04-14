@@ -743,7 +743,7 @@ Level 3 for very minor items
 &prerequisite.discipline.theban_sorcery DD=
 	u( .is_full, %0, bio.covenant, Lancea et Sanctum )
 &prereq-text.discipline.theban_sorcery DD=Covenant is Lancea et Sanctum
-&tags.discipline.theban_sorcery D:T=vampire.blood sorcery
+&tags.discipline.theban_sorcery D:T=vampire.blood sorcery.lancea et sanctum
 
 
 // -- Blood Sorcery: Cruac -----------------------------------------------------
@@ -753,7 +753,7 @@ Level 3 for very minor items
 &discipline.cruac DD=1.2.3.4.5
 &prerequisite.discipline.cruac DD=u( .is_full, %0, bio.covenant, Circle of the Crone )
 &prereq-text.discipline.cruac DD=Covenant is Circle of the Crone
-&tags.discipline.cruac D:T=vampire.blood sorcery
+&tags.discipline.cruac D:T=vampire.blood sorcery.circle of the crone
 
 
 // -- Coils --------------------------------------------------------------------
@@ -763,19 +763,19 @@ Level 3 for very minor items
 &prerequisite.discipline.coil_of_the_ascendant DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
 &prereq-text.discipline.coil_of_the_ascendant DD=Covenant is Ordo Dracul
-&tags.discipline.coil_of_the_ascendant D:T=vampire.coil
+&tags.discipline.coil_of_the_ascendant D:T=vampire.coil.ordo dracul
 
 &discipline.coil_of_the_wyrm DD=1.2.3.4.5
 &prerequisite.discipline.coil_of_the_wyrm DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
 &prereq-text.discipline.coil_of_the_wyrm DD=Covenant is Ordo Dracul
-&tags.discipline.coil_of_the_wyrm D:T=vampire.coil
+&tags.discipline.coil_of_the_wyrm D:T=vampire.coil.ordo dracul
 
 &discipline.coil_of_voivode DD=1.2.3.4.5
 &prerequisite.discipline.coil_of_voivode DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
 &prereq-text.discipline.coil_of_voivode DD=Covenant is Ordo Dracul
-&tags.discipline.coil_of_voivode D:T=vampire.coil
+&tags.discipline.coil_of_voivode D:T=vampire.coil.ordo dracul
 
 
 
@@ -1137,7 +1137,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	)
 &prereq-text.discipline.coil_of_the_ascendant DD=Covenant is Ordo Dracul, 
 	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
-&tags.discipline.coil_of_the_ascendant D:T=vampire.coil
+&tags.discipline.coil_of_the_ascendant D:T=vampire.coil.ordo dracul
 &xp.discipline.coil_of_the_ascendant xpcd=
 	if( 
 		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Ascendant ), 
@@ -1161,7 +1161,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	)
 &prereq-text.discipline.coil_of_the_wyrm DD=Covenant is Ordo Dracul, 
 	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
-&tags.discipline.coil_of_the_wyrm D:T=vampire.coil
+&tags.discipline.coil_of_the_wyrm D:T=vampire.coil.ordo dracul
 &xp.discipline.coil_of_the_wyrm xpcd=
 	if( 
 		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Wyrm ), 
@@ -1185,7 +1185,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	)
 &prereq-text.discipline.coil_of_voivode DD=Covenant is Ordo Dracul, 
 	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
-&tags.discipline.coil_of_voivode D:T=vampire.coil
+&tags.discipline.coil_of_voivode D:T=vampire.coil.ordo dracul
 &xp.discipline.coil_of_voivode xpcd=
 	if( 
 		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Voivode ), 
