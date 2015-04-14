@@ -1356,7 +1356,18 @@ It is wildly substandard.
 ================================================================================
 == CHARGEN: ALLOCATIONS ========================================================
 
+--------------------------------------------------------------------------------
+-- Allocated Merits: Blood Potency ---------------------------------------------
+*/
 
+&f.allocated.power-trait.vampire [v(d.cg)]=
+	mul( 
+		dec( first( get( %0/_advantage.blood_potency ), . )), 
+		5 
+	)
+
+
+/*
 --------------------------------------------------------------------------------
 -- Allocated Disciplines -------------------------------------------------------
 
@@ -1377,7 +1388,6 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 		ladd( iter( %qi, first( get( %0/_%i0 ), . ))), 
 //		`, ladd( iter( %qi, first( get( %0/_%i0 ), . )))
 	))
-
 
 
 
@@ -1437,7 +1447,7 @@ currently:
 			gt( words( %qa ), 1 ), ansi( r, too many set ), 
 			neq( words( %qi ), 1 ), ansi( r, not allowed for your clan ), 
 			not( %qc ), ansi( r, bonus point not spent ), 
-			ansi( gh, OK )
+			ansi( g, OK )
 		), 
 		%]
 	)
@@ -1688,8 +1698,7 @@ For each dot in Theban Sorcery, one dot of that level (or lower) in Miracle
 
 &block.powers.disciplines sheet: rows=
 	strcat( 
-		setq( w, 79 ), 
-		setq( t, 70 ), 
+		setq( w, 79 ), setq( t, 70 ), 
 		setq( d, u( powers.disciplines, %0 )), 
 		setq( b, 
 			iter( %qd, 
@@ -1702,9 +1711,106 @@ For each dot in Theban Sorcery, one dot of that level (or lower) in Miracle
 		iter( %qb, 
 			%i0, 
 			|, %r 
-		), %r
+		), %r, 
 
+		case( get( %0/_bio.covenant ), 
+			Circle of the Crone, 
+			if( hasattr( %0, _discipline.cruac ), 
+				u( block.powers.disciplines.rites, %0 )
+			), 
+
+			Lancea et Sanctum, 
+			if( hasattr( %0, _discipline.theban_sorcery ), 
+				u( block.powers.disciplines.miracles, %0 )
+			), 
+
+			Ordo Dracul, 
+			if( t( lattr( %0/_scale.* )), 
+				u( block.powers.disciplines.scales, %0 )
+			)
+		), 
+
+		@@( to be continued ), 
 	)
+
+// -- Disciplines: Rites (Cruac) -----------------------------------------------
+
+&powers.disciplines.rites [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_rite.* ), _RITE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, rite.%i0, numeric ), 
+		, | 
+	)
+
+&block.powers.disciplines.rites sheet: rows=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines.rites, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Rites ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+	)
+
+// -- Disciplines: Miracles (Theban Sorcery) -----------------------------------
+
+&powers.disciplines.miracles [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_miracle.* ), _MIRACLE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, miracle.%i0, numeric ), 
+		, | 
+	)
+
+&block.powers.disciplines.miracles sheet: rows=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines.miracles, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Miracles ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+	)
+
+// -- Disciplines: Scales (Coil)  ----------------------------------------------
+
+&powers.disciplines.scales [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_scale.* ), _SCALE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, miracle.%i0, numeric ), 
+		, | 
+	)
+
+&block.powers.disciplines.scales sheet: rows=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines.scales, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Scales ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+	)
+
 
 // -- Advantages ---------------------------------------------------------------
 
