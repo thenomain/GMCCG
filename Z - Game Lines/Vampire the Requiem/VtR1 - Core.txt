@@ -742,7 +742,7 @@ Level 3 for very minor items
 &discipline.theban_sorcery DD=1.2.3.4.5
 &prerequisite.discipline.theban_sorcery DD=
 	u( .is_full, %0, bio.covenant, Lancea et Sanctum )
-&prereq-text.discipline.theban_sorcery DD=Lancea et Sanctum only
+&prereq-text.discipline.theban_sorcery DD=Covenant is Lancea et Sanctum
 &tags.discipline.theban_sorcery D:T=vampire.blood sorcery
 
 
@@ -752,7 +752,7 @@ Level 3 for very minor items
 
 &discipline.cruac DD=1.2.3.4.5
 &prerequisite.discipline.cruac DD=u( .is_full, %0, bio.covenant, Circle of the Crone )
-&prereq-text.discipline.cruac DD=Circle of the Crone only
+&prereq-text.discipline.cruac DD=Covenant is Circle of the Crone
 &tags.discipline.cruac D:T=vampire.blood sorcery
 
 
@@ -762,19 +762,19 @@ Level 3 for very minor items
 &discipline.coil_of_the_ascendant DD=1.2.3.4.5
 &prerequisite.discipline.coil_of_the_ascendant DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.discipline.coil_of_the_ascendant DD=Ordo Dracul only
+&prereq-text.discipline.coil_of_the_ascendant DD=Covenant is Ordo Dracul
 &tags.discipline.coil_of_the_ascendant D:T=vampire.coil
 
 &discipline.coil_of_the_wyrm DD=1.2.3.4.5
 &prerequisite.discipline.coil_of_the_wyrm DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.discipline.coil_of_the_wyrm DD=Ordo Dracul only
+&prereq-text.discipline.coil_of_the_wyrm DD=Covenant is Ordo Dracul
 &tags.discipline.coil_of_the_wyrm D:T=vampire.coil
 
 &discipline.coil_of_voivode DD=1.2.3.4.5
 &prerequisite.discipline.coil_of_voivode DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.discipline.coil_of_voivode DD=Ordo Dracul only
+&prereq-text.discipline.coil_of_voivode DD=Covenant is Ordo Dracul
 &tags.discipline.coil_of_voivode D:T=vampire.coil
 
 
@@ -863,6 +863,17 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 	Circle of the Crone, 
 	Cruac at this level or higher
 &tags.rite.deflection_of_wooden_doom D:T=vampire.circle of the crone
+
+&rite.shadowcall DD=3
+&prerequisite.rite.shadowcall DD=
+	cand( 
+		u( .is_full, %0, bio.covenant, circle of the crone ), 
+		u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
+	)
+&prereq-text.rite.shadowcall DD=
+	Circle of the Crone, 
+	Cruac at this level or higher
+&tags.rite.shadowcall D:T=vampire.circle of the crone
 
 &rite.touch_of_the_morrigan DD=3
 &prerequisite.rite.touch_of_the_morrigan DD=
@@ -1189,7 +1200,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Day-Wake_Conditioning DD=Coil of the Ascendant:1
 &prerequisite.scale.Day-Wake_Conditioning DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Day-Wake_Conditioning DD=Ordo Dracul
+&prereq-text.scale.Day-Wake_Conditioning DD=Covenant is Ordo Dracul
 &tags.scale.Day-Wake_Conditioning D:T=vampire.ordo dracul
 &xp.scale.Day-Wake_Conditioning xpcd=
 	if( 
@@ -1202,7 +1213,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Epidermal_Shielding_Bath DD=Coil of the Ascendant:5
 &prerequisite.scale.Epidermal_Shielding_Bath DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Epidermal_Shielding_Bath DD=Ordo Dracul
+&prereq-text.scale.Epidermal_Shielding_Bath DD=Covenant is Ordo Dracul
 &tags.scale.Epidermal_Shielding_Bath D:T=vampire.ordo dracul
 &xp.scale.Epidermal_Shielding_Bath xpcd=
 	if( 
@@ -1215,7 +1226,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Flesh_Graft_Treatment DD=Coil of the Ascendant:4
 &prerequisite.scale.Flesh_Graft_Treatment DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Flesh_Graft_Treatment DD=Ordo Dracul
+&prereq-text.scale.Flesh_Graft_Treatment DD=Covenant is Ordo Dracul
 &tags.scale.Flesh_Graft_Treatment D:T=vampire.ordo dracul
 &xp.scale.Flesh_Graft_Treatment xpcd=
 	if( 
@@ -1228,7 +1239,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Augmented_Vitae_Draught DD=Coil of the Wyrm:4
 &prerequisite.scale.Augmented_Vitae_Draught DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Augmented_Vitae_Draught DD=Ordo Dracul
+&prereq-text.scale.Augmented_Vitae_Draught DD=Covenant is Ordo Dracul
 &tags.scale.Augmented_Vitae_Draught D:T=vampire.ordo dracul
 &xp.scale.Augmented_Vitae_Draught xpcd=
 	if( 
@@ -1241,7 +1252,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Kindred_Sense_Endowment DD=Coil of the Wyrm:2
 &prerequisite.scale.Kindred_Sense_Endowment DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Kindred_Sense_Endowment DD=Ordo Dracul
+&prereq-text.scale.Kindred_Sense_Endowment DD=Covenant is Ordo Dracul
 &tags.scale.Kindred_Sense_Endowment D:T=vampire.ordo dracul
 &xp.scale.Kindred_Sense_Endowment xpcd=
 	if( 
@@ -1254,7 +1265,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Surgical_Heart_Removal DD=Coil of the Wyrm:5
 &prerequisite.scale.Surgical_Heart_Removal DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Surgical_Heart_Removal DD=Ordo Dracul
+&prereq-text.scale.Surgical_Heart_Removal DD=Covenant is Ordo Dracul
 &tags.scale.Surgical_Heart_Removal D:T=vampire.ordo dracul
 &xp.scale.Surgical_Heart_Removal xpcd=
 	if( 
@@ -1267,7 +1278,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Blood_Cleansing_Ritual DD=Coil of the Voivode:1
 &prerequisite.scale.Blood_Cleansing_Ritual DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Blood_Cleansing_Ritual DD=Ordo Dracul
+&prereq-text.scale.Blood_Cleansing_Ritual DD=Covenant is Ordo Dracul
 &tags.scale.Blood_Cleansing_Ritual D:T=vampire.ordo dracul
 &xp.scale.Blood_Cleansing_Ritual xpcd=
 	if( 
@@ -1280,7 +1291,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Fealty's_Reward DD=Coil of the Voivode:3
 &prerequisite.scale.Fealty's_Reward DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Fealty's_Reward DD=Ordo Dracul
+&prereq-text.scale.Fealty's_Reward DD=Covenant is Ordo Dracul
 &tags.scale.Fealty's_Reward D:T=vampire.ordo dracul
 &xp.scale.Fealty's_Reward xpcd=
 	if( 
@@ -1293,7 +1304,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Mass_Embrace DD=Coil of the Voivode:5
 &prerequisite.scale.Mass_Embrace DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Mass_Embrace DD=Ordo Dracul
+&prereq-text.scale.Mass_Embrace DD=Covenant is Ordo Dracul
 &tags.scale.Mass_Embrace D:T=vampire.ordo dracul
 &xp.scale.Mass_Embrace xpcd=
 	if( 
@@ -1306,7 +1317,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &scale.Sanguinary_Invigoration DD=Coil of the Voivode:2
 &prerequisite.scale.Sanguinary_Invigoration DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Sanguinary_Invigoration DD=Ordo Dracul
+&prereq-text.scale.Sanguinary_Invigoration DD=Covenant is Ordo Dracul
 &tags.scale.Sanguinary_Invigoration D:T=vampire.ordo dracul
 &xp.scale.Sanguinary_Invigoration xpcd=
 	if( 
