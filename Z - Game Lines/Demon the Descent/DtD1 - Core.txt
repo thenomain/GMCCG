@@ -18,7 +18,7 @@ Level 3 for very minor items
 */
 
 &d.search-order-02-demon sfp=embed exploit
-&d.search-order-03-demon sfp=demonic_form glitch
+&d.search-order-03-demon sfp=demonic_form
 
 
 
@@ -101,11 +101,8 @@ List all agendas that a demon has.
 &bio.agenda DD=Inquisitor.Integrator.Saboteur.Tempter.Uncalled
 &tags.bio.agenda D:T=demon
 
-&bio.stigmata DD=*
-&tags.bio.stigmata D:T=stigmatic
-
 &bio.ring DD=*
-&tags.bio.stigmata D:T=demon.stigmatic.clique
+&tags.bio.ring D:T=demon.stigmatic.clique
 
 
 
@@ -765,13 +762,6 @@ List all agendas that a demon has.
 &tags.demonic_form.wound_healing D:T=demon.process
 
 
-// == DEMON GLITCHES ===========================================================
-
-&type.glitch.? DD=string
-
-&glitch.brand_() DD=minor.major.catastrophic|*
-&glitch.tell_() DD=minor.major.catastrophic|*
-&glitch.emanation_() DD=minor.major.catastrophic|*
 
 
 /* 
@@ -791,7 +781,7 @@ agenda
 -- Bio Check -------------------------------------------------------------------
 */
 
-&check.bio.stigmatic cg=virtue vice stigmata
+&check.bio.stigmatic cg=virtue vice
 &check.bio.demon cg=virtue vice incarnation agenda
 
 
@@ -1129,7 +1119,7 @@ to check from
 
 
 &bio.default.stigmatic Newest Sheet Code <nsc>=
-	birthdate concept stigmata template virtue vice ring
+	birthdate concept ring template virtue vice
 
 
 // -- Powers -------------------------------------------------------------------
