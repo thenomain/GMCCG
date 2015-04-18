@@ -473,7 +473,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &merit.omen_sensitivity DD=3
 
-&merit.psychokinesis DD=3.5
+&merit.psychokinesis_() DD=3.5|Fire.Cold.Electricity
 
 &merit.psychometry DD=3
 
