@@ -15,7 +15,7 @@ Level 2 for powers
 Level 3 for very minor items
 */
 
-&d.search-order-02-werewolf sfp=gift
+&d.search-order-02-werewolf sfp=renown gift
 &d.search-order-03-werewolf sfp=rite
 
 
@@ -70,6 +70,43 @@ Stuff we need to put on the Data Dictionary
 &bio.pack DD=*
 &tags.bio.pack D:T=werewolf.wolf-blooded.clique
 
+&bio.blood DD=Alpha.Challenger.Destroyer.Fox.Monster.Soldier.
+&tags.bio.blood D:T=werewolf
+
+&bio.bone DD=Community Organizer.Cub.Guru.Hedonist.Lone Wolf.Wallflower
+&tags.bio.bone D:T=werewolf
+
+&bio.auspice DD=Cahalith.Elodoth.Irraka.Ithaeur.Rahu
+&tags.bio.auspice D:T=werewolf
+
+&bio.tribe DD=
+	Blood Talons.Bone Shadows.Hunters in Darkness.Iron Masters.Storm Lords.Ghost Wolves
+&default.bio.tribe DD=Ghost Wolves
+&tags.bio.tribe D:T=werewolf
+
+/*
+auspice offers you a free dot of one of three Skills and one of your starting Renown dots
+
+Cahalith: Crafts, Expression, and Persuasion; Glory
+Elodoth: Empathy, Investigation, and Politics; Honor
+Irraka: Larceny, Stealth, and Subterfuge; Cunning
+Ithaeur: Animal Ken, Medicine, and Occult; Wisdom
+Rahu: Brawl, Intimidation, and Survival; Purity
+
+each tribe has an associated Renown; mark a dot in that Renown
+
+Blood Talons: Inspiration, Rage, Strength; Glory
+Bone Shadows: Death, Elemental, and Insight; Wisdom
+Hunters in Darkness: Nature, Stealth, and Warding; Purity
+Iron Masters: Knowledge, Shaping, and Technology; Cunning
+Storm Lords: Evasion, Dominance, and Weather; Honor
+
+renown: 1 for auspice, 1 for tribe, 1 chosen any
+
+Eldritch House Rule: Limit any Renown to 2 at Chargen.
+*/
+
+
 
 /*
 ================================================================================
@@ -78,6 +115,69 @@ Stuff we need to put on the Data Dictionary
 &advantage.xxx DD=
 &tags.advantage.xxx D:T=werewolf
 */
+
+&advantage.harmony DD=1.2.3.4.5.6.7.8.9.10
+&default.advantage.harmony DD=7
+&tags.advantage.harmony D:T=integrity.werewolf
+
+&advantage.primal_urge DD=1.2.3.4.5.6.7.8.9.10
+&default.advantage.primal_urge DD=1
+&tags.advantage.primal_urge D:T=power.werewolf
+
+&advantage.vitae DD=ladd( u( .value_full, %0, advantage.vitae_maximum ), . )
+&default.advantage.vitae DD=derived
+&tags.advantage.vitae D:T=derived.vampire.ghoul
+
+&advantage.vitae_maximum DD=
+	if( u( .is_full, %0, bio.template, vampire ), 
+
+		elements( 
+			10 11 12 13 14 15 20 30 50 100, 
+			u( .value, %0, advantage.blood_potency )
+		), 
+
+		u( .value_stats, %0, attribute.stamina discipline.resilience )
+	)
+&default.advantage.vitae_maximum DD=derived
+&tags.advantage.vitae_maximum D:T=derived.vampire.ghoul
+
+
+
+/* 
+================================================================================
+== WEREWOLF RENOWN =============================================================
+
+Cunning, Glory, Honor, Purity, and Wisdom
+
+effective rank: 
+*/
+
+&renown.cunning DD=1.2.3.4.5
+&tags.renown.cunning D:T=werewolf
+
+&renown.glory DD=1.2.3.4.5
+&tags.renown.glory D:T=werewolf
+
+&renown.honor DD=1.2.3.4.5
+&tags.renown.honor D:T=werewolf
+
+&renown.purity DD=1.2.3.4.5
+&tags.renown.purity D:T=werewolf
+
+&renown.wisdom DD=1.2.3.4.5
+&tags.renown.wisdom D:T=werewolf
+
+&advantage.effective_rank DD=
+	switch( ladd( iter( lattr( %0/_renown.* ), first( get( %0/%i0 ), . ))), 
+		<4, 1, 
+		<8, 2, 
+		<13, 3, 
+		<19, 4, 
+		<26, 5, 
+		0 
+	)
+&default.advantage.effective_rank DD=derived
+&tags.advantage.effective_rank D:T=werewolf.derived
 
 
 
@@ -301,6 +401,123 @@ Stuff we need to put on the Data Dictionary
 	)
 &prereq-text.merit.no_moon's_birth dd=Only one Moon Birth merit allowed
 &tags.merit.no_moon's_birth dd=wolf-blooded.moon birth
+
+
+// -- Merits: Werewolf ---------------------------------------------------------
+
+&merit.anchored_() DD=1.2|*
+&tags.merit.anchored_() D:T=werewolf.mental
+
+&merit.blood_or_bone_affinity DD=2.5|Blood.Bone.Both
+&prerequisite.merit.blood_or_bone_affinity DD=
+	u( .between, advantage.harmony, 3, 8 )
+&prereq-text.merit.blood_or_bone_affinity DD=Harmony 3 to 8
+&tags.merit.blood_or_bone_affinity D:T=werewolf.mental
+&notes.merit.blood_or_bone_affinity D:T=Staff should also: 
+	stat/set <player>/blood or bone affinity.<which one>=1
+
+&merit.code_of_honor DD=2
+&prerequisite.merit.code_of_honor DD=
+	u( .at_least, advantage.harmony, 8 )
+&prereq-text.merit.code_of_honor DD=Harmony 8
+&tags.merit.code_of_honor D:T=werewolf.mental
+
+&merit.controlled_burn DD=2
+&prerequisite.merit.controlled_burn DD=
+	u( .at_least_all, attribute.resolve:3 attribute.composure:3 )
+&prereq-text.merit.controlled_burn DD=Resolve 3, Composure 3
+&tags.merit.controlled_burn D:T=werewolf.mental
+
+&merit.creative_tactician DD=3
+&prerequisite.merit.creative_tactician DD=u( .at_leas, renown.purity, 2 )
+&prereq-text.merit.creative_tactician DD=Purity 2
+&tags.merit.creative_tactician D:T=werewolf.mental
+
+&merit.dedicated_locus_() DD=1.2.3.4.5|*
+&tags.merit.dedicated_locus_() D:T=werewolf.social.location
+&prerequisite.merit.haven_() DD=u( .has, %0, merit.haven_(%1) )
+&prereq-text.merit.haven_() DD=Safe Place (<place name>) 1
+
+&merit.embodiment_of_the_firstborn DD=5
+&tags.merit.embodiment_of_the_firstborn D:T=werewolf.physical
+&prerequisite.merit.embodiment_of_the_firstborn DD=u( .is_not, %0, bio.tribe, Ghost Wolf )
+&prereq-text.merit.embodiment_of_the_firstborn DD=Cannot be a Ghost Wolf, must have Tribe
+
+&merit.fading DD=3
+&tags.merit.fading D:T=werewolf.physical
+&prerequisite.merit.fading DD=u( .at_least, renown.cunning, 2 )
+&prereq-text.merit.fading DD=Cunning 2
+
+&merit.favored_form_() DD=1.2.3.4.5|Dalu.Gauru.Urshul.Urhan|*
+&tags.merit.favored_form_() D:T=werewolf.physical
+&prerequisite.merit.favored_form_() DD=
+	cand( 
+		u( .at_least_stat, %0, merit.favored_form_(%1), advantage.primal_urge + 1, %2 ), 
+		not( 
+			setdiff( 
+				lattr( %0/_merit.favored_form_(*)), 
+				_merit.favored_form_(%1) 
+			)
+		)
+	)
+&prereq-text.merit.favored_form_() DD=
+	Primal Urge 1 higher than Merit rating, Cannot take any other Favored Forms 
+&note.merit.favored_form_() D:T=
+	For each dot, set a substat with the name of the stat affected and the value of 
+	Favored Form it was gained at. 
+	e.g.: stat/set <name>/favored form (urhan).stealth=1
+// +shift MUST respect this stat
+
+&merit.fortified_form_() DD=3.4.5|Dalu.Gauru.Urshul.Urhan
+&tags.merit.fortified_form_() D:T=werewolf.physical
+&prerequisite.merit.fortified_form_() DD=
+	u( .at_least_all, attribute.stamina:3 skill.survival:2 )
+&prereq-text.merit.favored_form_() DD=Stamina 3, Survival 2
+// +shift MIGHT respect this stat
+
+&merit.hearing_whispers DD=2
+&tags.merit.hearing_whispers D:T=werewolf.bone shadow.mental
+&prerequisite.merit.hearing_whispers DD=u( .is, %0, bio.tribe, Bone Shadow )
+&prereq-text.merit.hearing_whispers DD=Tribe is Bone Shadow
+
+&merit.impartial_mediator DD=3
+&tags.merit.impartial_mediator D:T=werewolf.social
+&prerequisite.merit.impartial_mediator DD=u( .at_least, %0, renown.honor, 2 )
+&prereq-text.merit.impartial_mediator DD=Honor 2
+
+&merit.living_weapon_() DD=3.4.5|Dalu.Gauru.Urshul.Urhan
+&tags.merit.living_weapon_() D:T=werewolf.physical
+&prerequisite.merit.living_weapon_() DD=
+	u( .at_least_all, attribute.stamina:3 skill.survival:2 )
+&prereq-text.merit.living_weapon_() DD=Stamina 3, Survival 2
+
+&merit.moon-kissed_() DD=1|*
+&tags.merit.moon-kissed_() D:T=werewolf
+&prerequisite.merit.moon-kissed_() DD=<< %1 is Auspice gift and 2+ >>
+&prereq-text.merit.moon-kissed_() DD=Auspice Skill at 2+
+/*
+When taking this Merit, choose one of her three auspice Skills. That Skill has the 9-again quality. If you already have 9-again available, use 8-again.
+*/
+
+&merit.nowhere_to_run DD=2
+&tags.merit.nowhere_to_run D:T=werewolf.hunter in darkness
+&prerequisite.merit.nowhere_to_run DD=u( .is, %0, bio.tribe, Hunter in Darkness )
+&prereq-text.merit.nowhere_to_run DD=Tribe is Hunter in Darkness
+
+&merit.pack_dynamics DD=3.4.5
+&tags.merit.pack_dynamics D:T=werewolf.pack.social
+
+&merit.residential_area DD=1.2.3.4.5
+&tags.merit.residential_area D:T=werewolf.social
+
+&merit.resonance_shaper DD=3
+&tags.merit.resonance_shaper D:T=werewolf.mental
+&prerequisite.merit.xxx DD=
+&prereq-text.merit.xxx DD=
+(prereq Wisdom 2)
+
+
+
 
 
 
