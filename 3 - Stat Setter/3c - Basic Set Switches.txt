@@ -75,66 +75,92 @@ uses: setstat() and shiftstat().
 --
 
 &f.stat/set Stat Setter <ss>=
+	case( 0, 
 
-case( 0, 
+// .. /set input makes sense
+		t( u( d.regmatch-stat, %0, %# )), 
+		I couldn't tell what you typed. 
+		The format is: stat/set %[<player>/%]<stat> <operator> <value>, 
 
-@@ .. /set input makes sense
-	t( u( d.regmatch-stat, %0, %# )), 
-	I couldn't tell what you typed. 
-	The format is: stat/set %[<player>/%]<stat> <operator> <value>, 
+// .. staff can set anything
+// .. players can only /set on themselves, and only if they're 'in chargen'
+		cor( 
+			cand( 
+				strmatch( %#, setr( p, pmatch( %q0 ))), 
+				strmatch( %1, @@( null )), 
+				isapproved( %#, chargen )
+			), 
+			isstaff( %# )
+		), 
+		Staff Only., 
 
-@@ .. staff can set anything
-@@ .. players can only /set on themselves, and only if they're 'in chargen'
-	or( 
-		isstaff( %# ), 
-		cand( 
-			strmatch( %#, setr( p, pmatch( %q0 ))), 
-			strmatch( %1, @@( null )), 
-			isapproved( %#, chargen )
-		)
-	), 
-	Staff Only., 
+// .. player not found
+		t( %qp ), 
+		Player not found., 
 
-@@ .. player not found
-	t( %qp ), 
-	Player not found., 
-
-@@ .. template not there
-	t( getstat( %qp/template )), 
-	No Template set. Use 'stat/template <template>'., 
+// .. template not there
+		t( getstat( %qp/template )), 
+		No Template set. Use 'stat/template <template>'., 
 
 
-@@ REMOVED: @@ .. no null stats, unless we're doing an /override or /offset
-@@	or( strmatch( override, %1 ), strmatch( offset, %1 ), comp( %q3, )), 
-@@	Error: Must set a value., 
+// REMOVED: @@ .. no null stats, unless we're doing an /override or /offset
+//		cor( strmatch( override, %1 ), strmatch( offset, %1 ), comp( %q3, )), 
+//		Error: Must set a value., 
 
-@@ .. no multi-stat setting here
-	[setq( n, ulocal( [u( d.stat-funcs )]/f.statpath-validate-name, %q1 ))]
-	[cor( lte( words( %qn ), 1 ), not( t( %qn )))], 
-	Can only set one stat at a time., 
+// .. no multi-stat setting here
+		strcat( 
+			setq( n, 
+				ulocal( u( d.stat-funcs )/f.statpath-validate-name, %q1 )
+			), 
+			cor( 
+				lte( words( %qn ), 1 ), 
+				not( %qn )
+			)
+		), 
+		cat( 
+			Can only set one stat at a time. I'm matching:, 
+			itemize( 
+				iter( %qn, 
+					ansi( 
+						n, u( v( d.stat-funcs )/f.statname.workhorse, 
+							rest( %i0, . )
+						), 
+						n, %b, 
+						xh, %[, 
+						xh, u( v( d.stat-funcs )/f.statname.workhorse, 
+							first( %i0, . )
+						), 
+						xh, %] 
+					), 
+					, | 
+				), 
+				| 
+			)
+		), 
 
-@@ >> SET THAT STAT!
-@@ .. .. =, setstat
-	comp( %q2, = ), 
-	if( 
-		t( setr( s, setstat( %qp/%q1, %q3, %1 ))), 
-		%qs, 
-		Error from Setstat: %qs
-	), 
 
-@@ .. .. +/-, shiftstat
-	not( xor( comp( %q2, + ), comp( %q2, - ))), 
-	if( 
-		t( setr( s, shiftstat( %qp/%q1, %q2%q3, %1 ))), 
-		%qs, 
-		Error from Shiftstat: %qs
-	), 
+// >> SET THAT STAT!
+// .. .. =, setstat
+		comp( %q2, = ), 
+		if( 
+			t( setr( s, setstat( %qp/%q1, %q3, %1 ))), 
+			%qs, 
+			Error from Setstat: %qs
+		), 
 
-@@ .. uncaught error (it happens)
-	I couldn't tell what you typed. 
-	The format is: 'stat/set <player>/<stat> <operator> <value>'
+// .. .. +/-, shiftstat
+		not( xor( comp( %q2, + ), comp( %q2, - ))), 
+		if( 
+			t( setr( s, shiftstat( %qp/%q1, %q2%q3, %1 ))), 
+			%qs, 
+			Error from Shiftstat: %qs
+		), 
 
-)
+// .. uncaught error (it happens)
+		I couldn't tell what you typed. 
+		The format is: 'stat/set <player>/<stat> <operator> <value>'
+
+	)
 
 
 
