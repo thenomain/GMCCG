@@ -195,7 +195,7 @@ Level 3 for very minor items
 &prerequisite.merit.friends_in_high_places dd=u( .has, %0, merit.status_(invictus) )
 &prereq-text.merit.friends_in_high_places DD=Status (Invictus) 1
 
-&merit.haven_() DD=1.2.3.4.5
+&merit.haven_() DD=1.2.3.4.5|*
 &tags.merit.haven_() D:T=vampire.location
 &prerequisite.merit.haven_() DD=
 	u( .at_least, %0, merit.haven_(%1), u( .value, %0, merit.safe_place_(%1)), %2 )
