@@ -365,11 +365,17 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 // -- Merits: Fighting Merits --------------------------------------------------
 
 &merit.armed_defense DD=1.2.3.4.5
-&prerequisite.merit.armed_defense DD=cand( u( .has, %0, defensive_combat_(weaponry) ), u( .at_least_all, %0, attribute.dexterity:3 skill.weaponry:2 ))
-&prereq-text.merit.armed_defense DD=Dexterity 3+, Weaponry 2+, and Defensive Combat (Weaponry)
+&prerequisite.merit.armed_defense DD=
+	cand( 
+		u( .has, %0, defensive_combat_(weaponry) ), 
+		u( .at_least_all, %0, attribute.dexterity:3 skill.weaponry:2 )
+	)
+&prereq-text.merit.armed_defense DD=
+	Dexterity 3+, Weaponry 2+, and Defensive Combat (Weaponry)
 
 &merit.cheap_shot DD=2
-&prerequisite.merit.cheap_shot DD=u( .at_least_all, %0, merit.street_fighting:3 skill.subterfuge:2 )
+&prerequisite.merit.cheap_shot DD=
+	u( .at_least_all, %0, merit.street_fighting:3 skill.subterfuge:2 )
 &prereq-text.merit.cheap_shot DD=Street Fighting 3+ and Subterfuge 2+
 
 &merit.choke_hold DD=2
@@ -381,11 +387,13 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &prereq-text.merit.close_quarters_combat DD=Wits 3+, Athletics 2, and Brawl 3+
 
 &merit.defensive_combat_() DD=1|*
-&prerequisite.merit.defensive_combat_() DD=u( .has_one_of, %0, skill.brawl skill.weaponry )
+&prerequisite.merit.defensive_combat_() DD=
+	u( .has_one_of, %0, skill.brawl skill.weaponry )
 &prereq-text.merit.defensive_combat_() DD=Brawl 1+ or Weaponry 1+
 
 &merit.fighting_finesse_() DD=2|*
-&prerequisite.merit.fighting_finesse_() DD=u( .at_least_all, %0, attribute.dexterity:3 skill.weaponry:2 )
+&prerequisite.merit.fighting_finesse_() DD=
+	u( .at_least_all, %0, attribute.dexterity:3 skill.weaponry:2 )
 &prereq-text.merit.fighting_finesse_() DD=Dexterity 3+ and Weaponry 2+
 
 &merit.fighting_finesse_() DD=2|*
@@ -398,52 +406,98 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 	existing specialty you have in Weaponry or Brawl
 
 &merit.firefight DD=1.2.3
-&prerequisite.merit.firefight DD=u( .at_least_all, %0, attribute.composure:3 attribute.dexterity:3 skill.firearms:2 skill.athletics:2 )
-&prereq-text.merit.firefight DD=Composure 3+, Dexterity 3+, Athletics 2+, and Firearms 2+
+&prerequisite.merit.firefight DD=
+	u( .at_least_all, %0, 
+		attribute.composure:3 attribute.dexterity:3 skill.firearms:2 
+		skill.athletics:2 
+	)
+&prereq-text.merit.firefight DD=
+	Composure 3+, Dexterity 3+, Athletics 2+, and Firearms 2+
 
 &merit.grappling DD=1.2.3
 &prerequisite.merit.grappling DD=u( .at_least_all, %0, attribute.stamina:3 attribute.strength:2 skill.brawl:2 skill.athletics:2 )
-&prereq-text.merit.grappling DD=Stamina 3+, Strength 2+, Athletics 2+, and Brawl 2
+&prereq-text.merit.grappling DD=
+	Stamina 3+, Strength 2+, Athletics 2+, and Brawl 2
 
 &merit.heavy_weapons DD=1.2.3.4.5
-&prerequisite.merit.heavy_weapons DD=u( .at_least_all, %0, attribute.stamina:3 attribute.strength:3 skill.weaponry:2 skill.athletics:2 )
-&prereq-text.merit.heavy_weapons DD=Stamina 3, Strength 3, Athletics 2, & Weaponry 2
+&prerequisite.merit.heavy_weapons DD=
+	u( .at_least_all, %0, 
+		attribute.stamina:3 attribute.strength:3 skill.weaponry:2 
+		skill.athletics:2 
+	)
+&prereq-text.merit.heavy_weapons DD=
+	Stamina 3, Strength 3, Athletics 2, & Weaponry 2
 
 &merit.improvised_weaponry DD=1.2.3
 &prerequisite.merit.improvised_weaponry DD=u( .at_least_all, %0, attribute.wits:3 skill.weaponry:1 )
 &prereq-text.merit.improvised_weaponry DD=Wits 3+ and Weaponry 1+
 
 &merit.iron_skin DD=2.4
-&prerequisite.merit.iron_skin DD=cand( u( .at_least, %0, attribute.stamina, 3 ), u( .at_least_one, %0, merit.martial_arts:2 merit.street_fighting:2 ))
-&prereq-text.merit.iron_skin DD=Stamina 3+ and either Martial Arts 2+ or Street Fighting 2+
+&prerequisite.merit.iron_skin DD=
+	cand( 
+		u( .at_least, %0, attribute.stamina, 3 ), 
+		u( .at_least_one, %0, merit.martial_arts:2 merit.street_fighting:2 )
+	)
+&prereq-text.merit.iron_skin DD=
+	Stamina 3+ and either Martial Arts 2+ or Street Fighting 2+
 
 &merit.light_weapons DD=1.2.3.4.5
-&prerequisite.merit.light_weapons DD=cand( cor( u( .at_least, %0, attribute.wits, 3 ), u( .has, %0, merit.fighting_finesse )), u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 skill.weaponry:2 ))
-&prereq-text.merit.light_weapons DD=Wits 3+ or Fighting Finesse, plus Dexterity 3+, Athletics 2+, and Weaponry 2+
+&prerequisite.merit.light_weapons DD=
+	cand( 
+		cor( 
+			u( .at_least, %0, attribute.wits, 3 ), 
+			u( .has, %0, merit.fighting_finesse )
+		), 
+		u( .at_least_all, %0, 
+			attribute.dexterity:3 skill.athletics:2 skill.weaponry:2 
+		)
+	)
+&prereq-text.merit.light_weapons DD=
+	Wits 3+ or Fighting Finesse, plus Dexterity 3+, Athletics 2+, 
+	and Weaponry 2+
 
 &merit.marksmanship DD=1.2.3.4
-&prerequisite.merit.marksmanship DD=u( .at_least_all, %0, attribute.composure:3 attribute.resolve:3 skill.firearms:2 )
+&prerequisite.merit.marksmanship DD=
+	u( .at_least_all, %0, 
+		attribute.composure:3 attribute.resolve:3 skill.firearms:2 
+	)
 &prereq-text.merit.marksmanship DD=Composure 3+, Resolve 3+, and Firearms 2+
 
 &merit.martial_arts DD=1.2.3.4.5
-&prerequisite.merit.martial_arts DD=u( .at_least_all, %0, attribute.resolve:3 attribute.dexterity:3 skill.brawl:2 skill.athletics:2 )
-&prereq-text.merit.martial_arts DD=Resolve 3+, Dexterity 3+, Athletics 2+, and Brawl 2+
+&prerequisite.merit.martial_arts DD=
+	u( .at_least_all, %0, 
+		attribute.resolve:3 attribute.dexterity:3 skill.brawl:2 
+		skill.athletics:2 
+	)
+&prereq-text.merit.martial_arts DD=
+	Resolve 3+, Dexterity 3+, Athletics 2+, and Brawl 2+
 
 &merit.police_tactics DD=1.2.3
-&prerequisite.merit.police_tactics DD=u( .at_least_all, %0, skill.brawl:2 skill.weaponry:1 )
+&prerequisite.merit.police_tactics DD=
+	u( .at_least_all, %0, skill.brawl:2 skill.weaponry:1 )
 &prereq-text.merit.police_tactics DD=Brawl 2+ and Weaponry 1+
 
 &merit.shiv DD=1.2
-&prerequisite.merit.shiv DD=u( .at_least_all, %0, merit.street_fighting:2 skill.weaponry:1 )
+&prerequisite.merit.shiv DD=
+	u( .at_least_all, %0, merit.street_fighting:2 skill.weaponry:1 )
 &prereq-text.merit.shiv DD=Street Fighting 2+ and Weaponry 1+
 
 &merit.street_fighting DD=1.2.3.4.5
-&prerequisite.merit.street_fighting DD=u( .at_least_all, %0, attribute.stamina:3 attribute.composure:3 skill.brawl:2 skill.streetwise:2 )
-&prereq-text.merit.street_fighting DD=Stamina 3+, Composure 3+, Brawl 2+, and Streetwise 2+
+&prerequisite.merit.street_fighting DD=
+	u( .at_least_all, %0, 
+		attribute.stamina:3 attribute.composure:3 skill.brawl:2 
+		skill.streetwise:2 
+	)
+&prereq-text.merit.street_fighting DD=
+	Stamina 3+, Composure 3+, Brawl 2+, and Streetwise 2+
 
 &merit.unarmed_defense DD=1.2.3.4.5
-&prerequisite.merit.unarmed_defense DD=u( .at_least_all, %0, attribute.dexterity:3 skill.brawl:2 merit.defensive_combat_(brawl):1 )
-&prereq-text.merit.unarmed_defense DD=Dexterity 3+, Brawl 2+ & Defensive Combat (Brawl)
+&prerequisite.merit.unarmed_defense DD=
+	u( .at_least_all, %0, 
+		attribute.dexterity:3 skill.brawl:2 merit.defensive_combat_(brawl):1 
+	)
+&prereq-text.merit.unarmed_defense DD=
+	Dexterity 3+, Brawl 2+ & Defensive Combat (Brawl)
 
 
 // -- Core Merits: Special -----------------------------------------------------
@@ -483,7 +537,8 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &merit.thief_of_fate DD=3
 
-&merit.unseen_sense_() DD=2|Vampires.Werewolves.God Machine.Spirits.Ghosts.Angels
+&merit.unseen_sense_() DD=2|
+	Vampires.Werewolves.God Machine.Spirits.Ghosts.Angels
 &prerequisite.merit.unseen_sense_() dd=u( .at_least, %0, attribute.wits, 2 )
 &prereq-text.merit.unseen_sense_() DD=Wits 2+
 
