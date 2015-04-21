@@ -148,7 +148,7 @@ output: <value>, but if lookup is null then return something
 
 --
 
-// Output: <value>:<detail>.<value>:<detail>.<etc.>
+// Output: <value>.<detail>:<value>.<detail>:<etc.>
 
 &f.cheat_getstat.list nsc=
 	localize( strcat( 
@@ -157,8 +157,8 @@ output: <value>, but if lookup is null then return something
 		setq( s, elements( %qv, 2, | )), 
 		setq( v, elements( %qv, 1, | )), 
 		iter( get( %0/_%1 ), 
-			strcat( %i0, :, elements( %qs, match( %qv, %i0, . ), . )), 
-			., . 
+			strcat( %i0, ., elements( %qs, match( %qv, %i0, . ), . )), 
+			., : 
 		)
 	))
 
