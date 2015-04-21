@@ -146,13 +146,29 @@ output: <value>, but if lookup is null then return something
 &f.cheat_getstat.string nsc=
 	default( %0/_%1, <not set> )
 
+--
+
+// Output: <value>:<detail>.<value>:<detail>.<etc.>
+
+&f.cheat_getstat.list nsc=
+	localize( strcat( 
+		setq( 1, u( v( d.sfp )/f.statpath-without-instance, %1 )), 
+		setq( v, get( v( d.dd )/%q1 )), 
+		setq( s, elements( %qv, 2, | )), 
+		setq( v, elements( %qv, 1, | )), 
+		iter( get( %0/_%1 ), 
+			strcat( %i0, :, elements( %qs, match( %qv, %i0, . ), . )), 
+			., . 
+		)
+	))
+
 
 --------------------------------------------------------------------------------
 -- The Basics: Get Name:Value --------------------------------------------------
 
 0: sheet dbref
 1: stat.path_(full)
-2: what 'cheat_getstat.*' type
+2: what 'cheat_getstat.*' type (stat class)
 
 --
 
