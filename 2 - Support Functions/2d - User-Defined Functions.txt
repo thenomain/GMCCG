@@ -505,11 +505,23 @@ qv: matched value, if any
 // list: set-intersect as a cheap filter, will not name-complete
 // .. (like setstat.workhorse, make space -> '.')
 					list, 
-// .. filter out the items that don't match %qs (filter sees !xx as xx)
-					filter( fil.statvalidate-list, 
-						edit( %1, %b, . ), 
-						., ., %qs
+					strcat( 
+						setq( e, edit( %1, %b, . )), 
+						setq( x, 
+							iter( graball( %qe, !*, ., . ), 
+								![grab( .%qs, [rest( %i0, ! )]*, . )], 
+								., . 
+							)
+						), 
+						setq( a, 
+							iter( setdiff( %qe, %qx, . ), 
+								grab( .%qs, %i0*, . ), 
+								., . 
+							)
+						), 
+						trim( squish( %qa.%qx, . ), b, . )
 					), 
+
 // other classes: grab the first match
 					grab( %qs, %1*, . )
 				)
@@ -544,12 +556,6 @@ qv: matched value, if any
 			)
 		)
 	))
-
-
---------------------------------------------------------------------------------
--- Statvalidate List -----------------------------------------------------------
-
-&fil.statvalidate-list sfp=t(match(%1, edit(%0, !, ), .))
 
 
 --------------------------------------------------------------------------------
