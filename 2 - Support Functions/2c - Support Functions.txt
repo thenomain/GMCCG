@@ -127,19 +127,29 @@ p: return for &prerequisite.<statpath>
 --------------------------------------------------------------------------------
 
 &f.prereq-check-other sfp=
+	localize( 
+		[setq( 
+			p, 
+			ulocal( [u( d.data-dictionary )]/prerequisite.%1, 
+				%0, 
+				edit( %2, %b, _ ), 
+				%3 
+			)
+		)]
+		[case( 
+			0, 
+			comp( %qp, ), 1, 
+			%qp, 
+			#-3 
+			[u( [u( d.data-dictionary )]/prereq-text.%1, 
+				%0, 
+				edit( %2, _, %b ), 
+				%3 
+			)], 
 
-localize(
-	[setq(
-		p, 
-		ulocal([u(d.data-dictionary)]/prerequisite.%1, %0, edit(%2, %b, _), %3)
-	)]
-	[case(
-		0, 
-		comp(%qp, ), 1, 
-		%qp, #-3 [u([u(d.data-dictionary)]/prereq-text.%1, %0, edit(%2, _, %b), %3)], 
-		1
-	)]
-)
+			1
+		)]
+	)
 
 --------------------------------------------------------------------------------
 
