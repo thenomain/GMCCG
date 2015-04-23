@@ -120,6 +120,11 @@ Min/Max Of - Return a high/low value
 	.Min_Of			Lowest value of a list of stats
 	.Max_Of			Highest value of a list of stats
 
+List Class Checks  - Checks specifically about the 'list' stat class
+	.List_Has		'List' stat class includes value passed
+	.List_Has_All	Includes all of a dot-delimited list passed
+	.List_Has_Not	Includes none of a dot-delimited list passed
+
 Core Stat Checks - Check against Supernatural Tollerance (power trait)
 	.Max_Trait		How high can they take skills/attributes?
 	.Trait_Check	Can they take "this" skill/attribute "that" high?
@@ -560,16 +565,30 @@ Item name must be exact or contain its own wildcards.
 
 --
 
-&.list_has dd=
-	t( match( 
-		first( u( %0/_%1 ), | ), 
-		%2,
-		. 
-	))
+&.List_Has dd=
+	t( match( u( .value_full, %0, %1 ), %2, . ))
+
+--
+
+&.List_Has_All dd=
+	eq( 
+		words( setinter( u( .value_full, %0, %1 ), %2, . ), . ), 
+		words( %2, . )
+	)
+
+--
+
+&.List_Has_None dd=
+	eq( 
+		words( setinter( u( .value_full, %0, %1 ), %2, . ), . ), 
+		0 
+	)
 
 
 --------------------------------------------------------------------------------
 -- Class: List -----------------------------------------------------------------
+
+*** Hey, Theno, this is pretty good code and you should use it in stat/set! ***
 
 Turns the number portion of a class:list statpath and returns the name portion.
 Looks up text in the value portion and, if match, returns the name portion.
