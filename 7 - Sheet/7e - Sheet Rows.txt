@@ -142,6 +142,32 @@ localize(
 
 --=-=-=-=-=-=-=
 
+// display the trait name only; takes in the same inputs as above
+
+&display.trait-name-only [v( d.nsc )]=
+	strcat( 
+		setq( v, rest( %0, : )), 
+		setq( s, ansi( xh, if( strmatch( %4, ), %b, %4 ))), 
+		case( strtrunc( %0, 1 ), 
+
+// .. sub-trait
+			*, %b [trim( rest( %0, * ))], 
+
+// .. sub-header
+			#, u( display.subheader, %2, trim( rest( %0, # ))), 
+
+// .. display them normal thangs
+			strcat( 
+				ljust( cat( first( %0, : ), ), %1, %qs ), 
+				if( 
+					not( strmatch( %qs, ansi( xh, %b ))), 
+					%qs,  
+				)
+			)
+		)
+	)
+
+-==--=-=-=-=-=-=
 &block.attributes sheet: rows=
 	strcat( 
 		setq( w, 26 ), 
