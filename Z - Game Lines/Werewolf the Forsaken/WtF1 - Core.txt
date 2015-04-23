@@ -156,7 +156,7 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 &advantage.essence_maximum DD=
 	elements( 
 		10 11 12 13 14 15 20 30 50 100, 
-		u( .value, %0, advantage.blood_potency )
+		u( .value, %0, advantage.primal_urge )
 	)
 &default.advantage.essence_maximum DD=derived
 &tags.advantage.essence_maximum D:T=derived.werewolf
