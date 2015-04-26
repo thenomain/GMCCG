@@ -50,18 +50,27 @@ think u( v( d.cg )/f.allocated.attributes, *joseph, attribute.strength:-1 )
 Specialties are ignored because they don't have tags, so fail the filter.
 
 	0: dbref of sheet
+	1: list of stats to add (stat.path:value stat.path:value)
 	returns: <mental>/<physical>/<social>
 */
 
-&f.allocated.skills cg=
+&f.allocated.skills [v( d.cg )]=
 	iter( 
 		mental physical social, 
-		u( f.points.category, %0, skill, %i0 ), , / 
+		add( 
+			u( f.points.category, %0, skill, %i0 ), 
+			ladd( iter( 
+				filter( fil.stats-to-include, %1, , , skill, %i0 ), 
+				last( %i0, : )
+			))
+		), 
+		, / 
 	)
 
 /* --tests --
 
 think u( cg/f.allocated.skills, %# )
+think u( v( d.cg )/f.allocated.skills, %#, skill.empathy:-1 )
 
 
 --------------------------------------------------------------------------------

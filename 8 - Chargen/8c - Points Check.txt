@@ -37,13 +37,14 @@ think u( cg/f.pts-valid?.attributes, %# )
 
 Check for: 4/7/11 points
 0: dbref of sheet
+1: possible late additions/subtractions (for 'free point' checks)
 s: skills
 
 */
 
-&f.pts-valid?.skills cg=
+&f.pts-valid?.skills [v( d.cg )]=
 	strcat( 
-		setq( s, sort( u( f.allocated.skills, %0 ), n, / )), 
+		setq( s, sort( u( f.allocated.skills, %0, %1 ), n, / )), 
 		and(
 			eq( first( %qs, / ), 4 ), 
 			eq( elements( %qs, 2, / ), 7 ), 

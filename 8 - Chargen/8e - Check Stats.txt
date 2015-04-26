@@ -571,9 +571,11 @@ Merits: 5/10 (5 on <name of Power Stat>)
 		ulocal( check.chargen.attributes, %0, %1 ), %r, 
 
 		%b%b, ansi( h, Skills ), :%b, 
-			u( f.allocated.skills, %0 ), %b, %(of 11/7/4%), %b, 
-			u( display.check.stats, %0, skills ), %r, 
-
+		udefault( 
+			check.chargen.skills.%1, 
+			u( check.chargen.skills.default, %0 ), 
+			%0 
+		), %r, 
 		ulocal( check.chargen.specialties, %0, %1 ), %r, 
 
 		%b%b, ansi( h, Aspirations ), :%b, 
@@ -602,6 +604,17 @@ Merits: 5/10 (5 on <name of Power Stat>)
 	strcat( 
 		u( f.allocated.attributes, %0 ), %b, %(of 5/4/3%), %b, 
 		u( display.check.stats, %0, attributes ), 
+	)
+
+/*
+--------------------------------------------------------------------------------
+-- Check Chargen: Skills -------------------------------------------------------
+*/
+
+&check.chargen.skills.default [v( d.cg )]=
+	strcat( 
+		u( f.allocated.skills, %0 ), %b, %(of 11/7/4%), %b, 
+		u( display.check.stats, %0, skills )
 	)
 
 /*
