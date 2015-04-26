@@ -254,7 +254,7 @@ Level 3 for very minor items
 &merit.unnatural_affinity_() DD=1|*
 &tags.merit.unnatural_affinity_ D:T=vampire
 
-&merit.swarm_form DD=1
+&merit.swarm_form DD=2
 &tags.merit.swarm_form D:T=vampire
 &prerequisite.merit.swarm_form dd=u( .at_least, %0, discipline.protean, 3 )
 &prereq-text.merit.swarm_form DD=Protean 3
@@ -1349,7 +1349,6 @@ System: All Scales have a prerequisite Coil, a particular tier with which the Sc
 ## VAMPIRE CHARGEN #############################################################
 
 
-/* 
 ================================================================================
 == CHARGEN: ATTRIBUTES =========================================================
 
