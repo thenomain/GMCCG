@@ -1,0 +1,134 @@
+
+/*
+Werewolf Chargen House Rules
+
+================================================================================
+== CHARGEN: GIFTS & FACETS =====================================================
+
+Take 1 Moon Gift Facet for every dot in your Auspice Renown.
+Pick two Shadow Gifts (one from Tribe list, one from Auspice list) to have unlocked, and take 1 Facet from these Gifts for every dot of Renown (Facet must belong to the Renown dot linked to it); may take Wolf Gift Facets instead.
+If you have 2 dots in your Auspice Renown, that second dot nets you a Wolf Gift Facet rather than a Shadow Gift Facet (see Werewolf House Rules on the wiki).
+
+So if someone has 2 Cunning, they will have 2 Facets of Cunning across their two Shadow Gifts and any Wolf Gift.
+
+v: auspice renown's value
+z: auspice gift (gift.<moon>'s_gift)
+
+*/
+
+&check.gifts [v( d.cg )]=
+	strcat( 
+		setq( g, u( f.allocated.gifts, %0 )), 
+		wdivider( Chargen Levels: Gifts ), %r, 
+
+// .. moon gifts .. (1 level per dot of auspice's renown)
+		setq( a, u( v( d.dd )/.value_full, %0, bio.auspice )), 
+		setq( r, 
+			filter( v( d.sfp )/fil.list-stats-tags, 
+				lattr( v( d.dd )/renown.* ), , , %qa 
+			)
+		), 
+		setq( v, u( v( d.dd )/.value, %0, %qr )), 
+		setq( x, elements( %qg, 1, ` )), 
+		setq( z, gift.%qx ), 
+
+		%b%b, 
+		ansi( h, Moon Gift ), :, %b, 
+		titlestr( edit( itemize( %qx ), _, %b )), %b, 
+		u( display.check.ok-no, setr( k, eq( words( %qx ), 1 ))), %r, 
+
+// .. moon facets ..
+		setq( f, 
+			setdiff( 
+				u( v( d.dd )/.value_full, %0, %qz ), 
+				unlock, . 
+			)
+		), 
+		%b %b%b, ansi( h, Moon Facets ), :, %b, 
+		setr( x, words( %qf, . )), %b, out of %qv, 
+		%b, u( display.check.ok-no, eq( %qx, %qv )), %r, 
+
+// .. shadow gifts ..
+		%b%b, 
+		ansi( h, Shadow Gift%, Auspice ), :, %b, 
+		titlestr( edit( itemize( setr( x, elements( %qg, 2, ` ))), _, %b )), %b, 
+		u( display.check.ok-no, eq( words( %qx ), 1 )), %r, 
+
+		%b%b, 
+		ansi( h, Shadow Gift%, Tribe ), :, %b, 
+		titlestr( edit( itemize( setr( x, elements( %qg, 3, ` ))), _, %b )), %b, 
+		setq( k, 
+			eq( 
+				words( %qx ), 
+				mul( 1, 
+					setr( w, u( v( d.dd )/.is_not, %0, tribe, Ghost Wolves ))
+				)
+			)
+		), 
+		u( display.check.ok-no, %qk ), %r, 
+
+// .. wolf gifts .. (may not have any; don't check just list)
+		setq( x, elements( %qg, 4, ` )), 
+		if( words( %qx ), 
+			strcat( 
+				%b%b, 
+				ansi( h, Wolf Gifts ), :, %b, 
+				titlestr( edit( itemize( %qx ), _, %b )), 
+				%r, 
+			)
+		), 
+
+// .. shadow/wolf facets by renown ..
+		iter( cunning glory honor purity wisdom, 
+			strcat( 
+				setq( x, 
+					ladd( iter( edit( %qg, `, %b ), 
+						u( v( d.dd )/.list_has, %0, gift.%i0, %i1 )
+					))
+				), 
+				setq( v, u( v( d.dd )/.value, %0, renown.%i0 )), 
+				if( strmatch( %qv, ), setq( v, 0 )), 
+
+				%b %b%b, 
+				ansi( h, capstr( %i0 ), h, %b, h, Facets ), :, %b, 
+				%qx out of %qv, 
+				%b, u( display.check.ok-no, eq( %qx, %qv )), 
+			), 
+			, %r 
+		), %r, 
+
+// .. gifts unclaimed by above, always wrong .. 
+		setq( x, elements( %qg, 5, ` )), 
+		setq( k, eq( words( %qx ), 0 )), 
+		if( not( %qk ), 
+			strcat( 
+				%b%b, 
+				ansi( h, Other Gifts ), :, %b, 
+				titlestr( edit( itemize( %qx ), _, %b )), %b, 
+				u( display.check.ok-no, %qk ), %r, 
+			)
+		), 
+
+	)
+
+// -- 
+
+think u( v( d.cg )/check.gifts, %# )
+
+/*
+================================================================================
+== MERIT.TELL_() ===============================================================
+
+WEREWOLF HOUSE RULE: Wolf-Blooded & Tell () Merit
+
+Deviant says, “WB can take the Tell Merit a number of times equal to their highest Resistance Attribute.”
+Deviant says, “Or, rather, can have a number of tells equal to.”
+Deviant says, “So if you have, say, Stamina 5, you can have your Tell + 4 more.”
+
+================================================================================
+== CHARGEN: RENOWN =============================================================
+
+Eldritch House Rule: Limit any Renown to 2 at Chargen.
+
+*/
+
