@@ -45,7 +45,8 @@ z: auspice gift (gift.<moon>'s_gift)
 			)
 		), 
 		%b %b%b, ansi( h, Moon Facets ), :, %b, 
-		setr( x, words( %qf, . )), %b, out of %qv, 
+//		setr( x, words( %qf, . )), %b, out of %qv, 
+		setr( x, words( %qf, . )), /, %qv, 
 		%b, u( display.check.ok-no, eq( %qx, %qv )), %r, 
 
 // .. shadow gifts ..
@@ -91,7 +92,7 @@ z: auspice gift (gift.<moon>'s_gift)
 
 				%b %b%b, 
 				ansi( h, capstr( %i0 ), h, %b, h, Facets ), :, %b, 
-				%qx out of %qv, 
+				%qx/%qv, 
 				%b, u( display.check.ok-no, eq( %qx, %qv )), 
 			), 
 			, %r 
