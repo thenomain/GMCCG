@@ -49,6 +49,8 @@ does not have the ability to handle nesting.
 @fo me=&d.sfp nsc=num( Stat Functions Prototype <sfp> )
 @fo me=&d.health nsc=num( WoD Health System <whs> )
 @fo me=&d.dd nsc=num( Data Dictionary <dd> )
+@fo me=&d.cg nsc=num( GMC Chargen <cg> )
+
 
 
 --
@@ -231,6 +233,7 @@ output: <value>, but if lookup is null then return something
 
 --
 
+/* This was for a different implementation of Cover. Trying something else. 
 &f.cheat_getstat.morality nsc=
 	strcat( 
 		ulocal( f.cheat_getstat.with_name, %0, advantage.%1, numeric ), 
@@ -242,5 +245,7 @@ output: <value>, but if lookup is null then return something
 			), , @@ 
 		)
 	)
+*/
 
-
+&f.cheat_getstat.morality nsc=
+	ulocal( f.cheat_getstat.with_name, %0, advantage.%1, numeric )

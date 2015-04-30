@@ -99,7 +99,7 @@ output:
 
 &display.value.numeric nsc=
 	if( eq( words( %0, . ), 1 ), 
-		u( display.check-zero, %0), 
+		u( display.check-zero, %0 ), 
 		[u( display.check-zero, ladd( %0, . ))] 
 		([u( display.check-zero, first( %0, . ))])
 	)
