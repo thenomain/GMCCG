@@ -1,8 +1,9 @@
 /*
 DtD2: Flowers of Hell
 
--- MERITS --------
---- Demon ---
+================================================================================== NEW MERITS ==================================================================
+
+-- Merits: Demon ---------------------------------------------------------------
 */
 
 &merit.advanced_form DD=1
@@ -10,11 +11,13 @@ DtD2: Flowers of Hell
 
 &merit.efficient_dealer DD=2
 &tags.merit.efficient_dealer D:T=demon
-&prereq-text.merit.efficient_dealer DD=Specialty in Skill that would be appropriate for screwing someone over.
+&prereq-text.merit.efficient_dealer DD=Specialty in Skill 
+	that would be appropriate for screwing someone over.
 
 &merit.electromagnetic_linguistics DD=2
 &tags.merit.electromagnetic_linguistics D:T=demon
-&prerequisite.merit.electromagnetic_linguistics dd=u( .has, %0, skill.computers )
+&prerequisite.merit.electromagnetic_linguistics dd=
+	u( .has, %0, skill.computers )
 &prereq-text.merit.electromagnetic_linguistics DD=Computers 1+
 
 &merit.high_tolerance DD=1.2
@@ -47,20 +50,22 @@ DtD2: Flowers of Hell
 
 &merit.sympathetic_stigmatic_() DD=2
 &tags.merit.sympathetic_stigmatic_() D:T=demon
-&prerequisite.merit.sympathetic_stigmatic dd=u( .has, %0, merit.true_friend_(<name>) )
+&prerequisite.merit.sympathetic_stigmatic dd=
+	u( .has, %0, merit.true_friend_(<name>) )
 &prereq-text.merit.sympathetic_stigmatic DD=True Friend
 
 &merit.tattooed_gadget DD=2
 &tags.merit.tattooed_gadget D:T=demon
 
-// --- Stigmatic ----------------
+// -- Merits: Stigmatic --------------------------------------------------------
 
 &merit.potent_blood DD=1
 &tags.merit.potent_blood D:T=stigmatic
 
 &merit.sleeve_integrator DD=1.2.3.4.5
 &tags.merit.sleeve_integrator D:T=stigmatic
-&prerequisite.merit.sleeve_integrator DD=u( .at_least, %0, advantage.integrity, 5 )
+&prerequisite.merit.sleeve_integrator DD=
+	u( .at_least, %0, advantage.integrity, 5 )
 &prereq-text.merit.sleeve_integrator DD=Integrity 5
 
 &merit.sympathetic_demon_() DD=2
@@ -73,9 +78,11 @@ DtD2: Flowers of Hell
 
 
 /*
-New Embeds
+================================================================================
+== NEW EMBEDS ==================================================================
 
-Cacophony
+--------------------------------------------------------------------------------
+-- Embeds: Cacophony -----------------------------------------------------------
 */
 
 &embed.apple_of_discord DD=Manipulation+Expression vs. Integrity
@@ -118,7 +125,7 @@ Cacophony
 &tags.embed.victory_at_any_price DD=demon.cacophony
 &type.embed.victory_at_any_price DD=string
 
-// Instrumental
+// -- Embeds: Instrumental -----------------------------------------------------
 
 &embed.call_out DD=Manipulation+Intimidation vs. Presence + Supernatural Tolerance
 &tags.embed.call_out DD=demon.instrumental
@@ -160,7 +167,7 @@ Cacophony
 &tags.embed.wasted_time DD=demon.instrumental
 &type.embed.wasted_time DD=string
 
-// Mundane
+// -- Embeds: Mundane ----------------------------------------------------------
 
 &embed.associate_and_integrate DD=Manipulation+Science vs. Resolve + Composure
 &tags.embed.associate_and_integrate DD=demon.mundane
@@ -202,7 +209,7 @@ Cacophony
 &tags.embed.you_can_tell_me DD=demon.mundane
 &type.embed.you_can_tell_me DD=string
 
-// Vocal
+// -- Embeds: Vocal ------------------------------------------------------------
 
 &embed.imagine DD=Manipulation+Persuasion
 &tags.embed.imagine DD=demon.vocal
@@ -245,6 +252,151 @@ Cacophony
 &type.embed.vox DD=string
 
 /*
--- EXPLOITS ----------------------------------------------------------------
+== NEW EXPLOITS ================================================================
 */
+
+&exploit.break_the_dam DD=Presence + Science + Primum
+&tags.exploit.break_the_dam D:T=demon
+
+&exploit.context_matters DD=Presence + Persuasion + Primum
+&tags.exploit.context_matters D:T=demon
+
+&exploit.demon_car DD=Strength + Drive + Primum
+&tags.exploit.demon_car D:T=demon
+
+&exploit.devour_infrastructure DD=Strength + Survival + Primum
+&tags.exploit.devour_infrastructure D:T=demon
+
+&exploit.living_installation DD=Intelligence + Medicine + Primum
+&tags.exploit.living_installation D:T=demon
+
+&exploit.newton's_nightmares DD=Intelligence + Science + Primum
+&tags.exploit.newton's_nightmares D:T=demon
+
+&exploit.open-and-shut_case DD=Presence + Investigation + Primum
+&tags.exploit.open-and-shut_case D:T=demon
+
+&exploit.show_of_power DD=Presence + Occult + Primum 
+	vs. highest Wits + Supernatural Tolerance of observers
+&tags.exploit.show_of_power D:T=demon
+
+&exploit.soul_brand DD=Presence + Expression + Primum – Supernatural Tolerance
+&tags.exploit.soul_brand D:T=demon
+
+&exploit.stop DD=Intelligence + Science + Primum
+&tags.exploit.stop D:T=demon
+
+&exploit.terrible_avatar DD=Strength + Occult + Primum
+&tags.exploit.terrible_avatar D:T=demon
+
+&exploit.two_places_at_once DD=Presence + Science + Primum
+&tags.exploit.two_places_at_once D:T=demon
+
+&exploit.ultimatium DD=Intelligence + Science + Primum vs. Resolve
+&tags.exploit.ultimatium D:T=demon
+
+&exploit.urban_legend DD=Intelligence + Expression + Primum
+&tags.exploit.urban_legend D:T=demon
+
+&exploit.visions_of_heaven_and_hell DD=Presence + Intimidation + Primum 
+	vs. Resolve + Supernatural Tolerance
+&tags.exploit.visions_of_heaven_and_hell D:T=demon
+
+&exploit.walls_of_jericho DD=Strength + Intimidation + Primum
+&tags.exploit.walls_of_jericho D:T=demon
+
+
+/* 
+================================================================================
+== NEW DEMONIC FORMS ===========================================================
+
+-- Demonic Forms: Modifications ------------------------------------------------
+*/
+
+&demonic_form.advanced_optics DD=1
+&tags.demonic_form.advanced_optics D:T=demon.modification
+
+&demonic_form.component_indicators DD=1
+&tags.demonic_form.component_indicators D:T=demon.modification
+
+&demonic_form.detachable_limbs DD=1
+&tags.demonic_form.detachable_limbs D:T=demon.modification
+
+&demonic_form.lighting DD=1
+&tags.demonic_form.lighting D:T=demon.modification
+
+&demonic_form.limb_retractor DD=1
+&tags.demonic_form.limb_retractor D:T=demon.modification
+
+&demonic_form.low_density DD=1
+&tags.demonic_form.low_density D:T=demon.modification
+
+&demonic_form.nauseating_musk DD=1
+&tags.demonic_form.nauseating_musk D:T=demon.modification
+
+&demonic_form.olfactory_enhancements DD=1
+&tags.demonic_form.olfactory_enhancements D:T=demon.modification
+
+&demonic_form.radio_suite DD=1
+&tags.demonic_form.radio_suite D:T=demon.modification
+
+&demonic_form.resistors DD=1
+&tags.demonic_form.resistors D:T=demon.modification
+
+&demonic_form.steel_frame DD=1
+&tags.demonic_form.steel_frame D:T=demon.modification
+
+&demonic_form.unyielding_vice DD=1
+&tags.demonic_form.unyielding_vice D:T=demon.modification
+
+// -- Demonic Form: Technologies -----------------------------------------------
+
+&demonic_form.abruption_jets DD=1
+&tags.demonic_form.abruption_jets D:T=demon.technology
+
+&demonic_form.adhesive DD=1
+&tags.demonic_form.adhesive D:T=demon.technology
+
+&demonic_form.collapsible DD=1
+&tags.demonic_form.collapsible D:T=demon.technology
+
+&demonic_form.laser_cutter DD=1
+&tags.demonic_form.laser_cutter D:T=demon.technology
+
+&demonic_form.mantle_of_fire DD=1
+&tags.demonic_form.mantle_of_fire D:T=demon.technology
+
+&demonic_form.savant_core DD=1
+&tags.demonic_form.savant_core D:T=demon.technology
+
+&demonic_form.shielded_compartment DD=1
+&tags.demonic_form.shielded_compartment D:T=demon.technology
+
+// -- Demonic Form: Propulsions ------------------------------------------------
+
+&demonic_form.aquatic DD=1
+&tags.demonic_form.aquatic D:T=demon.propulsion
+
+&demonic_form.burrowing DD=1
+&tags.demonic_form.burrowing D:T=demon.propulsion
+
+&demonic_form.tread DD=1
+&tags.demonic_form.tread D:T=demon.propulsion
+
+&demonic_form.urban_fluidity DD=1
+&tags.demonic_form.urban_fluidity D:T=demon.propulsion
+
+// -- Demonic Form: Processes --------------------------------------------------
+
+&demonic_form.amorphous DD=1
+&tags.demonic_form.amorphous D:T=demon.process
+
+&demonic_form.dataform DD=1
+&tags.demonic_form.dataform D:T=demon.process
+
+&demonic_form.eliminator_cannon DD=1
+&tags.demonic_form.eliminator_cannon D:T=demon.process
+
+&demonic_form.nanobot_composition DD=1
+&tags.demonic_form.nanobot_composition D:T=demon.process
 

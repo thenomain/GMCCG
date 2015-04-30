@@ -110,9 +110,17 @@ List all agendas that a demon has.
 
 // -- Cover: The Integrity stat for Demons -------------------------------------
 
-&advantage.cover DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.cover DD=7
-&tags.advantage.cover D:T=integrity.demon
+// &advantage.cover DD=1.2.3.4.5.6.7.8.9.10
+// &default.advantage.cover DD=7
+// &tags.advantage.cover D:T=integrity.demon
+
+// &advantage.cover_() DD=1.2.3.4.5.6.7.8.9.10|*|*
+// &default.advantage.cover_() DD=7
+// &prerequisite.advantage.cover_() DD=strmatch( %1, ucstr( u( .value_full, %0, bio.full_name )))
+// &prereq-text.advantage.cover_() DD=Cover's <type> must be Full Name
+
+&advantage.cover_() DD=1.2.3.4.5.6.7.8.9.10|*
+&tags.advantage.cover_() D:T=integrity.demon
 
 &advantage.aether DD=ladd( u( .value_full, %0, advantage.aether_maximum ), . )
 &tags.advantage.aether D:T=derived.pool.demon
@@ -815,7 +823,7 @@ Stigmatics get +3 dots for Supernatural Merits only.
 ================================================================================
 == CHARGEN: ADVANTAGES =========================================================
 
-cover
+cover ()
 aether
 primum
 
@@ -844,16 +852,24 @@ Counting Merit points for Aether.
 --------------------------------------------------------------------------------
 -- Integrity, Demon: Allocations -----------------------------------------------
 
-Cover.
-
-We are using only one 'cover' stat presently. This is not optimal, as the Demon 
-should have one per Cover (e.g., 'Cover (Bob): 4'), but this will have to do for 
-now.
+Cover ()
 
 */
 
-&f.allocated.integrity.demon cg=
-	u( v( d.dd )/.value, %0, advantage.cover )
+&f.allocated.integrity.demon [v( d.cg )]=
+	edit( 
+		iter( 
+			setdiff( 
+				lattr( %0/_advantage.cover_* ), 
+				lattr( %0/_advantage.cover_*.* ), 
+			), 
+			strcat( %i0, :, get( %0/%i0 )), 
+			, | 
+		), 
+		_ADVANTAGE., , 
+		_, %b
+	)
+
 
 
 /*
@@ -861,12 +877,14 @@ now.
 -- Integrity, Demon: Point Count -----------------------------------------------
 */
 
-&f.pts-valid?.integrity.demon cg=
-	eq( 
-		u( f.allocated.integrity.demon, %0 ), 
-		udefault( v( d.dd )/default.advantage.cover, 7 ) 
+&f.pts-valid?.integrity.demon [v( d.cg )]=
+	cand( 
+		eq( words( setr( z, u( f.allocated.integrity.demon, %0 )), | ), 1 ), 
+		eq( last( %qz, : ), 7 ), 
+		strmatch( first( %qz, : ), cover %([get( %0/_bio.full_name )]%) )
 	)
 
+think u( v( d.cg )/f.pts-valid?.integrity.demon, #220 )
 
 
 /* 
@@ -991,13 +1009,15 @@ Still faster than 'f.list-stats-tags'
 
 */
 
-&allocated.demonic_form cg=
+&allocated.demonic_form [v( d.cg )]=
 	strcat( 
-		setq( f, lattr( %0/_demonic_form.* )), 
+		setq( f, 
+			edit( lattr( %0/_demonic_form.* ), _DEMONIC_FORM., DEMONIC_FORM. 
+		)), 
 		iter( modification technology propulsion process, 
 			filter( 
 				u( d.sfp )/f.hastag?.workhorse, 
-				%qf, , , 
+				rest( %qf, _ ), , , 
 				%i0
 			), , ` 
 		)
@@ -1030,7 +1050,7 @@ Still faster than 'f.list-stats-tags'
 
 Check for: Demonic Form, 
 
-&check.chargen.demon CG=
+&check.chargen.demon [v( d.cg )]=
 	strcat( 
 		%b, %b, ansi( h, Embeds & Exploits ), :, %b, 
 		setr( 9, 
@@ -1045,7 +1065,15 @@ Check for: Demonic Form,
 				words( %i0 ), `, / 
 			)
 		), %b, (of 3/2/1/1), %b, 
-		u( display.check.ok-no, u( f.pts-valid?.demonic_form, %0 )), %b, %r,
+		u( display.check.ok-no, u( f.pts-valid?.demonic_form, %0 )), %r,
+
+		%b%b, ansi( h, Cover ), :, %b, 
+		iter( u( f.allocated.integrity.demon, %0 ), 
+			titlestr( %i0 ), |, %,%b 
+		), %r, 
+		%b %b%b, %(one cover at 7 with the current Full Name%), %b, 
+		u( display.check.ok-no, u( f.pts-valid?.integrity.demon, %0 )), %r,
+		
 	)
 
 
@@ -1152,14 +1180,122 @@ to check from
 		setq( t, inc( lmax( iter( %qx, strlen( %i0 ), | )))), 
 		divider( Exploits ), %r, 
 		table( %qx, %qt, %qw, | ), %r, 
+
+		u( block.demonic-forms, %0 ), %r, 
+	)
+
+
+// -- Powers: Demonic Forms ----------------------------------------------------
+
+
+&powers.demonic-forms [v( d.nsc )]=
+	iter( 
+		modification technology propulsion process, 
+		strcat( 
+			# [capstr( %i0 )], |, 
+			ulocal( powers.demonic-forms.%i0, %0 )
+		), 
+		, | 
+	)
+
+&powers.demonic-forms.modification [v( d.nsc )]=
+	iter( 
+		u( v( d.cg )/f.list-stats-tags, %0, demonic_form, modification ), 
+		u( f.cheat_getstat.name_only, %0, %i0, flag ), 
+		, | 
+	)
+
+&powers.demonic-forms.technology [v( d.nsc )]=
+	iter( 
+		u( v( d.cg )/f.list-stats-tags, %0, demonic_form, technology ), 
+		u( f.cheat_getstat.name_only, %0, %i0, flag ), 
+		, | 
+	)
+
+&powers.demonic-forms.propulsion [v( d.nsc )]=
+	iter( 
+		u( v( d.cg )/f.list-stats-tags, %0, demonic_form, propulsion ), 
+		u( f.cheat_getstat.name_only, %0, %i0, flag ), 
+		, | 
+	)
+
+&powers.demonic-forms.process [v( d.nsc )]=
+	iter( 
+		u( v( d.cg )/f.list-stats-tags, %0, demonic_form, process ), 
+		u( f.cheat_getstat.name_only, %0, %i0, flag ), 
+		, | 
+	)
+
+&block.demonic-forms sheet: rows=
+	strcat( 
+		setq( w, 26 ), 
+		setq( t, 26 ), 
+		setq( m, 
+			iter( #Modification|
+				[ulocal( powers.demonic-forms.modification, %0 )], 
+				u( display.trait-name-only, %i0, %qt, %qw, flag ), 
+				|, | 
+			)
+		), 
+		setq( t, 
+			iter( #Technology|
+				[ulocal( powers.demonic-forms.technology, %0 )], 
+				u( display.trait-name-only, %i0, %qt, dec( %qw ), flag ), 
+				|, | 
+			)
+		), 
+		setq( p, 
+			iter( #Propulsion|
+				[ulocal( powers.demonic-forms.propulsion, %0 )], 
+				u( display.trait-name-only, %i0, %qt, %qw, flag ), 
+				|, | 
+			)
+		), 
+		setq( r, 
+			iter( #Process|
+				[ulocal( powers.demonic-forms.process, %0 )], 
+				u( display.trait-name-only, %i0, %qt, %qw, flag ), 
+				|, | 
+			)
+		), 
+		divider( Demonic Forms ), %r, 
+		vcolumns( 
+			%qw:%qm, 
+			[dec( %qw )]:%qt, 
+			%qw:%qp|%qr, 
+			|, 
+			%b 
+		)
 	)
 
 
 // -- Traits -------------------------------------------------------------------
 
-&traits.morality.demon nsc=
-	ulocal( f.cheat_getstat.morality, %0, cover )
+&traits.morality.demon [v(d.nsc)]=
+	strcat( 
+		setr( 9, iter( 
+			edit( 
+				setdiff( 
+					lattr( %0/_advantage.cover_* ), 
+					lattr( %0/_advantage.cover_*.* )
+				), 
+				_ADVANTAGE., 
+			), 
+			ulocal( f.cheat_getstat.morality, %0, %i0 ), 
+			, | 
+		)), 
+// we're changing the 'text field' width in the middle
+// (I don't like this, but it will do for now)
+		setq( t, 
+			min( 
+				lmax( iter( %q9, strlen( %i0 ), | )), 
+				%qw 
+			)
+		), 
+	)
 
+
+// --
 
 &block.traits.demon sheet: rows=
 	strcat( 

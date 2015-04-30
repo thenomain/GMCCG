@@ -20,5 +20,3 @@ Demon-Blooded:
 
 &merit.soul_pact_() DD=2.3.4.5|*
 &tags.merit.soul_pact_() D:T=demon
-// &notes.merit.soul_pact_() xxxx=
-// http://eldritch.mechanipus.com/w/index.php/Merits/Custom#Soul_Pact
