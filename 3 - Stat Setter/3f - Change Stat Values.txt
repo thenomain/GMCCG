@@ -118,33 +118,18 @@ a quick way to add <type> to <statpath>_()
 
 
 
-
-
-
-
-
-
-
-
-
 /*
 ================================================================================
 == /SETVALUE ===================================================================
 
-
 A system to add or remove values (<value>) from stats.
 
-Last item cannot be removed.
-
-1) determine if stat is instanced
-2) prettify input
-3) add to the end
-
+	stat/setvalue <stat>=[!]<value>
 
 0: <stat>=[!]<value>
+   <stat>=<list value>/<list name> <-- planned
 
 s: statpath
-c: stat class
 a: raw attrtibute 
 	'<values>'
 	'<values>|<types>|<substats>'
@@ -153,32 +138,98 @@ a: raw attrtibute
 n: not? [!]
 v: value to add/remove
 
+c: stat class
+u: <values>
+m: matched location of <value> in <current values>, if any
+
 */
 
-&c.stat/setvalue Stat Setter <ss>=
+&f.stat/setvalue [v( d.ss )]=
 	strcat( 
-		setq( s, setr( s, <get statpath -- first( %0, = )> )), 
-		setq( c, <stat class of %qs> ), 
-		setq( a, get( v( d.dd )/%qs )), 
-		setq( n, strmatch( rest( %0, = ), !* )), 
-		setq( v, strtrunc( %qv, sub( strlen( %qv ), %qn ))), 
-		case( 0, 
-			isstaff( %# ), Staff only., 
+		setq( s, 
+			u( 
+				v( d.stat-funcs )/f.statpath-validate-name, 
+				first( %0, = )
+			)
+		), 
+		setq( a, get( v( d.data-dictionary )/%qs )), 
+		setq( n, strmatch( setr( v, rest( %0, = )), !* )), 
+		setq( v, titlestr( right( %qv, sub( strlen( %qv ), %qn )))), 
 
-			t( %qs ), Stat not found., 
+		setq( c, ulocal( v( d.stat-funcs )/f.get-class, %qs )), 
+		setq( u, elements( %qa, 1, | )), 
+		setq( m, match( %qu, %qv, . )), 
+
+		ansi( h, <stat/setvalue>%b, n, 
+		
+			case( 0, 
+				isstaff( %# ), Staff only., 
+
+				t( %qs ), Stat not found., 
+
+				comp( rest( %0, = ), ), 
+				Oh at least enter something to add or remove, 
 
 // .. add 'list' to grab() when it's done
-			t( grab( %qc, numeric string )), 
-			I only know how to edit the values for Numeric and String stats, 
+				t( match( numeric string, %qc )), 
+				I only know how to edit the values for Numeric and String stats, 
 
-			not( member( elements( %qa, 1, | ), * )), 
-			Stat can take any value and cannot be adjusted this way., 
+				not( cor( 
+					member( %qu, * ), 
+					member( %qu, # )
+				)), 
+				Stat can take any value and cannot be adjusted this way - 
+				change the stat's attribute directly, 
 
-			not( strmatch( %qc, Numeric )), xxx, 
+				cor( 
+					not( strmatch( %qc, numeric )), 
+					cand( 
+						isint( %qv ), 
+						gte( %qv, 0 )
+					)
+				), 
+				Value '%qv' must be positive integer for numeric types, 
 
-			not( strmatch( %qc, String )), xxx, 
+				cor( not( %qn ), t( %qm )), 
+				Value '%qv' doesn't exist, 
+
+				cor( %qn, not( %qm )), 
+				Value '%qv' already exists, 
 			
-			Unexpected error. It happens.
+				case( %qc, 
+// ok: lists
+					list, 
+					This is an error because I don't know how to add 
+					to lists yet, 
+
+// ok: numeric & string
+					strcat( 
+						setq( f, 
+							if( %qn, 
+								ldelete( %qu, %qm, . ), 
+								case( %qc, 
+									numeric, setunion( %qu, %qv, ., ., n ), 
+									insert( %qu, inc( words( %qu, .)), %qv, . )
+								)
+							)
+						), 
+						setq( e, 
+							set( 
+								v( d.data-dictionary ), 
+								%qs:[replace( %qa, 1, %qf, | )]
+							)
+						), 
+
+						if( strlen( %qe ), 
+							strcat( 
+								Error setting new attribute! Please type: 
+								&%qs, %b, v( d.data-dictionary ), =, 
+								replace( %qa, 1, %qf, | )
+							), 
+							cat( Value '%qv', if( %qn, removed, added ))
+						)
+					)
+				)
+			)
 		)
 	)
-*/
