@@ -21,7 +21,24 @@ z: auspice gift (gift.<moon>'s_gift)
 		setq( g, u( f.allocated.gifts, %0 )), 
 		wdivider( Chargen Levels: Gifts ), %r, 
 
-// .. moon gifts .. (1 level per dot of auspice's renown)
+		u( check.gifts.moon, %0, %qg ), 
+		u( check.gifts.auspice, %0, %qg ), 
+		u( check.gifts.tribe, %0, %qg ), 
+		u( check.gifts.wolf, %0, %qg ), 
+		u( check.gifts.facets, %0, %qg ), 
+		u( check.gifts.other, %0, %qg ), 
+	)
+
+// -- 
+
+think u( v( d.cg )/check.gifts, %# )
+
+// -- moon gifts --
+// 1 level per dot of auspice's renown
+// 0: %0 - 1: %qg
+
+&check.gifts.moon [v( d.cg )]=
+	strcat( 
 		setq( a, u( v( d.dd )/.value_full, %0, bio.auspice )), 
 		setq( r, 
 			filter( v( d.sfp )/fil.list-stats-tags, 
@@ -45,16 +62,27 @@ z: auspice gift (gift.<moon>'s_gift)
 			)
 		), 
 		%b %b%b, ansi( h, Moon Facets ), :, %b, 
-//		setr( x, words( %qf, . )), %b, out of %qv, 
 		setr( x, words( %qf, . )), /, %qv, 
 		%b, u( display.check.ok-no, eq( %qx, %qv )), %r, 
+	)
 
-// .. shadow gifts ..
+
+// -- shadow gifts: auspice --
+// 0: %0 - 1: %qg 
+
+&check.gifts.auspice [v( d.cg )]= 
+	strcat( 
 		%b%b, 
 		ansi( h, Shadow Gift%, Auspice ), :, %b, 
 		titlestr( edit( itemize( setr( x, elements( %qg, 2, ` ))), _, %b )), %b, 
 		u( display.check.ok-no, eq( words( %qx ), 1 )), %r, 
+	)
 
+// -- shadow gifts: tribe --
+// 0: %0 - 1: %qg 
+
+&check.gifts.tribe [v( d.cg )]= 
+	strcat( 
 		%b%b, 
 		ansi( h, Shadow Gift%, Tribe ), :, %b, 
 		titlestr( edit( itemize( setr( x, elements( %qg, 3, ` ))), _, %b )), %b, 
@@ -67,8 +95,14 @@ z: auspice gift (gift.<moon>'s_gift)
 			)
 		), 
 		u( display.check.ok-no, %qk ), %r, 
+	)
 
-// .. wolf gifts .. (may not have any; don't check just list)
+
+// -- wolf gifts --
+// may not have any; don't check just list 
+
+&check.gifts.wolf [v( d.cg )]= 
+	strcat( 
 		setq( x, elements( %qg, 4, ` )), 
 		if( words( %qx ), 
 			strcat( 
@@ -78,8 +112,12 @@ z: auspice gift (gift.<moon>'s_gift)
 				%r, 
 			)
 		), 
+	)
 
-// .. shadow/wolf facets by renown ..
+// -- facets: shadow/wolf facets by renown --
+
+&check.gifts.facets [v( d.cg )]= 
+	strcat( 
 		iter( cunning glory honor purity wisdom, 
 			strcat( 
 				setq( x, 
@@ -97,8 +135,12 @@ z: auspice gift (gift.<moon>'s_gift)
 			), 
 			, %r 
 		), %r, 
+	)
 
-// .. gifts unclaimed by above, always wrong .. 
+// -- other: gifts unclaimed by above, always wrong --
+
+&check.gifts.other [v( d.cg )]= 
+	strcat( 
 		setq( x, elements( %qg, 5, ` )), 
 		setq( k, eq( words( %qx ), 0 )), 
 		if( not( %qk ), 
@@ -109,12 +151,8 @@ z: auspice gift (gift.<moon>'s_gift)
 				u( display.check.ok-no, %qk ), %r, 
 			)
 		), 
-
 	)
 
-// -- 
-
-think u( v( d.cg )/check.gifts, %# )
 
 /*
 ================================================================================
@@ -132,4 +170,3 @@ Deviant says, “So if you have, say, Stamina 5, you can have your Tell + 4 more
 Eldritch House Rule: Limit any Renown to 2 at Chargen.
 
 */
-
