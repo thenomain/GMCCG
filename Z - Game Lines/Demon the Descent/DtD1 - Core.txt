@@ -204,255 +204,255 @@ List all agendas that a demon has.
 // -- EMBED: CACOPHANY ---------------------------------------------------------
 
 &embed.bystander_effect DD=Manipulation + Intimidation
-&tags.embed.bystander_effect D:T=demon.destroyer.cacophony
+&tags.embed.bystander_effect D:T=demon.cacophony
 
 &embed.cause_and_effect DD=Wits + <<self:Skill>>
-&tags.embed.cause_and_effect D:T=demon.destroyer.cacophony
+&tags.embed.cause_and_effect D:T=demon.cacophony
 
 &embed.combustion DD=Wits + Science
-&tags.embed.combustion D:T=demon.destroyer.cacophony
+&tags.embed.combustion D:T=demon.cacophony
 
 &embed.cool_heads_prevail DD=Manipulation + Empathy - <<room:Composure>>
-&tags.embed.cool_heads_prevail D:T=demon.destroyer.cacophony
+&tags.embed.cool_heads_prevail D:T=demon.cacophony
 
 &embed.deafen DD=Manipulation + Medicine - <<target:Stamina>>
-&tags.embed.deafen D:T=demon.destroyer.cacophony
+&tags.embed.deafen D:T=demon.cacophony
 
 &embed.devil's_advocate DD=Manipulation + Subterfuge - <<room:Resolve>>
-&tags.embed.devil's_advocate D:T=demon.destroyer.cacophony
+&tags.embed.devil's_advocate D:T=demon.cacophony
 
 &embed.hesitation DD=Manipulation + Intimidation - <<target:Resolve>>
-&tags.embed.hesitation D:T=demon.destroyer.cacophony
+&tags.embed.hesitation D:T=demon.cacophony
 
 &embed.hush DD=Dexterity + Brawl - <<target:Defense>>
-&tags.embed.hush D:T=demon.destroyer.cacophony
+&tags.embed.hush D:T=demon.cacophony
 
 &embed.just_bruised DD=Wits + Medicine
-&tags.embed.just_bruised D:T=demon.destroyer.cacophony
+&tags.embed.just_bruised D:T=demon.cacophony
 
 &embed.knockout_punch DD=Dexterity + Brawl - <<target:Defense>>
-&tags.embed.knockout_punch D:T=demon.destroyer.cacophony
+&tags.embed.knockout_punch D:T=demon.cacophony
 
 &embed.left_or_right? DD=Manipulation + Science
-&tags.embed.left_or_right? D:T=demon.destroyer.cacophony
+&tags.embed.left_or_right? D:T=demon.cacophony
 
 &embed.lucky_break DD=Manipulation + Occult
-&tags.embed.lucky_break D:T=demon.destroyer.cacophony
+&tags.embed.lucky_break D:T=demon.cacophony
 
 &embed.merciless_gunman DD=Dexterity + Firearms
-&tags.embed.merciless_gunman D:T=demon.destroyer.cacophony
+&tags.embed.merciless_gunman D:T=demon.cacophony
 
 &embed.no_quarter DD=Manipulation + Brawl vs. <<target:Resolve>>
-&tags.embed.no_quarter D:T=demon.destroyer.cacophony
+&tags.embed.no_quarter D:T=demon.cacophony
 
 &embed.on_the_mend DD=Wits + Medicine
-&tags.embed.on_the_mend D:T=demon.destroyer.cacophony
+&tags.embed.on_the_mend D:T=demon.cacophony
 
 &embed.raw_materials DD=Manipulation + Crafts
-&tags.embed.raw_materials D:T=demon.destroyer.cacophony
+&tags.embed.raw_materials D:T=demon.cacophony
 
 &embed.sabotage DD=Dexterity + Crafts
-&tags.embed.sabotage D:T=demon.destroyer.cacophony
+&tags.embed.sabotage D:T=demon.cacophony
 
 &embed.shatter DD=Wits + Crafts
-&tags.embed.shatter D:T=demon.destroyer.cacophony
+&tags.embed.shatter D:T=demon.cacophony
 
 &embed.shifty_eyes DD=Manipulation + Subterfuge - <<target:Resolve>>
-&tags.embed.shifty_eyes D:T=demon.destroyer.cacophony
+&tags.embed.shifty_eyes D:T=demon.cacophony
 
 &embed.special_someone DD=Wits + Empathy
-&tags.embed.special_someone D:T=demon.destroyer.cacophony
+&tags.embed.special_someone D:T=demon.cacophony
 
 
 // -- EMBED: INSTRUMENTAL ------------------------------------------------------
 
 &embed.ambush DD=Wits + Stealth
-&tags.embed.ambush D:T=demon.guardian.instrumental
+&tags.embed.ambush D:T=demon.instrumental
 
 &embed.check_backdrop DD=Manipulation + Firearms
-&tags.embed.check_backdrop D:T=demon.guardian.instrumental
+&tags.embed.check_backdrop D:T=demon.instrumental
 
 &embed.download_knowledge DD=Wits + Computers
-&tags.embed.download_knowledge D:T=demon.guardian.instrumental
+&tags.embed.download_knowledge D:T=demon.instrumental
 
 &embed.efficiency DD=Wits+Academics
-&tags.embed.efficiency D:T=demon.guardian.instrumental
+&tags.embed.efficiency D:T=demon.instrumental
 
 &embed.ellipses DD=Manipulation + Expression
-&tags.embed.ellipses D:T=demon.guardian.instrumental
+&tags.embed.ellipses D:T=demon.instrumental
 
 &embed.freeze_assets DD=Manipulation + Academics - <<target:Resources>>
-&tags.embed.freeze_assets D:T=demon.guardian.instrumental
+&tags.embed.freeze_assets D:T=demon.instrumental
 
 &embed.fulcrum_point DD=Wits + Science
-&tags.embed.fulcrum_point D:T=demon.guardian.instrumental
+&tags.embed.fulcrum_point D:T=demon.instrumental
 
 &embed.fungible_knowledge DD=Wits + Academics
-&tags.embed.fungible_knowledge D:T=demon.guardian.instrumental
+&tags.embed.fungible_knowledge D:T=demon.instrumental
 
 &embed.like_i_built_it DD=Wits + Crafts
-&tags.embed.like_i_built_it D:T=demon.guardian.instrumental
+&tags.embed.like_i_built_it D:T=demon.instrumental
 
 &embed.the_map_is_not_the_territory DD=Manipulation + Academics - 
 	<<target:Intelligence>>
-&tags.embed.the_map_is_not_the_territory D:T=demon.guardian.instrumental
+&tags.embed.the_map_is_not_the_territory D:T=demon.instrumental
 
 &embed.miles_away DD=Wits + Expression
-&tags.embed.miles_away D:T=demon.guardian.instrumental
+&tags.embed.miles_away D:T=demon.instrumental
 
 &embed.momentum DD=Wits + Science
-&tags.embed.momentum D:T=demon.guardian.instrumental
+&tags.embed.momentum D:T=demon.instrumental
 
 &embed.read_hostility DD=Wits + Subterfuge
-&tags.embed.read_hostility D:T=demon.guardian.instrumental
+&tags.embed.read_hostility D:T=demon.instrumental
 
 &embed.right_tools_right_job DD=WIts + Crafts
-&tags.embed.right_tools_right_job D:T=demon.guardian.instrumental
+&tags.embed.right_tools_right_job D:T=demon.instrumental
 
 &embed.shift_consequences DD=Manipulation + Occult - 
 	<<target:Resolve|target:Composure|target:Stamina>>
-&tags.embed.shift_consequences D:T=demon.guardian.instrumental
+&tags.embed.shift_consequences D:T=demon.instrumental
 
 &embed.strike_first DD=Wits + Brawl
-&tags.embed.strike_first D:T=demon.guardian.instrumental
+&tags.embed.strike_first D:T=demon.instrumental
 
 &embed.synthesis DD=Wits + Investigation
-&tags.embed.synthesis D:T=demon.guardian.instrumental
+&tags.embed.synthesis D:T=demon.instrumental
 
 &embed.tag_and_release DD=Dexterity + Expression
-&tags.embed.tag_and_release D:T=demon.guardian.instrumental
+&tags.embed.tag_and_release D:T=demon.instrumental
 
 &embed.tools_into_toys DD=Manipulation + Crafts
-&tags.embed.tools_into_toys D:T=demon.guardian.instrumental
+&tags.embed.tools_into_toys D:T=demon.instrumental
 
 &embed.turn_blade DD=Wits + Weaponry
-&tags.embed.turn_blade D:T=demon.guardian.instrumental
+&tags.embed.turn_blade D:T=demon.instrumental
 
 
 // -- EMBED: MUNDANE -----------------------------------------------------------
 
 &embed.alibi DD=Manipulation + Stealth
-&tags.embed.alibi D:T=demon.psychopomp.mundane
+&tags.embed.alibi D:T=demon.mundane
 
 &embed.authorize DD=Manipulation + Intimidation - <<target:Intelligence>>
-&tags.embed.authorize D:T=demon.psychopomp.mundane
+&tags.embed.authorize D:T=demon.mundane
 
 &embed.cuckoo's_egg DD=Dexterity + Larceny
-&tags.embed.cuckoo's_egg D:T=demon.psychopomp.mundane
+&tags.embed.cuckoo's_egg D:T=demon.mundane
 
 &embed.diversion DD=Manipulation + Expression
-&tags.embed.diversion D:T=demon.psychopomp.mundane
+&tags.embed.diversion D:T=demon.mundane
 
 &embed.don't_i_know_you? DD=Manipulation + Subterfuge - <<target:Resolve>>
-&tags.embed.don't_i_know_you? D:T=demon.psychopomp.mundane
+&tags.embed.don't_i_know_you? D:T=demon.mundane
 
 &embed.earworm DD=Manipulation+Expression-Composure
-&tags.embed.earworm D:T=demon.psychopomp.mundane
+&tags.embed.earworm D:T=demon.mundane
 
 &embed.homogenous_memory DD=Manipulation + Subterfuge - <<target:Resolve>>
-&tags.embed.homogenous_memory D:T=demon.psychopomp.mundane
+&tags.embed.homogenous_memory D:T=demon.mundane
 
 &embed.identity_theft DD=Manipulation + Subterfuge
-&tags.embed.identity_theft D:T=demon.psychopomp.mundane
+&tags.embed.identity_theft D:T=demon.mundane
 
 &embed.idle_conversation DD=Manipulation + Socialize
-&tags.embed.idle_conversation D:T=demon.psychopomp.mundane
+&tags.embed.idle_conversation D:T=demon.mundane
 
 &embed.in_my_pocket DD=Dexterity + Larceny
-&tags.embed.in_my_pocket D:T=demon.psychopomp.mundane
+&tags.embed.in_my_pocket D:T=demon.mundane
 
 &embed.interference DD=Manipulation + Subterfuge
-&tags.embed.interference D:T=demon.psychopomp.mundane
+&tags.embed.interference D:T=demon.mundane
 
 &embed.last_place_you_look DD=Wits + Larceny
-&tags.embed.last_place_you_look D:T=demon.psychopomp.mundane
+&tags.embed.last_place_you_look D:T=demon.mundane
 
 &embed.living_recorder DD=Manipulation + Investigation
-&tags.embed.living_recorder D:T=demon.psychopomp.mundane
+&tags.embed.living_recorder D:T=demon.mundane
 
 &embed.lost_in_the_crowd DD=Wits + Stealth
-&tags.embed.lost_in_the_crowd D:T=demon.psychopomp.mundane
+&tags.embed.lost_in_the_crowd D:T=demon.mundane
 
 &embed.meaninglessness DD=Manipulation + Academics
-&tags.embed.meaninglessness D:T=demon.psychopomp.mundane
+&tags.embed.meaninglessness D:T=demon.mundane
 
 &embed.never_here DD=Manipulation + Stealth - <<target:Resolve>>
-&tags.embed.never_here D:T=demon.psychopomp.mundane
+&tags.embed.never_here D:T=demon.mundane
 
 &embed.occam's_razor DD=Manipulation + Persuasion
-&tags.embed.occam's_razor D:T=demon.psychopomp.mundane
+&tags.embed.occam's_razor D:T=demon.mundane
 
 &embed.quick_change DD=Manipulation + Subterfuge
-&tags.embed.quick_change D:T=demon.psychopomp.mundane
+&tags.embed.quick_change D:T=demon.mundane
 
 &embed.unperson DD=Manipulation + Subterfuge - <<target:Composure>>
-&tags.embed.unperson D:T=demon.psychopomp.mundane
+&tags.embed.unperson D:T=demon.mundane
 
 &embed.without_a_trace DD=Manipulation + Investigation
-&tags.embed.without_a_trace D:T=demon.psychopomp.mundane
+&tags.embed.without_a_trace D:T=demon.mundane
 
 
 // -- EMBED: VOCAL -------------------------------------------------------------
 
 &embed.across_a_crowded_room DD=Manipulation + Subterfuge
-&tags.embed.across_a_crowded_room D:T=demon.messenger.vocal
+&tags.embed.across_a_crowded_room D:T=demon.vocal
 
 &embed.animal_communication DD=Manipulation + Animal Ken
-&tags.embed.animal_communication D:T=demon.messenger.vocal
+&tags.embed.animal_communication D:T=demon.vocal
 
 &embed.animal_messenger DD=Manipulation + Animal Ken
-&tags.embed.animal_messenger D:T=demon.messenger.vocal
+&tags.embed.animal_messenger D:T=demon.vocal
 
 &embed.borrowed_expertise DD=Manipulation + <<Skill Granted>>
-&tags.embed.borrowed_expertise D:T=demon.messenger.vocal
+&tags.embed.borrowed_expertise D:T=demon.vocal
 
 &embed.common_misconception DD=Manipulation + Science
-&tags.embed.common_misconception D:T=demon.messenger.vocal
+&tags.embed.common_misconception D:T=demon.vocal
 
 &embed.eavesdrop DD=Wits + Empathy
-&tags.embed.eavesdrop D:T=demon.messenger.vocal
+&tags.embed.eavesdrop D:T=demon.vocal
 
 &embed.everbody_knows DD=Manipulation + Subterfuge
-&tags.embed.everybody_knows D:T=demon.messenger.vocal
+&tags.embed.everybody_knows D:T=demon.vocal
 
 &embed.find_the_leak DD=Wits + Empathy
-&tags.embed.find_the_leak D:T=demon.messenger.vocal
+&tags.embed.find_the_leak D:T=demon.vocal
 
 &embed.freudian_slip DD=Manipulation + Empathy
-&tags.embed.freudian_slip D:T=demon.messenger.vocal
+&tags.embed.freudian_slip D:T=demon.vocal
 
 &embed.heart's_desire DD=Wits + Empathy - <<target:Composure>>
-&tags.embed.heart's_desire D:T=demon.messenger.vocal
+&tags.embed.heart's_desire D:T=demon.vocal
 
 &embed.marco_polo DD=Manipulation + Persuasion - <<target:Composure>>
-&tags.embed. DD=demon.messenger.vocal
+&tags.embed. DD=demon.vocal
 
 &embed.mercury_retrograde DD=Manipulation + Subterfuge - <<room:Wits>>
-&tags.embed.mercury_retrograde D:T=demon.messenger.vocal
+&tags.embed.mercury_retrograde D:T=demon.vocal
 
 &embed.muse DD=Manipulation + Expression - <<target:Resolve>>
-&tags.embed.muse D:T=demon.messenger.vocal
+&tags.embed.muse D:T=demon.vocal
 
 &embed.recurring_hallucinations DD=Manipulations + Occult - Resolve
-&tags.embed.recurring_hallucinations D:T=demon.messenger.vocal
+&tags.embed.recurring_hallucinations D:T=demon.vocal
 
 &embed.social_dynamics DD=Wits + Socialize
-&tags.embed.social_dynamics D:T=demon.messenger.vocal
+&tags.embed.social_dynamics D:T=demon.vocal
 
 &embed.special_message DD=Manipulation + Expression
-&tags.embed.special_message D:T=demon.messenger.vocal
+&tags.embed.special_message D:T=demon.vocal
 
 &embed.tower_of_babel DD=Manipulation + Socialize
-&tags.embed.tower_of_babel D:T=demon.messenger.vocal
+&tags.embed.tower_of_babel D:T=demon.vocal
 
 &embed.trick_of_the_light DD=Manipulation + Investigation - <<target:Wits>>
-&tags.embed.trick_of_the_light D:T=demon.messenger.vocal
+&tags.embed.trick_of_the_light D:T=demon.vocal
 
 &embed.trust_no_one DD=Manipulation + Subterfuge - <<target:Resolve>>
-&tags.embed.trust_no_one D:T=demon.messenger.vocal
+&tags.embed.trust_no_one D:T=demon.vocal
 
 &embed.voice_of_the_machine DD=Wits + Crafts
-&tags.embed.voice_of_the_machine D:T=demon.messenger.vocal
+&tags.embed.voice_of_the_machine D:T=demon.vocal
 
 
 
