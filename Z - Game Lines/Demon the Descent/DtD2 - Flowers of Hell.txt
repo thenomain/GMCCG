@@ -16,9 +16,8 @@ DtD2: Flowers of Hell
 
 &merit.electromagnetic_linguistics DD=2
 &tags.merit.electromagnetic_linguistics D:T=demon
-&prerequisite.merit.electromagnetic_linguistics dd=
-	u( .has, %0, skill.computers )
-&prereq-text.merit.electromagnetic_linguistics DD=Computers 1+
+&prerequisite.merit.electromagnetic_linguistics dd=u( .has, %0, skill.computer )
+&prereq-text.merit.electromagnetic_linguistics DD=Computer 1+
 
 &merit.high_tolerance DD=1.2
 &tags.merit.high_tolerance D:T=demon
@@ -131,11 +130,11 @@ DtD2: Flowers of Hell
 &tags.embed.call_out DD=demon.instrumental
 &type.embed.call_out DD=string
 
-&embed.data_retrieval DD=Wits+Computers
+&embed.data_retrieval DD=Wits+Computer
 &tags.embed.data_retrieval DD=demon.instrumental
 &type.embed.data_retrieval DD=string
 
-&embed.data_wipe DD=Wits+Copmputers
+&embed.data_wipe DD=Wits+Computer
 &tags.embed.data_wipe DD=demon.instrumental
 &type.embed.data_wipe DD=string
 
