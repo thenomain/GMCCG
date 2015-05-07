@@ -110,15 +110,6 @@ List all agendas that a demon has.
 
 // -- Cover: The Integrity stat for Demons -------------------------------------
 
-// &advantage.cover DD=1.2.3.4.5.6.7.8.9.10
-// &default.advantage.cover DD=7
-// &tags.advantage.cover D:T=integrity.demon
-
-// &advantage.cover_() DD=1.2.3.4.5.6.7.8.9.10|*|*
-// &default.advantage.cover_() DD=7
-// &prerequisite.advantage.cover_() DD=strmatch( %1, ucstr( u( .value_full, %0, bio.full_name )))
-// &prereq-text.advantage.cover_() DD=Cover's <type> must be Full Name
-
 &advantage.cover_() DD=1.2.3.4.5.6.7.8.9.10|*
 &tags.advantage.cover_() D:T=integrity.demon
 
@@ -126,7 +117,8 @@ List all agendas that a demon has.
 &tags.advantage.aether D:T=derived.pool.demon
 &default.advantage.aether DD=derived
 
-&advantage.aether_maximum DD=elements( 10 11 12 13 14 15 20 30 50 100, u( .value, %0, advantage.primum ))
+&advantage.aether_maximum DD=
+	elements( 10 11 12 13 14 15 20 30 50 100, u( .value, %0, advantage.primum ))
 &tags.advantage.aether_maximum D:T=derived.pool.demon
 &default.advantage.aether_maximum DD=derived
 
@@ -189,7 +181,8 @@ List all agendas that a demon has.
 		)), 
 		not( lattr( %0/_merit.multiple_agendas_(*) )
 	)
-&prereq-text.merit.multiple_agendas_() DD=Must be different than current agenda, may not have this merit more than once, may not take if Uncalled
+&prereq-text.merit.multiple_agendas_() DD=Must be different than current agenda, 
+	may not have this merit more than once, may not take if Uncalled
 &tags.merit.multiple_agendas_() D:T=demon.mental
 
 &merit.suborned_infrastructure_() DD=1.2.3
@@ -300,7 +293,8 @@ List all agendas that a demon has.
 &embed.like_i_built_it DD=Wits + Crafts
 &tags.embed.like_i_built_it D:T=demon.guardian.instrumental
 
-&embed.the_map_is_not_the_territory DD=Manipulation + Academics - <<target:Intelligence>>
+&embed.the_map_is_not_the_territory DD=Manipulation + Academics - 
+	<<target:Intelligence>>
 &tags.embed.the_map_is_not_the_territory D:T=demon.guardian.instrumental
 
 &embed.miles_away DD=Wits + Expression
@@ -315,7 +309,8 @@ List all agendas that a demon has.
 &embed.right_tools_right_job DD=WIts + Crafts
 &tags.embed.right_tools_right_job D:T=demon.guardian.instrumental
 
-&embed.shift_consequences DD=Manipulation + Occult - <<target:Resolve|target:Composure|target:Stamina>>
+&embed.shift_consequences DD=Manipulation + Occult - 
+	<<target:Resolve|target:Composure|target:Stamina>>
 &tags.embed.shift_consequences D:T=demon.guardian.instrumental
 
 &embed.strike_first DD=Wits + Brawl
@@ -470,7 +465,8 @@ List all agendas that a demon has.
 &exploit.addictive_presence DD=Presence + Socialize + Primum
 &tags.exploit.addictive_presence D:T=demon
 
-&exploit.affliction DD=Strength + Medicine + Primum vs. <<target:Stamina|target:Resolve>> + <<target:Supernatural Tolerance>>
+&exploit.affliction DD=Strength + Medicine + Primum vs. 
+	<<target:Stamina|target:Resolve>> + <<target:Supernatural Tolerance>>
 &tags.exploit.affliction D:T=demon
 
 &exploit.allies_into_gold DD=Intelligence + Socialize + Primum
@@ -536,7 +532,8 @@ List all agendas that a demon has.
 &exploit.merge DD=Strength + Occult + Primum
 &tags.exploit.merge D:T=demon
 
-&exploit.murder_by_improbability DD=Intelligence + Academics + Primum vs. Presence + Supernatural Tolerance
+&exploit.murder_by_improbability DD=Intelligence + Academics + Primum vs. 
+	Presence + Supernatural Tolerance
 &tags.exploit.murder_by_improbability D:T=demon
 
 &exploit.play_on_words DD=Presence + Expression + Primum
@@ -566,13 +563,16 @@ List all agendas that a demon has.
 &exploit.sermon DD=Presence + Persuasion + Primum
 &tags.exploit.sermon D:T=demon
 
-&exploit.solitary_confinement DD=Strength + Occult + Primum - Resolve + Supernatural Tolerance
+&exploit.solitary_confinement DD=Strength + Occult + Primum - Resolve + 
+	Supernatural Tolerance
 &tags.exploit.solitary_confinement D:T=demon
 
-&exploit.stalking_horse DD=Presence + Expression + Primum vs. Composure + Supernatural Tolerance
+&exploit.stalking_horse DD=Presence + Expression + Primum vs. Composure + 
+	Supernatural Tolerance
 &tags.exploit.stalking_horse D:T=demon
 
-&exploit.stimulus/response DD=Intelligence + Empathy + Primum vs. Resolve + Supernatural Tolerance
+&exploit.stimulus/response DD=Intelligence + Empathy + Primum vs. Resolve + 
+	Supernatural Tolerance
 &tags.exploit.stimulus/response D:T=demon
 
 &exploit.summon DD=Presence + Streetwise + Primum
@@ -966,7 +966,7 @@ a: all embeds and exploits
 				%qa, , , 
 				u( allocated.embeds_and_exploits.%qi ) 
 			))
-		)
+		), 
 
 		setdiff( %qa, %qe ), `, %qe 
 	)
@@ -978,6 +978,9 @@ a: all embeds and exploits
 &allocated.embeds_and_exploits.messenger cg=vocal
 &allocated.embeds_and_exploits.psychopomp cg=mundane
 
+// --
+
+think u( v( d.cg )/allocated.embeds_and_exploits, #220 )
 
 // -----------------------------------------------------------------------------
 // -- Embeds & Explots: Point Count --------------------------------------------
@@ -1027,7 +1030,8 @@ Still faster than 'f.list-stats-tags'
 // -----------------------------------------------------------------------------
 // -- Demonic Form: Point Count ------------------------------------------------
 
-// At character creation, a demon has three Modifications, two Technologies, one // Propulsion, and one Process.
+// At character creation, a demon has three Modifications, two Technologies, one 
+// Propulsion, and one Process.
 
 // --
 
@@ -1083,7 +1087,12 @@ Check for: Demonic Form,
 // A character begins with one Cover at rank 7 and may buy an additional one 
 // for a single Merit dot.
 /* 
-For each Merit a player buys, he should consider whether that Merit specifically describes one of his character’s Covers or the Demon’s Unchained identity. Of particular note are Social Merits — many of these tie heavily into the character’s Covers. Players and Storytellers need to exercise judgment in this regard, as situations exist where most Merits could be Cover- specific. Cover Merits are written down in the specific Cover’s section of the Cover sheet.
+For each Merit a player buys, he should consider whether that Merit specifically 
+describes one of his character’s Covers or the Demon’s Unchained identity. Of 
+particular note are Social Merits — many of these tie heavily into the 
+character’s Covers. Players and Storytellers need to exercise judgment in this 
+regard, as situations exist where most Merits could be Cover- specific. Cover 
+Merits are written down in the specific Cover’s section of the Cover sheet.
 */
 
 
@@ -1098,10 +1107,12 @@ For each Merit a player buys, he should consider whether that Merit specifically
 
 
 
-&bio.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.Loyal.Patient.Peaceful.Righteous.Trustworthy
+&bio.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.
+	Loyal.Patient.Peaceful.Righteous.Trustworthy
 &class.bio.virtue DD=string
 
-&bio.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
+&bio.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.
+	Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
 &class.bio.vice DD=string
 
 
@@ -1341,14 +1352,28 @@ to check from
 
 STIGMATIC CHARACTER CREATION
 
-Stigmatics follow the same rules for mortal character creation found in the World of Darkness Rulebook and this book. In addition, a few extra character traits and options are added to the process.
+Stigmatics follow the same rules for mortal character creation found in the 
+World of Darkness Rulebook and this book. In addition, a few extra character 
+traits and options are added to the process.
 
-• Stigmatic characters begin play with the Unseen Sense (God-Machine) Merit (p. 302) for free. Characters who become stigmatic during play gain the Merit at no cost. Additionally, like demons, stigmatics can see the gears and structures of the God-Machine unveiled.
+• Stigmatic characters begin play with the Unseen Sense (God-Machine) Merit (p. 
+302) for free. Characters who become stigmatic during play gain the Merit at no 
+cost. Additionally, like demons, stigmatics can see the gears and structures of 
+the God-Machine unveiled.
 
-• Every stigmatic character suffers visions, much like those from the Omen Sensitivity merit (p. 299) but completely beyond the stigmatic’s control. Once per chapter, the Storyteller may spontaneously subject a stigmatic character to one such vision, in which case the character gains the Stunned tilt (p. 333) for a single turn and the Spooked Condition (p. 310) in regards to the vision.
+• Every stigmatic character suffers visions, much like those from the Omen 
+Sensitivity merit (p. 299) but completely beyond the stigmatic’s control. Once 
+per chapter, the Storyteller may spontaneously subject a stigmatic character to 
+one such vision, in which case the character gains the Stunned tilt (p. 333) for 
+a single turn and the Spooked Condition (p. 310) in regards to the vision.
 
-• Stigmatic characters gain a single glitch (a major brand or tell; see p. 184 for more details) that cannot be cured, removed, or changed by any means, although it may be suppressed for a scene with a Willpower point. This trait is called stigmata.
+• Stigmatic characters gain a single glitch (a major brand or tell; see p. 184 
+for more details) that cannot be cured, removed, or changed by any means, 
+although it may be suppressed for a scene with a Willpower point. This trait is 
+called stigmata.
 
-• Stigmatic characters begin play with three extra Merit dots to distribute into any of the supernatural Merits on pages 298-302 of this book. They may also use Experiences during play to increase these Merits or purchase new ones.
+• Stigmatic characters begin play with three extra Merit dots to distribute into 
+any of the supernatural Merits on pages 298-302 of this book. They may also use 
+Experiences during play to increase these Merits or purchase new ones.
 
 */
