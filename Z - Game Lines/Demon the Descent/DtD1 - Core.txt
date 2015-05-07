@@ -908,7 +908,6 @@ We're doing this by assuming the last specialty is the Demon specialty.
 */
 
 &f.allocated.specialties.demon CG=last( %1 )
-// &f.allocated.specialties.stigmatic CG=last( %1 )
 
 
 // -----------------------------------------------------------------------------
@@ -919,7 +918,6 @@ We're doing this by assuming the last specialty is the Demon specialty.
 // --
 
 &f.pts-valid?.specialties.demon CG=eq( words( elements( %0, 1, ` )), 1 )
-// &f.pts-valid?.specialties.stigmatic CG=eq( words( elements( %0, 1, ` )), 1 )
 
 
 // -----------------------------------------------------------------------------
@@ -957,7 +955,12 @@ a: all embeds and exploits
 &allocated.embeds_and_exploits cg=
 	strcat( 
 		setq( i, get( %0/_bio.incarnation )), 
-		setq( a, cat( lattr( %0/_embed.* ), lattr( %0/_exploit.* ))), 
+		setq( a, 
+			cat( 
+				edit( lattr( %0/_embed.* ), _EMBED., EMBED. ), 
+				edit( lattr( %0/_exploit.* ), _EXPLOIT., EXPLOIT. )
+			)
+		), 
 
 // this is faster than 'f.list-stats-tags' in '8a - Setup'
 		setq( e, 
