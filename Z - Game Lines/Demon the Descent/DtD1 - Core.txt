@@ -1072,13 +1072,19 @@ Check for: Demonic Form,
 			titlestr( %i0 ), |, %,%b 
 		), %r, 
 		%b %b%b, %(one cover at 7 with the current Full Name%), %b, 
+// Covers: <primum>, 1 with current Full Name, both at 7
+// Extra cover costs 1 Merit dot
 		u( display.check.ok-no, u( f.pts-valid?.integrity.demon, %0 )), %r,
 		
 	)
 
 
 
-
+// A character begins with one Cover at rank 7 and may buy an additional one 
+// for a single Merit dot.
+/* 
+For each Merit a player buys, he should consider whether that Merit specifically describes one of his character’s Covers or the Demon’s Unchained identity. Of particular note are Social Merits — many of these tie heavily into the character’s Covers. Players and Storytellers need to exercise judgment in this regard, as situations exist where most Merits could be Cover- specific. Cover Merits are written down in the specific Cover’s section of the Cover sheet.
+*/
 
 
 
@@ -1126,13 +1132,13 @@ to check from
 
 &xp.advantage.primum XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
 
-&xp.advantage.cover XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
+&xp.advantage.cover_() XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 
 &xp.embed XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 &xp.exploit XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 
-&d.restricted.types.demon xpas=exploit embed tell
-&d.restricted.stats.demon xpas=advantage.cover_(*) advantage.aether
+&d.restricted.types.demon [v( d.xpas )]=exploit embed
+&d.restricted.stats.demon [v( d.xpas )]=advantage.cover_(*) advantage.aether
 
 
 /*
