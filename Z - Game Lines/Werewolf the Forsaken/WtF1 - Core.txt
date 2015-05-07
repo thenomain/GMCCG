@@ -1714,14 +1714,6 @@ t: tribe
 &check.gifts [v( d.cg )]=
 	strcat( 
 		setq( g, u( f.allocated.gifts, %0 )), 
-		setq( a, u( v( d.dd )/.value_full, %0, bio.auspice )), 
-		setq( r, 
-			filter( v( d.sfp )/fil.list-stats-tags, 
-				lattr( v( d.dd )/renown.* ), , , %qa 
-			)
-		), 
-		setq( v, u( v( d.dd )/.value, %0, %qr )), 
-		setq( t, u( v( d.dd )/.value_full, %0, bio.tribe )), 
 
 		wdivider( Chargen Levels: Gifts ), %r, 
 
@@ -1730,9 +1722,6 @@ t: tribe
 		u( check.gifts.tribe, %0, %qg ), 
 		u( check.gifts.wolf, %0, %qg ), 
 		u( check.gifts.other, %0, %qg ), 
-
-
-
 	)
 
 // -- 
@@ -1744,10 +1733,19 @@ think u( v( d.cg )/check.gifts, %# )
 
 &check.gifts.moon [v( d.cg )]=
 	strcat( 
+		setq( a, u( v( d.dd )/.value_full, %0, bio.auspice )), 
+		setq( r, 
+			filter( v( d.sfp )/fil.list-stats-tags, 
+				lattr( v( d.dd )/renown.* ), , , %qa 
+			)
+		), 
+		setq( v, u( v( d.dd )/.value, %0, %qr )), 
+		setq( x, elements( %1, 1, ` )), 
+		setq( k, eq( words( %qx ), 1 )), 
+
 		%b%b, 
 		ansi( h, Moon Gift ), :, %b, 
-		titlestr( edit( itemize( setr( x, elements( %1, 1, ` ))), _, %b )), %b, 
-		setq( k, eq( words( %qx ), 1 )), 
+		titlestr( edit( itemize( %qx ), _, %b )), %b, 
 		u( display.check.ok-no, %qk ), 
 		if( %qk, 
 			strcat( 
@@ -1771,10 +1769,13 @@ think u( v( d.cg )/check.gifts, %# )
 
 &check.gifts.auspice [v( d.cg )]=
 	strcat( 
+		setq( t, u( v( d.dd )/.value_full, %0, bio.tribe )), 
+		setq( x, elements( %1, 2, ` )), 
+		setq( k, eq( words( %qx ), 1 )), 
+
 		%b%b, 
 		ansi( h, Shadow Gift%, Auspice ), :, %b, 
-		titlestr( edit( itemize( setr( x, elements( %1, 2, ` ))), _, %b )), %b, 
-		setq( k, eq( words( %qx ), 1 )), 
+		titlestr( edit( itemize( %Qx ), _, %b )), %b, 
 		%(of one%), %b, 
 		u( display.check.ok-no, %qk ), 
 		if( %qk, 
