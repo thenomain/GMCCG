@@ -80,40 +80,19 @@ Stuff we need to put on the Data Dictionary
 &tags.bio.auspice D:T=werewolf
 
 &bio.tribe DD=
-	Blood Talons.Bone Shadows.Hunters in Darkness.Iron Masters.Storm Lords.Ghost Wolves
+	Blood Talons.Bone Shadows.Hunters in Darkness.Iron Masters.Storm Lords.
+	Ghost Wolves
 &default.bio.tribe DD=Ghost Wolves
 &tags.bio.tribe D:T=werewolf
 
-/*
-auspice offers you a free dot of one of three Skills and one of your starting Renown dots
 
-Cahalith: Crafts, Expression, and Persuasion; Glory
-Elodoth: Empathy, Investigation, and Politics; Honor
-Irraka: Larceny, Stealth, and Subterfuge; Cunning
-Ithaeur: Animal Ken, Medicine, and Occult; Wisdom
-Rahu: Brawl, Intimidation, and Survival; Purity
-
-each tribe has an associated Renown; mark a dot in that Renown
-
-Blood Talons: Inspiration, Rage, Strength; Glory
-Bone Shadows: Death, Elemental, and Insight; Wisdom
-Hunters in Darkness: Nature, Stealth, and Warding; Purity
-Iron Masters: Knowledge, Shaping, and Technology; Cunning
-Storm Lords: Evasion, Dominance, and Weather; Honor
-
-renown: 1 for auspice, 1 for tribe, 1 chosen any
-
-*/
 
 /*
-== DATA DICTIONARY =======
+================================================================================
+== DATA DICTIONARY =============================================================
 
 Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 	.Auspice_Skills	(?? should this be in cgen?)
-
-	.Rites_Check	Can they take "this" rite?
-	.Gifts_Check	Can they take "this" gift "that" high?
-	.Renown_Check	Can they take "this" renown "that" high?
 
 	0: sheet dbref
 	1: statpath to check
@@ -471,7 +450,10 @@ Effective Rank.
 &merit.favored_form_() DD=1.2.3.4.5|Dalu.Gauru.Urshul.Urhan|*
 &prerequisite.merit.favored_form_() DD=
 	cand( 
-		u( .at_least_stat, %0, merit.favored_form_(%1), advantage.primal_urge + 1, %2 ), 
+		u( .at_least_stat, %0, 
+			merit.favored_form_(%1), 
+			advantage.primal_urge + 1, %2 
+		), 
 		not( 
 			setdiff( 
 				lattr( %0/_merit.favored_form_(*)), 
@@ -567,7 +549,7 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 &prereq-text.merit.weakest_link DD=Tribe is Blood Talon
 &tags.merit.weakest_link D:T=werewolf.blood talon.social
 
-// -- Merits: Fighting Merits ------------------------------------------------------------
+// -- Merits: Fighting Merits --------------------------------------------------
 
 &merit.call_out DD=2
 &prerequisite.merit.call_out DD=
@@ -723,9 +705,6 @@ Vampire also uses the 'rite' stat type, and it's also always a 'flag'.
 incarnation
 agenda
 
-
-
-
 --------------------------------------------------------------------------------
 -- Bio Check: Wolf-Blooded -----------------------------------------------------
 
@@ -733,10 +712,6 @@ agenda
 */
 
 &check.bio.wolf-blooded cg=
-
-
-
-
 
 
 /*
@@ -937,7 +912,6 @@ one free merit.tell_()
 		setq( t, 
 			strcat( 
 				rest( first( %qr, : ), . ), 
-//				if( cand( t( setr( z, first( first( %qr, : ), . ))), not( isint( %qz ))), 
 				if( t( setr( z, first( first( %qr, : ), . ))), 
 					strcat( 
 						%b, %(, first( first( %qr, : ), . ), %)
@@ -973,7 +947,10 @@ one free merit.tell_()
 				setq( w, 38 ), setq( t, 38 ), 
 
 				setq( y, 
-					iter( %qx, u( display.trait-name-only, %i0, %qt, %qw, flag ), |, | )
+					iter( %qx, 
+						u( display.trait-name-only, %i0, %qt, %qw, flag ), 
+						|, | 
+					)
 				), 
 				setq( a, words( %qx, | )), 
 				setq( b, ceil( fdiv( %qa, 2 ))), 
@@ -1189,7 +1166,8 @@ one free merit.tell_()
 
 &gift.gift_of_knowledge DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Needle.This Story is True.Know Thy Prey.Lore of the Land.Sift the Sands
+	Unlocked.Needle.This Story is True.Know Thy Prey.Lore of the Land.
+	Sift the Sands
 &prerequisite.gift.gift_of_knowledge DD=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_knowledge, %2 )
 &prereq-text.gift.gift_of_knowledge DD=
@@ -1256,7 +1234,8 @@ one free merit.tell_()
 
 &gift.gift_of_warding DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Maze Ward.Ward the Wolf's Den.All Doors Locked.Predator's Claim.Boundary Ward
+	Unlocked.Maze Ward.Ward the Wolf's Den.All Doors Locked.
+	Predator's Claim.Boundary Ward
 &prerequisite.gift.gift_of_warding DD=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_warding, %2 )
 &prereq-text.gift.gift_of_warding DD=Must have Renown of the Facet entered (%2), 
@@ -1303,109 +1282,14 @@ one free merit.tell_()
 
 
 
-
-
-
-
-
-/*
-################################################################################
-## WEREWOLF: ONGOING NOTES #####################################################
-
-Willpower is equal to Resolve + Composure. Harmony is 7. Size is 5. Health is Size + Stamina. Speed is Size + Strength + Dexterity. Defense is the lower of Dexterity and Wits, plus Athletics. Primal Urge is 1, plus any bought with Merits.
-
-Primal Urge starts at 1 dot. Additional dots may be purchased with five Merit dots each. A character cannot start with Primal Urge higher than 3.
-
-Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the second Facet of your Moon Gift if you have two dots in your auspice Renown. You cannot choose a Facet in which your character has no dots of Renown.
-
---
-
-Auspice :: Auspice Skills :: Renown :: Gifts
-
-Cahalith :: Crafts, Expression, Persuasion :: Glory :: Gibbous Moon, Inspiration, Knowledge
-
-Elodoth :: Empathy, Investigation, Politics :: Honor :: Half Moon, Insight, Warding
-
-Irraka :: Larceny, Stealth, Subterfuge :: Cunning :: New Moon, Evasion, Stealth
-
-Ithaeur :: Animal Ken, Medicine, Occult :: Wisdom :: Crescent Moon, Elemental, Shaping
-
-Rahu :: Brawl, Intimidation, Survival :: Purity :: Full Moon, Dominance, Strength
-
---
-
-Tribe :: Renown :: Gifts
-
-Blood Talons :: Glory :: Inspiration, Rage, Strength
-Bone Shadows :: Wisdom :: Death, Elemental, Insight
-Hunters in Darkness :: Purity :: Nature, Stealth, Warding
-Iron Masters :: Cunning :: Knowledge, Shaping, Technology
-Storm Lords :: Honor :: Evasion, Dominance, Weather
-Ghost Wolves :: None :: None 
-
---
-
-Anchors: 
-Anchors keep Uratha grounded. They’re concepts, philosophies, people, places, and things that help her find herself when lost. Werewolf: The Forsaken characters have three Anchors: Blood, Bone, and Touchstones
-
-Blood: thingy
-Bone: thingy
-Touchstone: thingy
-
---
-
-AUSPICE
-From a character creation standpoint, auspice offers you a free dot of one of 
-three Skills, and one of your starting Renown dots. You can choose any of the 
-three auspice Skills, but this free dot cannot take the Skill beyond five dots. 
-Mark the Renown dot in the relevant Renown category.
-
-TRIBE
-Each tribe has an associated Renown. Mark a dot in that Renown.
-
-GIFTS AND RITES
-Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two 
-Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the 
-second Facet of your Moon Gift if you have two dots in your auspice Renown. You 
-cannot choose a Facet in which your character has no dots of Renown.
-
-	Aspirations 3 + 1 Totem
-	Attributes 5/4/3
-	Skills 11/7/4 (+3 Specialties)
-	Auspice, Tribe
-	Primal Urge 1
-	Renown 1 auspice, 1 tribe, 1 free
-	1 Moon Gift, 2 Shadow Gifts, 1 Moon/Wolf Gift
-	Merits 10
-
---
-
-Wolf-Blooded: p. 296
-
---
-
-Primal Urge chart: p.93
-Shapeshifting chart: p.96
-Renown (& effective rank): p.98-9
-Harmony: p.104
-Merits: pp.105-110
-Gifts: p.114
-
-*/
-
-
-
 /* 
 ################################################################################
-## WEREWOLF CHARGEN (working copy)  ############################################
+## WEREWOLF CHARGEN ############################################################
 
 Yeah, let's see how this works.
 
-*/
 
 
-
-/*
 ================================================================================
 == CHARGEN: ALLOCATIONS ========================================================
 
@@ -1415,7 +1299,7 @@ Yeah, let's see how this works.
 
 &f.allocated.power-trait.werewolf [v(d.cg)]=
 	mul( 
-		dec( first( get( %0/_advantage.primal_urge ), . )), 
+		dec( u( v( d.dd )/.value, %0, advantage.primal_urge )), 
 		5 
 	)
 
@@ -1511,6 +1395,7 @@ moon gift`shadow gift (auspice)`shadow gift (tribe)`other gifts (probably wolf)
 
 &f.allocated.gifts.wolf [v( d.cg )]=ulocal( f.list-stats-tags, %0, gift, wolf )
 
+
 /*
 --------------------------------------------------------------------------------
 -- Allocated Rites -------------------------------------------------------------
@@ -1528,8 +1413,6 @@ Total points in rites (should be 2)
 
 
 
-
-
 /*
 ================================================================================
 == CHARGEN: BIO ================================================================
@@ -1540,6 +1423,7 @@ Total points in rites (should be 2)
 */
 
 &check.bio.werewolf cg=blood bone auspice tribe
+
 
 
 /* 
@@ -1663,17 +1547,27 @@ y: temp number of renown allowed
 			)
 		), 
 		setq( c, edit( lattr( %0/_renown.* ), _RENOWN., )), 
+		setq( t, 0 ), 
 
 		wdivider( Chargen Levels: Renown ), %r, 
 		iter( setunion( %qc, %qa ), 
 			strcat( 
 				%b%b, 
 				ansi( h, titlestr( %i0 )), :, %b, 
-				setr( x, default( %0/_renown.%i0, 0 )), /, 
-				setr( y, words( graball( %qa, %i0 ))), 
-				%b, u( display.check.ok-no, eq( %qx, %qy )), 
+				setr( x, default( %0/_renown.%i0, 0 )), 
+				setq( t, add( %qt, %qx )), 
+				if( 
+					cand( 
+						t( match( %qa, %i0 )), 
+						lt( %qx, 1 )
+					), 
+					ansi( n, %b%[, r, must exist, n, %] )
+				), 
 			), , %r 
 		), %r, 
+		%b%b, ansi( h, Points Spent ), : %qt/3, 
+		%b, u( display.check.ok-no, eq( %qt, 3 )), 
+		%r, 
 	)
 
 /*
@@ -1895,3 +1789,112 @@ think u( v( d.cg )/check.gifts, %# )
 		%r 
 	)
 
+
+
+
+
+
+
+
+/*
+################################################################################
+## WEREWOLF: ONGOING NOTES #####################################################
+
+Willpower is equal to Resolve + Composure. Harmony is 7. Size is 5. Health is Size + Stamina. Speed is Size + Strength + Dexterity. Defense is the lower of Dexterity and Wits, plus Athletics. Primal Urge is 1, plus any bought with Merits.
+
+Primal Urge starts at 1 dot. Additional dots may be purchased with five Merit dots each. A character cannot start with Primal Urge higher than 3.
+
+Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the second Facet of your Moon Gift if you have two dots in your auspice Renown. You cannot choose a Facet in which your character has no dots of Renown.
+
+--
+
+Cahalith: 
+	Crafts, Expression, and Persuasion
+	Glory
+	Gibbous Moon, Inspiration, Knowledge
+Elodoth: 
+	Empathy, Investigation, and Politics
+	Honor
+	Half Moon, Insight, Warding
+Irraka: 
+	Larceny, Stealth, and Subterfuge
+	Cunning
+	New Moon, Evasion, Stealth
+Ithaeur: 
+	Animal Ken, Medicine, and Occult
+	Wisdom
+	Crescent Moon, Elemental, Shaping
+Rahu: 
+	Brawl, Intimidation, and Survival
+	Purity
+	Full Moon, Dominance, Strength
+
+each tribe has an associated Renown; mark a dot in that Renown
+
+Blood Talons: 
+	Glory
+	Inspiration, Rage, Strength
+Bone Shadows: 
+	Wisdom
+	Death, Elemental, and Insight
+Hunters in Darkness: 
+	Purity
+	Nature, Stealth, and Warding
+Iron Masters: 
+	Cunning
+	Knowledge, Shaping, and Technology
+Storm Lords: 
+	Honor
+	Evasion, Dominance, and Weather
+
+--
+
+Anchors: 
+Anchors keep Uratha grounded. They’re concepts, philosophies, people, places, 
+and things that help her find herself when lost. Werewolf: The Forsaken 
+characters have three Anchors: Blood, Bone, and Touchstones
+
+Blood: thingy
+Bone: thingy
+Touchstone: thingy
+
+--
+
+AUSPICE
+From a character creation standpoint, auspice offers you a free dot of one of 
+three Skills, and one of your starting Renown dots. You can choose any of the 
+three auspice Skills, but this free dot cannot take the Skill beyond five dots. 
+Mark the Renown dot in the relevant Renown category.
+
+TRIBE
+Each tribe has an associated Renown. Mark a dot in that Renown.
+
+GIFTS AND RITES
+Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two 
+Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the 
+second Facet of your Moon Gift if you have two dots in your auspice Renown. You 
+cannot choose a Facet in which your character has no dots of Renown.
+
+	Aspirations 3 + 1 Totem
+	Attributes 5/4/3
+	Skills 11/7/4 (+3 Specialties)
+	Auspice, Tribe
+	Primal Urge 1
+	Renown 1 auspice, 1 tribe, 1 free
+	1 Moon Gift, 2 Shadow Gifts, 1 Moon/Wolf Gift
+	Merits 10
+
+--
+
+Wolf-Blooded: p. 296
+
+--
+
+Primal Urge chart: p.93
+Shapeshifting chart: p.96
+Renown (& effective rank): p.98-9
+Harmony: p.104
+Merits: pp.105-110
+Gifts: p.114
+
+*/
