@@ -853,7 +853,7 @@ one free merit.tell_()
 					|, %r  
 				), 
 			), , %r 
-		), 
+		), %r, 
 
 // .. rites, if any 
 		setq( x, u( powers.rites.werewolf, %0 )), 
@@ -862,7 +862,10 @@ one free merit.tell_()
 				setq( w, 38 ), setq( t, 38 ), 
 
 				setq( y, 
-					iter( %qx, u( display.trait-name-only, %i0, %qt, %qw, flag ), |, | )
+					iter( %qx, 
+						u( display.trait-name-only, %i0, %qt, %qw, flag ), 
+						|, | 
+					)
 				), 
 				setq( a, words( %qx, | )), 
 				setq( b, ceil( fdiv( %qa, 2 ))), 
