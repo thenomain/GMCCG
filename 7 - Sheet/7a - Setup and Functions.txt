@@ -87,7 +87,7 @@ Here we're starting to use '.sheet.<pref>' as a way to set preferences.
 
 --
 
-&c.sheet nsc=$^\+?sheet( [^ ]+)?$:
+&c.sheet [v( d.nsc )]=$^\+?sheet( [\s\S]+)?$:
 	think cat( 
 		target:, setr( t, if( t( %1 ), trim( %1 ), %# )), %r, 
 		pmatch:, setr( p, pmatch( %qt )), %r, 
