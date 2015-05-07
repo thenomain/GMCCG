@@ -1101,7 +1101,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.moon, %0, Rahu, gift.full_moon's_gift, %2 )
 &prereq-text.gift.full_moon's_gift DD=
 	Auspice is Rahu, must be set or unset in order
-&tags.gift.full_moon's_gift D:T=werewolf.rahu
+&tags.gift.full_moon's_gift D:T=werewolf.moon.rahu
 
 &gift.gibbous_moon's_gift DD=1.2.3.4.5|
 	War Howl.Voice of Glory.Dream Hunter.Thousand-Throat Howl.End of Story
@@ -1146,7 +1146,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_dominance, %2 )
 &prereq-text.gift.gift_of_dominance DD=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_dominance D:T=werewolf.shadow.storm lords
+&tags.gift.gift_of_dominance D:T=werewolf.shadow.rahu.storm lords
 
 &gift.gift_of_the_elementals DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1156,7 +1156,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_the_elementals, %2 )
 &prereq-text.gift.gift_of_the_elementals DD=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_the_elementals D:T=werewolf.shadow.bone shadows
+&tags.gift.gift_of_the_elementals D:T=werewolf.shadow.ithaeur.bone shadows
 
 &gift.gift_of_evasion DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1165,7 +1165,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_evasion, %2 )
 &prereq-text.gift.gift_of_evasion DD=Must have Renown of the Facet entered (%2), 
 	and must have 'Unlock'.
-&tags.gift.gift_of_evasion D:T=werewolf.shadow.storm lords
+&tags.gift.gift_of_evasion D:T=werewolf.shadow.irraka.storm lords
 
 &gift.gift_of_insight DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1175,7 +1175,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_insight, %2 )
 &prereq-text.gift.gift_of_insight DD=Must have Renown of the Facet entered (%2), 
 	and must have 'Unlock'.
-&tags.gift.gift_of_insight D:T=werewolf.shadow.bone shadows
+&tags.gift.gift_of_insight D:T=werewolf.shadow.elodoth.bone shadows
 
 &gift.gift_of_inspiration DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1185,7 +1185,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_inspiration, %2 )
 &prereq-text.gift.gift_of_inspiration DD=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_inspiration D:T=werewolf.shadow.blood talons
+&tags.gift.gift_of_inspiration D:T=werewolf.shadow.cahalith.blood talons
 
 &gift.gift_of_knowledge DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1194,7 +1194,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_knowledge, %2 )
 &prereq-text.gift.gift_of_knowledge DD=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_knowledge D:T=werewolf.shadow.iron masters
+&tags.gift.gift_of_knowledge D:T=werewolf.shadow.cahalith.iron masters
 
 &gift.nature's_gift DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1223,7 +1223,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_shaping, %2 )
 &prereq-text.gift.gift_of_shaping DD=Must have Renown of the Facet entered (%2), 
 	and must have 'Unlock'.
-&tags.gift.gift_of_shaping D:T=werewolf.shadow.iron masters
+&tags.gift.gift_of_shaping D:T=werewolf.shadow.ithaeur.iron masters
 
 &gift.gift_of_stealth DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1233,7 +1233,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_stealth, %2 )
 &prereq-text.gift.gift_of_stealth DD=Must have Renown of the Facet entered (%2), 
 	and must have 'Unlock'.
-&tags.gift.gift_of_stealth D:T=werewolf.shadow.hunters in darkness
+&tags.gift.gift_of_stealth D:T=werewolf.shadow.irraka.hunters in darkness
 
 &gift.gift_of_strength DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1243,7 +1243,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_strength, %2 )
 &prereq-text.gift.gift_of_strength DD=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_strength D:T=werewolf.shadow.blood talons
+&tags.gift.gift_of_strength D:T=werewolf.shadow.rahu.blood talons
 
 &gift.gift_of_technology DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1261,7 +1261,7 @@ one free merit.tell_()
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_warding, %2 )
 &prereq-text.gift.gift_of_warding DD=Must have Renown of the Facet entered (%2), 
 	and must have 'Unlock'.
-&tags.gift.gift_of_warding D:T=werewolf.shadow.hunters in darkness
+&tags.gift.gift_of_warding D:T=werewolf.shadow.elodoth.hunters in darkness
 
 &gift.gift_of_weather DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
@@ -1281,8 +1281,7 @@ one free merit.tell_()
 	Quicksilver Flesh
 &prerequisite.gift.gift_of_change DD=
 	u( .gifts.facet_check.wolf, %0, gift.gift_of_change, %2 )
-&prereq-text.gift.gift_of_change DD=Must have Renown of the Facet entered (%2) 
-	and must have 'Unlock'.
+&prereq-text.gift.gift_of_change DD=Must have Renown of the Facet entered (%2).
 &tags.gift.gift_of_change D:T=werewolf.wolf
 
 &gift.gift_of_hunting DD=
@@ -1290,8 +1289,7 @@ one free merit.tell_()
 	Honed Senses.Cow the Prey.Beast Talker.Tireless Hunter.Impossible Spoor
 &prerequisite.gift.gift_of_hunting DD=
 	u( .gifts.facet_check.wolf, %0, gift.gift_of_hunting, %2 )
-&prereq-text.gift.gift_of_hunting DD=Must have Renown of the Facet entered (%2) 
-	and must have 'Unlock'.
+&prereq-text.gift.gift_of_hunting DD=Must have Renown of the Facet entered (%2).
 &tags.gift.gift_of_hunting D:T=werewolf.wolf
 
 &gift.gift_of_pack DD=
@@ -1299,8 +1297,7 @@ one free merit.tell_()
 	Reflected Facets.Down the Prey.Totem's Wrath.Maw of Madness.Pack Awareness
 &prerequisite.gift.gift_of_pack DD=
 	u( .gifts.facet_check.wolf, %0, gift.gift_of_pack, %2 )
-&prereq-text.gift.gift_of_pack DD=Must have Renown of the Facet entered (%2) 
-	and must have 'Unlock'.
+&prereq-text.gift.gift_of_pack DD=Must have Renown of the Facet entered (%2).
 &tags.gift.gift_of_pack D:T=werewolf.wolf
 
 
@@ -1511,22 +1508,7 @@ moon gift`shadow gift (auspice)`shadow gift (tribe)`other gifts (probably wolf)
 
 // --
 
-&f.allocated.gifts.wolf [v( d.cg )]=
-	localize( strcat( 
-		setq( g, lattr( v( d.dd )/gift.* )), 
-		setq( m, 
-			filter( 
-				v( d.sfp )/fil.list-stats-tags, %qg, , , 
-				wolf.[get( %0/_bio.tribe )], 1 
-			)
-		), 
-		setq( c, 
-			u( f.list-stats-tags, 
-				%0, gift, wolf.[get( %0/_bio.tribe )], and 
-			)
-		), 
-		setinter( %qm, %qc )
-	))
+&f.allocated.gifts.wolf [v( d.cg )]=ulocal( f.list-stats-tags, %0, gift, wolf )
 
 /*
 --------------------------------------------------------------------------------
@@ -1576,7 +1558,7 @@ Should be easier than 'favored attribute':
 */
 
 &check.chargen.skills.werewolf [v( d.cg )]=
-	localize( strcat( 
+  localize( strcat( 
 		setq( a, v( d.werewolf.auspice_skills.[get( %0/_bio.auspice )] )), 
 		setq( s, ulocal( f.allocated.skills, %0 )), 
 		setq( k, edit( lattr( %0/_skill.* ), _SKILL., SKILL. )), 
@@ -1604,17 +1586,22 @@ Should be easier than 'favored attribute':
 		), 
 
 		ulocal( f.allocated.skills, %0 ), %b, %(of 11/7/4 + auspice skill%), %b, 
-		ulocal( display.check.stats, %0, skills, skill.%qf:-1 ), %r, 
+		ulocal( display.check.stats, %0, skills, skill.%qf:-1 ), 
+		if( eq( words( %qf ), 0 ), 
+			ansi( n, %b%[, r, but no auspice skill found, n, %] )
+		), 
+		%r, 
 
 		%b %b%b, ansi( h, Auspice Skill ), :, %b, 
 		titlestr( edit( itemize( %qf, , or ), _, %b )), %b, 
 		%[, 
 		case( 1, 
-			eq( words( %qf ), 0 ), ansi( r, none set ), 
+			eq( words( %qf ), 0 ), ansi( r, none found ), 
 			ansi( g, OK )
 		), 
 		%] 
 	))
+
 
 // ... it would be easier if the following could be tagged and we'd 
 // ... use the system created exactly for this kind of thing
@@ -1649,7 +1636,7 @@ think u( [v( d.cg )]/check.chargen.skills.werewolf, pmatch( thenomain ))
 --------------------------------------------------------------------------------
 -- Chargen Check: Renown -------------------------------------------------------
 
-Check that each renown's tags == (auspice + tribe)
+Check that each renown's tags == (auspice + tribe) + 1
 
 This stuff should be in some 'f.allocated.renown' or whatnot, but this 
 will do.
@@ -1720,6 +1707,7 @@ g: allocated gifts: moon`shadow (auspice)`shadow (tribal)`wolf`other/unaccounted
 a: auspice
 r: auspice renown
 v: auspice renown's value
+t: tribe
 
 */
 
@@ -1733,6 +1721,7 @@ v: auspice renown's value
 			)
 		), 
 		setq( v, u( v( d.dd )/.value, %0, %qr )), 
+		setq( t, u( v( d.dd )/.value_full, %0, bio.tribe )), 
 
 		wdivider( Chargen Levels: Gifts ), %r, 
 
@@ -1761,6 +1750,7 @@ v: auspice renown's value
 		ansi( h, Shadow Gift%, Auspice ), :, %b, 
 		titlestr( edit( itemize( setr( x, elements( %qg, 2, ` ))), _, %b )), %b, 
 		setq( k, eq( words( %qx ), 1 )), 
+		%(of one%), %b, 
 		u( display.check.ok-no, %qk ), 
 		if( %qk, 
 			strcat( 
@@ -1782,7 +1772,8 @@ v: auspice renown's value
 
 		%b%b, 
 		ansi( h, Shadow Gift%, Tribe ), :, %b, 
-		titlestr( edit( itemize( setr( x, elements( %qg, 3, ` ))), _, %b )), %b, 
+		titlestr( edit( setr( x, elements( %qg, 3, ` )), %b, %,%b , _, %b )), 
+		%b, 
 		setq( k, 
 			eq( 
 				words( %qx ), 
@@ -1791,6 +1782,7 @@ v: auspice renown's value
 				)
 			)
 		), 
+		%(of, %b, if( strmatch( %qt, Ghost Wolves ), none, one ), %)%b, 
 		u( display.check.ok-no, %qk ), 
 		if( cand( %qk, %qw ), 
 			strcat( 
