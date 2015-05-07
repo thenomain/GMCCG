@@ -1020,12 +1020,10 @@ Still faster than 'f.list-stats-tags'
 		setq( f, 
 			edit( lattr( %0/_demonic_form.* ), _DEMONIC_FORM., DEMONIC_FORM. 
 		)), 
-		iter( modification technology propulsion process, 
-			filter( 
-				u( d.sfp )/f.hastag?.workhorse, 
-				rest( %qf, _ ), , , 
-				%i0
-			), , ` 
+		iter( 
+			modification technology propulsion process, 
+			filter( u( d.sfp )/f.hastag?.workhorse, %qf, , , %i0 ), 
+			, ` 
 		)
 	)
 
@@ -1038,18 +1036,14 @@ Still faster than 'f.list-stats-tags'
 
 // --
 
-&f.pts-valid?.demonic_form cg=
-	strcat( 
-		setq( f, u( allocated.demonic_form, %0 )), 
-		cand( 
-			eq( words( elements( %qf, 1, ` )), 3 ), 
-			eq( words( elements( %qf, 2, ` )), 2 ), 
-			eq( words( elements( %qf, 3, ` )), 1 ), 
-			eq( words( elements( %qf, 4, ` )), 1 )
-		)
-	)
 
+&f.pts-valid?.demonic_form.modification [v( d.cg )]=3
+&f.pts-valid?.demonic_form.technology [v( d.cg )]=2
+&f.pts-valid?.demonic_form.propulsion [v( d.cg )]=1
+&f.pts-valid?.demonic_form.process [v( d.cg )]=1
 
+&f.pts-valid?.demonic_form [v( d.cg )]=
+	eq( %1, v( f.pts-valid?.demonic_form.%0 ))
 
 /*
 ================================================================================
@@ -1066,23 +1060,31 @@ Check for: Demonic Form,
 		u( display.check.ok-no, u( f.pts-valid?.embeds_and_exploits, %0 )), %b, 
 		%r,
 
-		%b, %b, ansi( h, Demonic Form ), :, %b, 
-		setr( 9, 
-			iter( u( allocated.demonic_form, %0 ), 
-				words( %i0 ), `, / 
-			)
-		), %b, (of 3/2/1/1), %b, 
-		u( display.check.ok-no, u( f.pts-valid?.demonic_form, %0 )), %r,
+		setq( f, u( allocated.demonic_form, %0 )), 
+		%b, %b, ansi( h, Demonic Form ), :, %r, 
+		iter( modification technology propulsion process, 
+			strcat( 
+				%b%b %b, 
+				ansi( h, titlestr( %i0 )), :, %b, 
+				setr( x, words( elements( %qf, inum(0), ` ))), /, 
+				v( f.pts-valid?.demonic_form.%i0 ), %b, 
+				u( display.check.ok-no, 
+					u( f.pts-valid?.demonic_form, %i0, %qx )
+				)
+			), , %r 
+		), %r, 
 
 		%b%b, ansi( h, Cover ), :, %b, 
 		iter( u( f.allocated.integrity.demon, %0 ), 
 			titlestr( %i0 ), |, %,%b 
 		), %r, 
 		%b %b%b, %(one cover at 7 with the current Full Name%), %b, 
+
 // Covers: <primum>, 1 with current Full Name, both at 7
 // Extra cover costs 1 Merit dot
+
 		u( display.check.ok-no, u( f.pts-valid?.integrity.demon, %0 )), %r,
-		
+
 	)
 
 
@@ -1164,7 +1166,6 @@ to check from
 
 &bio.default.demon Newest Sheet Code <nsc>=
 	birthdate concept virtue vice template incarnation agenda ring
-
 
 &bio.default.stigmatic Newest Sheet Code <nsc>=
 	birthdate concept ring template virtue vice
@@ -1257,7 +1258,7 @@ to check from
 				|, | 
 			)
 		), 
-		setq( t, 
+		setq( k, 
 			iter( #Technology|
 				[ulocal( powers.demonic-forms.technology, %0 )], 
 				u( display.trait-name-only, %i0, %qt, dec( %qw ), flag ), 
@@ -1281,7 +1282,7 @@ to check from
 		divider( Demonic Forms ), %r, 
 		vcolumns( 
 			%qw:%qm, 
-			[dec( %qw )]:%qt, 
+			[dec( %qw )]:%qk, 
 			%qw:%qp|%qr, 
 			|, 
 			%b 
