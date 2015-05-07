@@ -1502,9 +1502,10 @@ moon gift`shadow gift (auspice)`shadow gift (tribe)`other gifts (probably wolf)
 				%0, gift, shadow.[get( %0/_bio.tribe )], and 
 			)
 		), 
-		setinter( %qm, %qc )
+// take out auspice gifts that have already been accounted for 
+		setq( a, u( f.allocated.gifts.shadow.auspice, %0 )), 
+		setdiff( setinter( %qm, %qc ), %qa )
 	))
-
 
 // --
 
@@ -1769,13 +1770,13 @@ think u( v( d.cg )/check.gifts, %# )
 
 &check.gifts.auspice [v( d.cg )]=
 	strcat( 
-		setq( t, u( v( d.dd )/.value_full, %0, bio.tribe )), 
+		setq( a, u( v( d.dd )/.value_full, %0, bio.auspice )), 
 		setq( x, elements( %1, 2, ` )), 
 		setq( k, eq( words( %qx ), 1 )), 
 
 		%b%b, 
 		ansi( h, Shadow Gift%, Auspice ), :, %b, 
-		titlestr( edit( itemize( %Qx ), _, %b )), %b, 
+		titlestr( edit( itemize( %qx ), _, %b )), %b, 
 		%(of one%), %b, 
 		u( display.check.ok-no, %qk ), 
 		if( %qk, 
