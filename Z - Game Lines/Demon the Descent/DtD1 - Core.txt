@@ -882,14 +882,20 @@ Cover ()
 /*
 --------------------------------------------------------------------------------
 -- Integrity, Demon: Point Count -----------------------------------------------
+
+Character with Primum 1 can opt to have only 1 Cover
+
 */
 
 &f.pts-valid?.integrity.demon [v( d.cg )]=
 	cand( 
-		eq( 
-			words( setr( z, u( f.allocated.integrity.demon, %0 )), | ), 
-			max( 1, u( v( d.dd )/.value, %0, advantage.primum ))
-		), 
+		gte( 
+			lte( 
+				words( setr( z, u( f.allocated.integrity.demon, %0 )), | ), 
+				setr( p, u( v( d.dd )/.value, %0, advantage.primum ))
+			), 
+			1 
+		)
 		land( 
 			iter( %qz, eq( last( %i0, : ), 7 ), | )
 		), 
@@ -1090,6 +1096,7 @@ Merits are written down in the specific Cover’s section of the Cover sheet.
 	strcat( 
 		setq( c, u( f.allocated.integrity.demon, %0 )), 
 		setq( f, u( allocated.demonic_form, %0 )), 
+		setq( p, u( v( d.dd )/.value, %0, advantage.primum )), 
 
 // extra covers costs 1 Merit dot each
 		if( gt( words( %qc, | ), 1 ), 
@@ -1122,12 +1129,16 @@ Merits are written down in the specific Cover’s section of the Cover sheet.
 		), %r, 
 
 // Covers: <primum>, 1 with current Full Name, both at 7
-		setq( p, u( v( d.dd )/.value, %0, advantage.primum )), 
 		%b%b, ansi( h, rest( u( .plural, words( %qc, | ), Cover, Covers ))), :, 
 		%r, %b%b %b, 
 		iter( %qc, titlestr( %i0 ), |, %r%b%b %b ), %r, 
 		%b%b %b, 
-		%(, max( 1, %qp ) at level 7%, one with current Full Name%), %b, 
+		%(, 
+		if( lte( %qp, 1 ), 
+			1, 
+			up to %qp
+		), 
+		%b, at level 7%, one with current Full Name%), %b, 
 		u( display.check.ok-no, u( f.pts-valid?.integrity.demon, %0 )), %r,
 	)
 
