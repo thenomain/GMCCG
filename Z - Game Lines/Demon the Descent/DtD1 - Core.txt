@@ -617,7 +617,7 @@ List all agendas that a demon has.
 &tags.demonic_form.huge_size D:T=demon.modification
 
 &demonic_form.inhuman_intelligence DD=1
-&tags.demonic_form. DD=demon.modification
+&tags.demonic_form.inhuman_intelligence D:T=demon.modification
 
 &demonic_form.inhuman_strength DD=1
 &tags.demonic_form.inhuman_strength D:T=demon.modification
