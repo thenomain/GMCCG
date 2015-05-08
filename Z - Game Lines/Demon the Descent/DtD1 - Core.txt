@@ -835,15 +835,22 @@ primum
 -- Aether: Point Count ---------------------------------------------------------
 
 Counting Merit points for Aether.
+We are also adding 1 merit point per extra Cover, here, to be clarified in 
+the cg/check text.
 
 */
 
-&f.allocated.power-trait.demon CG=
-	max( 
-		0, 
+&f.allocated.power-trait.demon [v( d.cg )]=
+	add( 
+// primum dots
 		mul( 
 			5, 
-			dec( u( v( d.dd )/.value, %0, advantage.primum ))
+			max( dec( u( v( d.dd )/.value, %0, advantage.primum )), 0 )
+		), 
+// extra covers 
+		max( 
+			0, 
+			dec( words( u( f.allocated.integrity.demon, %0 ), | ))
 		)
 	)
 
@@ -1066,10 +1073,34 @@ Still faster than 'f.list-stats-tags'
 ================================================================================
 == CHARGEN CHECK: DEMON ========================================================
 
-Check for: Demonic Form, 
+p. 79: A character begins with one Cover at rank 7 and may buy an additional one 
+for a single Merit dot.
+
+* TO BE ADDED LATER *
+For each Merit a player buys, he should consider whether that Merit specifically 
+describes one of his character’s Covers or the Demon’s Unchained identity. Of 
+particular note are Social Merits — many of these tie heavily into the 
+character’s Covers. Players and Storytellers need to exercise judgment in this 
+regard, as situations exist where most Merits could be Cover- specific. Cover 
+Merits are written down in the specific Cover’s section of the Cover sheet.
+
+*/
 
 &check.chargen.demon [v( d.cg )]=
 	strcat( 
+		setq( c, u( f.allocated.integrity.demon, %0 )), 
+		setq( f, u( allocated.demonic_form, %0 )), 
+
+// extra covers costs 1 Merit dot each
+		if( gt( words( %qc, | ), 1 ), 
+			cat( 
+				%b, %b, 
+				Extra covers account for, 
+				u( .plural, dec( words( %qc, | )), dot, dots ), 
+				%r
+			)
+		), 
+
 		%b, %b, ansi( h, Embeds & Exploits ), :, %b, 
 		setr( 9, 
 			iter( u( allocated.embeds_and_exploits, %0 ), words( %i0 ), `, / )
@@ -1077,7 +1108,6 @@ Check for: Demonic Form,
 		u( display.check.ok-no, u( f.pts-valid?.embeds_and_exploits, %0 )), %b, 
 		%r,
 
-		setq( f, u( allocated.demonic_form, %0 )), 
 		%b, %b, ansi( h, Demonic Form ), :, %r, 
 		iter( modification technology propulsion process, 
 			strcat( 
@@ -1092,8 +1122,6 @@ Check for: Demonic Form,
 		), %r, 
 
 // Covers: <primum>, 1 with current Full Name, both at 7
-// Extra cover costs 1 Merit dot
-		setq( c, u( f.allocated.integrity.demon, %0 )), 
 		setq( p, u( v( d.dd )/.value, %0, advantage.primum )), 
 		%b%b, ansi( h, rest( u( .plural, words( %qc, | ), Cover, Covers ))), :, 
 		%r, %b%b %b, 
@@ -1105,40 +1133,23 @@ Check for: Demonic Form,
 
 
 
-// A character begins with one Cover at rank 7 and may buy an additional one 
-// for a single Merit dot.
-/* 
-For each Merit a player buys, he should consider whether that Merit specifically 
-describes one of his character’s Covers or the Demon’s Unchained identity. Of 
-particular note are Social Merits — many of these tie heavily into the 
-character’s Covers. Players and Storytellers need to exercise judgment in this 
-regard, as situations exist where most Merits could be Cover- specific. Cover 
-Merits are written down in the specific Cover’s section of the Cover sheet.
+/*
+--------------------------------------------------------------------------------
+-- Virtue/Vice -----------------------------------------------------------------
 */
-
-
-
 
 &bio.virtue.demon DD=[get( bio.virtue )].[get( bio.vice )]
 &bio.vice.demon DD=[get( bio.vice )].[get( bio.virtue )]
 
-
-
-
-
-
-
 &bio.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.
 	Loyal.Patient.Peaceful.Righteous.Trustworthy
-&class.bio.virtue DD=string
 
 &bio.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.
 	Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
-&class.bio.vice DD=string
 
 
 
-
+/*
 ================================================================================
 == CHARGEN CHECK: STIGMATIC ====================================================
 
@@ -1324,9 +1335,9 @@ to check from
 // we're changing the 'text field' width in the middle
 // (I don't like this, but it will do for now)
 		setq( t, 
-			min( 
+			max( 
 				lmax( iter( %q9, strlen( %i0 ), | )), 
-				%qw 
+				%qt 
 			)
 		), 
 	)
