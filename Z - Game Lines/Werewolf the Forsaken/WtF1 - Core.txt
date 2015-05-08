@@ -480,7 +480,7 @@ Effective Rank.
 &merit.hearing_whispers DD=2
 &prerequisite.merit.hearing_whispers DD=u( .is, %0, bio.tribe, Bone Shadow )
 &prereq-text.merit.hearing_whispers DD=Tribe is Bone Shadow
-&tags.merit.hearing_whispers D:T=werewolf.bone shadow.mental
+&tags.merit.hearing_whispers D:T=werewolf.bone shadows.mental
 
 &merit.impartial_mediator DD=3
 &prerequisite.merit.impartial_mediator DD=u( .at_least, %0, renown.honor, 2 )
