@@ -863,7 +863,7 @@ Cover ()
 				lattr( %0/_advantage.cover_* ), 
 				lattr( %0/_advantage.cover_*.* ), 
 			), 
-			strcat( %i0, :, get( %0/%i0 )), 
+			strcat( %i0, :%b, get( %0/%i0 )), 
 			, | 
 		), 
 		_ADVANTAGE., , 
@@ -879,10 +879,27 @@ Cover ()
 
 &f.pts-valid?.integrity.demon [v( d.cg )]=
 	cand( 
-		eq( words( setr( z, u( f.allocated.integrity.demon, %0 )), | ), 1 ), 
-		eq( last( %qz, : ), 7 ), 
-		strmatch( first( %qz, : ), cover %([get( %0/_bio.full_name )]%) )
+		eq( 
+			words( setr( z, u( f.allocated.integrity.demon, %0 )), | ), 
+			max( 1, u( v( d.dd )/.value, %0, advantage.primum ))
+		), 
+		land( 
+			iter( %qz, eq( last( %i0, : ), 7 ), | )
+		), 
+		eq( 
+			words( 
+				graball( 
+					%qz, 
+					cover %([get( %0/_bio.full_name )]%):*, 
+					|, | 
+				), 
+				| 
+			), 
+			1 
+		) 
 	)
+
+// -- 
 
 think u( v( d.cg )/f.pts-valid?.integrity.demon, #220 )
 
@@ -1074,17 +1091,16 @@ Check for: Demonic Form,
 			), , %r 
 		), %r, 
 
-		%b%b, ansi( h, Cover ), :, %b, 
-		iter( u( f.allocated.integrity.demon, %0 ), 
-			titlestr( %i0 ), |, %,%b 
-		), %r, 
-		%b %b%b, %(one cover at 7 with the current Full Name%), %b, 
-
 // Covers: <primum>, 1 with current Full Name, both at 7
 // Extra cover costs 1 Merit dot
-
+		setq( c, u( f.allocated.integrity.demon, %0 )), 
+		setq( p, u( v( d.dd )/.value, %0, advantage.primum )), 
+		%b%b, ansi( h, rest( u( .plural, words( %qc, | ), Cover, Covers ))), :, 
+		%r, %b%b %b, 
+		iter( %qc, titlestr( %i0 ), |, %r%b%b %b ), %r, 
+		%b%b %b, 
+		%(, max( 1, %qp ) at level 7%, one with current Full Name%), %b, 
 		u( display.check.ok-no, u( f.pts-valid?.integrity.demon, %0 )), %r,
-
 	)
 
 
