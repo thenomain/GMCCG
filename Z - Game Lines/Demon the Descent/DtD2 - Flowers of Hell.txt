@@ -8,8 +8,8 @@ DtD2: Flowers of Hell
 -- Merits: Demon ---------------------------------------------------------------
 */
 
-&merit.advanced_form DD=1
-&tags.merit.advanced_form D:T=demon
+&merit.advance_form DD=1
+&tags.merit.advance_form D:T=demon
 
 &merit.efficient_dealer DD=2
 &tags.merit.efficient_dealer D:T=demon

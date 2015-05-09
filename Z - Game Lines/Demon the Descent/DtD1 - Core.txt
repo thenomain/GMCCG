@@ -191,8 +191,8 @@ List all agendas that a demon has.
 &merit.terrible_form DD=1.2.3.4
 &tags.merit.terrible_form D:T=demon.style.physical
 
-&merit.versatile_form DD=1
-&tags.merit.versatile_form D:T=demon.physical
+&merit.versatile_transformation DD=1
+&tags.merit.versatile_transformation D:T=demon.physical
 
 
 
