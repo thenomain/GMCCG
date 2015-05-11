@@ -1219,7 +1219,7 @@ to check from
 
 
 &powers.exploits Newest Sheet Code <nsc>=
-	iter( sort( edit( lattr( %0/_explot.* ), _EXPLOIT., )), 
+	iter( sort( edit( lattr( %0/_exploit.* ), _EXPLOIT., )), 
 		ulocal( f.cheat_getstat.name_only, %0, exploit.%i0, flag ), 
 		, | 
 	)
