@@ -36,8 +36,10 @@ COMMANDS:
 √	xp/award <name>=<amt> for <reason> : give out dem generic goodies
 √	xp/award <name>/<xp type>=<amt> for <reason> : give out dem specific goodies
 
-	xp/spend <stat>=<level> : spend some xps on some mad skillz
-	xp/spend <stat>=<level>/<xp type> : spend some specific xpz
+√	xp/spend <stat>=<level> : spend some xps on some mad skillz
+√	xp/spend <stat>=<level>/<xp type> : spend some specific xpz
+
+√	xp/freebie <stat>=<level> for <reason> : Give <stat> spending xpz.
 
 √	xp/cost <stat>=<level>[/<xp type>] : how much it be costin'?
 √	xp/cost <name>/<stat>=<level> : how much it be costin' for them?
@@ -138,6 +140,9 @@ a very temporary thing
 
 
 &c.xp/spend xpas=$xp/spend *:@pemit %#=[u( f.xp/spend, %0 )]
+
+
+&c.xp/freebie xpas=$xp/freebie *:@pemit %#=[u( f.xp/freebie, %0 )]
 
 
 
@@ -1238,6 +1243,114 @@ n: statname
 						), %b, 
 						%qn, %b, 
 						has been set to '%qv' for %qc Experience.
+					)
+				), 
+			)
+		)
+	)
+
+
+
+/*
+================================================================================
+== XP/FREEBIE ==================================================================
+
+	xp/freebie <player>/<stat>[=<value>] for <reason>
+
+This is 'xp/spend' without spending any xp.
+
+This is important, for now, for some spends that grant other items, 
+such as Professional Training.
+
+&testreg me=(.+)/(.+?)(=(.+))? for (.+)
+think regmatchi( <player>/<stat>=<value> for <reason>, v( testreg ), -1 p s -1 v r 5 ) -- [iter( p s v r, r( %i0 ), , %b--%b )]
+
+think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- [iter( p n v r, r( %i0 ), , %b--%b )]
+
+
+*/
+
+&d.regex.freebie xpas=(.+)/(.+?)(=(.+))? for (.+)
+
+// -- 
+
+&f.xp/freebie xpas=
+	strcat( 
+
+// break %0 down to <player>, <name of stat>, [<value>], <reason>
+		setq( 0, regmatchi( %0, v( d.regex.freebie ), -1 p n -1 v r )), 
+		setq( p, pmatch( %qp )), 
+
+// get sheet location, statpath
+		setq( w, ulocal( v( d.sfp )/f.find-sheet, %qp )),
+		setq( s, ulocal( v( d.sfp )/f.statpath.workhorse, %qn, %qp )), 
+
+// current value, next value, estimated cost
+		setq( t, ulocal( .value, %qw, %qs )), 
+		if( 
+			not( t( %qv )), 
+			setq( v, ulocal( f.stat.next_rank, %qw, _%qs ))
+		), 
+
+		case( 1, 
+			not( isstaff( %# )), 
+			u( .msg, xp/freebie, Staff only ), 
+
+// normal checks
+			not( strlen( %qr )), 
+			u( .msg, xp/freebie, Must provide a reason this is free ), 
+
+			t( setr( e, ulocal( validate.player, %qp, %qw, 1 ))), 
+			u( .msg, xp/freebie, %qe ), 
+
+			t( setr( e, ulocal( validate.stat, %qw, %qs, %qt, %qv ))), 
+			u( .msg, xp/freebie, %qe ), 
+
+			t( setr( e, ulocal( validate.value ))), 
+			u( .msg, xp/freebie, %qe ), 
+
+			t( setr( e, ulocal( validate.restricted, %qs, %qv ))), 
+			u( .msg, xp/freebie, %qe ), 
+
+// spend 1: log to sql and check - stop if failed
+			strmatch( 
+				setr( e, 
+					sql( u( sql.insert.spend, 
+						%qp, %#, normal, 0, %qs, 
+						u( f.sql.escape, 
+							Freebie: [statname( %qp/%qn )] '%qt' -> '%qv' 
+							for reason '%qr' 
+						)
+					))
+				), 
+				#-* 
+			), 
+			u( .msg, xp/freebie, XP log entry failed. Spend not processed. ), 
+
+// spend 2: run setstat and check - stop if failed
+			strmatch( 
+				setr( e, 
+					ulocal( v( d.sfp )/f.setstat.workhorse, %qw, %qs, %qv )
+				), 
+				#-* 
+			), 
+			u( .msg, xp/freebie, Error from Setstat: %qe ), 
+
+			strcat( 
+
+// spend 3: ignored; we're not spending xp
+
+// spend 4: message to enactor
+				setq( n, statname( %qp/%qn )), 
+				u( .msg, xp/freebie, 
+					strcat( 
+						if( strmatch( %qp, %# ), 
+							Your, 
+							[name( %qp )]'s
+						), %b, 
+						%qn, %b, 
+						has been set to '%qv' for Free 
+						because '%qr'
 					)
 				), 
 			)
