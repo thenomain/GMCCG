@@ -16,7 +16,7 @@ Where is +health/hurt and +health/heal, anyway?
 &c.hurt WoD Health System <whs>=$^\+?hurt(.*)$:
 	@pemit %#=u( f.healhurt-workhorse, trim( %1 ), 0 )
 
-&c.heal WoD Health System <whs>=$^+?heal(.*)$:
+&c.heal WoD Health System <whs>=$^\+?heal(.*)$:
 	@pemit %#=u(f.healhurt-workhorse, trim(%1), 1)
 
 @set whs/c.hurt=regex
