@@ -97,7 +97,7 @@ Notes - Things you might want to know
 	attribute.dexterity:+1 
 	attribute.stamina:+2 
 	advantage.size:+2 
-&form.Dauru.notes sfs=
+&form.Gauru.notes sfs=
 	Perception +3 w/ Wolfy Things, 
 	Regeneration, 
 	Teeth/Claws +2L (no grapple) & +3 Init, 
@@ -156,7 +156,7 @@ Notes - Things you might want to know
 			%1, 
 			add( 
 				rest( u( %0/_%1 ), . ), 
-				mul( %2, -1 )
+				%2
 			), 
 			offset
 		))), 
@@ -257,9 +257,9 @@ qt: valid forms for sheet's template <- expand to user-defined later
 qf: full name of matched form
 */
 
-&c.shift sfs=$shift*: @pemit %#=
+&c.shift sfs=$^\+?shift(.*)$: @pemit %#=
 	strcat( 
-		setq( 0, trim( %0 )), 
+		setq( 0, trim( %1 )), 
 		setq( s, u( v( d.sfp )/f.find-sheet, %# )), 
 		setq( c, 
 			udefault( %qs/_form.current, 
@@ -286,14 +286,14 @@ qf: full name of matched form
 // if just 'shift', return valid forms
 			strlen( %q0 ), 
 			u( .msg, shift, 
-				Valid Forms: [itemize( %qt, . )]%r
-				[space( 7 )] You are in form: %qc
+				[ansi( h, Valid Forms )]: [itemize( %qt, . )]%r
+				[space( 7 )] [ansi( h, You are in form )]: %qc
 				[if( 
 					hasattr( %!, form.%qc.notes ), 
 					%r
 					[wrap( 
-						Notes: [u( form.%qc.notes )], 
-						sub( width( %# ), 2 ), 
+						[ansi( h, Notes )]: [u( form.%qc.notes )], 
+						sub( width( %# ), 8 ), 
 						left, space( 8 )
 					)] 
 				)]
@@ -312,6 +312,9 @@ qf: full name of matched form
 		)
 	)
 
+// --
+
+@set sfs/c.shift=regexp
 
 /*
 --------------------------------------------------------------------------------
@@ -376,11 +379,12 @@ qn: post-shift health (bashing lethal agg)
 // -- ANNOUNCE OSHIFT: if on them, use that, else use default
 		pemit( lcon( loc( %# ), connect ), 
 			u( .msg, shift, 
-				if( 
+				%N 
+				[if( 
 					hasattr( %#, oshift.%2 ), 
-					objeval( %#, u( oshift.%2 )), 
+					stripansi( objeval( %#, u( oshift.%2 ))), 
 					u( form.%2.oshift )
-				)
+				)]
 			)
 		), 
 
@@ -401,7 +405,7 @@ qn: post-shift health (bashing lethal agg)
 				), 
 				pemit( lcon( loc( %# ), connect ), 
 					u( .msg, shift, 
-						u( v( d.health )/f.display-current-health-descr, 
+						u( v( d.health )/display.current-health-descr, 
 							%#, %qn, u( f.getstat.derived, %0, _health.maximum )
 						)
 					)
