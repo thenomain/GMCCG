@@ -62,6 +62,9 @@ Level 3 for very minor items
 == VAMPIRE BIO =================================================================
 */
 
+&bio.embrace_date DD=*
+&tags.bio.embrace_date D:T=vampire
+
 &bio.clan DD=Daeva.Gangrel.Mekhet.Nosferatu.Ventrue
 &tags.bio.clan D:T=vampire.ghoul
 
@@ -1411,7 +1414,7 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 */
 
 &check.bio.ghoul cg=virtue vice clan
-&check.bio.vampire cg=mask dirge clan 
+&check.bio.vampire cg=embrace_date mask dirge clan 
 	[if( u( v( d.dd )/.is_full, %0, bio.covenant, Ordo Dracul ), mystery_coil )]
 
 
@@ -1727,8 +1730,7 @@ Character should have no Scales
 &bio.default.ghoul Newest Sheet Code <nsc>=
 	birthdate concept clan coterie template virtue vice 
 
-&bio.default.vampire Newest Sheet Code <nsc>=
-	birthdate concept clan covenant template mask dirge coterie
+&bio.default.vampire Newest Sheet Code <nsc>=embrace_date concept clan covenant template mask dirge coterie
 
 // -- Powers -------------------------------------------------------------------
 
