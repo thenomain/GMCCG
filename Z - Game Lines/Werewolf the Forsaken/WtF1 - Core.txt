@@ -785,7 +785,7 @@ one free merit.tell_()
 &bio.default.werewolf [v( d.nsc )]=
 	birthdate concept pack lodge template blood bone auspice tribe
 
-// -- Powers: Gifts ----------------------------------------------------------------------
+// -- Powers: Gifts ------------------------------------------------------------
 // 0: sheet dbref
 // 1: moon, shadow, or wolf (type of gift)
 // outputs: <name>:<value>.<desc>:<value>.<desc>|...
@@ -800,7 +800,7 @@ one free merit.tell_()
 		, | 
 	)
 
-// -- Powers: Renown -----
+// -- Powers: Renown -----------------------------------------------------------
 // outputs: <renown>:<value>|...|Effective Rank:<value>
 
 &powers.renown [v( d.nsc )]=
@@ -811,7 +811,7 @@ one free merit.tell_()
 		, | 
 	)
 
-// -- Powers: Rites ---
+// -- Powers: Rites ------------------------------------------------------------
 // May collide with 'powers.disciplines.rites', but so be it
 
 &powers.rites.werewolf [v( d.nsc )]=
@@ -916,10 +916,13 @@ one free merit.tell_()
 		setq( r, rest( %0, : )), 
 		setq( u, grab( %qr, Unlock.*, : )),
 		setq( s, 
-			match( first( get( v( d.dd )/gift.[edit( %qn, %b, _ )] ), | ), Unlock, . )
+			match( 
+				first( get( v( d.dd )/gift.[edit( %qn, %b, _ )] ), | ), 
+				Unlock, . 
+			)
 		), 
 
-		if( cand( strmatch( %qr, Unlock.* ), eq( words( %qr, | ), 1 )), 
+		if( cand( strmatch( %qr, Unlock.* ), eq( words( %qr, : ), 1 )), 
 			setq( r, .[rest( %qu, . )]), 
 			setq( r, remove( %qr, %qu, : ))
 		), 
