@@ -148,6 +148,9 @@ List all agendas that a demon has.
 &merit.bolthole_-_arsenal_() DD=1.2.3.4.5|*
 &tags.merit.bolthole_-_arsenal_() D:T=demon.location
 
+&merit.bolthole_-_easy_access_() DD=1.2.3.4.5|*
+&tags.merit.bolthole_-_easy_access_() D:T=demon.location
+
 &merit.bolthole_-_no_twilight_() DD=1|*
 &tags.merit.bolthole_-_no_twilight_() D:T=demon.location
 
