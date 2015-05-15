@@ -120,7 +120,7 @@ uses: header(), footer()
 
 // .. interpret roll results from global registers
 		u( f.roll-success-interpreter ), 
-//		q0: %q0 --- q1: %q1 --- q2: %q2, %r, 
+//		debug :: q0: %q0 --- q1: %q1 --- q2: %q2, %r, 
 // .. massage the registers a bit; from here on out they're just for displays
 		if( lte( %qd, 0 ), setq( d, 0 )), 
 		if( gte( %qa, 11 ), setq( a, No )), 
@@ -363,16 +363,16 @@ squish(
 --------------------------------------------------------------------------------
 -- Display: Roll To Job --------------------------------------------------------
 
-This system is not ready for production. '#15' is the jobs system, but I think 
-'f.has_job_access' is mine. I think.
+I didn't take these notes when I created this system, so some of it might 
+be incorrect.
 
 --
 
-For #15/trig_myadd: 
- 0: dbref of job object (Job 6 -> #491)
- 1: content, I think
+For %va/trig_add: 
+ 0: dbref of job object (Job 6 -> #491), returned by 'f.has_jobs_access'
+ 1: content
  2: dbref of the person causing the change
- 3: the act upon the object (CREate, ADD, NAMe, ASN-assign, MAIl, etc)
+ 3: the act upon the object (CREate, ADD, NAMe, ASN-assign, MAIL, etc)
 
 For the following:
  0: enactor dbref (probably %#)
@@ -383,26 +383,63 @@ uses: titlestr()
 */
 
 &display.roll-to-job nWoD Roller <nr>=
-	[case( 0, 
+	case( 0, 
 // .. job access check failed
-		t(setr(9, ulocal( #15/f.has_job_access, rest( %1 ), %0 ))), 
-		[u( .alert, roll )] 
-		You can't roll to that job because [titlestr( rest( %q9 ))], 
+		t( setr( 9, ulocal( f.has_job_access, rest( %1 ), %0 ))), 
+		u( .msg, roll, You can't roll to that job because [rest( %q9 )] ), 
 
 // .. else, show enactor and add it to the job
-		[u( display.roll-output, %0, to %1 )]
-		[trigger( #15/trig_myadd, 
-			locate( #15, %1, i ), 
-			%r[u( display.roll-output, %0, to %1 )], 
-			%0, 
-			ADD 
-		)]
+		strcat( 
+			ulocal( display.roll-output, %0, to %1 ), 
+			trigger( %va/trig_add, 
+				%q9, 
+				%r[ulocal( display.roll-output, %0, to %1, %! )], 
+				%0, 
+				ADD 
+			), 
 // .. trigger the jobs system to inform people who can see the bucket
-		[trigger( #15/trig_broadcast, 
-			parent( locate( #15, %1, i )), 
-			Roll added to [lcstr( %1 )] by %N. 
-		)] 
-	)]
+			trigger( %va/trig_broadcast, 
+				%q9, 
+				Roll added to [lcstr( %1 )] by [name( %0 )]. 
+			)
+		)
+	)
+
+/*
+--------------------------------------------------------------------------------
+-- Has Jobs Access? ------------------------------------------------------------
+
+Does the target have write access to the job number passed?
+(Code cribbed directly from +myjob/add.)
+
+0: job number
+1: target dbref
+return: #-1 <error>, or job number's dbref for 'okay'
+
+*/
+
+&f.has_job_access nWoD Roller <nr>=
+	localize( case( 0, 
+		not( u( %va/FN_GUEST, %1 )), 
+		#-1 This command is not available to guests, 
+
+		isdbref( setr( 0, u( %va/FN_FIND-JOB, %0 ))), 
+		#-1 That is an invalid job number, 
+
+		cor( 
+			cand( 
+				u( %va/IS_PUBLIC, %q0 ), 
+				match( get( %q0/OPENED_BY ), %1 )
+			), 
+			u( %va/FN_MYACCESSCHECK, parent( %q0 ), %1, %q0 ),  
+		), 
+		#-1 [name( %q0 )] is not yours%; you can only modify your own jobs, 
+
+		not( u( %va/FN_HASATTR, %q0, LOCKED )), 
+		#-1 That job is locked and cannot be changed at this time, 
+		
+		%q0 
+	))
 
 
 
