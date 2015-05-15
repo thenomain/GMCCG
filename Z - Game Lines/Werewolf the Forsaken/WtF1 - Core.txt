@@ -199,7 +199,12 @@ Effective Rank.
 &merit.pack_bond dd=1.3
 &tags.merit.pack_bond d:t=wolf-blooded
 
-&merit.tell_() dd=3|A Wolf's Meat.Anger Issues.Bite.Bitten.Clever Fingers.Devil Inside.Evil Eye.Exciting.Familiar.Fuck Ugly.Horse.Host-Ache.Liar's Skin.Marker.Moon Marked.Phantom Pack.Piercing Eyes.Second Skin.Shape-Shifted.Shadow Twin.Skinner.Spirit Double.Strong Scent.Third Nipple.Tongues.Waystone.Wolf Sign
+&merit.tell_() dd=3|
+	A Wolf's Meat.Anger Issues.Bite.Bitten.Clever Fingers.Devil Inside.
+	Evil Eye.Exciting.Familiar.Fuck Ugly.Horse.Host-Ache.Liar's Skin.Marker.
+	Moon Marked.Phantom Pack.Piercing Eyes.Second Skin.Shape-Shifted.
+	Shadow Twin.Skinner.Spirit Double.Strong Scent.Third Nipple.Tongues.
+	Waystone.Wolf Sign
 &tags.merit.tell_() d:t=wolf-blooded
 
 &merit.raised_by_wolves dd=1
@@ -409,7 +414,7 @@ Effective Rank.
 
 &merit.blood_or_bone_affinity DD=2.5|Blood.Bone.Both
 &prerequisite.merit.blood_or_bone_affinity DD=
-	u( .between, advantage.harmony, 3, 8 )
+	u( .between, %0, advantage.harmony, 3, 8 )
 &prereq-text.merit.blood_or_bone_affinity DD=Harmony 3 to 8
 &tags.merit.blood_or_bone_affinity D:T=werewolf.mental.harmony
 &notes.merit.blood_or_bone_affinity D:T=Staff should also: 
@@ -417,18 +422,18 @@ Effective Rank.
 
 &merit.code_of_honor DD=2
 &prerequisite.merit.code_of_honor DD=
-	u( .at_least, advantage.harmony, 8 )
+	u( .at_least, %0, advantage.harmony, 8 )
 &prereq-text.merit.code_of_honor DD=Harmony 8
 &tags.merit.code_of_honor D:T=werewolf.mental.harmony
 
 &merit.controlled_burn DD=2
 &prerequisite.merit.controlled_burn DD=
-	u( .at_least_all, attribute.resolve:3 attribute.composure:3 )
+	u( .at_least_all, %0, attribute.resolve:3 attribute.composure:3 )
 &prereq-text.merit.controlled_burn DD=Resolve 3, Composure 3
 &tags.merit.controlled_burn D:T=werewolf.mental
 
 &merit.creative_tactician DD=3
-&prerequisite.merit.creative_tactician DD=u( .at_leas, renown.purity, 2 )
+&prerequisite.merit.creative_tactician DD=u( .at_least, %0, renown.purity, 2 )
 &prereq-text.merit.creative_tactician DD=Purity 2
 &tags.merit.creative_tactician D:T=werewolf.mental.purity
 
@@ -438,12 +443,14 @@ Effective Rank.
 &tags.merit.dedicated_locus_() D:T=werewolf.social.location
 
 &merit.embodiment_of_the_firstborn DD=5
-&prerequisite.merit.embodiment_of_the_firstborn DD=u( .is_not, %0, bio.tribe, Ghost Wolf )
-&prereq-text.merit.embodiment_of_the_firstborn DD=Cannot be a Ghost Wolf, must have Tribe
+&prerequisite.merit.embodiment_of_the_firstborn DD=
+	u( .is_not, %0, bio.tribe, Ghost Wolf )
+&prereq-text.merit.embodiment_of_the_firstborn DD=
+	Cannot be a Ghost Wolf, must have Tribe
 &tags.merit.embodiment_of_the_firstborn D:T=werewolf.physical
 
 &merit.fading DD=3
-&prerequisite.merit.fading DD=u( .at_least, renown.cunning, 2 )
+&prerequisite.merit.fading DD=u( .at_least, %0, renown.cunning, 2 )
 &prereq-text.merit.fading DD=Cunning 2
 &tags.merit.fading D:T=werewolf.physical.cunning
 
@@ -465,21 +472,21 @@ Effective Rank.
 	Primal Urge 1 higher than Merit rating, Cannot take any other Favored Forms 
 &tags.merit.favored_form_() D:T=werewolf.physical
 &note.merit.favored_form_() D:T=
-	For each dot, set a substat with the name of the stat affected and the value of 
-	Favored Form it was gained at. 
+	For each dot, set a substat with the name of the stat affected and the value 
+	of Favored Form it was gained at. 
 	e.g.: stat/set <name>/favored form (urhan).stealth=1
 // +shift MUST respect this stat
 
 &merit.fortified_form_() DD=3.4.5|Dalu.Gauru.Urshul.Urhan
 &prerequisite.merit.fortified_form_() DD=
-	u( .at_least_all, attribute.stamina:3 skill.survival:2 )
+	u( .at_least_all, %0, attribute.stamina:3 skill.survival:2 )
 &prereq-text.merit.favored_form_() DD=Stamina 3, Survival 2
 &tags.merit.fortified_form_() D:T=werewolf.physical
 // +shift MIGHT respect this stat
 
 &merit.hearing_whispers DD=2
-&prerequisite.merit.hearing_whispers DD=u( .is, %0, bio.tribe, Bone Shadow )
-&prereq-text.merit.hearing_whispers DD=Tribe is Bone Shadow
+&prerequisite.merit.hearing_whispers DD=u( .is, %0, bio.tribe, Bone Shadows )
+&prereq-text.merit.hearing_whispers DD=Tribe is Bone Shadows
 &tags.merit.hearing_whispers D:T=werewolf.bone shadows.mental
 
 &merit.impartial_mediator DD=3
@@ -489,7 +496,7 @@ Effective Rank.
 
 &merit.living_weapon_() DD=3.4.5|Dalu.Gauru.Urshul.Urhan
 &prerequisite.merit.living_weapon_() DD=
-	u( .at_least_all, attribute.stamina:3 skill.survival:2 )
+	u( .at_least_all, %0, attribute.stamina:3 skill.survival:2 )
 &prereq-text.merit.living_weapon_() DD=Stamina 3, Survival 2
 &tags.merit.living_weapon_() D:T=werewolf.physical
 
@@ -506,7 +513,8 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 */
 
 &merit.nowhere_to_run DD=2
-&prerequisite.merit.nowhere_to_run DD=u( .is, %0, bio.tribe, Hunters in Darkness )
+&prerequisite.merit.nowhere_to_run DD=
+	u( .is, %0, bio.tribe, Hunters in Darkness )
 &prereq-text.merit.nowhere_to_run DD=Tribe is Hunters in Darkness
 &tags.merit.nowhere_to_run D:T=werewolf.hunters in darkness
 
@@ -532,34 +540,37 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 &tags.merit.song_in_your_heart D:T=werewolf.glory.social
 
 &merit.sounds_of_the_city DD=2
-&prerequisite.merit.sounds_of_the_city DD=u( .is, bio.tribe, Iron Master )
-&prereq-text.merit.sounds_of_the_city DD=Tribe is Iron Master
-&tags.merit.sounds_of_the_city D:T=werewolf.iron master.social
+&prerequisite.merit.sounds_of_the_city DD=u( .is, %0, bio.tribe, Iron Masters )
+&prereq-text.merit.sounds_of_the_city DD=Tribe is Iron Masters
+&tags.merit.sounds_of_the_city D:T=werewolf.iron masters.social
 
 &merit.strings_of_the_heart DD=
-&prerequisite.merit.strings_of_the_heart DD=u( .is, bio.tribe, Storm Lord )
-&prereq-text.merit.strings_of_the_heart DD=Tribe is Storm Lord
-&tags.merit.strings_of_the_heart D:T=werewolf.storm lord.social
+&prerequisite.merit.strings_of_the_heart DD=u( .is, %0, bio.tribe, Storm Lords )
+&prereq-text.merit.strings_of_the_heart DD=Tribe is Storm Lords
+&tags.merit.strings_of_the_heart D:T=werewolf.storm lords.social
 
 &merit.totem DD=1.2.3.4.5
 &tags.merit.totem D:T=werewolf.shared
 
 &merit.weakest_link DD=2
-&prerequisite.merit.weakest_link DD=u( .is, bio.tribe, Blood Talon )
-&prereq-text.merit.weakest_link DD=Tribe is Blood Talon
-&tags.merit.weakest_link D:T=werewolf.blood talon.social
+&prerequisite.merit.weakest_link DD=u( .is, %0, bio.tribe, Blood Talons )
+&prereq-text.merit.weakest_link DD=Tribe is Blood Talons
+&tags.merit.weakest_link D:T=werewolf.blood talons.social
+
 
 // -- Merits: Fighting Merits --------------------------------------------------
 
 &merit.call_out DD=2
 &prerequisite.merit.call_out DD=
-	u( .at_least_all, renown.honor:3 attribute.composure:3 skill.intimidation:2 )
+	u( .at_least_all, %0, 
+		renown.honor:3 attribute.composure:3 skill.intimidation:2 
+	)
 &prereq-text.merit.call_out DD=Honor 2, Intimidation 2, Composure 3
 &tags.merit.call_out D:T=werewolf.fighting.honor
 
 &merit.efficient_killer DD=2
 &prerequisite.merit.efficient_killer DD=
-	u( .at_least_all, 
+	u( .at_least_all, %0, 
 		renown.purity:2 attribute.strength:3 skill.brawl:3 skill.medicine:2 
 	)
 &prereq-text.merit.efficient_killer DD=Purity 2, Brawl 3, Medicine 2, Strength 3
@@ -568,7 +579,7 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 
 &merit.flanking DD=2
 &prerequisite.merit.flanking DD=
-	u( .at_least_all, 
+	u( .at_least_all, %0, 
 		renown.cunning:2 attribute.wits:3 skill.stealth:2 skill.brawl:2 
 	)
 &prereq-text.merit.flanking DD=Cunning 2, Wits 3, Stealth 2, Brawl 2
@@ -576,19 +587,21 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 
 &merit.instinctive_defense DD=2
 &prerequisite.merit.instinctive_defense DD=
-	u( .at_least_all, advantage.primal_urge:2 skill.athletics:2 )
+	u( .at_least_all, %0, advantage.primal_urge:2 skill.athletics:2 )
 &prereq-text.merit.instinctive_defense DD=Primal Urge 2, Athletics 2
 &tags.merit.instinctive_defense D:T=werewolf.fighting
 
 &merit.relentless_assault DD=1.2.3.4.5
 &prerequisite.merit.relentless_assault DD=
-	u( .at_least_all, attribute.strength:3 attribute.stamina:3 skill.brawl:2 )
+	u( .at_least_all, %0, 
+		attribute.strength:3 attribute.stamina:3 skill.brawl:2 
+	)
 &prereq-text.merit.relentless_assault DD=Strength 3, Stamina 3, Brawl 2
 &tags.merit.relentless_assault D:T=werewolf.style.fighting
 
 &merit.spiritual_blockage DD=2
 &prerequisite.merit.spiritual_blockage DD=
-	u( .at_least_all, 
+	u( .at_least_all, %0, 
 		renown.wisdom:2 attribute.wits:3 skill.brawl:1 skill.occult:3 
 	)
 &prereq-text.merit.spiritual_blockage DD=Wisdom 2, Brawl 1, Occult 3, Wits 3
@@ -596,14 +609,17 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 
 &merit.tactial_shifting DD=1.2.3.4.5
 &prerequisite.merit.tactial_shifting DD=
-	u( .at_least_all, attribute.wits:3 attribute.dexterity:3 skill.athletics:2 )
+	u( .at_least_all, %0, 
+		attribute.wits:3 attribute.dexterity:3 skill.athletics:2 
+	)
 &prereq-text.merit.tactial_shifting DD=Wits 3, Dexterity 3, Athletics 2
 &tags.merit.tactial_shifting D:T=werewolf.style.fighting
 
 &merit.warcry DD=2
 &prerequisite.merit.warcry DD=
-	u( .at_least_all, 
-		renown.glory:2 attribute.presence:3 skill.expression:2 skill.intimidation:2 
+	u( .at_least_all, %0, 
+		renown.glory:2 attribute.presence:3 skill.expression:2 
+		skill.intimidation:2 
 	)
 &prereq-text.merit.warcry DD=Glory 2, Presence 3, Expression 2, Intimidation 2
 &tags.merit.warcry D:T=werewolf.style.fighting.glory
