@@ -607,13 +607,13 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 &prereq-text.merit.spiritual_blockage DD=Wisdom 2, Brawl 1, Occult 3, Wits 3
 &tags.merit.spiritual_blockage D:T=werewolf.fighting.wisdom
 
-&merit.tactial_shifting DD=1.2.3.4.5
-&prerequisite.merit.tactial_shifting DD=
+&merit.tactical_shifting DD=1.2.3.4.5
+&prerequisite.merit.tactical_shifting DD=
 	u( .at_least_all, %0, 
 		attribute.wits:3 attribute.dexterity:3 skill.athletics:2 
 	)
-&prereq-text.merit.tactial_shifting DD=Wits 3, Dexterity 3, Athletics 2
-&tags.merit.tactial_shifting D:T=werewolf.style.fighting
+&prereq-text.merit.tactical_shifting DD=Wits 3, Dexterity 3, Athletics 2
+&tags.merit.tactical_shifting D:T=werewolf.style.fighting
 
 &merit.warcry DD=2
 &prerequisite.merit.warcry DD=
