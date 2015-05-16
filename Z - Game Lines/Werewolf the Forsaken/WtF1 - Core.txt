@@ -544,7 +544,7 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 &prereq-text.merit.sounds_of_the_city DD=Tribe is Iron Masters
 &tags.merit.sounds_of_the_city D:T=werewolf.iron masters.social
 
-&merit.strings_of_the_heart DD=
+&merit.strings_of_the_heart DD=2
 &prerequisite.merit.strings_of_the_heart DD=u( .is, %0, bio.tribe, Storm Lords )
 &prereq-text.merit.strings_of_the_heart DD=Tribe is Storm Lords
 &tags.merit.strings_of_the_heart D:T=werewolf.storm lords.social
@@ -679,6 +679,9 @@ Vampire also uses the 'rite' stat type, and it's also always a 'flag'.
 
 &rite.harness_the_circle dd=1
 &tags.rite.harness_the_circle d:t=werewolf.wolf-blooded.pack
+
+&rite.totemic_empowerment dd=1
+&tags.rite.totemic_empowerment d:t=werewolf.wolf-blooded.pack
 
 &rite.hunting_ground dd=1
 &tags.rite.hunting_ground d:t=werewolf.wolf-blooded.pack
@@ -1920,3 +1923,18 @@ Merits: pp.105-110
 Gifts: p.114
 
 */
+
+
+
+
+
+
+/*
+** TO DO! **
+================================================================================
+== TOTEM ASPIRATION ============================================================
+
+p. 92
+
+*/
+
