@@ -358,15 +358,15 @@ r: rest (optional)
 
 Staff can approve 'pitched' -> 'approved'
 
-	asp/approve <player>=<number>
+	asp/approve <player>/<number>
 	asp/approve [<player>] :: list approved aspirations [on <player>]
 
 */
 
 &c.aspiration/approve asp=
 	strcat( 
-		setq( p, trim( first( %0, = ))), 
-		setq( r, trim( rest( %0, = ))), 
+		setq( p, trim( first( %0, / ))), 
+		setq( r, trim( rest( %0, / ))), 
 
 		if( strlen( %qr ), 
 			u( f.aspiration/approve.action, %qp, %qr ), 
