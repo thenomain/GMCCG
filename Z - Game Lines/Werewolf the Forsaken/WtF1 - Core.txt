@@ -391,6 +391,7 @@ Effective Rank.
 &tags.merit.half_moon's_birth dd=wolf-blooded.moon birth
 
 &merit.no_moon's_birth dd=2
+&prerequisite.merit.no_moon's_birth dd=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -764,6 +765,15 @@ one free merit.tell_()
 /*
 ################################################################################
 ## WEREWOLF: XP COSTS ##########################################################
+
+Trait Experience
+Rites 1
+Affinity Gift 3
+Non-Affinity Gift 5 
+Wolf Gift Facet 1
+Additional Facet 2
+Renown 3
+Primal Urge 5
 */
 
 // &xp.advantage.<power> XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
@@ -773,6 +783,20 @@ one free merit.tell_()
 &d.restricted.types.werewolf xpas=gift
 &d.restricted.stats.werewolf xpas=
 
+&xp.renown xpcd=u( cost.standard, 3, %1, %2 )
+&xp.advantage.primal_urge xpcd=u( cost.standard, 5, %1, %2 )
+&xp.rite xpcd=u( cost.standard, 1, %1, %2 )
+
+&xp.gift xpcd=
+	u( cost.standard, 
+		case( 1, 
+			<level is 'unlock' and tag matches tribe or auspice>, 3, 
+			<level is 'unlock'>, 5, 
+			<tag matches 'wolf'>, 1, 
+			2
+		), 
+		%1, %2 
+	)
 
 
 /*
