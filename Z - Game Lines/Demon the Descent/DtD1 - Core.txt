@@ -1064,19 +1064,35 @@ Still faster than 'f.list-stats-tags'
 // -----------------------------------------------------------------------------
 // -- Demonic Form: Point Count ------------------------------------------------
 
-// At character creation, a demon has three Modifications, two Technologies, one 
-// Propulsion, and one Process.
+/*
+At character creation, a demon has three Modifications, two Technologies, one 
+Propulsion, and one Process.
 
-// --
+The merit 'Terrible Form' alters these as well:
+	*: +1 Modification
+	**: +1 Technology
+	***: +1 Propulsion
+	****: +1 Process
 
+The merit 'Advance Form' allows you to swap one Modification or Technology 
+for one Propulsion or Process.
 
-&f.pts-valid?.demonic_form.modification [v( d.cg )]=3
-&f.pts-valid?.demonic_form.technology [v( d.cg )]=2
-&f.pts-valid?.demonic_form.propulsion [v( d.cg )]=1
-&f.pts-valid?.demonic_form.process [v( d.cg )]=1
+*/
+
+&f.pts-valid?.demonic_form.modification [v( d.cg )]=
+	add( 3, 
+		u( v( d.dd )/.at_least, %0, merit.terrible_form, 1 ), 
+		u( v( d.dd )/.at_least, %0, advantage.primum, 3 )
+	)
+&f.pts-valid?.demonic_form.technology [v( d.cg )]=
+	add( 2, u( v( d.dd )/.at_least, %0, merit.terrible_form, 2 ))
+&f.pts-valid?.demonic_form.propulsion [v( d.cg )]=
+	add( 1, u( v( d.dd )/.at_least, %0, merit.terrible_form, 3 ))
+&f.pts-valid?.demonic_form.process [v( d.cg )]=
+	add( 1, u( v( d.dd )/.at_least, %0, merit.terrible_form, 4 ))
 
 &f.pts-valid?.demonic_form [v( d.cg )]=
-	eq( %1, v( f.pts-valid?.demonic_form.%0 ))
+	eq( %1, u( f.pts-valid?.demonic_form.%0, %2 ))
 
 /*
 ================================================================================
@@ -1118,15 +1134,20 @@ Merits are written down in the specific Cover’s section of the Cover sheet.
 		u( display.check.ok-no, u( f.pts-valid?.embeds_and_exploits, %0 )), %b, 
 		%r,
 
-		%b, %b, ansi( h, Demonic Form ), :, %r, 
+		%b, %b, ansi( h, Demonic Form ), :, %b, 
+		if( 
+			u( v( d.dd )/.has, %0, merit.advance_form ), 
+			ansi( xh, %(Advance Form may affect two by +/-1%) )
+		), 
+		%r, 
 		iter( modification technology propulsion process, 
 			strcat( 
 				%b%b %b, 
 				ansi( h, titlestr( %i0 )), :, %b, 
 				setr( x, words( elements( %qf, inum(0), ` ))), /, 
-				v( f.pts-valid?.demonic_form.%i0 ), %b, 
+				u( f.pts-valid?.demonic_form.%i0, %0 ), %b, 
 				u( display.check.ok-no, 
-					u( f.pts-valid?.demonic_form, %i0, %qx )
+					u( f.pts-valid?.demonic_form, %i0, %qx, %0 )
 				)
 			), , %r 
 		), %r, 
@@ -1191,8 +1212,12 @@ to check from
 
 &xp.advantage.cover_() XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
 
-&xp.embed XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
-&xp.exploit XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
+// [Staff] Eerie says, “And immediately following that is xp/spend not working 
+// for imbeds and exploits.”
+// <xp/cost> I don't know how to process flags yet
+
+&xp.embed XP Cost Database <xpcd>=2
+&xp.exploit XP Cost Database <xpcd>=2
 
 &d.restricted.types.demon [v( d.xpas )]=exploit embed
 &d.restricted.stats.demon [v( d.xpas )]=advantage.cover_(*) advantage.aether
