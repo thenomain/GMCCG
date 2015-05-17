@@ -1059,6 +1059,12 @@ f: other error check results
 				statname( %0/%1 )
 			), 
 
+			flag, 
+			strcat( 
+				to add, %b', statname( %0/%1 ), '%b, 
+				%(, %3, %)
+			), 
+
 			cat( 
 				to raise, 
 				statname( %0/%1 ), 
@@ -1242,7 +1248,12 @@ n: statname
 							[name( %qp )]'s
 						), %b, 
 						%qn, %b, 
-						has been set to '%qv' for %qc Experience.
+						has been set, 
+						case( u( v( d.sfp )/f.get-class, %qs ), 
+							list, , 
+							%bto '%qv', 
+						), %b, 
+						for %qc Experience.
 					)
 				), 
 			)
@@ -1457,7 +1468,10 @@ v: chargen's stat validation
 --------------------------------------------------------------------------------
 -- Validate: Value -------------------------------------------------------------
 
-To be honest, I'm not sure why this is here.
+c: stat class
+v: requested value (new) - from f.xp/cost
+t: trait's value (current, from the sheet) - from f.xp/cost
+returns: <null> if ok, otherwise error message
 
 */
 
@@ -1484,7 +1498,7 @@ To be honest, I'm not sure why this is here.
 				isint( %qv ), 
 				Raise must be numeric, 
 
-				gt(%qv, %qt), 
+				gt( %qv, %qt ), 
 				Stat must be raised
 			), 
 
@@ -1492,7 +1506,7 @@ To be honest, I'm not sure why this is here.
 			Cannot raise string stats, 
 
 			flag, 
-			I don't know how to process flags yet,
+			@@( all flags should be okay ),
 
 			Uncaptured stat class type in 'validate.value' 
 
