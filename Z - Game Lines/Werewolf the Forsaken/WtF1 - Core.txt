@@ -1106,6 +1106,7 @@ Following is sent from XP:
 		case( 1, 
 			strmatch( %3, ), 1, 
 			cor( 
+// ** something about our assumption in list_has_all is breaking ** //
 				u( .list_has_all, %0, %2, lnum( 1, %3, . )), 
 				cand( 
 					u( .has_not, %0, %2 ), 
@@ -1150,7 +1151,6 @@ Following is sent from XP:
 
 &gift.full_moon's_gift DD=1.2.3.4.5|
 	Killer Instinct.Warrior's Hide.Bloody-Handed Hunter.Butchery.Crimson Spasm
-&prerequisite.gift.full_moon's_gift DD=
 &prerequisite.gift.half_moon's_gift DD=
 	u( .gifts.facet_check.moon, %0, Rahu, gift.full_moon's_gift, %2 )
 &prereq-text.gift.full_moon's_gift DD=
