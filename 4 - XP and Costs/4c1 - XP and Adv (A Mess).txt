@@ -165,7 +165,8 @@ A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
 			'[u( .objid, %1 )]', '[name( %1 )]', 
 			'%2', %3, 
 			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', 
-			'spend', '%5'
+			if( eq( %3, 0 ), 'freebie', 'spend' ), 
+			'%5'
 		)
 
 
