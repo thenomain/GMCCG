@@ -36,13 +36,14 @@ COMMANDS:
 √	xp/award <name>=<amt> for <reason> : give out dem generic goodies
 √	xp/award <name>/<xp type>=<amt> for <reason> : give out dem specific goodies
 
+√	xp/cost <stat>=<level>[/<xp type>] : how much it be costin'?
+√	xp/cost <name>/<stat>=<level> : how much it be costin' for them?
+
 √	xp/spend <stat>=<level> : spend some xps on some mad skillz
 √	xp/spend <stat>=<level>/<xp type> : spend some specific xpz
 
 √	xp/freebie <stat>=<level> for <reason> : Give <stat> spending xpz.
-
-√	xp/cost <stat>=<level>[/<xp type>] : how much it be costin'?
-√	xp/cost <name>/<stat>=<level> : how much it be costin' for them?
+	(rewrite this and xp/spend and xp/cost to share redundant functions!)
 
 	xp/remove <name>=<amt> for <reason> : take some honey away
 	xp/remove <name>/<xp type>=<amt> for <reason> : a specific kind of honey
@@ -72,6 +73,11 @@ CREATE TABLE IF NOT EXISTS xp_log (
 	xp_type VARCHAR(255) NOT NULL, 
 	xp_amt DECIMAL(21,17) NOT NULL,
 
+	trait_category VARCHAR(255), 
+	trait_name VARCHAR(255), 
+	trait_value VARCHAR(255), 
+
+	action VARCHAR(255) NOT NULL, 
 	reason VARCHAR(255) NOT NULL,
 
 	PRIMARY KEY (target_objid, log_time) 
@@ -563,7 +569,10 @@ p: target (dbref)
 			2 3 5 
 		), |, 
 // amt
-		if( strmatch( elements( %0, 5, | ), spend ), - ), 
+		case( elements( %0, 5, | ), 
+			spend, -, 
+			freebie, - 
+		), 
 		trim( fdiv( floor( elements( %0, 4, | )), v( d.beat-to-exp )), l, 0 ), 
 		|, 
 // reason
@@ -1209,7 +1218,8 @@ n: statname
 						u( f.sql.escape, %qs ), 
 						u( f.sql.escape, 
 							Spend: [statname( %qp/%qn )] '%qt' -> '%qv' 
-						)
+						), 
+						%qv 
 					))
 				), 
 				#-* 
@@ -1332,7 +1342,8 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 						u( f.sql.escape, 
 							Freebie: [statname( %qp/%qn )] '%qt' -> '%qv' 
 							for reason '%qr' 
-						)
+						), 
+						%qv 
 					))
 				), 
 				#-* 
@@ -1825,4 +1836,44 @@ if 'u( f.at_weeks_end?, %0 )', reset the 'xp earned this week' attribute
 --
 
 
+
+
+
+
+
+
+
+
+================================================================================
+== Command: xp/unspend =========================================================
+
+	xp/unspend <name>/<stat>[=<level>] for <reason>
+
+Unspend...
+	- finds the most recent spend for <stat>
+	- (if <stat> is 'list', then it finds <level>)
+	- reduces <stat> by 1 (numeric), entirely (flag), or <level> (list)
+	- adds the spent beats to _special.beats.<type>
+	- reduces the spent beats from  the 'spent' column
+
+So across the board I would need to check: 
+	- the usual validity stuff
+	- can I find a spend (-xxx) entry for this stat?
+	- is this stat valid after the unspend is done?
+
+--
+
+	n: name passed
+	t: type passed ( optional, default 'normal')
+	a: amt passed
+	r: reason passed
+
+	d: character dbref
+	x: current beats (for type) : _special.beats.<type>
+	b: current week's earned beats : _special.beats_earned.<type>
+	f: final weekly award attribute (for type)
+	e: total weekly earnable (for type)
+
 */
+
+&c.xp/unspend xpas=$^\+?xp/unspend(.+)$:

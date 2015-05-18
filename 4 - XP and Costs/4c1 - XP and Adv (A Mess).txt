@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS xp_log (
 
 	trait_category VARCHAR(255),
 	trait_name VARCHAR(255), 
+	trait_value VARCHAR(255), 
 
 	action VARCHAR(255) NOT NULL, 
 	reason VARCHAR(255), 
@@ -61,8 +62,9 @@ CREATE TABLE IF NOT EXISTS xp_log (
 
 	trait_category: Merit? Gift? (First part of statpath.) Used for spends.
 	trait_name: The rest of the statpath. Used for spends.
+	trait_value: Value set or added. Used for spends.
 
-	action: gain, spend, <others to follow>
+	action: gain, spend, freebie, <others to follow>
 	reasoning: Content for this. VAGUELY OPTIONAL
 
 
@@ -148,6 +150,7 @@ A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
 3: xp amt
 4: full statpath (with instance)
 5: reason (probably 'statname old -> new') 
+6: value set/added
 
 */
 
@@ -157,15 +160,15 @@ A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
 			target_objid, target_name, 
 			enactor_objid, enactor_name, 
 			xp_type, xp_amt, 
-			trait_category, trait_name, 
+			trait_category, trait_name, trait_value, 
 			action, reason
 		) 
 		VALUES (
 			'[u( .objid, %0 )]', '[name( %0 )]', 
 			'[u( .objid, %1 )]', '[name( %1 )]', 
 			'%2', %3, 
-			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', 
-			if( eq( %3, 0 ), 'freebie', 'spend' ), 
+			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', '%6', 
+			[if( eq( %3, 0 ), 'freebie', 'spend' )], 
 			'%5'
 		)
 
