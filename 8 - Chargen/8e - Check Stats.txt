@@ -778,3 +778,60 @@ strcat(
 /* -- test --
 
 think u( cg/check.badstats, udefault( %#/_special.sheet_location, %# ))
+
+
+
+/*
+================================================================================
+== CG/FORCECHECK ===============================================================
+
+'cg/check', but will check someone even if they're not 'in chargen'.
+Otherwise identical.
+
+*/
+
+&c.cg/forcecheck cg=
+	$^\+?cg/forcecheck(.*):
+
+	think strcat( 
+		player dbref:, %b, 
+		setr( p, if( t( strlen( trim( %1 ))), pmatch( trim( %1 )), %# )), %r, 
+		sheet dbref:, %b, 
+		setr( s, u( u( d.sfp )/f.find-sheet, %qp )), %r, 
+		sheet template:, %b, 
+		setr( t, u( %qs/_bio.template ))
+	); 
+
+	@pemit %#=
+	case( 0, 
+
+		t( %qp ), 
+		u( .msg, cg/check, Player cannot be found ), 
+
+		cor( isstaff( %# ), not( comp( %qp, %# ))), 
+		u( .msg, cg/check, You must be staff or checking yourself ), 
+
+		t( %qs ), 
+		u( .msg, cg/check, Can't find the sheet ), 
+
+		t( %qt ), 
+		u( .msg, cg/check, No template set ), 
+
+		strcat( 
+			header( Checking [name( %qp )]'s Stats, width( %# )), %r, 
+
+// .. chargen-level check normally happens only pre-approval
+			strcat( 
+				ulocal( check.bio, %qp, %qs, %qt ), %r, 
+				ulocal( check.chargen, %qs, %qt ), 
+			), 
+// .. valid stats check
+			ulocal( check.badstats, %qs ), %r, 
+
+			footer( , width( %# ))
+		)
+	)
+
+// --
+
+@set cg/c.cg/forcecheck=regex
