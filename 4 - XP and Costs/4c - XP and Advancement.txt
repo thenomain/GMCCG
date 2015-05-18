@@ -1205,7 +1205,8 @@ n: statname
 			strmatch( 
 				setr( e, 
 					sql( u( sql.insert.spend, 
-						%qp, %#, normal, mul( %qc, v( d.beat-to-exp )), %qs, 
+						%qp, %#, normal, mul( %qc, v( d.beat-to-exp )), 
+						u( f.sql.escape, %qs ), 
 						u( f.sql.escape, 
 							Spend: [statname( %qp/%qn )] '%qt' -> '%qv' 
 						)
@@ -1327,7 +1328,7 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 			strmatch( 
 				setr( e, 
 					sql( u( sql.insert.spend, 
-						%qp, %#, normal, 0, %qs, 
+						%qp, %#, normal, 0, u( f.sql.escape, %qs ), 
 						u( f.sql.escape, 
 							Freebie: [statname( %qp/%qn )] '%qt' -> '%qv' 
 							for reason '%qr' 
