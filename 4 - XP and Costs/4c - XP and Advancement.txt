@@ -1471,13 +1471,14 @@ v: chargen's stat validation
 c: stat class
 v: requested value (new) - from f.xp/cost
 t: trait's value (current, from the sheet) - from f.xp/cost
+s: statpath - from f.xp/cost
 returns: <null> if ok, otherwise error message
 
 */
 
 &validate.value xpas=
 	localize( strcat( 
-		setq( c, u( v( d.sfp )/f.get-class, %qs )), 
+		setq( c, ulocal( v( d.sfp )/f.get-class, %qs )), 
 
 		case( %qc, 
 
@@ -1485,6 +1486,9 @@ returns: <null> if ok, otherwise error message
 			case( 0, 
 				t( %qv ), 
 				capstr( lcstr( rest( %qv ))), 
+
+				match( first( get( v( d.dd )/%qs ), | ), %qv, . ), 
+				Value not in the list of values I can set, 
 
 				not( match( %qt, %qv, . )), 
 				You already have the stat at that level
