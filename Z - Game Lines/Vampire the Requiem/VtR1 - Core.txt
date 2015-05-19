@@ -754,7 +754,8 @@ Level 3 for very minor items
 // add '.ghoul' to the tags if you want them to be able to take it
 
 &discipline.cruac DD=1.2.3.4.5
-&prerequisite.discipline.cruac DD=u( .is_full, %0, bio.covenant, Circle of the Crone )
+&prerequisite.discipline.cruac DD=
+	u( .is_full, %0, bio.covenant, Circle of the Crone )
 &prereq-text.discipline.cruac DD=Covenant is Circle of the Crone
 &tags.discipline.cruac D:T=vampire.blood sorcery.circle of the crone
 
@@ -1119,8 +1120,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 */
 
 &bio.mystery_coil DD=Coil of the Ascendant.Coil of the Wyrm.Coil of the Voivode
-&prerequisite.bio.mystery_coil DD=
-	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prerequisite.bio.mystery_coil DD=u( .is_full, %0, bio.covenant, Ordo Dracul )
 &prereq-text.bio.mystery_coil DD=Covenant is Ordo Dracul
 &tags.bio.mystery_coil D:T=vampire.ordo dracul
 
@@ -1130,10 +1130,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	cand( 
 		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
 		cor( 
-			strmatch( 
-				u( .is_full, %0, bio.mystery_coil ), 
-				Coil of the Ascendant 
-			), 
+			u( .is_full, %0, bio.mystery_coil, Coil of the Ascendant ), 
 			u( .at_most_stat, %0, 
 				discipline.coil_of_the_ascendant, 
 				merit.status_(ordo_dracul), 
@@ -1146,7 +1143,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &tags.discipline.coil_of_the_ascendant D:T=vampire.coil.ordo dracul
 &xp.discipline.coil_of_the_ascendant xpcd=
 	if( 
-		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Ascendant ), 
+		u( .is_full, %0, bio.mystery_coil, Coil of the Ascendant ), 
 		u( cost.standard, 3, %1, %2 ), 
 		u( cost.standard, 4, %1, %2 )
 	)
@@ -1157,7 +1154,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	cand( 
 		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
 		cor( 
-			strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Wyrm ), 
+			u( .is_full, %0, bio.mystery_coil, Coil of the Wyrm ), 
 			u( .at_most_stat, %0, 
 				discipline.coil_of_the_wyrm, 
 				merit.status_(ordo_dracul), 
@@ -1170,18 +1167,18 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &tags.discipline.coil_of_the_wyrm D:T=vampire.coil.ordo dracul
 &xp.discipline.coil_of_the_wyrm xpcd=
 	if( 
-		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Wyrm ), 
+		u( .is_full, %0, bio.mystery_coil, Coil of the Wyrm ), 
 		u( cost.standard, 3, %1, %2 ), 
 		u( cost.standard, 4, %1, %2 )
 	)
 
 
-&discipline.coil_of_voivode DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_voivode DD=
+&discipline.coil_of_the_voivode DD=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_voivode DD=
 	cand( 
 		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
 		cor( 
-			strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Voivode ), 
+			u( .is_full, %0, bio.mystery_coil, Coil of the Voivode ), 
 			u( .at_most_stat, %0, 
 				discipline.coil_of_the_wyrm, 
 				merit.status_(ordo_dracul), 
@@ -1189,12 +1186,12 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 			)
 		)
 	)
-&prereq-text.discipline.coil_of_voivode DD=Covenant is Ordo Dracul, 
+&prereq-text.discipline.coil_of_the_voivode DD=Covenant is Ordo Dracul, 
 	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
-&tags.discipline.coil_of_voivode D:T=vampire.coil.ordo dracul
-&xp.discipline.coil_of_voivode xpcd=
+&tags.discipline.coil_of_the_voivode D:T=vampire.coil.ordo dracul
+&xp.discipline.coil_of_the_voivode xpcd=
 	if( 
-		strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Voivode ), 
+		u( .is_full, %0, bio.mystery_coil, Coil of the Voivode ), 
 		u( cost.standard, 3, %1, %2 ), 
 		u( cost.standard, 4, %1, %2 )
 	)
