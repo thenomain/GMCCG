@@ -821,7 +821,7 @@ Following is sent from XP:
 			) 
 		), 3, 
 		strmatch( %2, unlock ), 5, 
-		hastag( %2, wolf ), 1, 
+		hastag?( %3, wolf ), 1, 
 		2
 	)
 
