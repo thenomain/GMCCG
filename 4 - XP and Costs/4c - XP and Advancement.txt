@@ -1870,10 +1870,98 @@ So across the board I would need to check:
 
 	d: character dbref
 	x: current beats (for type) : _special.beats.<type>
-	b: current week's earned beats : _special.beats_earned.<type>
-	f: final weekly award attribute (for type)
-	e: total weekly earnable (for type)
+
+//	b: current week's earned beats : _special.beats_earned.<type>
+//	f: final weekly award attribute (for type)
+//	e: total weekly earnable (for type)
 
 */
 
-&c.xp/unspend xpas=$^\+?xp/unspend(.+)$:
+&c.xp/unspend [v( d.xpas )]=$^\+?xp/unspend(.+)$:@pemit %#=
+	strcat( 
+
+// xp/unspend <name>/<stat>[=<level>] for <reason>
+		setq( 0, trim( %1 )), 
+		setq( p, pmatch( first( %q0, / ))), 
+		setq( n, before( before( rest( %q0, / ), %bfor%b ), = )), 
+		setq( r, rest( %q0, %bfor%b )), 
+		setq( l, 
+			if( strmatch( %q0, *=* ), before( rest( %q0, = ), %bfor%b ))
+		), 
+
+// sheet loc, statpath, stat class
+		setq( w, ulocal( v( d.sfp )/f.find-sheet, %qp )),
+		setq( s, ulocal( v( d.sfp )/f.statpath.workhorse, %qn, %qp )), 
+		setq( c, ulocal( [u( d.sfp )]/f.get-class, %qs )), 
+
+// sql results -- only if %qp and %qs are valid
+		setq( q, 
+			if( cand( isdbref( %qp ), t( %qs )), 
+				last( sql( u( sql.select.spends-stat, %qp, %qs, %ql ), |, ` ), | )
+			)
+		), 
+
+		DEBUG: %r
+		%b p: %qp -- n: %qn -- r: %qr -- l: %ql, %r, 
+		%b w: %qw -- s: %qs -- c: %qc, %r, 
+		%b q: %qq, %r, 
+
+		case( 1, 
+			not( isstaff( %# )), 
+			u( .msg, xp/unspend, Staff only ), 
+
+			t( setr( e, ulocal( validate.player, %qp, %qw, 1 ))), 
+			u( .msg, xp/unspend, %qe ), 
+
+			not( %qr ), 
+			u( .msg, xp/unspend, Unspends must include a reason ), 
+
+			not( %qs ), 
+			u( .msg, xp/unspend, 
+				Statpath errored: [capstr( lcstr( rest( %qs )))] 
+			), 
+			
+			not( strlen( %qq )), 
+			u( .msg, xp/unspend, No record of a spend for that stat ), 
+
+			OK.			
+		)
+	)
+
+// --
+
+@set xpas/c.xp/unspend=regexp
+
+// -- 
+
+xp/unspend vera/dex for A Good Reason Clearly
+xp/unspend delilah/gift of stealth=unlock for Some Reason Here
+
+
+// --
+
+/* 
+--------------------------------------------------------------------------------
+-- SQL Select: Get all spends for '<statpath>' ---------------------------------
+
+All timestamps & xp spent on '<statpath>'; ignore freebies
+
+0: target dbref
+1: statpath (with instance)
+2: trait value (list only)
+
+*/
+
+&sql.select.spends-stat [v( d.xpas )]=
+	SELECT log_time, target_objid, xp_type, xp_amt 
+	FROM xp_log 
+	WHERE 
+		target_objid='[u( .objid, %0 )]' 
+		AND trait_category='[first( %1, . )]' 
+		AND trait_name='[rest( %1, . )]' 
+		[if( 
+			strmatch( ulocal( [u( d.sfp )]/f.get-class, %1 ), list ), 
+			AND trait_value='%2' 
+		)] 
+		AND action='spend' 
+	ORDER BY log_time ASC
