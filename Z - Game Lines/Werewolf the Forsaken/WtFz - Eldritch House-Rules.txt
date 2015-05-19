@@ -163,6 +163,23 @@ think u( v( d.cg )/check.gifts, %# )
 		), 
 	)
 
+/*
+================================================================================
+== MERIT.CLEAR-SIGHTED =========================================================
+
+Allowed for 'wolf-blooded' and 'stigmatic'.
+
+*/
+
+@fo me=&tags.merit.clear-sighted d:t=
+	strcat( 
+		setr( a, get( d:t/tags.merit.clear-sighted )), 
+		if( 
+			not( match( get( d:t/tags.merit.clear-sighted ), wolf-blooded, . )), 
+			.wolf-blooded 
+		)
+	)
+
 
 /*
 ================================================================================

@@ -20,3 +20,24 @@ Demon-Blooded:
 
 &merit.soul_pact_() DD=2.3.4.5|*
 &tags.merit.soul_pact_() D:T=demon
+
+
+
+/*
+================================================================================
+== MERIT.CLEAR-SIGHTED =========================================================
+
+Allowed for 'wolf-blooded' and 'stigmatic'.
+
+*/
+
+@fo me=&tags.merit.clear-sighted d:t=
+	strcat( 
+		setr( a, get( d:t/tags.merit.clear-sighted )), 
+		if( 
+			not( match( get( d:t/tags.merit.clear-sighted ), stigmatic, . )), 
+			.stigmatic 
+		)
+	)
+
+
