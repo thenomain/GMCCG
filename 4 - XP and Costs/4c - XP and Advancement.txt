@@ -575,7 +575,8 @@ p: target (dbref)
 		), 
 		trim( fdiv( floor( elements( %0, 4, | )), v( d.beat-to-exp )), l, 0 ), 
 		|, 
-// reason
+// action: reason
+		elements( %0, 5, | ), :%b, 
 		elements( %0, 6, | )
 	)
 
@@ -1217,7 +1218,7 @@ n: statname
 						%qp, %#, normal, mul( %qc, v( d.beat-to-exp )), 
 						u( f.sql.escape, %qs ), 
 						u( f.sql.escape, 
-							Spend: [statname( %qp/%qn )] '%qt' -> '%qv' 
+							[statname( %qp/%qn )] '%qt' -> '%qv' 
 						), 
 						%qv 
 					))
@@ -1340,7 +1341,7 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 					sql( u( sql.insert.spend, 
 						%qp, %#, normal, 0, u( f.sql.escape, %qs ), 
 						u( f.sql.escape, 
-							Freebie: [statname( %qp/%qn )] '%qt' -> '%qv' 
+							[statname( %qp/%qn )] '%qt' -> '%qv' 
 							for reason '%qr' 
 						), 
 						%qv 
@@ -1897,7 +1898,10 @@ So across the board I would need to check:
 // sql results -- only if %qp and %qs are valid
 		setq( q, 
 			if( cand( isdbref( %qp ), t( %qs )), 
-				last( sql( u( sql.select.spends-stat, %qp, %qs, %ql ), |, ` ), | )
+				last( 
+					sql( u( sql.select.spends-stat, %qp, %qs, %ql ), |, ` ), 
+					| 
+				)
 			)
 		), 
 
@@ -1924,7 +1928,12 @@ So across the board I would need to check:
 			not( strlen( %qq )), 
 			u( .msg, xp/unspend, No record of a spend for that stat ), 
 
-			OK.			
+// ok
+			strcat( 
+				%b beats spent:%b, trim( elements( %qq, 4, ` ), b, 0 ), %r, 
+				%b xp type:%b, elements( %qq, 3, ` ), %r, 
+				%b reason:%b, elements( %qq, 2, ` ), %r, 
+			)			
 		)
 	)
 
@@ -1953,7 +1962,7 @@ All timestamps & xp spent on '<statpath>'; ignore freebies
 */
 
 &sql.select.spends-stat [v( d.xpas )]=
-	SELECT log_time, target_objid, xp_type, xp_amt 
+	SELECT log_time, reason, xp_type, xp_amt 
 	FROM xp_log 
 	WHERE 
 		target_objid='[u( .objid, %0 )]' 
@@ -1965,3 +1974,4 @@ All timestamps & xp spent on '<statpath>'; ignore freebies
 		)] 
 		AND action='spend' 
 	ORDER BY log_time ASC
+
