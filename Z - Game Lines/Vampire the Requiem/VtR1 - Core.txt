@@ -774,11 +774,11 @@ Level 3 for very minor items
 &prereq-text.discipline.coil_of_the_wyrm DD=Covenant is Ordo Dracul
 &tags.discipline.coil_of_the_wyrm D:T=vampire.coil.ordo dracul
 
-&discipline.coil_of_voivode DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_voivode DD=
+&discipline.coil_of_the_voivode DD=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_voivode DD=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.discipline.coil_of_voivode DD=Covenant is Ordo Dracul
-&tags.discipline.coil_of_voivode D:T=vampire.coil.ordo dracul
+&prereq-text.discipline.coil_of_the_voivode DD=Covenant is Ordo Dracul
+&tags.discipline.coil_of_the_voivode D:T=vampire.coil.ordo dracul
 
 
 
@@ -1130,7 +1130,10 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	cand( 
 		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
 		cor( 
-			strmatch( u( .is_full, %0, bio.mystery_coil ), Coil of the Ascendant ), 
+			strmatch( 
+				u( .is_full, %0, bio.mystery_coil ), 
+				Coil of the Ascendant 
+			), 
 			u( .at_most_stat, %0, 
 				discipline.coil_of_the_ascendant, 
 				merit.status_(ordo_dracul), 
@@ -1197,6 +1200,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	)
 
 // -- scales --
+// A little trickery for XP. 2 - (do they have the discount? 1 or 0)
 
 &class.scale.? DD=flag
 
@@ -1206,11 +1210,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Day-Wake_Conditioning DD=Covenant is Ordo Dracul
 &tags.scale.Day-Wake_Conditioning D:T=vampire.ordo dracul
 &xp.scale.Day-Wake_Conditioning xpcd=
-	if( 
-		u( .at_least, %0, discipline.coil_of_the_ascendant, 1 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.coil_of_the_ascendant, 1 ))
 
 
 &scale.Epidermal_Shielding_Bath DD=Coil of the Ascendant:5
@@ -1219,11 +1219,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Epidermal_Shielding_Bath DD=Covenant is Ordo Dracul
 &tags.scale.Epidermal_Shielding_Bath D:T=vampire.ordo dracul
 &xp.scale.Epidermal_Shielding_Bath xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil of the Ascendant, 5 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil of the Ascendant, 5 ))
 
 
 &scale.Flesh_Graft_Treatment DD=Coil of the Ascendant:4
@@ -1232,11 +1228,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Flesh_Graft_Treatment DD=Covenant is Ordo Dracul
 &tags.scale.Flesh_Graft_Treatment D:T=vampire.ordo dracul
 &xp.scale.Flesh_Graft_Treatment xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil_of_the_Ascendant, 4 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Ascendant, 4 ))
 
 
 &scale.Augmented_Vitae_Draught DD=Coil of the Wyrm:4
@@ -1245,11 +1237,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Augmented_Vitae_Draught DD=Covenant is Ordo Dracul
 &tags.scale.Augmented_Vitae_Draught D:T=vampire.ordo dracul
 &xp.scale.Augmented_Vitae_Draught xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil_of_the_Wyrm, 4 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Wyrm, 4 ))
 
 
 &scale.Kindred_Sense_Endowment DD=Coil of the Wyrm:2
@@ -1258,11 +1246,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Kindred_Sense_Endowment DD=Covenant is Ordo Dracul
 &tags.scale.Kindred_Sense_Endowment D:T=vampire.ordo dracul
 &xp.scale.Kindred_Sense_Endowment xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil_of_the_Wyrm, 2 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Wyrm, 2 ))
 
 
 &scale.Surgical_Heart_Removal DD=Coil of the Wyrm:5
@@ -1271,11 +1255,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Surgical_Heart_Removal DD=Covenant is Ordo Dracul
 &tags.scale.Surgical_Heart_Removal D:T=vampire.ordo dracul
 &xp.scale.Surgical_Heart_Removal xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil_of_the_Wyrm, 5 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Wyrm, 5 ))
 
 
 &scale.Blood_Cleansing_Ritual DD=Coil of the Voivode:1
@@ -1284,11 +1264,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Blood_Cleansing_Ritual DD=Covenant is Ordo Dracul
 &tags.scale.Blood_Cleansing_Ritual D:T=vampire.ordo dracul
 &xp.scale.Blood_Cleansing_Ritual xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil_of_the_Voivode, 1 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Voivode, 1 ))
 
 
 &scale.Fealty's_Reward DD=Coil of the Voivode:3
@@ -1297,11 +1273,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Fealty's_Reward DD=Covenant is Ordo Dracul
 &tags.scale.Fealty's_Reward D:T=vampire.ordo dracul
 &xp.scale.Fealty's_Reward xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil_of_the_Voivode, 3 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Voivode, 3 ))
 
 
 &scale.Mass_Embrace DD=Coil of the Voivode:5
@@ -1310,11 +1282,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Mass_Embrace DD=Covenant is Ordo Dracul
 &tags.scale.Mass_Embrace D:T=vampire.ordo dracul
 &xp.scale.Mass_Embrace xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil_of_the_Voivode, 5 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Voivode, 5 ))
 
 
 &scale.Sanguinary_Invigoration DD=Coil of the Voivode:2
@@ -1323,11 +1291,7 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 &prereq-text.scale.Sanguinary_Invigoration DD=Covenant is Ordo Dracul
 &tags.scale.Sanguinary_Invigoration D:T=vampire.ordo dracul
 &xp.scale.Sanguinary_Invigoration xpcd=
-	if( 
-		u( .at_least, %0, discipline.Coil_of_the_Voivode, 2 ), 
-		u( cost.standard, 1, %1, %2 ), 
-		u( cost.standard, 2, %1, %2 )
-	)
+	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Voivode, 2 ))
 
 
 
