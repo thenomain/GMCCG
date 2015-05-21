@@ -1333,7 +1333,7 @@ Following is sent from XP:
 
 &gift.gift_of_change DD=
 	Cunning.Glory.Honor.Purity.Wisdom|
-	Skin Thief.The Father's Form.Gaze of the Moon.Luna's Embrace.
+	Skin Thief.Gaze of the Moon.Luna's Embrace.The Father's Form.
 	Quicksilver Flesh
 &prerequisite.gift.gift_of_change DD=
 	u( .gifts.facet_check.wolf, %0, gift.gift_of_change, %2 )
