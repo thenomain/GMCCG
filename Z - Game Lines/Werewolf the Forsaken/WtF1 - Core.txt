@@ -101,7 +101,7 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 &.Auspice_Skill_Check DD=
 	t( setinter( 
 		%1, 
-		case( u( .value_full, %0, bio.tribe ), 
+		switch( u( .value_full, %0, bio.auspice ), 
 			cahalith, skill.crafts skill.expression skill.persuasion, 
 			elodoth, skill.empathy skill.investigation skill.politics, 
 			irraka, skill.larceny skill.stealth skill.subterfuge, 
