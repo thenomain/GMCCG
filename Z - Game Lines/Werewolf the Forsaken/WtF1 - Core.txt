@@ -504,7 +504,7 @@ Effective Rank.
 &merit.moon-kissed_() DD=1|*
 &prerequisite.merit.moon-kissed_() DD=
 	cand( 
-		u( .at_least. %0, skill.%1, 2 ), 
+		u( .at_least, %0, skill.%1, 2 ), 
 		u( .auspice_skill_check, %0, skill.%1 )
 	)
 &prereq-text.merit.moon-kissed_() DD=Type must be an Auspice Skill at 2+
