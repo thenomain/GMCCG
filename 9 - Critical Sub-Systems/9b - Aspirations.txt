@@ -683,7 +683,7 @@ think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [an
 		If you approve of this%, type:, %r, 
 		%b %b asp/approve %qn/%1, %r%r, 
 		If not%, type:, %r, 
-		%b %b asp/deny %qn/%1=<reason>, %r%r, 
+		%b %b asp/deny %qn=%1, %r%r, 
 		Either way%, be sure to close this job with the reason that you 
 		are closing it. 
 	)
