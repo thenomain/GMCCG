@@ -1151,7 +1151,7 @@ Following is sent from XP:
 
 &gift.full_moon's_gift DD=1.2.3.4.5|
 	Killer Instinct.Warrior's Hide.Bloody-Handed Hunter.Butchery.Crimson Spasm
-&prerequisite.gift.half_moon's_gift DD=
+&prerequisite.gift.full_moon's_gift DD=
 	u( .gifts.facet_check.moon, %0, Rahu, gift.full_moon's_gift, %2 )
 &prereq-text.gift.full_moon's_gift DD=
 	Auspice is Rahu, must be set or unset in order
