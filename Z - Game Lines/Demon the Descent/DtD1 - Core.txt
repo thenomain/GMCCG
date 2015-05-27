@@ -901,7 +901,9 @@ Character with Primum 1 can opt to have only 1 Cover
 		)
 		land( 
 			iter( %qz, eq( last( %i0, : ), 7 ), | )
-		), 
+		)
+/* -- we don't care if a cover matches bio.full_name --
+		, 
 		eq( 
 			words( 
 				graball( 
@@ -912,7 +914,8 @@ Character with Primum 1 can opt to have only 1 Cover
 				| 
 			), 
 			1 
-		) 
+		)
+*/ 
 	)
 
 // -- 
