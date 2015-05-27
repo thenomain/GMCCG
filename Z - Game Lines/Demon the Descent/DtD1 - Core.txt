@@ -1155,7 +1155,7 @@ Merits are written down in the specific Cover’s section of the Cover sheet.
 			), , %r 
 		), %r, 
 
-// Covers: <primum>, 1 with current Full Name, both at 7
+// Covers: <primum>, each at 7
 		%b%b, ansi( h, rest( u( .plural, words( %qc, | ), Cover, Covers ))), :, 
 		%r, %b%b %b, 
 		iter( %qc, titlestr( %i0 ), |, %r%b%b %b ), %r, 
@@ -1165,7 +1165,7 @@ Merits are written down in the specific Cover’s section of the Cover sheet.
 			1, 
 			up to %qp
 		), 
-		%b, at level 7%, one with current Full Name%), %b, 
+		%b, at level 7%), %b, 
 		u( display.check.ok-no, u( f.pts-valid?.integrity.demon, %0 )), %r,
 	)
 
