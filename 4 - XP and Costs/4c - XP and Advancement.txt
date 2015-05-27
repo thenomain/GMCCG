@@ -641,7 +641,7 @@ Valid award:
 --
 
 	n: name passed
-	t: type passed ( optional, default 'normal')
+	t: type passed (optional, default 'normal')
 	a: amt passed
 	r: reason passed
 
@@ -670,7 +670,7 @@ Valid award:
 
 	@assert hastype( setr( p, pmatch( %qn )), PLAYER )={ 
 		@pemit %#=u( .msg, xp/award, Could not find '%qn' )
-	};
+	}; 
 
 	@assert cor( isapproved( %qp ), isapproved( %qp, chargen ))={ 
 		@pemit %#=u( .msg, 
@@ -681,22 +681,22 @@ Valid award:
 
 	@assert hastype( setr( p, pmatch( %qn )), PLAYER )={ 
 		@pemit %#=u( .msg, xp/award, Could not find '%qn' )
-	};
+	}; 
 
 	@assert isint( %qa )={ 
 		@pemit %#=u( .msg, xp/award, Award must be an integer )
-	};
+	}; 
 
 	@assert strlen( %qr )={ 
 		@pemit %#=u( .msg, xp/award, Must include reason )
-	};
+	}; 
 
 	@break cor( strmatch( %qr, *|* ), strmatch( %qr, *`* ))={ 
 		@pemit %#=u( .msg, xp/award, May not use | or ` in reason )
-	};
-	
-	@assert strmatch( %qt, normal )={ 
-		@pemit %#=u( .msg, xp/award, I can only award 'normal' xp right now )
+	}; 
+
+	@assert t( match( v( d.xp_types ), %qt ))={ 
+		@pemit %#=u( .msg, xp/award, I can't find the '%qt' type )
 	}; 
 
 	think strcat( 
@@ -739,6 +739,7 @@ Valid award:
 		xp/award, 
 		You have awarded '[name( %qp )]' 
 		[u( .plural, %qa, Beat, Beats )] 
+		[if( not( strmatch( %qt, normal )), %(%qt%)%b )]
 		for '%qr' 
 	); 
 
@@ -746,6 +747,7 @@ Valid award:
 		xp/award, 
 		[moniker( %# )] has just awarded you 
 		[u( .plural, %qa, Beat, Beats )] 
+		[if( not( strmatch( %qt, normal )), %(%qt%)%b )]
 		for '%qr' 
 	); 
 
@@ -1933,6 +1935,10 @@ So across the board I would need to check:
 				%b beats spent:%b, trim( elements( %qq, 4, ` ), b, 0 ), %r, 
 				%b xp type:%b, elements( %qq, 3, ` ), %r, 
 				%b reason:%b, elements( %qq, 2, ` ), %r, 
+// .. here we need to determine if removing the stat is valid
+// .. 1. what would the new stat be?
+				%b current stat value:%b, u( .value, %qw, %qs )
+// .. 2. validate that
 			)			
 		)
 	)
