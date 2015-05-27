@@ -415,7 +415,7 @@ List all agendas that a demon has.
 &embed.eavesdrop DD=Wits + Empathy
 &tags.embed.eavesdrop D:T=demon.vocal
 
-&embed.everbody_knows DD=Manipulation + Subterfuge
+&embed.everybody_knows DD=Manipulation + Subterfuge
 &tags.embed.everybody_knows D:T=demon.vocal
 
 &embed.find_the_leak DD=Wits + Empathy
