@@ -326,8 +326,15 @@ DtD2: Flowers of Hell
 &demonic_form.mantle_of_fire DD=1
 &tags.demonic_form.mantle_of_fire D:T=demon.technology
 
-&demonic_form.savant_core DD=1
-&tags.demonic_form.savant_core D:T=demon.technology
+&demonic_form.savant_core_() DD=1|
+	Academics.Animal Ken.Athletics.Brawl.Computer.Crafts.Drive.Empathy.
+	Expression.Firearms.Intimidation.Investigation.Larceny.Medicine.
+	Occult.Persuasion.Politics.Science.Socialize.Stealth.Streetwise.
+	Subterfuge.Survival.Weaponry
+&tags.demonic_form.savant_core_() D:T=demon.technology
+
+// &demonic_form.savant_core DD=1
+// &tags.demonic_form.savant_core D:T=demon
 
 &demonic_form.shielded_compartment DD=1
 &tags.demonic_form.shielded_compartment D:T=demon.technology
