@@ -29,8 +29,8 @@ COMMANDS:
 	xp : how much I got? (all types)
 	xp <name> : how much they got?
 
-	xp/log [<type>]
-	xp/log <name>[=<type>]
+√	xp/log [<name>]
+≈	xp/log <name>[=<type>]
 	
 
 √	xp/award <name>=<amt> for <reason> : give out dem generic goodies
@@ -507,6 +507,7 @@ think u( xpas/display.approval-deets, pmatch( vera ))
 
 For now, shows the entire log of self or <name>. 
 This system needs massively overhauled in the future.
+Especially now that we're handing out other kinds of xps.
 
 p: target (dbref)
 
@@ -1014,19 +1015,19 @@ x: current 'beats' attribute
 
 		case( 1, 
 			t( setr( e, ulocal( validate.player, %qp, %qw, 1 ))), 
-			u( .msg, xp/cost, %qe ), 
+			ulocal( .msg, xp/cost, %qe ), 
 
 			t( setr( e, ulocal( validate.stat, %qw, %qs, %qt, %qv ))), 
-			u( .msg, xp/cost, %qe ), 
+			ulocal( .msg, xp/cost, %qe ), 
 
-			t( setr( e, ulocal( validate.value ))), 
-			u( .msg, xp/cost, %qe ), 
+			t( setr( e, ulocal( validate.value, %qs, %qt, %qv ))), 
+			ulocal( .msg, xp/cost, %qe ), 
 
 			t( setr( e, ulocal( validate.cost, %qc ))), 
-			u( .msg, xp/cost, %qe ), 
+			ulocal( .msg, xp/cost, %qe ), 
 
-			u( .msg, xp/cost, 
-				u( display.xp/cost, %qp, %qn, %qs, %qv, %qt )
+			ulocal( .msg, xp/cost, 
+				ulocal( display.xp/cost, %qp, %qn, %qs, %qv, %qt )
 			)
 
 		)
@@ -1113,6 +1114,7 @@ Needs to handle specialties properly.  The XP cost calculator does, too.
 1: _sheet.statpath_(with_instance)
 
 d: dd statpath, without instance
+c: stat class
 s: value of stat on sheet
 v: valid values
 n: next rank, if applicable
@@ -1120,7 +1122,9 @@ n: next rank, if applicable
 
 &f.stat.next_rank xpas=
 	localize( strcat( 
-		setq( d, u( v( d.sfp )/f.statpath-without-instance, trim( %1, l, _ ))), 
+		setq( d, 
+			ulocal( v( d.sfp )/f.statpath-without-instance, trim( %1, l, _ ))
+		), 
 		setq( s, first( udefault( %0/%1, 0 ), . )), 
 		setq( v, first( u( v( d.dd )/%qd ), | )), 
 		setq( n, extract( %qv, inc( match( %qv, %qs, . )), 1, . )), 
@@ -1140,9 +1144,18 @@ n: next rank, if applicable
 
 Extended form of 'xp/cost'
 
+	xp/spend [<player>/]<stat>[=<value>[/<xp type>]]
+
+	xp/spend <stat>
+	xp/spend <stat>=<value>
+	xp/spend <stat>=<value>/<xp type>
+	xp/spend <stat>=<value>/<xp type> <amt>/<xp type> <amt>/<xp type> <amt>
+	xp/spend/<xp_type>:<amt>/<xp_type>:<amt> <stat>=<value>
+
+
 --
 
-0: [<player>/]<stat>[=<value>]
+0: [<player>/]<stat>[=<value>[/<xp type>]]
 p: player dbref
 n: stat name
 v: requested value (new)
@@ -1200,7 +1213,7 @@ n: statname
 			t( setr( e, ulocal( validate.stat, %qw, %qs, %qt, %qv ))), 
 			u( .msg, xp/spend, %qe ), 
 
-			t( setr( e, ulocal( validate.value ))), 
+			t( setr( e, ulocal( validate.value, %qs, %qt, %qv ))), 
 			u( .msg, xp/spend, %qe ), 
 
 			t( setr( e, ulocal( validate.cost, %qc ))), 
@@ -1310,10 +1323,9 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 		setq( w, ulocal( v( d.sfp )/f.find-sheet, %qp )),
 		setq( s, ulocal( v( d.sfp )/f.statpath.workhorse, %qn, %qp )), 
 
-// current value, next value, estimated cost
+// current value, next value
 		setq( t, ulocal( .value, %qw, %qs )), 
-		if( 
-			not( t( %qv )), 
+		if( not( %qv ), 
 			setq( v, ulocal( f.stat.next_rank, %qw, _%qs ))
 		), 
 
@@ -1331,7 +1343,7 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 			t( setr( e, ulocal( validate.stat, %qw, %qs, %qt, %qv ))), 
 			u( .msg, xp/freebie, %qe ), 
 
-			t( setr( e, ulocal( validate.value ))), 
+			t( setr( e, ulocal( validate.value, %qs, %qt, %qv ))), 
 			u( .msg, xp/freebie, %qe ), 
 
 			t( setr( e, ulocal( validate.restricted, %qs, %qv ))), 
@@ -1426,6 +1438,7 @@ Uses 'f.statcheck' for almost all of it.
 3: requested value (new) (qv)
 
 v: chargen's stat validation
+
 */
 
 &validate.stat xpas=
@@ -1456,7 +1469,7 @@ v: chargen's stat validation
 			Stat cannot be taken by your template, 
 
 			t( elements(%qv, 4, . )), 
-			capstr( lcstr( rest( elements( %qv, 4, . ))))
+			rest( elements( %qv, 4, . ))
 		)
 	))
 
@@ -1483,41 +1496,46 @@ v: chargen's stat validation
 --------------------------------------------------------------------------------
 -- Validate: Value -------------------------------------------------------------
 
+
+0: full.statpath_(with_instance), %qs
+1: trait's value (current, from sheet), %qt
+2: requested value (new), %qv
+
 c: stat class
-v: requested value (new) - from f.xp/cost
-t: trait's value (current, from the sheet) - from f.xp/cost
-s: statpath - from f.xp/cost
 returns: <null> if ok, otherwise error message
 
 */
 
 &validate.value xpas=
 	localize( strcat( 
-		setq( c, ulocal( v( d.sfp )/f.get-class, %qs )), 
+		setq( c, ulocal( v( d.sfp )/f.get-class, %0 )), 
+		setq( v, lcstr( first( get( v( d.dd )/%0 ), | ))), 
 
 		case( %qc, 
-
 			list, 
 			case( 0, 
-				t( %qv ), 
-				capstr( lcstr( rest( %qv ))), 
+				t( %2 ), 
+				capstr( lcstr( rest( %2 ))), 
 
-				match( first( get( v( d.dd )/%qs ), | ), %qv, . ), 
+				eq( 
+					words( setinter( %qv, lcstr( %2 ), . ), . ), 
+					words( %2, . )
+				), 
 				Value not in the list of values I can set, 
 
-				not( match( %qt, %qv, . )), 
+				not( match( %1, %2, . )), 
 				You already have the stat at that level
 			), 
 
 			numeric, 
 			case( 0, 
-				t( %qv ), 
-				capstr( lcstr( rest( %qv ))), 
+				t( %2 ), 
+				capstr( lcstr( rest( %2 ))), 
 
-				isint( %qv ), 
+				isint( %2 ), 
 				Raise must be numeric, 
 
-				gt( %qv, %qt ), 
+				gt( %2, %1 ), 
 				Stat must be raised
 			), 
 

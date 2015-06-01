@@ -36,8 +36,8 @@ t: temp validation results, used here and there
 
 &f.statcheck cg=
 localize( strcat(  
-	setq( s, ulocal( [u( d.sfp )]/f.statpath-without-instance, rest( %1, _ ))), 
-	setq( c, ulocal( [u( d.dd )]/.class, %qs )), 
+	setq( s, ulocal( v( d.sfp )/f.statpath-without-instance, rest( %1, _ ))), 
+	setq( c, ulocal( v( d.sfp )/f.get-class, %qs )), 
 	setq( v, case( %qc, numeric, first( u( %0/%1 ), . ), u( %0/%1 ))), 
 
 // >> <stat value>
@@ -49,7 +49,7 @@ localize( strcat(
 			u( f.statcheck.substat, %0, %1, %2 ), 
 
 // .. derived: dd value matches [*]: check the sheet value is integer
-			ulocal( [u( d.sfp )]/f.hastag?.workhorse, %qs, derived ), 
+			ulocal( v( d.sfp )/f.hastag?.workhorse, %qs, derived ), 
 			ulocal( f.statcheck.derived, %0, %1, %qc ), 
 
 // .. list: stat with class of "list"
@@ -294,7 +294,7 @@ localize( strcat(
 	setq( l, 
 		setinter( 
 // .. valid stats vs.
-			first( get( [u(d.dd)]/%0 ), | ), 
+			first( get( v( d.dd )/%0 ), | ), 
 			setunion( 
 // .. .. sheet stats +
 				%1, 
@@ -308,7 +308,7 @@ localize( strcat(
 
 // Any matches?
 	if(
-		gte(words(%ql, .), 1), 
+		gte( words( %ql, . ), 1 ), 
 		%ql, 
 		#-1 No list items valid 
 	)
