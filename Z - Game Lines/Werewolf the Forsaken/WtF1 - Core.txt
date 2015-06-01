@@ -1106,8 +1106,7 @@ Following is sent from XP:
 		case( 1, 
 			strmatch( %3, ), 1, 
 			cor( 
-// ** something about our assumption in list_has_all is breaking ** //
-				u( .list_has_all, %0, %2, lnum( 1, %3, . )), 
+				u( .list_has_all, %0, %2, lnum( 1, dec( %3 ), . )), 
 				cand( 
 					u( .has_not, %0, %2 ), 
 					eq( %3, 1 )
