@@ -989,6 +989,24 @@ a: attribute for subject, if any
 
 
 
+init: Check the room's initiative roster.
+
+init/roll [<modifiers>]: Roll your initiative, + or - modifiers. Health penalties at the time of the roll apply.
+
+init/roll <name>[/<initiative stat>] [<modifiers>]: Roll for an NPC with an initiative stat as entered, 0 otherwise.
+
+init/remove me: Remove yourself from the roster.
+
+init/remove <name>: Remove an NPC from the roster.
+
+init/set me=<value>: Add yourself onto the roster with a total initiative of <value>.
+
+init/set <name>[/<initiative stat>]=<value>: Add an NPC to the roster with a total iniative of <value>.
+
+init/clear: Clear the entire initiative roster. Use at the start of combat.
+
+
+
 ================================================================================
 == MORE RANDOM COMMENTS ========================================================
 
