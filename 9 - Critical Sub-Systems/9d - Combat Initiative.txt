@@ -910,7 +910,7 @@ Hey, past self, I have a question:
 						[if( t( %qm ), %b[u( .operand, %qm )] [abs( %qm )] )]%, 
 						putting '[titlestr( %qs )]' on the initiative roster 
 						at [trim( %qt, l, 0 )]
-					), 
+					)
 				)
 			), 
 // else error: dbref & not approved
@@ -967,7 +967,7 @@ a: attribute for subject, if any
 // not-dbref == not pc == NPC
 			isdbref( %qs ), 
 			strcat( 
-				set( %ql, %qa: )
+				set( %ql, %qa: ), 
 				remit( %ql, 
 					u( .msg, init, %N removes '%qs' from the initiative roster )
 				)
