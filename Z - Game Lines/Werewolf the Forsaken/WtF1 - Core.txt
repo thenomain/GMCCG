@@ -1989,3 +1989,140 @@ p. 92
 
 */
 
+
+/*
+================================================================================
+== SPEND/REGAIN ESSENCE ========================================================
+
+expands: 9c - Spend and Regain
+
+	spend essence=<amt/method> for <reason>
+
+spend limit per Primal Urge: 
+	1 2 3 4 5 6 7 8 10 15
+
+regain methods:
+	moon (once/night)
+	locus
+	rite of the spirit hunt
+	cannibalism
+
+
+--------------------------------------------------------------------------------
+-- Spend/Regain Methods --------------------------------------------------------
+*/
+
+&regain.methods.essence psrs=|all
+&spend.methods.essence psrs=[@@( nothing but numeric allowed here )]
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend/Regain Essence Amts ---------------------------------------------------
+*/
+
+&amt.spend.numeric.essence psrs=
+	if( t( u( amt.spend.numeric.default, %0, %1, %2 )), 
+		if( 
+			lte( %2, 
+				elements( 
+					1 2 3 4 5 6 7 8 10 15, 
+					getstat( %0/Primal Urge )
+				)
+			), 
+			mul( %2, -1 ), 
+			#-1 You can't spend that much at one time 
+		), 
+		u( amt.spend.numeric.default, %0, %1, %2 )
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend Essence Trigger -------------------------------------------------------
+*/
+
+&spend.trigger.essence psrs=
+	think strcat( 
+		m:, %b, setr( m, u( f.match-method, spend, essence, %2 )), %r, 
+		a:, %b, setr( a, u( amt.spend, %1, essence, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, advantage.Primal_Urge )), %r, 
+		s:, %b, setr( s, hasattr( %1, advantage.Essence_Maximum )), %r, 
+	); 
+
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, essence/spend, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				Must have both Primal Urge and an Essence pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, essence/spend, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, essence/spend, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Essence, %qa )))={ 
+		@pemit %0=u( .msg, essence/spend, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, essence, %qa )))={ 
+		@pemit %0=u( .msg, essence/spend, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, essence, spend, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, spend, %qe ); 
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Regain Essence Trigger ------------------------------------------------------
+*/
+
+&regain.trigger.essence psrs=
+	think strcat( 
+		m:, %b, setr( m, u( f.match-method, regain, essence, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, essence, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, advantage.Primal_Urge )), %r, 
+		s:, %b, setr( s, hasattr( %1, advantage.Essence_Maximum )), %r, 
+	); 
+
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, essence/regain, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				Must have both Primal Urge and an Essence pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, essence/regain, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, essence/regain, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Essence, %qa )))={ 
+		@pemit %0=u( .msg, essence/regain, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, essence, %qa )))={ 
+		@pemit %0=u( .msg, essence/regain, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, essence, regain, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, regain, %qe ); 
+

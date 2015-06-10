@@ -1,8 +1,536 @@
 /* 
 Spend and Regain Pool Traits
 
-Sigh.
+Sigh. Yeah.
 
-Yeah.
+The code has two stats for each pool item. 
+	<stat_name>: Tracks the main ups and downs for the stat.
+	<stat_name>_maximum: Tracks the permanent max, and its occasional motion
+
+To change the maximum, something special needs to happen, such as spending a dot 
+of Willpower to fuel a power. This should always be managed by staff using 
+'stat/set', and not part of the pool system.
+
+
+--------------------------------------------------------------------------------
+-- Commands --------------------------------------------------------------------
+
+Commands:
+	spend[/<switches>] <stat>[=<input>][ for <reason>]
+	regain[/<switches>] <stat>[=<input>] [for <reason>]
+
+	<input>: Depending on the 'pool.<stat>.xxx' code, might be one of ...
+		<amt>: A straight value ('2').
+		<method>: A code-word ('moon') that triggers code.
+		<dice pool>: Does that it says ('dex+composure').
+	<reason>: Sometimes a reason for people to see or system to record.
+	<switches>: Switches will happen, but they will be processed by the rules.
+
+
+--------------------------------------------------------------------------------
+-- Pool Rules ------------------------------------------------------------------
+
+<stat> will be stored in various rules. Without these rules, the stat cannot be 
+spent nor regained. This system doesn't check whether or not the stat is really 
+a pool item. Technically you could spend/regain to any numeric stat with this 
+system.
+
+	&spend.trigger.<stat>
+	&gain.trigger.<stat>
+
+	<stat>: name only, e.g. willpower, cover
+	0: dbref of enactor/target (can they be different?)
+	1: <amt> or <method> or <dice pool>
+	2: <reason>, if given
+	3: <instance>, if given
+
+
+
+================================================================================
+== SETUP =======================================================================
+*/
+
+@create Pool Spend Regain System <psrs>
+@set psrs=safe inherit
+
+@parent psrs=codp
+&prefix.pool_spend_rules psrs=spend.
+&prefix.pool_regain_rules psrs=regain.
+&prefix.amount_calc psrs=amt.
+
+
+
+/*
+================================================================================
+== DOT FUNCTIONS ===============================================================
+*/
+
+&.msg psrs=ansi( xh, <%0>, n, %b%1 )
+&.possessive psrs=strcat( %0, if( strmatch( %0, *s ), ', 's ))
+&.plural psrs=strcat( %0, %b, plural( %0, %1, %2 ))
+&.be_quiet psrs=
+	cand( andflags( loc( %0 ), bB ), not( elock( loc( %0 )/speechlock, %0 )))
+
+
+/*
+================================================================================
+== COMMAND: SPEND ==============================================================
+
+	spend[/<switches>] [<target>/]<stat>[=<input>] [for <reason>]
+
+	s: /switches 
+	t: target
+	p: target dbref
+	w: what stat
+	i: input 
+	r: reason 
+*/
+
+&c.spend psrs=$(?s)^\+?spend(/[^\s]+)*( .*)$:
+	@assert isapproved( %# )={ 
+		@pemit %#=u( .msg, spend, You must be approved ); 
+	}; 
+
+	think u( f.registers.extract, %1, trim( %2 )); 
+
+	@assert t( %qp )={ 
+		@pemit %#=u( .msg, spend, I don't know '%qt' ); 
+	}; 
+
+	@assert cor( isstaff( %# ), strmatch( %#, %qp ))={ 
+		@pemit %#=u( .msg, spend, Only staff may spend for someone else ); 
+	}; 
+
+	@assert hasattr( %!, spend.trigger.%qw )={ 
+		@pemit %#=u( .msg, spend, 
+			I don't know how to spend '[edit( %qw, _, %b )]'. 
+			I know: 
+			[itemize( 
+				edit( lcstr( lattr( %!/spend.trigger.* )), spend.trigger., )
+			)]
+		); 
+	}; 
+	
+	@trigger %!/spend.trigger.%qw=%#, %qp, %qi, %qs, %qr; 
+
+// -- 
+
+@set psrs/c.spend=regexp
+
+
+
+/*
+================================================================================
+== COMMAND: REGAIN =============================================================
+
+	regain[/<switches>] <stat>[=<input>] [for <reason>]
+
+	(see 'COMMAND:SPEND' for registers)
 
 */
+
+&c.regain psrs=$(?s)^\+?regain(/[^\s]+)*( .*)$:
+	@assert isapproved( %# )={ 
+		@pemit %#=u( .msg, regain, You must be approved ); 
+	}; 
+
+	think u( f.registers.extract, %1, trim( %2 )); 
+
+	@assert t( %qp )={ 
+		@pemit %#=u( .msg, regain, I don't know '%qt' ); 
+	}; 
+
+	@assert cor( isstaff( %# ), strmatch( %#, %qp ))={ 
+		@pemit %#=u( .msg, regain, Only staff may regain for someone else ); 
+	}; 
+
+	@assert hasattr( %!, regain.trigger.%qw )={ 
+		@pemit %#=u( .msg, regain, 
+			I don't know how to regain '[edit( %qw, _, %b )]'. 
+			I know: 
+			[itemize( 
+				edit( lcstr( lattr( %!/regain.trigger.* )), regain.trigger., )
+			)]
+		); 
+	}; 
+	
+	@trigger %!/regain.trigger.%qw=%#, %qp, %qi, %qs, %qr; 
+
+// -- 
+
+@set psrs/c.regain=regexp
+
+
+
+/*
+================================================================================
+== POOL RULES ==================================================================
+
+Passed to all of these:
+	0: dbref of enactor
+	1: dbref of target
+	2: <input>: <amt> or <method> or <dice pool>
+	3: <switches>, if given
+	4: <reason>, if given
+
+
+--------------------------------------------------------------------------------
+-- Willpower: Spend ------------------------------------------------------------
+
+	spend [<target>/]willpower [for <reason>]
+*/
+
+&spend.trigger.willpower psrs=
+	@assert t( setr( e, u( f.pool.canchange, %1, willpower, -1 )))={ 
+		@pemit %0=u( .msg, willpower/spend, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, willpower, -1 )))={ 
+		u( .msg, willpower/spend, rest( %qe )) 
+	}; 
+
+	think e: [setr( e, u( display.number, %0, %1, willpower, spend, 1, , %4 ))]; 
+
+	@eval u( f.announcement, %0, %1, spend, %qe ); 
+
+
+// --------=-=-=-=-=-=-=
+
+// Determine where a message goes.
+// 0: enactor -- 1: target -- 2: spend/regain -- 3: message
+
+&f.announcement psrs=
+	case( 1, 
+		cand( u( .be_quiet, %0 ), strmatch( %0, %1 )), 
+		pemit( %0, u( .msg, %2, %3 %(not announced%) ))
+
+		strmatch( %0, %1 ), 
+		remit( loc( %0 ), u( .msg, %2, %3 )), 
+
+		pemit( %0 %1, u( .msg, %2, %3 %(sent to [name( %1 )]%) ))
+	); 
+
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Willpower: Regain -----------------------------------------------------------
+
+	regain [<target>/]willpower=<input> [for <reason>]
+
+	0: dbref of enactor
+	1: dbref of target
+	2: <input>: <amt> or <method> or <dice pool>
+	3: <switches>, if given
+	4: <reason>, if given
+
+	<input>:
+		rest: Regain 1
+		vice: Regain 1, usually
+		virtue: Regain all
+		<num>: Regain <num> - must have <reason>
+		all: Regain all - must have <reason>
+
+*/
+
+
+&regain.methods.willpower psrs=|all|rest
+// &regain.methods.willpower.demon psrs=[@@( an example )]
+
+
+// 0: target -- 1: spend/regain -- 2: stat -- 3: method/amt
+// looks for: spend.methods.<stat>
+// possible expansion: spend.methods.<stat>.<%0's template>
+
+&f.match_method psrs=
+	localize( strcat( 
+		setq( x, 
+			grab( 
+				sort( 
+					u( %1.methods.%2, %3 ), 
+					a, | 
+				), 
+				%3*, | 
+			)
+		), 
+		if( strlen( %qx ), %qx, %3 )
+	))
+
+// think u( psrs/f.match_method, %#, regain, willpower, a )
+// think u( psrs/f.match_method, %#, regain, willpower, 3 )
+
+
+
+&amt.regain.rest.default psrs=1
+
+
+
+// m: method (or numeric value)
+// a: amt to gain
+
+&regain.trigger.willpower psrs=
+	think strcat( 
+		m:, %b, setr( m, u( f.match_method, %1, regain, willpower, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, willpower, %qm )), %r, 
+	); 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, willpower/regain, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, willpower/regain, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Willpower, %qa )))={ 
+		@pemit %0=u( .msg, willpower/regain, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, willpower, %qa )))={ 
+		@pemit %0=u( .msg, willpower/regain, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, willpower, regain, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, regain, %qe ); 
+
+
+
+
+/*
+================================================================================
+== DISPLAYS & FORMATS ==========================================================
+
+
+--------------------------------------------------------------------------------
+-- Display: Output Flat Number -------------------------------------------------
+
+	0: enactor dbref
+	1: target dbref (may be the same)
+	2: stat
+	3: "spend" or "regain"
+	4: value
+	5: method (optional)
+	6: reason (optional)
+
+Thenomain spends/regains 1 point of 
+	Vera's 
+	Willpower 
+	pool
+Vera spends/regains 1 point of 
+	his/her 
+	Willpower 
+	pool
+
+*/
+
+&display.number psrs=
+	strcat( 
+		name( %0 ), %b, %3s, %b, 
+		if( cand( strlen( %5 ), not( strmatch( %4, %5 ))), 
+			[titlestr( %5 )] %([u(.plural, %4, point, points )]%), 
+			u( .plural, %4, point, points )
+		), %b, of, %b, 
+
+		if( strmatch( %0, %1 ), 
+			poss( %1 ), 
+			u( .possessive, name( %1 )) 
+		), %b, 
+
+		titlestr( %2 ), %b, pool, 
+		if( strlen( %6 ), %, for %6 ), . 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Display: Output Roll Result -------------------------------------------------
+
+	0: player dbref
+	1: stat
+	2: "spend" or "regain"
+	3: rolled items
+	4: successes
+	5: list/of/switches (optional)
+	6: reason (optional)
+*/
+
+
+&display.roll psrs=
+	strcat( 
+		name( %0 ), %b,  
+		if( gte( %4, 0 ), 
+			%2s %4, 
+			critically fails %2ing
+		), %b,  
+		capstr( %1 ), %b, 
+		by, %b, titlestr( %3 ), 
+		if( strlen(%5), %, using switches [itemize( %5, /, & )] ), 
+		if( strlen(%6), %, for %6 ), .
+	)
+
+
+
+/*
+================================================================================
+== SUPPORT FUNCTIONS ===========================================================
+
+
+--------------------------------------------------------------------------------
+-- Change the Stat -------------------------------------------------------------
+*/
+
+&f.pool.changestat psrs=shiftstat( %0/%1, %2, offset )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Extract registers from input ------------------------------------------------
+
+COMMAND[/<switches>] [<target>/]<stat>[=<input>] [for <reason>]
+
+	0: /list/of/switches
+	1: everything else
+
+	s: /switches 
+	t: target
+	w: what stat
+	i: input 
+	r: reason 
+*/
+
+&f.registers.extract psrs=
+	strcat( 
+		s:, %b, setr( s, trim( %0 )), %r, 
+		i:, %b, setr( i, trim( before( after( %1, = ), %bfor%b ))), %r, 
+		r:, %b, setr( r, trim( after( %1, %bfor%b ))), %r, 
+		setq( w, edit( trim( before( before( %1, %bfor%b ), = )), %b, _ )), 
+		t:, %b, setr( t, if( strlen( rest( %qw, / )), first( %qw, / ), %# )), 
+		%r, 
+		p:, %b, setr( p, pmatch( %qt )), %r, 
+		w:, %b, setr( w, if( strlen( rest( %qw, / )), rest( %qw, / ), %qw )), 
+		%r, 
+	)
+
+
+/*
+-----------------------------------------------------------------------------
+-- Can you can change Pool X by amt Y? --------------------------------------
+
+	0: player (not sheet)
+	1: stat
+	2: amt
+
+	s: stat
+	m: stat's maximum (%1_maximum)
+	t: amt + stat ( %2 + %qs )
+
+*/
+
+&f.pool.canchange psrs=
+	localize( strcat( 
+		setq( s, getstat( %0/%1 )), 
+		setq( m, getstat( %0/%1_maximum )), 
+		setq( t, add( %qs, %2 )), 
+
+		case( 0, 
+			isint( %2 ), #-1 May only change by an integer, 
+			neq( %2, 0 ), #-1 Cannot change by zero, 
+			isnum( %qm ), #-1 Do not appear to be changing a pool, 
+			gte( %qt, 0 ), #-1 Pool cannot be negative, 
+			lte( %qt, %qm ), #-1 Pool cannot be greater than its maximum, 
+			1 
+		)
+	))
+
+
+/*
+================================================================================
+== AMT REGAIN (METHODS) ========================================================
+
+Calculate how much is actually in ...
+
+amt.regain.<method>[.<stat>]
+	0: target
+	1: stat
+	2: input (<amt> or <method>, e.g.)
+
+	u( amt.regain, <target>, willpower, 1 )
+	u( amt.regain, <target>, willpower, all )
+
+The failed 'regain.amt.%2' error will probably default to 'roll' later on.
+
+*/
+
+&amt.regain psrs=
+	case( 1, 
+
+		isint( %2 ), 
+		udefault( amt.regain.numeric.%1, 
+			u( amt.regain.numeric.default, %0, %1, %2 ), 
+			%0, %1, %2 
+		), 
+
+		t( lattr( %!/amt.regain.* )), 
+		udefault( amt.regain.%2.%1, 
+			u( amt.regain.%2.default, %0, %1, %2 ), 
+			%0, %1, %2 
+		), 
+
+		#-1 Regain amount rules for '%2' not found 
+	)
+
+&amt.regain.numeric.default psrs=
+	if( cand( isint( %2 ), gt( %2, 0 )), 
+		%2, 
+		#-1 Value must be a positive integer
+	)
+
+&amt.regain.all.default psrs=
+	mul( getstat( %0/%1, offset ), -1 )
+
+
+/*
+================================================================================
+== AMT SPEND (METHODS) =========================================================
+
+Calculate how much to actually spend ...
+
+Identical to 'amt.regain...'
+
+	u( amt.spend, <target>, willpower, 1 )
+	u( amt.spend, <target>, willpower, all )
+
+*/
+
+&amt.spend psrs=
+	case( 1, 
+
+		isint( %2 ), 
+		udefault( amt.spend.numeric.%1, 
+			u( amt.spend.numeric.default, %0, %1, %2 ), 
+			%0, %1, %2 
+		), 
+
+		t( lattr( %!/amt.spend.* )), 
+		udefault( amt.spend.%2.%1, 
+			u( amt.spend.%2.default, %0, %1, %2 ), 
+			%0, %1, %2 
+		), 
+
+		#-1 Spend amount rules for '%2' not found 
+	)
+
+// spend numeric 
+&amt.spend.numeric.default psrs=
+	if( cand( isint( %2 ), gt( %2, 0 )), 
+		mul( %2, -1 ), 
+		#-1 Value must be a positive integer
+	)
+
+// spend all
+&amt.spend.all.default psrs=
+	mul( getstat( %0/%1 ), -1 )

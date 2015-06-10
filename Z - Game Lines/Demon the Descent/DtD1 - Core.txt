@@ -1450,3 +1450,142 @@ any of the supernatural Merits on pages 298-302 of this book. They may also use
 Experiences during play to increase these Merits or purchase new ones.
 
 */
+
+
+
+
+
+
+/*
+================================================================================
+== SPEND/REGAIN ESSENCE ========================================================
+
+expands: 9c - Spend and Regain
+
+	spend aether=<amt/method> for <reason>
+
+spend limit per Primum: 
+	1 2 3 4 5 6 7 8 10 15
+
+regain methods:
+	suckin' da blood
+
+
+--------------------------------------------------------------------------------
+-- Spend/Regain Methods --------------------------------------------------------
+*/
+
+&regain.methods.vitae psrs=|all
+&spend.methods.vitae psrs=[@@( nothing but numeric allowed here )]
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend/Regain Vitae Amts -----------------------------------------------------
+*/
+
+&amt.spend.numeric.aether psrs=
+	if( t( u( amt.spend.numeric.default, %0, %1, %2 )), 
+		if( 
+			lte( %2, 
+				elements( 
+					1 2 3 4 5 6 7 8 10 15, 
+					getstat( %0/Primum )
+				)
+			), 
+			mul( %2, -1 ), 
+			#-1 You can't spend that much at one time 
+		), 
+		u( amt.spend.numeric.default, %0, %1, %2 )
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend Aether Trigger -------------------------------------------------------
+*/
+
+&spend.trigger.aether psrs=
+	think strcat( 
+		m:, %b, setr( m, u( f.match-method, spend, aether, %2 )), %r, 
+		a:, %b, setr( a, u( amt.spend, %1, aether, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, advantage.Primum )), %r, 
+		s:, %b, setr( s, hasattr( %1, advantage.Aether_Maximum )), %r, 
+	); 
+
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, aether/spend, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				Must have both Primum and an Aether pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, aether/spend, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, aether/spend, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Aether, %qa )))={ 
+		@pemit %0=u( .msg, aether/spend, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, aether, %qa )))={ 
+		@pemit %0=u( .msg, aether/spend, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, aether, spend, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, spend, %qe ); 
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Regain Vitae Trigger --------------------------------------------------------
+*/
+
+&regain.trigger.aether psrs=
+	think strcat( 
+		m:, %b, setr( m, u( f.match-method, regain, aether, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, aether, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, advantage.Primum )), %r, 
+		s:, %b, setr( s, hasattr( %1, advantage.Aether_Maximum )), %r, 
+	); 
+
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, aether/regain, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				Must have both Primum and an Aether pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, aether/regain, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, aether/regain, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Aether, %qa )))={ 
+		@pemit %0=u( .msg, aether/regain, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, aether, %qa )))={ 
+		@pemit %0=u( .msg, aether/regain, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, aether, regain, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, regain, %qe ); 
+

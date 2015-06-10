@@ -1952,3 +1952,138 @@ to store and spend Vitae. This trait cannot be increased with Experiences or
 time.
 
 */
+
+
+
+
+/*
+================================================================================
+== SPEND/REGAIN ESSENCE ========================================================
+
+expands: 9c - Spend and Regain
+
+	spend vitae=<amt/method> for <reason>
+
+spend limit per Blood Potency: 
+	1 2 3 4 5 6 7 8 10 15
+
+regain methods:
+	suckin' da blood
+
+
+--------------------------------------------------------------------------------
+-- Spend/Regain Methods --------------------------------------------------------
+*/
+
+&regain.methods.vitae psrs=|all
+&spend.methods.vitae psrs=[@@( nothing but numeric allowed here )]
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend/Regain Vitae Amts -----------------------------------------------------
+*/
+
+&amt.spend.numeric.vitae psrs=
+	if( t( u( amt.spend.numeric.default, %0, %1, %2 )), 
+		if( 
+			lte( %2, 
+				elements( 
+					1 1 2 3 4 5 6 7 8 10 15, 
+					inc( getstat( %0/Blood Potency ))
+				)
+			), 
+			mul( %2, -1 ), 
+			#-1 You can't spend that much at one time 
+		), 
+		u( amt.spend.numeric.default, %0, %1, %2 )
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend Vitae Trigger ---------------------------------------------------------
+*/
+
+&spend.trigger.essence psrs=
+	think strcat( 
+		m:, %b, setr( m, u( f.match-method, spend, vitae, %2 )), %r, 
+		a:, %b, setr( a, u( amt.spend, %1, vitae, %qm )), %r, 
+		s:, %b, setr( s, hasattr( %1, advantage.Vitae_Maximum )), %r, 
+	); 
+
+	@assert strlen( %qs )={ 
+		@pemit %0=u( .msg, essence/spend, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				Must have a Vitae pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, vitae/spend, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, vitae/spend, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Vitae, %qa )))={ 
+		@pemit %0=u( .msg, vitae/spend, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, vitae, %qa )))={ 
+		@pemit %0=u( .msg, vitae/spend, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, vitae, spend, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, spend, %qe ); 
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Regain Vitae Trigger --------------------------------------------------------
+*/
+
+&regain.trigger.essence psrs=
+	think strcat( 
+		m:, %b, setr( m, u( f.match-method, regain, vitae, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, vitae, %qm )), %r, 
+		s:, %b, setr( s, hasattr( %1, advantage.Vitae_Maximum )), %r, 
+	); 
+
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, vitae/regain, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				Must have a Vitae pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, vitae/regain, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, vitae/regain, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Vitae, %qa )))={ 
+		@pemit %0=u( .msg, vitae/regain, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, vitae, %qa )))={ 
+		@pemit %0=u( .msg, vitae/regain, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, vitae, regain, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, regain, %qe ); 
+
