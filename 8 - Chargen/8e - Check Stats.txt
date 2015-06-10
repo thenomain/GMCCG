@@ -389,6 +389,8 @@ b: badstat list
 
 	@pemit %#=
 	case( 0, 
+		not( isapproved( %#, guest )), 
+		u( .msg, cg/check, Players only ), 
 
 		t( %qp ), 
 		u( .msg, cg/check, Player cannot be found ), 
@@ -406,7 +408,7 @@ b: badstat list
 			header( Checking [name( %qp )]'s Stats, width( %# )), %r, 
 
 // .. chargen-level check happens only pre-approval
-			if( isapproved( %qp, chargen ), 
+			if( not( isapproved( %qp )), 
 				strcat( 
 					ulocal( check.bio, %qp, %qs, %qt ), %r, 
 					ulocal( check.chargen, %qs, %qt ), 
@@ -790,9 +792,10 @@ Otherwise identical.
 
 */
 
-&c.cg/forcecheck cg=
-	$^\+?cg/forcecheck(.*):
+&c.cg/forcecheck cg=$^\+?cg/forcecheck(.*):
+	@pemit %#='cg/check' should now work for anyone who is not approved.
 
+/*
 	think strcat( 
 		player dbref:, %b, 
 		setr( p, if( t( strlen( trim( %1 ))), pmatch( trim( %1 )), %# )), %r, 
@@ -831,7 +834,7 @@ Otherwise identical.
 			footer( , width( %# ))
 		)
 	)
-
+*/
 // --
 
 @set cg/c.cg/forcecheck=regex
