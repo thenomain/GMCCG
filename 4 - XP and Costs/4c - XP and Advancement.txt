@@ -503,71 +503,91 @@ think u( xpas/display.approval-deets, pmatch( vera ))
 ================================================================================
 == Command: xp/log =============================================================
 
-	xp/log [<name>]
+	xp/log <name>[/<type>] -- staff only
+	xp/log [<type>] -- players only
+	xp/log[/<log type>] -- either/or
+
+xp type: normal, player, cover, etc.
+log type: gain, spend, freebie, auto
 
 For now, shows the entire log of self or <name>. 
 This system needs massively overhauled in the future.
 Especially now that we're handing out other kinds of xps.
 
-s: extra switch
-p: target (dbref)
-x: xp type (pulled from switch)
+s: switches
+o: non-switch input
+
+p: raw target (kept for error reporting)
+x: raw xp type (kept for error reporting)
+
+t: processed target
+e: processed xp type
 
 */
 
-&c.xp/log xpas=$^\+?xp/log(.*)$:
+&c.xp/log [v( d.xpas )]=$^\+?xp/log(.*)$:
+	@assert not( isapproved( %#, guest ))={ 
+		@pemit %#=u( .msg, xp/log, Players only )
+	}; 
+
 	think strcat( 
-		case( 1, 
-			strmatch( %1, /* ), 
+
+// grab switches, or not
+		if( strmatch( %1, /* ), 
 			strcat( 
 				raw switches:, %b, setr( s, first( %1 )), %r, 
-				raw target:, %b, setr( p, rest( %1 )), %r, 
+				raw everything else:, %b, setr( o, rest( %1 )), %r, 
 			), 
+			strcat( no switches:, %b, setr( o, %1 ), %r, )
+		), 
 
+// staff input is different than player input
+// .. staff: <target>[/<type>]
+// .. player: [<type>]
+		if( isstaff( %# ), 
 			strcat( 
-				raw switches:, %b, <none>, %r, 
-				raw target:, %b, setr( p, %1 ), %r, 
+				* STAFF *, %r, 
+				raw target:, %b, setr( p, first( %qo, / )), %r, 
+				raw type:, %b, setr( x, rest( %qo, / )), %r, 
+			), 
+			strcat( 
+				* PLAYER *, %r, 
+				raw target, %b, setr( p, %# ), %r, 
+				raw type, %b, setr( x, %1 ), %r, 
 			)
 		), 
 
-		processed target:, %b, 
-		setr( p, 
-			if( 
-				t( setr( p, trim( %qp ))), 
-				pmatch( %qp ), 
-				%# 
-			)
-		), %r, 
-		xp type:, %b, 
-		setr( x, 
+		processed target:, %b, setr( t, pmatch( trim( %qp ))), %r, 
+		processed xp type:, %b, 
+		setr( e, 
 			grab( 
 				|[edit( v( d.xp_types ), %b, | )], 
-				trim( rest( %qs*, / )), 
+				trim( %qx* ), 
 				| 
 			)
 		), %r, 
 		xp type correction:, %b, 
-		if( strmatch( %qs, ), setr( x, normal ), <no change> )
+		if( strmatch( %qx, ), setr( e, normal ), <no change> )
 	); 
 
 	@assert cor( strmatch( %#, %qp ), isstaff( %# ))={ 
 		@pemit %#=u( .msg, xp/log, Self or staff only )
 	}; 
 
-	@assert t( %qp )={ 
-		@pemit %#=u( .msg, xp/log, '[trim( %2 )]' not found )
+	@assert t( %qt )={ 
+		@pemit %#=u( .msg, xp/log, Target '[trim( %qp )]' not found )
 	}; 
 
-	@assert strlen( %qx )={ 
+	@assert strlen( %qe )={ 
 		@pemit %#=u( .msg, xp/log, 
-			Experience type '[trim( rest( %qs, / ))]' not found 
+			Experience type '[trim( %qx )]' not found 
 		)
 	}; 
 
 	think strcat( 
 		Log:, setr( l, 
 			iter( 
-				sql( u( sql.select.type-character, %qp, %qx ), `, | ), 
+				sql( u( sql.select.type-character, %qt, %qe ), `, | ), 
 				u( format.xp/log.one-line, %i0 ), 
 				`, `
 			)
@@ -575,7 +595,7 @@ x: xp type (pulled from switch)
 	); 
 
 	@pemit %#=strcat( 
-		wheader( XP/Log for [name( %qp )] %([capstr( %qx )]%) ), %r, 
+		wheader( XP/Log for [name( %qt )] %([capstr( %qe )]%) ), %r, 
 		u( display.xp/log.header ), %r, 
 		iter( %ql, u( display.xp/log.one-line, %i0 ), `, %r ), %r, 
 		wfooter()
