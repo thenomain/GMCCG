@@ -558,13 +558,40 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 // -- Other Advantages ---------------------------------------------------------
 
-&advantage.defense DD=add( ladd( u( .value_full, %0, skill.athletics ), . ), min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . )))
+&advantage.defense DD=
+	add( 
+		ladd( u( .value_full, %0, skill.athletics ), . ), 
+		min( 
+			ladd( u( .value_full, %0, attribute.wits ), . ), 
+			ladd( u( .value_full, %0, attribute.dexterity ), . )
+		)
+	)
 &default.advantage.defense DD=derived
 
-&advantage.weaponry_defense DD=if( u( .has, %0, merit.defensive_combat_(weaponry) ), add( ladd( u( .value_full, %0, skill.weaponry ), . ), min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . ))), 0 )
+&advantage.weaponry_defense DD=
+	if( u( .has, %0, merit.defensive_combat_(weaponry) ), 
+		add( 
+			ladd( u( .value_full, %0, skill.weaponry ), . ), 
+			min( 
+				ladd( u( .value_full, %0, attribute.wits ), . ), 
+				ladd( u( .value_full, %0, attribute.dexterity ), . )
+			)
+		), 
+		0 
+	)
 &default.advantage.weaponry_defense DD=derived
 
-&advantage.brawl_defense DD=if( u( .has, %0, merit.defensive_combat_(brawl) ), add( ladd( u( .value_full, %0, skill.weaponry ), . ), min( ladd( u( .value_full, %0, attribute.wits ), . ), ladd( u( .value_full, %0, attribute.dexterity ), . ))), 0 )
+&advantage.brawl_defense DD=
+	if( u( .has, %0, merit.defensive_combat_(brawl) ), 
+		add( 
+			ladd( u( .value_full, %0, skill.brawl ), . ), 
+			min( 
+				ladd( u( .value_full, %0, attribute.wits ), . ), 
+				ladd( u( .value_full, %0, attribute.dexterity ), . )
+			)
+		), 
+		0 
+	)
 &default.advantage.brawl_defense DD=derived
 
 &advantage.size DD=add( ladd( u( .value_full, %0, special.size ), . ), t( ladd( u( .value_full, %0, merit.giant ), . )))
