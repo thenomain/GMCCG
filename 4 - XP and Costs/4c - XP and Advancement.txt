@@ -22,6 +22,7 @@ Warning: This is a mess coded in a crunch.
 Illegal characters: | and ` 
 
 &d.xp_types xpas=normal player
+&d.log_types xpas=gain spend freebie auto
 
 -=-=-=-=-=-=-=-=-=-=-=
 
@@ -30,8 +31,7 @@ COMMANDS:
 	xp <name> : how much they got?
 
 √	xp/log [<name>]
-≈	xp/log <name>[=<type>]
-	
+√	xp/log <name>[/<type>]
 
 √	xp/award <name>=<amt> for <reason> : give out dem generic goodies
 √	xp/award <name>/<xp type>=<amt> for <reason> : give out dem specific goodies
@@ -514,7 +514,7 @@ For now, shows the entire log of self or <name>.
 This system needs massively overhauled in the future.
 Especially now that we're handing out other kinds of xps.
 
-s: switches
+s: switch
 o: non-switch input
 
 p: raw target (kept for error reporting)
@@ -522,10 +522,13 @@ x: raw xp type (kept for error reporting)
 
 t: processed target
 e: processed xp type
+g: processed log type (spend, gain, etc, from switch)
+
+l: log sql results
 
 */
 
-&c.xp/log [v( d.xpas )]=$^\+?xp/log(.*)$:
+&c.xp/log xpas=$^\+?xp/log(.*)$:
 	@assert not( isapproved( %#, guest ))={ 
 		@pemit %#=u( .msg, xp/log, Players only )
 	}; 
@@ -567,7 +570,16 @@ e: processed xp type
 			)
 		), %r, 
 		xp type correction:, %b, 
-		if( strmatch( %qx, ), setr( e, normal ), <no change> )
+		if( strmatch( %qx, ), setr( e, normal ), <no change> ), %r, 
+
+		processed log type:, %b, 
+		setr( g, 
+			grab( 
+				|[edit( v( d.log_types ), %b, | )], 
+				rest( trim( %qs* ), / ), 
+				| 
+			)
+		), %r, 
 	); 
 
 	@assert cor( strmatch( %#, %qp ), isstaff( %# ))={ 
@@ -584,10 +596,16 @@ e: processed xp type
 		)
 	}; 
 
+	@assert cor( strlen( %qg ), strmatch( %qs, ))={ 
+		@pemit %#=u( .msg, xp/log, 
+			Log type '[rest(trim( %qs ), / )]' not found 
+		)
+	}; 
+
 	think strcat( 
 		Log:, setr( l, 
 			iter( 
-				sql( u( sql.select.type-character, %qt, %qe ), `, | ), 
+				sql( u( sql.select.type-character, %qt, %qe, %qg ), `, | ), 
 				u( format.xp/log.one-line, %i0 ), 
 				`, `
 			)
@@ -595,7 +613,11 @@ e: processed xp type
 	); 
 
 	@pemit %#=strcat( 
-		wheader( XP/Log for [name( %qt )] %([capstr( %qe )]%) ), %r, 
+		wheader( 
+			XP/Log[if( strlen( %qg ), /[capstr( %qg)] )] 
+			for [name( %qt )] 
+			%([capstr( %qe )]%) 
+		), %r, 
 		u( display.xp/log.header ), %r, 
 		iter( %ql, u( display.xp/log.one-line, %i0 ), `, %r ), %r, 
 		wfooter()
@@ -832,7 +854,8 @@ Valid award:
 
 &d.beat-to-exp xpas=5
 
-&d.xp_types xpas=normal
+&d.xp_types xpas=normal player
+&d.log_types xpas=gain spend freebie auto
 
 &default.special.xp.normal dd=0 0
 

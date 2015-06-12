@@ -130,6 +130,7 @@ A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
 
 0: target dbref
 1: xp type
+2: log type (optional)
 
 */
 
@@ -137,7 +138,10 @@ A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
 	SELECT enactor_objid, enactor_name, log_time, xp_amt, action, reason 
 	FROM xp_log 
 	WHERE target_objid='[u( .objid, %0 )]' 
-	AND xp_type='[lcstr( %1 )]'
+	AND xp_type='[lcstr( %1 )]' 
+	[if( strlen( %2 ), 
+		AND action='%2' 
+	)]
 
 
 /*
