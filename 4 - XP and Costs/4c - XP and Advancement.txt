@@ -509,20 +509,45 @@ For now, shows the entire log of self or <name>.
 This system needs massively overhauled in the future.
 Especially now that we're handing out other kinds of xps.
 
+s: extra switch
 p: target (dbref)
+x: xp type (pulled from switch)
 
 */
 
 &c.xp/log xpas=$^\+?xp/log(.*)$:
-	think strcat(
-		target:, 
+	think strcat( 
+		case( 1, 
+			strmatch( %1, /* ), 
+			strcat( 
+				raw switches:, %b, setr( s, first( %1 )), %r, 
+				raw target:, %b, setr( p, rest( %1 )), %r, 
+			), 
+
+			strcat( 
+				raw switches:, %b, <none>, %r, 
+				raw target:, %b, setr( p, %1 ), %r, 
+			)
+		), 
+
+		processed target:, %b, 
 		setr( p, 
 			if( 
-				t( setr( p, trim( %1 ))), 
+				t( setr( p, trim( %qp ))), 
 				pmatch( %qp ), 
 				%# 
 			)
-		)
+		), %r, 
+		xp type:, %b, 
+		setr( x, 
+			grab( 
+				|[edit( v( d.xp_types ), %b, | )], 
+				trim( rest( %qs*, / )), 
+				| 
+			)
+		), %r, 
+		xp type correction:, %b, 
+		if( strmatch( %qs, ), setr( x, normal ), <no change> )
 	); 
 
 	@assert cor( strmatch( %#, %qp ), isstaff( %# ))={ 
@@ -530,13 +555,19 @@ p: target (dbref)
 	}; 
 
 	@assert t( %qp )={ 
-		@pemit %#=u( .msg, xp/log, '[trim( %1 )]' not found )
+		@pemit %#=u( .msg, xp/log, '[trim( %2 )]' not found )
+	}; 
+
+	@assert strlen( %qx )={ 
+		@pemit %#=u( .msg, xp/log, 
+			Experience type '[trim( rest( %qs, / ))]' not found 
+		)
 	}; 
 
 	think strcat( 
 		Log:, setr( l, 
 			iter( 
-				sql( u( sql.select.type-character, %qp, normal ), `, | ), 
+				sql( u( sql.select.type-character, %qp, %qx ), `, | ), 
 				u( format.xp/log.one-line, %i0 ), 
 				`, `
 			)
@@ -544,7 +575,7 @@ p: target (dbref)
 	); 
 
 	@pemit %#=strcat( 
-		wheader( XP/Log for [name( %qp )] %(Normal%) ), %r, 
+		wheader( XP/Log for [name( %qp )] %([capstr( %qx )]%) ), %r, 
 		u( display.xp/log.header ), %r, 
 		iter( %ql, u( display.xp/log.one-line, %i0 ), `, %r ), %r, 
 		wfooter()
