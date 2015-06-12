@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS xp_log (
 	trait_name: The rest of the statpath. Used for spends.
 	trait_value: Value set or added. Used for spends.
 
-	action: gain, spend, freebie, <others to follow>
+	action: gain, spend, freebie, auto, <others to follow>
 	reasoning: Content for this. VAGUELY OPTIONAL
 
 
@@ -78,7 +78,7 @@ CREATE TABLE IF NOT EXISTS xp_log (
 
 */
 
-&sql.insert.daily-auto xpas=
+&sql.insert.daily-auto [v( d.xpas )]=
 	INSERT 
 		INTO xp_log (
 			target_objid, target_name, 
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS xp_log (
 		VALUES (
 			'[u( .objid, %0 )]', '[name( %0 )]', 
 			'[u( .objid, %1 )]', 'Auto-Experience System <xpas>', 
-			'%2', %3, 'gain', 'Daily Auto'
+			'%2', %3, 'auto', 'Daily Auto'
 		)
 
 
@@ -132,6 +132,11 @@ A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
 1: xp type
 2: log type (optional)
 
+If no log type is entered, do not show 'auto', the daily auto gain system,
+because it is spammy as all get-out.
+
+'all' is the keyword to include it.
+
 */
 
 &sql.select.type-character xpas=
@@ -139,8 +144,10 @@ A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
 	FROM xp_log 
 	WHERE target_objid='[u( .objid, %0 )]' 
 	AND xp_type='[lcstr( %1 )]' 
-	[if( strlen( %2 ), 
-		AND action='%2' 
+	[case( %2, 
+		all, @@( show all ), 
+		@@( null ), AND action!='auto', 
+		AND action='%2'
 	)]
 
 

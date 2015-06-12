@@ -522,7 +522,7 @@ x: raw xp type (kept for error reporting)
 
 t: processed target
 e: processed xp type
-g: processed log type (spend, gain, etc, from switch)
+g: processed log type (spend, gain, etc, from switch; null = all)
 
 l: log sql results
 
