@@ -1772,6 +1772,7 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 /*
 
 @daily xpas=
+	@pemit *thenomain=XPAS: Triggering Daily
 	@trigger %!/trig.daily.xp; 
 	@trigger %!/trig.weekly.reset; 
 
@@ -1812,22 +1813,31 @@ c: current normal xp attribute for <character>
 
 // --
 
-&trig.weekly.reset xpas=
-	@eval 
-		list( 
-			search( eplayer=cand( u( f.at_weeks_end?, ## ), isapproved( ## ))), 
-			set( %i0, _special.beats_earned.normal: )
+&trig.weekly.reset [v( d.xpas )]=
+	think setr( m, header( xpas: clearing 'beat' limit )); 
+	think setr( n, 
+		iter( 
+			search( eplayer=
+				cand( 
+					isapproved( ## ), 
+					hasattr( ##, _special.beats_earned.normal ), 
+					u( f.at_weeks_end?, ## )
+				)
+			), 
+			cat( 
+				name( %i0 ), :, %i0, ::, 
+				set( %i0, _special.beats_earned.normal: ), ::, 
+				if( strmatch( get( %i0/_special.beats_earned.normal ), ), 
+					ansi( hg, OK! ), 
+					ansi( n, error )
+				)
+			), , %r 
 		)
+	); 
+	think setr( o, footer()); 
 
-
-
-
-
-
-
-
-
-
+// .. debug ..
+	@mail/quick thenomain/Daily Beats Reset=%qm%r%qn%r%qo; 
 
 
 
