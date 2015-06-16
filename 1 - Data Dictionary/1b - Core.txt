@@ -505,37 +505,50 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 // -- Core Merits: Supernatural ------------------------------------------------
 
 &merit.aura_reading DD=3
+&tags.merit.aura_reading D:T=human.supernatural
 
 &merit.biokinesis DD=1.2.3.4.5
+&tags.merit.biokinesis D:T=human.supernatural
 
 &merit.clairvoyance DD=3
+&tags.merit.clairvoyance D:T=human.supernatural
 
 &merit.cursed DD=2
+&tags.merit.cursed D:T=human.supernatural
 
 &merit.medium DD=3
 &prerequisite.merit.medium DD=u( .at_least, %0, skill.empathy )
 &prereq-text.merit.medium DD=Empathy 2+
+&tags.merit.medium D:T=human.supernatural
 
 &merit.mind_of_a_madman DD=2
 &prerequisite.merit.mind_of_a_madman DD=u( .at_least, %0, skill.empathy )
 &prereq-text.merit.mind_of_a_madman DD=Empathy 2+
+&tags.merit.mind_of_a_madman D:T=human.supernatural
 
 &merit.omen_sensitivity DD=3
+&tags.merit.omen_sensitivity D:T=human.supernatural
 
 &merit.psychokinesis_() DD=3.5|Fire.Cold.Electricity
+&tags.merit.psychokinesis_() D:T=human.supernatural
 
 &merit.psychometry DD=3
+&tags.merit.psychometry D:T=human.supernatural
 
 &merit.telekinesis DD=1.2.3.4.5
+&tags.merit.telekinesis D:T=human.supernatural
 
 &merit.telepathy DD=3.5
+&tags.merit.telepathy D:T=human.supernatural
 
 &merit.thief_of_fate DD=3
+&tags.merit.thief_of_fate D:T=human.supernatural
 
 &merit.unseen_sense_() DD=2|
 	Vampires.Werewolves.God Machine.Spirits.Ghosts.Angels
 &prerequisite.merit.unseen_sense_() dd=u( .at_least, %0, attribute.wits, 2 )
 &prereq-text.merit.unseen_sense_() DD=Wits 2+
+&tags.merit.unseen_sense_() D:T=human.supernatural
 
 
 // == CORE ADVANTAGES ==========================================================
