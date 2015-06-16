@@ -1106,7 +1106,7 @@ Following is sent from XP:
 		case( 1, 
 			strmatch( %3, ), 1, 
 			cor( 
-				u( .list_has_all, %0, %2, lnum( 1, dec( %3 ), . )), 
+				u( .list_has_all, %0, %2, lnum( 1, %3, . )), 
 				cand( 
 					u( .has_not, %0, %2 ), 
 					eq( %3, 1 )
@@ -1165,7 +1165,8 @@ Following is sent from XP:
 &tags.gift.gibbous_moon's_gift D:T=werewolf.moon.cahalith
 
 &gift.half_moon's_gift DD=1.2.3.4.5|
-	Scent Beneath the Surface.Binding Oath.Sly Hunter.Ties of Word and Promise
+	Scent Beneath the Surface.Binding Oath.Sly Hunter.
+	Ties of Word and Promise.Ties of Blood and Bone
 &prerequisite.gift.half_moon's_gift DD=
 	u( .gifts.facet_check.moon, %0, Elodoth, gift.half_moon's_gift, %2 )
 &prereq-text.gift.half_moon's_gift DD=
