@@ -607,7 +607,13 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 	)
 &default.advantage.brawl_defense DD=derived
 
-&advantage.size DD=add( ladd( u( .value_full, %0, special.size ), . ), t( ladd( u( .value_full, %0, merit.giant ), . )))
+&advantage.size DD=
+	add( 
+		u( .value_stats, %0, special.size ), 
+		u( .has, %0, merit.giant ), 
+		mul( u( .has, %0, merit.small_framed ), -1 )
+	)
+
 &default.advantage.size DD=derived
 
 &advantage.speed DD=u( .value_stats, %0, attribute.strength attribute.dexterity special.species_factor merit.fleet_of_foot )
