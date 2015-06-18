@@ -1001,7 +1001,7 @@ a: aspiration text
 		ansi( h, %2 ), %r%r, 
 		The reasoning:, %b, ansi( h, %3 ), %r%r
 		If you approve of this%, type:, %r, 
-		%b %b asp/deny %qn/%1, %r%r, 
+		%b %b asp/deny %qn=%1, %r%r, 
 		Then complete this job., %r%r, 
 		Otherwise%, start a discussion with the player or complete this job 
 		with a reason why not. 
