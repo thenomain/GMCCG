@@ -161,6 +161,10 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 // == CORE MERITS ==============================================================
 
+// -- Merits: Special ----------------------------------------------------------
+
+&merit.sanctity_of_merits DD=#
+
 // -- Merits: Mental -----------------------------------------------------------
 
 &merit.area_of_expertise_() DD=1|*
