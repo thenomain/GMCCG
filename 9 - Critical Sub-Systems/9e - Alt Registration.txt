@@ -1,0 +1,278 @@
+/*
+alt/register <character name>:
+	check <character name>'s objd
+	generate 6-digit base-35 code (0-9, a-z)
+	check code's global uniqueness
+	store code on: &_alt.register.<objid>
+	@mail code to <character name>
+	never expire code - re-send if requested
+
+alt/accept <code>:
+	find character with that code
+	compare enactor with objid
+	add target's objid to enactor's list
+	add enactor's objid to target's list
+
+	&_alt.list: <objid> <objid> <objid>
+	never expire
+
+
+
+You paged Trixie with ‘Like, say 'xp/convert vera=3' and it will move 3 Player XP to my 3 Normal XP?’
+You paged Trixie with ‘Because that would be AWESOME.’
+
+
+
+think strcat( setq( l, 0123456789abcdefghijklmnopqrstuvwxyz ), iter( lnum( 6 ), mid( %ql, rand( 1, strlen( %ql )), 1 ), , @@ ))
+
+// there is a better way to do this: 
+
+think iter( lnum( 6 ), pack( rand( 0, 35 )), , @@ )
+
+
+"Or I could maximize pack() and make each digit rand( 0, 63 )
+You say, “I would have to be very careful to use strmatch(), tho, as it's case-sensitive.”
+
+think iter( lnum( 6 ), pack( rand( 0, 63 )), , @@ )
+
+--
+
+
+
+--
+
+
+--
+
+-==--=-=
+
+alt registration
+
+used by xp code for 'player experience'.
+
+*/
+
+@create Alt Registration <ars>
+@set ars=inherit safe
+
+@parent ars=codp
+
+
+
+/*
+================================================================================
+== DOT FUNCTIONS ===============================================================
+*/
+
+&.objid ars=
+	localize( 
+		if( 
+			t( setr( l, locate( %#, %0, * ))), 
+			[num( %ql )]:[convtime( get( %ql/created ))], 
+			#-1 NOT FOUND 
+		)
+	)
+
+&.msg ars=ansi( h, <%0>, n, %b%1 )
+
+
+
+/*
+================================================================================
+== COMMANDS ====================================================================
+
+--------------------------------------------------------------------------------
+-- Command: Mistress -----------------------------------------------------------
+*/
+
+&c.alt ars=$(?s)^\+?alts?(/[^\s]+)*( .*)?$:
+	@assert isapproved( %# )={ 
+		@pemit %#=u( .msg, alt, You must be approved ); 
+	}; 
+
+	think strcat( 
+		switch:, %b, setr( s, trim( rest( %1, /  ))), %r, 
+		inputs:, %b, setr( i, trim( %2 )), %r, 
+
+		valid switches:, %b, 
+		setr( v, 
+			edit( lattr( %!/c.alt/* ), C.ALT/, , %b, | )
+		), %r, 
+
+		switch match:, %b, setr( m, grab( |%qv, %qs*, | )), %r, 
+	); 
+
+	@pemit %#=strcat( 
+		case( 0, 
+			strlen( %qs%qi ), u( c.alt.default ), 
+			strlen( %qs ), u( c.alt.specific, %qi ), 
+			udefault( c.alt/%qm, 
+				u( .msg, alt, 
+					Cannot find that switch. 
+					I know: [lcstr( edit( %qv, |, %,%b  ))] 
+				), 
+				%qi 
+			)
+		), 
+	); 
+
+@set ars/c.alt=regexp
+
+
+/*
+--------------------------------------------------------------------------------
+-- Command: Default ------------------------------------------------------------
+*/
+
+&c.alt.default ars=Here's your alt list: [setr( a, filter( fil.alts.current, get( %#/_alt.list )))]
+
+
+/*
+--------------------------------------------------------------------------------
+-- Command: Specific -----------------------------------------------------------
+*/
+
+&c.alt.specific [v( d.ars )]=list alts of '%0' are :: [setr( a, filter( fil.alts.current, get( pmatch( %0 )/_alt.list )))]
+
+
+/*
+================================================================================
+== SWITCHES ====================================================================
+
+--------------------------------------------------------------------------------
+-- Switch: Register ------------------------------------------------------------
+
+Verify the target, generate a unique code, store it on the enactor, 
+@mail it to the target
+
+0: target
+
+*/
+
+&c.alt/register ars=
+	strcat( 
+		setq( p, pmatch( %0 )), 
+		setq( o, u( .objid, %qp )), 
+		
+		case( 0, 
+			t( %qp ), u( .msg, alt/register, I can't find '%0' ), 
+
+			not( strmatch( %qp, %# )), u( .msg, alt/register, That's you ), 
+
+			t( %qo ), u( .msg, alt/register, I couldn't find their objid ), 
+
+			not( u( f.has-alt, %#, %qo )), 
+			u( .msg, alt/register, 
+				That character has already been registered as your alt 
+			), 
+
+			strcat( 
+				setq( c, ulocal( f.generate-code )), 
+				set( %#, _alt.register.[edit( %qo, :, . )]:%qc ), 
+				u( .msg, alt/register, Alt request code sent to [name( %qp )] ), 
+				trigger( %!/tr.mail.register, %#, %qp, %qc )
+			)
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Switch: Accept --------------------------------------------------------------
+
+Find the code, add objid of enactor to target, add objid of target to enactor
+
+0: code
+
+*/
+
+&c.alt/accept [v(d.ars)]=
+	strcat( 
+		setq( c, lcstr( %0 )), 
+		setq( o, edit( u( .objid, %# ), :, . )), 
+		setq( s, search( eplayer=strmatch( get( ##/_alt.register.%qo ), %qc ))), 
+		case( 0, 
+			words( %qs ), 
+			u( .msg, alt/accept, You aren't listed anywhere with that code ), 
+
+			eq( words( %qs ), 1 ), 
+			u( .msg, alt/accept, 
+				This is astronomically unlikely%, but more than one person have 
+				your code. Please re-generate the request from your alt. 
+			), 
+
+// alt lists on one alt must be populated to all alts 
+			strcat( 
+				setq( a, u( f.merge-alt-lists, %#, %qs )), 
+				setq( e, 
+					iter( %qa, set( first( %i0, : ), _alt.list:%qa ), , @@ )
+				), 
+				u( .msg, alt/accept, 
+					You are now [name( %qs )]'s alt%, 
+					please check with 'alts'
+				)
+			)
+		)
+	)
+
+
+
+
+-=-=-=-=-=-=
+
+&f.has-alt ars=t( match( get( %0/_alt.list ), %1 ))
+
+--=-==-=-=-=-
+
+&f.generate-code ars=
+	if( 
+		search( 
+			eplayer=
+			grepi( 
+				##, _alt.register.*, 
+				setr( r, lcstr( iter( lnum( 6 ), pack( rand( 0, 35 )), , @@ )))
+			)
+		), 
+		ulocal( f.generate-code ), 
+		%qr 
+	)
+
+-=-=-==--=-=
+
+&tr.mail.register ars=
+	@mail/quick %1/Alt Request: [name( %0 )]=
+		[name( %0 )] has sent an alt request, 
+		suggesting that you and they are played by the same player.%r%r
+		If this is correct, please type: alt/accept %2%r%r
+		If this is not correct, please contact the player concerning the error 
+		or to contact staff for assistance.
+
+
+-=-=-=-=-=-=
+
+// 0: one dbref
+// 1: another dbref
+// take alt-lists on both dbrefs, find their alt-lists, 
+// and merge them all together. include both input dbrefs
+// returns: all alts' objids
+
+&f.merge-alt-lists ars=
+	localize( strcat( 
+		setq( a, 
+			setunion( 
+				cat( get( %0/_alt.list ), get( %1/_alt.list )), 
+				cat( u( .objid, %0 ), u( .objid, %1 ))
+			)
+		), 
+		setunion( 
+			iter( %qa, get( first( %i0, : )/_alt.list )), 
+			cat( u( .objid, %0 ), u( .objid, %1 ))
+		), 
+	))
+
+=--=-=-=-=
+
+// 0: list of objids
+&fil.alts.current ars=strmatch( %0, u( .objid, first( %0, : )))
+
+&fil.alts.active ars=isapproved( first( %0, : ))
