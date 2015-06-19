@@ -1705,6 +1705,12 @@ Character should have no Scales
 		, | 
 	)
 
+&powers.devotions Newest Sheet Code <nsc>=
+	iter( sort( edit( lattr( %0/_devotion.* ), _DEVOTION., )), 
+		ulocal( f.cheat_getstat.name_only, %0, devotion.%i0 ), 
+		, | 
+	)
+
 &block.powers.vampire sheet: rows=u( block.powers.disciplines, %0, %1 )
 &block.powers.ghoul sheet: rows=u( block.powers.disciplines, %0, %1 )
 
@@ -1712,9 +1718,10 @@ Character should have no Scales
 	strcat( 
 		setq( w, 79 ), setq( t, 70 ), 
 		setq( d, u( powers.disciplines, %0 )), 
+		setq( v, u( powers.devotions, %0 )), 
 		setq( b, 
 			iter( %qd, 
-				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
 				|, | 
 			)
 		), 
@@ -1728,22 +1735,30 @@ Character should have no Scales
 		case( get( %0/_bio.covenant ), 
 			Circle of the Crone, 
 			if( hasattr( %0, _discipline.cruac ), 
-				u( block.powers.disciplines.rites, %0 )
+				ulocal( block.powers.disciplines.rites, %0 )
 			), 
 
 			Lancea et Sanctum, 
 			if( hasattr( %0, _discipline.theban_sorcery ), 
-				u( block.powers.disciplines.miracles, %0 )
+				ulocal( block.powers.disciplines.miracles, %0 )
 			), 
 
 			Ordo Dracul, 
 			if( t( lattr( %0/_scale.* )), 
-				u( block.powers.disciplines.scales, %0 )
+				ulocal( block.powers.disciplines.scales, %0 )
+			)
+		), 
+
+		if( strlen( %qv ), 
+			strcat( 
+				divider( Devotions ), %r, 
+				table( %qv, %qt, %qw, | ), %r, 
 			)
 		), 
 
 		@@( to be continued ), 
 	)
+
 
 // -- Disciplines: Rites (Cruac) -----------------------------------------------
 
