@@ -273,6 +273,29 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 =--=-=-=-=
 
 // 0: list of objids
+// returns: objects that still exist
 &fil.alts.current ars=strmatch( %0, u( .objid, first( %0, : )))
 
-&fil.alts.active ars=isapproved( first( %0, : ))
+&fil.alts.approval-type [v( d.ars )]=isapproved( first( %0, : ), %1 )
+
+-=-=-=-=-=-=
+
+&display.alts [v( d.ars )]=
+	iter( chargen approved unapproved frozen staff, 
+		strcat( 
+			wdivider( %i0 ), %r, 
+			iter( filter( fil.alts.approval-type, %0, , , %i0 ), 
+				ulocal( format.alts.one-line, %i0 ), 
+				, %r 
+			), 
+		), 
+		, %r
+	)
+
+// =--=-=-==--=
+
+&format.alts.one-line [v( d.ars )]=
+	localize( strcat( 
+		setq( t, first( %0, : )), 
+		if( hasflag( %qt, connect ), ansi( xh, * ), %b ), %b, name( %qt ), 
+	))
