@@ -201,7 +201,11 @@ Level 3 for very minor items
 &merit.haven_() DD=1.2.3.4.5|*
 &tags.merit.haven_() D:T=vampire.location
 &prerequisite.merit.haven_() DD=
-	u( .at_least, %0, merit.haven_(%1), u( .value, %0, merit.safe_place_(%1)), %2 )
+	u( .at_least, %0, 
+		merit.haven_(%1), 
+		u( .value, %0, merit.safe_place_(%1)), 
+		%2 
+	)
 &prereq-text.merit.haven_() DD=Safe Place (<place name>) must be same or higher
 
 &merit.herd DD=1.2.3.4.5
