@@ -221,7 +221,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 
 			eq( words( %qs ), 1 ), 
 			u( .msg, alt/accept, 
-				This is astronomically unlikely%, but more than one person have 
+				This is astronomically unlikely%, but more than one person has 
 				your code. Please re-generate the request from your alt. 
 			), 
 
