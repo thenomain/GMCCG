@@ -124,15 +124,35 @@ used by xp code for 'player experience'.
 -- Command: Default ------------------------------------------------------------
 */
 
-&c.alt.default ars=Here's your alt list: [setr( a, filter( fil.alts.current, get( %#/_alt.list )))]
+&c.alt.default [v( d.ars )]=
+	strcat( 
+		wheader( Your Alts ), %r, 
+		u( display.alts, get( %#/_alt.list )), 
+		wfooter()
+	)
 
 
 /*
 --------------------------------------------------------------------------------
 -- Command: Specific -----------------------------------------------------------
+
+p: player dbref
 */
 
-&c.alt.specific [v( d.ars )]=list alts of '%0' are :: [setr( a, filter( fil.alts.current, get( pmatch( %0 )/_alt.list )))]
+&c.alt.specific [v( d.ars )]=
+	case( 0, 
+		cor( strmatch( %#, setr( p, pmatch( %0 ))), isstaff( %# )), 
+		u( .msg, alt, Only staff can look at someone else's alt list ), 
+
+		t( %qp ), 
+		u( .msg, alt, Can't find playerbit '%0' ), 
+
+		strcat( 
+			wheader( Alts for [name( %qp )] ), %r, 
+			u( display.alts, get( %qp/_alt.list )), 
+			wfooter()
+		)
+	)
 
 
 /*
@@ -175,6 +195,10 @@ Verify the target, generate a unique code, store it on the enactor,
 		)
 	)
 
+// ---
+
+&c.alt/request ars=u( c.alt/register, %0 )
+
 
 /*
 --------------------------------------------------------------------------------
@@ -207,6 +231,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 				setq( e, 
 					iter( %qa, set( first( %i0, : ), _alt.list:%qa ), , @@ )
 				), 
+				setq( f, set( %qs, _alt.register.%qo: )), 
 				u( .msg, alt/accept, 
 					You are now [name( %qs )]'s alt%, 
 					please check with 'alts'
@@ -276,26 +301,53 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 // returns: objects that still exist
 &fil.alts.current ars=strmatch( %0, u( .objid, first( %0, : )))
 
-&fil.alts.approval-type [v( d.ars )]=isapproved( first( %0, : ), %1 )
+&fil.alts.approval_type [v( d.ars )]=strmatch( rest( %0, : ), %1 )
 
 -=-=-=-=-=-=
 
 &display.alts [v( d.ars )]=
-	iter( chargen approved unapproved frozen staff, 
-		strcat( 
-			wdivider( %i0 ), %r, 
-			iter( filter( fil.alts.approval-type, %0, , , %i0 ), 
-				ulocal( format.alts.one-line, %i0 ), 
-				, %r 
-			), 
+	strcat( 
+		setq( l, 
+			iter( filter( fil.alts.current, %0 ), 
+				[setr( x, first( %i0, : ))]:[isapproved( %qx, status )] 
+			)
 		), 
-		, %r
+		iter( chargen approved unapproved staff guest, 
+			setq( 
+				strtrunc( %i0, 1 ), 
+				filter( fil.alts.approval_type, %ql, , , %i0  )
+			), 
+			, @@
+		), 
+		iter( chargen approved unapproved staff guest, 
+			if( strlen( r( strtrunc( %i0, 1 ))), 
+				strcat( 
+					wdivider( %i0 ), %r, 
+					iter( r( strtrunc( %i0, 1 )), 
+						u( format.alts.one-line, %i0 ), 
+						, %r 
+					), %r, 
+				)
+			), 
+			, @@ 
+		), 
+		if( 
+			not( strlen( %qc%qa%qu%qs%qg )), 
+			No alts to list.%r
+		), 
+
 	)
+
+
+
 
 // =--=-=-==--=
 
 &format.alts.one-line [v( d.ars )]=
 	localize( strcat( 
 		setq( t, first( %0, : )), 
-		if( hasflag( %qt, connect ), ansi( xh, * ), %b ), %b, name( %qt ), 
+		if( hasflag( %qt, connect ), ansi( xh, * ), %b ), %b, 
+		ljust( name( %qt ), 25 ), %b, 
+		ljust( get( %qt/_bio.template), 15 ), %b, 
+		if( t( elements( mail( %qt ), 2 )), Unread mail )
 	))
