@@ -271,10 +271,14 @@ Level 3 for very minor items
 &prerequisite.merit.secret_society_junkie dd=u( .has, %0, merit.status_(ordo_dracul) )
 &prereq-text.merit.secret_society_junkie DD=Status (Ordo Dracul) 1
 
-&merit.sworn DD=1
-&tags.merit.sworn D:T=vampire.ordo dracul
-&prerequisite.merit.sworn dd=u( .has, %0, merit.status_(ordo_dracul) )
-&prereq-text.merit.sworn DD=Status (Ordo Dracul) 1
+&merit.sworn_() DD=1|Axe.Mysteries.Dying Light
+&tags.merit.sworn_() D:T=vampire.ordo dracul
+&prerequisite.merit.sworn_() dd=
+	cand( 
+		u( .has, %0, merit.status_(ordo_dracul) ), 
+		not( lattr( %0/_merit.sworn_(*) ))
+	)
+&prereq-text.merit.sworn_() DD=Status (Ordo Dracul) 1, only one Sworn.
 
 &merit.i_know_a_guy DD=1
 &tags.merit.i_know_a_guy D:T=vampire.carthian movement
