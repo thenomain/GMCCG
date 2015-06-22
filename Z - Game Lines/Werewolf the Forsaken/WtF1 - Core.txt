@@ -1292,7 +1292,7 @@ Following is sent from XP:
 
 &gift.gift_of_strength DD=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Unchained.Predator's Unmached Pursuit.Crushing Blow.
+	Unlocked.Unchained.Predator's Unmatched Pursuit.Crushing Blow.
 	Primal Strength.Rending Claws
 &prerequisite.gift.gift_of_strength DD=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_strength, %2 )
