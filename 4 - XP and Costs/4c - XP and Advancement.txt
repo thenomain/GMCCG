@@ -45,7 +45,7 @@ COMMANDS:
 √	xp/freebie <stat>=<level> for <reason> : Give <stat> spending xpz.
 	(rewrite this and xp/spend and xp/cost to share redundant functions!)
 
-	xp/convert <amt> [beats|xp] to <name> : Player xpz -> Normal xpz, yo.
+	xp/convert <amt> [beats|xp] from <name> : Player xpz -> Normal xpz, yo.
 	(<name> must be an alt of yours)
 
 	xp/remove <name>=<amt> for <reason> : take some honey away
@@ -459,7 +459,6 @@ e: earned
 		setq( c, ladd( %qa )), 
 		setq( e, first( %qa )), 
 		setq( s, rest( %qa )),
-
 
 		ansi( h, titlestr( %1 )), :, %b, 
 		Experience:, %b, floor( fdiv( %qc, v( d.beat-to-exp ))), %,%b, 
@@ -1212,6 +1211,7 @@ n: next rank, if applicable
 		 )
 	))
 
+
 /*
 ================================================================================
 == XP/SPEND ====================================================================
@@ -1468,6 +1468,181 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 	)
 
 
+
+/*
+================================================================================
+== XP/CONVERT ==================================================================
+
+An unusual fringe case. Rather than creating a system to dump Player Experience 
+on an object shared by alts, each character object stores their own Player 
+Experience and these beats can be converted into spendable Normal Experience 
+on an alt object.
+
+Requires '9e - Alt Registration.txt'.
+
+	xp/convert <number> from <name>
+	xp/convert all from <name>
+	xp/convert <number> beats|xp|experience from <name>
+
+*/
+
+@fo me=&d.ars xpas=[search( name=Alt Registration <ars> )]
+
+// -- 
+
+/*
+	a: amt (in beats)
+	t: type (beats|experience|xp)
+
+	n: target name
+	d: target dbref
+	o: target objid
+	x: target's _special.beats.player
+
+	l: enactor's _special.beats.normal
+
+	r: 'reason' for xp_log
+*/
+
+&c.xp/convert [v( d.xpas )]=$^\+?xp/convert (.+) from (.+)$:
+	think strcat( 
+		** initial registers **, %r, 
+		-- amt/type --, %r, 
+		type:, %b, setr( t, grab( beats|experience|xp, [rest( %1 )]*, | )), %r, 
+		amt:, %b, 
+			setr( a, 
+				case( %qt, 
+					beats, first( %1 ), 
+					experience, mul( first( %1 ), v( d.beat-to-exp )), 
+					xp, mul( first( %1 ), v( d.beat-to-exp )), 
+					0 
+				)
+			), 
+		%r, 
+		-- target --, %r, 
+		name:, %b, setr( n, trim( %2 )), %r, 
+		dbref:, %b, setr( d, if( strmatch( %qn, me ), %#, pmatch( %qn ))), %r, 
+		objid:, %b, setr( o, u( .objid, %qd )), %r, 
+		player xp:, %b, setr( x, get( %qd/_special.beats.player )), %r, 
+		-- enactor --, %r, 
+		normal xp:, %b, setr( l, get( %#/_special.beats.normal )), %r, 
+	); 
+
+	@assert t( %qo )={ 
+		@pemit %#=u( .msg, xp/convert, Character '%qn' not found. ) 
+	}; 
+
+	@assert strlen( %qt )={ 
+		@pemit %#=u( .msg, xp/convert, 
+			If you're going to enter a type%, it must be 'beats'%, 
+			'experience'%, or 'xp'. Leave blank for 'beats'. 
+		) 
+	}; 
+
+	@assert cand( isint( %qa ), gt( %qa, 0 ))={ 
+		@pemit %#=u( .msg, xp/convert, 
+			Amount to transfer must be a non-zero integer 
+		) 
+	}; 
+
+	@assert u( v( d.ars )/f.has-alt, %#, %qo )={ 
+		@pemit %#=u( .msg, xp/convert, 
+			'[name( %qd )]' is not an alt of yours. 
+			If [subj( %qd )] should be%, see: +help alts 
+		) 
+	}; 
+
+	@assert gte( ladd( %qx ), %qa )={ 
+		@pemit %#=u( .msg, xp/convert, 
+			[name( %qd )] doesn't have that much Player Experience 
+		)
+	}; 
+
+// 'spend' from target's Player Experience
+	@set/quiet %qd=
+		_special.beats.player:[first( %qx )] [sub( rest( %qx ), %qa )]; 
+
+	think strcat( 
+		** spend player experience **, %r, 
+		reason:, setr( r, Converted Player Experience to %N (%#) ), %r, 
+		-- tranaction begin --, u( f.transaction.begin ), %r, 
+		sanitized reason:, setr( r, u( f.sql.escape, %qr )), %r, 
+/*
+0: target dbref
+1: enactor dbref (may be the same)
+2: xp type (probably 'normal')
+3: xp amt
+4: full statpath (with instance)
+5: reason (probably 'statname old -> new') 
+6: value set/added
+*/
+		add to xp_log:, 
+			sql( u( sql.insert.spend, %qd, %#, player, %qa, , %qr )), %r, 
+	); 
+
+// 'gain' to enactor's Normal Experience
+	@set/quiet %#=
+		_special.beats.normal:[add( first( %ql ), %qa )] [rest( %ql )];
+
+	think strcat( 
+		** gain normal experience **, %r, 
+		reason:, 
+			setr( r, Converted Player Experience from [name( %qd )] (%qd) ), %r, 
+		sanitized reason:, setr( r, u( f.sql.escape, %qr )), %r, 
+/*
+0: target dbref
+1: enactor dbref
+2: xp type (probably 'normal')
+3: xp amt
+4: reason
+*/
+		add to xp_log:, 
+			sql( u( sql.insert.award, %#, %#, normal, %qa, %qr )), %r, 
+		-- tranaction end --, u( f.transaction.end ), %r 
+	); 
+
+	@pemit %#=u( .msg, xp/convert, 
+		Converted %qa beats 
+		from [name( %qd )]'s Player Experience 
+		to [name( %# )]'s Normal Experience 
+	); 
+
+// -- 
+
+@set xpas/c.xp/convert=regex
+
+/* CURRENT OUTPUT 
+
+Jared says, “Whoa, major complicated.”
+Jared peers.
+You say, “Let me push the current pretty code to github”
+** initial registers **
+-- amt/type --
+type: beats
+amt: 2
+-- target --
+name: me
+dbref: #7
+objid: #7:1412477070
+player xp: 50 -22
+-- enactor --
+normal xp: 72 -50
+
+** spend player experience **
+reason:Converted Player Experience to Thenomain (#7)
+-- tranaction begin --
+sanitized reason:Converted Player Experience to Thenomain (#7)
+add to xp_log:
+
+** gain normal experience **
+reason:Converted Player Experience from Thenomain (#7)
+sanitized reason:Converted Player Experience from Thenomain (#7)
+add to xp_log:#-1 QUERY ERROR
+-- tranaction end --
+
+<xp/convert> Converted 2 beats from Thenomain's Player Experience to Thenomain's Normal Experience
+
+*/
 
 /*
 ================================================================================
