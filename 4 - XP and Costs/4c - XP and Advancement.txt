@@ -1642,6 +1642,42 @@ add to xp_log:#-1 QUERY ERROR
 
 <xp/convert> Converted 2 beats from Thenomain's Player Experience to Thenomain's Normal Experience
 
+*** WORKING OUTPUT: From Vera to Thenomain ***
+
+add to xp_log:#-1 QUERY ERROR
+-- tranaction end --
+
+<xp/convert> Converted 2 beats from Thenomain's Player Experience to Thenomain's Normal Experience
+Thenomain adds the working Alt output to the github. Sec.
+** initial registers **
+-- amt/type --
+type: beats
+amt: 2
+-- target --
+name: vera
+dbref: #300
+objid: #300:1422406673
+player xp: 50 -2
+-- enactor --
+normal xp: 78 -50
+
+** spend player experience **
+reason:Converted Player Experience to Thenomain (#7)
+-- tranaction begin --
+sanitized reason:Converted Player Experience to Thenomain (#7)
+add to xp_log:
+
+** gain normal experience **
+reason:Converted Player Experience from Vera (#300)
+sanitized reason:Converted Player Experience from Vera (#300)
+add to xp_log:
+-- tranaction end --
+
+<xp/convert> Converted 2 beats from Vera's Player Experience to Thenomain's Normal Experience
+
+
+
+
 */
 
 /*
