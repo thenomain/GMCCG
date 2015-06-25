@@ -45,6 +45,9 @@ COMMANDS:
 √	xp/freebie <stat>=<level> for <reason> : Give <stat> spending xpz.
 	(rewrite this and xp/spend and xp/cost to share redundant functions!)
 
+	xp/convert <amt> [beats|xp] to <name> : Player xpz -> Normal xpz, yo.
+	(<name> must be an alt of yours)
+
 	xp/remove <name>=<amt> for <reason> : take some honey away
 	xp/remove <name>/<xp type>=<amt> for <reason> : a specific kind of honey
 
@@ -665,7 +668,6 @@ Reason & Entered By are flexible to the viewer's screen width.
 
 */
 
-
 &display.xp/log.header xpas=
 	localize( strcat( 
 		setq( w, sub( width( %# ), 80 )), 
@@ -684,6 +686,8 @@ Reason & Entered By are flexible to the viewer's screen width.
 		ljust( elements( %0, 1, | ), add( 20, floor( fdiv( %qw, 2 ))) ), %b,
 		elements( %0, 2, | )
 	))
+
+
 
 
 /* 
@@ -833,15 +837,6 @@ Valid award:
 
 
 
-
-
-
-
-
-
-
-
-
 /* 
 ################################################################################
 ## XP PURCHASING ###############################################################
@@ -932,7 +927,7 @@ f: formula's attribute name
 --------------------------------------------------------------------------------
 -- XP Formula Finder -----------------------------------------------------------
 
-This code is meant to find out which of the xp.<blah> function to look up for any given statpath.  It only finds the name.
+This code is meant to find out which of the xp.<blah> function to look up for any given statpath. It only finds the name.
 
 >>> XP FORMULAS ARE STORED ON THE XPCD <<<
 
@@ -1042,7 +1037,9 @@ x: temp statpaths for the degrading search
 --------------------------------------------------------------------------------
 -- XP/COST ---------------------------------------------------------------------
 
-Cost (and therefore Spend) does a cheat I use in other places: Its support functions pull directly from the set registers, instead of passing them.  This may cause problems in the future.
+Cost (and therefore Spend) does a cheat I use in other places: Its support 
+functions pull directly from the set registers, instead of passing them. This 
+may cause problems in the future.
 
 0: [<player>/]<stat>[=<value>]
 p: player dbref
@@ -1178,11 +1175,14 @@ f: other error check results
 --------------------------------------------------------------------------------
 -- XP Next Stat Rank -----------------------------------------------------------
 
-For our next trick, we'll take <sheet> and <stat> and return the next logical value for that stat.  For instance, a skill from 0 to 1, Stunning Looks from 2 to 4.  It will return #-1 should the person be at the top of the list, as well as other errors.
+For our next trick, we'll take <sheet> and <stat> and return the next logical 
+value for that stat. For instance, a skill from 0 to 1, Stunning Looks from 2 
+to 4. It will return #-1 should the person be at the top of the list, as well 
+as other errors.
 
 If a stat whose value set is # can always be raised.
 
-Needs to handle specialties properly.  The XP cost calculator does, too.
+Needs to handle specialties properly. The XP cost calculator does, too.
 
 0: sheet dbref
 1: _sheet.statpath_(with_instance)
@@ -1225,7 +1225,6 @@ Extended form of 'xp/cost'
 	xp/spend <stat>=<value>/<xp type>
 	xp/spend <stat>=<value>/<xp type> <amt>/<xp type> <amt>/<xp type> <amt>
 	xp/spend/<xp_type>:<amt>/<xp_type>:<amt> <stat>=<value>
-
 
 --
 
@@ -1379,7 +1378,6 @@ think regmatchi( <player>/<stat>=<value> for <reason>, v( testreg ), -1 p s -1 v
 
 think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- [iter( p n v r, r( %i0 ), , %b--%b )]
 
-
 */
 
 &d.regex.freebie xpas=(.+)/(.+?)(=(.+))? for (.+)
@@ -1479,7 +1477,7 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 --------------------------------------------------------------------------------
 -- Validate: Player ------------------------------------------------------------
 
-Everything there is to validate about a player.  Sheet, approved, staff status, etc.  Staff can check or set non-approved players.
+Everything there is to validate about a player. Sheet, approved, staff status, etc. Staff can check or set non-approved players.
 
 0: character dbref (qp)
 1: sheet dbref (qw)
@@ -1680,24 +1678,6 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*
 ################################################################################
 ## AUTO XP GAINING #############################################################
@@ -1871,14 +1851,6 @@ Limitations of earning:
 
 Total time active:
 	u( <cg>/f.total_secs_approved, <character dbref> )
-
-[3/8/15, 10:13:06 PM] Manu: Need to decide when XP resets for gaining.
-[3/8/15, 10:13:32 PM] Kent: Tuesday at 4:53 am.
-[3/8/15, 10:13:34 PM] Kent: Eastern.
-[3/8/15, 10:13:34 PM] Manu: Like, when it resets to "you have now gained 0 XP this week".
-[3/8/15, 10:13:50 PM] Manu: Hah.
-[3/8/15, 10:14:08 PM] Kent: I could base it on their most recent approval, but I could also jam a hot poker in my eye.
-
 --
 
 &d.one-day xxx=86400
