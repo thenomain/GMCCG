@@ -245,7 +245,11 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 
 -=-=-=-=-=-=
 
-&f.has-alt ars=t( match( get( %0/_alt.list ), %1 ))
+&f.has-alt ars=
+	cor( 
+		t( match( get( %0/_alt.list ), %1 )), 
+		strmatch( %0, first( %1, : ))
+	)
 
 --=-==-=-=-=-
 
