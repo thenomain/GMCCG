@@ -263,11 +263,11 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 	cand( 
 		u( .at_least, %0, attribute.Wits, 3 ), 
 		cor( 
-			u( .specialty_has, %0, Brawl Melee Firearms, %1 ), 
+			u( .specialty_has, %0, Brawl Weaponry Firearms, %1 ), 
 			u( .has, %0, merit.[edit( %1, %b, _ )] )
 		)
 	)
-&prereq-text.merit.quick_draw_() DD=Wits 3+, and the type is either a specialty for Melee, Firearms, or a learned Fighting Style
+&prereq-text.merit.quick_draw_() DD=Wits 3+, and the type is either a specialty for Brawl, Weaponry, Firearms, or a learned Fighting Style
 
 &merit.parkour DD=1.2.3.4.5
 &prerequisite.merit.parkour DD=u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 )
