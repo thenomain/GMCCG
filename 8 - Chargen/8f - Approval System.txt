@@ -165,9 +165,9 @@ for one reason or another, no longer is.
 				isapproved( %qp, guest ), guest, 
 				isapproved( %qp, staff ), staff, 
 				isapproved( %qp, chargen ), chargen, 
-				isapproved( %qp, approved ), approved, 
-				isapproved( %qp, storyteller ), storyteller, 
 				isapproved( %qp, npc ), npc, 
+				isapproved( %qp, storyteller ), storyteller, 
+				isapproved( %qp, approved ), approved, 
 				isapproved( %qp, dead ), dead, 
 				isapproved( %qp, frozen ), frozen, 
 				isapproved( %qp, unapproved ), unapproved, 
@@ -200,6 +200,11 @@ cg/freeze
 cg/kill
 	same as 'unapprove', but also sets dead
 
+cg/chargen
+	returns character to cgen
+	un-unapprove and un-freeze, but not un-kill
+	may be used any time by Wizards ONLY
+
 cg/log
 	What happened when. Display newest first. (It's stored newest last.)
 
@@ -210,6 +215,7 @@ cg/log
 // -- cg/approve ---------------------------------------------------------------
 
 &c.cg/approve cg=$^\+?cg/approve( .*)$:
+
 	@trigger %!/trig.approval.switch=
 		%#, 
 		%1, 
@@ -315,6 +321,38 @@ cg/log
 	@set %1=unapproved !approved !npc !storyteller; 
 
 
+
+
+
+// -----------------------------------------------------------------------------
+// -- cg/chargen ---------------------------------------------------------------
+
+&c.cg/chargen cg=$^\+?cg/chargen( .*)$:
+	@assert hasflag( %#, wizard )={ 
+		@pemit %#=u( .msg, cg/chargen, Wizards only )
+	}; 
+
+	@trigger %!/trig.approval.switch=
+		%#, 
+		%1, 
+		chargen, 
+		chargen, 
+		approved NPC storyteller frozen
+
+// --
+
+@set cg/c.cg/chargen=regexp
+
+
+// -----------------------------------------------------------------------------
+// -- cg/chargen: triggers ---------------------------------------------------
+
+&trig.approval.switch/chargen cg=
+	@set %1=!approved !unapproved !npc !storyteller; 
+	@set %1=_approval.frozen:; 
+
+
+
 // -----------------------------------------------------------------------------
 // -- cg/freeze -------------------------------------------------------------
 
@@ -342,13 +380,21 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/kill ------------------------------------------------------------------
 
-&c.cg/kill cg=$^\+?cg/kill( .*)$:
+&c.cg/kill cg=$^\+?cg/kill(/YES)?( .*)$:
+	@assert not( comp( %1, /YES ))={ 
+		@pemit %#=u( .msg, cg/kill, 
+			If you really want to do this%, type: 
+			cg/kill/YES %2 
+		)
+	}; 
+
 	@trigger %!/trig.approval.switch=
 		%#, 
-		%1, 
+		%2, 
 		kill, 
 		dead, 
 		approved unapproved frozen
+
 
 // --
 
@@ -744,6 +790,10 @@ All commands have the leading '+' as an option. No harm if you use it.
 		Can be from: Chargen
 		
 	cg/unapprove <character>[=<comment>]
+		Remove <character>'s approval status.
+		Can be from: Approved, NPC, Storyteller
+
+	cg/chargen <character>[=<comment>]
 		Remove <character>'s approval status.
 		Can be from: Approved, NPC, Storyteller
 
