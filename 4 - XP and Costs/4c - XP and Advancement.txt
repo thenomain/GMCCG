@@ -299,6 +299,7 @@ Technically an sql.* function, but easier to do this way.
 2: xp type (probably 'normal')
 3: xp amt
 4: reason
+5: action
 
 */
 
@@ -307,13 +308,14 @@ Technically an sql.* function, but easier to do this way.
 		INTO xp_log (
 			target_objid, target_name, 
 			enactor_objid, enactor_name, 
-			xp_type, xp_amt, reason
+			xp_type, xp_amt, 
+			action, reason
 		) 
 		VALUES (
 			'[u( .objid, %0 )]', '[name( %0 )]', 
 			'[u( .objid, %1 )]', '[name( %1 )]', 
 			'%2', %3, 
-			'%4'
+			'%5', '%4'
 		)
 			
 			
@@ -1558,127 +1560,130 @@ Requires '9e - Alt Registration.txt'.
 		)
 	}; 
 
-// 'spend' from target's Player Experience
-	@set/quiet %qd=
-		_special.beats.player:[first( %qx )] [sub( rest( %qx ), %qa )]; 
+// a little explanation here:
+// for some reason, this is the only way I can throw two INSERT statements
+// from the game at the same time. that is, if they are not at the same time.
+// I don't know why. it's very frustrating.
 
-	think strcat( 
-		** spend player experience **, %r, 
-		reason:, setr( r, Converted Player Experience to %N (%#) ), %r, 
-		-- tranaction begin --, u( f.transaction.begin ), %r, 
-		sanitized reason:, setr( r, u( f.sql.escape, %qr )), %r, 
-/*
-0: target dbref
-1: enactor dbref (may be the same)
-2: xp type (probably 'normal')
-3: xp amt
-4: full statpath (with instance)
-5: reason (probably 'statname old -> new') 
-6: value set/added
-*/
-		add to xp_log:, 
-			sql( u( sql.insert.spend, %qd, %#, player, %qa, , %qr )), %r, 
-	); 
-
-// 'gain' to enactor's Normal Experience
-	@set/quiet %#=
-		_special.beats.normal:[add( first( %ql ), %qa )] [rest( %ql )];
-
-	think strcat( 
-		** gain normal experience **, %r, 
-		reason:, 
-			setr( r, Converted Player Experience from [name( %qd )] (%qd) ), %r, 
-		sanitized reason:, setr( r, u( f.sql.escape, %qr )), %r, 
-/*
-0: target dbref
-1: enactor dbref
-2: xp type (probably 'normal')
-3: xp amt
-4: reason
-*/
-		add to xp_log:, 
-			sql( u( sql.insert.award, %#, %#, normal, %qa, %qr )), %r, 
-		-- tranaction end --, u( f.transaction.end ), %r 
-	); 
+	@trigger %!/trig.xp/convert.spend=%#, %qd, %qa; 
+	@wait 1=@trigger %!/trig.xp/convert.gain=%#, %qd, %qa; 
 
 	@pemit %#=u( .msg, xp/convert, 
-		Converted %qa beats 
-		from [name( %qd )]'s Player Experience 
-		to [name( %# )]'s Normal Experience 
+		cat( 
+			Converted, 
+			u( .plural, %qa, beat, beats ), 
+			from, 
+			if( strmatch( %qd, %# ), your, [name( %qd )]'s ), 
+			Player Experience to your Normal Experience 
+		)
 	); 
 
-// -- 
 
-@set xpas/c.xp/convert=regex
+/*
+--------------------------------------------------------------------------------
+-- Trigger: XP/CONVERT's spend player & gain normal beats ----------------------
 
-/* CURRENT OUTPUT 
+This is pretty ugly. I apologize.
 
-Jared says, “Whoa, major complicated.”
-Jared peers.
-You say, “Let me push the current pretty code to github”
-** initial registers **
--- amt/type --
-type: beats
-amt: 2
--- target --
-name: me
-dbref: #7
-objid: #7:1412477070
-player xp: 50 -22
--- enactor --
-normal xp: 72 -50
+0: enactor dbref, %#
+1: target dbref, %qd
+2: amt, %qa
 
-** spend player experience **
-reason:Converted Player Experience to Thenomain (#7)
--- tranaction begin --
-sanitized reason:Converted Player Experience to Thenomain (#7)
-add to xp_log:
+p: target's player beats attribute
+n: enactor's normal beats attribute
+r: reason built and sent to sql log
 
-** gain normal experience **
-reason:Converted Player Experience from Thenomain (#7)
-sanitized reason:Converted Player Experience from Thenomain (#7)
-add to xp_log:#-1 QUERY ERROR
--- tranaction end --
-
-<xp/convert> Converted 2 beats from Thenomain's Player Experience to Thenomain's Normal Experience
-
-*** WORKING OUTPUT: From Vera to Thenomain ***
-
-add to xp_log:#-1 QUERY ERROR
--- tranaction end --
-
-<xp/convert> Converted 2 beats from Thenomain's Player Experience to Thenomain's Normal Experience
-Thenomain adds the working Alt output to the github. Sec.
-** initial registers **
--- amt/type --
-type: beats
-amt: 2
--- target --
-name: vera
-dbref: #300
-objid: #300:1422406673
-player xp: 50 -2
--- enactor --
-normal xp: 78 -50
-
-** spend player experience **
-reason:Converted Player Experience to Thenomain (#7)
--- tranaction begin --
-sanitized reason:Converted Player Experience to Thenomain (#7)
-add to xp_log:
-
-** gain normal experience **
-reason:Converted Player Experience from Vera (#300)
-sanitized reason:Converted Player Experience from Vera (#300)
-add to xp_log:
--- tranaction end --
-
-<xp/convert> Converted 2 beats from Vera's Player Experience to Thenomain's Normal Experience
-
-
-
+d: database 'set()' error
+s: sql error
 
 */
+
+&trig.xp/convert.spend [v( d.xpas )]=
+	think strcat( 
+		## xp/convert: spend ##, %r, 
+		u( f.transaction.begin ), 
+		** set registers **, %r, 
+		target xp:, %b, setr( p, get( %1/_special.beats.player )), %r, 
+		reason:, %b, 
+			setr( r, Converted Player Experience to [name( %0 )] (%0) ), %r, 
+		sanitized reason:, %b, setr( r, u( f.sql.escape, %qr )), %r, 
+		** manipulate beats attributes **, %r, 
+		spend target's player beats:, %b, 
+			setr( d, 
+				set( %1, 
+					_special.beats.player:
+					[first( %qp )] [sub( rest( %qp ), %2 )] 
+				)
+			), %r, 
+		** enter SQL log: spend (target, player) **, %r, 
+		add spend (player) to xp_log:, %b, 
+			setr( s, 
+				sql( u( sql.xp_log.add, %1, %0, player, %2, %qr, spend ))
+			), 
+		%r, 
+		u( f.transaction.end ), 
+	); 
+
+	@if strlen( %qd%qs )={ 
+		@pemit %0=u( .msg, xp/convert, 
+			strcat( 
+				Spending from [name( %1 )] ran into some problems:, 
+				if( strlen( %qd ), 
+					%r* [name( %1 )]'s Player Beats was not set correctly! 
+					It should be: [first( %qp )] [sub( rest( %qp ), %2 )] 
+				), 
+				if( strlen( %qs ), 
+					%r* The xp/log for [name( %1 )]'s Player Beats was not set 
+				)
+			)
+		)
+	}; 
+
+
+// --
+
+&trig.xp/convert.gain [v( d.xpas )]=
+	think strcat( 
+		## xp/convert: gain ##, %r, 
+		** set registers **, %r, 
+		enactor xp:, %b, setr( n, get( %0/_special.beats.normal )), %r, 
+		reason:, %b, 
+			setr( r, Converted Player Experience from [name( %1 )] (%1) ), 
+			%r, 
+		sanitized reason:, %b, setr( r, u( f.sql.escape, %qr )), %r, 
+		** manipulate beats attributes **, %r, 
+		gain enactor's normal beats:, %b, 
+			setr( d, 
+				set( %0, 	
+					_special.beats.normal:
+					[add( first( %qn ), %2 )] [rest( %qn )] 
+				)
+			), %r, 
+
+		** enter SQL log: award (enactor, normal) **, %r, 
+		add gain (normal) to xp_log:, %b, 
+			setr( s, 
+				sql( u( sql.xp_log.add, %0, %0, normal, %2, %qr, gain ))
+			), 
+		%r, 
+	); 
+
+	@if strlen( %qd%qs )={ 
+		@pemit %0=u( .msg, xp/convert, 
+			strcat( 
+				Gaining to [name( %0 )] ran into some problems:, 
+				if( strlen( %qd ), 
+					%r* [name( %0 )]'s Normal Beats was not set correctly! 
+					It should be: [add( first( %qn ), %2 )] [rest( %qn )] 
+				), 
+				if( strlen( %qs ), 
+					%r* The xp/log for [name( %0 )]'s Normal Beats was not set 
+				)
+			)
+		)
+	}; 
+
+
 
 /*
 ================================================================================
