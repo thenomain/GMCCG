@@ -101,6 +101,9 @@ List all agendas that a demon has.
 &bio.agenda DD=Inquisitor.Integrator.Saboteur.Tempter.Uncalled
 &tags.bio.agenda D:T=demon
 
+&bio.agency DD=*
+&tags.bio.agency D:T=demon.stigmatic
+
 &bio.ring DD=*
 &tags.bio.ring D:T=demon.stigmatic.clique
 
@@ -1234,10 +1237,10 @@ to check from
 // -- Bio ----------------------------------------------------------------------
 
 &bio.default.demon Newest Sheet Code <nsc>=
-	birthdate concept virtue vice template incarnation agenda ring
+	birthdate concept virtue vice template incarnation agenda agency ring
 
 &bio.default.stigmatic Newest Sheet Code <nsc>=
-	birthdate concept ring template virtue vice
+	birthdate concept agency template virtue vice ring
 
 
 // -- Powers -------------------------------------------------------------------
@@ -1507,7 +1510,7 @@ regain methods:
 
 &spend.trigger.aether psrs=
 	think strcat( 
-		m:, %b, setr( m, u( f.match-method, spend, aether, %2 )), %r, 
+		m:, %b, setr( m, u( f.match_method, %1, spend, aether, %2 )), %r, 
 		a:, %b, setr( a, u( amt.spend, %1, aether, %qm )), %r, 
 		u:, %b, setr( u, hasattr( %1, advantage.Primum )), %r, 
 		s:, %b, setr( s, hasattr( %1, advantage.Aether_Maximum )), %r, 
@@ -1552,7 +1555,7 @@ regain methods:
 
 &regain.trigger.aether psrs=
 	think strcat( 
-		m:, %b, setr( m, u( f.match-method, regain, aether, %2 )), %r, 
+		m:, %b, setr( m, u( f.match_method, %1, regain, aether, %2 )), %r, 
 		a:, %b, setr( a, u( amt.regain, %1, aether, %qm )), %r, 
 		u:, %b, setr( u, hasattr( %1, advantage.Primum )), %r, 
 		s:, %b, setr( s, hasattr( %1, advantage.Aether_Maximum )), %r, 

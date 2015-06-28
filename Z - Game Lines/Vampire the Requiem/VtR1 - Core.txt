@@ -2003,7 +2003,9 @@ regain methods:
 
 &spend.trigger.vitae psrs=
 	think strcat( 
-		m:, %b, setr( m, u( f.match-method, spend, vitae, %2 )), %r, 
+//	@pemit %0=strcat( 
+//		DEBUGGING:, %r, 
+		m:, %b, setr( m, u( f.match_method, %1, spend, vitae, %2 )), %r, 
 		a:, %b, setr( a, u( amt.spend, %1, vitae, %qm )), %r, 
 		s:, %b, setr( s, hasattr( %1, advantage.Vitae_Maximum )), %r, 
 	); 
@@ -2034,6 +2036,7 @@ regain methods:
 	}; 
 
 	think e: 
+//	@pemit %0=e: 
 		[setr( e, 
 			u( display.number, %0, %1, vitae, spend, %qa, %qm, %4 )
 		)]; 
@@ -2047,7 +2050,7 @@ regain methods:
 
 &regain.trigger.vitae psrs=
 	think strcat( 
-		m:, %b, setr( m, u( f.match-method, regain, vitae, %2 )), %r, 
+		m:, %b, setr( m, u( f.match_method, %1, regain, vitae, %2 )), %r, 
 		a:, %b, setr( a, u( amt.regain, %1, vitae, %qm )), %r, 
 		s:, %b, setr( s, hasattr( %1, advantage.Vitae_Maximum )), %r, 
 	); 
