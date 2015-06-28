@@ -2001,7 +2001,7 @@ regain methods:
 -- Spend Vitae Trigger ---------------------------------------------------------
 */
 
-&spend.trigger.essence psrs=
+&spend.trigger.vitae psrs=
 	think strcat( 
 		m:, %b, setr( m, u( f.match-method, spend, vitae, %2 )), %r, 
 		a:, %b, setr( a, u( amt.spend, %1, vitae, %qm )), %r, 
@@ -2045,7 +2045,7 @@ regain methods:
 -- Regain Vitae Trigger --------------------------------------------------------
 */
 
-&regain.trigger.essence psrs=
+&regain.trigger.vitae psrs=
 	think strcat( 
 		m:, %b, setr( m, u( f.match-method, regain, vitae, %2 )), %r, 
 		a:, %b, setr( a, u( amt.regain, %1, vitae, %qm )), %r, 
