@@ -66,10 +66,12 @@ Hey, this is new.
 &tags.health.damage D:T=derived
 &default.health.damage DD=derived
 
-&health.penalty DD=min( 0, 
+&health.penalty DD=min( 
+	0, 
 	add( 
 		u( .value, %0, health.maximum ), 
 		mul( -1, u( .value, %0, health.damage )), 
+		u( .value, %0, merit.iron_stamina ), 
 		-3 
 	)
 )
