@@ -2011,10 +2011,10 @@ regain methods:
 	); 
 
 	@assert strlen( %qs )={ 
-		@pemit %0=u( .msg, essence/spend, 
+		@pemit %0=u( .msg, vitae/spend, 
 			cat( 
 				if( strmatch( %0, %1 ), You, name( %1 )), 
-				Must have a Vitae pool 
+				must have a Vitae pool 
 			)
 		) 
 	}; 
@@ -2055,11 +2055,11 @@ regain methods:
 		s:, %b, setr( s, hasattr( %1, advantage.Vitae_Maximum )), %r, 
 	); 
 
-	@assert cand( %qu, %qs )={ 
+	@assert strlen( %qs )={ 
 		@pemit %0=u( .msg, vitae/regain, 
 			cat( 
 				if( strmatch( %0, %1 ), You, name( %1 )), 
-				Must have a Vitae pool 
+				must have a Vitae pool 
 			)
 		) 
 	}; 

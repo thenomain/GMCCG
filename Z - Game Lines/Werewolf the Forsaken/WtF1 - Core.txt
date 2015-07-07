@@ -2055,7 +2055,7 @@ regain methods:
 		@pemit %0=u( .msg, essence/spend, 
 			cat( 
 				if( strmatch( %0, %1 ), You, name( %1 )), 
-				Must have both Primal Urge and an Essence pool 
+				must have both Primal Urge and an Essence pool 
 			)
 		) 
 	}; 
@@ -2100,7 +2100,7 @@ regain methods:
 		@pemit %0=u( .msg, essence/regain, 
 			cat( 
 				if( strmatch( %0, %1 ), You, name( %1 )), 
-				Must have both Primal Urge and an Essence pool 
+				must have both Primal Urge and an Essence pool 
 			)
 		) 
 	}; 
