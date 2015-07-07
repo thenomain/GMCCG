@@ -119,6 +119,7 @@ Remember we pass to prerequisite.<statpath> the following:
 	0: dbref of sheet
 	1: instance of stat, if any
 	2: stat-raise (offset) if stat being checked is being raised (used in cg/xp)
+	3: (
 
 returns: 1 if valid, #-1 <reason> if not
 
