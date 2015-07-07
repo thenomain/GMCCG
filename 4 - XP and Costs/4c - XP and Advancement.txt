@@ -45,7 +45,7 @@ COMMANDS:
 √	xp/freebie <stat>=<level> for <reason> : Give <stat> spending xpz.
 	(rewrite this and xp/spend and xp/cost to share redundant functions!)
 
-	xp/convert <amt> [beats|xp] from <name> : Player xpz -> Normal xpz, yo.
+√	xp/convert <amt> [beats|xp] from <name> : Player xpz -> Normal xpz, yo.
 	(<name> must be an alt of yours)
 
 	xp/remove <name>=<amt> for <reason> : take some honey away
