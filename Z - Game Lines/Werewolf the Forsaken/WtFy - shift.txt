@@ -47,7 +47,7 @@ We'll see where this goes.
 @fo me=&d.sfp sfs=[search( name=Stat Functions Prototype <sfp> )]
 @fo me=&d.health sfs=[search( name=WoD Health System <whs> )]
 
-&d.forms.werewolf sfs=Hishu.Dalu.Gauru.Urshal.Urhan
+&d.forms.werewolf sfs=Hishu.Dalu.Gauru.Urshul.Urhan
 &d.forms.skinthief sfs=Human.*
 &d.forms.changeling sfs=Human.*
 
@@ -110,20 +110,20 @@ Notes - Things you might want to know
 &form.Gauru.oshift sfs=changes to %p gauru war-form. 
 	[switch( rand( 10 ), 0, Rar! )]
 
-&form.Urshal.offsets sfs=
+&form.Urshul.offsets sfs=
 	attribute.strength:+2 
 	attribute.dexterity:+2 
 	attribute.stamina:+2 
 	attribute.manipulation:-1 
 	advantage.size:+1 
 	special.species_factor:+3 
-&form.Urshal.notes sfs=
+&form.Urshul.notes sfs=
 	Perception +3 w/ Wolfy Things, 
 	Claws +1L, 
 	Teeth +2L (no grapple), 
 	Average Lunacy (-0 to resist), 
 	Weaken the Prey
-&form.Urshal.oshift sfs=changes to %p near-wolf (urshal) form.
+&form.Urshul.oshift sfs=changes to %p near-wolf (urshul) form.
 
 &form.Urhan.offsets sfs=
 	attribute.dexterity:+2 
