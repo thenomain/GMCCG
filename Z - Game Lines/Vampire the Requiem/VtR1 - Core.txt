@@ -1644,7 +1644,7 @@ Character should have no Scales
 */
 
 &xp.advantage.blood_potency XP Cost Database <xpcd>=
-	u( cost.standard, 5, %1, %2 ), 
+	u( cost.standard, 5, %1, %2 )
 	
 &xp.advantage.humanity XP Cost Database <xpcd>=
 	u( cost.standard, 2, %1, %2 )
