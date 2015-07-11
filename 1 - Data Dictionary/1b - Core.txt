@@ -308,9 +308,8 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &prereq-text.merit.fast_talking DD=Manipulation 3+ and Subterfuge 2+
 
 &merit.fixer DD=2
-&prerequisite.merit.fixer DD=cand( u( .at_least, %0, attribute.wits, 3 ), gte( words( lattr( %0/_merit.contacts_* )), 2 ))
-&prereq-text.merit.fixer DD=Wits 3+ & 2 or more Contacts
-// So since I made Contacts a 1-dot Merit, and Fixer requires Contacts 2, I’m not sure what the code should be to make sure that the prerequisite is two instances of the Contacts Merit.
+&prerequisite.merit.fixer DD=cand( u( .at_least, %0, attribute.wits, 3 ), cor( gte( words( lattr( %0/_merit.contacts_* )), 2 ), t( lattr( %0/_merit.professional_training_(*) ))))
+&prereq-text.merit.fixer DD=Wits 3+ & 2 or more Contacts, or Professional Training (which gives you 2 Contacts)
 // GENERAL NOTE: Need a way to look up a list of traits by name with wildcard
 
 &merit.hobbyist_clique_() DD=2|*|*
