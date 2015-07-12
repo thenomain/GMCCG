@@ -507,9 +507,10 @@ think u( xpas/display.approval-deets, pmatch( vera ))
 ================================================================================
 == Command: xp/log =============================================================
 
-	xp/log <name>[/<type>] -- staff only
-	xp/log [<type>] -- players only
-	xp/log[/<log type>] -- either/or
+	xp/log <name>        -- staff only
+	xp/log <name>/<type> -- staff only
+	xp/log [<type>]      -- players only
+	xp/log[/<log type>]  -- both
 
 xp type: normal, player, cover, etc.
 log type: gain, spend, freebie, auto
@@ -538,6 +539,7 @@ l: log sql results
 	}; 
 
 	think strcat( 
+		** DEBUG SPAM **, %r, 
 
 // grab switches, or not
 		if( strmatch( %1, /* ), 
@@ -545,7 +547,7 @@ l: log sql results
 				raw switches:, %b, setr( s, first( %1 )), %r, 
 				raw everything else:, %b, setr( o, rest( %1 )), %r, 
 			), 
-			strcat( no switches:, %b, setr( o, %1 ), %r, )
+			strcat( raw everything else:, %b, setr( o, %1 ), %r, )
 		), 
 
 // staff input is different than player input
@@ -559,11 +561,12 @@ l: log sql results
 			), 
 			strcat( 
 				* PLAYER *, %r, 
-				raw target, %b, setr( p, %# ), %r, 
-				raw type, %b, setr( x, %1 ), %r, 
+				raw target:, %b, setr( p, %# ), %r, 
+				raw type:, %b, setr( x, %qo ), %r, 
 			)
 		), 
 
+		* PROCESSING *, %r, 
 		processed target:, %b, setr( t, pmatch( trim( %qp ))), %r, 
 		processed xp type:, %b, 
 		setr( e, 
