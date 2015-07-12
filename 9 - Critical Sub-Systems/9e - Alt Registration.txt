@@ -392,6 +392,8 @@ Or returns '1' if <alt> is in <target>'s alts-list
 			strmatch( %qt, %qa ) 
 		), 
 
+		words( get( %qt/_alt.list )), %qt, 
+
 		sort( 
 			iter( 
 				filter( fil.alts.current, get( %qt/_alt.list )), 
