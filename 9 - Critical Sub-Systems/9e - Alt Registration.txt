@@ -243,7 +243,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 
 
 
--=-=-=-=-=-=
+// -=-=-=-=-=-=
 
 &f.has-alt ars=
 	cor( 
@@ -251,7 +251,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 		strmatch( %0, first( %1, : ))
 	)
 
---=-==-=-=-=-
+// --=-==-=-=-=-
 
 &f.generate-code ars=
 	if( 
@@ -266,7 +266,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 		%qr 
 	)
 
--=-=-==--=-=
+// -=-=-==--=-=
 
 &tr.mail.register ars=
 	@mail/quick %1/Alt Request: [name( %0 )]=
@@ -277,7 +277,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 		or to contact staff for assistance.
 
 
--=-=-=-=-=-=
+// -=-=-=-=-=-=
 
 // 0: one dbref
 // 1: another dbref
@@ -299,15 +299,16 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 		), 
 	))
 
-=--=-=-=-=
+// =--=-=-=-=
 
 // 0: list of objids
 // returns: objects that still exist
+
 &fil.alts.current ars=strmatch( %0, u( .objid, first( %0, : )))
 
 &fil.alts.approval_type [v( d.ars )]=strmatch( rest( %0, : ), %1 )
 
--=-=-=-=-=-=
+// -=-=-=-=-=-=
 
 &display.alts [v( d.ars )]=
 	strcat( 
@@ -355,3 +356,43 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 		ljust( get( %qt/_bio.template), 15 ), %b, 
 		if( t( elements( mail( %qt ), 2 )), Unread mail )
 	))
+
+
+
+
+/*
+================================================================================
+== USER-DEFINED FUNCTIONS ======================================================
+
+Remember to register these with whatever global function system you have.
+
+--------------------------------------------------------------------------------
+-- alts() ----------------------------------------------------------------------
+
+	alts( <target>[, <alt>] )
+
+Return the existing objids from &_alts.list
+Or returns '1' if <alt> is in <target>'s alts-list
+
+*/
+
+&ufunc/privileged.alts [v( d.ars )]=
+	case( 0, 
+		cor( strmatch( setr( t, pmatch( %0 )), %# ), isstaff( %@ )), 
+		#-1 Staff or Self Only, 
+
+		t( hastype( %qt, PLAYER )), #-1 Target Not Found, 
+
+		cor( t( setr( a, pmatch( %1 ))), not( strlen( %1 ))), 
+		#-1 Match Not Found, 
+
+		not( strlen( %1 )), 
+		cor( 
+			t( match( get( %qt/_alt.list ), %qa:* )), 
+			strmatch( %qt, %qa ) 
+		), 
+
+		filter( fil.alts.current, get( %qt/_alt.list ))
+	)
+
+
