@@ -371,7 +371,7 @@ Remember to register these with whatever global function system you have.
 
 	alts( <target>[, <alt>] )
 
-Return the existing objids from &_alts.list
+Return the existing dbrefs from &_alts.list
 Or returns '1' if <alt> is in <target>'s alts-list
 
 */
@@ -392,7 +392,12 @@ Or returns '1' if <alt> is in <target>'s alts-list
 			strmatch( %qt, %qa ) 
 		), 
 
-		filter( fil.alts.current, get( %qt/_alt.list ))
+		sort( 
+			iter( 
+				filter( fil.alts.current, get( %qt/_alt.list )), 
+				first( %i0, : )
+			)
+		)
 	)
 
 
