@@ -783,7 +783,7 @@ Valid award:
 
 	think strcat( 
 		experience:, setr( x, get( %qp/_special.beats.%qt )), %r, 
-		beats earned:, setr( b, get( %qp/_special.beats_earned.%qt )), %r, 
+		beats earned:, setr( b, u( f.beats_earned.%qt, %qp )), %r, 
 		final award attribute:, setr( f, add( %qa, %qb )), %r, 
 		total weekly earnable:, setr( e, u( f.weekly_beats.max_earnable, %qp ))
 	); 
@@ -2013,8 +2013,10 @@ c: current normal xp attribute for <character>
 // --
 
 &trig.weekly.reset [v( d.xpas )]=
-	think setr( m, header( xpas: clearing 'beat' limit )); 
-	think setr( n, 
+	think setr( m, header( xpas: clear weekly beat limits )); 
+
+	think setr( n, divider( normal beats ));
+	think setr( o, 
 		iter( 
 			search( eplayer=
 				cand( 
@@ -2024,7 +2026,7 @@ c: current normal xp attribute for <character>
 				)
 			), 
 			cat( 
-				name( %i0 ), :, %i0, ::, 
+				name( %i0 ), %i0, ::, 
 				set( %i0, _special.beats_earned.normal: ), ::, 
 				if( strmatch( get( %i0/_special.beats_earned.normal ), ), 
 					ansi( hg, OK! ), 
@@ -2033,18 +2035,51 @@ c: current normal xp attribute for <character>
 			), , %r 
 		)
 	); 
-	think setr( o, footer()); 
+
+	think setr( p, divider( player beats )); 
+	think setr( q, 
+		iter( 
+			search( eplayer=
+				cand( 
+					isapproved( ## ), 
+					hasattr( ##, _special.beats_earned.player ), 
+					u( f.at_weeks_end?, ## )
+				)
+			), 
+			cat( 
+				name( %i0 ), %i0, ::, 
+				set( %i0, _special.beats_earned.player: ), ::, 
+				if( strmatch( get( %i0/_special.beats_earned.player ), ), 
+					ansi( hg, OK! ), 
+					ansi( n, error )
+				)
+			), , %r 
+		)
+	); 
+
+	think setr( r, footer()); 
 
 // .. debug ..
-	@mail/quick thenomain/Daily Beats Reset=%qm%r%qn%r%qo; 
+	@mail/quick thenomain/Daily Beats Reset=iter( m n o p q r, r( %i0 ), , %r ); 
 
+// --
+
+&f.beats_earned.player [v( d.xpas )]=
+	ladd( 
+		iter( alts( %0 ), 
+			get( %i0/_special.beats_earned.player )
+		)
+	)
+
+&f.beats_earned.normal [v( d.xpas )]=
+	get( %0/_special.beats_earned.normal )
 
 
 /*
 ================================================================================
 == NOTES AND OTHER RANDOM BITS =================================================
 
-Don't trust any code below this line as being done.
+Don't trust any code below this line.
 
 Beat Types:
 	Normal (default, general xp)
