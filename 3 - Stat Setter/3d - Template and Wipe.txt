@@ -79,17 +79,7 @@ strcat(
 
 @@ OK! Find all stat.paths to be set with this template
 		strcat( 
-			setq( l, 
-				setunion( 
-					filter( filter.stat-allowed-for-template, 
-						iter( 
-							lattr( [u( d.data-dictionary )]/default.* ), 
-							rest( %i0, . )
-						), 
-						, , %qv 
-					), 
-				)
-			), 
+			setq( l, u( f.statpaths-for-template, %qv )), 
 
 @@ .. .. output what we're setting
 			u( display.statpath_defaults, %qp, %qv, %ql ), 
@@ -116,6 +106,28 @@ stat/template thenomain=hum
 stat/wipe thenomain=YES
 stat/template thenomain=hum
 stat/wipe thenomain=YES
+
+
+/*
+--------------------------------------------------------------------------------
+-- Function: List all statpaths for that template ------------------------------
+
+0: template
+
+*/
+
+&f.statpaths-for-template ss=
+		setunion( 
+			filter( filter.stat-allowed-for-template, 
+				edit( 
+					lattr( [u( d.data-dictionary )]/default.* ), 
+					DEFAULT., 
+				), 
+				, , %0 
+			), 
+		)
+
+// think u( v( d.ss )/f.statpaths-for-template, vampire )
 
 
 ------------------------------------------------------------------------------
@@ -193,6 +205,8 @@ think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.un
 
 think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , human)
 
+think filter( v( d.ss )/filter.stat-allowed-for-template, edit( lattr( dd/default.* ), DEFAULT., ), , , vampire)
+
 
 
 =============================================================================
@@ -213,97 +227,81 @@ ql: list of stats getting wiped, sorted
 --
 
 &f.stat/wipe Stat Setter <ss>=
-
-strcat( 
-	if( strmatch( %0, *=* ), 
-		setq( 0, trim( first( %0, = ))), 
-		setq( 0, %# )	
-	), 
-	setq( 1, trim( rest( %0, = ))), 
-
-	setq( p, if( strmatch( %q0, me ), %#, pmatch( %q0 ))), 
-	setq( s, strmatch( %qp, %# )), 
-	setq( w, u( f.find-sheet, %qp )), 
-
-	case( 0, 
-
-@@ .. staff can set anything
-@@ .. players can only /template themselves, and only if they're 'in chargen'
-		cor( 
-			isstaff( %# ), 
-			cand( %qs, isapproved( %#, chargen ))
+	strcat( 
+		if( strmatch( %0, *=* ), 
+			setq( 0, trim( first( %0, = ))), 
+			setq( 0, %# )	
 		), 
-		Staff Only., 
+		setq( 1, trim( rest( %0, = ))), 
 
-		t( %qp ), 
-		Player Not Found., 
+		setq( p, if( strmatch( %q0, me ), %#, pmatch( %q0 ))), 
+		setq( s, strmatch( %qp, %# )), 
+		setq( w, u( f.find-sheet, %qp )), 
 
-		hasattr( %qw , _bio.template ), 
-		Template Not Set. Cannot Wipe Stats., 
+		case( 0, 
 
-@@ >> wipe the sheet -- of only stats that are valid!
-		comp( %q1, YES ), 
-		strcat( 
-@@ .. .. ql: get all possible types
-			setq( l, 
-				edit(
-					iter( 
-						cat( 
-							u( [u( d.stat-funcs )]/d.search-order ), 
-							u( [u( d.stat-funcs )]/d.type.specials )
-						), 
+// .. staff can set anything
+// .. players can only /wipe themselves, and only if they're 'in chargen'
+			cor( 
+				isstaff( %# ), 
+				cand( %qs, isapproved( %#, chargen ))
+			), 
+			Staff Only., 
 
-@@ .. .. list all attributes matching those types, stripping leading _
-						iter( lattr( %qw/_%i0.* ), rest( %i0, _ ))
-					), 
-@@ .. .. (remove template from the list; we'll be displaying that first)
-					BIO.TEMPLATE, @@( null )
+			t( %qp ), 
+			Player Not Found., 
+
+			hasattr( %qw , _bio.template ), 
+			Template Not Set. Cannot Wipe Stats., 
+
+// >> wipe the sheet -- of only stats that are valid!
+			comp( %q1, YES ), 
+			strcat( 
+// .. .. ql: get all possible types
+				setq( l, u( f.statpaths-from-sheet, %qw )), 
+
+// .. >> wipe and display sheet
+				wheader( Wiping [name(%qp)]'s Sheet ), %r, 
+				%b%b, 
+				iter( %ql, 
+					strcat( 
+						ansi( h, 
+							u( 
+								[u(d.stat-funcs)]/f.statname.workhorse, 
+								rest( %i0, . )
+							)
+						), :%b, 
+						get( %qw/_%i0 ), 
+						null( set( %qw, _%i0: ))
+						
+					), , %r %b
+				), 
+				%r, 
+//			CGStamp:, %b, u(%qp/_CGSTAMP), 
+//			null(set(%qp, _CGSTAMP:)), %r, 
+				wfooter( Sheet Wiped )
+			), 
+
+
+// >> default: warning message
+			if( t( %qs ), 
+				ansi( 
+					r, >> Are you%b, 
+					rhu, absolutely sure, 
+					r, %byou want to wipe your sheet? <<, 
+					n, %rIf so%, type:%b, 
+					h, stat/wipe me=YES 
+				), 
+				ansi( 
+					r, >> Are you%b, 
+					rhu, absolutely sure, 
+					r, %byou want to wipe [name(%qp)]'s sheet? <<, 
+					n, %rIf so%, type:%b, 
+					h, stat/wipe [name(%qp)]=YES 
 				)
-			), 
-
-@@ .. >> wipe and display sheet
-			wheader( Wiping [name(%qp)]'s Sheet ), %r, 
-			%b%b, 
-			iter(
-				BIO.TEMPLATE %ql, 
-				strcat( 
-					ansi( h, 
-						u( 
-							[u(d.stat-funcs)]/f.statname.workhorse, 
-							rest( %i0, . )
-						)
-					), :%b, 
-					get( %qw/_%i0 ), 
-					null( set( %qw, _%i0: ))
-					
-				), , %r %b
-			), 
-			%r, 
-@@			CGStamp:, %b, u(%qp/_CGSTAMP), 
-@@			null(set(%qp, _CGSTAMP:)), %r, 
-			wfooter( Sheet Wiped )
-		), 
-
-
-@@ >> default: warning message
-		if( t( %qs ), 
-			ansi( 
-				r, >> Are you%b, 
-				rhu, absolutely sure, 
-				r, %byou want to wipe your sheet? <<, 
-				n, %rIf so%, type:%b, 
-				h, stat/wipe me=YES 
-			), 
-			ansi( 
-				r, >> Are you%b, 
-				rhu, absolutely sure, 
-				r, %byou want to wipe [name(%qp)]'s sheet? <<, 
-				n, %rIf so%, type:%b, 
-				h, stat/wipe [name(%qp)]=YES 
 			)
 		)
 	)
-)
 
 --
 
@@ -312,6 +310,36 @@ stat/template thenomain=h
 stat/wipe thenomain
 stat/wipe thenomain=yes
 stat/wipe thenomain=YES
+
+
+/*
+-----------------------------------------------------------------------------
+-- Function: All Stats from Sheet -------------------------------------------
+
+Does NOT wipe the 'special' types!
+(This is mostly to protect experience/beats storage.)
+
+We put bio.template first, because it is the most important stat on the game.
+
+0: sheet location
+
+*/
+
+&f.statpaths-from-sheet [v( d.ss )]=
+	cat( 
+		BIO.TEMPLATE, 
+		edit( 
+			iter( 
+				u( [u( d.stat-funcs )]/d.search-order ), 
+				iter( lattr( %0/_%i0.* ), rest( %i0, _ ))
+			), 
+			BIO.TEMPLATE, @@( null )
+		)
+	)
+
+think u( v( d.ss )/f.statpaths-from-sheet, *vera )
+
+*/
 
 
 -----------------------------------------------------------------------------
