@@ -1,4 +1,4 @@
-
+/*
 
 Switches for basic setup work, and for completely wiping a character sheet.
 
@@ -34,72 +34,61 @@ qv: validated template(s)
 ql: list of stats to set
 qs: setting self? (1/0)
 
---
+*/
 
 &f.stat/template Stat Setter <ss>=
-
-strcat( 
-
-@@ .. registers
-	if( strmatch( %0, *=* ), 
-		setq( 0, before( %0, = )), 
-		setq( 0, %# )
-	), 
-	if( strmatch( %0, *=* ), 
-		setq( 1, after( %0, = )), 
-		setq( 1, %0 )
-	), 
-	setq( p, pmatch( %q0 )), 
-	setq( w, u( f.find-sheet, %qp )), 
-	setq( s, strmatch( %#, %qp )), 
-	setq( v, statvalidate( template, %q1 )), 
-
-	case( 0, 
-
-@@ .. staff can set anything
-@@ .. players can only /template themselves, and only if they're 'in chargen'
-		cor( 
-			isstaff( %# ), 
-			cand( %qs, isapproved( %#, chargen ))
+	strcat( 
+// .. registers
+		if( strmatch( %0, *=* ), 
+			setq( 0, before( %0, = )), 
+			setq( 0, %# )
 		), 
-		Staff Only., 
-
-		not( hasattr( %qw, _bio.template )), 
-		if( t( %qs ), 
-			You already have a template. 
-			'stat/wipe' to erase your stats., 
-			Player already has a template. 
-			'stat/wipe %q0' to erase their stats. 
+		if( strmatch( %0, *=* ), 
+			setq( 1, after( %0, = )), 
+			setq( 1, %0 )
 		), 
+		setq( p, pmatch( %q0 )), 
+		setq( w, u( f.find-sheet, %qp )), 
+		setq( s, strmatch( %#, %qp )), 
+		setq( v, statvalidate( template, %q1 )), 
 
-		t( %qv ), 
-		Template '%q1' could not be found. Check 'stat template', 
+		case( 0, 
 
+// .. staff can set anything
+// .. players can only /template themselves, and only if they're 'in chargen'
+			cor( 
+				isstaff( %# ), 
+				cand( %qs, isapproved( %#, chargen ))
+			), 
+			Staff Only., 
 
+			not( hasattr( %qw, _bio.template )), 
+			if( t( %qs ), 
+				You already have a template. 
+				'stat/wipe' to erase your stats., 
+				Player already has a template. 
+				'stat/wipe %q0' to erase their stats. 
+			), 
 
-@@ OK! Find all stat.paths to be set with this template
-		strcat( 
-			setq( l, u( f.statpaths-for-template, %qv )), 
+			t( %qv ), 
+			Template '%q1' could not be found. Check 'stat template', 
 
-@@ .. .. output what we're setting
-			u( display.statpath_defaults, %qp, %qv, %ql ), 
+// OK! Find all stat.paths to be set with this template
+			strcat( 
+				setq( l, u( f.statpaths-for-template, %qv )), 
 
-@@ .. .. and set it
-			null( set( %qw, _BIO.TEMPLATE:%qv )), 
+// .. .. output what we're setting
+				u( display.statpath_defaults, %qp, %qv, %ql ), 
 
-			null( 
-				iter( %ql, 
-					set( %qw, 
-						_%i0:
-						[get( [u( d.data-dictionary )]/default.%i0 )] 
-					)
-				)
+// .. .. and set it
+				null( set( %qw, _BIO.TEMPLATE:%qv )), 
+				null( u( f.defaults.set, %qw, %ql )), 
 			)
 		)
 	)
-)
 
---
+/*
+-- tests --
 
 stat/template thenomain=ch
 stat/template thenomain=hum
@@ -108,7 +97,6 @@ stat/template thenomain=hum
 stat/wipe thenomain=YES
 
 
-/*
 --------------------------------------------------------------------------------
 -- Function: List all statpaths for that template ------------------------------
 
@@ -128,6 +116,28 @@ stat/wipe thenomain=YES
 		)
 
 // think u( v( d.ss )/f.statpaths-for-template, vampire )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Function: Set Sheet Defaults ------------------------------------------------
+
+Set defaults on a sheet for a list of statpaths.
+
+0: sheet loc
+1: list of statpaths
+
+output: may be a list of spaces or some setting errors
+
+*/
+
+&f.defaults.set [v( d.ss )]=
+	iter( %1, 
+		set( %0, 
+			_%i0:
+			[get( [u( d.data-dictionary )]/default.%i0 )] 
+		)
+	)
 
 
 ------------------------------------------------------------------------------
