@@ -667,23 +667,26 @@ qr: prerequisite checks
 						%1, 
 						#-1 Non-Numeric Offset
 					), 
-// .. normal - validate completely, if null then default or null
-					if( comp( %1, ), 
-						ulocal( f.statvalidate.workhorse, %qi, %1 ), 
-// .. (if get( dd/default.%qi ) is null, null will be set, which is fine)
-						get( u( d.data-dictionary )/default.%qi )
+// .. normal - validate completely, if null then null, if default then default
+					case( %1, 
+						default, get( u( d.data-dictionary )/default.%qi ), 
+						@@( null ), , 
+						ulocal( f.statvalidate.workhorse, %qi, %1 )
 					)
 				)
 			), 
 
-// qr: pre-requisites validation, 'template' and 'other' only
+// qr: prerequisites validation, 'template' and 'other' only
 			setq( r, 
 				case( 0, 
 // .. always good if "override" is set
 					not( strmatch( %2, ov* )), 
 					1, 
-// .. if template check is bad, pass error
-					t( setr( r, u( f.prereq-check-template, %qw, %qi ))), 
+// .. if template check is bad, pass error (always allow 'null')
+					cor( 
+						setr( r, u( f.prereq-check-template, %qw, %qi )), 
+						strmatch( %qv, )
+					), 
 					%qr, 
 // .. offset is bad for template (above) but good for other (below)
 					not( strmatch( %2, of* )), 
@@ -693,7 +696,7 @@ qr: prerequisite checks
 						u( f.prereq-check-other, 
 							%qw, 
 							%qi, 
-							before( rest( %qs, %(  ), % )), 
+							before( rest( %qs, %( ), %) ), 
 // .. (stat being changed by...)
 // .. (don't mess with if %qv is non-numeric)
 							if( isnum( %qv ), 
@@ -706,7 +709,7 @@ qr: prerequisite checks
 					%qr, 
 
 // .. else, all was good
-					1
+					1 
 				)
 			), 
 
@@ -736,8 +739,9 @@ qr: prerequisite checks
 				u( f.setstat.workhorse, %qw, edit( %qs, %b, _ ), %qv, %2 )
 			) 
 		), 
-// Not Staff? NO WAY!
-		#-1 Not Staff
+
+// Calling object (not enactor) must pass isstaff().
+		#-1 Not Staff 
 	)
 
 
