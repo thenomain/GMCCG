@@ -98,20 +98,52 @@ think u( v( d.cg )/check.gifts, %# )
 	)
 
 // -- wolf gifts --
-// may not have any; don't check just list 
+// may not have any; facets may have to match auspice renown 
+/*
+	set [auspice renown]
+	if num( [auspice renown] ) >= 2, 
+		set [num auspice wolf gift facets] = num( [auspice renown] ) - 1
+	set [count wolf gifts (<auspice renown>)]
+	if [count wolf gifts (<auspice renown>)] >= [num auspice wolf gift facets]
+		OK!
+	else
+		Not Enough
+*/
 
 &check.gifts.wolf [v( d.cg )]= 
 	strcat( 
 		setq( x, elements( %1, 4, ` )), 
 		if( words( %qx ), 
 			strcat( 
+				setq( a, 
+					filter( 
+						v( d.sfp )/fil.list-stats-tags, 
+						lattr( v( d.dd )/renown.* ), , , 
+						get( %0/_bio.auspice )
+					)
+				), 
+				setq( v, get( %0/_%qa )), 
+				setq( f, iter( %qx, get( %0/_gift.%i0 ), , . )), 
+				setq( n, words( graball( %qf, rest( %qa, . ), . ), . )), 
+
 				%b%b, 
 				ansi( h, Wolf Gifts ), :, %b, 
 				titlestr( edit( itemize( %qx ), _, %b )), 
-				%r, 
+				if( cand( gte( %qv, 2 ), lt( %qn, dec( %qv ))), 
+					ansi( 
+						n, %r %b, 
+						r, %(you must have at least%b, 
+						r, dec( %qv ), 
+						r, %b, 
+						r, titlestr( rest( %qa, . )), 
+						r, %bFacets in your Wolf Gifts%) 
+					), 
+				), 
+				%r 
 			)
-		), 
+		)
 	)
+
 
 // -- facets: shadow/wolf facets by renown --
 // (using the cheapest filter)

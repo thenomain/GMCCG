@@ -1803,6 +1803,7 @@ think u( v( d.cg )/check.gifts, %# )
 
 // -- check gifts: wolf -- 
 // 0: target sheet -- 1: %qg
+// NEEDS ADDED (?): If Auspice Renown = 2+, additional gifts are Wolf Gifts.
 
 &check.gifts.wolf [v( d.cg )]=
 	strcat( 
@@ -1826,7 +1827,6 @@ think u( v( d.cg )/check.gifts, %# )
 			)
 		), 
 	)
-
 
 // -- check gifts: other -- 
 // 0: target sheet -- 1: %qg
