@@ -1,0 +1,127 @@
+/*
+sheet/transition <player>=<new template>
+
+Transition from one template to another.
+Must be done from 'unapproved'.
+
+By EldritchMux rules, only minor template -> major template
+(there should be hooks to allow major -> major for other games)
+
+All: 
+	Save sheet to an attribute (probably 'note' format)
+
+if Demon: 
+	Remove spent Normal XP
+	Set as 'stat/wipe'
+	Set as 'stat/template demon'
+	Set 'Cover (<full name>)' to 7
+
+else Others:
+	Look for existing stats that are have a default for new template & WARN
+	Look for existing stats that are disallowed for new template & WARN
+	Find defaults not already set from 'cg/template <template>' and set
+
+Finalize:
+	Note for XP log (do I have a 'note' type yet?)
+	Report to human to check and to 'cg/approve'
+
+
+
+
+================================================================================
+== SETUP =======================================================================
+
+We're going to know where the sheet code is for this.
+
+*/
+
+@fo me=&d.nsc Stat System <ss>=[search( name=Newest Sheet Code <nsc> )]
+
+
+/* 
+================================================================================
+== /TRANSITION =================================================================
+
+Set up someone with a template with a new template.
+Works only for people who are Unapproved (once-approved), NPC, or Storyteller.
+
+	stat/transition <player>=<new template>
+
+
+
+*/
+
+
+
+
+
+/*
+================================================================================
+== FUNCTION: Save the Sheet ====================================================
+
+These 'save sheet' functions *probably* should go in the sheet system.
+
+--
+
+Save the formatted sheet to an attribute.
+
+0: target
+1: enactor
+
+*/
+&f.save_sheet Stat System <ss>=
+	set( %0, 
+		[u( f.save_sheet.attr, %0, %1 )]:[u( f.save_sheet.format, %0, %1 )]
+	)
+
+/*
+--------------------------------------------------------------------------------
+-- Save Sheet: Format ----------------------------------------------------------
+
+using theno's note system: 
+	'approve' the note to lock it
+	<approval>~<set by>~<note>
+
+The setq() set was taken directly from nsc/c.sheet
+
+0: target
+1: enactor
+
+s: sheet dbref
+w: which sheet display? rows or columns?
+a: sheet display object (where the sheet display lives)
+
+*/
+
+&f.save_sheet.format Stat System <ss>=
+	strcat( 
+		setq( s, u( f.find-sheet, %0 )), 
+		setq( w, default( %0/.sheet.display, rows )), 
+		setq( a, locate( v( d.nsc ), Sheet: %qw, i )), 
+
+
+		name( %1 ), %b, %(%1%), %b, time(), ~, 
+		name( %1 ), %b, %(%1%), %b, time(), ~, 
+		u( %qa/display.sheet, %qs, %0, get( %qs/_bio.template ))
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Save Sheet: Attribute -------------------------------------------------------
+
+What attribute should we save the sheet to?
+
+0: target
+1: enactor
+
+*/
+
+&f.save_sheet.attr Stat System <ss>=
+	strcat( 
+		_note~sheets~, 
+		edit( default( %0/_bio.full_name, no_name ), %b, _ ), 
+		_, 
+		secs( )
+	)
+
