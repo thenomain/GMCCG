@@ -184,7 +184,7 @@ for one reason or another, no longer is.
 ================================================================================
 == COMMANDS & SWITCHES =========================================================
 
-cg/approve <name>[=<comment>]
+cg/approve <name>=<comment>
 	when done with cgen, full character status
 	un-unapprove and un-freeze, but not un-kill
 cg/npc
@@ -487,19 +487,22 @@ cg/log
 // == TRIGGERS =================================================================
 
 
-// -----------------------------------------------------------------------------
-// -- Trigger: Do Approval/Unapproval Et al. -----------------------------------
-// 0: %#
-// 1: %1
-// 2: switch name (e.g., 'approve')
-// 3: isapproved() status we're moving to (e.g., 'approved')
-// 4: list of isapproved() statuses that are valid to trigger from
-//   (e.g., 'approved npc storyteller' for unapproving)
-// 
-// p: player dbref
-// c: comment, if any
-// a: current approval status (should be chargen, unapproved, or frozen)
-// r: resulting log entry (may be added to _approval.frozen or *.dead)
+/*
+-----------------------------------------------------------------------------
+-- Trigger: Do Approval/Unapproval Et al. -----------------------------------
+0: %#
+1: %1
+2: switch name (e.g., 'approve')
+3: isapproved() status we're moving to (e.g., 'approved')
+4: list of isapproved() statuses that are valid to trigger from
+   (e.g., 'approved npc storyteller' for unapproving)
+
+p: player dbref
+c: comment
+a: current approval status (should be chargen, unapproved, or frozen)
+r: resulting log entry (may be added to _approval.frozen or *.dead)
+
+*/
 
 &trig.approval.switch cg=
 
@@ -524,6 +527,10 @@ cg/log
 
 	@assert %qp={ 
 		@pemit %0=u( .msg, cg/%2, Character not found. )
+	}; 
+
+	@assert strlen( %qc )={ 
+		@pemit %0=u( .msg, cg/%2, Please include comment. )
 	}; 
 
 	@assert t( grab( %4, %qa ))={ 
