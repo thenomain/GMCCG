@@ -1,4 +1,8 @@
 /*
+You paged Typhon with ‘Oh fuck me yes, Covers need Aspirations.’
+
+
+
 cover system
 
 a system for Demon covers
@@ -36,12 +40,12 @@ f.getstat ::
 
 --
 
-cover/new <cover name>
+cover/new <target>/<cover name>
 cover/wear <cover name>
-cover/set [[<character>:]<cover>/]<stat>=<value>
-cover/view [<character>/]<cover>
+cover/set [[<target>:]<cover>/]<stat>=<value>
+cover/view [<target>/]<cover>
 
-cover/chown <cover name>=<new owner>
+cover/chown [<target>/]<cover name>=<new owner>
 cover/cleanup :: deletes covers belonging to deleted objects
 
 
@@ -112,6 +116,9 @@ return: 1, or #-1 <error reason>
 			hasattr( %q0, _advantage.cover_%(%q1%) ), 
 			#-1 No dots in that Cover, 
 
+			xxx, 
+			#-1 Cover already exists, 
+
 			1 
 		), 
 	)
@@ -145,15 +152,97 @@ return: 1, or #-1 <error reason>
 --------------------------------------------------------------------------------
 -- Mistress Code ---------------------------------------------------------------
 
-	[/switch] [target/][action][=value]
+	cover[s][/<switch>] [<target>/][<action>][=<value>]
+
+s: <switch>
+t: <target>
+a: <action>
+v: <value>
+
+d: target dbref
+l: list of switches
+m: matched switch, if any
 
 */
 
-&c.cover dc=$(?s)^\+?covers?( .+)?$:
-	think parsing: [u( f.parse, trim( %0 ))]; 
-	@pemit %#=[iter( 0 1 2 3, %i0: [r( %i0 )], , %b--%b )]; 
+&c.cover dc=$(?s)^\+?covers?(.+)?$:
+	think strcat( 
+		parsing:, %b, u( f.parse.command, trim( %0 )), %r, 
+		iter( s t a v, - %i0: [r( %i0 )], , %r ), 
+		if( not( %qt ), t: [setr( t, %# )]), %r, 
+		l:, %b, lcstr( edit( lattr( %!/c.cover/* ), C.COVER/, )), %r, 
+	); 
 
+	@assert cor( not( %qs ), setr( m, grab( %ql, %qs* )))={ 
+		@pemit %#=u( .msg, cover, 
+			No match on switch '%qs'%; 
+			options are: [itemize( %ql )]
+		) 
+	}; 
 
+// .. check other things for 'cover' 
+
+	@assert isdbref( setr( d, pmatch( %qt )))={ 
+		@pemit %#=u( .msg, cover, Can't find target '%qt' ) 
+	}; 
+
+	@assert cor( isstaff( %# ), strmatch( %#, %qp ))={ 
+		@pemit %#=u( .msg, cover, Target must be yourself ) 
+	}; 
+
+	@assert strlen( %qa )={ 
+		@pemit %#=u( .msg, cover, No action given ) 
+	}; 
+
+	@pemit %#=case( 1, 
+		t( %qs ), u( c.cover/%qm, %qp, %#, %qa, %qv ), 
+		t( %qa ), u( c.cover.action, %qp, %#, %qa, %qv ), 
+		u( c.cover.general, %qp, %# )
+	); 
+
+// --
+
+@set dc/c.cover=regex
+
+// --
+
+&f.parse.command dc=regmatchi( %0, v( d.parse.regexp ), -1 -1 s -1 t a -1 v )
 &d.parse.regexp dc=(?s)^(/(\w+))? ?((\w+)/)?(\w+)?(=([\w\s]+))?
-&f.parse dc=regmatchi( %0, v( d.parse.regexp ), -1 -1 0 -1 1 2 -1 3 )
+
+
+/* 
+--------------------------------------------------------------------------------
+-- cover (no action) -----------------------------------------------------------
+*/
+
+&c.cover.general dc=* There is no plain 'cover' command. *
+
+
+/* 
+--------------------------------------------------------------------------------
+-- cover (w/action) ------------------------------------------------------------
+
+*/
+
+&c.cover.action dc=
+	xxx
+
+
+
+/*
+================================================================================
+== COVER/SWITCHES ==============================================================
+*/
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- cover/new -------------------------------------------------------------------
+
+The name of a new cover sheet must match a '_advantage.cover_(<name>)' on the 
+character's sheet. Done by 'f.validate.new-cover-name'.
+
+
+*/
 
