@@ -443,12 +443,19 @@ Effective Rank.
 &prereq-text.merit.haven_() DD=Safe Place (<place name>) 1
 &tags.merit.dedicated_locus_() D:T=werewolf.social.location
 
-&merit.embodiment_of_the_firstborn DD=5
-&prerequisite.merit.embodiment_of_the_firstborn DD=
-	u( .is_not, %0, bio.tribe, Ghost Wolf )
-&prereq-text.merit.embodiment_of_the_firstborn DD=
-	Cannot be a Ghost Wolf, must have Tribe
-&tags.merit.embodiment_of_the_firstborn D:T=werewolf.physical
+&merit.embodiment_of_the_firstborn_() dd=
+	5|
+	Intelligence.Wits.Resolve.
+	Strength.Dexterity.Stamina.
+	Presence.Manipulation.Composure
+&prerequisite.merit.embodiment_of_the_firstborn_() dd=
+	cand( 
+		u( .is_not, %0, bio.tribe, Ghost Wolves ), 
+		not( lattr( %0/_merit.emobdiment_of_the_firstborn_(*) )) 
+	)
+&prereq-text.merit.embodiment_of_the_firstborn_() dd=
+	May not be taken if Tribe is Ghost Wolf, may only be taken once
+&tags.merit.embodiment_of_the_firstborn_() d:t=werewolf.physical
 
 &merit.fading DD=3
 &prerequisite.merit.fading DD=u( .at_least, %0, renown.cunning, 2 )
