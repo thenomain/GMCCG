@@ -160,8 +160,8 @@ Level 3 for very minor items
 
 &merit.claws_of_the_unholy DD=1
 &tags.merit.claws_of_the_unholy D:T=vampire
-&prerequisite.merit.carthian_pull dd=u( .at_least, %0, discipline.protean, 4 )
-&prereq-text.merit.carthian_pull DD=Protean 4
+&prerequisite.merit.claws_of_the_unholy dd=u( .at_least, %0, discipline.protean, 4 )
+&prereq-text.merit.claws_of_the_unholy DD=Protean 4
 
 &merit.close_family DD=1
 &tags.merit.close_family D:T=vampire
