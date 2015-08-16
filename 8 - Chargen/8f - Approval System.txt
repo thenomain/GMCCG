@@ -372,9 +372,12 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/freeze: triggers ------------------------------------------------------
 
-&trig.approval.switch/freeze cg=
+&trig.approval.switch/freeze [v( d.cg )]=
 	@set %1=unapproved !approved !npc !storyteller; 
 	@set %1=_approval.frozen:%2; 
+	@name %1=[name( %1 )]_[rest( num( %1 ), # )]; 
+	@alias %1; 
+
 
 
 // -----------------------------------------------------------------------------
