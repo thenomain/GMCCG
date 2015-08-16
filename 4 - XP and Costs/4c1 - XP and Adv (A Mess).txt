@@ -44,9 +44,25 @@ CREATE TABLE IF NOT EXISTS xp_log (
 
 	action VARCHAR(255) NOT NULL, 
 	reason VARCHAR(255), 
+	
+	entry_num BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, 
 
-	PRIMARY KEY (target_objid, log_time) 
+	PRIMARY KEY (target_objid, log_time), 
+	INDEX (entry_num) 
 ) ENGINE=INNODB; 
+
+
+
+*** UPDATE VERSION ***
+(Only run if you used the older xp_log table.)
+
+CREATE TABLE xp_log_old LIKE xp_log; 
+INSERT xp_log_old SELECT * FROM xp_log;
+
+ALTER TABLE xp_log 
+	ADD entry_num BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, 
+	ADD INDEX (entry_num);
+
 
 
 ================================================================================
