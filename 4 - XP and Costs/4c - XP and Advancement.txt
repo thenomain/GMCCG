@@ -507,11 +507,14 @@ think u( xpas/display.approval-deets, pmatch( vera ))
 ================================================================================
 == Command: xp/log =============================================================
 
-	xp/log <name>        -- staff only
-	xp/log <name>/<type> -- staff only
-	xp/log [<type>]      -- players only
-	xp/log[/<log type>]  -- both
+	xp/log <name>           -- staff only
+	xp/log <name>/<xp type> -- staff only
+	xp/log [<xp type>]      -- players only
+	xp/log[/<log type>]     -- both
 
+	xp/log <entry num>      -- both; if not int, assume <name>, 
+	                           else ignore all other input
+	
 xp type: normal, player, cover, etc.
 log type: gain, spend, freebie, auto
 
@@ -519,7 +522,7 @@ For now, shows the entire log of self or <name>.
 This system needs massively overhauled in the future.
 Especially now that we're handing out other kinds of xps.
 
-s: switch
+s: switch(es)
 o: non-switch input
 
 p: raw target (kept for error reporting)
@@ -571,13 +574,11 @@ l: log sql results
 		processed xp type:, %b, 
 		setr( e, 
 			grab( 
-				|[edit( v( d.xp_types ), %b, | )], 
+				normal|[edit( v( d.xp_types ), %b, | )], 
 				trim( %qx* ), 
 				| 
 			)
 		), %r, 
-		xp type correction:, %b, 
-		if( strmatch( %qx, ), setr( e, normal ), <no change> ), %r, 
 
 		processed log type:, %b, 
 		setr( g, 
