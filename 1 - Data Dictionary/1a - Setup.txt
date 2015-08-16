@@ -245,28 +245,30 @@ One stat passed is no lower than values associated ("or _at_least")
 This stat is no lower than another stat
 	0: sheet dbref
 	1: this.statpath
-	2: that.statpath
+	2: that.statpath +/- stuff
 	3: add-offset (send "%2" always, used in xp-spends)
 	e.g.:
 		u( .at_least_stat, %0, merit.fame, attribute.presence, %2 )
 		u( .at_least_stat, %0, merit.hollow_(%1).size, advantage.wyrd + 2, %2 )
 
 &.At_Least_Stat dd=
-localize( 
-@@ .. sloppy, but gets the job done
-	[setq( t, trim( first( edit( %2, -, +- ), + )))]
-	[setq( a, iter( rest( edit( edit( %2, -%b, - ), -, %b+- ), + ), %i0, + ))]
-	[u( 
-		.at_least, 
-		%0, 
-		%1, 
-		ladd( 
-			[u( .value, %0, %qt )] 
-			%qa 
-		), 
-		%3 
-	)] 
-)
+	localize( 
+// .. sloppy, but gets the job done
+		[setq( t, trim( first( edit( %2, -, +- ), + )))]
+		[setq( a, 
+			iter( rest( edit( edit( %2, -%b, - ), -, %b+- ), + ), %i0, + 	)
+		)]
+		[u( 
+			.at_least, 
+			%0, 
+			%1, 
+			ladd( 
+				[u( .value, %0, %qt )] 
+				%qa 
+			), 
+			%3 
+		)] 
+	)
 
 
 --------------------------------------------------------------------------------
@@ -316,8 +318,7 @@ One stat passed is no higher than values associated ("or _at_most")
 &.At_Most_One dd=
 	lor( iter( %1, u( .at_most, %0, first( %i0, : ), rest( %i0, : ))))
 
---
-
+/*
 This stat is no higher than another stat
 	0: sheet dbref
 	1: this.statpath
@@ -330,23 +331,25 @@ This stat is no higher than another stat
 	e.g.:
 		u( .at_most_stat, %0, merit.hidden_life, advantage.wyrd, %2 )
 		u( .at_most_stat, %0, skill.academics, advantage.wyrd+1, %2 )
+*/
 
 &.At_Most_Stat dd=
-localize( 
-@@ .. sloppy, but gets the job done
-	[setq( t, trim( first( edit( %2, -, +- ), + )))]
-	[setq( a, iter( rest( edit( edit( %2, -%b, - ), -, %b+- ), + ), %i0, + ))]
-	[u( 
-		.at_most, 
-		%0, 
-		%1, 
-		ladd( 
-			[u( .value, %0, %qt )] 
-			%qa 
-		), 
-		%3 
-	)] 
-)
+	localize( 
+// .. sloppy, but gets the job done
+		[setq( t, trim( first( edit( %2, -, +- ), + )))]
+		[setq( a, 
+			iter( rest( edit( edit( %2, -%b, - ), -, %b+- ), + ), %i0, + )
+		)]
+		[u( .at_most, 
+			%0, 
+			%1, 
+			ladd( 
+				[u( .value, %0, %qt )] 
+				%qa 
+			), 
+			%3 
+		)] 
+	)
 
 
 --------------------------------------------------------------------------------
