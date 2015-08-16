@@ -16,7 +16,7 @@ Use a 'shift'-like system to swap them in and out.
 --
 
 Cover Object:
-	@create Cover: <exact name>=10
+	@create Cover: <cover name>=10
 	&d.owner <cover object>=<objid>
 	&_<statpath> <cover object>=<value>
 	&_merit.*
@@ -112,12 +112,13 @@ return: 1, or #-1 <error reason>
 	strcat( 
 		setq( 0, u( v( d.sfp )/f.find-sheet, %0 )), 
 		setq( 1, edit( %1, %b, _ )), 
+		setq( 2, edit( %1, _, %b )), 
 		case( 0, 
 			hasattr( %q0, _advantage.cover_%(%q1%) ), 
 			#-1 No dots in that Cover, 
 
-			xxx, 
-			#-1 Cover already exists, 
+			validate( Cover: %q2, name ), 
+			#-1 Cover name not valid, 
 
 			1 
 		), 
