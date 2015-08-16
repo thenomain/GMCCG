@@ -465,9 +465,9 @@ Effective Rank.
 &merit.favored_form_() DD=1.2.3.4.5|Dalu.Gauru.Urshul.Urhan|*
 &prerequisite.merit.favored_form_() DD=
 	cand( 
-		u( .at_least_stat, %0, 
+		u( .at_most_stat, %0, 
 			merit.favored_form_(%1), 
-			advantage.primal_urge + 1, %2 
+			advantage.primal_urge - 1, %2 
 		), 
 		not( 
 			setdiff( 
