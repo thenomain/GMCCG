@@ -1,11 +1,22 @@
 /*
 DtD3 - Heirs to Hell
 
-Adds template: Demon-Born
+Adds template: Demon-Blooded
+(was: Demon-Born; '-Blooded' makes more sense)
+
+
+*** WARNING ***
+
+This isn't finished.
+The way to indicate Offspring, Latent, and Fractal is not yet in place.
+Chargen is not yet in place.
+
+*** WARNING ***
+
 */
 
 
-// << ADD TEMPLATE: Demon-Born >>
+// << ADD TEMPLATE: Demon-Blooded >>
 
 
 /*
