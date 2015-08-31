@@ -1512,8 +1512,8 @@ regain methods:
 	think strcat( 
 		m:, %b, setr( m, u( f.match_method, %1, spend, aether, %2 )), %r, 
 		a:, %b, setr( a, u( amt.spend, %1, aether, %qm )), %r, 
-		u:, %b, setr( u, hasattr( %1, advantage.Primum )), %r, 
-		s:, %b, setr( s, hasattr( %1, advantage.Aether_Maximum )), %r, 
+		u:, %b, setr( u, hasattr( %1, _advantage.Primum )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.Aether_Maximum )), %r, 
 	); 
 
 	@assert cand( %qu, %qs )={ 
@@ -1557,8 +1557,8 @@ regain methods:
 	think strcat( 
 		m:, %b, setr( m, u( f.match_method, %1, regain, aether, %2 )), %r, 
 		a:, %b, setr( a, u( amt.regain, %1, aether, %qm )), %r, 
-		u:, %b, setr( u, hasattr( %1, advantage.Primum )), %r, 
-		s:, %b, setr( s, hasattr( %1, advantage.Aether_Maximum )), %r, 
+		u:, %b, setr( u, hasattr( %1, _advantage.Primum )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.Aether_Maximum )), %r, 
 	); 
 
 	@assert cand( %qu, %qs )={ 
