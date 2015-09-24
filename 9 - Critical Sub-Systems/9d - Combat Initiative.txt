@@ -198,7 +198,9 @@ be shifted back by .01.
 */
 
 &.msg init=ansi( h, <%0>, n, %b%1 )
-&.plural init=%0 [plural( %0, %1, %2  )]
+&.plural init=plural( %0, %1, %2  )
+
+&.pmatch init=if( strmatch( %0, me ), %#, pmatch( %0 ))
 
 // &.operand init=u( .operand, %0 )
 &.operand init=case( 1, strmatch( %0, #-* ), %0, strmatch( %0, -* ), -, + )
@@ -552,7 +554,7 @@ returns: dbref if pc, name if npc, #-1 if not allowed
 
 &f.validate.init-subject init=
 	localize( strcat( 
-		setq( t, pmatch( if( %0, %0, %1 ))), 
+		setq( t, u( .pmatch, if( %0, %0, %1 ))), 
 		case( 1, 
 			strmatch( %qt, %1 ), %qt, 
 			not( valid( attrname, edit( %0, %b, _ ))), 
