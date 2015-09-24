@@ -1,7 +1,10 @@
+/*
 ################################################################################
 ## ROLL SWITCHES ###############################################################
 
-Multiple switches may be given (and, of course, taken out).  Each system adds to what's being rolled and will probably depend upon the dice-to-roll part of it being parsed first.
+Multiple switches may be given (and, of course, taken out).  Each system adds 
+to what's being rolled and will probably depend upon the dice-to-roll part of 
+it being parsed first.
 
 Spaces may not be in any switch.  Name completion will do its best.
 
@@ -30,6 +33,8 @@ take a normal failure ('2') and turn it into a success-eating '1'.
 
 It is what it is.
 
+For building to-lists.
+	/blind - a target list including everyone except the roller
 
 
 ================================================================================
@@ -45,7 +50,7 @@ Wildcards are valid.
 
 	<full switch>:<alias>:<alias>:<alias> <full switch 2>:...
 
---
+*/
 
 &d.switch.passives nWoD Roller <nr>=
 	nowound 
@@ -53,7 +58,7 @@ Wildcards are valid.
 	weakness 
 	rote 
 
---
+// --
 	
 &d.switch.aliases nWoD Roller <nr>=
 	10-again|again=10 
@@ -64,6 +69,7 @@ Wildcards are valid.
 
 
 
+/*
 ================================================================================
 == Functions ===================================================================
 
@@ -82,31 +88,35 @@ b: hey it matched
 x: the switch
 y: the switch modifier (after '=')
 
---
+*/
 
 &f.switch.name-complete nWoD Roller <nr>=
-localize( 
-	iter( lcstr( trim( %0, l, / )), 
-		strcat( 
-			setq( a, lcstr( sort( edit( lattr( %!/f.roll/* ), F.ROLL/, )))), 
-			setq( x, before( %i0, = )), 
-			setq( y, rest( %i0, = )), 
-			case( 1, 
-				t( setr( b, grab( %qa, %qx* ))), 
-				/%qb[if( strlen( %qy ), =%qy )], 
+	localize( 
+		iter( lcstr( trim( %0, l, / )), 
+			strcat( 
+				setq( a, 
+					lcstr( sort( edit( lattr( %!/f.roll/* ), F.ROLL/, )))
+				), 
+				setq( x, before( %i0, = )), 
+				setq( y, rest( %i0, = )), 
+				case( 1, 
+					t( setr( b, grab( %qa, %qx* ))), 
+					/%qb[if( strlen( %qy ), =%qy )], 
 
-				t( setr( b, grab( v( d.switch.passives ), %qx* ))), 
-				/%qb[if( strlen( %qy ), =%qy )], 
+					t( setr( b, grab( v( d.switch.passives ), %qx* ))), 
+					/%qb[if( strlen( %qy ), =%qy )], 
 
-				t( setr( b, rest( grab( v( d.switch.aliases ), %qx*|* ), | ))), 
-				/%qb[if( words( %qy ), =%qy )] 
-			)
-		), 
-		/, @@ 
+					t( setr( b, 
+						rest( grab( v( d.switch.aliases ), %qx*|* ), | )
+					)), 
+					/%qb[if( words( %qy ), =%qy )] 
+				)
+			), 
+			/, @@ 
+		)
 	)
-)
 
---
+/* -- Tests --
 
 think u( nr/f.switch.name-complete, 8/w/no/dsfds/no-/ag=5/t/tr/fd )
 
@@ -130,43 +140,46 @@ because the list is <null>/item1/item2/item3, so searching for * returns the
 0: partial name of switch to check for
 returns: the full item
 
---
+*/
 
 &f.getswitch nWoD Roller <nr>=
-	regrabi(%qz, ^%0, /)
+	regrabi( %qz, ^%0, / )
 
 
+/*
 --------------------------------------------------------------------------------
 -- HasSwitch? ------------------------------------------------------------------
 
 0: partial name of switch to check for
 returns: 1 for true, 0 for false (null returns false)
 
---
+*/
 
 &f.hasswitch? nWoD Roller <nr>=
-	t(u(f.getswitch, %0))
+	t( u( f.getswitch, %0 ))
 
 
 
+/*
 ================================================================================
 == /weakness ===================================================================
 
 A vampire weakness roll is always no-again.
 A chance roll takes precident.
 
---
+*/
 
 &f.roll/weakness nWoD Roller <nr>=
 	strcat( 
 		setq( a, 11 ), 
 		if( not( strmatch( %qs, chance ), 
-				setq( s, Weakness )
+			setq( s, Weakness )
 		)
 	)
 
 
 
+/*
 ================================================================================
 == /again ======================================================================
 
@@ -176,41 +189,36 @@ A chance roll takes precident.
 0: /again=xxx
 q0: the "again" type
 
---
+*/
 
 &f.roll/again nWoD Roller <nr>=
+	strcat( 
+		setq( 0, rest( %0, = )), 
+		case( 
+			1, 
 
-	[setq( 0, rest( %0, = ))]
-	[case( 
-		1, 
+// .. check an "again" type was actually passed
+			not( t( %q0 )), 
+			u( f.registers.error-add, Again type not passed. ), 
 
-@@ .. check an "again" type was actually passed
-		not( t( %q0 )), 
-		u(f.registers.error-add, Again type not passed.), 
+// .. "n"o-again
+			strmatch( %q0, n* ), 
+			setq( a, 11 ), 
 
-@@ .. "n"o
-		strmatch( %q0, n* ), 
-		setq( a, 11 ), 
+// .. must be at least 8 and integer
+			not( and( isint( %q0 ), gte( %q0, 8 ))), 
+			u( f.registers.error-add, 
+				Again type must be integer of 8 or higher. 
+			), 
 
-@@ .. must be at least 8 and integer
-		not( and( isint( %q0 ), gte( %q0, 8 ))), 
-		u( f.registers.error-add, Again type must be integer of 8 or higher. ), 
-
-@@ .. if below 8, +2 dice per
-@@ .. (change to above makes this impossible to hit)
-@@		lt( %q0, 8 ), 
-@@		[setq( 1, mul( 2, sub( 8, %q0 )))]
-@@		[u( f.registers.dice-add, %q1 )]
-@@		[u( f.registers.output-add, %q1 %(%q0-again%), + )]
-@@		[setq( a, 8 )], 
-
-@@ .. else just set
-		setq( a, %q0 )
-
-	)]
+// .. else just set
+			setq( a, %q0 )
+		)
+	)
 
 
 
+/*
 ================================================================================
 == /extended[=<num>] ===========================================================
 
@@ -229,40 +237,39 @@ q0: the "extended" value, if any
 q1: upper limit of <num>
 qn: a GLOBAL REGISTER for number of times to roll
 
---
+*/
 
 &f.roll/extended nWoD Roller <nr>=
-@@ .. if <num> is there, %q0 = <num>, else %q0 = %qn
-@@ .. this may be redundant, but allows us to check <num> and %qn 
-@@ .. with the same code
-
+// .. if <num> is there, %q0 = <num>, else %q0 = %qn
+// .. this may be redundant, but allows us to check <num> and %qn 
+// .. with the same code
 	strcat( 
 		setq( 0, if( strmatch( %0, *=* ), rest( %0, = ), %qn )), 
 		setq( 1, 200 ), 
 
 		case( 0, 
-@@ .. checks if both %qn and %q0 fail
+// .. checks if both %qn and %q0 fail
 			cor( t( %qn ), t( rest( %0, = ))), 
 			u( f.registers.error-add, 
 				If there no traits in the roll%, you must use /extended=<num> 
 			), 
-@@ .. <num> must be an integer > 0 (catches "null")
+// .. <num> must be an integer > 0 (catches "null")
 			cand( isint( %q0 ), gt( %q0, 0 )), 
 			u( f.registers.error-add, 
 				Extended roll must be an integer greater than zero 
 			), 
 
-@@ .. <num> can't be higher than %q1
+// .. <num> can't be higher than %q1
 			lte( %0, %q1 ), 
 			u( f.registers.error-add, 
 				Extended roll cannot be higher than %q1
 			), 
-@@ .. else, set %q0 into %qn
+// .. else, set %q0 into %qn
 			setq( n, %q0 )
 		)
 	)
 
---
+/* -- Tests -- 
 
 think %%qn: [setr( n, 4 )] - [u(nWoD Roller/f.roll/extended, /extended)] - errors: %qe - number rolls: %qn
 think %%qn: [setr( n, 4 )] - [u(nWoD Roller/f.roll/extended, /extended=2)] - errors: %qe - number rolls: %qn
@@ -290,10 +297,9 @@ q0: the "target" value
 q1: upper bound for <num> (for code sanity)
 qt: a GLOBAL REGISTER for number of times to roll
 
---
+*/
 
 &f.roll/target nWoD Roller <nr>=
-
 	strcat( 
 		setq( 0, rest( %0, = )), 
 		setq( 1, 200 ), 
@@ -313,8 +319,12 @@ qt: a GLOBAL REGISTER for number of times to roll
 
 
 
+/*
 =--=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-==---==--=-=-=-==-=-=-
 
-@@ Before I forget: can you add a /blind switch for +roll that only shows the
-@@ result to the people you're rolling to?
+Before I forget: can you add a /blind switch for +roll that only shows the
+result to the people you're rolling to?
 
+... Probably.
+
+*/

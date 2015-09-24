@@ -1,5 +1,6 @@
-================================================================================
-== ROLL PRIMER =================================================================
+/*
+################################################################################
+## ROLL PRIMER #################################################################
 
 The following registers are used across the entire system:
 
@@ -21,9 +22,11 @@ The following registers are used across the entire system:
 	qr: Final Roll(s), |-delimited
 	qc: List of Successes, space-delimited
 
-These registers are to be considered global and should not be touched out of context, for any reason.
+These registers are to be considered global and should not be touched out of 
+context, for any reason.
 
-See "Roll Switches", below, for details about how to add and include switches to roll.
+See "Roll Switches", below, for details about how to add and include switches 
+to roll.
 
 
 ================================================================================
@@ -31,7 +34,8 @@ See "Roll Switches", below, for details about how to add and include switches to
 
 Playing with the registers in a way where I know it will work properly.
 
-In all cases, %0 is what to add.  In all cases, no error checking is done.  In all cases, there is to be no output.
+In all cases, %0 is what to add.  In all cases, no error checking is done.  In 
+all cases, there is to be no output.
 
 
 --------------------------------------------------------------------------------
@@ -41,39 +45,49 @@ In all cases, %0 is what to add.  In all cases, no error checking is done.  In a
 1: sign (+ if <null>)
 2: "nostat" if we want to error it
 
---
+*/
 
 &f.registers.output-add nWoD Roller <nr>=
 	setq( o, 
-		%qo`
-		[if( comp( %1, ), %1, + )] 
-		[if( strmatch( %2, nostat ), ansi( xh, %[%0%] ), %0 )] 
+        strcat( 
+            %qo, `, 
+            if( comp( %1, ), %1, + ), 
+            if( strmatch( %2, nostat ), ansi( xh, %[%0%] ), %0 )
+        )
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Add to Dice (qd) ------------------------------------------------------------
+*/
 
 &f.registers.dice-add nWoD Roller <nr>=setq( d, add( %qd, %0 ))
 
 
+/*
 --------------------------------------------------------------------------------
 -- Add to Errors (qe) ----------------------------------------------------------
+*/
 
 &f.registers.error-add nWoD Roller <nr>=setq( e, %qe`%0 )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Add to Number of Extended Rolls To Make (qt) --------------------------------
+*/
 
 &f.registers.extendednum-add nWoD Roller <nr>=setq( n, add( %qn, %0 ))
 
 
 
+/*
 ================================================================================
 == STAT CHECKS =================================================================
 
-These functions build the basic what-to-roll list.  Stats, untrained penalties and wound penalties are all added here.
+These functions build the basic what-to-roll list.  Stats, untrained penalties 
+and wound penalties are all added here.
 
 
 --------------------------------------------------------------------------------
@@ -86,7 +100,7 @@ Add (subtract) health penalty unless passive /nowound switch is included
 0: sheet dbref
 q0: health penalties
 
---
+*/
 
 &f.stat-check.health nWoD Roller <nr>=
 	if( 
@@ -102,12 +116,14 @@ q0: health penalties
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Check for Stats -------------------------------------------------------------
 
-Build the what-to-roll list with the stats.  If the system can pull the stat, it will roll it.
+Build the what-to-roll list with the stats.  If the system can pull the stat, 
+it will roll it.
 
->> here is where I would put in <player>:<stat>, if we could
+>> here is where I would put in <player>:<stat>, if we could <<
 
 --
 
@@ -119,17 +135,17 @@ q0: Current stat to check
 q1: Current sign (+ or -)
 q2: Current full stat path
 
---
+*/
 
 &f.stat-check.stats nWoD Roller <nr>=
 	iter( edit( %1, -%b, -, -, +- ), 
 
 		case( 1, 
-@@ >> it's a number
+// >> it's a number
 			u( f.stat-check.number, %i0 ), 
 			@@( number ), 
 
-@@ >> it's possibly a stat - collect information on it
+// >> it's possibly a stat - collect information on it
 			strcat( 
 				setq( 1, u( .sign, %i0 )),
 				setq( 0, trim( case( %q1, -, rest( %i0, - ), %i0 ))), 
@@ -150,6 +166,7 @@ q2: Current full stat path
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Stat Check: Number ----------------------------------------------------------
 
@@ -157,7 +174,7 @@ See if this is a straight-up number.
 
 0: number to check
 
---
+*/
 
 &f.stat-check.number nWoD Roller <nr>=
 	if( 
@@ -170,6 +187,7 @@ See if this is a straight-up number.
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Stat Check: Invalid Trait ---------------------------------------------------
 
@@ -177,7 +195,7 @@ See if this is a straight-up number.
 1: sign
 2: full stat path (can't be found if invalid trait)
 
---
+*/
 
 &f.stat-check.invalid-trait nWoD Roller <nr>=
 	if( 
@@ -188,7 +206,7 @@ See if this is a straight-up number.
 		)
 	)
 
---
+/* -- Tests -- 
 
 think u( nr/f.stat-check.invalid-trait, beauty, +, beauty )
 
@@ -201,7 +219,7 @@ think u( nr/f.stat-check.invalid-trait, beauty, +, beauty )
 2: trait's sign (+ or -)
 3: full stat path
 
---
+*/
 
 &f.stat-check.trait nWoD Roller <nr>=
 	if( 
@@ -217,6 +235,7 @@ think u( nr/f.stat-check.invalid-trait, beauty, +, beauty )
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Stat Check: Trait: Numeric --------------------------------------------------
 
@@ -228,7 +247,7 @@ Skills are handled separately.
 3: proper stat name
 4: value from sheet
 
---
+*/
 
 &f.stat-check.trait.numeric nWoD Roller <nr>=
 	strcat( 
@@ -237,11 +256,11 @@ Skills are handled separately.
 		u( f.registers.extendednum-add, 
 			mul( ladd( %4, . ), case( %2, -, -1, 1 ))
 		), 
-
 		1 
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Stat Check: Trait: String ---------------------------------------------------
 
@@ -253,7 +272,7 @@ Don't roll this, sheesh.
 3: proper trait name
 4: value from sheet [unused]
 
---
+*/
 
 &f.stat-check.trait.string nWoD Roller <nr>=
 	strcat( 
@@ -262,6 +281,7 @@ Don't roll this, sheesh.
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Stat Check: Trait: List -----------------------------------------------------
 
@@ -271,7 +291,7 @@ Don't roll this, sheesh.
 3: proper trait name
 4: value from sheet [unused]
 
---
+*/
 
 &f.stat-check.trait.list nWoD Roller <nr>=
 	strcat( 
@@ -280,6 +300,7 @@ Don't roll this, sheesh.
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Stat Check: Skill -----------------------------------------------------------
 
@@ -301,7 +322,7 @@ q5: skill's value
 q6: specs name(s)
 q7: specs' value(s)
 
---
+*/
 
 &f.stat-check.skill nWoD Roller <nr>=
 	if( strmatch( %3, skill.* ), 
@@ -311,11 +332,11 @@ q7: specs' value(s)
 			setq( 6, rest( rest( %3, . ), . )), 
 			setq( 7, mul( t( %q6 ), u( .value_full, %0, %3 ))), 
 			case( 1, 
-@@ >> untrained skill (+ specs)
+// >> untrained skill (+ specs)
 				u( f.stat-check.skill.untrained, %0, %q4, %q5, %q6, %q7, %2 ), 
 				1, 
 
-@@ >> skill (+ specs)
+// >> skill (+ specs)
 				u( f.stat-check.skill.trained, %0, %q4, %q5, %q6, %q7, %2 ), 
 				1, 
 
@@ -325,6 +346,7 @@ q7: specs' value(s)
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Stat Check: Skill: Untrained ------------------------------------------------
 
@@ -351,7 +373,7 @@ q0: output message
 q1: final sign
 q2: 'nostat' if it's intended to be discarded (e.g., specialty doesn't exist)
 
---
+*/
 
 &f.stat-check.skill.untrained nWoD Roller <nr>=
 	if( not( %2 ), 
@@ -372,7 +394,7 @@ q2: 'nostat' if it's intended to be discarded (e.g., specialty doesn't exist)
 
 			case( 1, 
 
-@@ .. no specalty requested
+// .. no specalty requested
 				not( %3 ), 
 				strcat( 
 					u( f.registers.dice-add, %q7 ), 
@@ -381,7 +403,7 @@ q2: 'nostat' if it's intended to be discarded (e.g., specialty doesn't exist)
 					setq( 2, )
 				), 
 
-@@ .. valid specialty - add spec to extended but do not remove untrained
+// .. valid specialty - add spec to extended but do not remove untrained
 				t( %4 ), 
 				strcat( 
 					setq( 7, ladd( %q7.%4, . )), 
@@ -391,7 +413,7 @@ q2: 'nostat' if it's intended to be discarded (e.g., specialty doesn't exist)
 					u( f.registers.extendednum-add, ladd( %4, . )) 
 				), 
 
-@@ .. spec entered but has no value: reject the skill
+// .. spec entered but has no value: reject the skill
 				strcat( 
 					setq( 7, ), 
 					setq( 0, %q8.%q9 ), 
@@ -407,6 +429,7 @@ q2: 'nostat' if it's intended to be discarded (e.g., specialty doesn't exist)
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Stat Check: Skill: Trained --------------------------------------------------
 
@@ -424,13 +447,13 @@ q6: dice to add, also add to number of extended
 q7: output string
 q8: 'nostat' if the [not-a-stat] is meant to be used
 
---
+*/
 
 &f.stat-check.skill.trained nWoD Roller <nr>=
 	strcat( 
 		case( 1, 
 
-@@ .. no specialty
+// .. no specialty
 			not( %3 ), 
 			strcat( 
 				setq( 6, %2 ), 
@@ -438,7 +461,7 @@ q8: 'nostat' if the [not-a-stat] is meant to be used
 				setq( 8, )
 			), 
 
-@@ .. valid specialty
+// .. valid specialty
 			t( %4 ), 
 			strcat( 
 				setq( 6, ladd( %2.%4, . )), 
@@ -446,7 +469,7 @@ q8: 'nostat' if the [not-a-stat] is meant to be used
 				setq( 8, )
 			), 
 
-@@ .. invalid specialty: do not add the trait to dice to roll
+// .. invalid specialty: do not add the trait to dice to roll
 			strcat( 
 				setq( 6, 0 ), 
 				setq( 7, [u( .statname, rest( %1, . ))].[u( .statname, %3 )] ), 
@@ -454,10 +477,10 @@ q8: 'nostat' if the [not-a-stat] is meant to be used
 			)
 		), 
 
-@@ .. always add output
+// .. always add output
 		u( f.registers.output-add, %q7, %5, %q8 ), 
 
-@@ .. if output is valid, also add to dice and extended
+// .. if output is valid, also add to dice and extended
 		if( t( %q6 ), 
 			strcat( 
 				u( f.registers.dice-add, %q6 ), 
@@ -469,6 +492,7 @@ q8: 'nostat' if the [not-a-stat] is meant to be used
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Some Tests ------------------------------------------------------------------
 
@@ -481,4 +505,4 @@ think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + ste
 
 think [u( nr/f.stat-check.stats, pmatch(me), full name + str + beauty + will + stealth + occ.bla )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
 
-
+*/

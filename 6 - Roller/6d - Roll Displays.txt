@@ -46,36 +46,36 @@ Hilite '1' on a weakness roll, unless it's rote from the first section
 */
 
 &display.colorize.dice nWoD Roller <nr>= 
-localize( 
-	strcat( 
-		setq( c, strmatch( %qs, chance )), 
-		setq( w, u( f.hasswitch?, weakness )), 
-		setq( r, u( f.hasswitch?, rote )), 
-		iter( %0, 
-			iter( %i0, 
-				case( 1, 
-					u( f.successes.standard, %i0, 8 ), 
-					%xu%xc%i0%xn, 
+	localize( 
+		strcat( 
+			setq( c, strmatch( %qs, chance )), 
+			setq( w, u( f.hasswitch?, weakness )), 
+			setq( r, u( f.hasswitch?, rote )), 
+			iter( %0, 
+				iter( %i0, 
+					case( 1, 
+						u( f.successes.standard, %i0, 8 ), 
+						%xu%xc%i0%xn, 
 
-					cand( eq( %i0, 1 ), %qc ), 
-					%xr%i0%xn, 
+						cand( eq( %i0, 1 ), %qc ), 
+						%xr%i0%xn, 
 
-					cand( 
-						%qw, 
-						eq( %i0, 1 ), 
-						cor( not( %qr ), gt( inum( 1 ), 1 ))
-					), 
-					%xr%i0%xn, 
+						cand( 
+							%qw, 
+							eq( %i0, 1 ), 
+							cor( not( %qr ), gt( inum( 1 ), 1 ))
+						), 
+						%xr%i0%xn, 
 
-					%i0 
-				)
-			), 
-			:, : 
+						%i0 
+					)
+				), 
+				:, : 
+			)
 		)
 	)
-)
 
-// --
+/* -- Tests -- 
 
 think u( nr/display.colorize.dice, 7 3 10 2 10 1 8 3 2 4 9 4 )
 
@@ -90,7 +90,7 @@ think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr,
 think u( nr/display.colorize.dice, 2 4 10 9 3 5 10 6 3 3 8 1 3 7 8 8 6 7 10 3 8 2 10 7 5 9 )
 
 
-/*
+
 ================================================================================
 == DISPLAY: Main Spammy Output =================================================
 
@@ -172,22 +172,22 @@ Show the 'extended' roll results, line by line
 */
 
 &display.roll-output.extended nWoD Roller <nr>=
-localize( 
-	strcat( 
-		%b Results:%b, 
-		ladd( %qc ), %b, total successes, %r%r, 
-		iter( %qr, 
-			strcat( 
-				%b Successes:, %b, 
-				setr( x, max( extract( %qc, inum( ), 1 ), -1 )), 
-				%b, --, %b, u( display.interpret-roll-output, %i0 ), 
+	localize( 
+		strcat( 
+			%b Results:%b, 
+			ladd( %qc ), %b, total successes, %r%r, 
+			iter( %qr, 
+				strcat( 
+					%b Successes:, %b, 
+					setr( x, max( extract( %qc, inum( ), 1 ), -1 )), 
+					%b, --, %b, u( display.interpret-roll-output, %i0 ), 
 // .. .. .. report dramatic failure only; exc. succ was confusing people
-				switch( %qx, -1, %b%(dramatic failure%) )
-			), 
-			|, %r 
+					switch( %qx, -1, %b%(dramatic failure%) )
+				), 
+				|, %r 
+			)
 		)
 	)
-)
 
 
 /*
@@ -255,7 +255,8 @@ Give it that '(<dice rolled)' look.
 		pemit( %i0, 
 			u( display.roll-output, 
 				%0, 
-				to [iter( %1, name( %i0 ), , %,%b )], %i0 
+				to [iter( %1, name( %i0 ), , %,%b )], 
+				%i0 
 			)
 		)
 	)
@@ -296,67 +297,67 @@ internal:
 */
 
 &display.blind-roller-output nWoD Roller <nr>=
-squish( 
-	strcat( 
-		u( .alert, roll/blind ), %b, 
-		You roll, %b, 
+	squish( 
+		strcat( 
+			u( .alert, roll/blind ), %b, 
+			You roll, %b, 
 
 // chance/weakness and/or extended?
-		itemize( 
-			cat( 
-				if( not( strmatch( %qs, standard )), 
-					lcstr( %qs )
-				), 
-				if( 
-					or( 
-						setr( 0, u( f.hasswitch?, target )), 
-						setr( 1, u( f.hasswitch?, extended ))
+			itemize( 
+				cat( 
+					if( not( strmatch( %qs, standard )), 
+						lcstr( %qs )
 					), 
-					extended
-				)
-			), 
-			, & 
-		), %b, 
+					if( 
+						or( 
+							setr( 0, u( f.hasswitch?, target )), 
+							setr( 1, u( f.hasswitch?, extended ))
+						), 
+						extended
+					)
+				), 
+				, & 
+			), %b, 
 
 // if extended, output how it's extended
-		if( 
-			cor( %q0, %q1 ), 
-			strcat( 
-				%(, 
-				if( %q0, target %qt ), 
-				if( cand( %q0, %q1 ), %,%b ), 
-				if( %q1, %qn rolls ), 
-				%) 
-			)
-		), %b, 
+			if( 
+				cor( %q0, %q1 ), 
+				strcat( 
+					%(, 
+					if( %q0, target %qt ), 
+					if( cand( %q0, %q1 ), %,%b ), 
+					if( %q1, %qn rolls ), 
+					%) 
+				)
+			), %b, 
 
 // output the roll
-		', trim( u( display.roll-items, %qo )), ', 
+			', trim( u( display.roll-items, %qo )), ', 
 		
 
 // switches? (ignore the two extended switches, pulled earlier)
-		setq( 0, 
-			trim( 
-				edit( 
-					rest( %qz, / ), 
-					grab( %qz, extended*, / ), @@( null ), 
-					grab( %qz, target*, / ), @@( null )
-				), 
-				b, / 
-			)
-		), 
-		if( strlen( %q0 ), 
-			strcat( 
-				%, using, %b, 
-				iter( %q0, '%i0', /, %,%b ), %b 
-			)
-		), 
+			setq( 0, 
+				trim( 
+					edit( 
+						rest( %qz, / ), 
+						grab( %qz, extended*, / ), @@( null ), 
+						grab( %qz, target*, / ), @@( null )
+					), 
+					b, / 
+				)
+			), 
+			if( strlen( %q0 ), 
+				strcat( 
+					%, using, %b, 
+					iter( %q0, '%i0', /, %,%b ), %b 
+				)
+			), 
 
 // roll to whom?
-		%b, to, %b, 
-		iter( %0, name( %i0 ), , %,%b )
+			%b, to, %b, 
+			iter( %0, name( %i0 ), , %,%b )
+		)
 	)
-)
 
 
 /*
@@ -369,14 +370,14 @@ be incorrect.
 --
 
 For %va/trig_add: 
- 0: dbref of job object (Job 6 -> #491), returned by 'f.has_jobs_access'
- 1: content
- 2: dbref of the person causing the change
- 3: the act upon the object (CREate, ADD, NAMe, ASN-assign, MAIL, etc)
+	0: dbref of job object (Job 6 -> #491), returned by 'f.has_jobs_access'
+	1: content
+	2: dbref of the person causing the change
+	3: the act upon the object (CREate, ADD, NAMe, ASN-assign, MAIL, etc)
 
 For the following:
- 0: enactor dbref (probably %#)
- 1: Job <n>
+	0: enactor dbref (probably %#)
+	1: Job <n>
 
 uses: titlestr()
 
@@ -457,14 +458,13 @@ input:
 	qc: final success counter, space-delimited
 	
 output:
-	q0: successes <-- killed for %qc
+	q0: successes <-- depreciated for %qc
 	q1: success/failure type
 	q2: input, prettified 
 
 */
 
 &f.roll-success-interpreter nWoD Roller <nr>=
-
 	strcat( 
 
 // q1: success/failure type

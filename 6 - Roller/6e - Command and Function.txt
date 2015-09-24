@@ -1,7 +1,12 @@
+/*
+################################################################################
+## ROLL COMMAND ################################################################
+
+
 --------------------------------------------------------------------------------
 -- Command: Roll ---------------------------------------------------------------
 
-Cutting corners for now.
+Cutting corners for now. (And the past four years.)
 
 0: the match
 1: /list/of/switches, if any
@@ -12,7 +17,7 @@ q7: sanitized input (%2)
 q8: temp holder building target list
 q9: target list (dbrefs or job #)
 
---
+*/
 
 &c.roll nWoD Roller <nr>=$^\+?roll(/.+?)? (.+?)(\=.*)?$:
 
@@ -57,11 +62,12 @@ q9: target list (dbrefs or job #)
 			)
 		)
 
---
+// --
 
-@set  nWoD Roller <nr>/c.roll=regex
+@set nWoD Roller <nr>/c.roll=regex
 
 
+/*
 --------------------------------------------------------------------------------
 -- Build To-List ---------------------------------------------------------------
 
@@ -77,32 +83,33 @@ returns: public, private, or blind|<target dbrefs or 'job #'>
 q0: list of %1 as dbrefs (could be messy)
 q1: temp for pmatch() in iter
 
---
+*/
 
 &f.build.to-list nWoD Roller <nr>=
-localize( strcat( 
-	setq( 0, iter( %0 %1, if( setr( 1, pmatch( %i0 )), %q1 ))), 
-	case( 1, 
+	localize( strcat( 
+		setq( 0, iter( %0 %1, if( setr( 1, pmatch( %i0 )), %q1 ))), 
+		case( 1, 
 
-@@ .. job <num>
-		strmatch( %1, job * ), 
-		job|%1, 
+// .. job <num>
+			strmatch( %1, job * ), 
+			job|%1, 
 
-@@ .. blind: a target list including everyone except the roller
-		cand( t( %1 ), match( %2, blind, / )), 
-		strcat( blind|, setdiff( %q0, %0 )), 
+// .. blind: a target list including everyone except the roller
+			cand( t( %1 ), match( %2, blind, / )), 
+			strcat( blind|, setdiff( %q0, %0 )), 
 
-@@ .. private: a target list including the roller
-		t( %1 ), 
-		strcat( private|, setunion( %q0, )), 
+// .. private: a target list including the roller
+			t( %1 ), 
+			strcat( private|, setunion( %q0, )), 
 
-@@ .. public, default: everyone in the room with the roller
-		strcat( public|, lcon( loc( %0 ), connect ))
-	)
-))
+// .. public, default: everyone in the room with the roller
+			strcat( public|, lcon( loc( %0 ), connect ))
+		)
+	))
 
 
 
+/*
 ================================================================================
 == Main Rolling Functions ======================================================
 
@@ -110,7 +117,7 @@ localize( strcat(
 --------------------------------------------------------------------------------
 -- Function: roll() ------------------------------------------------------------
 
-roll(<what to roll>, <who is rolling>[, <list/of/switches>])
+roll( <what to roll>, <who is rolling>[, <list/of/switches>] )
 
 0: what to roll
 1: who is rolling
@@ -131,11 +138,11 @@ so we clear out all the globals (and "p"?!) before we start
 (no, iter didn't work)
 "e" was adding to the error list, "p" was, I think, changing the player dbref
 
---
+*/
 
 @fo me=&ufunc/privileged.roll nr=u\\( [num( nr )]/f.roll, \\\%0, \\\%1, \\\%2 \\)
 
---
+// --
 
 &f.roll nWoD Roller <nr>=
 	strcat( 
@@ -159,6 +166,7 @@ so we clear out all the globals (and "p"?!) before we start
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Roll Workhorse --------------------------------------------------------------
 
@@ -173,11 +181,11 @@ q2: die rolls
 returns: <successes or #-1>|<pretty output or errors>|<die rolls>
 may be ignored if internal: items kept in global registers!
 
---
+*/
 
 &f.roll.workhorse nWoD Roller <nr>=
 	strcat( 
-@@ .. set up global register defaults
+// .. set up global register defaults
 		setq( z, u( f.switch.name-complete, %2 )), 
 		setq( d, 0 ), 
 		setq( a, 10 ), 
@@ -186,25 +194,25 @@ may be ignored if internal: items kept in global registers!
 		setq( c, ), 
 		setq( s, Standard ), 
 		
-@@ .. run the basic roller setup
+// .. run the basic roller setup
 		u( f.stat-check.stats, %1, %0 ), 
 
-@@ >> Active Adjustments <<
-@@ .. scan for and run "active" switches
+// >> Active Adjustments <<
+// .. scan for and run "active" switches
 		iter(
 			again weakness extended target, 
 			if( u( f.hasswitch?, %i0 ), u( f.roll/%i0, u( f.getswitch, %i0 ))), 
 			, @@ 
 		), 
 
-@@ .. last, check for health penalty
+// .. last, check for health penalty
 		u( f.stat-check.health, %1 ), 
 		if( lte( %qd, 0 ), setq( s, Chance )), 
 
-@@ >> ROLL <<
+// >> ROLL <<
 		if(
 			t( words( %qe, ` )), 
-@@ .. error output instead of rolling
+// .. error output instead of rolling
 			strcat( 
 				#-1, |, 
 				u( display.roll-items, %qe ), |, 
@@ -213,8 +221,8 @@ may be ignored if internal: items kept in global registers!
 
 			strcat( 
 
-@@ .. tweak 'n-again' register (qa) if 'weakness' or 'chance' roll
-@@ .. (this may not be necessary, put here in case my logic is flawed)
+// .. tweak 'n-again' register (qa) if 'weakness' or 'chance' roll
+// .. (this may not be necessary, put here in case my logic is flawed)
 				setq( a, 
 					case( 1, 
 						u( f.hasswitch?, weakness ), 11, 
@@ -223,7 +231,7 @@ may be ignored if internal: items kept in global registers!
 					)
 				), 
 
-@@ .. reset 'number of times to roll' register (qn) if not /extended or /target
+// .. reset 'number of times to roll' register (qn) if not /extended or /target
 				setq( n, 
 					case( 1, 
 						u( f.hasswitch?, extended ), %qn , 
@@ -232,19 +240,19 @@ may be ignored if internal: items kept in global registers!
 					)
 				), 
 
-@@ .. roll %qn times, at least once (if %qd = 0, roll 1 die -- it's chance)
+// .. roll %qn times, at least once (if %qd = 0, roll 1 die -- it's chance)
 				setq( r, 
 					trim( u( f.roll.workhorse.recurisve, 0, 0 ), b, | )
 				), 
 
-@@ >> PARSE RESULTS
-@@ .. <'target' should also go here to remove extraneous rolls>
-@@ .. interpret successes -> <# succ>, "Success!", <what rolled>
+// >> PARSE RESULTS
+// .. <'target' should also go here to remove extraneous rolls>
+// .. interpret successes -> <# succ>, "Success!", <what rolled>
 				u( f.roll-success-interpreter ), 
 				setq( c, trim( %qc )), 
 
-@@ .. and output for the sake of the function 
-@@ .. .. <# succ>[ <# succ>], <what rolled>, <dice>:<rote>:<n-again>[|<dice>:..]
+// .. and output for the sake of the function 
+// .. .. <# succ>[ <# succ>], <what rolled>, <dice>:<rote>:<n-again>[|<dice>:..]
 
 				strcat( 
 					%qc, |, 
@@ -255,7 +263,7 @@ may be ignored if internal: items kept in global registers!
 		)
 	)
 
---
+/* -- Tests --
 
 think u(nr/f.roll.workhorse, str+dex+2, pmatch(thenomain), /again=8)
 think u(nr/f.roll, str+2, thenomain, /again=8)
@@ -287,7 +295,7 @@ internal
 	q0: this loop's roll
 	q1: this loop's successes
 
---
+*/
 
 &f.roll.workhorse.recurisve nr=
 	if( 
@@ -296,7 +304,7 @@ internal
 			cor( not( %qt ), lt( %1, %qt )), 
 			cor( t( %qt ), t( %qn ), lt( %0, 1 ))
 		), 
-@@ roll some dice
+// roll some dice
 		strcat( 
 			setr( 0, 
 				ulocal( f.roller, 
@@ -306,13 +314,14 @@ internal
 				)
 			), |, 
 
-@@ count some successes
+// count some successes
 			setq( 1, u( f.successes.%qs, %q0, 8 )), 
 			setq( c, %qc %q1 ), 
 
-@@ do it again
+// do it again
 			u( f.roll.workhorse.recurisve, inc( %0 ), add( %q1, %1 ))
 		), 
-@@ (last loop does nothing)
+
+// (last loop does nothing)
 
 	)
