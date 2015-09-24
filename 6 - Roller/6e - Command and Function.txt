@@ -46,7 +46,7 @@ q9: target list (dbrefs or job #)
 			), 
 
 // .. build the to-list
-			setq( 9, u( f.build.to-list, %#, rest( %3, = ), %1 )), 
+			setq( 9, u( f.build.to-list, %#, trim( rest( %3, = )), %1 )), 
 
 // .. interpret and output - check for errors first
 			if( 
@@ -316,4 +316,3 @@ internal
 @@ (last loop does nothing)
 
 	)
-
