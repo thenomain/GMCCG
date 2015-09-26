@@ -570,7 +570,7 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 		), 
 		1 
 	))
-&prereq-text.merit.totem DD=Wolf-Blooded must have Pack Bond merit
+&prereq-text.merit.totem DD=Wolf-Blooded must have Pack Bond merit 
 	at 1 for 1, at 3 for up to 5
 &tags.merit.totem D:T=werewolf.wolf-blooded.shared
 
@@ -2133,4 +2133,3 @@ regain methods:
 			u( display.number, %0, %1, essence, regain, %qa, %qm, %4 )
 		)]; 
 	@eval u( f.announcement, %0, %1, regain, %qe ); 
-
