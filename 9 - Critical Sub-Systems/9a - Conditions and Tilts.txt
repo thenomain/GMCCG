@@ -1,3 +1,5 @@
+/*
+
 Conditions and Tilts for GMC
 
 I'm stealing this from Reno (with permission). 
@@ -26,6 +28,7 @@ I'm stealing this from Reno (with permission).
 @desc ctst=Originally coded by Bingo@RenoMUX 
 	("the biggest little game on the net"), 
 	adapted to the Darkwater GMC Stat System by Thenomain.
+*/
 
 @parent ctst=codp
 &prefix.index ctst=i.
@@ -33,8 +36,10 @@ I'm stealing this from Reno (with permission).
 
 
 
+/*
 ================================================================================
 == DATA & INDICIES =============================================================
+*/
 
 @fo me=&D.DB +Cond and +Tilt Status Tracker <ctst>=[num( ctdb )]
 &D.DEFAULT_MAX_LOG_LENGTH +Cond and +Tilt Status Tracker <ctst>=10
@@ -60,24 +65,28 @@ I'm stealing this from Reno (with permission).
 
 
 
+/*
 ================================================================================
 == CROSS-GAME FUNCTIONS ========================================================
+*/
 
 &.alert +Cond and +Tilt Status Tracker <ctst>=ansi( h, <%0> )
+&.msg +Cond and +Tilt Status Tracker <ctst>=ansi( h, <%0>, n, %b%1 )
 
 
-
+/*
 ================================================================================
 == COMMANDS & SUCHWHAT =========================================================
+*/
 
-&C.TILT +Cond and +Tilt Status Tracker <ctst>=$^\+?tilt(.*)$:
+&C.TILT +Cond and +Tilt Status Tracker <ctst>=$^\+?tilts?(.*)$:
 	@pemit %#=[u( c.status, %1, tilt )]
 
 @set ctst/c.tilt=regexp
 
 // -----------------------------------------------------------------------------
 
-&C.COND +Cond and +Tilt Status Tracker <ctst>=$^\+?cond(.*)$:
+&C.COND +Cond and +Tilt Status Tracker <ctst>=$^\+?conds?(.*)$:
 	@pemit %#=[u( c.status, %1, cond )]
 
 @set ctst/c.cond=regexp
@@ -85,28 +94,25 @@ I'm stealing this from Reno (with permission).
 // -----------------------------------------------------------------------------
 
 &CMT.C.STATUS +Cond and +Tilt Status Tracker <ctst>=
-	This is the primary distinction between switched and <inputs> commands. Also 
-	distinguishes +<type>s, though they currently do the same thing as base 
-	+<type> commands, but if ever desired that +conds does something different 
-	than +cond, this could be modified.%r%r%0 is type of status that gets passed 
-	through the system.
+	This is the primary distinction between switched and <inputs> commands. 
+	Also distinguishes +<type>s, though they currently do the same thing as 
+	base +<type> commands, but if ever desired that +conds does something 
+	different than +cond, this could be modified.%r%r%0 is type of status that 
+	gets passed through the system.
 
 &C.STATUS +Cond and +Tilt Status Tracker <ctst>=
-	switch( %0, 
+	switch( strtrunc( %0, 1 ), 
 
-// null or 's': default
-		@@( <null> ), u( c.status.default, %1 ), 
-		s, u( c.status.default, %1 ), 
+// null: default
+		@@( <null> ), 
+		u( c.status.default, %1 ), 
 
 // switches
-		s/*, 
-		u( c.status.switched, first( after( %0, / )), secure( rest( %0 )), %1 ), 
-		/*, 
+		/, 
 		u( c.status.switched, first( after( %0, / )), secure( rest( %0 )), %1 ), 
 
-// no switch, other input
-		s *, u( c.status.specific, secure( trim( rest( %0 ))), %1 ), 
-		%b*, u( c.status.specific, secure( trim( %0 )), %1 ), 
+// no switch: other input
+		%b, u( c.status.specific, secure( trim( %0 )), %1 ), 
 
 // error
 		[u( .alert, %1 )] +%1's format is +%1 or +%1%[/<switch>%] <inputs> 
@@ -124,14 +130,15 @@ I'm stealing this from Reno (with permission).
 
 &CMT.C.STATUS.SWITCHED +Cond and +Tilt Status Tracker <ctst>=
 	Handles the +<type>/<switch> <input> type inputs, and redirects to any 
-	C.STATUS/<switch> attrs set on this object%r%r%0 is the switch name, %1 is 
-	the inputs, %2 is the type
+	C.STATUS/<switch> attrs set on this object%r
+	%r
+	%0 is the switch name, %1 is the inputs, %2 is the type
 
 &C.STATUS.SWITCHED +Cond and +Tilt Status Tracker <ctst>=
 	[setq( m, lattr( %!/c.status/%0* ))]
 	[case( 0, 
-		words( lattr( %!/c.status/* )), 
-		[u( .alert, %2 )] +%2 does not take switches., 
+//		words( lattr( %!/c.status/* )), 
+//		[u( .alert, %2 )] +%2 does not take switches., 
 
 		neq( words( %qm ), 1 ), 
 		u( %qm, %1, %2 ), 
@@ -150,12 +157,12 @@ I'm stealing this from Reno (with permission).
 
 &CMT.C.STATUS.SPECIFIC +Cond and +Tilt Status Tracker <ctst>=
 	Called for status without switches, must either be staff <name>, <name>/#, 
-	or user #, which must be an int. Anything else passes into the search to try 
-	and find a status in the db
+	or user #, which must be an int. Anything else passes into the search to 
+	try and find a status in the db
 
 &C.STATUS.SPECIFIC +Cond and +Tilt Status Tracker <ctst>=
-	switch( %0, 
-		*/*, 
+	switch( 1, 
+		regmatch( %0, .*\/.* ), 
 		u( c.status.player-status, %0, %1 ), 
 
 		ifelse( 
@@ -243,8 +250,8 @@ I'm stealing this from Reno (with permission).
 	[=<optional note>]
 
 &C.STATUS/ADD +Cond and +Tilt Status Tracker <ctst>=
-	switch( %0, 
-		*/*, 
+	switch( 1, 
+		regmatch( %0, .*\/.* ), 
 		switch( setr( s, rest( %0, / )), 
 			*=*, 
 			u( c.player.status.add, 
@@ -314,8 +321,8 @@ I'm stealing this from Reno (with permission).
 	%0 has %[Optional staff-only <name>/%]<# of status of type %1>=<note text>
 
 &C.STATUS/NOTE +Cond and +Tilt Status Tracker <ctst>=
-	switch( %0, 
-		*/*, 
+	switch( 1, 
+		regmatch( %0, .*\/.* ), 
 		[setq( s, rest( %0, / ))]
 		[u( c.player.status.note, first( %0,/ ), trim( first( %qs, = )), trim( rest( %qs, = )), %1 )], 
 
@@ -375,8 +382,8 @@ I'm stealing this from Reno (with permission).
 	%0 has %[Optional staff-only <name>/%]<# of status of type %1>=<title>
 
 &C.STATUS/TITLE +Cond and +Tilt Status Tracker <ctst>=
-	switch( %0, 
-		*/*, 
+	switch( 1, 
+		regmatch( %0, .*\/.* ), 
 		[setq( s, rest( %0, / ))]
 		[u( c.player.status.title, 
 			first( %0, / ), 
@@ -407,8 +414,8 @@ I'm stealing this from Reno (with permission).
 	%0 has %[Optional staff-only <name>/%]<# of status of type %1>
 
 &C.STATUS/REM +Cond and +Tilt Status Tracker <ctst>=
-	switch( %0, 
-		*/*, 
+	switch( 1, 
+		regmatch( %0, .*\/.* ), 
 		u( c.player.status.rem, first( %0,/ ), rest( %0, / ), %1 ), 
 
 		u( c.player.status.rem, %#, %0, %1 )
@@ -465,8 +472,8 @@ I'm stealing this from Reno (with permission).
 	<comma-delmited player list to show or here>
 
 &C.STATUS/SHOW +Cond and +Tilt Status Tracker <ctst>=
-	switch( %0, 
-		*/*, 
+	switch( 1, 
+		regmatch( %0, .*\/.* ), 
 		u( c.player.status.show, 
 			first( %0, / ), 
 			trim( first( rest( %0, / ), = )), 
@@ -741,8 +748,10 @@ I'm stealing this from Reno (with permission).
 
 
 
+/*
 ================================================================================
 == FUNCTIONS ===================================================================
+*/
 
 &F.GET.PLAYER.ATTR +Cond and +Tilt Status Tracker <ctst>=
 	extract( %0, v( i.player.attr ), 1, | )
@@ -775,9 +784,9 @@ I'm stealing this from Reno (with permission).
 	extract( %0, v( i.status.ref ), 1, | )
 
 
-// -----------------------------------------------------------------------------
-// -- Function: Handle the Logs ------------------------------------------------
 /*
+-------------------------------------------------------------------------------
+-- Function: Handle the Logs --------------------------------------------------
 
 0: what to do, 'add' or 'search'?
 1: <target dbref>
@@ -818,10 +827,13 @@ looks for:
 	))
 
 
-// -----------------------------------------------------------------------------
-// -- Sortby: Timestamp with 6-digit Precision ---------------------------------
+/*
+-------------------------------------------------------------------------------
+-- Sortby: Timestamp with 6-digit Precision -----------------------------------
 
 0, 1: <timestamp>.<6-digit precision>
+
+*/
 
 &sortby.log.player +Cond and +Tilt Status Tracker <ctst>=
 	sub( 
@@ -984,7 +996,6 @@ looks for:
 
 &FIL.ISPLAYER +Cond and +Tilt Status Tracker <ctst>=t( pmatch( %0 ))
 
-
 // -----------------------------------------------------------------------------
 
 &F.STATUS_DISPLAY_LOG +Cond and +Tilt Status Tracker <ctst>=
@@ -1005,14 +1016,17 @@ looks for:
 
 
 
+/*
 ================================================================================
 == THE DATABASE ================================================================
 
-@@ man this is a lot of stuff
+(man this is a lot of stuff)
 
 
-
-// == CONDITIONS ===============================================================
+/*
+--------------------------------------------------------------------------------
+-- Conditions ------------------------------------------------------------------
+*/
 
 &COND.ADDICTED +Cond and +Tilt Status Tracker Database <ctdb>=
 	Addicted|1|
@@ -2133,8 +2147,10 @@ looks for:
 	B&S.306
 
 
-
-// == TILTS ====================================================================
+/*
+--------------------------------------------------------------------------------
+-- Tilts -----------------------------------------------------------------------
+*/
 
 &TILT.ARM_WRACK +Cond and +Tilt Status Tracker Database <ctdb>=
 	Arm Wrack|0|
@@ -2831,8 +2847,9 @@ looks for:
 
 
 
+/*
 ================================================================================
 == FINISH IT ===================================================================
-
+*/
 
 @tel ctdb=ctst
