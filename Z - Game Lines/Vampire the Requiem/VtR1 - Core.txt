@@ -419,16 +419,22 @@ Level 3 for very minor items
 &merit.source_sympathy DD=1
 &tags.merit.source_sympathy D:T=ghoul
 
+// can gain only if they have a Regnant.
 &merit.protected DD=2
+&prereq-text.merit.protected DD=Must be Thrall.
 &tags.merit.protected D:T=ghoul.human
 
+// can gain only if they have a Regnant.
 &merit.empowered_to_speak DD=1
-&tags.merit.empowered_to_speak D:T=ghoul
+&prereq-text.merit.empowered_to_speak DD=Must be Thrall.
+&tags.merit.empowered_to_speak D:T=ghoul.human.stigmatic.wolf-blooded
 
 &merit.vitae_hound DD=1
 &tags.merit.vitae_hound D:T=ghoul
 
+// can gain only if they have a Regnant.
 &merit.beast_whispers DD=2
+&prereq-text.merit.beast_whispers DD=Must be Thrall.
 &tags.merit.beast_whispers D:T=ghoul.human
 
 &merit.beloved_() DD=1|*
@@ -2085,4 +2091,3 @@ regain methods:
 			u( display.number, %0, %1, vitae, regain, %qa, %qm, %4 )
 		)]; 
 	@eval u( f.announcement, %0, %1, regain, %qe ); 
-
