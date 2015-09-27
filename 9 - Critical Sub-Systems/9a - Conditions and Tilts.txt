@@ -9,6 +9,9 @@ I'm stealing this from Reno (with permission).
 ================================================================================
 == CHANGE LOG (oldest last) ====================================================
 
+* removed status logging - needs overhauled/doesn't work
+* u( .alert ) -> u( .msg )
+* changed some code for Glitch's Muxify system
 * logtext() -> u( f.logtext ), removes requirement
 * 'this number' divider change: %) -> .
 * alert() -> u( .alert )
@@ -70,7 +73,6 @@ I'm stealing this from Reno (with permission).
 == CROSS-GAME FUNCTIONS ========================================================
 */
 
-&.alert +Cond and +Tilt Status Tracker <ctst>=ansi( h, <%0> )
 &.msg +Cond and +Tilt Status Tracker <ctst>=ansi( h, <%0>, n, %b%1 )
 
 
@@ -115,7 +117,7 @@ I'm stealing this from Reno (with permission).
 		%b, u( c.status.specific, secure( trim( %0 )), %1 ), 
 
 // error
-		[u( .alert, %1 )] +%1's format is +%1 or +%1%[/<switch>%] <inputs> 
+		u( .msg, %1, Format is '%1' or '%1%[/<switch>%] <inputs>' )
 	)
 
 // -----------------------------------------------------------------------------
@@ -138,15 +140,15 @@ I'm stealing this from Reno (with permission).
 	[setq( m, lattr( %!/c.status/%0* ))]
 	[case( 0, 
 //		words( lattr( %!/c.status/* )), 
-//		[u( .alert, %2 )] +%2 does not take switches., 
+//		u( .msg, %2, Command does not take switches ), 
 
 		neq( words( %qm ), 1 ), 
 		u( %qm, %1, %2 ), 
 
 		[case( 1, 
-			gt( words( %qm ), 1 ), [u( .alert, %2 )] Too many matches, 
-			lt( words( %qm ), 1 ), [u( .alert, %2 )] No match, 
-			[u( .alert, %2 )] Unknown error in 'c.status.switched' 
+			gt( words( %qm ), 1 ), u( .msg, %2, Too many switches match ), 
+			lt( words( %qm ), 1 ), u( .msg, %2, No switches match ), 
+			u( .msg, %2, Unknown error in 'c.status.switched' )
 		)]%r
 
 		Possible Switches: 
@@ -169,7 +171,7 @@ I'm stealing this from Reno (with permission).
 			t( setr( p, pmatch( %0 ))), 
 			ifelse( isstaff( %# ), 
 				u( f.format.player.all-status, %qp, %1 ), 
-				[u( .alert, %1 )] Staff Only. 
+				u( .msg, %1, Staff only )
 			), 
 			ifelse( isint( %0 ), 
 				u( c.status.specific.player-status, %#, %0, %1 ), 
@@ -185,13 +187,13 @@ I'm stealing this from Reno (with permission).
 &C.STATUS.PLAYER-STATUS +Cond and +Tilt Status Tracker <ctst>=
 	case( 0, 
 		t( setr( p, pmatch( first( %0, / )))), 
-		[u( .alert, %1 )] Player not found, 
+		u( .msg, %1, Player not found ), 
 
 		isstaff( %# ), 
-		[u( .alert, %1 )] Staff only., 
+		u( .msg, %1, Staff only ), 
 
 		isint( setr( i, rest( %0, / ))), 
-		[u( .alert, %1 )] %qi is not a number, 
+		u( .msg, %1, '%qi' is not a number ), 
 
 		u( c.status.specific.player-status, %qp, %qi, %1 )
 	)
@@ -203,15 +205,19 @@ I'm stealing this from Reno (with permission).
 	in is found in their list and if so, shows the formatted status info
 
 &C.STATUS.SPECIFIC.PLAYER-STATUS +Cond and +Tilt Status Tracker <ctst>=
-	case( 0, 
-		[setq( z, case( %2, cond, condition, tilt, tilt ))]
-		[t( setr( l, lattr( %0/_%2.* )))], 
-		[u( .alert, %2 )] No [%qz]s found set for [name( %0 )]., 
+	strcat( 
+		setq( z, case( %2, cond, Condition, tilt, Tilt )), 
+		setq( n, name( %0 )), 
+		setq( l, lattr( %0/_%2.* )), 
+		case( 0, 
+			t( %ql ), 
+			u( .msg, %2, No [%qz]s found set for %qn ), 
 
-		lte( %1, words( %ql )), 
-		[u( .alert, %2 )] That %qz index not found for [name( %0 )], 
+			lte( %1, words( %ql )), 
+			u( .msg, %2, %qz #%1 not found for %qn ), 
 
-		u( f.format.player.status.details, %0, extract( %ql, %1, 1 ), %2 )
+			u( f.format.player.status.details, %0, extract( %ql, %1, 1 ), %2 )
+		)
 	)
 
 // -----------------------------------------------------------------------------
@@ -233,7 +239,7 @@ I'm stealing this from Reno (with permission).
 	[setq( l, u( f.status.search-for, %0, %1 ))]
 	[case( 0, 
 		t( %ql ), 
-		[u( .alert, %1 )] No %qz matching %0 found., 
+		u( .msg, %1, No %qz matching %0 found ), 
 
 		neq( words( %ql ), 1 ), 
 		[wheader( ansi( h, [capstr( %qz )]%bDetails ))]%r
@@ -283,37 +289,50 @@ I'm stealing this from Reno (with permission).
 	status with %2 note if %2 exists
 
 &C.PLAYER.STATUS.ADD +Cond and +Tilt Status Tracker <ctst>=
-	[setq( z, case( %3, cond, condition, tilt, tilt ))]
-	[setq( l, u( f.status.search-for, %1, %3 ))]
-	[case( 0, 
-		t( setr( p, pmatch( %0 ))), 
-		[u( .alert, %3 )] Player not found, 
+	strcat( 
+		setq( z, case( %3, cond, condition, tilt, tilt )), 
+		setq( l, u( f.status.search-for, %1, %3 )), 
+		setq( p, pmatch( %0 )), 
+		setq( n, name( %qp )), 
+		case( 0, 
+			t( %qp ), 
+			u( .msg, %3, Player not found ), 
 
-		or( strmatch( %qp, %# ), isstaff( %# )), 
-		[u( .alert, %3 )] Staff only., 
+			or( strmatch( %qp, %# ), isstaff( %# )), 
+			u( .msg, %3, Staff only ), 
 
-		t( %ql ), 
-		[u( .alert, %3 )] No %qz matching %1 found., 
+			t( %ql ), 
+			u( .msg, %3, No %qz matching %1 found ), 
 
-		eq( words( %ql ), 1 ), 
-		[u( .alert, %3 )] More than one %qz matching %1 found., 
+			eq( words( %ql ), 1 ), 
+			u( .msg, %3, More than one %qz matching %1 found ), 
 
-		[set( %qp, _%ql.[secs( )]:[setr( v, %ql|%2| )] )]
-		[if( 
-			strmatch( %qz, condition ), 
-			u( f.logtext, 
-				add, 
-				%#, 
-				cond, 
-				add|%#|%qp|[u( f.format.player.status.title, %qv )]|%2 
+			strcat( 
+				set( %qp, _%ql.[secs( )]:[setr( v, %ql|%2| )] ), 
+// logging is hellishly broken 
+/*				if( 
+					strmatch( %3, cond ), 
+					u( f.logtext, 
+						add, 
+						%#, 
+						cond, 
+						add|%#|%qp|[u( f.format.player.status.title, %qv )]|%2 
+					)
+				), 
+*/
+				u( .msg, %3, 
+					strcat( 
+						You add the, %b, u( f.format.player.status.title, %qv ), %b, 
+						%qz to, %b, 
+						ifelse( strmatch( %qp, %# ), yourself, %qn ), %b, 
+						as #, 
+						words( lattr( %qp/_%3.* )), 
+						if( t( %2 ), %bwith note of '%2' ) 
+					)
+				)
 			)
-		)]
-
-		[u( .alert, %3 )] You add the [u( f.format.player.status.title, %qv )] 
-		%qz to [ifelse( strmatch( %qp, %# ), yourself, name( %qp ))] as 
-		#[words( lattr( %qp/_%3.* ))]
-		[if( t( %2 ), %bwith note of %2 )]. 
-	)]
+		)
+	)
 
 // -----------------------------------------------------------------------------
 
@@ -323,8 +342,15 @@ I'm stealing this from Reno (with permission).
 &C.STATUS/NOTE +Cond and +Tilt Status Tracker <ctst>=
 	switch( 1, 
 		regmatch( %0, .*\/.* ), 
-		[setq( s, rest( %0, / ))]
-		[u( c.player.status.note, first( %0,/ ), trim( first( %qs, = )), trim( rest( %qs, = )), %1 )], 
+		strmatch( 
+			setq( s, rest( %0, / )), 
+			u( c.player.status.note, 
+				first( %0, / ), 
+				trim( first( %qs, = )), 
+				trim( rest( %qs, = )), 
+				%1 
+			)
+		), 
 
 		u( c.player.status.note, 
 			%#, 
@@ -346,35 +372,48 @@ I'm stealing this from Reno (with permission).
 
 &CMT.C.PLAYER.STATUS.SET +Cond and +Tilt Status Tracker <ctst>=
 	Sets the %0's %1 # status of %5 type's %3 index (which is named %4) to %2. 
-	Format is <player name>, <status index to edit>, <new value>, <player status 
-	object index in | list>, <description of what's being editted i.e. note or 
-	title>, <type of status>
+	Format is <player name>, <status index to edit>, <new value>, <player 
+	status object index in | list>, <description of what's being editted i.e. 
+	note or title>, <type of status>
 
 &C.PLAYER.STATUS.SET +Cond and +Tilt Status Tracker <ctst>=
-	[setq( z, case( %5, cond, condition, tilt, tilt ))]
-	[case( 0, 
-		t( setr( p, pmatch( %0 ))), 
-		[u( .alert, %5 )] Player not found, 
+	strcat( 
+		setq( z, case( %5, cond, Condition, tilt, Tilt )), 
+		setq( p, pmatch( %0 )), 
+		setq( n, name( %qp )), 
+		setq( l, lattr( %qp/_%5.* )), 
+		setq( a, extract( %ql, %1, 1 )), 
+		case( 0, 
+			t(  %qp ), 
+			u( .msg, %5, Player not found ), 
 
-		or( strmatch( %qp, %# ), isstaff( %# )), 
-		[u( .alert, %5 )] Staff only., 
+			or( strmatch( %qp, %# ), isstaff( %# )), 
+			u( .msg, %5, Staff only ), 
 
-		isint( %1 ), 
-		[u( .alert, %5 )] %1 is not a number, 
+			isint( %1 ), 
+			u( .msg, %5, '%1' is not a number ), 
 
-		t( setr( l, lattr( %qp/_%5.* ))), 
-		[u( .alert, %5 )] No [%qz]s set on [name( %qp )]., 
+			t( %ql ), 
+			u( .msg, %5, No [%qz]s set on %qn ), 
 
-		lte( %1, words( %ql )), 
-		[u( .alert, %5 )] That %qz index not found for [name( %qp )], 
+			lte( %1, words( %ql )), 
+			u( .msg, %5, %qz #%1 not found for %qn ), 
 
-		[setq( s, get( %qp/[setr( a, extract( %ql, %1, 1 ))] ))]
-		[set( %qp, %qa:[replace( %qs, %3, %2, | )] )]
-		[u( .alert, %5 )] You replace the %4 on 
-			[ifelse( strmatch( %qp, %# ), your, [name( %qp )]'s )] 
-			%1. [u( f.format.player.status.title, %qs )] %qz 
-			with %2. 
-	)]
+			strcat( 
+				setq( s, get( %qp/%qa )), 
+				set( %qp, %qa:[replace( %qs, %3, %2, | )] ), 
+
+				u( .msg, %5, 
+					cat( 
+						You replace the %4 on, 
+						ifelse( strmatch( %qp, %# ), your, %qn's ), %1., 
+						u( f.format.player.status.title, %qs ), 
+						%qz with %2. 
+					)
+				)
+			)
+		)
+	)
 
 // -----------------------------------------------------------------------------
 
@@ -384,13 +423,15 @@ I'm stealing this from Reno (with permission).
 &C.STATUS/TITLE +Cond and +Tilt Status Tracker <ctst>=
 	switch( 1, 
 		regmatch( %0, .*\/.* ), 
-		[setq( s, rest( %0, / ))]
-		[u( c.player.status.title, 
-			first( %0, / ), 
-			trim( first( %qs, = )), 
-			trim( rest( %qs, = )), 
-			%1 
-		)], 
+		strcat( 
+			setq( s, rest( %0, / )), 
+			u( c.player.status.title, 
+				first( %0, / ), 
+				trim( first( %qs, = )), 
+				trim( rest( %qs, = )), 
+				%1 
+			)
+		), 
 
 		u( c.player.status.title, 
 			%#, 
@@ -427,42 +468,54 @@ I'm stealing this from Reno (with permission).
 	Delete %0's %1 # status of type %2
 
 &C.PLAYER.STATUS.REM +Cond and +Tilt Status Tracker <ctst>=
-	[setq( z, case( %2, cond, condition, tilt, tilt ))]
-	[case( 0, 
-		t( setr( p, pmatch( %0 ))), 
-		[u( .alert, %2 )] Player not found, 
-		
-		or( strmatch( %qp, %# ), isstaff( %# )), 
-		[u( .alert, %2 )] Staff only., 
-		
-		isint( %1 ), 
-		[u( .alert, %2 )] %1 is not a number, 
+	strcat( 
+		setq( z, case( %2, cond, Condition, tilt, Tilt )), 
+		setq( p, pmatch( %0 )), 
+		setq( n, name( %qp )), 
+		setq( l, lattr( %qp/_%2.* )), 
+		setq( a, extract( %ql, %1, 1 )), 
+		setq( s, get( %qp/%qa )), 
+		case( 0, 
+			t( %qp ), 
+			u( .msg, %2, Player not found ), 
+			
+			cor( strmatch( %qp, %# ), isstaff( %# )), 
+			u( .msg, %2, Staff only ), 
+			
+			isint( %1 ), 
+			u( .msg, %2, '%1' is not a number ), 
 
-		t( setr( l, lattr( %qp/_%2.* ))), 
-		[u( .alert, %2 )] No [%qz]s set on [name( %qp )]., 
-		
-		lte( %1, words( %ql )), 
-		[u( .alert, %2 )] That %qz index not found for [name( %qp )], 
-		
-		[setq( a, extract( %ql, %1, 1 ))]
-		[setq( s, get( %qp/%qa ))]
-
-		[if( 
-			strmatch( %qz, condition ), 
-			u( f.logtext,  
-				add, 
-				%#, 
-				cond, 
-				rem|%#|%qp|
-				[u( f.format.player.status.title, %qs )]|
-				[u( f.get.player.note, get( %qp/%qa ))] 
+			t( %ql ), 
+			u( .msg, %2, No [%qz]s set on %qn ), 
+			
+			lte( %1, words( %ql )), 
+			u( .msg, %2, %qz #%1 not found for %qn ), 
+			
+			strcat( 
+// logging his hellishly broken
+/*				if( 
+					strmatch( %2, cond ), 
+					u( f.logtext,  
+						add, 
+						%#, 
+						cond, 
+						rem|%#|%qp|
+						[ulocal( f.format.player.status.title, %qs )]|
+						[ulocal( f.get.player.note, get( %qp/%qa ))] 
+					)
+				), 
+*/
+				set( %qp, %qa: ), 
+				u( .msg, %2, 
+					cat( 
+						You remove, 
+						ifelse( strmatch( %qp, %# ), your, %qn's ), 
+						#%1, u( f.format.player.status.title, %qs ), %qz 
+					)
+				)
 			)
-		)]
-		[set( %qp, %qa: )]
-		[u( .alert, %2 )] You remove 
-		[ifelse( strmatch( %qp, %# ), your, [name( %qp )]'s )] 
-		%1. [u( f.format.player.status.title, %qs )] %qz. 
-	)]
+		)
+	)
 
 // -----------------------------------------------------------------------------
 
@@ -495,34 +548,43 @@ I'm stealing this from Reno (with permission).
 	Shows %0's %1 # status of type %3 to %2 list of players
 
 &C.PLAYER.STATUS.SHOW +Cond and +Tilt Status Tracker <ctst>=
-	[setq( z, case( %3, cond, condition, tilt, tilt ))]
-	[case( 0, 
-		t( setr( p, pmatch( %0 ))), 
-		[u( .alert, %3 )] Player not found, 
-		
-		or( strmatch( %qp, %# ), isstaff( %# )), 
-		[u( .alert, %3 )] Staff only., 
-		
-		isint( %1 ), 
-		[u( .alert, %3 )] %1 is not a number, 
-		
-		t( setr( l, lattr( %qp/_%3.* ))), 
-		[u( .alert, %3 )] No [%qz]s set on [name( %qp )]., 
-		
-		lte( %1, words( %ql )), 
-		[u( .alert, %3 )] That %qz index not found for [name( %qp )], 
-		
-		t( setr( t, u( f.test.to-list, %2 ))), 
-		[u( .alert, %3 )] To list must be valid player names or aliases 
-		in a comma-separated list., 
-		
-		[setq( s, get( %qp/[setr( a, extract( %ql, %1, 1 ))] ))]
-		[pemit( %qt, u( f.format.player.status.details, %qp, %qa, %3 ))]
+	strcat( 
+		setq( z, case( %3, cond, Condition, tilt, Tilt )), 
+		setq( p, pmatch( %0 )), 
+		setq( n, name( %qp )), 
+		setq( t, u( f.test.to-list, %2 )), 
+		case( 0, 
+			t( %qp ), 
+			u( .msg, %3, Player not found ), 
+			
+			or( strmatch( %qp, %# ), isstaff( %# )), 
+			u( .msg, %3, Staff only ), 
+			
+			isint( %1 ), 
+			u( .msg, %3, '%1' is not a number ), 
+			
+			t( setr( l, lattr( %qp/_%3.* ))), 
+			u( .msg, %3, No [%qz]s set on %qn ), 
+			
+			lte( %1, words( %ql )), 
+			u( .msg, %3, Player not found ), 
+			[u( .alert, %3 )] %qz #%1 not found for %qn, 
+			
+			t( %qt ), 
+			u( .msg, %3, 
+				To list must be valid player names or aliases in a comma-separated list 
+			), 
+			
+			[setq( s, get( %qp/[setr( a, extract( %ql, %1, 1 ))] ))]
+			[pemit( %qt, u( f.format.player.status.details, %qp, %qa, %3 ))]
 
-		[u( .alert, %3 )] You show your 
-		[u( f.format.player.status.title, %qs )] %qz 
-		to [iter( %qt, name( %i0 ),%b,%, )]. 
-	)]
+			u( .msg, %3, Player not found ), 
+			[u( .alert, %3 )] You show your 
+			[u( f.format.player.status.title, %qs )] %qz 
+			to [iter( %qt, name( %i0 ),%b,%, )]. 
+		)
+	), 
+
 
 // -----------------------------------------------------------------------------
 
@@ -677,7 +739,10 @@ I'm stealing this from Reno (with permission).
 	)
 
 // -----------------------------------------------------------------------------
+// Logging has been turned off because it's currently broken
 
+&C.STATUS/LOG +Cond and +Tilt Status Tracker <ctst>=
+/*
 &C.STATUS/LOG +Cond and +Tilt Status Tracker <ctst>=
 	[setq( z, case( %1, cond, condition, tilt, tilt ))]
 	[if( strmatch( %qz, condition ), 
@@ -716,9 +781,13 @@ I'm stealing this from Reno (with permission).
 
 		[u( .alert, %1 )]: Not available for this type of status. 
 	)]
+*/
 
 // -----------------------------------------------------------------------------
+// Logging has been turned off because it's currently broken
 
+&C.STATUS/HISTORY +Cond and +Tilt Status Tracker <ctst>=
+/*
 &C.STATUS/HISTORY +Cond and +Tilt Status Tracker <ctst>=
 	[setq( z, case( %1, cond, condition, tilt, tilt ))]
 	[if( strmatch( %qz, condition ), 
@@ -745,6 +814,7 @@ I'm stealing this from Reno (with permission).
 		
 		[u( .alert, %4 )]: Not available for this type of status. 
 	)]
+*/
 
 
 
@@ -802,7 +872,8 @@ outputs:
 looks for:
 	&_cond.log.<timestamp>.<6-digit precision>: ...
 	&_tilt.log.<timestamp>.<6-digit precision>: ...
-*/
+
+WARNING: Couldn't get this to work, so I'm turning it off for now. 
 
 &f.logtext +Cond and +Tilt Status Tracker <ctst>=
 	localize( strcat( 
@@ -820,11 +891,12 @@ looks for:
 			), 
 			
 			add, 
-			set( %1, _%qs.log.[secs( utc, 6 )]: %3 ), 
+			set( %1, _%qs.log.[secs( utc, 6 )]:%3 ), 
 		
-			#-1 I don't know what you want me to do
+			#-1 I don't know what you want me to do 
 		)
 	))
+*/
 
 
 /*
