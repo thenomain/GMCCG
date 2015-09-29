@@ -621,20 +621,32 @@ trait" based on general power level.
 
 >>> When adding or removing spheres from a game, alter this -- for now <<< 
 
+Some spheres allow the max to be raised depending on a merit, and sometimes 
+only for a specific stat.
+
 	 0: sheet dbref
+	 1: trait statpath [optional]
 
 think u( dd/.max_trait, num( eric russell))
-think u( dd/.max_trait, num( *thenomain ))
+think u( dd/.max_trait, num( *thenomain ), attribute.intelligence )
 
 --
 
 &.max_trait dd=
-	max( 
-		5, 
-		u( .value, 
-			%0, 
-			udefault( .max_trait.[u( .value_full, %0, bio.template )], 
-				0 
+	add( 
+		max( 5, 
+			u( .value, 
+				%0, 
+				udefault( 
+					.max_trait.[u( .value_full, %0, bio.template )], 
+					0 
+				)
+			)
+		), 
+		ladd( 
+			iter( 
+				lattr( %!/.max.trait.[u( .value_full, %0, bio.template )].* ), 
+				u( %!/%i0, %0, %1 )
 			)
 		)
 	)
@@ -647,6 +659,9 @@ think u( dd/.max_trait, num( *thenomain ))
 &.max_trait.Mage dd=advantage.gnosis
 &.max_trait.Geist dd=advantage.psyche
 &.max_trait.Skinthief dd=advantage.supernatural_tolerance
+
+&.max_trait.Werewolf.Embodiment dd=
+	u( .has, %0, merit.embodiment_of_the_firstborn_([rest( %1, . )]) )
 
 
 --------------------------------------------------------------------------------
@@ -663,12 +678,12 @@ function, instead.
 	2: adding to stat, if any (pass %2 to this function, as there usually is)
 
 think u(dd/.max_trait, num( eric russell ))
-think u(dd/.max_trait, num( *thenomain ))
+think u(dd/.max_trait, num( *thenomain ), attribute.presence )
 
 --
 
 &.trait_check dd=
-	u( .at_most, %0, %1, u( .max_trait, %0 ), %2 )
+	u( .at_most, %0, %1, u( .max_trait, %0, %1 ), %2 )
 
 
 --------------------------------------------------------------------------------
@@ -737,5 +752,3 @@ Does the sheet have this specialty?
 
 &.Specialty_Has dd=
 	gt( words( iter( %1, lattr( %0/_skill.%i0.%2 ))), 0 )
-
-
