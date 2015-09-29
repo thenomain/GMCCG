@@ -1,11 +1,15 @@
-@@ #############################################################################
-@@ ## CORE WOD: TAGS ###########################################################
-@@ 
-@@ Tags for the Core WoD stats.
-@@ (Later, use this for page number and note references)
-@@ 
+/*
+###############################################################################
+## CORE WOD: TAGS #############################################################
 
-@@ == CORE ATTRIBUTES ==========================================================
+Tags for the Core WoD stats.
+(Later, use this for page number and note references)
+
+*/
+
+
+
+// == CORE ATTRIBUTES ==========================================================
 
 &tags.attribute.intelligence D:T=mental.power
 &tags.attribute.wits D:T=mental.finesse
@@ -21,9 +25,9 @@
 
 
 
-@@ == CORE SKILLS ==============================================================
+// == CORE SKILLS ==============================================================
 
-@@ -- Skills: Mental -----------------------------------------------------------
+// -- Skills: Mental -----------------------------------------------------------
 
 &tags.skill.academics D:T=mental
 &tags.skill.computer D:T=mental
@@ -34,7 +38,7 @@
 &tags.skill.politics D:T=mental
 &tags.skill.science D:T=mental
 
-@@ -- Skills: Physical ---------------------------------------------------------
+// -- Skills: Physical ---------------------------------------------------------
 
 &tags.skill.athletics D:T=physical
 &tags.skill.brawl D:T=physical
@@ -45,7 +49,7 @@
 &tags.skill.survival D:T=physical
 &tags.skill.weaponry D:T=physical
 
-@@ -- Skills: Social -----------------------------------------------------------
+// -- Skills: Social -----------------------------------------------------------
 
 &tags.skill.animal_ken D:T=social
 &tags.skill.empathy D:T=social
@@ -58,9 +62,9 @@
 
 
 
-@@ == CORE MERITS ==============================================================
+// == CORE MERITS ==============================================================
 
-@@ -- Merits: Mental -----------------------------------------------------------
+// -- Merits: Mental -----------------------------------------------------------
 
 &tags.merit.area_of_expertise_() D:T=mental
 &tags.merit.common_sense D:T=mental
@@ -84,7 +88,7 @@
 &tags.good_time_management D:T=mental
 
 
-@@ -- Merits: Physical ---------------------------------------------------------
+// -- Merits: Physical ---------------------------------------------------------
 
 &tags.merit.ambidextrous D:T=chargen-only.physical
 &tags.merit.crack_driver D:T=physical
@@ -100,7 +104,7 @@
 &tags.merit.small_framed D:T=chargen-only.physical
 
 
-@@ -- Merits: Social -----------------------------------------------------------
+// -- Merits: Social -----------------------------------------------------------
 
 &tags.merit.allies_() D:T=social
 &tags.merit.allies_() D:T=social
@@ -129,7 +133,7 @@
 &tags.merit.true_friend_() D:T=social
 
 
-@@ -- Merits: Fighting Merits --------------------------------------------------
+// -- Merits: Fighting Merits --------------------------------------------------
 
 &tags.merit.armed_defense D:T=physical.fighting.style
 &tags.merit.cheap_shot D:T=physical.fighting
@@ -151,13 +155,13 @@
 &tags.merit.unarmed_defense D:T=physical.fighting.style
 
 
-@@ -- Core Merits: Special -----------------------------------------------------
+// -- Core Merits: Special -----------------------------------------------------
 
 &tags.merit.virtuous D:T=special
 &tags.merit.vice-ridden_() D:T=special
 
 
-@@ -- Core Merits: Supernatural ------------------------------------------------
+// -- Core Merits: Supernatural ------------------------------------------------
 
 &tags.merit.aura_reading D:T=human.supernatural.mental
 &tags.merit.biokinesis D:T=human.supernatural.physical
@@ -175,14 +179,14 @@
 
 
 
-@@ == CORE ADVANTAGES ==========================================================
+// == CORE ADVANTAGES ==========================================================
 
 &tags.advantage.integrity D:T=integrity.human
 &tags.advantage.willpower D:T=derived.pool
 &tags.advantage.willpower_maximum D:T=derived.pool
 
 
-@@ -- Other Advantages ---------------------------------------------------------
+// -- Other Advantages ---------------------------------------------------------
 
 &tags.advantage.defense D:T=derived
 &tags.advantage.weaponry_defense D:T=derived
@@ -194,14 +198,14 @@
 
 
 
-@@ == BIO ======================================================================
+// == BIO ======================================================================
 
 &tags.bio.sphere D:T=derived
 
 
 
 /*
-@@ == CONDITIONS ===============================================================
+// == CONDITIONS ===============================================================
 
 &tags.condition.addicted_() D:T=persistent
 &tags.condition.amnesia D:T=persistent
