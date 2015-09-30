@@ -1,6 +1,7 @@
+/*
 ################################################################################
 ## FUNCTIONS ABOUT TAGS ########################################################
-################################################################################
+
 
 
 ================================================================================
@@ -16,21 +17,23 @@ Returns only the stats of a certain category (* for 'all') with a certain tag ('
 returns: character sheet statpaths
 
 --------------------------------------------------------------------------------
+*/
 
 &f.list-stats-tags sfp=
-	filter(
+	filter( 
 		fil.list-stats-tags, 
-@@ .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
-@@ .. so we can use the filter for non-sheet matches
-		rest(edit(lattr(%0/_%1.*), %b_, %b), _), 
+// .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
+// .. so we can use the filter for non-sheet matches
+		rest( edit( lattr( %0/_%1.* ), %b_, %b ), _ ), 
 		, 
 		, 
 		%2, 
-		not(strmatch(%3, or))
+		not( strmatch( %3, or ))
 	)
 
 
 
+/*
 ================================================================================
 == Filter: Does this stat have these tags? =====================================
 
@@ -40,17 +43,18 @@ Filter based on a tags list
 2: "0" for or, "1" for and
 
 --------------------------------------------------------------------------------
+*/
 
 &fil.list-stats-tags sfp=
-	ulocal(
+	ulocal( 
 		f.hastag?.workhorse, 
-		ulocal(f.statpath-without-instance, %0), 
+		ulocal( f.statpath-without-instance, %0 ), 
 		%1, 
 		%2
 	)
 
 
-
+/*
 ================================================================================
 == Filter: Is This Stat One of These Types? ====================================
 
@@ -60,12 +64,14 @@ Probably duplicitous. Filter based on a tags list
 1: types to check against
 
 --------------------------------------------------------------------------------
+*/
 
 &fil.list-stats-types sfp=
-	t(match(%1, first(%0, .)))
+	t( match( %1, first( %0, . )))
 
 
 
+/*
 ================================================================================
 == Filter: Does This Stat Have One of These Values? ============================
 
@@ -75,45 +81,76 @@ Filter based on values list (value.value 2.value 3)
 1: values to check against
 
 --------------------------------------------------------------------------------
+*/
 
 &fil.list-stats-values sfp=
-	setunion(
-		get([u(d.data-dictionary)]/[ulocal(f.statpath-without-instance, %0)]), 
+	setunion( 
+		get( 
+			u( d.data-dictionary )/
+			[ulocal( f.statpath-without-instance, %0 )] 
+		), 
 		%1, 
-		.
+		. 
 	)
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
+// -- most of these are destined to fail --
 
-think filter(sfp/fil.list-stats-tags, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , changeling)
+think 
+	filter( sfp/fil.list-stats-tags, 
+		trim( edit( lattr( me/_*.* ), %b_, %b ), b, _ ), , , 
+		human 
+	)
 
-think filter(sfp/fil.list-stats-types, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , attribute merit)
+	think 
+		filter( sfp/fil.list-stats-tags, 
+			trim( edit( lattr( me/_*.* ), %b_, %b ), b, _ ), , , 
+			attribute merit 
+		)
 
-think [setq(0, merit)][setq(1, changeling)][filter(sfp/fil.list-stats-tags, lattr(dd/%q0.*), , , %q1, not(strmatch(%q2, or)))]
+think 
+	[setq( 0, merit )]
+	[setq( 1, human )]
+	[filter( sfp/fil.list-stats-tags, 
+		lattr( dd/%q0.* ), , , %q1, not( strmatch( %q2, or ))
+	)]
 
 
-think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , 4)
+think 
+	filter( sfp/fil.list-stats-values, 
+		trim( edit( lattr( me/_*.* ), %b_, %b ), b, _ ), , , 4 
+	)
 
-think filter(sfp/fil.list-stats-values, trim(edit(lattr(me/_*.*), %b_, %b), b, _), , , Changeling)
+think 
+	filter( sfp/fil.list-stats-values, 
+		trim( edit( lattr( me/_*.* ), %b_, %b ), b, _ ), , , Human 
+	)
 
 
 
 
+/*
 ################################################################################
 ## PREREQUITE FUNCTIONS ########################################################
-################################################################################
 
-We check format, stat path, and roughly check the value.  Here we also check the types of prerequisites imposed upon us by ourselves in &prerequisite.<statpath>, but also by the Storytelling system.  I'll try to be careful to notate which is which.
+We check format, stat path, and roughly check the value. Here we also check 
+the types of prerequisites imposed upon us by ourselves in 
+&prerequisite.<statpath>, but also by the Storytelling system. I'll try to be 
+careful to notate which is which.
 
 These functions do minimal error-checking.
 
-Failed prerequisites should always return #-3 <reason> and be checked after value-checking.
+Failed prerequisites should always return #-3 <reason> and be checked after 
+value-checking.
 
 
 ================================================================================
 == PREREQ: OTHER ===============================================================
 
-We'll start with the most generic of prerequisite checks, stored on &prerequisite.<statpath>.  The error message when this check fails are pulled from &prereq-text.<statpath>
+We'll start with the most generic of prerequisite checks, stored on 
+&prerequisite.<statpath>. The error message when this check fails are pulled 
+from &prereq-text.<statpath>
 
 Remember we pass to prerequisite.<statpath> the following:
 	0: dbref of sheet
@@ -126,6 +163,7 @@ returns: 1 if valid, #-1 <reason> if not
 p: return for &prerequisite.<statpath>
 
 --------------------------------------------------------------------------------
+*/
 
 &f.prereq-check-other sfp=
 	localize( 
@@ -152,32 +190,28 @@ p: return for &prerequisite.<statpath>
 		)]
 	)
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
+// -- these will be hard to check without a sheet --
 
-@@ these will be hard to check without a sheet, won't they
-
-think u(sfp/f.prereq-check-other, pmatch(dog), merit.mantle_(), spring)
-think u(sfp/f.prereq-check-other, pmatch(dog), merit.court_goodwill_(), spring)
-
-think u(sfp/f.prereq-check-other, pmatch(gwen), merit.mantle_(), spring, 1)
-think u(sfp/f.prereq-check-other, pmatch(gwen), merit.court_goodwill_(), spring, 1)
-
-think u(sfp/f.prereq-check-other, pmatch(thenomain), contract.fleeting_spring, spring, 1)
-think u(sfp/f.prereq-check-other, pmatch(thenomain), contract.fleeting_spring, spring, 5)
-
-think u(sfp/f.prereq-check-other, pmatch(gwen), contract.fleeting_spring, spring, 1)
-think u(sfp/f.prereq-check-other, pmatch(gwen), contract.fleeting_spring, spring, 5)
-
-think u(sfp/f.prereq-check-other, pmatch(jade), merit.workshop_(), Washington's_Obsequy)
-think u(sfp/f.prereq-check-other, pmatch(jade), merit.workshop_(), Washington's_Obsequy, 1)
+think 
+	u( sfp/f.prereq-check-other, 
+		pmatch( thenomain ), merit.language_(), spring, 1 
+	)
+	think 
+		u( sfp/f.prereq-check-other, 
+			pmatch( thenomain ), merit.language_(), spring, 5 
+		)
 
 
+
+/*
 ================================================================================
 == PREREQ: CGEN ================================================================
 
-Some stats are cgen-only.  We are not going to enforce this, but add this function to the stat system for completeness.
+Some stats are cgen-only. We are not going to enforce this, but add this function to the stat system for completeness.
 
-Please note that unlike other support functions, we're sending the player dbref, not the sheet dbref.  Fine-tune this for your own game.
+Please note that unlike other support functions, we're sending the player dbref, not the sheet dbref. Fine-tune this for your own game.
 
 may use zones in the future
 0: player dbref
@@ -185,35 +219,45 @@ may use zones in the future
 returns: 1 if valid, #-1 <reason> if not
 
 --------------------------------------------------------------------------------
+*/
 
 &f.prereq-check-cgen sfp=
-	if(
-		cor(
-@@ .. player is in chargen
-			strmatch(loc(%0), u( d.chargen )), 
-@@ .. stat is not cg-only
-			not(u(f.hastag?.workhorse, %1, chargen-only))
+	if( 
+		cor( 
+// .. player is in chargen
+			strmatch( loc( %0 ), u( d.chargen )), 
+// .. stat is not cg-only
+			not( u( f.hastag?.workhorse, %1, chargen-only ))
 		), 
 		1, 
-		#-3 Stat May Only Be Purchased At Character Generation
+		#-3 Stat May Only Be Purchased At Character Generation 
 	)
 
----
+// -- test --
+// -- NOTE: test won't work until 'hastag?' is in --
 
-@@ NOTE: test won't work until 'hastag?' is in.
+think u( sfp/f.prereq-check-cgen, pmatch( thenomain ), attribute.presence )
+think u( sfp/f.prereq-check-cgen, 
+		pmatch( thenomain ), merit.encyclopedic_knowledge 
+	)
 
-think u(sfp/f.prereq-check-cgen, pmatch(thenomain), attribute.presence)
-think u(sfp/f.prereq-check-cgen, pmatch(thenomain), merit.encyclopedic_knowledge)
 
 
+/*
 ================================================================================
 == PREREQ: TEMPLATE ============================================================
 
-I know the stat system as a whole doesn't normally care about this, but to validate setstat(), we'll need this.
+I know the stat system as a whole doesn't normally care about this, but to 
+validate setstat(), we'll need this.
 
-Templates are only important for the Storytelling (etc) systems, but I can see it being used in other systems as well.  Say only your Anita Blake Vampires can have the Sexy Fangs stat.
+Templates are only important for the Storytelling (etc) systems, but I can see 
+it being used in other systems as well. Say only your Anita Blake Vampires can 
+have the Sexy Fangs stat.
 
-Requires the Data Dictionary to have &bio.template, and &tags.<statpath> to include the stat.  If &tags.<statpath> has no templates in it, then it will be considered valid.  (So even if you don't use templates, this system won't hurt anything, just be extra code.)
+Requires the Data Dictionary to have &bio.template, and &tags.<statpath> to 
+include the stat. If &tags.<statpath> has no templates in it, then it will be 
+considered valid. (So even if you don't use templates, this system won't hurt 
+anything, just be extra code.)
 
 See Also: setstat(), where this will be used.
 
@@ -228,37 +272,39 @@ b: bio.template
 t: templates used in tags.<statpath>
 
 --------------------------------------------------------------------------------
+*/
 
 &f.prereq-check-template sfp=
-localize(
-	[setq(b, lcstr( u( [u( d.data-dictionary )]/bio.template )))]
-	[setq(t, setinter( lcstr( u( [u( d.data-tags )]/tags.%1 )), %qb, . ))]
-	[case( 0, 
-@@ .. stat uses no templates, so is valid to all templates
-		comp( %qt, ), 1, 
-@@ .. check the intersection of stat's templates with sheet's
-		comp( setinter( %qt, lcstr( u( %0/_bio.template )), . ), ), 
-		#-3 Stat Not Allowed For This Template, 
-@@ .. no other errors, so 1
-		1 
-	)] 
-)
+	localize( 
+		[setq( b, lcstr( u( [u( d.data-dictionary )]/bio.template )))]
+		[setq( t, setinter( lcstr( u( [u( d.data-tags )]/tags.%1 )), %qb, . ))]
+		[case( 0, 
+// .. stat uses no templates, so is valid to all templates
+			comp( %qt, ), 1, 
+// .. check the intersection of stat's templates with sheet's
+			comp( setinter( %qt, lcstr( u( %0/_bio.template )), . ), ), 
+			#-3 Stat Not Allowed For This Template, 
+// .. no other errors, so 1
+			1 
+		)] 
+	)
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
 
-think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.unseen_sense_())
-think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.mantle_())
-think u(sfp/f.prereq-check-template, pmatch(thenomain), attribute.strength)
+think u( sfp/f.prereq-check-template, pmatch( thenomain ), merit.unseen_sense_() )
+think u( sfp/f.prereq-check-template, pmatch( thenomain ), merit.mantle_() )
+think u( sfp/f.prereq-check-template, pmatch( thenomain ), attribute.strength )
 
 
 
 
+/*
 ################################################################################
 ## PRETTYSTAT FUNCTIONS ########################################################
-################################################################################
 
-These functions are designed to help the character sheet make things look pretty 
-and neat.
+These functions are designed to help the character sheet make things look 
+pretty and neat.
 
 
 
@@ -275,57 +321,80 @@ qb: base
 qo: offset
 
 --------------------------------------------------------------------------------
+*/
 
 &f.pretty-stat-num sfp=
+	localize( switch( 
+		[setq( b, first( %0, . ))]
+		[setq( o, rest( %0, . ))]
+		1, 
+// if <value> or <offset> are non-numeric, forget it
+		not( cand( isnum( %qb ), cor( isnum( %qo ), not( t( %qo ))))), 
+		ansi( hw, %0 ), 
+// stars! + offset = wwwhh
+		cand( t( %1 ), gte( %qo, 0 )), 
+		ansi( 
+			w, repeat( o, %qb ), 
+			g, repeat( *, %qo )
+		), 
+// stars! - offset = yyxxx
+		cand( t( %1 ), lt( %qo, 0 )), 
+		ansi( 
+			w, repeat( o, add( %qb, %qo )), 
+			hx, repeat(., min( abs( %qo ), %qb ))
+		), 
+// number! + offset = g
+		gt( %qo, 0 ), 
+		ansi( ng, add( %qb, %qo )), 
+// number! - offset = y
+		lt( %qo, 0 ), 
+		ansi( hy, add( %qb, %qo )), 
+// else, number! + 0 = w
+		ansi( w, %0 )
+	))
 
-localize(switch(
-	[setq(b, first(%0, .))]
-	[setq(o, rest(%0, .))]
-	1, 
-@@ if <value> or <offset> are non-numeric, forget it
-	not(and(isnum(%qb), or(isnum(%qo), not(t(%qo))))), 
-	ansi(hw, %0), 
-@@ stars! + offset = wwwhh
-	and(t(%1), gte(%qo, 0)), 
-	ansi(w, [repeat(o, %qb)], g, [repeat(*, %qo)]), 
-@@ stars! - offset = yyxxx
-	and(t(%1), lt(%qo, 0)), 
-	ansi(w, [repeat(o, add(%qb, %qo))], hx, [repeat(., min(abs(%qo), %qb))]), 
-@@ number! + offset = g
-	gt(%qo, 0), 
-	ansi(ng, add(%qb, %qo)), 
-@@ number! - offset = y
-	lt(%qo, 0), 
-	ansi(hy, add(%qb, %qo)), 
-@@ else, number! + 0 = w
-	ansi(w, %0)
-))
+// -----------------------------------------------------------------------------
+// -- test --
 
---------------------------------------------------------------------------------
+think 
+	[ansi( c, statname( setr( 0, thenomain/str )))] 
+	[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
+	([u( sfp/f.prettify-stat-num, %q1 )])
 
-think [ansi(c, statname(setr(0, thenomain/str)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)] ([u(sfp/f.prettify-stat-num, %q1)])
+think 
+	[ansi( c, statname( setr( 0, thenomain/glam )))] 
+	[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
+	([u( sfp/f.prettify-stat-num, %q1 )])
 
-think [ansi(c, statname(setr(0, thenomain/glam)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)] ([u(sfp/f.prettify-stat-num, %q1)])
+think 
+	[ansi( c, statname( setr( 0, thenomain/spee )))] 
+	[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
+	([u( sfp/f.prettify-stat-num, %q1 )])
 
-think [ansi(c, statname(setr(0, thenomain/spee)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)] ([u(sfp/f.prettify-stat-num, %q1)])
+think 
+	[ansi( c, statname( setr( 0, thenomain/cont.rep )))] 
+	[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )]
 
-think [ansi(c, statname(setr(0, thenomain/cont.rep)))] [u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)]
+think u( sfp/f.prettify-stat-num, 4, 1 )
+think u( sfp/f.prettify-stat-num, 4.-1, 1 )
+think u( sfp/f.prettify-stat-num, 4.+1, 1 )
+think u( sfp/f.prettify-stat-num, 4 )
+think u( sfp/f.prettify-stat-num, 4.-1 )
+think u( sfp/f.prettify-stat-num, 4.+1 )
 
-think u(sfp/f.prettify-stat-num, 4, 1)
-think u(sfp/f.prettify-stat-num, 4.-1, 1)
-think u(sfp/f.prettify-stat-num, 4.+1, 1)
-think u(sfp/f.prettify-stat-num, 4)
-think u(sfp/f.prettify-stat-num, 4.-1)
-think u(sfp/f.prettify-stat-num, 4.+1)
-
-think iter(str glam spee cont.rep, >> [ansi(g, statname(setr(0, thenomain/##)))]: [[u(sfp/f.prettify-stat-num, setr(1, getstat(%q0, b)), 1)]], , %r)
+think 
+	iter( str glam spee cont.rep, 
+		>> [ansi( g, statname( setr( 0, thenomain/## )))]: 
+		[[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )]], 
+		, %r 
+	)
 
 
 
 
+/*
 ################################################################################
 ## HELP FILES ##################################################################
-################################################################################
 
 These attributes were made for Thenomain's softcode +help file system and are 
 left here for reference.
@@ -342,3 +411,5 @@ left here for reference.
 
 
 &SHELP~STAT_COMMANDS~+XP ##Staff +Help##=Adding and Spending a Player's XP~>>> This is a purely temporary solution. <<<%r%r[ansi(h, +xp)] : See your own XP, open to all.%r[ansi(h, +xp <player>)] : See <player>'s XP.%r[ansi(h, +xp/add <player>=<amt>)] : Add <amt> to <player>'s total XP.%r[ansi(h, +xp/spend <player>=<amt>)] : "Spend" <amt> of <player>'s XP.%r%rTechnically, this last one subtracts to the offset of the player's XP stat, so it can act a bit touchy. At the moment, you can "give back" Spent XP with a +xp/spend player=-amt.%r%rThis does not increase stats at all. See [ansi(h, +shelp stat)] and use that in conjunction with +xp/spend for now.
+
+*/

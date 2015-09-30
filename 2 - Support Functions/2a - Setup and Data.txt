@@ -1,12 +1,18 @@
+/*
 ================================================================================
 == SETUP =======================================================================
+*/
 
 @create Stat Functions Prototype <sfp>
 @set sfp=inherit safe
 
+@fo me=&d.sfp me=[num( stat functions prototype <sfp> )]
 
+
+/*
 ================================================================================
 == DATA ========================================================================
+*/
 
 @fo me=&d.data-dictionary sfp=[num( data dictionary <dd> )]
 @fo me=&d.sfp dd=[num( stat functions prototype <sfp> )]
@@ -14,6 +20,8 @@
 
 &d.cg sfp=<< location of character generation, may be obsolete >>
 
+
+/*
 ================================================================================
 == SEARCH ORDER ================================================================
 
@@ -29,9 +37,10 @@ d.search-order-<##>-<gameline>:
 	`02` should be for powers
 	`03` should be for less important additions, such as renown
 	`04` should be for smaller, social additions, such as entitlements
+	`09` should be for the least important traits, such as full name
 
 e.g.: 
-	core: (01) attribute skill merit advantage (03) bio
+	core: (01) attribute skill merit advantage (09) bio
 	vampire: (02) ... (03) ...
 	demon: (02) embed exploit (03) demonic_form
 	werewolf: (02) gift rite (03) renown
@@ -40,20 +49,24 @@ d.type.specials:
 	These are stat classes that are not rollable nor settable via softcode.
 
 --------------------------------------------------------------------------------
-	
+*/
+
 &d.search-order sfp=iter( sort( lattr( %!/d.search-order-* )), v( %i0 ))
 &d.search-order-01 sfp=attribute skill merit advantage
-@@ &d.search-order-<##>-<gameline> sfp=<stuff>
+// &d.search-order-<##>-<gameline> sfp=<stuff>
 &d.search-order-09 sfp=bio
 
 &d.type.specials sfp=special health 
 
 &filter.search-types sfp=t( match( u( d.search-order ), first( %0, . )))
 
-&sortby.types sfp=[setq( o, u( d.search-order ))][comp( match( %qo, first( %0, . )), match( %qo, first( %1, . )))]
+&sortby.types sfp=
+	[setq( o, u( d.search-order ))]
+	[comp( match( %qo, first( %0, . )), match( %qo, first( %1, . )))]
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
 
-think sortby(sfp/sortby.types, filter(sfp/filter.search-types, sort(lattr(dd/*.s*))))
+think sortby( sfp/sortby.types, filter( sfp/filter.search-types, sort( lattr( dd/*.s* ))))
 
-think sortby(sfp/sortby.types, filter(sfp/filter.search-types, sort(lattr(dd/*.str*))))
+think sortby( sfp/sortby.types, filter( sfp/filter.search-types, sort( lattr( dd/*.str* ))))

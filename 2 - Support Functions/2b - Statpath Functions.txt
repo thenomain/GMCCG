@@ -1,11 +1,10 @@
+/*
 ################################################################################
 ## STATPATH FUNCTIONS ##########################################################
-################################################################################
 
-
-In order to determine how to store a trait, we first have to determine what that 
-trait looks like. This is the stat-path, which is the lynchpin of the entire 
-system.
+In order to determine how to store a trait, we first have to determine what 
+that trait looks like. This is the stat-path, which is the lynchpin of the 
+entire system.
 
 This relies heavily on the 'type search order' up in the setup and data file.
 
@@ -29,6 +28,7 @@ To find middle matches, pass *<name>* or *<name>
 0: Partial stat name to search for
 
 --------------------------------------------------------------------------------
+*/
 
 &f.stat-list-selected sfp=
 	setunion(
@@ -38,7 +38,8 @@ To find middle matches, pass *<name>* or *<name>
 		), 
 	)
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
 
 think u(sfp/f.stat-list-selected, st)
 think u(sfp/f.stat-list-selected, *str*)
@@ -46,6 +47,7 @@ think u(sfp/f.stat-list-selected, *ual_k*)
 
 
 
+/*
 ================================================================================
 == FIND SHEET ==================================================================
 
@@ -55,14 +57,17 @@ this is a simple lookup function, in case things are changed
 0: dbref of player
 returns: dbref of sheet
 
+if the "sheet location" stat is on the passed item, pass that back, 
+else assume the sheet is on the player
+
 --------------------------------------------------------------------------------
+*/
 
 &f.find-sheet sfp=
-@@ if the "sheet location" stat is on the passed item, pass that back
-@@ else assume the sheet is on the player
 	udefault( %0/_special.sheet_location, %0 )
 
 
+/*
 ================================================================================
 == STAT INPUT: INSTANCE IS NULL? ===============================================
 
@@ -73,15 +78,19 @@ Returns 1 if null instance, else returns 0.
 Returns: 1 if instance is there but null, 0 otherwise
 
 --------------------------------------------------------------------------------
+*/
 
 &f.stat-input-instance-is-null? sfp=regmatch(%0, .*%\(%\))
 
 
 
+/*
 ================================================================================
 == STATVALUE-GOOD ==============================================================
 
-It occurred to me, a bit late, that I could use a function that does nothing but check to see if the value someone is trying to set for a stat is bad.  Bad values are: 
+It occurred to me, a bit late, that I could use a function that does nothing 
+but check to see if the value someone is trying to set for a stat is bad. Bad 
+values are: 
 	`			- because the charsheet uses this as a delimiter
 
 That's it for now.
@@ -90,26 +99,28 @@ That's it for now.
 returns: 0 if bad, 1 if good
 
 --------------------------------------------------------------------------------
+*/
 
 &f.statvalue-good sfp=not(strmatch(%0, *`*))
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
 
-think u(sfp/f.statvalue-good, blah)
+think u( sfp/f.statvalue-good, blah )
 
-think u(sfp/f.statvalue-good, .blah)
-think u(sfp/f.statvalue-good, blah.blah)
-think u(sfp/f.statvalue-good, 10.blah)
+think u( sfp/f.statvalue-good, .blah )
+think u( sfp/f.statvalue-good, blah.blah )
+think u( sfp/f.statvalue-good, 10.blah )
 
-think u(sfp/f.statvalue-good, `blah)
-think u(sfp/f.statvalue-good, b`lah)
-think u(sfp/f.statvalue-good, blah`)
+think u( sfp/f.statvalue-good, `blah )
+think u( sfp/f.statvalue-good, b`lah )
+think u( sfp/f.statvalue-good, blah` )
 
 
 
+/*
 ================================================================================
 == STAT INPUT: BREAK DOWN TO REGISTERS =========================================
-
 
 0: <stat>[ (<instance>)][.<substat>]
    "<stat>(<instance>)" and "<stat>(<instance>" should both also work
@@ -123,23 +134,24 @@ qy: instance
 qz: sub-trait/specialty
 
 --------------------------------------------------------------------------------
+*/
 
 &f.stat-input-breakdown-registers sfp=
+	[setq( z, squish( edit( %0, %(, %b%( )))]
+	[setq( x, trim( before( before( %qz, . ), %( )))]
+	[setq( y, before( rest( before( %qz, . ), %( ), %) ))]
+	[setq( z, rest( %qz, . ))]
 
-[setq(z, squish(edit(%0, %(, %b%()))]
+// -----------------------------------------------------------------------------
+// -- test --
 
-[setq(x, trim(before(before(%qz, .), %()))]
-[setq(y, before(rest(before(%qz, .), %(), %)))]
-[setq(z, rest(%qz, .))]
+think [u( sfp/f.stat-input-breakdown-registers, lit( get(foo).yay ))]%qx.%qy.%qz
 
---------------------------------------------------------------------------------
-
-think [u(sfp/f.stat-input-breakdown-registers, lit(get(foo).yay))]%qx.%qy.%qz
-
--=> get.foo.yay
-
+// -=> get.foo.yay
 
 
+
+/*
 ================================================================================
 == STATPATH: VALIDATE NAME =====================================================
 
@@ -167,69 +179,74 @@ q4: Final outcome
 qz, qa, qb: Regmatch results
 
 --------------------------------------------------------------------------------
+*/
 
 &f.statpath-validate-name sfp=
-localize(
+	localize( 
 
-@@ spaces to underscores
-@@ (and, cheating, ignore the instance)
-	[setq(0, edit(first(%0, .), %b, _))]
+// spaces to underscores
+// (and, cheating, ignore the instance)
+		[setq( 0, edit( first( %0, . ), %b, _ ))]
 
-@@ instanced?
-	[setq(1, 
-		if(
-			regmatch(%q0, %(.*%)%\(%(.*%)%\), z a b), 
-			[trim(%qa, b, _)]*_%(%), 
-			%q0*
-		)
-	)]
-
-@@ look for all possibilities in data dictionary
-@@ then filter it down and grab it by order
-	[setq(2, 
-		sortby(
-			sortby.types, 
-			filter(
-				filter.search-types, 
-				u(f.stat-list-selected, %q1)
+// instanced?
+		[setq( 1, 
+			if( 
+				regmatch( %q0, %(.*%)%\(%(.*%)%\), z a b ), 
+				[trim( %qa, b, _ )]*_%(%), 
+				%q0* 
 			)
-		)
-	)]
+		)]
+
+// look for all possibilities in data dictionary
+// then filter it down and grab it by order
+		[setq( 2, 
+			sortby( 
+				sortby.types, 
+				filter( 
+					filter.search-types, 
+					u( f.stat-list-selected, %q1 )
+				)
+			)
+		)]
 	
-@@ (look for literal match FIRST, THEN grab first sorted outcome)
-	[setq(4, 
-		if(
-			t(setr(3, graball(%q2, *.%q0))), 
-			%q3, 
-			first(%q2)
-		)
-	)]
+// (look for literal match FIRST, THEN grab first sorted outcome)
+		[setq( 4, 
+			if( 
+				t( setr( 3, graball( %q2, *.%q0 ))), 
+				%q3, 
+				first( %q2 )
+			)
+		)]
 
-@@ return: did I get anything?
-	[if(t(%q4), %q4, #-1 STAT NOT FOUND)]
-)
-
-
---------------------------------------------------------------------------------
--- Statpath: Validate Name Tests -----------------------------------------------
-
-think u(sfp/f.statpath-validate-name, stren)
-think u(sfp/f.statpath-validate-name, lang, fr)
-think u(sfp/f.statpath-validate-name, court)
-think u(sfp/f.statpath-validate-name, cour)
-
-think u(sfp/f.statpath-validate-name, lang(french))
-
-think u(sfp/f.statpath-validate-name, la*)
+// return: did I get anything?
+		[if( t( %q4 ), %q4, #-1 STAT NOT FOUND )] 
+	)
 
 
+// -----------------------------------------------------------------------------
+// -- Statpath: Validate Name Tests --------------------------------------------
 
+think u( sfp/f.statpath-validate-name, stren )
+think u( sfp/f.statpath-validate-name, lang, fr )
+think u( sfp/f.statpath-validate-name, court )
+think u( sfp/f.statpath-validate-name, cour )
+
+think u( sfp/f.statpath-validate-name, lang(french) )
+
+think u( sfp/f.statpath-validate-name, la* )
+
+
+
+/*
 ================================================================================
 == STATPATH: DATA DICTIONARY ===================================================
 
-Use this if we know that the path we're looking for is on the data dictionary itself.
+Use this if we know that the path we're looking for is on the data dictionary 
+itself.
 
-Because the "substat" section for List stats is only for lookup, we will return only the type.name portion for list stats.  (Remember to do the same for sheet, below.)
+Because the "substat" section for List stats is only for lookup, we will return 
+only the type.name portion for list stats. (Remember to do the same for sheet, 
+below.)
 
 --
 
@@ -248,6 +265,7 @@ MORE PERMISSIVE than statname-lookup-sheet, as * is "anything"
 Used for validating new purchases if sheet-lookup fails.
 
 --------------------------------------------------------------------------------
+*/
 
 &f.statpath-lookup-dd sfp=
 	strcat( 
@@ -340,49 +358,60 @@ Used for validating new purchases if sheet-lookup fails.
 	)
 
 
---------------------------------------------------------------------------------
--- Statpath: Data Dictionary Lookup Tests --------------------------------------
+// -----------------------------------------------------------------------------
+// -- Statpath: Data Dictionary Lookup Tests -----------------------------------
 
-think u(sfp/f.statpath-lookup-dd, str)
-think u(sfp/f.statpath-lookup-dd, lang (test))
+think u( sfp/f.statpath-lookup-dd, str )
+think u( sfp/f.statpath-lookup-dd, lang (test) )
 
-think u(sfp/f.statpath-lookup-dd, c (su))
-think u(sfp/f.statpath-lookup-dd, aca.lib)
+think u( sfp/f.statpath-lookup-dd, c (su) )
+think u( sfp/f.statpath-lookup-dd, aca.lib )
 
-think statpath(court)
-think statpath(cour)
-think statpath(cour(s))
-think statpath(lang ())
-think statpath(lang ().ft)
+think statpath( court )
+think statpath( cour )
+think statpath( cour(s) )
+think statpath( lang () )
+think statpath( lang ().ft )
 
-think ## [setr(0, lit(str|l (French)|aca.Library Science|mantle (courtless)))] %r--> [iter(%q0, u(sfp/f.statpath-lookup-dd, ##), |, %r-->%b)]
+think 
+	## [setr( 0, lit( str|l (French)|aca.Library Science|mantle (courtless) ))] 
+	%r--> [iter( %q0, u( sfp/f.statpath-lookup-dd, ## ), |, %r-->%b )]
 
 
+
+/*
 ================================================================================
 == STATPATH: WITHOUT INSTANCE ==================================================
 
-Reverses the statpath process, taking a stat from the sheet and stripping the instance from it.  Generally used to then look up things directly on the data dictionary itself.
+Reverses the statpath process, taking a stat from the sheet and stripping the instance from it. Generally used to then look up things directly on the data dictionary itself.
 
 0: Full statpath
 qz: temp holder to grab just the name portion of a stapath
 
 --------------------------------------------------------------------------------
+*/
 
-&f.statpath-without-instance sfp=localize(if(regmatchi(%0, %(.*%)%\(.*%\), z z), %qz%(%), %0))
+&f.statpath-without-instance sfp=
+	localize( if( regmatchi( %0, %(.*%)%\(.*%\), z z), %qz%(%), %0 ))
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
 
-think u(sfp/f.statpath-without-instance, u(sfp/f.statpath-lookup-dd, lang (sumerian)))
+think u( sfp/f.statpath-without-instance, 
+		u( sfp/f.statpath-lookup-dd, lang (sumerian) )
+	)
 
-think u(sfp/f.statpath-without-instance, statpath(strength))
-think u(sfp/f.statpath-without-instance, statpath(cour(sp)))
-think u(sfp/f.statpath-without-instance, statpath(lang (spanish)))
+think u( sfp/f.statpath-without-instance, statpath( strength ))
+think u( sfp/f.statpath-without-instance, statpath( cour(sp) ))
+think u( sfp/f.statpath-without-instance, statpath( lang (spanish) ))
 
 
+
+/*
 ================================================================================
 == STATPATH: SHEET =============================================================
 
-Use this when we know (or suspect) the stat we're looking for is on the character's sheet.  It's quicker to start with the sheet lookup then, if that doesn't work, check (without instance) on the data dictionary.
+Use this when we know (or suspect) the stat we're looking for is on the character's sheet. It's quicker to start with the sheet lookup then, if that doesn't work, check (without instance) on the data dictionary.
 
 YES, LOOKUP-SHEET PRACTICALLY VALIDATES THE STAT ON THE SHEET, BUT NOT ENTIRELY
 
@@ -401,84 +430,100 @@ qx, y, z: stat name, instance, substat to be validated (from another func)
 NOTE: Instances and Substats on sheet are stored with _ for spaces
 
 --------------------------------------------------------------------------------
+*/
 
 &f.statpath-lookup-sheet sfp=
 
-@@ until I can figure out how to have this and lookup-dd work together:
+// until I can figure out how to have this and lookup-dd work together:
+// Break down stat into registers x, y, z
+	[setq( 0, edit( %1, _, %b ))]
+	[u( f.stat-input-breakdown-registers, %q0 )]
+	[setq( y, edit( %qy, %b, _ ))]
 
-@@ Break down stat into registers x, y, z
-[setq(0, edit(%1, _, %b))]
-[u(f.stat-input-breakdown-registers, %q0)]
-[setq(y, edit(%qy, %b, _))]
+// validate stat name:
+	[if( 
+		setr( n, u( f.statpath-validate-name, %q0 )), 
+		[setq( s, u( v( d.data-dictionary )/%qn ))]
+		[setq( c, u( f.get-class, %qn ))]
 
-@@ validate stat name:
-[if(
-	setr(n, u(f.statpath-validate-name, %q0)), 
+// .. validate instance, if any
+// .. we are expecting an instance if validated stat name ends in ()
+		[if( 
+			strmatch( %qn, *_%(%) ), 
+// .. .. dd lookup, else sheet lookup, else error
+			switch( 
+				1, 
+// .. .. .. instance nowhere, because it wasn't passed
+				match( %qy, ), 
+				setq( n, #-2 INSTANCE NOT FOUND ), 
+// .. .. .. instance on dd
+				t( setr( 0, grab( extract( %qs, 2, 1, | ), %qy*, . ))), 
+				setq( n, [before( %qn, _%(%) )]_%(%q0%) ), 
 
-	[setq(s, u(v(d.data-dictionary)/%qn))]
-	[setq(c, u(f.get-class, %qn))]
+// .. .. .. instance on sheet
+				t( setr( 0, 
+					lattr( 
+						u( f.find-sheet, %0 )/
+						_[before( %qn, _%(%) )]_%(%qy*%) 
+					)
+				)), 
+				setq( n, rest( %q0, _ )), 
+// .. .. .. instance nowhere, because nothing else matched
+				setq( n, #-2 INSTANCE NOT FOUND )
+			)
+		)]
 
-@@ .. validate instance, if any
-	[if(
-@@ .. we are expecting an instance if validated stat name ends in ()
-		strmatch(%qn, *_%(%)), 
-@@ .. .. dd lookup, else sheet lookup, else error
-		switch(
-			1, 
-@@ .. .. .. instance nowhere, because it wasn't passed
-			match(%qy, ), 
-			setq(n, #-2 INSTANCE NOT FOUND), 
-@@ .. .. .. instance on dd
-			t(setr(0, grab(extract(%qs, 2, 1, |), %qy*, .))), 
-			setq(n, [before(%qn, _%(%))]_%(%q0%)), 
-
-@@ .. .. .. instance on sheet
-			t(setr(0, lattr(u(f.find-sheet, %0)/_[before(%qn, _%(%))]_%(%qy*%)))), 
-			setq(n, rest(%q0, _)), 
-@@ .. .. .. instance nowhere, because nothing else matched
-			setq(n, #-2 INSTANCE NOT FOUND)
-		)
+		[if( 
+			cand( t( %qz ), t( %qn )), 
+// .. .. dd lookup, else sheet lookup, else error
+			switch( 1, 
+				t( setr(0, 
+					grab( extract( %qs, add( 2, t( %qy )), 1, | ), %qz*, . )
+				)), 
+				setq( n, %qn.%q0 ), 
+				t( setr( 0, 
+					lattr( u( f.find-sheet, %0 )/_%qn.[edit( %qz, %b, _ )]* )
+				)), 
+				setq( n, rest( %q0, _ )), 
+				setq( n, #-2 SUBSTAT NOT FOUND )
+			)
+		)] 
 	)]
 
-	[if(
-		and(t(%qz), t(%qn)), 
-@@ .. .. dd lookup, else sheet lookup, else error
-		switch(
-			1, 
-			t(setr(0, grab(extract(%qs, add(2, t(%qy)), 1, |), %qz*, .))), 
-			setq(n, %qn.%q0), 
-			t(setr(0, lattr(u(f.find-sheet, %0)/_%qn.[edit(%qz, %b, _)]*))), 
-			setq(n, rest(%q0, _)), 
-			setq(n, #-2 SUBSTAT NOT FOUND)
-		)
+// return built stat, or error -- for class:list stats, type.name only
+	[if( 
+		cand( t( %qn ), strmatch( %qc, list )), 
+		extract( %qn, 1, 2, . ), 
+		%qn 
 	)]
-)]
-
-@@ return built stat, or error -- for class:list stats, type.name only
-[if(and(t(%qn), strmatch(%qc, list)), extract(%qn, 1, 2, .), %qn)]
 
 
---------------------------------------------------------------------------------
--- Statpath: Sheet Tests -------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- Statpath: Sheet Tests ----------------------------------------------------
 
 think u(sfp/f.statpath-lookup-sheet, %!, str)
 think u(sfp/f.statpath-lookup-sheet, %!, c (s))
 think u(sfp/f.statpath-lookup-sheet, %!, cont.rep)
 think u(sfp/f.statpath-lookup-sheet, %!, lang (fr))
 
-think [setq(0, lit(str|l (French)|athl.quick r|mantle (sp)))][setq(1, pmatch(thenomain))][iter(%q0, ==> [ljust(%q1/##, 15)] --> [statname(%q1/##)], |, %r)]
+think 
+	[setq( 0, lit( str|l (French)|athl.quick r|mantle (sp) ))]
+	[setq( 1, pmatch( thenomain ))]
+	[iter( %q0, ==> [ljust( %q1/##, 15 )] --> [statname( %q1/## )], |, %r )]
 
 
 
+/*
 ================================================================================
 == GET CLASS ===================================================================
 
-Get what kind of class a <statpath> is.  If only we did this in a more object-oriented manner.
+Get what kind of class a <statpath> is. If only we did this in a more object-oriented manner.
 
 0: full stat path (may include substat!)
 returns: class.<statpath> or "numeric" if null
 
 --------------------------------------------------------------------------------
+*/
 
 &f.get-class sfp=
 	udefault(
@@ -487,21 +532,22 @@ returns: class.<statpath> or "numeric" if null
 		[setr( s, u( f.statpath-without-instance, extract( %0, 1, 2, . )))], 
 
 		udefault( 
-			[u(d.data-dictionary)]/
+			[u( d.data-dictionary )]/
 			class.[setr( s, elements( %qs, 1, . ))].?, 
-
-			numeric
+			numeric 
 		)
 	)
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
 
-think u(sfp/f.get-class, attribute.strength)
-think u(sfp/f.get-class, bio.template)
-think u(sfp/f.get-class, bio.full_name)
+think u( sfp/f.get-class, attribute.strength )
+think u( sfp/f.get-class, bio.template )
+think u( sfp/f.get-class, bio.full_name )
 
 
 
+/*
 ================================================================================
 == ISCLASS? ====================================================================
 
@@ -512,15 +558,14 @@ Does the class of the stat path match any of the passed parameters?
 returns: 1 or 0
 
 --------------------------------------------------------------------------------
+*/
 
 &f.isclass? sfp=t(match(%1, ulocal(f.get-class, %0)))
 
---------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
+// -- test --
 
-think u(sfp/f.isclass?, attribute.strength, string)
-think u(sfp/f.isclass?, attribute.strength, numeric string)
+think u( sfp/f.isclass?, attribute.strength, string )
+think u( sfp/f.isclass?, attribute.strength, numeric string )
 
-think u(sfp/f.isclass?, gift.full_moon, list)
-
-
-
+think u( sfp/f.isclass?, gift.full_moon, list )
