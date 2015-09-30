@@ -15,7 +15,9 @@ The following is passed to every &prerequisite.<statpath>:
 @create Data Dictionary <dd>
 @set dd=inherit safe
 
-@fo me=&d.sfp dd=[num( Stat Functions Prototype <sfp> )]
+@fo me=&d.dd me=[num( data dictionary <dd> )]
+
+// @fo me=&d.sfp dd=[num( Stat Functions Prototype <sfp> )]
 
 @parent dd=codp
 &prefix.functions dd=.
