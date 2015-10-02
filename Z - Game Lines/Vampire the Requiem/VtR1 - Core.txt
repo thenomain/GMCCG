@@ -85,7 +85,6 @@ Level 3 for very minor items
 /*
 ================================================================================
 == VAMPIRE ADVANTAGES ==========================================================
-
 */
 
 &advantage.humanity DD=1.2.3.4.5.6.7.8.9.10
@@ -113,6 +112,8 @@ Level 3 for very minor items
 &default.advantage.vitae_maximum DD=derived
 &tags.advantage.vitae_maximum D:T=derived.vampire.ghoul
 
+&health.maximum.vampire DD=u( .value_stats, %0, discipline.resilience )
+&health.maximum.ghoul DD=u( .value_stats, %0, discipline.resilience )
 
 
 /*
