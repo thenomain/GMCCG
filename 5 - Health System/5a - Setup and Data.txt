@@ -51,7 +51,11 @@ Hey, this is new.
 -- HEALTH ---------------------------------------------------------------------
 */
 
-&health.maximum DD=u( .value_stats, %0, attribute.stamina advantage.size )
+&health.maximum DD=
+	add( 
+		u( .value_stats, %0, attribute.stamina advantage.size ), 
+		udefault( health.maximum.[get( %0/_bio.template )], 0, %0 )
+	)
 &tags.health.maximum D:T=derived
 &default.health.maximum DD=derived
 
