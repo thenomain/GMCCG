@@ -140,6 +140,12 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 &default.advantage.essence_maximum DD=derived
 &tags.advantage.essence_maximum D:T=derived.werewolf
 
+&health.maximum.werewolf DD=
+	case( 1, 
+		u( .list_has, %0, gift.full_moon's_gift, 2 ), 
+		u( .value_stats, %0, renown.purity ), 
+		0 
+	)
 
 
 /* 
