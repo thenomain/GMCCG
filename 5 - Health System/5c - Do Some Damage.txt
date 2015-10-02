@@ -1,5 +1,4 @@
-
-
+/*
 Do Some Damage. This is the main function, so it gets its own seat at the bar.
 
 
@@ -31,57 +30,53 @@ qc: complex, amount of damage done that's complex
 
 This is the biggie
 
---
+*/
 
 &f.do-some-dmg health=
 
-@@ Get type of min dmg.
-[setq(t, u(f.conv-type, %3))]
+// Get type of min dmg.
+	[setq( t, u( f.conv-type, %3 ))]
 
-@@ If starting dmg > max health, throw it through the diminisher
-@@ Returns new "starting dmg".
-[setq(
-	h, 
-	if(
-		lt(%0, ladd(%1)), 
-		u(f.reverse-max-health, %0, %1), 
-		%1
-	)
-)]
+// If starting dmg > max health, throw it through the diminisher
+// Returns new "starting dmg".
+	[setq( h, 
+		if( lt( %0, ladd( %1 )), 
+			u( f.reverse-max-health, %0, %1 ), 
+			%1 
+		)
+	)]
 
-@@ Get starting damages, numeric value of dmg type being done
-[iter(
-	u(d.health-types), 
-	setq(inum(0), extract(%qh, inum(0), 1)), , @@
-)]
+// Get starting damages, numeric value of dmg type being done
+	[iter( u( d.health-types ), 
+		setq( inum( 0 ), elements( %qh, inum( 0 ))), , @@ 
+	)]
 
-@@ Simple Damage: ADD
-@@ "Add" damage is always attempted.
-@@ simple damage = min(DMG, MAX - CURR)
-[setq(s, min(%2, setr(u, sub(%0, ladd(%qh)))))]
-[setq(%qt, add(r(%qt), %qs))]
+// Simple Damage: ADD
+// "Add" damage is always attempted.
+// simple damage = min(DMG, MAX - CURR)
+	[setq( s, min( %2, setr( u, sub( %0, ladd( %qh )))))]
+	[setq( %qt, add( r( %qt ), %qs ))]
 
-@@ Checked Damage: Loop, Check for Push/Wrap
-@@ checked damage = max(0, DMG - (MAX - CURR))
-[setq(c, max(0, sub(%2, %qu)))]
-[iter(
-@@ .. for each point of complex damage
-	lnum(%qc), 
-@@ .. get min type of existing dmg
-	[setq(m, u(f.min-dmg, %q1, %q2, %q3))]
-	[if(
-		gt(%qt, %qm), 
-@@ .. .. type done > min type have: PUSH
-		u(f.do-some-dmg.push), 
-@@ .. .. type done <= min type have: WRAP
-		u(f.do-some-dmg.wrap)
-	)], , @@
-)]
+// Checked Damage: Loop, Check for Push/Wrap
+// checked damage = max(0, DMG - (MAX - CURR))
+	[setq( c, max( 0, sub(%2, %qu )))]
+// .. for each point of complex damage
+	[iter( lnum( %qc ), 
+// .. get min type of existing dmg
+		[setq( m, u( f.min-dmg, %q1, %q2, %q3 ))]
+		[if( gt( %qt, %qm ), 
+// .. .. type done > min type have: PUSH
+			u( f.do-some-dmg.push ), 
+// .. .. type done <= min type have: WRAP
+			u( f.do-some-dmg.wrap )
+		)], , @@ 
+	)]
 
-@@ Output results as sent in: Bashing Lethal Aggravated
-%q1 %q2 %q3 
+// Output results as sent in: Bashing Lethal Aggravated
+	%q1 %q2 %q3 
 
 
+/*
 --------------------------------------------------------------------------------
 -- Do Some Damage: PUSH --------------------------------------------------------
 
@@ -94,17 +89,17 @@ subtracted (pushed off the health track and ignored), the damage type is added.
 not actually a separate function, just separated for legibility's sake
 see f.do-some-dmg for registers explanation
 
---
+*/
 
 &f.do-some-dmg.push health=
+// Drop min dmg type
+	[setq( %qm, dec( r( %qm )))]
 
-@@ Drop min dmg type
-[setq(%qm, dec(r(%qm)))]
-
-@@ Add done dmg type
-[setq(%qt, inc(r(%qt)))]
+// Add done dmg type
+	[setq( %qt, inc( r( %qt )))]
 
 
+/*
 --------------------------------------------------------------------------------
 -- Do Some Damage: WRAP --------------------------------------------------------
 
@@ -117,14 +112,10 @@ type is upgraded, done damage type is ignored.
 not actually a separate function, just separated for legibility's sake
 see f.do-some-dmg for registers explanation
 
---
+*/
 
 &f.do-some-dmg.wrap health=
-
-if(
-	lte(inc(%qm), words(u(d.health-types))), 
-	[setq(%qm, dec(r(%qm)))]
-	[setq(inc(%qm), inc(r(inc(%qm))))]
-)
-
-
+	if( lte( inc( %qm ), words( u( d.health-types ))), 
+		[setq( %qm, dec( r( %qm )))]
+		[setq( inc( %qm ), inc( r( inc( %qm ))))]
+	)
