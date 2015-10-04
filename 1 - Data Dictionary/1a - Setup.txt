@@ -761,6 +761,22 @@ same name as the major template from that game-line.
 &.sphere.demon dd=Demon Stigmatic
 &.sphere.werewolf dd=Werewolf Wolf-Blooded
 
+/* a thought:
+	&bio.template dd=[iter( lattr( %!/bio.template.* ), v( %i0 ), , . )]
+	&bio.template.human dd=Human
+	&bio.template.demon dd=Demon.Stigmatic
+	&bio.template.werewolf dd=Werewolf.Wolf-Blooded
+	&bio.template.vampire dd=Vampire.Ghoul
+	
+	&sphere dd=
+		lcstr( last( 
+			grepi( %!, bio.template., u( .value_full, %0, bio.template )), 
+			. 
+		))
+
+	However, the data line such as `bio.template` does not process code. Dammit.
+*/
+
 
 /* 
 --------------------------------------------------------------------------------
