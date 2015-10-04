@@ -148,6 +148,7 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 	)
 
 
+
 /* 
 ================================================================================
 == WEREWOLF RENOWN =============================================================
@@ -477,8 +478,8 @@ Effective Rank.
 		), 
 		not( 
 			setdiff( 
-				lattr( %0/_merit.favored_form_(*)), 
-				_merit.favored_form_(%1) 
+				lattr( %0/_merit.favored_form_(*) ), 
+				_MERIT.FAVORED_FORM_([ucstr( %1 )]) 
 			)
 		)
 	)
