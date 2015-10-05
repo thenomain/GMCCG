@@ -10,6 +10,11 @@ Status and Mystery Cult Initiation cannot be raised for 30 days
 
 &timer.<statpath> xpas=<timer nonsense>
 
+
+
+
+
+
 ================================================================================
 == SETUP =======================================================================
 */
@@ -145,8 +150,9 @@ We don't use trait_* for awards.
 A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
 
 0: target dbref
-1: xp type
-2: log type (optional)
+1: xp type (normal, player, etc.)
+2: log type (spend, freebie, gain, etc.) [optional]
+3: partial stat name [optional], meaingful for log types 'spend' and 'freebie'
 
 If no log type is entered, do not show 'auto', the daily auto gain system,
 because it is spammy as all get-out.
@@ -156,7 +162,8 @@ because it is spammy as all get-out.
 */
 
 &sql.select.type-character xpas=
-	SELECT enactor_objid, enactor_name, log_time, xp_amt, action, reason 
+	SELECT entry_num, enactor_objid, enactor_name, log_time, xp_amt, 
+	action, reason 
 	FROM xp_log 
 	WHERE target_objid='[u( .objid, %0 )]' 
 	AND xp_type='[lcstr( %1 )]' 
@@ -164,6 +171,9 @@ because it is spammy as all get-out.
 		all, @@( show all ), 
 		@@( null ), AND action!='auto', 
 		AND action='%2'
+	)] 
+	[if( strlen( %3 ), 
+		AND trait_name LIKE '[edit( %3, %b, _ )]%%%%' 
 	)]
 
 

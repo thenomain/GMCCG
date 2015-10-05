@@ -121,3 +121,28 @@ Basically the 'XP Formula Finder'.
 
 ...
 
+
+
+
+
+
+
+
+
+================================================================================
+== UNSPEND =====================================================================
+
+* Check unspend is for 'normal' xp only (to start)
+	- Never for 'player' xp. Once that's converted, that's it.
+* Turn action from 'Spend' to 'Unspend'
+* Add 'Unspent by (info) for (reason)' at the end of comment
+	- Yes, this is bad design. Who touched it/why should be in separate table.
+* Add beats from table to offset in &_special.beats.<type>
+* Call it a day
+
+*/
+
+&c.xp/unspend xpas=$^\+?xp/unspend(.*)$:
+
+
+

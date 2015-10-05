@@ -147,9 +147,7 @@ a very temporary thing
 
 &c.xp/cost xpas=$xp/cost *:@pemit %#=[u( f.xp/cost, %0 )]
 
-
 &c.xp/spend xpas=$xp/spend *:@pemit %#=[u( f.xp/spend, %0 )]
-
 
 &c.xp/freebie xpas=$xp/freebie *:@pemit %#=[u( f.xp/freebie, %0 )]
 
@@ -350,16 +348,20 @@ Technically an sql.* function, but easier to do this way.
 
 A summary used for xp/log 
 
-0: target dbref
-1: xp type
+0: target dbref (pmatch(someone))
+1: xp type (normal, player, etc)
+2: partial stat name [optional]
 
 */
 
 &sql.xp_log.type-character xpas=
-	SELECT enactor_objid, enactor_name, log_time, xp_amt, reason 
+	SELECT entry_num, enactor_objid, enactor_name, log_time, xp_amt, reason 
 	FROM xp_log 
 	WHERE target_objid='[u( .objid, %0 )]' 
-	AND xp_type='[lcstr( %1 )]'
+	AND xp_type='[lcstr( %1 )]' 
+	[if( strlen( %2 ), 
+		AND trait_name LIKE '[edit( %2, %b, _ )]%%%%'
+	)]
 
 
 
@@ -639,27 +641,31 @@ l: log sql results
 /*
 --------------------------------------------------------------------------------
 -- Format One Line -------------------------------------------------------------
+input: entry_num|enactor_objid|enactor_name|timestamp|beats|action|reason
+output: entry_num|who|when|amt|action: reason
 */
 
-&format.xp/log.one-line xpas=
+&format.xp/log.one-line [v( d.xpas )]=
 	strcat( 
+// entry_num
+		elements( %0, 1, | ), |, 
 // who
-		elements( %0, 2, | ), %b, %(, first( elements( %0, 1, | ), : ), %), |, 
+		elements( %0, 3, | ), %b, %(, first( elements( %0, 2, | ), : ), %), |, 
 // when
 		elements( 
-			convsecs( u( f.time.sql2unix, elements( %0, 3, | ))), 
+			convsecs( u( f.time.sql2unix, elements( %0, 4, | ))), 
 			2 3 5 
 		), |, 
 // amt
-		case( elements( %0, 5, | ), 
+		case( elements( %0, 6, | ), 
 			spend, -, 
 			freebie, - 
 		), 
-		trim( fdiv( floor( elements( %0, 4, | )), v( d.beat-to-exp )), l, 0 ), 
+		trim( fdiv( floor( elements( %0, 5, | )), v( d.beat-to-exp )), l, 0 ), 
 		|, 
 // action: reason
-		elements( %0, 5, | ), :%b, 
-		elements( %0, 6, | )
+		capstr( elements( %0, 6, | )), :%b, 
+		elements( %0, 7, | )
 	)
 
 
@@ -667,7 +673,8 @@ l: log sql results
 --------------------------------------------------------------------------------
 -- Display One Line ------------------------------------------------------------
 
-Amt / Reason / Entered By / Date
+input: entry_num|who|when|amt|action: reason
+output: Amt / Reason / Entered By / Date
 
 Reason & Entered By are flexible to the viewer's screen width.
 
@@ -683,13 +690,13 @@ Reason & Entered By are flexible to the viewer's screen width.
 		wdivider()
 	))
 
-&display.xp/log.one-line xpas=
+&display.xp/log.one-line [v( d.xpas )]=
 	localize( strcat( 
 		setq( w, sub( width( %# ), 80 )), 
-		rjust( elements( %0, 3, | ), 5 ), %b%b, 
-		ljust( elements( %0, 4, | ), add( 40, ceil( fdiv( %qw, 2 ))) ), %b, 
-		ljust( elements( %0, 1, | ), add( 20, floor( fdiv( %qw, 2 ))) ), %b,
-		elements( %0, 2, | )
+		rjust( elements( %0, 4, | ), 5 ), %b%b, 
+		ljust( elements( %0, 5, | ), add( 40, ceil( fdiv( %qw, 2 ))) ), %b, 
+		ljust( elements( %0, 2, | ), add( 20, floor( fdiv( %qw, 2 ))) ), %b,
+		elements( %0, 3, | )
 	))
 
 
@@ -2309,4 +2316,3 @@ All timestamps & xp spent on '<statpath>'; ignore freebies
 		)] 
 		AND action='spend' 
 	ORDER BY log_time ASC
-
