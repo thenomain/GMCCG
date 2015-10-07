@@ -161,9 +161,9 @@ because it is spammy as all get-out.
 
 */
 
-&sql.select.type-character xpas=
+&sql.select.type-character [v( d.xpas )]=
 	SELECT entry_num, enactor_objid, enactor_name, log_time, xp_amt, 
-	action, reason 
+	action, reason, trait_name, trait_value  
 	FROM xp_log 
 	WHERE target_objid='[u( .objid, %0 )]' 
 	AND xp_type='[lcstr( %1 )]' 

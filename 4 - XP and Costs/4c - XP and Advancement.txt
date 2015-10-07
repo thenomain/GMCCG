@@ -51,9 +51,8 @@ COMMANDS:
 	xp/remove <name>=<amt> for <reason> : take some honey away
 	xp/remove <name>/<xp type>=<amt> for <reason> : a specific kind of honey
 
-	xp/unspend <name>=<amt> for <reason> : reduce stat by <amt>, give xp back
-	xp/unspend <name>/<xp type>=<amt> for <reason> : bla bla bla
-
+	xp/unspend <entry_num> : reverse the spend entered on <entry_num>
+	(we need a way to reveal '<entry_num>', blgh)
 
 
 
@@ -514,6 +513,8 @@ think u( xpas/display.approval-deets, pmatch( vera ))
 	xp/log [<xp type>]      -- players only
 	xp/log[/<log type>]     -- both
 
+??	xp/log <name>=<search>  -- find all logs for name matching '<search>*'
+
 	xp/log <entry num>      -- both; if not int, assume <name>, 
 	                           else ignore all other input
 	
@@ -538,7 +539,7 @@ l: log sql results
 
 */
 
-&c.xp/log xpas=$^\+?xp/log(.*)$:
+&c.xp/log [v( d.xpas )]=$^\+?xp/log(.*)$:
 	@assert not( isapproved( %#, guest ))={ 
 		@pemit %#=u( .msg, xp/log, Players only )
 	}; 
@@ -641,20 +642,21 @@ l: log sql results
 /*
 --------------------------------------------------------------------------------
 -- Format One Line -------------------------------------------------------------
-input: entry_num|enactor_objid|enactor_name|timestamp|beats|action|reason
-output: entry_num|who|when|amt|action: reason
+input: entry_num|enactor_objid|enactor_name|timestamp|beats|
+	action|reason|
+	trait_name|trait_value
+output: entry_num|who|when|amt|reason or stat -> 'value'|entry_num
 */
 
 &format.xp/log.one-line [v( d.xpas )]=
-	strcat( 
+  strcat( 
 // entry_num
 		elements( %0, 1, | ), |, 
 // who
 		elements( %0, 3, | ), %b, %(, first( elements( %0, 2, | ), : ), %), |, 
 // when
-		elements( 
-			convsecs( u( f.time.sql2unix, elements( %0, 4, | ))), 
-			2 3 5 
+		timefmt( $m/$d/$g,  
+			u( f.time.sql2unix, elements( %0, 4, | ))
 		), |, 
 // amt
 		case( elements( %0, 6, | ), 
@@ -663,9 +665,23 @@ output: entry_num|who|when|amt|action: reason
 		), 
 		trim( fdiv( floor( elements( %0, 5, | )), v( d.beat-to-exp )), l, 0 ), 
 		|, 
-// action: reason
-		capstr( elements( %0, 6, | )), :%b, 
-		elements( %0, 7, | )
+// reason or stat -> 'value'
+		case( elements( %0, 6, | ), 
+			freebie, 
+			strcat( 
+				statname( elements( %0, 8, | )), 
+        %b, ->, %b, ', elements( %0, 9, | ), ' 
+			), 
+			spend,  
+			strcat( 
+				statname( elements( %0, 8, | )), 
+        %b, ->, %b, ', elements( %0, 9, | ), ' 
+			), 
+			strcat( 
+//				capstr( elements( %0, 6, | )), :, %b, 
+				elements( %0, 7, | )
+			)
+		), 
 	)
 
 
@@ -673,30 +689,33 @@ output: entry_num|who|when|amt|action: reason
 --------------------------------------------------------------------------------
 -- Display One Line ------------------------------------------------------------
 
-input: entry_num|who|when|amt|action: reason
-output: Amt / Reason / Entered By / Date
+input: entry_num|who|when|amt|reason or stat -> 'value'
+output: Amt / Action or Stat / Entered By / Date
 
 Reason & Entered By are flexible to the viewer's screen width.
 
 */
 
-&display.xp/log.header xpas=
-	localize( strcat( 
+&display.xp/log.header [v( d.xpas )]=
+  localize( strcat( 
 		setq( w, sub( width( %# ), 80 )), 
 		rjust( Exp, 5 ), %b%b, 
-		ljust( Reason, add( 40, ceil( fdiv( %qw, 2 ))) ), %b, 
-		ljust( Entered By, add( 20, floor( fdiv( %qw, 2 )))), %b,
-		Date, %r, 
+		ljust( Reason, add( 27, ceil( fdiv( %qw, 2 ))) ), %b%b, 
+		ljust( Entered By, add( 20, floor( fdiv( %qw, 2 )))), %b, 
+		ljust( Date, 10 ), %b, 
+		Entry Num, %r, 
 		wdivider()
 	))
+
 
 &display.xp/log.one-line [v( d.xpas )]=
 	localize( strcat( 
 		setq( w, sub( width( %# ), 80 )), 
 		rjust( elements( %0, 4, | ), 5 ), %b%b, 
-		ljust( elements( %0, 5, | ), add( 40, ceil( fdiv( %qw, 2 ))) ), %b, 
+		ljust( elements( %0, 5, | ), add( 27, ceil( fdiv( %qw, 2 ))) ), %b%b, 
 		ljust( elements( %0, 2, | ), add( 20, floor( fdiv( %qw, 2 ))) ), %b,
-		elements( %0, 3, | )
+		ljust( elements( %0, 3, | ), 10 ), %b, 
+		rjust( elements( %0, 1, | ), 9 )
 	))
 
 
@@ -2316,3 +2335,28 @@ All timestamps & xp spent on '<statpath>'; ignore freebies
 		)] 
 		AND action='spend' 
 	ORDER BY log_time ASC
+
+
+
+/*
+================================================================================
+== Command: xp/unspend =========================================================
+
+	xp/unspend <entry_num>
+
+The goal of xp/unspend is to do a complete reversal of the spend, including 
+altering the stat, which may not be possible. We shall see.
+
+Action: Must be 'spend' or 'freebie'!
+
+Stat Type
+	string: hahaha no
+	numeric: reduce stat by 1? or difference between last action and this one?
+	sub-stat: *grumble grumble*
+	list: remove the item from the list
+	flag: unset
+
+*/
+
+&c.xp/unspend [v( d.xpas )]=
+	
