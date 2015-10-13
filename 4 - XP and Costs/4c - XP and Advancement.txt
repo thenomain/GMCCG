@@ -166,6 +166,15 @@ a very temporary thing
 &.plural xpas=if( eq( %0, 1 ), %0 %1, %0 %2 )
 &.lmax xpas=lmax( %0 )
 
+// expands trunc(): Truncate '%0' to '%1' significant digits.
+&.trunc [v( d.xpas )]=
+	fdiv( 
+		trunc( 
+			mul( %0, power( 10, %1 ))
+		), 
+		power( 10, %1 )
+	)
+
 
 /*
 --------------------------------------------------------------------------------
@@ -456,7 +465,7 @@ e: earned
 
 */
 
-&display.xp-and-beats.one-line xpas=
+&display.xp-and-beats.one-line [v( d.xpas )]=
 	strcat( 
 		setq( a, get( %0/_special.beats.%1 )), 
 		setq( c, ladd( %qa )), 
@@ -466,8 +475,8 @@ e: earned
 		ansi( h, titlestr( %1 )), :, %b, 
 		Experience:, %b, floor( fdiv( %qc, v( d.beat-to-exp ))), %,%b, 
 		Beats:, %b, mod( %qc, v( d.beat-to-exp )), %r, 
-		%b- Earned:, %b, floor( fdiv( %qe, v( d.beat-to-exp ))), %r, 
-		%b- Spent:, %b, abs( floor( fdiv( %qs, v( d.beat-to-exp )))) 
+		%b- Earned:, %b, u( .trunc, fdiv( %qe, v( d.beat-to-exp )), 1 ), %r, 
+		%b- Spent:, %b%b, u( .trunc, fdiv( abs( %qs ), v( d.beat-to-exp )), 1 )
 	)
 
 think u( xpas/display.xp-and-beats.one-line, *vera, normal )
@@ -666,19 +675,12 @@ output: entry_num|who|when|amt|reason or stat -> 'value'|entry_num
 		trim( fdiv( floor( elements( %0, 5, | )), v( d.beat-to-exp )), l, 0 ), 
 		|, 
 // reason or stat -> 'value'
-		case( elements( %0, 6, | ), 
-			freebie, 
+		if( strlen( elements( %0, 8, | )), 
 			strcat( 
 				statname( elements( %0, 8, | )), 
-        %b, ->, %b, ', elements( %0, 9, | ), ' 
-			), 
-			spend,  
-			strcat( 
-				statname( elements( %0, 8, | )), 
-        %b, ->, %b, ', elements( %0, 9, | ), ' 
+				%b, ->, %b, ', elements( %0, 9, | ), ' 
 			), 
 			strcat( 
-//				capstr( elements( %0, 6, | )), :, %b, 
 				elements( %0, 7, | )
 			)
 		), 

@@ -147,7 +147,7 @@ We don't use trait_* for awards.
 --------------------------------------------------------------------------------
 -- SQL Select: Get XP Log of One Type for One Character ------------------------
 
-A summary used for xp/log. Don't need '<statpath>'; should be in 'reason'
+A summary used for xp/log.
 
 0: target dbref
 1: xp type (normal, player, etc.)
@@ -163,7 +163,7 @@ because it is spammy as all get-out.
 
 &sql.select.type-character [v( d.xpas )]=
 	SELECT entry_num, enactor_objid, enactor_name, log_time, xp_amt, 
-	action, reason, trait_name, trait_value  
+	action, reason, trait_name, trait_value 
 	FROM xp_log 
 	WHERE target_objid='[u( .objid, %0 )]' 
 	AND xp_type='[lcstr( %1 )]' 
@@ -175,6 +175,25 @@ because it is spammy as all get-out.
 	[if( strlen( %3 ), 
 		AND trait_name LIKE '[edit( %3, %b, _ )]%%%%' 
 	)]
+
+
+/* 
+--------------------------------------------------------------------------------
+-- SQL Select: Get XP Log of One Entry Number ----------------------------------
+
+A detail used for xp/log.
+
+0: entry_num
+
+*/
+
+&sql.select.entry_num [v( d.xpas )]=
+	SELECT 
+		enactor_objid, enactor_name, target_objid, target_name, 
+		log_time, xp_amt, action, reason, trait_category, trait_name, 
+		trait_value 
+	FROM xp_log 
+	WHERE entry_num=%0
 
 
 /*
