@@ -335,6 +335,8 @@ I'm stealing this from Reno (with permission).
 	)
 
 // -----------------------------------------------------------------------------
+// 0: [<optional name>/]<#>=<text>
+// 1: 'cond' or 'tilt'
 
 &CMT.C.STATUS/NOTE +Cond and +Tilt Status Tracker <ctst>=
 	%0 has %[Optional staff-only <name>/%]<# of status of type %1>=<note text>
@@ -361,6 +363,7 @@ I'm stealing this from Reno (with permission).
 	)
 
 // -----------------------------------------------------------------------------
+// 0: <target as entered>; 1: <#>; 2: <note>; 3: 'cond' or 'tilt'
 
 &CMT.C.PLAYER.STATUS.NOTE +Cond and +Tilt Status Tracker <ctst>=
 	Modify the %0's %1 # status of %3 type note to %2
@@ -369,6 +372,8 @@ I'm stealing this from Reno (with permission).
 	u( c.player.status.set, %0, %1, %2, v( i.player.note ), note, %3 )
 
 // -----------------------------------------------------------------------------
+// 0: <target as entered>; 1: <#>; 2: <text>; 3: <position to set text>
+// 4: <type of text, e.g. 'note'>; 5: 'cond' or 'tilt'
 
 &CMT.C.PLAYER.STATUS.SET +Cond and +Tilt Status Tracker <ctst>=
 	Sets the %0's %1 # status of %5 type's %3 index (which is named %4) to %2. 
@@ -376,8 +381,8 @@ I'm stealing this from Reno (with permission).
 	status object index in | list>, <description of what's being editted i.e. 
 	note or title>, <type of status>
 
-&C.PLAYER.STATUS.SET +Cond and +Tilt Status Tracker <ctst>=
-	strcat( 
+&C.PLAYER.STATUS.SET [v( d.ctst )]=
+  strcat( 
 		setq( z, case( %5, cond, Condition, tilt, Tilt )), 
 		setq( p, pmatch( %0 )), 
 		setq( n, name( %qp )), 
@@ -406,14 +411,15 @@ I'm stealing this from Reno (with permission).
 				u( .msg, %5, 
 					cat( 
 						You replace the %4 on, 
-						ifelse( strmatch( %qp, %# ), your, %qn's ), %1., 
+						ifelse( strmatch( %qp, %# ), your, %qn's ), 
 						u( f.format.player.status.title, %qs ), 
-						%qz with %2. 
+						%qz, (#%1), with '%2'. 
 					)
 				)
 			)
 		)
 	)
+
 
 // -----------------------------------------------------------------------------
 
@@ -566,9 +572,11 @@ I'm stealing this from Reno (with permission).
 			t( setr( l, lattr( %qp/_%3.* ))), 
 			u( .msg, %3, No [%qz]s set on %qn ), 
 			
-			lte( %1, words( %ql )), 
+			t( %qp ), 
 			u( .msg, %3, Player not found ), 
-			[u( .alert, %3 )] %qz #%1 not found for %qn, 
+
+			lte( %1, words( %ql )), 
+			u( .msg, %3, %qz #%1 not found for %qn ), 
 			
 			t( %qt ), 
 			u( .msg, %3, 
@@ -583,7 +591,7 @@ I'm stealing this from Reno (with permission).
 			[u( f.format.player.status.title, %qs )] %qz 
 			to [iter( %qt, name( %i0 ),%b,%, )]. 
 		)
-	), 
+	)
 
 
 // -----------------------------------------------------------------------------
@@ -1057,8 +1065,12 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 &F.TEST.TO-LIST +Cond and +Tilt Status Tracker <ctst>=
 	iter( 
-		filter( fil.isplayer, %0, %, ), 
-		pmatch( %i0 )
+		filter( fil.isplayer, 
+			edit( %0, %,%b, %, ), 
+			%, 
+		), 
+		pmatch( %i0 ), 
+		%, 
 	)
 
 // -----------------------------------------------------------------------------
