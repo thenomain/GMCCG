@@ -553,31 +553,64 @@ l: log sql results
 		@pemit %#=u( .msg, xp/log, Players only )
 	}; 
 
+    think strcat( 
+        * Switches & Cetera *, %r, 
+        if( strmatch( strtrunc( %1, 1 ), / ), 
+            strcat( 
+                raw switches:, %b, setr( s, trim( first( %1 ))), %r, 
+                raw everything else:, %b, setr( o, trim( rest( %1 ))), %r, 
+            ), 
+            strcat( raw everything else:, %b, setr( o, trim( %1 )), %r, )
+        )
+    ); 
+
+    @if isint( %qo )={ 
+        @trigger %!/trig.xp/log.detail=%#, %qo, %qs 
+    }, { 
+        @trigger %!/trig.xp/log.summary=%#, %qo, %qs 
+    }; 
+
+// --
+
+@set xpas/c.xp/log=regexp
+
+
+/*
+--------------------------------------------------------------------------------
+-- Trigger: xp/log summary (all entries) ---------------------------------------
+
+0: enactor (%#)
+1: other input (%qo)
+2: other switches (%qs)
+
+p: raw target (kept for error reporting)
+x: raw xp type (kept for error reporting)
+
+t: processed target
+e: processed xp type
+g: processed log type (spend, gain, etc, from switch; null = all)
+
+l: log sql results
+
+*/
+
+&trig.xp/log.summary [v( d.xpas )]=
 	think strcat( 
 		** DEBUG SPAM **, %r, 
-
-// grab switches, or not
-		if( strmatch( %1, /* ), 
-			strcat( 
-				raw switches:, %b, setr( s, first( %1 )), %r, 
-				raw everything else:, %b, setr( o, rest( %1 )), %r, 
-			), 
-			strcat( raw everything else:, %b, setr( o, %1 ), %r, )
-		), 
 
 // staff input is different than player input
 // .. staff: <target>[/<type>]
 // .. player: [<type>]
-		if( isstaff( %# ), 
+		if( isstaff( %0 ), 
 			strcat( 
 				* STAFF *, %r, 
-				raw target:, %b, setr( p, first( %qo, / )), %r, 
-				raw type:, %b, setr( x, rest( %qo, / )), %r, 
+				raw target:, %b, setr( p, first( %1, / )), %r, 
+				raw type:, %b, setr( x, rest( %1, / )), %r, 
 			), 
 			strcat( 
 				* PLAYER *, %r, 
-				raw target:, %b, setr( p, %# ), %r, 
-				raw type:, %b, setr( x, %qo ), %r, 
+				raw target:, %b, setr( p, %0 ), %r, 
+				raw type:, %b, setr( x, %1 ), %r, 
 			)
 		), 
 
@@ -596,29 +629,29 @@ l: log sql results
 		setr( g, 
 			grab( 
 				|[edit( v( d.log_types ), %b, | )], 
-				rest( trim( %qs* ), / ), 
+				rest( trim( %2* ), / ), 
 				| 
 			)
 		), %r, 
 	); 
 
-	@assert cor( strmatch( %#, %qp ), isstaff( %# ))={ 
-		@pemit %#=u( .msg, xp/log, Self or staff only )
+	@assert cor( strmatch( %0, %qp ), isstaff( %0 ))={ 
+		@pemit %0=u( .msg, xp/log, Self or staff only )
 	}; 
 
 	@assert t( %qt )={ 
-		@pemit %#=u( .msg, xp/log, Target '[trim( %qp )]' not found )
+		@pemit %0=u( .msg, xp/log, Target '[trim( %qp )]' not found )
 	}; 
 
 	@assert strlen( %qe )={ 
-		@pemit %#=u( .msg, xp/log, 
+		@pemit %0=u( .msg, xp/log, 
 			Experience type '[trim( %qx )]' not found 
 		)
 	}; 
 
-	@assert cor( strlen( %qg ), strmatch( %qs, ))={ 
-		@pemit %#=u( .msg, xp/log, 
-			Log type '[rest(trim( %qs ), / )]' not found 
+	@assert cor( strlen( %qg ), strmatch( %2, ))={ 
+		@pemit %0=u( .msg, xp/log, 
+			Log type '[rest(trim( %2 ), / )]' not found 
 		)
 	}; 
 
@@ -632,7 +665,7 @@ l: log sql results
 		)
 	); 
 
-	@pemit %#=strcat( 
+	@pemit %0=strcat( 
 		wheader( 
 			XP/Log[if( strlen( %qg ), /[capstr( %qg)] )] 
 			for [name( %qt )] 
@@ -642,10 +675,6 @@ l: log sql results
 		iter( %ql, u( display.xp/log.one-line, %i0 ), `, %r ), %r, 
 		wfooter()
 	)
-
-// --
-
-@set xpas/c.xp/log=regexp
 
 
 /*

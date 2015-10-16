@@ -189,8 +189,8 @@ A detail used for xp/log.
 
 &sql.select.entry_num [v( d.xpas )]=
 	SELECT 
-		enactor_objid, enactor_name, target_objid, target_name, 
-		log_time, xp_amt, action, reason, trait_category, trait_name, 
+		enactor_objid, enactor_name, target_objid, target_name, log_time, 
+		xp_amt, action, reason, trait_category, trait_name, 
 		trait_value 
 	FROM xp_log 
 	WHERE entry_num=%0
