@@ -298,8 +298,8 @@ I'm stealing this from Reno (with permission).
 			t( %qp ), 
 			u( .msg, %3, Player not found ), 
 
-			or( strmatch( %qp, %# ), isstaff( %# )), 
-			u( .msg, %3, Staff only ), 
+			cor( strmatch( %qp, %# ), isstaff( %# )), 
+			u( .msg, %3, Staff or self only ), 
 
 			t( %ql ), 
 			u( .msg, %3, No %qz matching %1 found ), 
@@ -392,8 +392,8 @@ I'm stealing this from Reno (with permission).
 			t(  %qp ), 
 			u( .msg, %5, Player not found ), 
 
-			or( strmatch( %qp, %# ), isstaff( %# )), 
-			u( .msg, %5, Staff only ), 
+			cor( strmatch( %qp, %# ), isstaff( %# )), 
+			u( .msg, %5, Staff or self only ), 
 
 			isint( %1 ), 
 			u( .msg, %5, '%1' is not a number ), 
@@ -486,7 +486,7 @@ I'm stealing this from Reno (with permission).
 			u( .msg, %2, Player not found ), 
 			
 			cor( strmatch( %qp, %# ), isstaff( %# )), 
-			u( .msg, %2, Staff only ), 
+			u( .msg, %2, Staff or self only ), 
 			
 			isint( %1 ), 
 			u( .msg, %2, '%1' is not a number ), 
@@ -563,8 +563,8 @@ I'm stealing this from Reno (with permission).
 			t( %qp ), 
 			u( .msg, %3, Player not found ), 
 			
-			or( strmatch( %qp, %# ), isstaff( %# )), 
-			u( .msg, %3, Staff only ), 
+			cor( strmatch( %qp, %# ), isstaff( %# )), 
+			u( .msg, %3, Staff or self only ), 
 			
 			isint( %1 ), 
 			u( .msg, %3, '%1' is not a number ), 
