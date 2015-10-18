@@ -679,8 +679,85 @@ l: log sql results
 
 /*
 --------------------------------------------------------------------------------
+-- Trigger: xp/log detail (specific entry_num) ---------------------------------
+
+0: enactor (%#)
+1: entry_num (%q0)
+2: extra switches (%qs)
+
+l: xp_log entry
+t: target dbref
+w: enactor's width
+
+*/
+
+&trig.xp/log.detail [v( d.xpas )]=
+    think strcat( 
+        * extra switches (%2) ignored for now *, %r, 
+        * xp log for entry '%1' *, %r, 
+        log:, %b, setr( l, sql( u( sql.select.entry_num, %1 ), `, | )), %r, 
+        target's dbref:, %b, setr( t, first( elements( %ql, 3, | ), : )), %r, 
+    ); 
+
+    @break eq( words( %ql, ` ), 0 )={ 
+        @pemit %0=u( .msg, xp/log, No entries found )
+    }; 
+
+    @assert eq( words( %ql, ` ), 1 )={ 
+        @pemit %0=u( .msg, xp/log, 
+            Somehow I found more than one entry for entry num '%1'. 
+            This is very alarming. Help. 
+        )
+    }; 
+    
+    @assert cor( strmatch( %0, %qt ), isstaff( %0 ))={ 
+        @pemit %0=u( .msg, xp/log, Self or staff only )
+    }; 
+
+// .. 'format' section - should be split in the future
+    think strcat( 
+        enactor's display width:, %b, setr( w, width( %0 )), %r 
+        * format data for display *, %r, 
+        enactor (dbref):, %b, setr( e, strcat( 
+            elements( %ql, 2, | ), %b, 
+            %(, first( elements( %ql, 1, | ), : ), %) 
+        )), %r, 
+        target (dbref):, %b, setr( t, strcat( 
+            elements( %ql, 4, | ), %b, %(, %qt, %) 
+        )), %r, 
+        timestamp:, %b, setr( x, elements( %ql, 5, | )), %r, 
+        action:, %b, setr( a, elements( %ql, 7, | )), 
+        reason:, %b, setr( r, elements( %ql, 8, | )), 
+        trait type:, %b, setr( y, titlestr( elements( %ql, 9, | ))), %r, 
+        trait name -> 'value':, %b, setr( n, strcat( 
+            statname( elements( %ql, 10, | )), %b, %[, %qy, %], 
+            %b--> ', elements( %ql, 11, | ), ' 
+        )), %r, 
+    ); 
+
+// .. 'display' section - should be split in the future
+    @pemit %0=strcat( 
+        header( xp/log %1, %qw ), %r, 
+        ansi( h, Enactor ), :, %b, %qe, %r, 
+        ansi( h, Target ), :, %b, %qt, %r, 
+        ansi( h, Action ), :, %b, %qa, %r, 
+        ansi( h, Timestamp ), :, %b, %qx, %r, 
+        ansi( h, Reason ), :, %b, %qr, %r, 
+        if( strlen( %qy ), 
+            strcat( ansi( h, Trait ), :, %b, %qn, %r ), 
+        ), 
+        footer( , %qw )
+    ); 
+
+
+/*
+--------------------------------------------------------------------------------
 -- Format One Line -------------------------------------------------------------
-input: entry_num|enactor_objid|enactor_name|timestamp|beats|
+input: 
+	entry_num|
+	enactor_objid|enactor_name|
+	timestamp|
+	beats|
 	action|reason|
 	trait_name|trait_value
 output: entry_num|who|when|amt|reason or stat -> 'value'|entry_num
