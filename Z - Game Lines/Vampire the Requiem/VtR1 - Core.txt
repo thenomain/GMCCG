@@ -297,7 +297,7 @@ Level 3 for very minor items
 &prerequisite.merit.unsettling_gaze DD=u( .is, %0, bio.clan, Nosferatu )
 &prereq-text.merit.unsettling_gaze DD=Must be Nosferatu
 
-&merit.where_the_bodies_are_buried DD=1
+&merit.where_the_bodies_are_buried DD=2
 &tags.merit.where_the_bodies_are_buried D:T=vampire.invictus
 &prerequisite.merit.where_the_bodies_are_buried DD=
 	u( .at_least, %0, merit.status_(invictus), 2 )
