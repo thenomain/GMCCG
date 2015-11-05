@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS xp_log (
 	reason VARCHAR(255), 
 	
 	entry_num BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, 
+	trait_value_old VARCHAR(255), 
 
 	PRIMARY KEY (target_objid, log_time), 
 	INDEX (entry_num) 
@@ -69,6 +70,14 @@ ALTER TABLE xp_log
 	ADD INDEX (entry_num);
 
 
+*** ANOTHER UPDTE ***
+DROP TABLE IF EXISTS xp_log_old; 
+CREATE TABLE xp_log_old LIKE xp_log; 
+INSERT xp_log_old SELECT * FROM xp_log;
+
+ALTER TABLE xp_log ADD trait_value_old VARCHAR(255); 
+
+
 
 ================================================================================
 == SQL =========================================================================
@@ -84,6 +93,7 @@ ALTER TABLE xp_log
 	trait_category: Merit? Gift? (First part of statpath.) Used for spends.
 	trait_name: The rest of the statpath. Used for spends.
 	trait_value: Value set or added. Used for spends.
+	trait_value_old: Value before it was set or added to. Used for spends.
 
 	action: gain, spend, freebie, auto, <others to follow>
 	reasoning: Content for this. VAGUELY OPTIONAL
@@ -191,7 +201,7 @@ A detail used for xp/log.
 	SELECT 
 		enactor_objid, enactor_name, target_objid, target_name, log_time, 
 		xp_amt, action, reason, trait_category, trait_name, 
-		trait_value 
+		trait_value, xp_type 
 	FROM xp_log 
 	WHERE entry_num=%0
 

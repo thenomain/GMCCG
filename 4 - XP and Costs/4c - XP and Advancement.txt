@@ -56,37 +56,6 @@ COMMANDS:
 
 
 
-################################################################################
-## THE SQL #####################################################################
-
-DROP TABLE IF EXISTS xp_log;
-
---
-
-CREATE TABLE IF NOT EXISTS xp_log ( 
-	target_objid VARCHAR(255) NOT NULL, 
-	target_name VARCHAR(255) NOT NULL, 
-
-	enactor_objid VARCHAR(255) NOT NULL, 
-	enactor_name VARCHAR(255) NOT NULL, 
-
-	log_time TIMESTAMP NOT NULL DEFAULT NOW(), 
-
-	xp_type VARCHAR(255) NOT NULL, 
-	xp_amt DECIMAL(21,17) NOT NULL,
-
-	trait_category VARCHAR(255), 
-	trait_name VARCHAR(255), 
-	trait_value VARCHAR(255), 
-
-	action VARCHAR(255) NOT NULL, 
-	reason VARCHAR(255) NOT NULL,
-
-	PRIMARY KEY (target_objid, log_time) 
-) ENGINE=INNODB; 
-
-
-
 
 ################################################################################
 ## THE OBJECT ##################################################################
