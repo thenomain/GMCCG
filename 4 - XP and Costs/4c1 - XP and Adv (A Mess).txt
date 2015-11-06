@@ -77,6 +77,77 @@ INSERT xp_log_old SELECT * FROM xp_log;
 
 ALTER TABLE xp_log ADD trait_value_old VARCHAR(255); 
 
+*** THIS WILL BE HARD TO POPULATE FROM THE EXISTING SETUP ***
+-- This is how I did it:
+
+DROP TABLE IF EXISTS xp_log_old; 
+CREATE TABLE xp_log_old LIKE xp_log; 
+INSERT xp_log_old SELECT * FROM xp_log;
+
+-- Clear and start from scratch.
+UPDATE xp_log SET trait_value_old=NULL; 
+
+-- Main update.
+UPDATE xp_log AS a 
+  INNER JOIN xp_log AS b ON a.entry_num = b.entry_num 
+  SET a.trait_value_old = 
+    SUBSTRING( 
+      a.reason 
+      FROM LOCATE( '\'', a.reason ) + 1 
+      FOR LOCATE( 
+        '\'', 
+        a.reason, 
+        LOCATE( '\'', a.reason ) + 1 ) - 
+        LOCATE( '\'', a.reason ) - 1 
+    ) 
+  WHERE a.action=('spend' OR 'freebie') 
+  AND a.trait_value_old IS NULL 
+  AND a.trait_name IS NOT NULL;
+
+-- Catch false nonsense from 's and 't.
+UPDATE xp_log AS a 
+  INNER JOIN xp_log AS b ON a.entry_num = b.entry_num 
+  SET a.trait_value_old = 
+    SUBSTRING_INDEX( substring_index( a.reason, '\'', 5 ), '\'', -1 ) 
+  WHERE (a.trait_value_old REGEXP '^s.*$' OR a.trait_value_old REGEXP '^t.*$')
+  AND a.trait_name IS NOT NULL;
+
+-- Turn '' into NULL.
+UPDATE xp_log 
+  SET trait_value_old = NULL 
+  WHERE 
+    (trait_value_old NOT REGEXP '^-?[0-9]+$') AND 
+    (trait_value_old NOT REGEXP '^.+\\..+$') AND 
+    (trait_value_old NOT IN 
+      ('Unlock','Cunning','Glory','Honor','Purity','Wisdom')
+    ); 
+
+-- Check that everything went through alright.
+-- If not, you'll have to set this all by hand.
+SELECT entry_num, trait_value_old 
+  FROM xp_log 
+  WHERE 
+    (trait_value_old NOT REGEXP '^-?[0-9]+$') AND 
+    (trait_value_old NOT REGEXP '^.+\\..+$') AND 
+    (trait_value_old NOT IN 
+      ('Unlock','Cunning','Glory','Honor','Purity','Wisdom')
+    ) AND 
+    (trait_value_old IS NOT NULL); 
+
+-- If everything is okay, let's simplify the 'reason' field ...
+UPDATE xp_log 
+  SET reason=
+    if( 
+      locate( 'for reason', reason ), 
+      trim( 
+        BOTH '\'' 
+        FROM substring( reason FROM locate( 'for reason', reason ) + 11 )
+      ), 
+      NULL 
+    ) 
+  WHERE (action='spend' OR action='freebie') AND trait_name IS NOT NULL; 
+
+
 
 
 ================================================================================
@@ -201,7 +272,7 @@ A detail used for xp/log.
 	SELECT 
 		enactor_objid, enactor_name, target_objid, target_name, log_time, 
 		xp_amt, action, reason, trait_category, trait_name, 
-		trait_value, xp_type 
+		trait_value, xp_type, trait_value_old 
 	FROM xp_log 
 	WHERE entry_num=%0
 
@@ -217,6 +288,7 @@ A detail used for xp/log.
 4: full statpath (with instance)
 5: reason (probably 'statname old -> new') 
 6: value set/added
+7: value coming from
 
 */
 
@@ -226,14 +298,14 @@ A detail used for xp/log.
 			target_objid, target_name, 
 			enactor_objid, enactor_name, 
 			xp_type, xp_amt, 
-			trait_category, trait_name, trait_value, 
+			trait_category, trait_name, trait_value, trait_value_old, 
 			action, reason
 		) 
 		VALUES (
 			'[u( .objid, %0 )]', '[name( %0 )]', 
 			'[u( .objid, %1 )]', '[name( %1 )]', 
 			'%2', %3, 
-			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', '%6', 
+			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', '%6', '%7', 
 			[if( eq( %3, 0 ), 'freebie', 'spend' )], 
 			'%5'
 		)

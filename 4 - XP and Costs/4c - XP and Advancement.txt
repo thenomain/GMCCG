@@ -700,7 +700,7 @@ w: enactor's width
         trait type:, %b, setr( y, titlestr( elements( %ql, 9, | ))), %r, 
         trait name -> 'value':, %b, setr( n, strcat( 
             statname( elements( %ql, 10, | )), %b, %[, %qy, %], 
-            %b--> ', elements( %ql, 11, | ), ' 
+			%b', elements( %ql, 13, | ) ,' -> ', elements( %ql, 11, | ), ' 
         )), %r, 
     ); 
 
@@ -711,10 +711,11 @@ w: enactor's width
         ansi( h, Target ), :, %b, %qt, %r, 
         ansi( h, Action ), :, %b, %qa, %r, 
         ansi( h, Timestamp ), :, %b, %qx, %r, 
-        ansi( h, Reason ), :, %b, %qr, %r, 
         if( strlen( %qy ), 
             strcat( ansi( h, Trait ), :, %b, %qn, %r ), 
         ), 
+        ansi( h, Reason ), :%b, if( strlen( %qr ), %qr, ansi( xh, <none> )), 
+		%r, 
         footer( , %qw )
     ); 
 
@@ -1354,7 +1355,7 @@ n: statname
 
 */
 
-&f.xp/spend xpas=
+&f.xp/spend [v( d.xpas )]=
 	strcat( 
 
 // break %0 down to p, n, v
@@ -1414,10 +1415,11 @@ n: statname
 					sql( u( sql.insert.spend, 
 						%qp, %#, normal, mul( %qc, v( d.beat-to-exp )), 
 						u( f.sql.escape, %qs ), 
-						u( f.sql.escape, 
-							[statname( %qp/%qn )] '%qt' -> '%qv' 
-						), 
-						%qv 
+//						u( f.sql.escape, 
+//							[statname( %qp/%qn )] '%qt' -> '%qv' 
+//						), 
+						@@( null ), 
+						%qv, %qt 
 					))
 				), 
 				#-* 
@@ -1493,7 +1495,7 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 
 // -- 
 
-&f.xp/freebie xpas=
+&f.xp/freebie [v( d.xpas )]=
 	strcat( 
 
 // break %0 down to <player>, <name of stat>, [<value>], <reason>
@@ -1535,11 +1537,12 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 				setr( e, 
 					sql( u( sql.insert.spend, 
 						%qp, %#, normal, 0, u( f.sql.escape, %qs ), 
-						u( f.sql.escape, 
-							[statname( %qp/%qn )] '%qt' -> '%qv' 
-							for reason '%qr' 
-						), 
-						%qv 
+//						u( f.sql.escape, 
+//							[statname( %qp/%qn )] '%qt' -> '%qv' 
+//							for reason '%qr' 
+//						), 
+						%qr, 
+						%qv, %qt 
 					))
 				), 
 				#-* 
