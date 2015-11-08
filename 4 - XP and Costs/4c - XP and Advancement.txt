@@ -51,8 +51,8 @@ COMMANDS:
 	xp/remove <name>=<amt> for <reason> : take some honey away
 	xp/remove <name>/<xp type>=<amt> for <reason> : a specific kind of honey
 
-	xp/unspend <entry_num> : reverse the spend entered on <entry_num>
-	(we need a way to reveal '<entry_num>', blgh)
+	xp/unspend <entry_num> for <reason>: reverse the freebie/spend 
+	on <entry_num>
 
 
 
@@ -2272,123 +2272,20 @@ if 'u( f.at_weeks_end?, %0 )', reset the 'xp earned this week' attribute
 	sub( v( d.beats.max_weekly ), u( f.weekly_beats.auto, %0 ))
 
 --
-
-
-
-
-
-
-
-
-
-
-================================================================================
-== Command: xp/unspend =========================================================
-
-	xp/unspend <name>/<stat>[=<level>] for <reason>
-
-Unspend...
-	- finds the most recent spend for <stat>
-	- (if <stat> is 'list', then it finds <level>)
-	- reduces <stat> by 1 (numeric), entirely (flag), or <level> (list)
-	- adds the spent beats to _special.beats.<type>
-	- reduces the spent beats from  the 'spent' column
-
-So across the board I would need to check: 
-	- the usual validity stuff
-	- can I find a spend (-xxx) entry for this stat?
-	- is this stat valid after the unspend is done?
-
---
-
-	n: name passed
-	t: type passed ( optional, default 'normal')
-	a: amt passed
-	r: reason passed
-
-	d: character dbref
-	x: current beats (for type) : _special.beats.<type>
-
-//	b: current week's earned beats : _special.beats_earned.<type>
-//	f: final weekly award attribute (for type)
-//	e: total weekly earnable (for type)
-
 */
 
-&c.xp/unspend [v( d.xpas )]=$^\+?xp/unspend(.+)$:@pemit %#=
-	strcat( 
-
-// xp/unspend <name>/<stat>[=<level>] for <reason>
-		setq( 0, trim( %1 )), 
-		setq( p, pmatch( first( %q0, / ))), 
-		setq( n, before( before( rest( %q0, / ), %bfor%b ), = )), 
-		setq( r, rest( %q0, %bfor%b )), 
-		setq( l, 
-			if( strmatch( %q0, *=* ), before( rest( %q0, = ), %bfor%b ))
-		), 
-
-// sheet loc, statpath, stat class
-		setq( w, ulocal( v( d.sfp )/f.find-sheet, %qp )),
-		setq( s, ulocal( v( d.sfp )/f.statpath.workhorse, %qn, %qp )), 
-		setq( c, ulocal( [u( d.sfp )]/f.get-class, %qs )), 
-
-// sql results -- only if %qp and %qs are valid
-		setq( q, 
-			if( cand( isdbref( %qp ), t( %qs )), 
-				last( 
-					sql( u( sql.select.spends-stat, %qp, %qs, %ql ), |, ` ), 
-					| 
-				)
-			)
-		), 
-
-		DEBUG: %r
-		%b p: %qp -- n: %qn -- r: %qr -- l: %ql, %r, 
-		%b w: %qw -- s: %qs -- c: %qc, %r, 
-		%b q: %qq, %r, 
-
-		case( 1, 
-			not( isstaff( %# )), 
-			u( .msg, xp/unspend, Staff only ), 
-
-			t( setr( e, ulocal( validate.player, %qp, %qw, 1 ))), 
-			u( .msg, xp/unspend, %qe ), 
-
-			not( %qr ), 
-			u( .msg, xp/unspend, Unspends must include a reason ), 
-
-			not( %qs ), 
-			u( .msg, xp/unspend, 
-				Statpath errored: [capstr( lcstr( rest( %qs )))] 
-			), 
-			
-			not( strlen( %qq )), 
-			u( .msg, xp/unspend, No record of a spend for that stat ), 
-
-// ok
-			strcat( 
-				%b beats spent:%b, trim( elements( %qq, 4, ` ), b, 0 ), %r, 
-				%b xp type:%b, elements( %qq, 3, ` ), %r, 
-				%b reason:%b, elements( %qq, 2, ` ), %r, 
-// .. here we need to determine if removing the stat is valid
-// .. 1. what would the new stat be?
-				%b current stat value:%b, u( .value, %qw, %qs )
-// .. 2. validate that
-			)			
-		)
-	)
-
-// --
-
-@set xpas/c.xp/unspend=regexp
-
-// -- 
-
-xp/unspend vera/dex for A Good Reason Clearly
-xp/unspend delilah/gift of stealth=unlock for Some Reason Here
 
 
-// --
+
+
+
+
+
+
+
+
+
+
 
 /* 
 --------------------------------------------------------------------------------
@@ -2415,28 +2312,3 @@ All timestamps & xp spent on '<statpath>'; ignore freebies
 		)] 
 		AND action='spend' 
 	ORDER BY log_time ASC
-
-
-
-/*
-================================================================================
-== Command: xp/unspend =========================================================
-
-	xp/unspend <entry_num>
-
-The goal of xp/unspend is to do a complete reversal of the spend, including 
-altering the stat, which may not be possible. We shall see.
-
-Action: Must be 'spend' or 'freebie'!
-
-Stat Type
-	string: hahaha no
-	numeric: reduce stat by 1? or difference between last action and this one?
-	sub-stat: *grumble grumble*
-	list: remove the item from the list
-	flag: unset
-
-*/
-
-&c.xp/unspend [v( d.xpas )]=
-	
