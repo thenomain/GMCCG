@@ -4,25 +4,44 @@
 
 * Check unspend is for 'normal' xp only (to start)
 	- Never for 'player' xp. Once that's converted, that's it.
-* Turn action from 'Spend' to 'Unspend'
-* Add 'Unspent by (info) for (reason)' at the end of comment
-	- Yes, this is bad design. Who touched it/why should be in separate table.
+* Add new log entry for 'unspend' and relate it to the old 'spend/freebie'.
 * Add beats from table to offset in &_special.beats.<type>
 * Call it a day
 
-Wizard-only.
-
-l: log entry
-a: action
-t: xp type
-v: xp amt
-o: target objid
-d: target dbref
-c: target current beats
-x: stat class
-y: current value
+Wizard-only (??).
 
 	xp/unspend <entry num> for <reason>
+
+--
+
+e: entry num, as entered
+r: reason, as entered
+
+l: sql log of entry_num = %qe
+o: target objid
+d: target dbref
+0: entry_num matching existing 'unspend' (if any)
+
+a: action
+t: xp type
+
+s: xp (beats) spent
+b: current ('normal') beats on target (%qd)
+
+1: stat category
+2: stat name
+p: stat path ('category.name')
+// 3: new 'beats' attribute contents
+c: stat class
+v: logged stat value added/changed to, from sql log (%ql, trait_value)
+x: current stat value, from target (%qd, statpath)
+
+m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
+
+3: unspend log entry insert (from sql())
+4: unspend log reference insert (from sql())
+5: new 'beats' attribute contents
+6: attempt at setstat( %qd/<stat>, %qm )
 
 */
 
@@ -62,7 +81,7 @@ y: current value
 		@pemit %#=u( .msg, xp/unspend, Staff or self only ) 
 	}; 
 
-/* possibly:
+/* Wizard-only, possibly:
 	@assert isstaff( %#, wizard )={ 
 		@pemit %#=u( .msg, xp/unspend, Wizard only ) 
 	}; 
@@ -106,7 +125,7 @@ y: current value
 
 		logged value:, setr( v, elements( %ql, 11, | )), %r, 
 		current value:, setr( x, ulocal( .value, %qd, %qp )), %r, 
-		original value:, 
+		modified value:, 
 		setr( m, 
 			udefault( f.xp/unspend.%qc, 
 				#-1 I don't know how to unspend that kind of stat, 
@@ -127,7 +146,8 @@ y: current value
 		), %r, 
 
 // .. stat change
-		ansi( h, statname( %q2 )), :%b, '%qx', %b->%b, '%qm', 
+		ansi( h, statname( %q2 )), : '%qx' -> ', 
+		udefault( display.xp/unspend.%qc, %qm, %qx, %qm ), ', 
 		%r%r, 
 // .. refund amt
 		Refunding, %b, 
@@ -161,45 +181,10 @@ y: current value
 	); 
 
 	@assert strmatch( %#, pmatch( thenomain ))={ 
-		@@ do nothing more
+		@@ do nothing more for testing
 	}; 
 	
 	@pemit %#=u( .msg, xp/unspend, Hello%, Thenomain ); 
-
-
-
-
-
-
-/*
-e: entry num, as entered
-r: reason, as entered
-
-l: sql log of entry_num = %qe
-o: target objid
-d: target dbref
-0: entry_num matching existing 'unspend' (if any)
-
-a: action
-t: xp type
-
-s: xp (beats) spent
-b: current ('normal') beats on target (%qd)
-
-1: stat category
-2: stat name
-p: stat path ('category.name')
-// 3: new 'beats' attribute contents
-c: stat class
-v: logged stat value added/changed to, from sql log (%ql, trait_value)
-x: current stat value, from target (%qd, statpath)
-
-m: original stat value (%ql, trait_value_old)
-
-3: unspend log entry insert
-4: unspend log reference insert 
-*/
-
 
 // record into 'xp_log' and 'xp_log_unspend'
 	@pemit %#=strcat( 
@@ -210,7 +195,7 @@ m: original stat value (%ql, trait_value_old)
 				)) 
 		), %r, 
 		reference:, setr( 4, 
-			if( not( strlen( %q3 )), 
+			if( not( strmatch( %q3, #-* )), 
 				sql( u( sql.insert.unspend.reference, %qe )), 
 				#-1 log entry failed 
 			)
@@ -218,10 +203,37 @@ m: original stat value (%ql, trait_value_old)
 		commit:, u( f.transaction.end ), %r, 
 	); 
 
-	@pemit %#=
-		u( .msg, xp/unspend, 
-			unspend entry: %q3 %runspend reference: %q4 %r 
-		); 
+	@break strmatch( %q3, #-* )={ 
+		@pemit %#=u( .msg, xp/unspend, Error logging unspend%; unspend canceled )
+	}; 
+
+// apply beats
+	think strcat( 
+		set beats:, setr( 5, 
+			set( %qd, 
+				_special.beats.%qt:
+				[cat( first( %qb ), add( rest( %qb ), %qs ))] 
+			)
+		), %r, 
+		set trait:, setr( 6, setstat( %qd/[rest( %qp, . )], %qm )), %r, 
+	); 
+
+	@if strmatch( %q5, #-* )={ 
+		@pemit %#=u( .msg, xp/unspend, 
+			I tried to '&_special.beats.%qt %qd=
+			[cat( first( %qb ), add( rest( %qb ), %qs ))]' %([name( %qd )]%) 
+			but an error ocurred. Please set this properly or this character 
+			will not the refund already recorded. 
+		) 
+	}; 
+
+	@if strmatch( %q6, #-* )={ 
+		@pemit %#=u( .msg, xp/unspend, 
+			I tried to 'setstat %qd/[rest( %qp, . )]=%qm', but I got the 
+			message: [rest( %q6 )]. Please set this properly or this character 
+			will still have their refunded stat.
+		)
+	}; 
 
 
 /*
@@ -242,17 +254,23 @@ list:
 
 */
 
+
 &f.xp/unspend.numeric [v( d.xpas )]=
 	if( strmatch( add( %0, 0 ), add( %1, 0 )), 
 		trim( %2, 0, l ), 
 		#-1 Current value different than added value 
 	)
 
+// &display.xp/unspend.numeric [v( d.xpas )]=%0
+
 &f.xp/unspend.list [v( d.xpas )]=
  	if( t( match( %0, %1, . )), 
-		ldelete( %0, match( %0, %1, . ), . ), 
+		!%1, 
 		#-1 Added value does not exist in current list 
 	)
+
+&display.xp/unspend.list [v( d.xpas )]=
+	ldelete( %0, match( %0, rest( %1, ! ), . ), . ) 
 
 
 /*
