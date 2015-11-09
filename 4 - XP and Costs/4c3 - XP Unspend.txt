@@ -46,6 +46,10 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 */
 
 &c.xp/unspend [v( d.xpas )]=$^\+?xp/unspend(.*)$:
+	@assert isstaff( %#, wizard )={ 
+		@pemit %#=u( .msg, xp/unspend, Wizard only ) 
+	}; 
+
 	think strcat( 
 		entry num:, setr( e, first( %1 )), %r, 
 		reason:, setr( r, trim( rest( %1, for ))), %r, 
@@ -73,19 +77,9 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 
 	@assert not( strmatch( %ql, #-* ))={ 
 		@pemit %#=u( .msg, xp/unspend, 
-			SQL query failed - please contact a coder 
+			Initial SQL query failed - please contact a coder 
 		) 
 	}; 
-
-	@assert cor( isstaff( %# ), strmatch( %#, %qd ))={ 
-		@pemit %#=u( .msg, xp/unspend, Staff or self only ) 
-	}; 
-
-/* Wizard-only, possibly:
-	@assert isstaff( %#, wizard )={ 
-		@pemit %#=u( .msg, xp/unspend, Wizard only ) 
-	}; 
-*/
 
 	@assert cand( isdbref( %qd ), strmatch( %qo, u( .objid, %qd )))={ 
 		@pemit %#=u( .msg, xp/unspend, Target no longer exists ) 
@@ -161,37 +155,15 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 			if( strmatch( %qd, %# ), you, to [name( %qd )] ), %b, 
 			for reason ', %qr, ', 
 		%r, 
-/*
-		Beats from:, %b, round( ladd( %qb ), 1 ), 
-			%b%(, 
-			round( first( %qb ), 1 ), %bearned, %,%b, 
-			round( abs( rest( %qb )), 1 ), %bspent, 
-			%), 
-		%r,  
-		Beats to:, %b %b, 
-			setq( 3, cat( first( %qb ), add( rest( %qb ), %qs ))), 
-			round( ladd( %q3 ), 1 ), 
-			%b%(, 
-			round( first( %q3 ), 1 ), %bearned, %,%b, 
-			round( abs( rest( %q3 )), 1 ), %bspent, 
-			%), 
-		%r, 
-*/
 		footer( %qe, width())
 	); 
 
-	@assert strmatch( %#, pmatch( thenomain ))={ 
-		@@ do nothing more for testing
-	}; 
-	
-	@pemit %#=u( .msg, xp/unspend, Hello%, Thenomain ); 
-
 // record into 'xp_log' and 'xp_log_unspend'
-	@pemit %#=strcat( 
+	think strcat( 
 		start:, u( f.transaction.begin ), %r, 
 		log entry:, setr( 3, 
 				sql( u( sql.insert.unspend.log,  
-					%qd, %#, %qt, %qs, %qp, %qr, %qv 
+					%qd, %#, %qt, %qs, %qp, %qr, %qm, %qv 
 				)) 
 		), %r, 
 		reference:, setr( 4, 
@@ -311,11 +283,12 @@ CREATE TABLE IF NOT EXISTS xp_log_unspend (
 
 0: target dbref
 1: enactor dbref (may be the same)
-2: xp type (probably 'normal') - must be 'normal' for now
+2: xp type (probably 'normal') - must be 'normal' for now, by rules above
 3: xp amt
 4: full statpath (with instance)
-5: reason (probably "'unspent <entry num> for reason '<reason>'") 
-6: value set/reduced
+5: reason
+6: new value set/reduced
+7: old value before unspend
 
 do not forget to 'start transaction'
 
@@ -327,14 +300,14 @@ do not forget to 'start transaction'
 			target_objid, target_name, 
 			enactor_objid, enactor_name, 
 			xp_type, xp_amt, 
-			trait_category, trait_name, trait_value, 
+			trait_category, trait_name, trait_value, trait_value_old, 
 			action, reason
 		) 
 		VALUES (
 			'[u( .objid, %0 )]', '[name( %0 )]', 
 			'[u( .objid, %1 )]', '[name( %1 )]', 
 			'%2', %3, 
-			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', '%6', 
+			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', '%6', '%7', 
 			'unspend', 
 			'%5'
 		)

@@ -959,7 +959,7 @@ Valid award:
 &d.beat-to-exp xpas=5
 
 &d.xp_types xpas=normal player
-&d.log_types xpas=gain spend freebie auto
+&d.log_types [v( d.xpas )]=gain spend freebie auto unspend
 
 &default.special.xp.normal dd=0 0
 
