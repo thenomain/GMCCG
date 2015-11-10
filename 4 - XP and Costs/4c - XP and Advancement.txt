@@ -48,11 +48,14 @@ COMMANDS:
 √	xp/convert <amt> [beats|xp] from <name> : Player xpz -> Normal xpz, yo.
 	(<name> must be an alt of yours)
 
-	xp/remove <name>=<amt> for <reason> : take some honey away
-	xp/remove <name>/<xp type>=<amt> for <reason> : a specific kind of honey
+	xp/ungain <name>=<amt> for <reason> : take some honey away
+	xp/ungain <name>/<xp type>=<amt> for <reason> : a specific kind of honey
+	("unspend" for xp/award, tho seems very minor)
 
-	xp/unspend <entry_num> for <reason>: reverse the freebie/spend 
-	on <entry_num>
+√	xp/unspend <entry_num> for <reason> : reverse the freebie/spend 
+	on <entry_num>; Wizard-only
+
+	xp/check [<name>] : what traits still have xp timers on them?	
 
 
 
@@ -2310,5 +2313,15 @@ All timestamps & xp spent on '<statpath>'; ignore freebies
 			strmatch( ulocal( [u( d.sfp )]/f.get-class, %1 ), list ), 
 			AND trait_value='%2' 
 		)] 
-		AND action='spend' 
+		AND (action='spend' OR action='freebie') 
 	ORDER BY log_time ASC
+
+// -- test --
+
+think sql( 
+		u( v( d.xpas )/sql.select.spends-stat, 
+			pmatch( hemi ), 
+			advantage.primal_urge 
+		), 
+		%r, | 
+	)
