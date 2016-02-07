@@ -263,18 +263,18 @@ if for an unlikely reason, a 'spend' needs deleted from the table, delete its
 DROP TABLE IF EXISTS xp_log_unspend;
 
 CREATE TABLE IF NOT EXISTS xp_log_unspend ( 
-	entry_num_spend BIGINT UNSIGNED NOT NULL, 
-	entry_num_unspend BIGINT UNSIGNED NOT NULL, 
+    entry_num_spend BIGINT UNSIGNED NOT NULL, 
+    entry_num_unspend BIGINT UNSIGNED NOT NULL, 
 
-	PRIMARY KEY (entry_num_spend, entry_num_unspend), 
+    PRIMARY KEY (entry_num_spend, entry_num_unspend), 
 
-	FOREIGN KEY (entry_num_spend) 
-		REFERENCES xp_log (entry_num) 
-		ON DELETE RESTRICT 
-		ON UPDATE CASCADE, 
-	FOREIGN KEY (entry_num_unspend) 
-		REFERENCES xp_log (entry_num) 
-		ON UPDATE CASCADE 
+    FOREIGN KEY (entry_num_spend) 
+        REFERENCES xp_log (entry_num) 
+        ON DELETE RESTRICT 
+        ON UPDATE CASCADE, 
+    FOREIGN KEY (entry_num_unspend) 
+        REFERENCES xp_log (entry_num) 
+        ON UPDATE CASCADE 
 ) ENGINE=INNODB; 
 
 

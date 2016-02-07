@@ -55,7 +55,7 @@ COMMANDS:
 √	xp/unspend <entry_num> for <reason> : reverse the freebie/spend 
 	on <entry_num>; Wizard-only
 
-	xp/check [<name>] : what traits still have xp timers on them?	
+	xp/check [<name>] : what traits still have xp timers on them?
 
 
 
