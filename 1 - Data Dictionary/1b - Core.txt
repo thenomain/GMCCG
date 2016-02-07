@@ -313,8 +313,9 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 // GENERAL NOTE: Need a way to look up a list of traits by name with wildcard
 
 &merit.hobbyist_clique_() DD=2|*|*
-&prerequisite.merit.hobbyist_clique_() DD=u( .at_least_all, %0, attribute.wits:3 merit.contacts:2 )
-&prereq-text.merit.hobbyist_clique_() DD=
+// &prerequisite.merit.hobbyist_clique_() DD=
+//	u( .at_least_all, %0, attribute.wits:3 merit.contacts:2 )
+// &prereq-text.merit.hobbyist_clique_() DD=
 // Not sure how to code it so that the prerequisite is a 2 in the Skill 
 // associated with the Merit.
 // Thought: "Hobbyist Clique (Computer Club).Computers"
@@ -520,12 +521,12 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &tags.merit.cursed D:T=human.supernatural
 
 &merit.medium DD=3
-&prerequisite.merit.medium DD=u( .at_least, %0, skill.empathy )
+&prerequisite.merit.medium DD=u( .at_least, %0, skill.empathy, 2 )
 &prereq-text.merit.medium DD=Empathy 2+
 &tags.merit.medium D:T=human.supernatural
 
 &merit.mind_of_a_madman DD=2
-&prerequisite.merit.mind_of_a_madman DD=u( .at_least, %0, skill.empathy )
+&prerequisite.merit.mind_of_a_madman DD=u( .at_least, %0, skill.empathy, 2 )
 &prereq-text.merit.mind_of_a_madman DD=Empathy 2+
 &tags.merit.mind_of_a_madman D:T=human.supernatural
 
