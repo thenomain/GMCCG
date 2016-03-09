@@ -3,11 +3,11 @@
 ================================================================================
 == ACTION: The "roll macro" system. ============================================
 
-The player sets the action on themselves.  e.g.:
+The player sets the action on themselves. e.g.:
 
 	&action.perception me=/again=9 wits + composure
 
-The system runs it through objeval(%#, u(action.<name>)).  This is done so the 
+The system runs it through objeval(%#, u(action.<name>)). This is done so the 
 player can add code to their own actions and keep it secure.
 
 I'd like the system to be able to strip the final target, "=job 5" for 
@@ -19,8 +19,8 @@ e.g.:
 
 	action/rote perception + 3=thenomain
 
-Switches entered by hand should override switches in the macro.  For our 
-system, this is as simple as making sure they're first.  (roll/again=8/again=9 
+Switches entered by hand should override switches in the macro. For our 
+system, this is as simple as making sure they're first. (roll/again=8/again=9 
 will roll 8-again.)
 
 Basic Logic:
@@ -158,6 +158,6 @@ List all actions on %0
 --------------------------------------------------------------------------------
 -- Help: Action ---------------------------------------------------------------
 
-&help~stat_topics~action #96=Roll Macros~action\[/<switches>] <action_name> \[+|- <more items>]\[ = <send to>]%r%rThis command allows you to set up and use your own often-used rolls by setting them on an attribute.  Any switches you use with action will override any switches you set on the attribute.%r%rYou may shorten <action_name> to the closest unique name. Due to coding shortcuts, you must put a space after <action_name> if anything follows it.%r%r&action.<action_name> me=<roll format>%r%re.g.: &action.perception me=/again=9 Wits + Composure%r%rYou may also add code to the attribute.  For instance, the perception rolls for werewolves depend upon their form.%r%re.g.: %r%b &form me=gauru%r%b &action.perception me=Wits + Composure + \[case(v(form), gauru, 3, ...)\]%r%raction: Typed alone will list which action macros you've set.%r%r[ansi(h, See Also)]: +help roll
+&help~stat_topics~action #96=Roll Macros~action\[/<switches>] <action_name> \[+|- <more items>]\[ = <send to>]%r%rThis command allows you to set up and use your own often-used rolls by setting them on an attribute. Any switches you use with action will override any switches you set on the attribute.%r%rYou may shorten <action_name> to the closest unique name. Due to coding shortcuts, you must put a space after <action_name> if anything follows it.%r%r&action.<action_name> me=<roll format>%r%re.g.: &action.perception me=/again=9 Wits + Composure%r%rYou may also add code to the attribute. For instance, the perception rolls for werewolves depend upon their form.%r%re.g.: %r%b &form me=gauru%r%b &action.perception me=Wits + Composure + \[case(v(form), gauru, 3, ...)\]%r%raction: Typed alone will list which action macros you've set.%r%r[ansi(h, See Also)]: +help roll
 
 */

@@ -22,6 +22,8 @@ ROLLER 3.0
 @fo me=&d.stat-setter nWoD Roller <nr>=[num( Stat Functions Prototype <sfp> )]
 @fo me=&d.data-dictionary nWoD Roller <nr>=[num( Data Dictionary <dd> )]
 
+@fo me=&d.spend-regain nWoD Roller <nr>=[search( name=Pool Spend Regain System <psrs> )]
+
 @fo me=&d.jobs nWoD Roller <nr>=[search( name=Job Global Object <JGO> )]
 @fo me=@va nWoD Roller <nr>=[get( get( nr/d.jobs )/va )]
 
@@ -82,7 +84,7 @@ ROLLER 3.0
 == CORE ROLLER =================================================================
 
 The n-again checker does not care about any rules, it just sees how many are x 
-or higher and returns that.  You know, to be honest, this is precisely the same 
+or higher and returns that. You know, to be honest, this is precisely the same 
 as the plain success checker.
 
 

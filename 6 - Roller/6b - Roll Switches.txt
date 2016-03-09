@@ -2,18 +2,20 @@
 ################################################################################
 ## ROLL SWITCHES ###############################################################
 
-Multiple switches may be given (and, of course, taken out).  Each system adds 
+Multiple switches may be given (and, of course, taken out). Each system adds 
 to what's being rolled and will probably depend upon the dice-to-roll part of 
 it being parsed first.
 
-Spaces may not be in any switch.  Name completion will do its best.
+Spaces may not be in any switch. Name completion will do its best.
 
 Active Switches (do their own thing):
 	/again=<again type> - roll different types of n-again
 		/<number>[-again]
 		/no[-again]
 		/weakness
-	/willpower - spend a willpower for +3
+	/willpower - spend a willpower for +3 dice (needs hooked into spend system)
+		/willpower=<number of dice> - spend a willpower for + <number of dice>
+		/wp[=<num dice>] - an easier way to type it
 
 
 'Weakness' is a term half made-up from the Vampire book, indicating some clans' 
@@ -57,6 +59,7 @@ Wildcards are valid.
 	trained 
 	weakness 
 	rote 
+	blind 
 
 // --
 	
@@ -66,6 +69,7 @@ Wildcards are valid.
 	8-again|again=8 
 	no-again|again=no 
 	11-again|again=no 
+	wp|willpower 
 
 
 
@@ -118,9 +122,9 @@ y: the switch modifier (after '=')
 
 /* -- Tests --
 
-think u( nr/f.switch.name-complete, 8/w/no/dsfds/no-/ag=5/t/tr/fd )
+think u( v( d.nr )/f.switch.name-complete, 8/w/no/dsfds/no-/ag=5/t/tr/fd/wp=4 )
 
-think [setr( z, /w/tr/e/ta=15 )] --> [setq( z, u( nr/f.switch.name-complete, %qz ))]%qz
+think [setr( z, /w/tr/e/ta=15 )] --> [setq( z, u( v( d.nr )/f.switch.name-complete, %qz ))]%qz
 
 This being more what it should probably look like when we're done.
 
@@ -129,13 +133,13 @@ This being more what it should probably look like when we're done.
 -- GetSwitch -------------------------------------------------------------------
 
 Passive switches are used in other parts of the system, usually to stop them 
-from working, or to cause them to work a little differnetly.  For them, the 
-/whole/switch/list is passed, as well as the item to check.  Yeah, it's pretty 
+from working, or to cause them to work a little differnetly. For them, the 
+/whole/switch/list is passed, as well as the item to check. Yeah, it's pretty 
 simple.
 
-CODE NOTE: This works just like grab(%0, %1*, /).  The reason it works is 
+CODE NOTE: This works just like grab(%0, %1*, /). The reason it works is 
 because the list is <null>/item1/item2/item3, so searching for * returns the 
-<null>.  This is VERY USEFUL.
+<null>. This is VERY USEFUL.
 
 0: partial name of switch to check for
 returns: the full item
@@ -183,7 +187,7 @@ A chance roll takes precident.
 ================================================================================
 == /again ======================================================================
 
-/again=10, 9, 8.  7 is 8 + 2 dice, 6 is 8 + 4 dice, and so on.
+/again=10, 9, 8. 7 is 8 + 2 dice, 6 is 8 + 4 dice, and so on.
 /again=no, converts to 11.
 
 0: /again=xxx
