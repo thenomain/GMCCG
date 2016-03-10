@@ -6,28 +6,46 @@ Multiple switches may be given (and, of course, taken out). Each system adds
 to what's being rolled and will probably depend upon the dice-to-roll part of 
 it being parsed first.
 
-Spaces may not be in any switch. Name completion will do its best.
+Spaces may not be in any switch.
 
-Active Switches (do their own thing):
+Name completion will do its best, so 'w' will match 'weakness' before 
+'willpower', but 'wi' will be clear. &d.switch.alias allows switches to have 
+multiple names. For instance: 'wp' -> 'willpower'.
+
+--
+
+Active switches need some more in-depth code run. They are processed after the 
+stat interpreter ('x + y - z' -> numbers). All are passed the following:
+
+	%0: '/<switch>[=<stuff>]'
+	%1: dbref of roller, usually %#
+
+--
+
+n-Again Switches (active):
 	/again=<again type> - roll different types of n-again
 		/<number>[-again]
 		/no[-again]
 		/weakness
-	/willpower - spend a willpower for +3 dice (needs hooked into spend system)
-		/willpower=<number of dice> - spend a willpower for + <number of dice>
-		/wp[=<num dice>] - an easier way to type it
-
 
 'Weakness' is a term half made-up from the Vampire book, indicating some clans' 
 weaknesses reminiscent of oWoD's success counter: After counting successes, 
 subtract 1s. 'Weakness' is also always 'no-again' and cannot dramatically fail.
 
+--
+
+Willpower Switches (active):
+	/willpower - spend a willpower for +3 dice (needs hooked into spend system)
+		/willpower=<number of dice> - spend a willpower for + <number of dice>
+		/wp[=<num dice>]
+
+--
 
 Passive Switches (used in other parts of the roller):
 	/tr[ained] - ignore untrained modifiers
 	/now[ound] - ignore wound penalties
 	/rote - roll as a rote (failures re-rolled once)
-
+	/blind - roller do not see the results
 
 According to the printed literature that I could find, 'rote' is processed 
 before all n-again rolls, including weakness. This means weakness + rote could 
@@ -35,8 +53,6 @@ take a normal failure ('2') and turn it into a success-eating '1'.
 
 It is what it is.
 
-For building to-lists.
-	/blind - a target list including everyone except the roller
 
 
 ================================================================================
@@ -86,8 +102,10 @@ Take the switch list /x/w=m/r/g/r and name-complete it.
 0: list/of/switches
 returns: name-completed and alias-fixed list/of/switches
 
-a: list of switches as known by the attributes
-b: hey it matched
+q0: list of switches as known by the attributes
+q1: hey it matched
+
+// maybe switch these back to a/b, since I think we don't need them //
 
 x: the switch
 y: the switch modifier (after '=')
@@ -98,22 +116,22 @@ y: the switch modifier (after '=')
 	localize( 
 		iter( lcstr( trim( %0, l, / )), 
 			strcat( 
-				setq( a, 
+				setq( 0, 
 					lcstr( sort( edit( lattr( %!/f.roll/* ), F.ROLL/, )))
 				), 
 				setq( x, before( %i0, = )), 
 				setq( y, rest( %i0, = )), 
 				case( 1, 
-					t( setr( b, grab( %qa, %qx* ))), 
-					/%qb[if( strlen( %qy ), =%qy )], 
+					t( setr( 1, grab( %q0, %qx* ))), 
+					/%q1[if( strlen( %qy ), =%qy )], 
 
-					t( setr( b, grab( v( d.switch.passives ), %qx* ))), 
-					/%qb[if( strlen( %qy ), =%qy )], 
+					t( setr( 1, grab( v( d.switch.passives ), %qx* ))), 
+					/%q1[if( strlen( %qy ), =%qy )], 
 
-					t( setr( b, 
+					t( setr( 1, 
 						rest( grab( v( d.switch.aliases ), %qx*|* ), | )
 					)), 
-					/%qb[if( words( %qy ), =%qy )] 
+					/%q1[if( words( %qy ), =%qy )] 
 				)
 			), 
 			/, @@ 
@@ -324,11 +342,62 @@ qt: a GLOBAL REGISTER for number of times to roll
 
 
 /*
-=--=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-==---==--=-=-=-==-=-=-
+================================================================================
+== /willpower[=<dice>] =========================================================
 
-Before I forget: can you add a /blind switch for +roll that only shows the
-result to the people you're rolling to?
+We also aliased this to '/wp' for sanity, tho '/wi[llpower]' would work too.
 
-... Probably.
+Add <dice> to the roll and trigger a willpower spend via the spend/regain 
+system.
+
+(Check enough willpower, first.)
+
+As a reminder: 
+	The rules state that only one Willpower can be spent per turn.
+	We do not check this.
 
 */
+
+&f.roll/willpower nWoD Roller <nr>=
+	strcat( 
+		setq( 0, if( strlen(rest( %0, = )), rest( %0, = ), 3 )), 
+		setq( 1, 4 ), 
+		
+		case( 0, 
+
+// value check
+			cand( isint( %q0 ), gt( %q0, 0 )), 
+			u( f.registers.error-add, 
+				Dice for willpower must be between 2 and %q1. 
+			), 
+
+			lte( %q0, %q1 ), 
+			u( f.registers.error-add, 
+				Dice for willpower cannot be higher than %q1. 
+			), 
+
+// template check (for the spend system)
+			t( getstat( %1/template )), 
+			u( f.registers.error-add, 
+				Must have a template to spend willpower. 
+			), 
+			
+
+// enough willpower? 
+			t( u( v( d.spend-regain )/f.pool.canchange, %1, willpower, -1 )), 
+			u( f.registers.error-add, 
+				You don't have enough Willpower to spend. 
+			), 
+
+// ok... (doesn't display willpower spend; should it?)
+			strcat( 
+				u( f.registers.output-add, %q0 %(willpower%) ), 
+				u( f.registers.dice-add, %q0 ), 
+				u( v( d.spend-regain )/f.pool.changestat, %1, willpower, -1 )
+			)
+		)
+	)
+
+
+
+

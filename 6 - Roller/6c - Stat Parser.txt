@@ -15,7 +15,7 @@ The following registers are used across the entire system:
         "Weakness": Use the weakness system
     qz: Text: /Full/on/switches
     qr: Text: Result of dice throw, <throw>|<throw> if extended/multiple throws
-
+    
 	qn: Number of times to roll (default 1 unless /extended switch used)
 	qt: Target number to roll until (default null unless /target switch used)
 
@@ -42,7 +42,7 @@ all cases, there is to be no output.
 -- Add to Output (qo) ----------------------------------------------------------
 
 0: stat name to add to output
-1: sign (+ if <null>)
+1: sign (default '+')
 2: "nostat" if we want to error it
 
 */

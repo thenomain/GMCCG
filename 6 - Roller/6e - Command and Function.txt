@@ -200,8 +200,12 @@ may be ignored if internal: items kept in global registers!
 // >> Active Adjustments <<
 // .. scan for and run "active" switches
 		iter(
-			again weakness extended target, 
-			if( u( f.hasswitch?, %i0 ), u( f.roll/%i0, u( f.getswitch, %i0 ))), 
+//			again weakness extended target willpower, 
+			edit( lcstr( lattr( %!/f.roll/* )), f.roll/, ), 
+			if( 
+				u( f.hasswitch?, %i0 ), 
+				u( f.roll/%i0, u( f.getswitch, %i0 ), %# )
+			), 
 			, @@ 
 		), 
 
@@ -265,12 +269,12 @@ may be ignored if internal: items kept in global registers!
 
 /* -- Tests --
 
-think u(nr/f.roll.workhorse, str+dex+2, pmatch(thenomain), /again=8)
-think u(nr/f.roll, str+2, thenomain, /again=8)
+think u( v( d.nr )/f.roll.workhorse, str+dex+2, pmatch(thenomain), /again=8 )
+think u( v( d.nr )/f.roll, str+2, thenomain, /again=8 )
 
-think roll(str+dex+2, thenomain, /again=8/extended)
+think roll( str+dex+2, thenomain, /again=8/extended )
 
-think roll(str+2, thenomain, /again=8/extended=tyyt)
+think roll( str+2, thenomain, /again=8/extended=tyyt )
 
 
 
