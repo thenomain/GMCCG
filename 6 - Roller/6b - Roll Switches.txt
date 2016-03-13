@@ -348,9 +348,9 @@ qt: a GLOBAL REGISTER for number of times to roll
 We also aliased this to '/wp' for sanity, tho '/wi[llpower]' would work too.
 
 Add <dice> to the roll and trigger a willpower spend via the spend/regain 
-system.
+system, default 3.
 
-(Check enough willpower, first.)
+Cannot be combined with /extended or /target, for sanity's sake.
 
 As a reminder: 
 	The rules state that only one Willpower can be spent per turn.
@@ -364,6 +364,16 @@ As a reminder:
 		setq( 1, 4 ), 
 		
 		case( 0, 
+
+// cannot roll with '/extended' or '/target'
+			not( cor( 
+				u( f.hasswitch?, extended ), 
+				u( f.hasswitch?, target )
+			)), 
+			u( f.registers.error-add, 
+				Cannot add willpower to an extended or targeted roll%; 
+				roll one at a time. 
+			), 
 
 // value check
 			cand( isint( %q0 ), gt( %q0, 0 )), 
@@ -397,7 +407,4 @@ As a reminder:
 			)
 		)
 	)
-
-
-
 
