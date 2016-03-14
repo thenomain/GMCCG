@@ -64,6 +64,12 @@ Tags for the Core WoD stats.
 
 // == CORE MERITS ==============================================================
 
+
+// -- Merits: Special ----------------------------------------------------------
+
+&tags.merit.sanctity_of_merits D:T=special
+
+
 // -- Merits: Mental -----------------------------------------------------------
 
 &tags.merit.area_of_expertise_() D:T=mental
@@ -78,6 +84,8 @@ Tags for the Core WoD stats.
 &tags.merit.holistic_awareness D:T=mental
 &tags.merit.indomitable D:T=mental
 &tags.merit.interdisciplinary_specialty_() D:T=mental
+&tags.merit.investigative_aide_() D:T=mental
+&tags.merit.investigative_prodigy D:T=mental
 &tags.merit.language_() D:T=mental
 &tags.merit.library_() D:T=mental
 &tags.merit.meditative_mind D:T=mental
@@ -86,22 +94,29 @@ Tags for the Core WoD stats.
 &tags.merit.professional_training_() D:T=mental
 &tags.merit.tolerance_for_biology D:T=mental
 &tags.good_time_management D:T=mental
+&tags.merit.virtuous D:T=mental
+&tags.merit.vice-ridden_() D:T=mental
 
 
 // -- Merits: Physical ---------------------------------------------------------
 
 &tags.merit.ambidextrous D:T=chargen-only.physical
+&tags.merit.automotive_genius D:T=physical
 &tags.merit.crack_driver D:T=physical
 &tags.merit.demolisher D:T=physical
 &tags.merit.double_jointed D:T=physical
 &tags.merit.fleet_of_foot D:T=physical
 &tags.merit.giant D:T=chargen-only.physical
 &tags.merit.hardy D:T=physical
+&tags.merit.greyhound DD=physical
 &tags.merit.iron_stamina D:T=physical
-&tags.merit.quick_draw_() D:T=physical
 &tags.merit.parkour D:T=physical.style
+&tags.merit.quick_draw_() D:T=physical
+&tags.merit.relentless D:T=physical
+&tags.merit.seizing_the_edge D:T=physical
 &tags.merit.sleight_of_hand D:T=physical
 &tags.merit.small_framed D:T=chargen-only.physical
+&tags.merit.stunt_driver D:T=physical.style
 
 
 // -- Merits: Social -----------------------------------------------------------
@@ -125,12 +140,16 @@ Tags for the Core WoD stats.
 &tags.merit.retainer_() D:T=social
 &tags.merit.safe_place_() D:T=social
 &tags.merit.small_unit_tactics D:T=social
+&tags.merit.spin_doctor D:T=social
 &tags.merit.status_() D:T=social
 &tags.merit.staff_() D:T=social
 &tags.merit.striking_looks_() D:T=social
 &tags.merit.sympathetic D:T=social
+&tags.merit.table_turner D:T=social
+&tags.merit.takes_one_to_know_one D:T=social
 &tags.merit.taste D:T=social
 &tags.merit.true_friend_() D:T=social
+&tags.merit.untouchable D:T=social
 
 
 // -- Merits: Fighting Merits --------------------------------------------------
@@ -153,12 +172,6 @@ Tags for the Core WoD stats.
 &tags.merit.shiv D:T=physical.fighting
 &tags.merit.street_fighting D:T=physical.fighting.style
 &tags.merit.unarmed_defense D:T=physical.fighting.style
-
-
-// -- Core Merits: Special -----------------------------------------------------
-
-&tags.merit.virtuous D:T=special
-&tags.merit.vice-ridden_() D:T=special
 
 
 // -- Core Merits: Supernatural ------------------------------------------------

@@ -203,6 +203,14 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &prerequisite.merit.interdisciplinary_specialty_() DD=u( .at_least, %0, u( .specialty_for, %0, %1 ), 3 )
 &prereq-text.merit.interdisciplinary_specialty_() DD=Chosen specialty must belong to a Skill at 3+
 
+&merit.investigative_aide_() DD=1|Academics.Animal Ken.Athletics.Brawl.Computer.Crafts.Drive.Empathy.Expression.Firearms.Intimidation.Investigation.Larceny.Medicine.Occult.Persuasion.Politics.Science.Socialize.Stealth.Streetwise.Subterfuge.Survival.Weaponry
+&prerequisite.merit.investigative_aide_() DD=u( .at_least, %0, skill.[edit( %1, %b, _ )], 3 )
+&prereq-text merit.investigative_aide_() DD=Chosen Skill must be at 3+
+
+&merit.investigative_prodigy DD=1.2.3.4.5
+&prerequisite.merit.investigative_prodigy DD=u( .at_least_all, %0, attribute.wits:3 skill.investigation:3 )
+&prereq-text.merit.investigative_prodigy DD=Wits 3+ and Investigation 3+
+
 &merit.language_() DD=1|*
 
 &merit.library_() DD=1.2.3|academics.computer.crafts.investigation.medicine.occult.politics.science
@@ -227,10 +235,18 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &prerequisite.merit.trained_observer DD=u( .at_least_one, %0, attribute.wits:3 attribute.composure:3 )
 &prereq-text.merit.trained_observer DD=Wits 3+ or Composure 3+
 
+&merit.virtuous_() DD=2|*
+
+&merit.vice-ridden_() DD=2|*
+
 
 // -- Merits: Physical ---------------------------------------------------------
 
 &merit.ambidextrous DD=3
+
+&merit.automotive_genius DD=1
+&prerequisite.merit.automotive_genius DD=u( .at_least_all, %0, skill.crafts:3 skill.drive:1 skill.science:1 )
+&prereq-text.merit.automotive_genius DD=Crafts 3+, Drive 1+, and Science 1+
 
 &merit.crack_driver DD=2.3
 &prerequisite.merit.crack_driver DD=u( .at_least, %0, skill.drive, 3 )
@@ -254,9 +270,17 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &prerequisite.merit.hardy DD=u( .at_least, %0, attribute.stamina, 3 )
 &prereq-text.merit.hardy DD=Stamina 3+
 
+&merit.greyhound DD=1
+&prerequisite.merit.greyhound DD=u( .at_least_all, %0, skill.athletics:3 attribute.wits:3 attribute.stamina:3 )
+&prereq-text.merit.greyhound DD=Athletics 3+, Wits 3+, and Stamina 3+
+
 &merit.iron_stamina DD=1.2.3
 &prerequisite.merit.iron_stamina DD=u( .at_least_one, %0, attribute.stamina:3 attribute.resolve:3 )
 &prereq-text.merit.iron_stamina DD=Stamina 3+ or Resolve 3+
+
+&merit.parkour DD=1.2.3.4.5
+&prerequisite.merit.parkour DD=u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 )
+&prereq-text.merit.parkour DD=Dexterity 3+ & Athletics 2+
 
 &merit.quick_draw_() DD=1|*
 &prerequisite.merit.quick_draw_() DD=
@@ -269,15 +293,23 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 	)
 &prereq-text.merit.quick_draw_() DD=Wits 3+, and the type is either a specialty for Brawl, Weaponry, Firearms, or a learned Fighting Style
 
-&merit.parkour DD=1.2.3.4.5
-&prerequisite.merit.parkour DD=u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 )
-&prereq-text.merit.parkour DD=Dexterity 3+ & Athletics 2+
+&merit.relentless DD=1
+&prerequisite.merit.relentless DD=u( .at_least_all, %0, skill.athletics:2 attribute.stamina:3 )
+&prereq-text.merit.relentless DD=Athletics 2+ and Stamina 3+
+
+&merit.seizing_the_edge DD=2
+&prerequisite.merit.seizing_the_edge DD=u( .at_least_all, %0, attribute.wits:3 attribute.composure:3 )
+&prereq-text.merit.seizing_the_edge DD=Wits 2+ and Composure 3+
 
 &merit.sleight_of_hand DD=2
 &prerequisite.merit.sleight_of_hand DD=u( .at_least, %0, skill.larceny, 3 )
 &prereq-text.merit.sleight_of_hand DD=Larceny 3+
 
 &merit.small_framed DD=2
+
+&merit.stunt_driver DD=1.2.3.4
+&prerequisite.merit.stunt_driver DD=u( .at_least_all, %0, attribute.dexterity:3 skill.drive:3 attribute.wits:3 )
+&prereq-text.merit.stunt_driver DD=Dexterity 3+, Drive 3+, and Wits 3+
 
 
 // -- Merits: Social -----------------------------------------------------------
@@ -287,21 +319,27 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &merit.alternate_identity_() DD=1.2.3|*
 
 &merit.anonymity DD=1.2.3.4.5
+&prerequisite.merit.anonymity DD=not( lattr( %0/_merit.fame_(*) ))
+&prereq-text.merit.anonymity DD=Cannot have the merit 'Fame'
 
 &merit.barfly DD=2
 &prerequisite.merit.barfly DD=u( .at_least, %0, skill.socialize, 2 )
 &prereq-text.merit.barfly DD=Socialize 2+
+
+&merit.closed_book DD=1.2.3.4.5
+&prerequisite.merit.closed_book DD=
+&prereq-text.merit.closed_book DD=
+&tags.merit.closed_book D:T=social
 
 &merit.contacts_() DD=1|*
 // I made this a 1-dot Merit because in GMC you can’t have more than a single 
 // dot per tpye of Contacts and it’s just easier to keep track of if they are 
 // 1-dot Merits with specifiers. This is how the Vampire book does it.
 
-&merit.etiquette DD=1.2.3.4.5
-&prerequisite.merit.etiquette DD=u( .at_least_all, %0, attribute.composure:3 skill.socialize:2 )
-&prereq-text.merit.etiquette DD=Composure 3+ and Socialize 2+
-
 &merit.fame_() DD=1.2.3|*
+&prerequisite.merit.fame_() DD=u( .has_not, %0, merit.anonymity )
+&prereq-text.merit.fame_() DD=Cannot have the 'Anonymity' merit
+// cannot have 'anonymity'
 
 &merit.fast_talking DD=1.2.3.4.5
 &prerequisite.merit.fast_talking DD=u( .at_least_all, %0, attribute.manipulation:3 skill.subterfuge:2 )
@@ -351,19 +389,33 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &prerequisite.merit.small_unit_tactics DD=u( .at_least, %0, attribute.presence, 3 )
 &prereq-text.merit.small_unit_tactics DD=Presence 3+
 
-&merit.status_() DD=1.2.3.4.5|*
+&merit.spin_doctor DD=1
+&prerequisite.merit.spin_doctor DD=u( .at_least_all, %0, attribute.manipulation:3 skill.subterfuge:2 )
+&prereq-text.merit.spin_doctor DD=Manipulation 3+ and Subterfuge 2+
 
 &merit.staff_() DD=1.2.3.4.5|*
+
+&merit.status_() DD=1.2.3.4.5|*
 
 &merit.striking_looks_() DD=1.2|*
 
 &merit.sympathetic DD=2
+
+&merit.table_turner DD=1
+&prerequisite.merit.table_turner DD=u( .at_least_all, %0, attribute.composure: 3 attribute.manipulation:3 attribute.wits:3 )
+&prereq-text.merit.table_turner DD=Composure 3+, Manipulation 3+, and Wits 3+
+
+&merit.takes_one_to_know_one DD=1
 
 &merit.taste DD=1
 &prerequisite.merit.taste DD=cand( u( .at_least, %0, skill.crafts, 2 ), u( .specialty_has, %0, Crafts Expression, * ))
 &prereq-text.merit.taste DD=Crafts 2+ and Specialty in Crafts or Expression
 
 &merit.true_friend_() DD=3|*
+
+&merit.untouchable DD=1
+&prerequisite.merit.untouchable DD=u( .at_least_all, %0, skill.manipulation:3 skill.subterfuge:2 )
+&prereq-text.merit.untouchable DD=Manipulation 3+ and Subterfuge 2+
 
 
 // -- Merits: Fighting Merits --------------------------------------------------
@@ -499,17 +551,13 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 	Dexterity 3+, Brawl 2+ & Defensive Combat (Brawl)
 
 
-// -- Core Merits: Special -----------------------------------------------------
-
-&merit.virtuous_() DD=2|*
-
-&merit.vice-ridden_() DD=2|*
-
-
 // -- Core Merits: Supernatural ------------------------------------------------
 
 &merit.aura_reading DD=3
 &tags.merit.aura_reading D:T=human.supernatural
+
+&merit.automatic_writing DD=2
+&tags.merit.automatic_writing D:T=human.supernatural
 
 &merit.biokinesis DD=1.2.3.4.5
 &tags.merit.biokinesis D:T=human.supernatural
@@ -519,6 +567,9 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &merit.cursed DD=2
 &tags.merit.cursed D:T=human.supernatural
+
+&merit.laying_on_hands DD=3
+&tags.merit.laying_on_hands D:T=human.supernatural
 
 &merit.medium DD=3
 &prerequisite.merit.medium DD=u( .at_least, %0, skill.empathy, 2 )
@@ -532,6 +583,9 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &merit.omen_sensitivity DD=3
 &tags.merit.omen_sensitivity D:T=human.supernatural
+
+&merit.numbing_touch DD=1.2.3.4.5
+&tags.merit.numbing_touch D:T=human.supernatural
 
 &merit.psychokinesis_() DD=3.5|Fire.Cold.Electricity
 &tags.merit.psychokinesis_() D:T=human.supernatural
@@ -550,8 +604,6 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &merit.unseen_sense_() DD=2|
 	Vampires.Werewolves.God Machine.Spirits.Ghosts.Angels
-&prerequisite.merit.unseen_sense_() dd=u( .at_least, %0, attribute.wits, 2 )
-&prereq-text.merit.unseen_sense_() DD=Wits 2+
 &tags.merit.unseen_sense_() D:T=human.supernatural
 
 
