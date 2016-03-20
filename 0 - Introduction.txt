@@ -1,3 +1,6 @@
+## NOTE: 'God Machine Chronicles' is now known as 'Chronicles of Darkness'.
+## I'm not changing the name of all of this just for that.
+
 -- DATA VS. SYSTEM -------------------------------------------------------------
 
 The stat system as a whole is mostly concerned with the data side of things. It 
