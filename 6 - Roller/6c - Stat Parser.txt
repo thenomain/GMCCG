@@ -95,7 +95,7 @@ and wound penalties are all added here.
 
 Add (subtract) health penalty unless passive /nowound switch is included
 
-"now" is "nowounds" shortened
+"now" is "nowound" shortened
 
 0: sheet dbref
 q0: health penalties
@@ -105,7 +105,7 @@ q0: health penalties
 &f.stat-check.health nWoD Roller <nr>=
 	if( 
 		cand( 
-			not( u( f.hasswitch?, nowounds )), 
+			not( u( f.hasswitch?, nowound )), 
 			lt( setr( 0, ladd( u( .value_full, %0, health.penalty ), . )), 0 )
 		), 
 
@@ -496,7 +496,7 @@ q8: 'nostat' if the [not-a-stat] is meant to be used
 --------------------------------------------------------------------------------
 -- Some Tests ------------------------------------------------------------------
 
-At the moment we don't have 'f.hasswitch?' in, so we can't check '/nowounds' or 
+At the moment we don't have 'f.hasswitch?' in, so we can't check '/nowound' or 
 '/trained'.
 
 --
