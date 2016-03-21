@@ -48,7 +48,7 @@ COMMANDS:
 √	xp/convert <amt> [beats|xp] from <name> : Player xpz -> Normal xpz, yo.
 	(<name> must be an alt of yours)
 
-	xp/unaward <entry_num> for <reason> : I made a mistake, help!; Wizard-only
+√	xp/unaward <entry_num> for <reason> : I made a mistake, help!; Wizard-only
 	("unspend" for xp/award, tho seems very minor)
 
 √	xp/unspend <entry_num> for <reason> : reverse the freebie/spend 
