@@ -17,7 +17,7 @@ Wizard-only (??).
 e: entry num, as entered
 r: reason, as entered
 
-l: sql log of entry_num = %qe
+l: sql log of 'entry_num = %qe'
 o: target objid
 d: target dbref
 0: entry_num matching existing 'unspend' (if any)
@@ -68,7 +68,7 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 		sql log:, setr( l, sql( u( sql.select.entry_num, %qe ), `, | )), %r, 
 		target objid:, setr( o, elements( %ql, 3, | )), %r, 
 		target dbref:, setr( d, first( %qo, : )), %r, 
-		unspent?:, setr( 0, sql( sql.select.unspend.check, %qe )), %r, 
+		unspent?:, setr( 0, sql( u( sql.select.unspend.check, %qe ))), %r, 
 	); 
 
 	@assert strlen( %ql )={ 
@@ -149,7 +149,7 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 				freebie, no Exp %(freebie%), 
 				strcat( 
 					div( %qs, v( d.beat-to-exp )), %b, Exp, %b, 
-					%(, floor( %qs ), %b, beats%), 
+					%(, u( .plural, floor( %qs ), Beat, Beats ), %), 
 				)
 			), %b, 
 			if( strmatch( %qd, %# ), you, to [name( %qd )] ), %b, 
@@ -162,8 +162,8 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 	think strcat( 
 		start:, u( f.transaction.begin ), %r, 
 		log entry:, setr( 3, 
-				sql( u( sql.insert.unspend.log,  
-					%qd, %#, %qt, %qs, %qp, %qr, %qm, %qv 
+				sql( u( sql.insert.unspend.log, 
+					%qd, %#, %qt, %qs, %qp, u( f.sql.escape, %qr ), %qm, %qv 
 				)) 
 		), %r, 
 		reference:, setr( 4, 
@@ -195,7 +195,7 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 			I tried to '&_special.beats.%qt %qd=
 			[cat( first( %qb ), add( rest( %qb ), %qs ))]' %([name( %qd )]%) 
 			but an error ocurred. Please set this properly or this character 
-			will not the refund already recorded. 
+			will not have the refund as recorded. 
 		) 
 	}; 
 
