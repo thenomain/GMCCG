@@ -1,0 +1,272 @@
+/*
+================================================================================
+== UNAWARD =====================================================================
+
+It's 'unspend' but for awards.
+
+If I forget, it's because I've copy/pasted the 'unspend' code and have been 
+tweaking it from there.
+
+* Check unaward is for 'normal' xp only (to start)
+* Add new log entry for 'unaward' and relate it to the old 'award'.
+* Removes beats from table from permanent in &_special.beats.<type>
+* Call it a day
+
+Wizard-only.
+
+	xp/unaward <entry num> for <reason>
+
+--
+
+e: entry num, as entered
+r: reason, as entered
+
+l: sql log of 'entry_num = %qe'
+o: target objid
+d: target dbref
+s: beats awarded
+q0: entry_num matching existing 'unaward' (if any)
+
+a: action
+t: xp type
+
+b: current ('normal') beats on target (%qd)
+
+z: a temporary storage, to be discarded almost immediately after setting
+
+q3: unaward log entry insert (from sql())
+q4: unaward log reference insert (from sql())
+q5: attempt at set( %qd, _special.beats.%qt:<new value> )
+
+*/
+
+&c.xp/unaward [v( d.xpas )]=$^\+?xp/unaward(.+)?$:
+	@assert isstaff( %#, wizard )={ 
+		@pemit %#=u( .msg, xp/unward, Wizard only ) 
+	}; 
+
+	think strcat( 
+		entry num:, setr( e, first( %1 )), %r, 
+		reason:, setr( r, trim( rest( %1, for ))), %r, 
+	); 
+
+	@break strmatch( %qr, *[lit( %r )]* )={ 
+		@pemit %#=u( .msg, xp/unaward, We are not allowing multi-line reasons ) 
+	}; 
+
+	@assert cand( isint( %qe ), gt( %qe, 0 ))={
+		@pemit %#=u( .msg, xp/unaward, Entry num must be postitive integer ) 
+	}; 
+
+	@assert strlen( %qr )={ 
+		@pemit %#=u( .msg, xp/unaward, Must include a reason ) 
+	}; 
+
+// check for information about xp_log and the target
+	think strcat( 
+		sql log:, setr( l, sql( u( sql.select.entry_num, %qe ), `, | )), %r, 
+		target objid:, setr( o, elements( %ql, 3, | )), %r, 
+		target dbref:, setr( d, first( %qo, : )), %r, 
+		amt to unaward:, setr( s, elements( %ql, 6, | )), %r, 
+		unawarded?:, setr( 0, sql( u( sql.select.unaward.check, %qe ))), %r, 
+	); 
+
+	@assert strlen( %ql )={ 
+		@pemit %#=u( .msg, xp/unaward, No such entry number found ) 
+	}; 
+
+	@assert not( strmatch( %ql, #-* ))={ 
+		@pemit %#=u( .msg, xp/unaward, 
+			Initial SQL query failed - please contact a coder 
+		) 
+	}; 
+
+	@assert cand( isdbref( %qd ), strmatch( %qo, u( .objid, %qd )))={ 
+		@pemit %#=u( .msg, xp/unaward, Target no longer exists ) 
+	}; 
+
+	@assert not( %q0 )={ 
+		@pemit %#=u( .msg, xp/unaward, 
+			This has already been unawarded in 'xp/log %q0' 
+		); 
+	}; 
+
+// check that the action and xp type are valid
+	think strcat( 
+		action:, %b, setr( a, elements( %ql, 7, | )), %r, 
+		xp type:, %b, setr( t, elements( %ql, 12, | )), %r, 
+	); 
+
+	@assert strmatch( %qa, gain )={ 
+		@pemit %#=u( .msg, xp/unaward, Action is '%qa'%; must be 'gain' ) 
+	}; 
+
+	@assert strmatch( %qt, normal )={ 
+		@pemit %#=u( .msg, xp/unaward, XP type is '%qt'%; must be 'normal' ) 
+	}; 
+
+// everything else is okay; display basic info
+	think strcat( 
+		current beats:, setr( b, get( %qd/_special.beats.%qt )), %r, 
+	); 
+
+// DISPLAY: header: Unaward: #<entry> (<original reason>)
+	@pemit %#=strcat( 
+		header( 
+			strcat( 
+				Unaward: Entry %qe, 
+				if( 
+					strlen( setr( z, elements( %ql, 8, | ))), 
+					%b%(%qz%) 
+				)
+			), 
+			width()
+		), %r, 
+
+// .. remove amt ('case()' in there in case we want to unaward action 'auto')
+		Removing, %b, 
+			case( %qa, 
+				gain, 
+				strcat( 
+					u( .plural, floor( %qs ), Beat, Beats ), 
+					if( gt( div( %qs, v( d.beat-to-exp )), 0 ), 
+						strcat( 
+							%b, %(, div( %qs, v( d.beat-to-exp )), %b, Exp, %) 
+						)
+					), 
+				)
+			), %b, 
+			if( strmatch( %qd, %# ), you, from [name( %qd )] ), %b, 
+			for reason ', %qr, ', 
+		%r, 
+		footer( %qe, width())
+	); 
+
+// record into 'xp_log' and 'xp_log_unspend' <-- yes, we're keeping this name
+	think strcat( 
+		start:, u( f.transaction.begin ), %r, 
+		log the entry:, setr( 3, 
+				sql( u( sql.insert.unaward.log, 
+					%qd, %#, %qt, %qs, u( f.sql.escape, %qr )
+				)) 
+		), %r, 
+		reference:, setr( 4, 
+			if( not( strmatch( %q3, #-* )), 
+				sql( u( sql.insert.unaward.reference, %qe )), 
+				#-1 log entry failed 
+			)
+		), %r, 
+		commit:, u( f.transaction.end ), %r, 
+	); 
+
+	@break strmatch( %q3, #-* )={ 
+		@pemit %#=u( .msg, xp/unaward, 
+			Error logging unaward%; unaward canceled 
+		)
+	}; 
+
+// apply new (unspent) beats
+	think strcat( 
+		set beats:, setr( 5, 
+			set( %qd, 
+				_special.beats.%qt:
+				[cat( sub( first( %qb ), %qs ), rest( %qb ))]
+			)
+		), %r, 
+	); 
+
+	@if strmatch( %q5, #-* )={ 
+		@pemit %#=u( .msg, xp/unaward, 
+			I tried to '&_special.beats.%qt %qd=
+			[cat( sub( first( %qb ), %qs ), rest( %qb ))]' %([name( %qd )]%) 
+			but an error ocurred. Please set this properly or this character 
+			will not have the unaward recorded. 
+		) 
+	}; 
+
+
+@set [v( d.xpas )]/c.xp/unaward=regexp
+@set [v( d.xpas )]/c.xp/unaward=no_parse
+
+/*
+--------------------------------------------------------------------------------
+-- xp/unaward: Unaward Lookup Table --------------------------------------------
+
+We are using the 'xp_log_unspend' table. The name is inaccurate; the table is a 
+self-reference lookup table that links one primary key to another. I don't have 
+a better name for it at the moment.
+
+What follows is the description, not code to be run. For more information, see:
+'4c3 - XP Unspend.txt'
+
+--
+
+mysql> desc xp_log_unspend;
++-------------------+---------------------+------+-----+---------+-------+
+| Field             | Type                | Null | Key | Default | Extra |
++-------------------+---------------------+------+-----+---------+-------+
+| entry_num_spend   | bigint(20) unsigned | NO   | PRI | NULL    |       |
+| entry_num_unspend | bigint(20) unsigned | NO   | PRI | NULL    |       |
++-------------------+---------------------+------+-----+---------+-------+
+2 rows in set (0.00 sec)
+
+--
+
+Foreign keys all reference 'xp_log'...
+
++----------------+-------------------+-----------------------+-----------------------+------------------------+
+| TABLE_NAME     | COLUMN_NAME       | CONSTRAINT_NAME       | REFERENCED_TABLE_NAME | REFERENCED_COLUMN_NAME |
++----------------+-------------------+-----------------------+-----------------------+------------------------+
+| xp_log_unspend | entry_num_spend   | xp_log_unspend_ibfk_1 | xp_log                | entry_num              |
+| xp_log_unspend | entry_num_unspend | xp_log_unspend_ibfk_2 | xp_log                | entry_num              |
++----------------+-------------------+-----------------------+-----------------------+------------------------+
+2 rows in set (0.03 sec)
+
+
+--------------------------------------------------------------------------------
+-- SQL Insert: Unaward Some Experience -----------------------------------------
+
+Again, these are nearly or exactly identical to the 'unspend' code. 
+We are using different attributes in case more has to be done with them in the 
+future.
+
+0: target dbref
+1: enactor dbref (may be the same)
+2: xp type (probably 'normal') - must be 'normal' for now, by rules above
+3: xp amt
+4: reason
+
+do not forget to 'f.transaction.begin' and 'f.transaction.end'
+
+*/
+
+&sql.insert.unaward.log [v( d.xpas )]=
+	INSERT 
+		INTO xp_log (
+			target_objid, target_name, 
+			enactor_objid, enactor_name, 
+			xp_type, xp_amt, 
+			action, reason
+		) 
+		VALUES (
+			'[u( .objid, %0 )]', '[name( %0 )]', 
+			'[u( .objid, %1 )]', '[name( %1 )]', 
+			'%2', %3, 
+			'unaward', '%4'
+		)
+
+// -----------------------------------------------------------------------------
+// apply the entry_num here (identical to 'sql.insert.unspend.reference'):
+
+&sql.insert.unaward.reference [v( d.xpas )]=
+	INSERT 
+		INTO xp_log_unspend (entry_num_spend, entry_num_unspend) 
+		VALUES (%0, LAST_INSERT_ID( ))
+
+// -----------------------------------------------------------------------------
+// see if an unaward exists (identical to 'sql.insert.unspend.check'):
+
+&sql.select.unaward.check [v( d.xpas )]=
+	SELECT entry_num_unspend 
+		FROM xp_log_unspend 
+		WHERE entry_num_spend=%0

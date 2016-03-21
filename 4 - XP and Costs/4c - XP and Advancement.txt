@@ -11,7 +11,7 @@ Warning: This is a mess coded in a crunch.
 * Be able to determine: not a spend/gain thing
 * Be able to Award XP: gain
 * Be able to spend XP: spend
-* Be able to unaward XP: ungain
+* Be able to unaward XP: unaward
 * Be able to unspend: unspend
 
 -=-=-=-=-=-=-=-=-=-=-=-=
@@ -48,8 +48,7 @@ COMMANDS:
 √	xp/convert <amt> [beats|xp] from <name> : Player xpz -> Normal xpz, yo.
 	(<name> must be an alt of yours)
 
-	xp/ungain <name>=<amt> for <reason> : take some honey away
-	xp/ungain <name>/<xp type>=<amt> for <reason> : a specific kind of honey
+	xp/unaward <entry_num> for <reason> : I made a mistake, help!; Wizard-only
 	("unspend" for xp/award, tho seems very minor)
 
 √	xp/unspend <entry_num> for <reason> : reverse the freebie/spend 
@@ -749,7 +748,8 @@ output: entry_num|who|when|amt|reason or stat -> 'value'|entry_num
 // amt
 		case( elements( %0, 6, | ), 
 			spend, -, 
-			freebie, - 
+			freebie, -, 
+			unaward, - 
 		), 
 		trim( fdiv( floor( elements( %0, 5, | )), v( d.beat-to-exp )), l, 0 ), 
 		|, 
@@ -962,7 +962,7 @@ Valid award:
 &d.beat-to-exp xpas=5
 
 &d.xp_types xpas=normal player
-&d.log_types [v( d.xpas )]=gain spend freebie auto unspend
+&d.log_types [v( d.xpas )]=gain spend freebie auto unspend unaward
 
 &default.special.xp.normal dd=0 0
 
