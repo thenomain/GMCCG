@@ -587,7 +587,15 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &merit.numbing_touch DD=1.2.3.4.5
 &tags.merit.numbing_touch D:T=human.supernatural
 
+// this is not really an instanced stat, so can only be taken once
+// prereq: person has no psychokinesis or they're taking one they already have
 &merit.psychokinesis_() DD=3.5|Fire.Cold.Electricity
+&prerequisite.merit.psychokinesis_() DD=
+	cor( 
+		not( lattr( %0/_merit.psychokinesis_(*) )), 
+		u( .has, %0, merit.psychokinesis_(%1) )
+	)
+&prereq-text.merit.psychokinesis_() DD=Only one form may be taken
 &tags.merit.psychokinesis_() D:T=human.supernatural
 
 &merit.psychometry DD=3
