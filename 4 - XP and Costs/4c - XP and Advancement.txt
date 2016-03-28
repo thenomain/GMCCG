@@ -367,8 +367,8 @@ Important data:
 */
 
 &c.xp.general xpas=$^\+?xp$:
-	@assert cor( isapproved( %# ), isapproved( %#, chargen ))={ 
-		@pemit %#=u( .msg, xp, You are not approved nor in chargen )
+	@assert not( isapproved( %#, guest ))={ 
+		@pemit %#=u( .msg, xp, This command is not applicable to guests )
 	}; 
 
 	@pemit %#=
@@ -402,8 +402,8 @@ Important data:
 		@pemit %qp=u( .msg, xp, '[trim( %1 )]' not found )
 	}; 	
 
-	@assert cor( isapproved( %qp ), isapproved( %qp, chargen ))={ 
-		@pemit %qp=u( .msg, xp, [name( %qp )] is not approved nor in chargen )
+	@assert not( isapproved( %qp, guest ))={ 
+		@pemit %#=u( .msg, xp, This command is not applicable to guests )
 	}; 
 
 	@pemit %#=
