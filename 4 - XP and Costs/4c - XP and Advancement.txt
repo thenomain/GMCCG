@@ -368,7 +368,7 @@ Important data:
 
 &c.xp.general xpas=$^\+?xp$:
 	@assert not( isapproved( %#, guest ))={ 
-		@pemit %#=u( .msg, xp, This command is not applicable to guests )
+		@pemit %#=u( .msg, xp, Players only )
 	}; 
 
 	@pemit %#=
@@ -403,7 +403,7 @@ Important data:
 	}; 	
 
 	@assert not( isapproved( %qp, guest ))={ 
-		@pemit %#=u( .msg, xp, This command is not applicable to guests )
+		@pemit %#=u( .msg, xp, Players only )
 	}; 
 
 	@pemit %#=
