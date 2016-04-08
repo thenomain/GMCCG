@@ -104,15 +104,20 @@ isapproved( <player>[, <status>] )
 
 'Unapproved' specifically means that the person has once been approved and,
 for one reason or another, no longer is.
+
 */
+
+&d.approval_types cg=
+	chargen|guest|approved|storyteller|npc|staff|unapproved|frozen|dead
 
 // --	
 
-&ufunc.isapproved cg=
+&ufunc.isapproved [v( d.cg )]=
 	strcat( 
 		setq( p, pmatch( %0 )), 
 		setq( s, 
 			grab( 
+// [v( d.approval_types )] didn't work here, returned '1' to everything, why?
 				|chargen|guest
 				|approved|storyteller|npc|staff
 				|unapproved|frozen|dead
@@ -149,7 +154,8 @@ for one reason or another, no longer is.
 				not( cor( 
 					isapproved( %qp ), 
 					hasflag( %qp, unapproved ), 
-					haspower( %qp, guest )
+					haspower( %qp, guest ), 
+					strmatch( %qp, config( guest_char_num ))
 				))
 			), 
 
