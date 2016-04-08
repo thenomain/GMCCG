@@ -29,10 +29,14 @@ Ogre: 7 (6)    Wizened: 6 (5)
 
 @parent Census System <cs>=codp
 
-&.msg Census System <cs>=ansi( h, <%0>, n, %b%1 )
+@fo me=&d.cs me=[search( name=Census System <cs> )]
 
-@fo me=&d.dd cs=[search( name=Data Dictionary <dd> )]
-@fo me=&d.sfp cs=[search( name=Stat Functions Prototype <sfp> )]
+think @@( do nothing for long enough for the '@fo me=' to take effect )
+
+&.msg [v( d.cs )]=ansi( h, <%0>, n, %b%1 )
+
+@fo me=&d.dd [v( d.cs )]=[search( name=Data Dictionary <dd> )]
+@fo me=&d.sfp [v( d.cs )]=[search( name=Stat Functions Prototype <sfp> )]
 
 
 
@@ -43,7 +47,7 @@ Ogre: 7 (6)    Wizened: 6 (5)
 Our old stand-by.
 
 */
-&c.census cs=$^\+?census([\s\S]+)?$:@pemit %#=
+&c.census [v( d.cs )]=$^\+?census([\s\S]+)?$:@pemit %#=
 	[setq( 0, secure( %1 ))]
 	[switch( %q0, 
 		, u( c.census.default ), 
@@ -63,7 +67,7 @@ Our old stand-by.
 -- Switch Hander ---------------------------------------------------------------
 */
 
-&c.census.switch cs=
+&c.census.switch [v( d.cs )]=
 	if( setr( 0, grab( lattr( me/c.census/* ), c.census/%0* )), 
 		u( %q0, %1 ), 
 		u( .msg, census, 
@@ -84,7 +88,7 @@ This hits the iteration limit and hits it hard.
 
 */
 
-&c.census.default cs=
+&c.census.default [v( d.cs )]=
 	strcat( 
 		setq( a, u( f.search.approved )), 
 		setq( u, 
@@ -166,14 +170,16 @@ end - gender census */
 For now, hand sort the pass and display default if the census type is not known. On the whole, these displays will be simple counts to players, counts and names to staff.
 
 s: statpath
+t: list of types for stat (<type>)
+
+
 k: possible kith statpath matches (special.kith.*) -- old code
 g: general kith matches (special.kith.<data>*) -- old code
 j: specific kith matches (special.kith.<data>) -- old code
-t: list of types for stat (<type>)
 
 */
 
-&c.census.specific cs=
+&c.census.specific [v( d.cs )]=
 	strcat( 
 		setq( s, statpath( %0 )), 
 // 		setq( k, lattr( v( d.dd )/special.kith.%0* )), 
@@ -250,18 +256,18 @@ Right now there are no switches.
 
 */
 
-&f.search.approved cs=
+&f.search.approved [v( d.cs )]=
 	search( eplayer=
 		cand( isapproved( ##, approved ), not( isstaff( ## )))
 	)
 
-&f.search.chargen cs=
+&f.search.chargen [v( d.cs )]=
 	search( eplayer=isapproved( ##, chargen ))
 
-&f.search.attr cs=search( eplayer=hasattr( ##, %0 ))
+&f.search.attr [v( d.cs )]=search( eplayer=hasattr( ##, %0 ))
 
 // These people have at least started to stat their character
-&f.search.attr.template cs=
+&f.search.attr.template [v( d.cs )]=
 	search( eplayer=
 		cand( 
 			hasattr( ##, %0 ), 
@@ -280,21 +286,21 @@ After doing a basic search, filter down to the information that you need
 */
 
 // .. approval
-&fil.approved cs=cand( isapproved( %0, approved ), not( isstaff( %0 )))
-&fil.chargen cs=isapproved( %0, chargen )
-&fil.unapproved cs=isapproved( %0, unapproved )
-&fil.frozen cs=isapproved( %0, frozen )
-&fil.dead cs=isapproved( %0, dead )
+&fil.approved [v( d.cs )]=cand( isapproved( %0, approved ), not( isstaff( %0 )))
+&fil.chargen [v( d.cs )]=isapproved( %0, chargen )
+&fil.unapproved [v( d.cs )]=isapproved( %0, unapproved )
+&fil.frozen [v( d.cs )]=isapproved( %0, frozen )
+&fil.dead [v( d.cs )]=isapproved( %0, dead )
 
 // .. either string 
-&fil.attr.exists cs=hasattr( %0, %1 )
-&fil.attr.string.is cs=strmatch( u( %0/%1 ), %2 )
-&fil.attr.list.contains cs=t( match( u( %0/%1 ), %2, . ))
+&fil.attr.exists [v( d.cs )]=hasattr( %0, %1 )
+&fil.attr.string.is [v( d.cs )]=strmatch( u( %0/%1 ), %2 )
+&fil.attr.list.contains [v( d.cs )]=t( match( u( %0/%1 ), %2, . ))
 
 // .. numeric stat checks
-&fil.attr.value.is cs=strmatch( first( u( %0/%1 ), . ), %2 )
-&fil.attr.value.gte cs=gte( first( u( %0/%1 ), . ), %2 )
-&fil.attr.value.lte cs=lte( first( u( %0/%1 ), . ), %2 )
+&fil.attr.value.is [v( d.cs )]=strmatch( first( u( %0/%1 ), . ), %2 )
+&fil.attr.value.gte [v( d.cs )]=gte( first( u( %0/%1 ), . ), %2 )
+&fil.attr.value.lte [v( d.cs )]=lte( first( u( %0/%1 ), . ), %2 )
 
 // -- tests --
 
@@ -322,7 +328,7 @@ s: search results for %0
 
 */
 
-&f.roster.string cs=
+&f.roster.string [v( d.cs )]=
 	localize( strcat( 
 		setq( s, u( f.search.attr.template, %0 )), 
 
@@ -526,7 +532,7 @@ o: operator ( is, gte, lte )
 
 */
 
-&f.roster.numeric cs=
+&f.roster.numeric [v( d.cs )]=
 	localize( strcat( 
 		setq( o, 
 			case( strtrunc( %2, 1 ), 
@@ -566,7 +572,7 @@ output: Approved:<list>|Waiting:<list>|Freezered:<list>
 
 */
 
-&f.roster.totals cs=
+&f.roster.totals [v( d.cs )]=
 	localize( strcat( 
 		setq( t, u( f.search.attr, _bio.template )), 
 		iter( Approved Chargen Unapproved Frozen Dead, 
@@ -605,7 +611,7 @@ The final tallied output of "stuff".
 Might never use this, but it's nice to have for completeness.
 */
 
-&display.census.totals cs=
+&display.census.totals [v( d.cs )]=
 	columns( 
 		iter( u( f.roster.totals ), 
 			[first( %i0, : )]: [words( rest( %i0, : ))], |, |
@@ -638,7 +644,7 @@ u: unapproved <list>
 
 */
 
-&display.census.attribute cs=
+&display.census.attribute [v( d.cs )]=
 	localize( strcat( 
 		setq( v, iter( %1, first( %i0, : ), ., . )), 
 		setq( r, ulocal( f.roster.string, %0, %qv, if( t( %2 ), l ))), 
@@ -683,7 +689,7 @@ think [u( v( d.cs )/display.census.attribute, _bio.template, Human.Changeling, 1
 output: List.of.types. If dd has them, it's easy, else we have to build them
 */
 
-&f.roster.types cs=
+&f.roster.types [v( d.cs )]=
 	case( comp( %1, * ), 
 // no type list passed, so return nothing
 		-1, @@( return nothing ), 
@@ -727,7 +733,7 @@ outputs: <value name>:<approved list>:<chargen list>|...
 
 */
 
-&f.roster.order-approved cs=
+&f.roster.order-approved [v( d.cs )]=
 	iter( 
 		if( %2, 
 			iter( %1, 
@@ -772,7 +778,7 @@ l: value name:approved list:unapproved list|value:approved:unapproved
 
 */
 
-&display.census.breakdown cs=
+&display.census.breakdown [v( d.cs )]=
 	localize( strcat( 
 // entire dd entry; dd types if "stat ()"; values; types
 		setq( d, u( v( d.dd )/%0 )), 
@@ -859,7 +865,7 @@ w: number of words of whichever list ( %qa/%qu ) we're looking at the time.
 
 */
 
-&display.census.breakdown.names cs=
+&display.census.breakdown.names [v( d.cs )]=
 
 // .. list only values that have people in them
 	iter( filter( fil.values-with-members, %1, |, | ), 
@@ -906,6 +912,7 @@ w: number of words of whichever list ( %qa/%qu ) we're looking at the time.
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Filter: Stat Values With Members --------------------------------------------
 
@@ -913,7 +920,9 @@ w: number of words of whichever list ( %qa/%qu ) we're looking at the time.
 
 Filter out any that are "<value>::"
 
-&fil.values-with-members cs=
+*/
+
+&fil.values-with-members [v( d.cs )]=
 	cor( 
 		t( extract( %0, 2, 1, : )), 
 		t( extract( %0, 3, 1, : ))
@@ -921,6 +930,7 @@ Filter out any that are "<value>::"
 
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Census Breakdown: Totals -------------------------------------------
 
@@ -936,14 +946,16 @@ a: temp approved of list
 u: temp unapproved of list
 w: number of words of whichever list ( %qa/%qu ) we're looking at the time.
 
-&display.census.breakdown.totals cs=
+*/
+
+&display.census.breakdown.totals [v( d.cs )]=
 		[columns( 
 			trim( 
 				iter( %0, 
-					[setq( a, extract( %i0, 2, 1, : ))]
-					[setq( u, last( %i0, : ))]
+					[setq( a, elements( %i0, 2, : ))]
+					[setq( u, elements( %i0, 3, : ))]
 
-@@ .. .. if there's anyone to display, or if it's a numeric stat, display it
+// .. .. if there's anyone to display, or if it's a numeric stat, display it
 					[if( 
 						or( t( %qa ), t( %qu ), %1 ), 
 						[first( %i0, : )]: 
@@ -954,7 +966,7 @@ w: number of words of whichever list ( %qa/%qu ) we're looking at the time.
 				), 
 				b, |
 			), 
-@@ .. width may vary
+// .. width may vary
 			max( 25, add( %2, 9 )), |, 2
 		)]
 
@@ -967,7 +979,7 @@ Here only as an example.
 
 --
 
-&display.census.template.changeling cs=
+&display.census.template.changeling [v( d.cs )]=
 localize( 
 	strcat( 
 		setq( z, 0 ), 
@@ -1019,7 +1031,7 @@ More examples!
 
 --
 
-&display.census.template.werewolf cs=
+&display.census.template.werewolf [v( d.cs )]=
 localize( 
 	strcat( 
 		
@@ -1046,7 +1058,7 @@ More examples.
 
 --
 
-&display.census.template.vampire cs=
+&display.census.template.vampire [v( d.cs )]=
 localize( 
 	strcat( 
 		if( 
