@@ -1,0 +1,583 @@
+/*
+################################################################################
+## BEAST: THE PRIMORDIAL #######################################################
+
+This file includes all additions to the system for Beast: The Primordial 
+core rules
+
+
+
+
+################################################################################
+## BEAST: STAT FUNCTIONS #######################################################
+
+--------------------------------------------------------------------------------
+-- SFP: Search Order -----------------------------------------------------------
+
+Level 2 for powers 
+Level 3 for very minor items
+*/
+
+&d.search-order-02-beast sfp=atavism nightmare
+&d.search-order-03-beast sfp=
+
+
+
+/*
+################################################################################
+## BEAST: DATA DICTIONARY ######################################################
+
+
+================================================================================
+== DD: SETUP ===================================================================
+*/
+
+// CODP prefixes
+&prefix.beast_-_atavism dd=atavism.
+&prefix.beast_-_nightmares dd=nightmare.
+
+&prefix.beast_-_atavism d:t=tags.atavism.
+&prefix.beast_-_nightmare d:t=tags.nightmare.
+
+
+// add to templates
+@fo me=&bio.template dd=[get( dd/bio.template )].Beast
+
+
+// register "max trait" statpath
+&.max_trait.beast dd=advantage.lair
+
+
+// register "sphere"'s templates (could this be folded into 'templates'?)
+&.sphere.beast dd=Beast
+
+
+/*
+================================================================================
+== BEAST BIO ===================================================================
+*/
+
+&bio.family DD=Anakim.Eshmaki.Makra.Namtaru.Ugallu
+&tags.bio.family D:T=beast
+
+&bio.hunger DD=Tyrant.Collector.Predator.Nemesis.Ravager
+&tags.bio.hunger D:T=beast
+
+// &bio.??? DD=*
+// &tags.bio.??? D:T=beast.clique
+
+&bio.legend DD=???
+&tags.bio.legend D:T=beast
+
+&bio.life DD=???
+&tags.bio.life D:T=beast
+
+
+
+/*
+================================================================================
+== BEAST ADVANTAGES ============================================================
+*/
+
+&advantage.satiety DD=1.2.3.4.5.6.7.8.9.10
+&default.advantage.satiety DD=2
+&tags.advantage.satiety D:T=integrity.beast
+
+&advantage.lair DD=1.2.3.4.5.6.7.8.9.10
+&default.advantage.lair DD=1
+&tags.advantage.lair D:T=power.beast
+
+
+
+/*
+================================================================================
+== BEAST MERITS ================================================================
+
+Beast introduces a new kind of merit, the 'Advanced' (and 'Epic'), which are 
+extensions of a basic merit. For instance, 'Danger Sense (Advanced)'.
+
+We are not, and cannot, notate the merit that way. Instead, the merit is given 
+the word 'Advanced' or 'Epic' at the end. In the above example, 'Danger Sense 
+Advanced'.
+
+*/
+
+&merit.danger_sense_advanced DD=2
+&prereq-text.merit.danger_sense_advanced DD=Has Danger Sense
+&prerequisite.merit.danger_sense_advanced=u( .has, %0, merit.danger_sense )
+&tags.merit.danger_sense_advanced D:T=beast
+
+&merit.direction_sense_advanced DD=2
+&prereq-text.merit.direction_sense_advanced DD=Has Direction Sense
+&prerequisite.merit.direction_sense_advanced=
+	u( .has, %0, merit.direction_sense )
+&tags.merit.direction_sense_advanced D:T=beast
+
+&merit.direction_sense_epic DD=2
+&prereq-text.merit.direction_sense_epic DD=Has Direction Sense Advanced
+&prerequisite.merit.direction_sense_epic=
+	u( .has, %0, merit.direction_sense_advanced )
+&tags.merit.direction_sense_epic D:T=beast
+
+&merit.double_jointed_advanced DD=1
+&prereq-text.merit.double_jointed_advanced DD=Has Double Jointed
+&prerequisite.merit.double_jointed_advanced=u( .has, %0, merit.double_jointed )
+&tags.merit.double_jointed_advanced D:T=beast
+
+&merit.eidetic_memory_advanced DD=1
+&prereq-text.merit.eidetic_memory_advanced DD=
+	Eidetic Memory or Mimir's Wisdom Atavism
+&prerequisite.merit.eidetic_memory_advanced DD=
+	u( .has_one_of, %0, merit.eidetic_memory atavism.mimir's_wisdom )
+&tags.merit.eidetic_memory_advanced D:T=beast
+
+&merit.epic_potential DD=1
+&tags.merit.epic_potential D:T=beast
+
+&merit.fame_advanced DD=1.2.3
+&prereq-text.merit.fame_advanced DD=Fame (equal level or higher)
+&prerequisite.merit.fame_advanced DD=
+	u( .at_most_stat, %0, merit.fame_advanced, merit.fame, %2 )
+&tags.merit.fame_advanced DD=beast
+
+&merit.fast_reflexes_advanced DD=1
+&prereq-text.merit.fast_reflexes_advanced DD=Fast Reflexes 3
+&prerequisite.merit.fast_reflexes_advanced DD=
+	u( .at_least, %0, merit.fast_reflexes, 3 )
+&tags.merit.fast_reflexes_advanced D:T=beast
+
+&merit.fist_of_nightmares DD=2
+&prereq-text.merit.fist_of_nightmares DD=Brawl 2+, Occult 2+
+&prerequisite.merit.fist_of_nightmares DD=
+	u( .at_least_all, %0, skill.brawl:2 skill.occult:2 )
+&tags.merit.fist_of_nightmares D:T=beast
+
+&merit.giant_advanced DD=2
+&prereq-text.merit.giant_advanced DD=Has Giant
+&prerequisite.merit.giant_advanced DD=u( .has, %0, merit.giant )
+&tags.merit.giant_advanced D:T=beast
+
+&merit.guilty_pleasure_() DD=1|*
+&prereq-text.merit.guilty_pleasure_() DD=May only be taken once
+&prerequisite.merit.guilty_pleasure_() DD=
+	not( lattr( %0/_merit.guilty_pleasure_(*) ))
+&tags.merit.guilty_pleasure_() D:T=beast
+
+&merit.hunger_management DD=1.2.3
+&prereq-text.merit.hunger_management DD=Resolve 3+
+&prerequisite.merit.hunger_management DD=
+	u( .at_least, %0, attribute.resolve, 3 )
+&tags.merit.hunger_management D:T=beast
+
+&merit.iron_skin_advanced DD=1.2
+&prereq-text.merit.iron_skin_advanced DD=Stamina 4+
+&prerequisite.merit.iron_skin_advanced DD=
+	u( .at_least, %0, attribute.stamina, 4 )
+&tags.merit.iron_skin_advanced D:T=beast
+
+&merit.iron_skin_epic DD=2
+&prereq-text.merit.iron_skin_epic DD=Stamina 5+
+&prerequisite.merit.iron_skin_epic DD=u( .at_least, %0, attribute.stamina, 5 )
+&tags.merit.iron_skin_epic D:T=beast
+
+&merit.killer_instinct DD=1.2.3
+&prereq-text.merit.killer_instinct DD=Composure 3+, Medicine 1+, Wits 3+
+&prerequisite.merit.killer_instinct DD=
+	u( .at_least_all, %0, 
+		attribute.composure:3 skill.medicine:1 attribute.wits:3 
+	)
+// &tags.merit.killer_instinct D:T=mental? social?
+
+&merit.killer_instinct_advanced DD=1.2.3
+&prereq-text.merit.killer_instinct_advanced DD=Killer Instinct 3
+&prerequisite.merit.killer_instinct_advanced DD=
+	u( .at_least, merit.killer_instinct, 3 )
+&tags.merit.killer_instinct_advanced D:T=beast
+
+// Library Advanced: We are linking it to a Safe Place via <Type> as a way to 
+// check validity, but it isn't otherwise set up this way and can only be 
+// taken once.
+// If used by a Beast (having advantage.lair), this limitation is ignored and 
+// staff must limit it themselves.
+
+&merit.library_advanced_() DD=1.2.3.4.5|*|*
+&prereq-text.library_advanced_() DD=
+	Library (any) at 3, 
+	Safe Place (<type>) equal to dots rating or a dedicated Lair room, 
+	Can only be taken once
+&prerequisite.library_advanced_() DD=
+	cand( 
+// .. any library at 3
+		lor( 
+			iter( 
+				lattr( %0/_merit.library_(*) ), 
+				gte( u( .value, %0, rest( %i0, _ )), 3 )
+			)
+		), 
+// .. has 'lair', or 'safe place (<type>)' greater than what we're setting to
+		cor( 
+			u( .has, %0, advantage.lair ), 
+// .. if safe place isn't set, then 'library advanced' is limited to 0
+			u( .at_most_stat, %0, 
+				merit.library_advanced_(%1), 
+				merit.safe_place_(%1), 
+				%2 
+			)
+		), 
+// .. may only be taken once, but allow us to raise it
+		not( 
+			setdiff( 
+				lattr( %0/_merit.library_advanced_(*) ), 
+				_merit.library_advanced_(%1) 
+			)
+		) 
+	)
+&tags.library_advanced_() D:T=location.mental?
+
+&merit.relentless_assault DD=1.2.3.4.5
+&prereq-text.merit.relentless_assault DD=Strength 3+, Stamina 3+, Brawl 2+
+&prerequisite.merit.relentless_assault DD=
+	u( .at_least_all, %0, 
+		attribute.strength:3 attribute.stamina:3 skill.brawl:2 
+	)
+&tags.merit.relentless_assault D:T=fighting.style
+
+&merit.spoor DD=1.2.3.4.5
+&prereq-text.merit.spoor DD=Cannot have the 'Fame' merit
+&prerequisite.merit.spoor DD=not( lattr( %0/_merit.fame_(*) ))
+&tags.merit.spoor D:T=beast
+
+&merit.striking_looks_advanced_() DD=2|*
+&prereq-text.striking_looks_advanced_() DD=Has Striking Looks (<type>)
+&prerequisite.striking_looks_advanced_() DD=
+	u( .has, %0, merit.striking_looks_(%1) )
+&tags.striking_looks_advanced_() D:T=beast
+
+
+
+/*
+================================================================================
+== BEAST NIGHTMARES ============================================================
+*/
+
+&class.nightmare.? DD=flag
+
+
+// -- Nightmares: Common (available to all) ------------------------------------
+
+&nightmare.all_your_teeth_are_falling_out DD=1
+&tags.nightmare.all_your_teeth_are_falling_out D:T=beast.common
+
+&nightmare.behold_my_true_form! DD=1
+&tags.nightmare.behold_my_true_form! D:T=beast.common
+
+&nightmare.bugs_everywhere! DD=1
+&tags.nightmare.bugs_everywhere! D:T=beast.common
+
+&nightmare.everything_you_do_is_worthless DD=1
+&tags.nightmare.everything_you_do_is_worthless D:T=beast.common
+
+&nightmare.fear_is_contagious DD=1
+&tags.nightmare.fear_is_contagious D:T=beast.common
+
+&nightmare.flying_and_falling DD=1
+&tags.nightmare.flying_and_falling D:T=beast.common
+
+&nightmare.run_away DD=1
+&tags.nightmare.run_away D:T=beast.common
+
+&nightmare.they_are_all_around_you DD=1
+&tags.nightmare.they_are_all_around_you D:T=beast.common
+
+&nightmare.you_are_alone DD=1
+&tags.nightmare.you_are_alone D:T=beast.common
+
+&nightmare.you_are_not_alone DD=1
+&tags.nightmare.you_are_not_alone D:T=beast.common
+
+&nightmare.you_can't_wake_up DD=1
+&tags.nightmare.you_can't_wake_up D:T=beast.common
+
+&nightmare.you_cannot_run DD=1
+&tags.nightmare.you_cannot_run D:T=beast.common
+
+&nightmare.you_deserve_this DD=1
+&tags.nightmare.you_deserve_this D:T=beast.common
+
+&nightmare.you_must_obey DD=1
+&tags.nightmare.you_must_obey D:T=beast.common
+
+&nightmare.you_will_never_rest DD=1
+&tags.nightmare.you_will_never_rest D:T=beast.common
+
+
+// -- Nightmares: Kinship (given the Family Ties Condition to a different type) 
+
+&nightmare.you_are_infected DD=1
+&prereq-text.nightmare.you_are_infected DD=
+	Family Ties Condition with Vampire
+&tags.nightmare.you_are_infected D:T=beast.kinship
+
+&nightmare.we_know_all_your_secrets DD=1
+&prereq-text.nightmare.we_know_all_your_secrets DD=
+	Family Ties Condition with Mekhet Vampire
+&tags.nightmare.we_know_all_your_secrets D:T=beast.kinship
+
+&nightmare.your_rage_consumes_you DD=1
+&prereq-text.nightmare.your_rage_consumes_you DD=
+	Family Ties Condition with Werewolf
+&tags.nightmare.your_rage_consumes_you D:T=beast.kinship
+
+&nightmare.your_tools_betray_you DD=1
+&prereq-text.nightmare.your_tools_betray_you DD=
+	Family Ties Condition with Iron Master Werewolf
+&tags.nightmare.your_tools_betray_you D:T=beast.kinship
+
+&nightmare.you_are_better_than_them DD=1
+&prereq-text.nightmare.you_are_better_than_them DD=
+	Family Ties Condition with Mage
+&tags.nightmare.you_are_better_than_them D:T=beast.kinship
+
+&nightmare.the_void_is_waiting DD=1
+&prereq-text.nightmare.the_void_is_waiting DD=
+	Family Ties Condition with Low-Wisdom Mage
+&tags.nightmare.the_void_is_waiting D:T=beast.kinship
+
+&nightmare.everyone_hates_you DD=1
+&prereq-text.nightmare.everyone_hates_you DD=
+	Family Ties Condition with Promethean
+&tags.nightmare.everyone_hates_you D:T=beast.kinship
+
+&nightmare.you_cannot_kill_it DD=1
+&prereq-text.nightmare.you_cannot_kill_it DD=
+	Family Ties Condition with Tammuz Promethean
+&tags.nightmare.you_cannot_kill_it D:T=beast.kinship
+
+&nightmare.you_are_lost DD=1
+&prereq-text.nightmare.you_are_lost DD=
+	Family Ties Condition with Changeling
+&tags.nightmare.you_are_lost D:T=beast.kinship
+
+&nightmare.you_are_an_impostor DD=1
+&prereq-text.nightmare.you_are_an_impostor DD=
+	Family Ties Condition with Mannikin Changeling
+&tags.nightmare.you_are_an_impostor D:T=beast.kinship
+
+&nightmare.death_is_a_prison DD=1
+&prereq-text.nightmare.death_is_a_prison DD=
+	Family Ties Condition with Sin-Eater
+&tags.nightmare.death_is_a_prison D:T=beast.kinship
+
+&nightmare.you_can't_take_it_with_you DD=1
+&prereq-text.nightmare.you_can't_take_it_with_you DD=
+	Family Ties Condition with Bonepicker Sin-Eater
+&tags.nightmare.you_can't_take_it_with_you D:T=beast.kinship
+
+&nightmare.tabula_rasa DD=1
+&prereq-text.nightmare.tabula_rasa DD=
+	Family Ties Condition with Mummy
+&tags.nightmare.tabula_rasa D:T=beast.kinship
+
+&nightmare.cursed_object DD=1
+&prereq-text.nightmare.cursed_object DD=
+	Family Ties Condition with Maa-Kep Mummy
+&tags.nightmare.cursed_object D:T=beast.kinship
+
+
+
+/*
+================================================================================
+== BEAST ATAVISMS ==============================================================
+*/
+
+&class.atavism.? DD=flag
+
+&atavism.alien_allure DD=1
+&tags.atavism.alien_allure D:T=beast.makara
+
+&atavism.basilisk's_touch DD=1
+&tags.atavism.basilisk's_touch D:T=beast.namtaru
+
+&atavism.cyclopean_strength DD=1
+&tags.atavism.cyclopean_strength D:T=beast.anakim
+
+&atavism.dragonfire DD=1
+&tags.atavism.dragonfire D:T=beast.eshmaki
+
+&atavism.eye_of_heaven DD=1
+&tags.atavism.eye_of_heaven D:T=beast.ugallu
+
+&atavism.from_the_shadows DD=1
+&tags.atavism.from_the_shadows D:T=beast.eshmaki
+
+&atavism.heart_of_the_ocean DD=1
+&tags.atavism.heart_of_the_ocean D:T=beast.makara
+
+&atavism.infestation DD=1
+&tags.atavism.infestation D:T=beast.namtaru
+
+&atavism.limb_from_limb DD=1
+&tags.atavism.limb_from_limb D:T=beast.eshmaki
+
+&atavism.looming_presence DD=1
+&tags.atavism.looming_presence D:T=beast.anakim
+
+&atavism.mimir's_wisdom DD=1
+&tags.atavism.mimir's_wisdom D:T=beast.anakim
+
+&atavism.monster_from_the_deep DD=1
+&tags.atavism.monster_from_the_deep D:T=beast.makara
+
+&atavism.needs_must DD=1
+&tags.atavism.needs_must D:T=beast.ugallu
+
+&atavism.relentless_hunter DD=1
+&tags.atavism.relentless_hunter D:T=beast.eshmaki
+
+&atavism.shadowed_soul DD=1
+&tags.atavism.shadowed_soul D:T=beast.namtaru
+
+&atavism.siren's_treacherous_song DD=1
+&tags.atavism.siren's_treacherous_song D:T=beast.makara
+
+&atavism.storm-lashed DD=1
+&tags.atavism.storm-lashed D:T=beast.ugallu
+
+&atavism.titanic_blow DD=1
+&tags.atavism.titanic_blow D:T=beast.anakim
+
+&atavism.unbreakable DD=1
+&tags.atavism.unbreakable D:T=beast.namtaru
+
+&atavism.wings_of_the_raptor DD=1
+&tags.atavism.wings_of_the_raptor D:T=beast.ugallu
+
+
+
+
+/* 
+################################################################################
+## BEAST CHARGEN ###############################################################
+
+
+
+================================================================================
+== CHARGEN: BIO ================================================================
+
+
+--------------------------------------------------------------------------------
+-- Bio Check -------------------------------------------------------------------
+*/
+
+&check.bio.demon cg=legend life family hunger
+
+
+// I have no idea what to do next, so taking a break.
+
+
+
+
+
+/*
+################################################################################
+## NOTES #######################################################################
+
+Family: (lineage) Anakim, Eshmaki, Makra, Namtaru, Ugallu
+
+Hunger: Tyrant, Collector, Predator, Nemesis, Ravager
+
+Legend/Life: (virtue/vice) - pp 85-6
+
+Nightmares: (power group) - start with 2
+Atavisms: (power group) - start with 2
+
+Lair: (supernatural tolerance) - start with 1, can buy 2 more at 5 merits each
+
+Satiety: (integrity) - start at 2 to 7, see p. 80
+
+-==--=
+
+* Chargen Atavisms
+- Anakim: Cyclopean Strength, Looming Presence, Mimir’s Wisdom, Titanic Blow
+- Eshmaki: Dragonfire, From the Shadows, Limb from Limb, Relentless Hunter
+- Makara: Alien Allure, Heart of the Ocean, Monster from the Deep, Siren’s Treacherous Song
+- Namtaru: Basilisk’s Touch, Infestation, Shadowed Soul, Unbreakable
+- Ugallu: Eye of Heaven, Needs Must, Storm-Lashed, Wings of the Raptor
+
+* Chargen Nightmares
+- Common Nightmares: All Your Teeth Are Falling Out, Behold My True Form, Bugs Everywhere!, Everything You Do Is Worthless, Fear Is Contagious, Flying and Falling, Run Away, They Are All Around You, You Are Alone, You Are Not Alone, You Can’t Wake Up, You Cannot Run, You Deserve This, You Must Obey, You Will Never Rest
+- Kinship Nightmares: You Are Infected, We Know All Your Secrets, Your Rage Consumes You, Your Tools Betray You, You Are Better Than Them, The Void Is Waiting, Everyone Hates You, You Cannot Kill It, You Are Lost, You Are an Impostor, Death Is a Prison, You Can’t Take it With You, Tabula Rasa, Cursed Object
+
+--=-=
+
+* Experience Costs
+- Attribute: 4 Experiences per dot 
+- Merit: 1 Experience per dot
+- Skill Specialty: 1 Experience
+- Skill: 2 Experiences per dot 
+- Nightmares: 3 Experiences
+- In-Family Atavisms: 3 Experiences 
+- Out-of-Family Atavisms: 4 Experiences 
+- Lair: 5 Experiences per dot
+
+=-=--=-=
+
+* Atavisms:
+	Alien Allure [Makara]
+	Basilisk’s Touch [Namtaru]
+	Cyclopean Strength [Anakim]
+	Dragonfire [Eshmaki]
+	Eye of Heaven [Ugallu]
+	From the Shadows [Eshmaki]
+	Heart of the Ocean [Makara]
+	Infestation [Namtaru]
+	Limb From Limb [Eshmaki]
+	Looming Presence [Anakim]
+	Mimir’s Wisdom [Anakim]
+	Monster from the Deep [Makara]
+	Needs Must [Ugallu]
+	Relentless Hunter [Eshmaki]
+	Shadowed Soul [Namtaru]
+	Siren’s Treacherous Song [Makara]
+	Storm-Lashed [Ugallu]
+	Titanic Blow [Anakim]
+	Unbreakable [Namtaru]
+	Wings of the Raptor [Ugallu]
+
+* Nightmares (Common, available to all):
+	All your Teeth Are Falling Out
+	Behold, My True Form!
+	Bugs Everywhere!
+	Everything you Do Is Worthless
+	Fear is Contagious
+	Flying and Falling
+	Run Away
+	They Are All Around you
+	You Are Alone
+	You Are Not Alone
+	You Can’t Wake Up
+	You Cannot Run
+	You Deserve This
+	You Must Obey
+	You Will Never Rest
+
+* Nightmares (Kinship, given the Family Ties Condition to a different type)
+	You Are Infected (Vampire)
+	We Know All your Secrets (Mekhet Vampire)
+	Your Rage Consumes you (Werewolf)
+	Your Tools Betray you (Iron Master Werewolf)
+	You Are Better Than Them (Mage)
+	The Void Is Waiting (Low-Wisdom Mage)
+	Everyone Hates you (Promethean)
+	You Cannot Kill It (Tammuz Promethean)
+	You Are Lost (Changeling)
+	You Are an Impostor (Mannikin Changeling)
+	Death Is a Prison (Sin-Eater)
+	You Can’t Take it With you (Bonepicker Sin-Eater)
+	Tabula Rasa (Mummy)
+	Cursed Object (Maa-Kep Mummy)
+
+
+-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=
+
+*/
