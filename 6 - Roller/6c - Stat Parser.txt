@@ -324,13 +324,20 @@ q7: specs' value(s)
 
 */
 
-&f.stat-check.skill nWoD Roller <nr>=
-	if( strmatch( %3, skill.* ), 
+&f.stat-check.skill [v( d.nr )]=
+  if( strmatch( %3, skill.* ), 
 		strcat( 
 			setq( 4, elements( %3, 1 2, . )), 
 			setq( 5, u( .value_full, %0, %q4 )), 
 			setq( 6, rest( rest( %3, . ), . )), 
-			setq( 7, mul( t( %q6 ), u( .value_full, %0, %3 ))), 
+// specs' values could be simple '# of specs' like so:
+// 			setq( 7, words( %q6, . )), 
+			setq( 7, 
+				ladd( iter( edit( %q6, %b, _ ), 
+					u( .value_full, %0, %q4.%i0 ), 
+					. 
+				)
+			)), 
 			case( 1, 
 // >> untrained skill (+ specs)
 				u( f.stat-check.skill.untrained, %0, %q4, %q5, %q6, %q7, %2 ), 

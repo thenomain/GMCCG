@@ -78,6 +78,11 @@ ROLLER 3.0
 &.alert nWoD Roller <nr>=ansi( h, <%0> )
 &.msg nWoD Roller <nr>=ansi( h, <%0>, n, %b%1 )
 
+// --
+
+&.crumple [v( d.nr )]=trim( squish( %0, %1 ), %1, b )
+
+
 
 /*
 ================================================================================
