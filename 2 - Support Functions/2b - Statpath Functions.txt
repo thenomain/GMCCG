@@ -522,7 +522,7 @@ We might as well.
 	localize( strcat( 
 		setq( 0, lattr( %0/_%1.* )), 
 		setq( 1, 
-			iter( u( .crumple, %2, . ), 
+			iter( u( .crumple, edit( %2, %b, _ ), . ), 
 				u( .grabexact, 
 					%q0, _%1.%i0 
 				), 
