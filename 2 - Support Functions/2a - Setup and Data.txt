@@ -20,6 +20,47 @@
 
 &d.cg sfp=<< location of character generation, may be obsolete >>
 
+/*
+================================================================================
+== DOT-FUNCTIONS ===============================================================
+
+Dot-functions are things that are to be used often enough that they could be 
+user-defined functions (and often are).
+
+--------------------------------------------------------------------------------
+-- Dot-Function: Grab Exact ----------------------------------------------------
+
+	u( .grabexact, <list>, <item>[, <delim>] )
+
+Will grab the exact match of '<item>'. If not found, it will return the first 
+alphanumeric match of '<item>*'.
+
+Using wildcards (*, ?) in '<item>' defeats the purpose; use 'grab' instead.
+	
+*/
+
+&.grabexact [v( d.sfp )]=
+	localize( 
+		if( 
+			t( setr( m, grab( %0, %1, %2, %2 ))), 
+			%qm, 
+			grab( sort( %0, ?, %2, %2 ), %1*, %2 )
+		)
+	)
+
+/* 
+--------------------------------------------------------------------------------
+-- Dot-Function: Crumple -------------------------------------------------------
+
+	u( .crumple, <list>, <delim> )
+
+Removes all but one instance of <delim> inside <list>, and all outside.
+
+*/
+
+&.crumple [v( d.sfp )]=trim( squish( %0, %1 ), b, %1 )
+
+
 
 /*
 ================================================================================

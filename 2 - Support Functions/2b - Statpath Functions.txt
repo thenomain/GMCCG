@@ -429,10 +429,9 @@ qx, y, z: stat name, instance, substat to be validated (from another func)
 
 NOTE: Instances and Substats on sheet are stored with _ for spaces
 
---------------------------------------------------------------------------------
 */
 
-&f.statpath-lookup-sheet sfp=
+&f.statpath-lookup-sheet [v( d.sfp )]=
 
 // until I can figure out how to have this and lookup-dd work together:
 // Break down stat into registers x, y, z
@@ -477,15 +476,20 @@ NOTE: Instances and Substats on sheet are stored with _ for spaces
 			cand( t( %qz ), t( %qn )), 
 // .. .. dd lookup, else sheet lookup, else error
 			switch( 1, 
-				t( setr(0, 
+
+				t( setr( 0, 
 					grab( extract( %qs, add( 2, t( %qy )), 1, | ), %qz*, . )
 				)), 
 				setq( n, %qn.%q0 ), 
+
 				t( setr( 0, 
-					lattr( u( f.find-sheet, %0 )/_%qn.[edit( %qz, %b, _ )]* )
+					u( f.statpath.lookup.substats.sheet, 
+						u( f.find-sheet, %0 ), %qn, %qz 
+					)
 				)), 
-				setq( n, rest( %q0, _ )), 
-				setq( n, #-2 SUBSTAT NOT FOUND )
+				setq( n, %qn.%q0 ), 
+
+				setq( n, #-2 SUBSTAT(S) NOT FOUND )
 			)
 		)] 
 	)]
@@ -497,6 +501,45 @@ NOTE: Instances and Substats on sheet are stored with _ for spaces
 		%qn 
 	)]
 
+/* 
+--------------------------------------------------------------------------------
+-- Statpath: Sheet: Substats ---------------------------------------------------
+
+In the Chronicles of Darkness RPG, you can string specialties (a type of substat) together. Here, that would look something like:
+
+	crafts.pottery.clay
+
+In order to do that, we pull out how that works from the core lookup system.
+We might as well.
+
+	0: sheet dbref (validated)
+	1: class.trait (validated)
+	2: list.of.substats (not validated)
+	returns: list.of.valid.substats 
+*/
+
+&f.statpath.lookup.substats.sheet [v( d.sfp )]=
+	localize( strcat( 
+		setq( 0, lattr( %0/_%1.* )), 
+		setq( 1, 
+			iter( u( .crumple, %2, . ), 
+				u( .grabexact, 
+					%q0, _%1.%i0 
+				), 
+				., . 
+			)
+		), 
+		setq( 2, 
+			u( .crumple, 
+				edit( %q1, _%1., ), 
+				. 
+			)
+		), 
+		if( t( %q2 ), 
+			%q2, 
+			#-2 SUBSTAT(S) NOT FOUND 
+		)
+	))
 
 // -----------------------------------------------------------------------------
 // -- Statpath: Sheet Tests ----------------------------------------------------
@@ -510,6 +553,16 @@ think
 	[setq( 0, lit( str|l (French)|athl.quick r|mantle (sp) ))]
 	[setq( 1, pmatch( thenomain ))]
 	[iter( %q0, ==> [ljust( %q1/##, 15 )] --> [statname( %q1/## )], |, %r )]
+
+// testing multiple specialties on 'crafts'. Pottery, Poles, and Clay.
+// 'ggg' and the multiple dots will be ignored
+// (WORKS FROM SHEET ONLY!)
+
+think 
+	u( v( d.sfp )/f.statpath-lookup-sheet, 
+		%!, 
+		crafts...pot.pol.c..ggg... 
+	)
 
 
 
