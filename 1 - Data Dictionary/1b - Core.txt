@@ -205,7 +205,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &merit.investigative_aide_() DD=1|Academics.Animal Ken.Athletics.Brawl.Computer.Crafts.Drive.Empathy.Expression.Firearms.Intimidation.Investigation.Larceny.Medicine.Occult.Persuasion.Politics.Science.Socialize.Stealth.Streetwise.Subterfuge.Survival.Weaponry
 &prerequisite.merit.investigative_aide_() DD=u( .at_least, %0, skill.[edit( %1, %b, _ )], 3 )
-&prereq-text merit.investigative_aide_() DD=Chosen Skill must be at 3+
+&prereq-text.merit.investigative_aide_() DD=Chosen Skill must be at 3+
 
 &merit.investigative_prodigy DD=1.2.3.4.5
 &prerequisite.merit.investigative_prodigy DD=u( .at_least_all, %0, attribute.wits:3 skill.investigation:3 )
