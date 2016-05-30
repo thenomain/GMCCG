@@ -7,6 +7,20 @@ Allows the other systems to get up to speed quickly.
 
 
 ================================================================================
+== @startup ====================================================================
+
+I'm leaving this commented out, but if you allow objects to use @function, use 
+this. Else, remember to have your function-creation object read here.
+
+@startup [v( d.sfp )]=
+	@dolist lattr( %!/ufunc.* )=
+		@function/preserve [rest( ##, . )]=%!/##; 
+	@dolist lattr( %!/ufunc/privileged.* )=
+		@function/preserve/privileged [rest( ##, . )]=%!/##
+
+
+
+================================================================================
 == statpath([<player>/]<stat>) ================================================
 
 USER-DEFINED FUNCTION: STATPATH()
