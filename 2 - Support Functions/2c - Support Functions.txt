@@ -358,34 +358,34 @@ qo: offset
 
 think 
 	[ansi( c, statname( setr( 0, thenomain/str )))] 
-	[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
-	([u( sfp/f.prettify-stat-num, %q1 )])
+	[u( sfp/f.pretty-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
+	([u( sfp/f.pretty-stat-num, %q1 )])
 
 think 
 	[ansi( c, statname( setr( 0, thenomain/glam )))] 
-	[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
-	([u( sfp/f.prettify-stat-num, %q1 )])
+	[u( sfp/f.pretty-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
+	([u( sfp/f.pretty-stat-num, %q1 )])
 
 think 
 	[ansi( c, statname( setr( 0, thenomain/spee )))] 
-	[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
-	([u( sfp/f.prettify-stat-num, %q1 )])
+	[u( sfp/f.pretty-stat-num, setr( 1, getstat( %q0, b )), 1 )] 
+	([u( sfp/f.pretty-stat-num, %q1 )])
 
 think 
 	[ansi( c, statname( setr( 0, thenomain/cont.rep )))] 
-	[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )]
+	[u( sfp/f.pretty-stat-num, setr( 1, getstat( %q0, b )), 1 )]
 
-think u( sfp/f.prettify-stat-num, 4, 1 )
-think u( sfp/f.prettify-stat-num, 4.-1, 1 )
-think u( sfp/f.prettify-stat-num, 4.+1, 1 )
-think u( sfp/f.prettify-stat-num, 4 )
-think u( sfp/f.prettify-stat-num, 4.-1 )
-think u( sfp/f.prettify-stat-num, 4.+1 )
+think u( sfp/f.pretty-stat-num, 4, 1 )
+think u( sfp/f.pretty-stat-num, 4.-1, 1 )
+think u( sfp/f.pretty-stat-num, 4.+1, 1 )
+think u( sfp/f.pretty-stat-num, 4 )
+think u( sfp/f.pretty-stat-num, 4.-1 )
+think u( sfp/f.pretty-stat-num, 4.+1 )
 
 think 
 	iter( str glam spee cont.rep, 
 		>> [ansi( g, statname( setr( 0, thenomain/## )))]: 
-		[[u( sfp/f.prettify-stat-num, setr( 1, getstat( %q0, b )), 1 )]], 
+		[[u( sfp/f.pretty-stat-num, setr( 1, getstat( %q0, b )), 1 )]], 
 		, %r 
 	)
 
