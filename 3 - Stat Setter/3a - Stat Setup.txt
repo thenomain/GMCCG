@@ -1,3 +1,4 @@
+/*
 ################################################################################
 ## STAT SETTER #################################################################
 
@@ -29,44 +30,62 @@ This probably needs to get fixed in this set of code, and not 'sheet'. Not sure.
 
 ================================================================================
 == SETUP =======================================================================
+*/
 
 @create Stat Setter <ss>
 @set Stat Setter <ss>=inherit safe
 
 @parent Stat Setter <ss>=codp
 
+@fo me=&d.ss me=[num( Stat Setter <ss> )]
 
 
+/*
 ================================================================================
 == DATA ========================================================================
+*/
 
 @fo me=&d.stat-funcs Stat Setter <ss>=num( Stat Functions Prototype <sfp> )
 @fo me=&d.data-dictionary Stat Setter <ss>=num( Data Dictionary <dd> )
 
-@@ &d.stat-reference Stat Setter <ss>=#382
+// &d.stat-reference Stat Setter <ss>=#382
 
 &f.find-sheet Stat Setter <ss>=u([u(d.stat-funcs)]/f.find-sheet, %0)
 
 
 
+/* 
+================================================================================
+== BASE FUNCTIONS ==============================================================
+*/
+
+&.msg [v( d.ss )]=ansi( h, <%0>, n, %b%1 )
+
+
+
+/*
 ================================================================================
 == HELP ========================================================================
 
 &HELP~STAT_TOPICS~stat #96=
 About Stats~
-stat is a multi-functional command that lists information about stats available on the game. It only lists stats available to the players, which not all stats on +sheet. (XP and health are notable exceptions.)
+'stat' is a multi-functional command that lists information about stats 
+available on the game. It only lists stats available to the players, which not 
+all stats on +sheet. (XP and health are notable exceptions.)
 
-[ansi(h, stat <stat>)] : Detailed information about <stat>. 
+[ansi( h, stat <stat> )] : Detailed information about <stat>. 
 
-[ansi(h, stat <stat>*)] : List of stats matching the wildcard and their stat category.
+[ansi( h, stat <stat>* )] : List of stats matching the wildcard and their stat 
+category.
 
-[ansi(h, stat <filter(s)>/<stat>*)]: Filters a stat list.
+[ansi( h, stat <filter(s)>/<stat>* )]: Filters a stat list.
 
 Filters and examples on the next page.
 ~
-[ansi(h, Useful Tags)]
+[ansi( h, Useful Tags )]
 
-If you're interested in using the filter for stat, here are a list of useful key words:
+If you're interested in using the filter for stat, here are a list of useful key 
+words:
 
 * Templates: changeling, fae-touched, human, thaumaturge, psychic, werewolf
 * Stat Types: attribute, skill, merit, contract, goblin contract, gift
@@ -85,3 +104,4 @@ Examples:
 %b %b stat contract beast/*
 %b %b stat psychic value=4.5/ps*
 
+*/

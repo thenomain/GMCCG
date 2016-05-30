@@ -1,4 +1,4 @@
-
+/*
 
 These are switches for the basic trait-setting commands.
 
@@ -22,36 +22,37 @@ returns: the above, through registers, 1 if all registers are full
 
 I hate having to do it like this. Wanted a regexp, didn't work.
 
---
+*/
 
-&d.regmatch-stat Stat Setter <ss>=
-strcat( 
-	if( gte( words( %0, / ), 2 ), 
-		setq( 0, trim( first( %0, / ))), 
-		setq( 0, %1 )
-	), 
+&d.regmatch-stat [v( d.ss )]=
+	strcat( 
+		if( gte( words( %0, / ), 2 ), 
+			setq( 0, trim( first( %0, / ))), 
+			setq( 0, %1 )
+		), 
 
-	if( gte( words( %0, / ), 2 ), 
-		setq( 1, rest( %0, / )), 
-		setq( 1, %0 )
-	), 
+		if( gte( words( %0, / ), 2 ), 
+			setq( 1, rest( %0, / )), 
+			setq( 1, %0 )
+		), 
 
-	setq( 2, 
-		case( 1, 
-			strmatch( %q1, *=* ), =, 
-			strmatch( %q1, *+* ), +, 
-			strmatch( %q1, *-* ), -
-		)
-	), 
+		setq( 2, 
+			case( 1, 
+				strmatch( %q1, *=* ), =, 
+				strmatch( %q1, *+* ), +, 
+				strmatch( %q1, *-* ), -
+			)
+		), 
 
-	setq( 3, trim( rest( %q1, %q2 ))), 
+		setq( 3, trim( rest( %q1, %q2 ))), 
 
-	setq( 1, trim( first( %q1, %q2 ))), 
+		setq( 1, trim( first( %q1, %q2 ))), 
 
-	cand( t( %q0 ), t( %q1 ), t( %q2 ))
-)
+		cand( t( %q0 ), t( %q1 ), t( %q2 ))
+	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- /SET ------------------------------------------------------------------------
 
@@ -72,9 +73,9 @@ qs: result from shift-/setstat
 uses: setstat() and shiftstat().
 (stat-setting functions find the sheet for us)
 
---
+*/
 
-&f.stat/set Stat Setter <ss>=
+&f.stat/set [v( d.ss )]=
 	case( 0, 
 
 // .. /set input makes sense
@@ -164,25 +165,27 @@ uses: setstat() and shiftstat().
 
 
 
+/*
 =============================================================================
 == /OFFSET ==================================================================
 
 Stat-specific, but numerics only.
 
---
+*/
 
-&f.stat/offset Stat Setter <ss>=u( f.stat/set, %0, offset )
+&f.stat/offset [v( d.ss )]=u( f.stat/set, %0, offset )
 
 
 
+/*
 =============================================================================
 == /OVERRIDE ================================================================
 
 Stat-specific, override everything
 
---
+*/
 
-&f.stat/override Stat Setter <ss>=u( f.stat/set, %0, override )
+&f.stat/override [v( d.ss )]=u( f.stat/set, %0, override )
 
 
 

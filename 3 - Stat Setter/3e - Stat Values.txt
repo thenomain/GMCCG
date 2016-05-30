@@ -1,6 +1,6 @@
+/*
 
-
-Data all about stats.
+Display data all about stats.
 
 
 =============================================================================
@@ -32,160 +32,172 @@ qz: temp holder
 qy: dbref: stat-funcs (sfp)
 qx: dbref: data dictionary (dd)
 
---
+*/
 
-&f.stat/values Stat Setter <ss>=
-strcat( 
+&f.stat/values [v( d.ss )]=
+	strcat( 
 
-@@ >> blank out registers we use to collect data; had some problems without this
-	setq( a, ), setq( t, ), setq( v, ), setq( f, ), 
-	setq( y, u( d.stat-funcs )), 
-	setq( q, u( %qy/f.find-sheet, %# )), 
-	setq( x, u( d.data-dictionary )), 
+// >> blank out registers we use to collect data; had some problems without this
+		setq( a, ), setq( t, ), setq( v, ), setq( f, ), 
+		setq( y, u( d.stat-funcs )), 
+		setq( q, u( %qy/f.find-sheet, %# )), 
+		setq( x, u( d.data-dictionary )), 
 
-@@ >> search for type(s) and/or tag(s)
-	if( strmatch( %0, */* ), 
-		strcat( 
-			setq( w, rest( %0, / )), 
-			iter( before( %0, / ), 
-				case( 1, 
+// >> search for type(s) and/or tag(s)
+		if( strmatch( %0, */* ), 
+			strcat( 
+				setq( w, rest( %0, / )), 
+				iter( before( %0, / ), 
+					case( 1, 
 
-@@ Removing "prereq/*" ability because it kept hitting iteration limits
-@@ @@ .. .. "prerequisite": flag for the filter, only if player has sheet
-@@ 					cand( 
-@@ 						strmatch( %i0, pre* ), 
-@@ 						t( %qq )
-@@ 					), 
-@@ 					setq( f, 1 ), 
+// Removing "prereq/*" ability because it kept hitting iteration limits
+// @@ .. .. "prerequisite": flag for the filter, only if player has sheet
+// 						cand( 
+// 							strmatch( %i0, pre* ), 
+// 							t( %qq )
+// 						), 
+// 						setq( f, 1 ), 
 
-@@ .. .. "v*=*": value of stat is 'x'.
-					strmatch( %i0, v*=* ), 
-					setq( v, edit( last( %i0, = ), _, %b )), 
+// .. .. "v*=*": value of stat is 'x'.
+						strmatch( %i0, v*=* ), 
+						setq( v, edit( last( %i0, = ), _, %b )), 
 
-@@ .. .. search matches type: look for stat types to search for (name complete)
-					t( setr( z, grab( u( %qy/d.search-order ), %i0* ))), 
-					setq( a, %qa %qz ), 
+// .. .. search matches type: look for stat types to search for (name complete)
+						t( setr( z, grab( u( %qy/d.search-order ), %i0* ))), 
+						setq( a, %qa %qz ), 
 
-@@ .. .. search matches template: filter on template-only (name complete)
-					t( setr( z, grab( u( %qx/bio.template ), %i0*, .))), 
-					setq( t, %qt.[edit( %qz, _, %b )] ), 
+// .. .. search matches template: filter on template-only (name complete)
+						t( setr( z, grab( u( %qx/bio.template ), %i0*, .))), 
+						setq( t, %qt.[edit( %qz, _, %b )] ), 
 
-@@ .. .. search matches unknown, assume tag: no name completion
-					setq( t, %qt.[edit( %i0, _, %b )] )
-				), 
-				, @@
-			)
+// .. .. search matches unknown, assume tag: no name completion
+						setq( t, %qt.[edit( %i0, _, %b )] )
+					), 
+					, @@
+				)
+			), 
+// .. else: no types/tags
+			setq( w, %0 )
 		), 
-@@ .. else: no types/tags
-		setq( w, %0 )
-	), 
 
-@@ .. clean-up (no leading periods with tags list)
-	setq( t, trim( %qt, b, . )), 
+// .. clean-up (no leading periods with tags list)
+		setq( t, trim( %qt, b, . )), 
 
-@@ >> find 'statpath without instance', then filter them as appropriate
-	setq( p, u( %qy/f.statpath-validate-name, %qw )), 
+// >> find 'statpath without instance', then filter them as appropriate
+		setq( p, u( %qy/f.statpath-validate-name, %qw )), 
 
 
-@@ @@ >> "prerequisite" flag (qf) was set -- removing functionality 'cause limit
-@@ 	if(
-@@ 		t( %qf ), 
-@@ 		setq( p, localize( filter( fil.prerequisites, %qp, , , %qq )))
-@@ 	), 
+// @@ >> "prerequisite" flag (qf) was set -- removing functionality 'cause limit
+// 		if(
+// 			t( %qf ), 
+// 			setq( p, localize( filter( fil.prerequisites, %qp, , , %qq )))
+// 		), 
 
-@@ >> filter: stat types (qa) -> qp
-	if(
-		t( %qa ), 
-		setq( p, filter( %qy/fil.list-stats-types, %qp, , , %qa ))
-	), 
+// >> filter: stat types (qa) -> qp
+		if(
+			t( %qa ), 
+			setq( p, filter( %qy/fil.list-stats-types, %qp, , , %qa ))
+		), 
 
-@@ >> filter: tags (qt) -> qp
-	if(
-		t( %qt ), 
-		setq( p, filter( %qy/fil.list-stats-tags, %qp, , , %qt, 1 ))
-	), 
+// >> filter: tags (qt) -> qp
+		if(
+			t( %qt ), 
+			setq( p, filter( %qy/fil.list-stats-tags, %qp, , , %qt, 1 ))
+		), 
 
-@@ >> filter: values (qv) -> qp
-	if(
-		t( %qv ), 
-		setq( p, filter( %qy/fil.list-stats-values, %qp, , , %qv ))
-	), 
+// >> filter: values (qv) -> qp
+		if(
+			t( %qv ), 
+			setq( p, filter( %qy/fil.list-stats-values, %qp, , , %qv ))
+		), 
 
-@@ >> grab name -> qn
-	setq( n, u( %qy/f.statname.workhorse, rest( %qp, . ))), 
+// >> grab name -> qn
+		setq( n, u( %qy/f.statname.workhorse, rest( %qp, . ))), 
 
-@@ >> grab stat(s) -> qs
-	setq( s, get( %qx/%qp )), 
+// >> grab stat(s) -> qs
+		setq( s, get( %qx/%qp )), 
 
-@@ >> check that a good stat was pulled, and output
-	case( 1, 
+// >> check that a good stat was pulled, and output
+		case( 1, 
 
-@@ .. .. display: one match
-		cand( t( %qp ), eq( words( %qp ), 1 )), 
-		u( display.stat.values.display.one ), 
+// .. .. display: one match
+			cand( t( %qp ), eq( words( %qp ), 1 )), 
+			u( display.stat.values.display.one ), 
 
-@@ .. .. error if too many matches
-@@ .. .. (had been sigsegv'ing in the display portion on 2.7, so limited to 40)
-@@ .. .. (http://code.google.com/p/tinymux/issues/detail?id=637)
-		gt( words( %qp ), 200 ), 
-		[alert( stat )] Over two hundred matches. Please refine your search., 
+// .. .. error if too many matches
+// .. .. (had been sigsegv'ing in the display portion on 2.7, so limited to 40)
+// .. .. (http://code.google.com/p/tinymux/issues/detail?id=637)
+// .. .. fixed now
+			gt( words( %qp ), 200 ), 
+			u( .msg, stat, 
+				Over two hundred matches. Please refine your search. 
+			), 
 
-@@ .. .. display: Multiple Matches
-		cand( t( %qp ), gt( words( %qp ), 1 )), 
-		u( display.stat.values.display.multiple ), 
+// .. .. display: Multiple Matches
+			cand( t( %qp ), gt( words( %qp ), 1 )), 
+			u( display.stat.values.display.multiple ), 
 
-@@ .. .. bad stat
-		Stat Not Found. Try <name>* to find a list of possible matches. 
+// .. .. bad stat
+			Stat Not Found. Try <name>* to find a list of possible matches. 
+		)
 	)
-)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Value List ---------------------------------------------------------
 
 This just displays what kind of values are good
 0: value list from data dictionary
 
---
+*/
 
-&display.stat-valuelist Stat Setter <ss>=case(%0, *, Any, #, Numeric, if(strmatch(%0, derived), Derived Formula, itemize(%0, ., if(t(%1), %1, and))))
+&display.stat-valuelist [v( d.ss )]=
+	case( %0, 
+		*, Any, 
+		#, Numeric, 
+		if( strmatch( %0, derived ), Derived Formula, 
+		itemize( %0, ., if( t( %1 ), %1, and )))
+	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Prereq List --------------------------------------------------------
 
 0: statpath (probably unchecked)
 Returns: <templates>|<chargen-only>|<other prereqs>
 
---
+*/
 
-&display.stat-prereqlist Stat Setter <ss>=
-strcat( 
+&display.stat-prereqlist [v( d.ss )]=
+	strcat( 
 
-@@ .. template prerequisites
-	filter( 
-		filter.stat-prereqlist.template, 
-		u( [u( d.data-dictionary )]/bio.template ), ., ., %0 
-	), |, 
+// .. template prerequisites
+		filter( 
+			filter.stat-prereqlist.template, 
+			u( [u( d.data-dictionary )]/bio.template ), ., ., %0 
+		), |, 
 
-@@ .. chargen-only prerequisite
-	if(
-		u( [u( d.stat-funcs )]/f.hastag?.workhorse, %0, chargen-only ), 
-		Chargen-Only 
-	), |, 
+// .. chargen-only prerequisite
+		if(
+			u( [u( d.stat-funcs )]/f.hastag?.workhorse, %0, chargen-only ), 
+			Chargen-Only 
+		), |, 
 
-@@ .. coded/other prerequisites
-	if(
-		hasattr( u( d.data-dictionary ), prereq-text.%0 ), 
-		u( [u( d.data-dictionary )]/prereq-text.%0 )
+// .. coded/other prerequisites
+		if(
+			hasattr( u( d.data-dictionary ), prereq-text.%0 ), 
+			u( [u( d.data-dictionary )]/prereq-text.%0 )
+		)
 	)
-)
 
 
---
+/*
+-- tests --
 
-think ulocal( ss/display.stat-prereqlist, merit.unseen_sense_() )
-think ulocal( ss/display.stat-prereqlist, merit.eidetic_memory )
+think ulocal( v( d.ss )/display.stat-prereqlist, merit.unseen_sense_() )
+think ulocal( v( d.ss )/display.stat-prereqlist, merit.eidetic_memory )
 
 
 --------------------------------------------------------------------------------
@@ -193,15 +205,18 @@ think ulocal( ss/display.stat-prereqlist, merit.eidetic_memory )
 
 Returns Templates (%0) that match tags on Statpath (%1)
 
---
+*/
 
-&filter.stat-prereqlist.template Stat Setter <ss>=u( [u( d.stat-funcs )]/f.hastag?.workhorse, %1, %0 )
+&filter.stat-prereqlist.template [v( d.ss )]=
+	u( [u( d.stat-funcs )]/f.hastag?.workhorse, %1, %0 )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: One Match ----------------------------------------------------------
+*/
 
-&display.stat.values.display.one Stat Setter <ss>=
+&display.stat.values.display.one [v( d.ss )]=
 	strcat( 
 
 // header: <name> (<type>) [<category>]
@@ -325,6 +340,7 @@ Returns Templates (%0) that match tags on Statpath (%1)
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Display: Multiple Matches ---------------------------------------------------
 
@@ -332,77 +348,89 @@ z: dbref: stat-funcs (sfp)
 y: temporary finding all the names for max-length, below
 m: max length of above, used for formatting of '<trait name> [<trait category>]'
 
---
+*/
 
-&display.stat.values.display.multiple Stat Setter <ss>=
-strcat( 
-	setq( z, u( d.stat-funcs )), 
-	setq( y, 
-		iter( %qp, 
-			edit( u( %qz/f.statname.workhorse, rest(%i0, .)), %(%), %(<type>%) ), 
-			, | 
-		)
-	), 
-	setq( m, last( sort( iter( %qy, strlen( %i0 ), | )))), 
-
-	header( Matches for [if( t( rest( %0, / )), [first( %0, / )]/ )]%qw ), %r, 
-
-	iter( %qp, 
-		strcat( 
-			%b%b, 
-			ljust( 
-				edit( u( %qz/f.statname.workhorse, rest(%i0, .)), 
-					%(%), %(<type>%) 
-				), 
-				%qm 
-			), 
-			%b%b, 
-			ansi( 
-				xh, %[, 
-				xh, u( %qz/f.statname.workhorse, first(%i0, .)), 
-				xh, %] 
+&display.stat.values.display.multiple [v( d.ss )]=
+	strcat( 
+		setq( z, u( d.stat-funcs )), 
+		setq( y, 
+			iter( %qp, 
+				edit( 
+					u( %qz/f.statname.workhorse, rest(%i0, .)), 
+					%(%), 
+					%(<type>%) 
+					), 
+				, | 
 			)
 		), 
-		, %r
-	), %r, 
+		setq( m, last( sort( iter( %qy, strlen( %i0 ), | )))), 
 
-	footer( [words( %qp )] Matches )
-)
+		header( Matches for [if( t( rest( %0, / )), [first( %0, / )]/ )]%qw ), 
+		%r, 
+
+		iter( %qp, 
+			strcat( 
+				%b%b, 
+				ljust( 
+					edit( u( %qz/f.statname.workhorse, rest(%i0, .)), 
+						%(%), %(<type>%) 
+					), 
+					%qm 
+				), 
+				%b%b, 
+				ansi( 
+					xh, %[, 
+					xh, u( %qz/f.statname.workhorse, first(%i0, .)), 
+					xh, %] 
+				)
+			), 
+			, %r
+		), %r, 
+
+		footer( [words( %qp )] Matches )
+	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Filter: Prerequisites -------------------------------------------------------
 
 Filter to check %1's "template" and "other" stats
 
---
+*/
 
-&fil.prerequisites Stat Setter <ss>=
-	and(
-@@ >> template check
-		u([u(d.stat-funcs)]/f.prereq-check-template, %1, %0), 
-@@ >> other check
-@@ .. we need to check all instances on a stat, if they have any
-		if(
-			and(
-				strmatch(%0, *_()), 
-				not(member(extract(get([u(d.data-dictionary)]/%0), 2, 1, |), *))
+&fil.prerequisites [v( d.ss )]=
+	cand(
+// >> template check
+		u( [u(d.stat-funcs)]/f.prereq-check-template, %1, %0 ), 
+// >> other check
+// .. we need to check all instances on a stat, if they have any
+		if( 
+			cand( 
+				strmatch( %0, *_() ), 
+				not( 
+					member( 
+						extract( get( [u( d.data-dictionary )]/%0 ), 2, 1, | ), 
+						* 
+					)
+				)
 			), 
-			lor(
-				iter(
-					extract(get([u(d.data-dictionary)]/%0), 2, 1, |), 
-					u([u(d.stat-funcs)]/f.prereq-check-other, %1, %0, %i0), 
+			lor( 
+				iter( 
+					extract( get( [u( d.data-dictionary )]/%0 ), 2, 1, | ), 
+					u( [u( d.stat-funcs )]/f.prereq-check-other, %1, %0, %i0 ), 
 					.
 				)
 			), 
-@@ .. not instsanced, or instance validation was * which is never checked
-			u([u(d.stat-funcs)]/f.prereq-check-other, %1, %0)
+// .. not instsanced, or instance validation was * which is never checked
+			u( [u(d.stat-funcs)]/f.prereq-check-other, %1, %0 )
 		)
 	)
 
---
+/*
+-- tests --
 
-think filter(ss/fil.prerequisites, attribute.strength merit.unseen_sense_() merit.mantle_() skill.academics, , , pmatch(thenomain))
+think filter( v( d.ss )/fil.prerequisites, attribute.strength merit.unseen_sense_() merit.mantle_() skill.academics, , , pmatch(thenomain) )
 
 
 stat/v cour
@@ -420,3 +448,4 @@ stat/v *st?m*
 
 stat/v cha merit/*
 
+*/

@@ -25,6 +25,8 @@ Finalize:
 	Note for XP log (do I have a 'note' type yet?)
 	Report to human to check and to 'cg/approve'
 
+*** NOTE: APPROVAL SYSTEM MUST BE IN PLACE FOR THIS TO WORK ***
+
 
 
 

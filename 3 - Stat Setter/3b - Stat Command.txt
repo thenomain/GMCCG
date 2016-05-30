@@ -1,3 +1,4 @@
+/*
 ================================================================================
 == BASIC COMMAND ===============================================================
 
@@ -8,57 +9,74 @@ input.
 --------------------------------------------------------------------------------
 -- Command: Origin -------------------------------------------------------------
 
-&c.stat Stat Setter <ss>=$^\+?stat(.*)$:@pemit %#=
-@@ [setq(0, secure(%1))] << this kills stat (instance)
-[setq(0, %1)]
-[switch(
-	%q0, 
-@@ No Entry (stat)
-	, u(f.stat-default), 
-@@ A Switch, with or without Argument (+money/<switch> [<arg>])
-	/*, u(f.stat-switch, after(first(%q0), /), rest(%q0)), 
-@@ Just Args (stat <arg>)
-	%b*, u(f.stat-specific, trim(%q0)), 
-@@ Crapola (statblablabla)
-	Error: Command is 'stat%[/<switch>%] %[<other stuff>%]'
-)]
+q0: massaged input, where appropriate
 
---
+*/
+
+&c.stat [v( d.ss )]=$^\+?stat(.*)$:@pemit %#=
+	[setq( 0, %1 )]
+	[switch( strtrunc( %q0, 1 ), 
+
+// No Entry (stat)
+		@@( null ), u( f.stat-default ), 
+
+// A Switch, with or without Argument (+money/<switch> [<arg>])
+		/, u( f.stat-switch, after( first( %q0 ), / ), rest( %q0 )), 
+
+// Just Args (stat <arg>)
+		%b, u( f.stat-specific, trim( %q0 )), 
+
+// Crapola (statblablabla)
+		u( .msg, stat, Command is 'stat%[/<switch>%] %[<other stuff>%]' )
+	)]
+
+// --
 
 @set ss/c.stat=regex
 
 
+/*
 --------------------------------------------------------------------------------
 -- Command: Switch-Finder ------------------------------------------------------
 
-&f.stat-switch Stat Setter <ss>=
-@@ q0: Partial-name-match the switch. What the hell.
+q0: Partial-name-match the switch.
 
-@@ Do I know the switch?
-	ifelse(
-		setr(0, grab(lattr(me/f.stat/*), f.stat/%0*)), 
-@@ Yes, I know it, hit it
-		u(%q0, %1), 
-@@ No, I don't know it. Waa. 
+*/
+
+&f.stat-switch [v( d.ss )]=
+// Do I know the switch?
+	ifelse( 
+		setr( 0, grab( lattr( %!/f.stat/* ), f.stat/%0* )), 
+// Yes, I know it, hit it
+		u( %q0, %1 ), 
+// No, I don't know it. 
 		No such switch for 'stat'. Valid switches are: 
-		[itemize(lcstr(iter(lattr(me/f.stat/*), after(##, /))))]
+		[itemize( lcstr( iter( lattr( %!/f.stat/* ), after( %i0, / ))))] 
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Command: Default ------------------------------------------------------------
 
-stat, alone, does nothing.
+'stat', alone, does nothing.
 
-&f.stat-default Stat Setter <ss>=Error: 'stat' alone does nothing  Try 'stat <stat>'
+*/
+
+&f.stat-default [v( d.ss )]=
+	u( .msg, stat, The command needs more input; try 'stat <stat name>' )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Command: Specific -----------------------------------------------------------
 
-We're putting an alias down to 'stat/v' here to make the command more non-staff friendly.
+We're putting an alias down to 'stat/v' here to make the command more non-staff 
+friendly.
 
-&f.stat-specific Stat Setter <ss>=u(f.stat/values, %0)
+*/
+
+&f.stat-specific [v( d.ss )]=u( f.stat/values, %0 )
 
 
 

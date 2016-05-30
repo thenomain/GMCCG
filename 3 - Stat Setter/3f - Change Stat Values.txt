@@ -7,7 +7,8 @@ A system to add or remove instanced types (<type>) from stats.
 	stat/settype <stat>=[!]<type>
 
 Stats with a type of '*' cannot be changed in this way. 
-Last item cannot be removed.
+If a stat has only one instanced item, it cannot be removed.
+(Instanced stats must have at least one type.)
 
 1) determine if stat is instanced
 2) prettify input

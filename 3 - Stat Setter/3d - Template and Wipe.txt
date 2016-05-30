@@ -20,7 +20,6 @@ CHARGEN:
 	Without <player>, it runs it on the player only if they're 'in chargen'.
 	Otherwise, throw 'Staff Only.'
 
-
 --
 
 0: [Target=]Template
@@ -36,7 +35,7 @@ qs: setting self? (1/0)
 
 */
 
-&f.stat/template Stat Setter <ss>=
+&f.stat/template [v( d.ss )]=
 	strcat( 
 // .. registers
 		if( strmatch( %0, *=* ), 
@@ -104,7 +103,7 @@ stat/wipe thenomain=YES
 
 */
 
-&f.statpaths-for-template ss=
+&f.statpaths-for-template [v( d.ss )]=
 		setunion( 
 			filter( filter.stat-allowed-for-template, 
 				edit( 
@@ -140,6 +139,7 @@ output: may be a list of spaces or some setting errors
 	)
 
 
+/*
 ------------------------------------------------------------------------------
 -- Display: Template Default Settings ----------------------------------------
 
@@ -147,75 +147,76 @@ output: may be a list of spaces or some setting errors
 1: template
 2: list of (dd) statpaths that are being set
 
---
+*/
 
-&display.statpath_defaults ss=
+&display.statpath_defaults [v( d.ss )]=
+	strcat( 
+		header( Set up [name( %0 )] with template '%1' ), %r %b, 
+		ansi( h, Sheet Location ), : [u( f.find-sheet, %0 )] %r %b, 
+		ansi( h, Template ), : %1 %r, 
 
-strcat( 
-	header( Set up [name( %0 )] with template '%1' ), %r %b, 
-	ansi( h, Sheet Location ), : [u( f.find-sheet, %0 )] %r %b, 
-	ansi( h, Template ), : %1 %r, 
-
-	setq( m, setunion( iter( %2, first( %i0, . )), )), 
-	iter( %qm, 
-		[divider( titlestr( edit( %i0, _, %b ) ))]%r
-		[iter( graball( %2, %i0.* ), 
-			strcat( 
-				%b%b, 
-				ansi( h, 
-					ulocal( 
-						[u( d.stat-funcs )]/f.statname.workhorse, 
-						rest( %i0, . )
-					)
+		setq( m, setunion( iter( %2, first( %i0, . )), )), 
+		iter( %qm, 
+			[divider( titlestr( edit( %i0, _, %b ) ))]%r
+			[iter( graball( %2, %i0.* ), 
+				strcat( 
+					%b%b, 
+					ansi( h, 
+						ulocal( 
+							[u( d.stat-funcs )]/f.statname.workhorse, 
+							rest( %i0, . )
+						)
+					), 
+					:%b, 
+					get( [u( d.data-dictionary )]/default.%i0 )
 				), 
-				:%b, 
-				get( [u( d.data-dictionary )]/default.%i0 )
-			), 
+				, %r 
+			)], 
 			, %r 
-		)], 
-		, %r 
-	), %r, 
+		), %r, 
 
-	footer( sheet [name( %0 )] )
-)
+		footer( sheet [name( %0 )] )
+	)
 
 
+/*
 ------------------------------------------------------------------------------
 -- Filter: Stat Allowed For Template -----------------------------------------
 
 Filter for all items that have either passed template(s) in their tags, or none.
 
 0: <statpath>
-1: template (Human, Changeling, Thaumaturge, Ghoul)
+1: template (Human, Changeling, Thaumaturge, Ghoul, etc.)
 
---
+*/
 
-&filter.stat-allowed-for-template Stat Setter <ss>=
+&filter.stat-allowed-for-template [v( d.ss )]=
 
-cor(
-@@ .. tag matches template(s)?
-	u([u(d.stat-funcs)]/f.hastag?.workhorse, %0, %1), 
-@@ .. tag has no templates?
-	not(u(
-		[u(d.stat-funcs)]/f.hastag?.workhorse, 
-		%0, 
-		get([u(d.data-dictionary)]/bio.template)
-	))
-)
+	cor( 
+// .. tag matches template(s)?
+		u( [u( d.stat-funcs )]/f.hastag?.workhorse, %0, %1 ), 
+// .. tag has no templates?
+		not( u( 
+			[u(d.stat-funcs)]/f.hastag?.workhorse, 
+			%0, 
+			get( [u(d.data-dictionary)]/bio.template )
+		))
+	)
 
---
+/* 
+-- tests --
 
-@@ .. which "default" stats are ok for 
+// .. which "default" stats are ok for 
 
-think filter(ss/filter.stat-allowed-for-template, iter(lattr(dd/default.*), rest(%i0, .)), , , changeling)
+think filter( v( d.ss )/filter.stat-allowed-for-template, iter( lattr( v( d.dd )/default.* ), rest( %i0, . )), , , changeling )
 
-@@ .. unseen sense is a human-only stat
+// .. unseen sense is a human-only stat
 
-think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , changeling)
+think filter( v( d.ss )/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , changeling )
 
-think filter(ss/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , human)
+think filter( v( d.ss )/filter.stat-allowed-for-template, merit.direction_sense merit.unseen_sense_() merit.common_sense, , , human )
 
-think filter( v( d.ss )/filter.stat-allowed-for-template, edit( lattr( dd/default.* ), DEFAULT., ), , , vampire)
+think filter( v( d.ss )/filter.stat-allowed-for-template, edit( lattr( dd/default.* ), DEFAULT., ), , , vampire )
 
 
 
@@ -234,9 +235,9 @@ qw: where is the sheet?
 qs: setting self?
 ql: list of stats getting wiped, sorted
 
---
+*/
 
-&f.stat/wipe Stat Setter <ss>=
+&f.stat/wipe [v( d.ss )]=
 	strcat( 
 		if( strmatch( %0, *=* ), 
 			setq( 0, trim( first( %0, = ))), 
@@ -313,7 +314,8 @@ ql: list of stats getting wiped, sorted
 		)
 	)
 
---
+/*
+-- tests --
 
 stat/wipe thenomain
 stat/template thenomain=h
@@ -322,7 +324,6 @@ stat/wipe thenomain=yes
 stat/wipe thenomain=YES
 
 
-/*
 -----------------------------------------------------------------------------
 -- Function: All Stats from Sheet -------------------------------------------
 
@@ -347,9 +348,10 @@ We put bio.template first, because it is the most important stat on the game.
 		)
 	)
 
-think u( v( d.ss )/f.statpaths-from-sheet, *vera )
+/*
+-- tests --
 
-*/
+think u( v( d.ss )/f.statpaths-from-sheet, *thenomain )
 
 
 -----------------------------------------------------------------------------
@@ -360,13 +362,7 @@ Not only does this list the stats in the search order, but those not as well.
 
 >>> I don't think anybody calls this; check for usage across system <<<
 
---
+*/
 
-&f.list-stats-all Stat Setter <ss>=u([u(d.stat-funcs)]/f.stat-list-selected, *)
-
---
-
-think u(sfp/f.prereq-check-template, pmatch(thenomain), merit.unseen_sense_())
-think u(sfp/f.prereq-check-other, pmatch(dog), merit.mantle_(), spring)
-think u(sfp/f.prereq-check-other, pmatch(dog), bio.kith, , Cleareyes)
+&f.list-stats-all [v( d.ss )]=u( [u(d.stat-funcs)]/f.stat-list-selected, * )
 
