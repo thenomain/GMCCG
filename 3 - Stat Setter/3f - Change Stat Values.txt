@@ -46,26 +46,34 @@ e: error check
 		setq( m, match( %qa, %qt, . )), 
 		ansi( h, <stat/settype>%b, n, 
 			case( 0, 
-				isstaff( %# ), Staff only, 
+				isstaff( %# ), u( .msg, stat/settype, Staff only ), 
 
-				t( %qs ), Stat not found, 
+				t( %qs ), u( .msg, stat/settype, Stat not found ), 
 
 				comp( rest( %0, = ), ), 
-				Oh at least enter something to add or remove, 
+				u( .msg, stat/settype, 
+					At least enter something to add or remove 
+				), 
 
 				strmatch( %qs, *_%(%) ), 
-				Stat cannot take an instanced type, 
+				u( .msg, stat/settype, Stat cannot take an instanced type ), 
 
 				not( member( %qa, * )), 
-				'[u( format.type.into_statpath, %qs )]' can take any type 
-				and so can't be added to or deleted from this way - 
-				change the stat's attribute directly, 
+				u( .msg, stat/settype, 
+					'[u( format.type.into_statpath, %qs )]' can take any type 
+					and so can't be added to or deleted from this way - 
+					change the stat's attribute directly 
+				), 
 
 				cor( not( %qn ), t( %qm )), 
-				'[u( format.type.into_statpath, %qs, %qt )]' doesn't exist, 
+				u( .msg, stat/settype, 
+					'[u( format.type.into_statpath, %qs, %qt )]' doesn't exist 
+				), 
 
 				cor( %qn, not( %qm )), 
-				'[u( format.type.into_statpath, %qs, %qt )]' already exists, 
+				u( .msg, stat/settype, 
+					'[u( format.type.into_statpath, %qs, %qt )]' already exists 
+				), 
 
 // ok
 				strcat( 
@@ -83,15 +91,22 @@ e: error check
 						)
 					), 
 					if( strlen( %qe ), 
-						strcat( 
-							Error setting new attribute! Please type: &%qs, %b, 
-							v( d.data-dictionary ), =, 
-							replace( %qa, 2, %qf, | )
+						u( .msg, stat/settype, 
+							strcat( 
+								Error setting new attribute! 
+								Please type: &%qs, %b, 
+								v( d.data-dictionary ), =, 
+								replace( %qa, 2, %qf, | )
+							)
 						), 
 
-						strcat( 
-							', u( format.type.into_statpath, %qs, %qt ), ', %b, 
-							if( %qn, removed, added )
+						u( .msg, stat/settype, 
+							strcat( 
+								', 
+								u( format.type.into_statpath, %qs, %qt ), 
+								', %b, 
+								if( %qn, removed, added )
+							)
 						)
 					)
 				)
@@ -164,23 +179,30 @@ m: matched location of <value> in <current values>, if any
 		ansi( h, <stat/setvalue>%b, n, 
 		
 			case( 0, 
-				isstaff( %# ), Staff only., 
+				isstaff( %# ), u( .msg, stat/setvalue, Staff only ), 
 
-				t( %qs ), Stat not found., 
+				t( %qs ), u( .msg, stat/setvalue, Stat not found ), 
 
 				comp( rest( %0, = ), ), 
-				Oh at least enter something to add or remove, 
+				u( .msg, stat/setvalue, 
+					At least enter something to add or remove 
+				), 
 
 // .. add 'list' to grab() when it's done
 				t( match( numeric string, %qc )), 
-				I only know how to edit the values for Numeric and String stats, 
+				u( .msg, stat/setvalue, 
+					I only know how to edit the values for Numeric 
+					and String stats 
+				), 
 
 				not( cor( 
 					member( %qu, * ), 
 					member( %qu, # )
 				)), 
-				Stat can take any value and cannot be adjusted this way - 
-				change the stat's attribute directly, 
+				u( .msg, stat/setvalue, 
+					Stat can take any value and cannot be adjusted this way - 
+					change the stat's attribute directly 
+				), 
 
 				cor( 
 					not( strmatch( %qc, numeric )), 
@@ -189,19 +211,23 @@ m: matched location of <value> in <current values>, if any
 						gte( %qv, 0 )
 					)
 				), 
-				Value '%qv' must be positive integer for numeric types, 
+				u( .msg, stat/setvalue, 
+					Value '%qv' must be positive integer for numeric types 
+				), 
 
 				cor( not( %qn ), t( %qm )), 
-				Value '%qv' doesn't exist, 
+				u( .msg, stat/setvalue, Value '%qv' doesn't exist ), 
 
 				cor( %qn, not( %qm )), 
-				Value '%qv' already exists, 
+				u( .msg, stat/setvalue, Value '%qv' already exists ), 
 			
 				case( %qc, 
 // ok: lists
 					list, 
-					This is an error because I don't know how to add 
-					to lists yet, 
+					u( .msg, stat/setvalue, 
+						This is an error because I don't know how to add 
+						to lists yet 
+					), 
 
 // ok: numeric & string
 					strcat( 
@@ -222,12 +248,16 @@ m: matched location of <value> in <current values>, if any
 						), 
 
 						if( strlen( %qe ), 
-							strcat( 
-								Error setting new attribute! Please type: 
-								&%qs, %b, v( d.data-dictionary ), =, 
-								replace( %qa, 1, %qf, | )
+							u( .msg, stat/setvalue, 
+								strcat( 
+									Error setting new attribute! Please type: 
+									&%qs, %b, v( d.data-dictionary ), =, 
+									replace( %qa, 1, %qf, | )
+								)
 							), 
-							cat( Value '%qv', if( %qn, removed, added ))
+							u( .msg, stat/setvalue, 
+								cat( Value '%qv', if( %qn, removed, added ))
+							)
 						)
 					)
 				)

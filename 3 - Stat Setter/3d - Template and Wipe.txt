@@ -59,18 +59,22 @@ qs: setting self? (1/0)
 				isstaff( %# ), 
 				cand( %qs, isapproved( %#, chargen ))
 			), 
-			Staff Only., 
+			u( .msg, stat/template, Staff only ), 
 
 			not( hasattr( %qw, _bio.template )), 
 			if( t( %qs ), 
-				You already have a template. 
-				'stat/wipe' to erase your stats., 
-				Player already has a template. 
-				'stat/wipe %q0' to erase their stats. 
+				u( .msg, stat/template, 
+					You already have a template. 
+					'stat/wipe' to erase your stats., 
+					Player already has a template. 
+					'stat/wipe %q0' to erase their stats. 
+				)
 			), 
 
 			t( %qv ), 
-			Template '%q1' could not be found. Check 'stat template', 
+			u( .msg, stat/template, 
+				Template '%q1' could not be found; check 'stat template' 
+			), 
 
 // OK! Find all stat.paths to be set with this template
 			strcat( 
@@ -257,13 +261,15 @@ ql: list of stats getting wiped, sorted
 				isstaff( %# ), 
 				cand( %qs, isapproved( %#, chargen ))
 			), 
-			Staff Only., 
+			u( .msg, stat/wipe, Staff only ), 
 
 			t( %qp ), 
-			Player Not Found., 
+			u( .msg, stat/wipe, Player not found ), 
 
 			hasattr( %qw , _bio.template ), 
-			Template Not Set. Cannot Wipe Stats., 
+			u( .msg, stat/wipe, 
+				Template not set; cannot wipe stats 
+			), 
 
 // >> wipe the sheet -- of only stats that are valid!
 			comp( %q1, YES ), 
@@ -295,20 +301,22 @@ ql: list of stats getting wiped, sorted
 
 
 // >> default: warning message
-			if( t( %qs ), 
-				ansi( 
-					r, >> Are you%b, 
-					rhu, absolutely sure, 
-					r, %byou want to wipe your sheet? <<, 
-					n, %rIf so%, type:%b, 
-					h, stat/wipe me=YES 
-				), 
-				ansi( 
-					r, >> Are you%b, 
-					rhu, absolutely sure, 
-					r, %byou want to wipe [name(%qp)]'s sheet? <<, 
-					n, %rIf so%, type:%b, 
-					h, stat/wipe [name(%qp)]=YES 
+			u( .msg, stat/wipe, 
+				if( t( %qs ), 
+					ansi( 
+						r, >> Are you%b, 
+						rhu, absolutely sure, 
+						r, %byou want to wipe your sheet? <<, 
+						n, %rIf so%, type:%b, 
+						h, stat/wipe me=YES 
+					), 
+					ansi( 
+						r, >> Are you%b, 
+						rhu, absolutely sure, 
+						r, %byou want to wipe [name(%qp)]'s sheet? <<, 
+						n, %rIf so%, type:%b, 
+						h, stat/wipe [name(%qp)]=YES 
+					)
 				)
 			)
 		)
@@ -364,5 +372,6 @@ Not only does this list the stats in the search order, but those not as well.
 
 */
 
-&f.list-stats-all [v( d.ss )]=u( [u(d.stat-funcs)]/f.stat-list-selected, * )
+&f.list-stats-all [v( d.ss )]=
+	u( [u(d.stat-funcs)]/f.stat-list-selected, * )
 

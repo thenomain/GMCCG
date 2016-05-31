@@ -138,7 +138,9 @@ qx: dbref: data dictionary (dd)
 			u( display.stat.values.display.multiple ), 
 
 // .. .. bad stat
-			Stat Not Found. Try <name>* to find a list of possible matches. 
+			u( .msg, stat, 
+				Stat not found; try '<name>*' to find a list of possible matches 
+			)
 		)
 	)
 

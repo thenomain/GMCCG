@@ -93,20 +93,19 @@ uses: setstat() and shiftstat().
 			), 
 			isstaff( %# )
 		), 
-		Staff Only., 
+		u( .msg, stat/set, Staff only ), 
 
 // .. player not found
 		t( %qp ), 
-		Player not found., 
+		u( .msg, stat/set, Player not found ), 
 
 // .. template not there
 		t( getstat( %qp/template )), 
-		No Template set. Use 'stat/template <template>'., 
+		u( .msg, stat/set, No Template set; use 'stat/template <template>' ), 
 
-
-// REMOVED: @@ .. no null stats, unless we're doing an /override or /offset
+// REMOVED: // .. no null stats, unless we're doing an /override or /offset
 //		cor( strmatch( override, %1 ), strmatch( offset, %1 ), comp( %q3, )), 
-//		Error: Must set a value., 
+//		u( .msg, stat/set, Must set a value ), 
 
 // .. no multi-stat setting here
 		strcat( 
@@ -118,24 +117,26 @@ uses: setstat() and shiftstat().
 				not( %qn )
 			)
 		), 
-		cat( 
-			Can only set one stat at a time. I'm matching:, 
-			itemize( 
-				iter( %qn, 
-					ansi( 
-						n, u( v( d.stat-funcs )/f.statname.workhorse, 
-							rest( %i0, . )
+		u( .msg, stat/set, 
+			cat( 
+				Can only set one stat at a time. I'm matching:, 
+				itemize( 
+					iter( %qn, 
+						ansi( 
+							n, u( v( d.stat-funcs )/f.statname.workhorse, 
+								rest( %i0, . )
+							), 
+							n, %b, 
+							xh, %[, 
+							xh, u( v( d.stat-funcs )/f.statname.workhorse, 
+								first( %i0, . )
+							), 
+							xh, %] 
 						), 
-						n, %b, 
-						xh, %[, 
-						xh, u( v( d.stat-funcs )/f.statname.workhorse, 
-							first( %i0, . )
-						), 
-						xh, %] 
+						, | 
 					), 
-					, | 
-				), 
-				| 
+					| 
+				)
 			)
 		), 
 
@@ -146,7 +147,7 @@ uses: setstat() and shiftstat().
 		if( 
 			t( setr( s, setstat( %qp/%q1, %q3, %1 ))), 
 			%qs, 
-			Error from Setstat: %qs
+			u( .msg, stat/set, Error from setstat(): %qs )
 		), 
 
 // .. .. +/-, shiftstat
@@ -154,13 +155,14 @@ uses: setstat() and shiftstat().
 		if( 
 			t( setr( s, shiftstat( %qp/%q1, %q2%q3, %1 ))), 
 			%qs, 
-			Error from Shiftstat: %qs
+			u( .msg, stat/set, Error from shiftstat(): %qs )
 		), 
 
 // .. uncaught error (it happens)
-		I couldn't tell what you typed. 
-		The format is: 'stat/set <player>/<stat> <operator> <value>'
-
+		u( .msg, stat/set, 
+			I couldn't tell what you typed. 
+			The format is: 'stat/set <player>/<stat> <operator> <value>'
+		)
 	)
 
 

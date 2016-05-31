@@ -32,7 +32,7 @@ q0: massaged input, where appropriate
 
 // --
 
-@set ss/c.stat=regex
+@set [v( d.ss )]/c.stat=regex
 
 
 /*
