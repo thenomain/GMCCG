@@ -22,7 +22,7 @@ The God Machine Chronicles (nWoD2) now features flat payments per dot.
 -- Attributes ------------------------------------------------------------------
 */
 
-&xp.attribute XP Cost Database <xpcd>=u( cost.standard, 4, %1, %2 )
+&xp.attribute [v( d.xpcd )]=u( cost.standard, 4, %1, %2 )
 
 
 /*
@@ -30,8 +30,8 @@ The God Machine Chronicles (nWoD2) now features flat payments per dot.
 -- Skills ----------------------------------------------------------------------
 */
 
-&xp.skill XP Cost Database <xpcd>=u( cost.standard, 2, %1, %2 )
-&xp.skill.?.? XP Cost Database <xpcd>=1
+&xp.skill [v( d.xpcd )]=u( cost.standard, 2, %1, %2 )
+&xp.skill.?.? [v( d.xpcd )]=1
 
 
 /*
@@ -39,15 +39,15 @@ The God Machine Chronicles (nWoD2) now features flat payments per dot.
 -- Advantages ------------------------------------------------------------------
 
 */
-&xp.advantage.willpower XP Cost Database <xpcd>=u( cost.standard, 1, %1, %2 )
-&xp.advantage.integrity XP Cost Database <xpcd>=u( cost.standard, 3, %1, %2 )	
+&xp.advantage.willpower [v( d.xpcd )]=u( cost.standard, 1, %1, %2 )
+&xp.advantage.integrity [v( d.xpcd )]=u( cost.standard, 3, %1, %2 )	
 
 
 /*
 --------------------------------------------------------------------------------
 -- Merits ----------------------------------------------------------------------
 
-&xp.merit XP Cost Database <xpcd>=u( cost.standard, 1, %1, %2 )
+&xp.merit [v( d.xpcd )]=u( cost.standard, 1, %1, %2 )
 
 
 
@@ -103,8 +103,8 @@ From Winter Masques, p.107
 --------------------------------------------------------------------------------
 -- Advantages: Changeling ------------------------------------------------------
 
-&xp.advantage.clarity XP Cost Database <xpcd>=u(cost.standard, 3, %1, %2)
-&xp.advantage.wyrd XP Cost Database <xpcd>=u(cost.standard, 8, %1, %2)
+&xp.advantage.clarity [v( d.xpcd )]=u(cost.standard, 3, %1, %2)
+&xp.advantage.wyrd [v( d.xpcd )]=u(cost.standard, 8, %1, %2)
 
 
 --------------------------------------------------------------------------------
@@ -112,14 +112,14 @@ From Winter Masques, p.107
 
 @@ spring mantle 3+ has a discount on contacts 
 
-&xp.merit.contacts~changeling XP Cost Database <xpcd>=
+&xp.merit.contacts~changeling [v( d.xpcd )]=
 	case(1, 
 		u(.at_least, %0, merit.mantle_(spring), 3), 
 		u(cost.standard, 1, %1, %2), 
 		u(cost.standard, 2, %1, %2)
 	)
 
-&xp.merit.allies_()~changeling XP Cost Database <xpcd>=
+&xp.merit.allies_()~changeling [v( d.xpcd )]=
 	case(1, 
 		u(.at_least, %0, merit.mantle_(spring), 3), 
 		u(cost.standard, 1, %1, %2), 
@@ -127,11 +127,11 @@ From Winter Masques, p.107
 	)
 
 @@ Milestone Merits cannot be bought, so setting their xp to 0
-&xp.merit.milestone XP Cost Database <xpcd>=0
+&xp.merit.milestone [v( d.xpcd )]=0
 
 @@ Wyrd Evolution is Dual Kith post-chargen
 @@ 1st new kith is 10 xp, 2nd new kith is 15 xp
-&xp.merit.wyrd_evolution XP Cost Database <xpcd>=ladd(iter(lnum(inc(%1), %2), add(5, mul(%i0, 5))))
+&xp.merit.wyrd_evolution [v( d.xpcd )]=ladd(iter(lnum(inc(%1), %2), add(5, mul(%i0, 5))))
 
 From Lords of Summer, p. 45
 >> Bodhisattvas of the Broken Cage: Because of the entitlement’s reputation as
@@ -144,7 +144,7 @@ From Lords of Summer, p. 45
 --------------------------------------------------------------------------------
 -- Contracts -------------------------------------------------------------------
 
-&xp.goblin_contract XP Cost Database <xpcd>=u(cost.direct, 3, %2)
+&xp.goblin_contract [v( d.xpcd )]=u(cost.direct, 3, %2)
 
 --
 
@@ -152,7 +152,7 @@ From Lords of Summer, p. 45
 @@ kith = semi-affinity (a house-rule based on Manikin and Shadowsoul)
 @@ otherwise = non-affinity
 
-&xp.contract XP Cost Database <xpcd>=
+&xp.contract [v( d.xpcd )]=
 	case(1, 
 @@ .. affinity: seeming, general (universal), or court mantle
 		or(
@@ -171,13 +171,13 @@ From Lords of Summer, p. 45
 
 --
 
-&xp.contract.elements_() XP Cost Database <xpcd>=
+&xp.contract.elements_() [v( d.xpcd )]=
 	u( cost.contract-with-instance, %0, %1, %2, %3, elements )
 
-&xp.contract.fang_and_talon_() XP Cost Database <xpcd>=
+&xp.contract.fang_and_talon_() [v( d.xpcd )]=
 	u( cost.contract-with-instance, %0, %1, %2, %3, fang_and_talon )
 
-&xp.contract.communion_() XP Cost Database <xpcd>=
+&xp.contract.communion_() [v( d.xpcd )]=
 	u( cost.contract-with-instance, %0, %1, %2, %3, communion )
 
 @@ maybe we can do this as: xp.contract.?_(), but we'll see
@@ -191,29 +191,29 @@ From Lords of Summer, p. 45
 -- Skills: Werewolf ------------------------------------------------------------
 
 @@ Certain Lodges: New Dots x 2 instead of x 3
-&xp.skill.brawl~werewolf XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.weaponry~werewolf XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.athletics~werewolf XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
-&xp.skill.persuasion~werewolf XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.brawl~werewolf [v( d.xpcd )]=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.weaponry~werewolf [v( d.xpcd )]=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.athletics~werewolf [v( d.xpcd )]=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
+&xp.skill.persuasion~werewolf [v( d.xpcd )]=u(cost.standard, if(u(.is, %0, bio.lodge, Garm), 2, 3), %1, %2)
 
-&xp.skill.intimidation~werewolf XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
-&xp.skill.streetwise~werewolf XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
-&xp.skill.survival~werewolf XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.intimidation~werewolf [v( d.xpcd )]=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.streetwise~werewolf [v( d.xpcd )]=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
+&xp.skill.survival~werewolf [v( d.xpcd )]=u(cost.standard, if(u(.is, %0, bio.lodge, Ruin), 2, 3), %1, %2)
 
 
 --------------------------------------------------------------------------------
 -- Advantages: Werewolf --------------------------------------------------------
 
-&xp.advantage.harmony XP Cost Database <xpcd>=u(cost.standard, 3, %1, %2)
-&xp.advantage.primal_urge XP Cost Database <xpcd>=u(cost.standard, 8, %1, %2)
+&xp.advantage.harmony [v( d.xpcd )]=u(cost.standard, 3, %1, %2)
+&xp.advantage.primal_urge [v( d.xpcd )]=u(cost.standard, 8, %1, %2)
 
 --------------------------------------------------------------------------------
 -- Merits: Werewolf ------------------------------------------------------------
 
-&xp.merit.pack_totem_() XP Cost Database <xpcd>=u(cost.standard, 3, %1, %2)
+&xp.merit.pack_totem_() [v( d.xpcd )]=u(cost.standard, 3, %1, %2)
 
 @@ x5 for most, x4 for Ithaeur (an auspice)
-&xp.merit.rituals XP Cost Database <xpcd>=u(cost.standard, if(u(.is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
+&xp.merit.rituals [v( d.xpcd )]=u(cost.standard, if(u(.is, %0, bio.auspice, ithaeur), 4, 5), %1, %2)
 
 
 --------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ From Lords of Summer, p. 45
 
 @@ 'Ithaeur' auspice (crescent-moon) gets rites for 1 instead of 2
 
-&xp.rite XP Cost Database <xpcd>=u(cost.direct, if(u(.is, %0, bio.auspice, ithaeur), 1, 2), %2)
+&xp.rite [v( d.xpcd )]=u(cost.direct, if(u(.is, %0, bio.auspice, ithaeur), 1, 2), %2)
 
 
 --------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ From Lords of Summer, p. 45
 @@ Semi-Affinity: Some Lodges
 @@ Non-Affinity: All others
 
-&xp.renown XP Cost Database <xpcd>=
+&xp.renown [v( d.xpcd )]=
 	case(1, 
 @@ .. affinity: tribe, auspice, or general (universal)
 		hastag?(%3, 
@@ -263,7 +263,7 @@ From Lords of Summer, p. 45
 2: level bought
 3: stat name to find tags for
 
-&xp.gift XP Cost Database <xpcd>=
+&xp.gift [v( d.xpcd )]=
 	add(
 		case(1, 
 @@ .. affinity: tribe, auspice, lodge, or general (universal)
@@ -290,7 +290,7 @@ From Lords of Summer, p. 45
 
 Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 
-&xp.gift.insight XP Cost Database <xpcd>=
+&xp.gift.insight [v( d.xpcd )]=
 	sub(
 		u(xp.gift, %0, %1, %2, %3), 
 		if(
@@ -320,7 +320,7 @@ Lodge of Prophecy allows -5xp for the 5th dot of Insight (don't ask)
 
 @@ 1 if arcana (%0) is major/minor, 0 otherwise
 
-&xp.arcanum XP Cost Database <xpcd>=
+&xp.arcanum [v( d.xpcd )]=
 	case(1, 
 @@ major
 		t(match(

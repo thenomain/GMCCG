@@ -15,7 +15,7 @@ returns: if %0 is a value, return name. If %0 is name, return value
 
 */
 
-&f.conv-type health=
+&f.conv-type [v( d.whs )]=
 	if( 
 		isnum( %0 ), 
 		extract( u( d.health-types ), %0, 1 ), 
@@ -36,7 +36,7 @@ We use this to control the damage loop, determining PUSH or WRAP.
 
 */
 
-&f.min-dmg health=
+&f.min-dmg [v( d.whs )]=
 	localize( 
 		[setq( z, )]
 		[iter( 
@@ -73,7 +73,7 @@ Output: [X][/][/][/][/][ ][ ]
 
 */
 
-&display.health-bar WoD Health System <whs>=
+&display.health-bar [v( d.whs )]=
 	[setq( w, inc( words( %0 )))]
 // .. * X / inversely related to <b> <l> <a>
 	[iter( 
@@ -99,7 +99,7 @@ Output: [X][/][/][/][/][ ][ ]
 
 // -- test --
 
-think u( whs/display.health-bar, 0 3 2, 7 )
+think u( v( d.whs )/display.health-bar, 0 3 2, 7 )
 
 
 /*
@@ -131,7 +131,7 @@ qi: inventory of wound types
 
 */
 
-&display.health-descr WoD Health System <whs>=
+&display.health-descr [v( d.whs )]=
 	strcat( 
 		setq( h, strmatch( %2, -* )), 
 
@@ -205,9 +205,9 @@ qi: inventory of wound types
 
 // -- test --
 
-think u(whs/display.health-descr, pmatch(thenomain), bashing, 1, 3 0 0, 7)
-think u(whs/display.health-descr, pmatch(thenomain), bashing, 2, 0 5 3, 7)
-think u(whs/display.health-descr, pmatch(thenomain), bashing, -3, 0 0 0, 7)
+think u( v( d.whs )/display.health-descr, %#, bashing, 1, 3 0 0, 7 )
+think u( v( d.whs )/display.health-descr, %#, bashing, 2, 0 5 3, 7 )
+think u( v( d.whs )/display.health-descr, %#, bashing, -3, 0 0 0, 7 )
 
 
 /*
@@ -227,7 +227,7 @@ detail-level output of a hurt or heal, does grab wound penalty from sheet
 
 */
 
-&display.health-detail WoD Health System <whs>=
+&display.health-detail [v( d.whs )]=
 	strcat( 
 		if( 
 			strmatch( %2, -* ), 
@@ -259,11 +259,11 @@ detail-level output of a hurt or heal, does grab wound penalty from sheet
 
 // -- test --
 
-think u( whs/display.health-detail, %#, bashing, 2, 7, 3 0 0, 5 0 0, %# )
+think u( v( d.whs )/display.health-detail, %#, bashing, 2, 7, 3 0 0, 5 0 0, %# )
 
-think u( whs/display.health-detail, %#, lethal, 2, 7, 5 0 0, 5 2 0, #1 )
+think u( v( d.whs )/display.health-detail, %#, lethal, 2, 7, 5 0 0, 5 2 0, #1 )
 
-think u( whs/display.health-detail, %#, lethal, -2, 7, 5 2 0, 5 0 0, #1 )
+think u( v( d.whs )/display.health-detail, %#, lethal, -2, 7, 5 2 0, 5 0 0, #1 )
 
 
 /*
@@ -281,7 +281,7 @@ qi: inventory of wound types
 
 */
 
-&display.current-health-descr WoD Health System <whs>=
+&display.current-health-descr [v( d.whs )]=
 	strcat(
 // -- player is...
 // -- "badly"
@@ -350,7 +350,7 @@ qh: <bashing> <lethal> <agg> stripped down from %1
 
 */
 
-&f.reverse-max-health health=
+&f.reverse-max-health [v( d.whs )]=
 	localize( strcat( 
 // Prime the counter
 		setq( d, setr( i, sub( ladd( %1 ), %0 ))), 

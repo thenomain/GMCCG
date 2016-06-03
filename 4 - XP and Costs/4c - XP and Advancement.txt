@@ -72,10 +72,10 @@ COMMANDS:
 @fo me=&d.xpas me=num( XP Advancement System <xpas> )
 @set xpas=INHERIT SAFE
 
-@fo me=&d.sfp xpas=[num( Stat Functions Prototype <sfp> )]
-@fo me=&d.dd xpas=[num( Data Dictionary <dd> )]
-@fo me=&d.xpcd xpas=[num( XP Cost Database <xpcd> )]
-@fo me=&d.cg xpas=[num( GMC Chargen <cg> )]
+@fo me=&d.sfp xpas=[search( name=Stat Functions Prototype <sfp> )]
+@fo me=&d.dd xpas=[search( name=Data Dictionary <dd> )]
+@fo me=&d.xpcd xpas=[search( name=XP Cost Database <xpcd> )]
+@fo me=&d.cg xpas=[search( name=GMC Chargen <cg> )]
 
 @parent xpas=codp
 &prefix.sql xpas=sql.
@@ -543,7 +543,7 @@ l: log sql results
 
 // --
 
-@set xpas/c.xp/log=regexp
+@set v( d.xpas )/c.xp/log=regexp
 
 
 /*

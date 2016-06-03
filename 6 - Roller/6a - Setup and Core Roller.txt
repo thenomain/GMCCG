@@ -10,7 +10,8 @@ ROLLER 3.0
 @set nWoD Roller <nr>=safe inherit
 
 @parent nWoD Roller <nr>=codp
-&prefix.cross-platform_functions nWoD Roller <nr>=.
+
+@fo me=&d.nr me=[num( nWoD Roller <nr> )]
 
 
 
@@ -19,13 +20,13 @@ ROLLER 3.0
 == DATA ========================================================================
 */
 
-@fo me=&d.stat-setter nWoD Roller <nr>=[num( Stat Functions Prototype <sfp> )]
-@fo me=&d.data-dictionary nWoD Roller <nr>=[num( Data Dictionary <dd> )]
+@fo me=&d.stat-setter [v( d.nr )]=search( name=Stat Functions Prototype <sfp> )
+@fo me=&d.data-dictionary [v( d.nr )]=search( name=Data Dictionary <dd> )
 
-@fo me=&d.spend-regain nWoD Roller <nr>=[search( name=Pool Spend Regain System <psrs> )]
+@fo me=&d.spend-regain [v( d.nr )]=search( name=Pool Spend Regain System <psrs> )
 
-@fo me=&d.jobs nWoD Roller <nr>=[search( name=Job Global Object <JGO> )]
-@fo me=@va nWoD Roller <nr>=[get( get( nr/d.jobs )/va )]
+@fo me=&d.jobs [v( d.nr )]=search( name=Job Global Object <JGO> )
+@fo me=@va [v( d.nr )]=[get( get( v( d.nr )/d.jobs )/va )]
 
 
 
@@ -34,7 +35,7 @@ ROLLER 3.0
 == CROSS-PLATFORM FUNCTIONS ====================================================
 */
 
-&.sign nWoD Roller <nr>=
+&.sign [v( d.nr )]=
 	case( 1, 
 		strmatch( %0, #-* ), %0, 
 		strmatch( %0, -* ), -, 
@@ -43,40 +44,40 @@ ROLLER 3.0
 
 // --
 
-&.value_full nWoD Roller <nr>=ulocal( [u( d.data-dictionary )]/.value_full, %0, %1 )
+&.value_full [v( d.nr )]=ulocal( [u( d.data-dictionary )]/.value_full, %0, %1 )
 
 // --
 
-&.class nWoD Roller <nr>=ulocal( [u( d.data-dictionary )]/.class, %0 )
+&.class [v( d.nr )]=ulocal( [u( d.data-dictionary )]/.class, %0 )
 
 // --
 
-&.statpath nWoD Roller <nr>=
+&.statpath [v( d.nr )]=
 	ulocal( 
-		[u(d.stat-setter)]/f.statpath.workhorse, 
+		[u( d.stat-setter )]/f.statpath.workhorse, 
 		%0, %1 
 	)
 
 // --
 
-&.statname nWoD Roller <nr>=
+&.statname [v( d.nr )]=
 	ulocal( 
-		[u(d.stat-setter)]/f.statname.workhorse, 
+		[u( d.stat-setter )]/f.statname.workhorse, 
 		%0 
 	)
 
 // --
 
-&.hastag? nWoD Roller <nr>=
+&.hastag? [v( d.nr )]=
 	ulocal( 
-		[u(d.stat-setter)]/f.hastag?.workhorse, 
+		[u( d.stat-setter )]/f.hastag?.workhorse, 
 		%0, %1, strmatch( %2, a* )
 	)
 
 // --
 
-&.alert nWoD Roller <nr>=ansi( h, <%0> )
-&.msg nWoD Roller <nr>=ansi( h, <%0>, n, %b%1 )
+&.alert [v( d.nr )]=ansi( h, <%0> )
+&.msg [v( d.nr )]=ansi( h, <%0>, n, %b%1 )
 
 // --
 
@@ -103,7 +104,7 @@ output: <base roll>:<rote re-roll, if exists>:<n-again roll>
 
 */
 
-&f.roller nWoD Roller <nr>=
+&f.roller [v( d.nr )]=
 	strcat( 
 		setr( 0, lrand( 1, 10, %0 )), :, 
 
@@ -123,7 +124,7 @@ output: <base roll>:<rote re-roll, if exists>:<n-again roll>
 -- Roller: Recursive -----------------------------------------------------------
 */
 
-&f.roller.recursive nWoD Roller <nr>=
+&f.roller.recursive [v( d.nr )]=
 		if( 
 			setr( 2, u( f.n-again-check, %0, %1 )), 
 			cat( 
@@ -145,7 +146,7 @@ returns: number of dice that are %1 or higher
 
 */
 
-&f.n-again-check nWoD Roller <nr>=
+&f.n-again-check [v( d.nr )]=
 	words( regraball( %0, [lnum( %1, 11, | )]))
 
 
@@ -163,7 +164,7 @@ returns: number of dice that are %1 or higher
 
 */
 
-&f.successes.standard nWoD Roller <nr>=
+&f.successes.standard [v( d.nr )]=
 	u( f.n-again-check, edit( %0, :, %b ), %1 )
 
 
@@ -183,7 +184,7 @@ returns: number of successes, -1 or f.successes.standard
 
 */
 
-&f.successes.chance nWoD Roller <nr>=
+&f.successes.chance [v( d.nr )]=
 	if( eq( first( %0, : ), 1 ), -1, u( f.successes.standard, %0, 10 ))
 
 
@@ -199,11 +200,11 @@ returns: number of successes (weakness cannot cause critical failure)
 
 */
 
-&f.successes.weakness nWoD Roller <nr>=
+&f.successes.weakness [v( d.nr )]=
 	max( 0, 
 		sub( 
 			u( f.successes.standard, %0, %1 ), 
-@@ .. don't count 1's in <base> roll /if/ there is a <rote> section
+// .. don't count 1's in <base> roll /if/ there is a <rote> section
 			if( strlen( elements( %0, 2, : )), 
 				words( graball( edit( rest( %0, : ), :, %b ), 1 )), 
 				words( graball( edit( %0, :, %b ), 1 ))
@@ -216,14 +217,14 @@ returns: number of successes (weakness cannot cause critical failure)
 --------------------------------------------------------------------------------
 -- Tests -----------------------------------------------------------------------
 
-think u( nr/f.roller, 3, 10 )
-think u( nr/f.roller, 3, 10, 8 )
+think u( v( d.nr )/f.roller, 3, 10 )
+think u( v( d.nr )/f.roller, 3, 10, 8 )
 
 
-think [setr( d, u( nr/f.roller, 10, 10 ))] >> [u( nr/f.successes.standard, %qd, 8 )]
+think [setr( d, u( v( d.nr )/f.roller, 10, 10 ))] >> [u( v( d.nr )/f.successes.standard, %qd, 8 )]
 
-think [setr( d, u( nr/f.roller, 1, 10 ))] >> [u( nr/f.successes.chance, %qd, 8 )]
+think [setr( d, u( v( d.nr )/f.roller, 1, 10 ))] >> [u( v( d.nr )/f.successes.chance, %qd, 8 )]
 
-think [setr( d, u( nr/f.roller, 10, 10 ))] >> [u( nr/f.successes.weakness, %qd, 8 )]
+think [setr( d, u( v( d.nr )/f.roller, 10, 10 ))] >> [u( v( d.nr )/f.successes.weakness, %qd, 8 )]
 
 */

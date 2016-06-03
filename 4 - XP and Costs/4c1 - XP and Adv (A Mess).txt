@@ -1,3 +1,7 @@
+/*
+
+*** NOTES ABOUT TIMED XP SPENDS: Not implemented ***
+
 Timed XP Spends: Cannot raise something based on various criteria.
 
 Almost Everything: 1 level/mo
@@ -8,10 +12,10 @@ Social Merits do not have to begin at one dot when appropriate to IC situations
 Status and Mystery Cult Initiation cannot be raised for 30 days 
 	after character approval
 
-&timer.<statpath> xpas=<timer nonsense>
+&timer.<statpath> [v( d.xpas )]=<timer nonsense>
 
 
-
+*/
 
 
 
@@ -208,7 +212,7 @@ We don't use trait_* for awards.
 
 */
 
-&sql.insert.award xpas=
+&sql.insert.award [v( d.xpas )]=
 	INSERT 
 		INTO xp_log (
 			target_objid, target_name, 
@@ -292,7 +296,7 @@ A detail used for xp/log.
 
 */
 
-&sql.insert.spend xpas=
+&sql.insert.spend [v( d.xpas )]=
 	INSERT 
 		INTO xp_log (
 			target_objid, target_name, 
@@ -330,7 +334,7 @@ Without trait name, searches only trait category.
 
 */
 
-&sql.select.last-touched xpas=
+&sql.select.last-touched [v( d.xpas )]=
 	SELECT MAX( log_time ) 
 	FROM xp_log 
 	WHERE target_objid = '[u( .objid, %0 )]' 

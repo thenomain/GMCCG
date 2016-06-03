@@ -19,7 +19,7 @@ q9: target list (dbrefs or job #)
 
 */
 
-&c.roll nWoD Roller <nr>=$^\+?roll(/.+?)? (.+?)(\=.*)?$:
+&c.roll [v( d.nr )]=$^\+?roll(/.+?)? (.+?)(\=.*)?$:
 
 // .. people 'in chargen' cannot use +roll -- no better place for this
 	@assert cor( isstaff( %# ), not( isapproved( %#, chargen )))={ 
@@ -64,7 +64,7 @@ q9: target list (dbrefs or job #)
 
 // --
 
-@set nWoD Roller <nr>/c.roll=regex
+@set v( d.nr )/c.roll=regex
 
 
 /*
@@ -85,7 +85,7 @@ q1: temp for pmatch() in iter
 
 */
 
-&f.build.to-list nWoD Roller <nr>=
+&f.build.to-list [v( d.nr )]=
 	localize( strcat( 
 		setq( 0, iter( %0 %1, if( setr( 1, pmatch( %i0 )), %q1 ))), 
 		case( 1, 
@@ -140,11 +140,7 @@ so we clear out all the globals (and "p"?!) before we start
 
 */
 
-@fo me=&ufunc/privileged.roll nr=u\\( [num( nr )]/f.roll, \\\%0, \\\%1, \\\%2 \\)
-
-// --
-
-&f.roll nWoD Roller <nr>=
+&f.roll [v( d.nr )]=
 	strcat( 
 		setq( d, ), setq( a, ), setq( e, ), setq( o, ), setq( s, ), setq( z, ), 
 		setq( r, ), setq( p, ), setq( t, ), setq( n, ), 
@@ -183,7 +179,7 @@ may be ignored if internal: items kept in global registers!
 
 */
 
-&f.roll.workhorse nWoD Roller <nr>=
+&f.roll.workhorse [v( d.nr )]=
 	strcat( 
 // .. set up global register defaults
 		setq( z, u( f.switch.name-complete, %2 )), 
@@ -267,14 +263,30 @@ may be ignored if internal: items kept in global registers!
 		)
 	)
 
+/*
+--------------------------------------------------------------------------------
+-- roll(): The Function --------------------------------------------------------
+
+Add 'roll()' to the user-defined function list. 
+
+This code presumes that Wizards have access to '@function'.
+If not, be sure to add this to your game's function startup system.
+
+*/
+
+@fo me=&ufunc/privileged.roll [v( d.nr )]=u\\( [num( nr )]/f.roll, \\\%0, \\\%1, \\\%2 \\)
+
+@startup [v( d.nr )]=
+	@dolist lattr( %!/ufunc.* )=@function/preserve [rest( ##, . )]=%!/##; 
+	@dolist lattr( %!/ufunc/privileged.* )=
+		@function/preserve/privileged [rest( ##, . )]=%!/##
+
+@trig v( d.nr )/startup
+
 /* -- Tests --
 
 think u( v( d.nr )/f.roll.workhorse, str+dex+2, pmatch(thenomain), /again=8 )
 think u( v( d.nr )/f.roll, str+2, thenomain, /again=8 )
-
-think roll( str+dex+2, thenomain, /again=8/extended )
-
-think roll( str+2, thenomain, /again=8/extended=tyyt )
 
 
 
@@ -329,3 +341,10 @@ internal
 // (last loop does nothing)
 
 	)
+
+/* -- Tests --
+
+think roll( str+dex+2, thenomain, /again=8/extended )
+think roll( str+2, thenomain, /again=8/extended=tyyt )
+
+*/

@@ -11,7 +11,7 @@ this may seem odd. this is odd, but it's expandable
 
 */
 
-&display.list nWoD Roller <nr>=
+&display.list [v( d.nr )]=
 	iter( rest( %0, . ), %i0, ., . )
 
 
@@ -24,7 +24,7 @@ outputs: Something legible (i.e., "Error Error Error")
 
 */
 
-&display.roll-items nWoD Roller <nr>=
+&display.roll-items [v( d.nr )]=
 	iter( 
 		trim( trim( %0, l, ` ), l, + ), 
 		%i0, 
@@ -45,7 +45,7 @@ Hilite '1' on a weakness roll, unless it's rote from the first section
 
 */
 
-&display.colorize.dice nWoD Roller <nr>= 
+&display.colorize.dice [v( d.nr )]= 
 	localize( 
 		strcat( 
 			setq( c, strmatch( %qs, chance )), 
@@ -77,17 +77,17 @@ Hilite '1' on a weakness roll, unless it's rote from the first section
 
 /* -- Tests -- 
 
-think u( nr/display.colorize.dice, 7 3 10 2 10 1 8 3 2 4 9 4 )
+think u( v( d.nr )/display.colorize.dice, 7 3 10 2 10 1 8 3 2 4 9 4 )
 
-think [setq( z, /weakness )][iter( 7 3 10 2::10 1, u( nr/display.colorize.dice, %i0 ), :, : )]
+think [setq( z, /weakness )][iter( 7 3 10 2::10 1, u( v( d.nr )/display.colorize.dice, %i0 ), :, : )]
 
-think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /9-again/rote/extended ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )]
+think [null( u( v( d.nr )/f.roll.workhorse, str+dex+2, %#, /9-again/rote/extended ))][iter( %qr, iter( %i0, u( v( d.nr )/display.colorize.dice, %i0 ), :, : ), |, | )]
 
-think [null( u( nr/f.roll.workhorse, 0, %#, /extended=5 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )]
+think [null( u( v( d.nr )/f.roll.workhorse, 0, %#, /extended=5 ))][iter( %qr, iter( %i0, u( v( d.nr )/display.colorize.dice, %i0 ), :, : ), |, | )]
 
-think [null( u( nr/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr, iter( %i0, u( nr/display.colorize.dice, %i0 ), :, : ), |, | )] --> %qe
+think [null( u( v( d.nr )/f.roll.workhorse, str+dex+2, %#, /ext/targ=200 ))][iter( %qr, iter( %i0, u( v( d.nr )/display.colorize.dice, %i0 ), :, : ), |, | )] --> %qe
 
-think u( nr/display.colorize.dice, 2 4 10 9 3 5 10 6 3 3 8 1 3 7 8 8 6 7 10 3 8 2 10 7 5 9 )
+think u( v( d.nr )/display.colorize.dice, 2 4 10 9 3 5 10 6 3 3 8 1 3 7 8 8 6 7 10 3 8 2 10 7 5 9 )
 
 
 
@@ -114,7 +114,7 @@ uses: header(), footer()
 
 */
 
-&display.roll-output nWoD Roller <nr>=
+&display.roll-output [v( d.nr )]=
 	strcat( 
 		setq( w, width( %2 )), 
 
@@ -171,7 +171,7 @@ Show the 'extended' roll results, line by line
 
 */
 
-&display.roll-output.extended nWoD Roller <nr>=
+&display.roll-output.extended [v( d.nr )]=
 	localize( 
 		strcat( 
 			%b Results:%b, 
@@ -198,7 +198,7 @@ Output for a single (non-extended) roll
 
 */
 
-&display.roll-output.single nWoD Roller <nr>=
+&display.roll-output.single [v( d.nr )]=
 	cat( 
 		%b, 
 		Result:, 
@@ -219,7 +219,7 @@ Give it that '(<dice rolled)' look.
 
 */
 
-&display.interpret-roll-output nWoD Roller <nr>=
+&display.interpret-roll-output [v( d.nr )]=
 	localize( 
 		strcat( 
 			setq( 9, u( display.colorize.dice, %0 )), 
@@ -239,7 +239,7 @@ Give it that '(<dice rolled)' look.
 -- Display: Roll To Public -----------------------------------------------------
 */
 
-&display.roll-to-public nWoD Roller <nr>=
+&display.roll-to-public [v( d.nr )]=
 	iter( %1, 
 		pemit( %i0, u( display.roll-output, %0, public, %i0  ))
 	)
@@ -250,7 +250,7 @@ Give it that '(<dice rolled)' look.
 -- Display: Roll To Private ----------------------------------------------------
 */
 
-&display.roll-to-private nWoD Roller <nr>=
+&display.roll-to-private [v( d.nr )]=
 	iter( %1, 
 		pemit( %i0, 
 			u( display.roll-output, 
@@ -272,7 +272,7 @@ Because of this, we return the message that's to be sent to the roller.
 
 */
 
-&display.roll-to-blind nWoD Roller <nr>=
+&display.roll-to-blind [v( d.nr )]=
 	strcat( 
 		u( display.roll-to-private, %0, %1 ), 
 		u( display.blind-roller-output, %1 )
@@ -296,7 +296,7 @@ internal:
 
 */
 
-&display.blind-roller-output nWoD Roller <nr>=
+&display.blind-roller-output [v( d.nr )]=
 	squish( 
 		strcat( 
 			u( .alert, roll/blind ), %b, 
@@ -383,7 +383,7 @@ uses: titlestr()
 
 */
 
-&display.roll-to-job nWoD Roller <nr>=
+&display.roll-to-job [v( d.nr )]=
 	case( 0, 
 // .. job access check failed
 		t( setr( 9, ulocal( f.has_job_access, rest( %1 ), %0 ))), 
@@ -419,7 +419,7 @@ return: #-1 <error>, or job number's dbref for 'okay'
 
 */
 
-&f.has_job_access nWoD Roller <nr>=
+&f.has_job_access [v( d.nr )]=
 	localize( case( 0, 
 		not( u( %va/FN_GUEST, %1 )), 
 		#-1 This command is not available to guests, 
@@ -464,7 +464,7 @@ output:
 
 */
 
-&f.roll-success-interpreter nWoD Roller <nr>=
+&f.roll-success-interpreter [v( d.nr )]=
 	strcat( 
 
 // q1: success/failure type

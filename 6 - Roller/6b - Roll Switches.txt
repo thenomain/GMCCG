@@ -70,7 +70,7 @@ Wildcards are valid.
 
 */
 
-&d.switch.passives nWoD Roller <nr>=
+&d.switch.passives [v( d.nr )]=
 	nowound 
 	trained 
 	weakness 
@@ -79,7 +79,7 @@ Wildcards are valid.
 
 // --
 	
-&d.switch.aliases nWoD Roller <nr>=
+&d.switch.aliases [v( d.nr )]=
 	10-again|again=10 
 	9-again|again=9 
 	8-again|again=8 
@@ -112,7 +112,7 @@ y: the switch modifier (after '=')
 
 */
 
-&f.switch.name-complete nWoD Roller <nr>=
+&f.switch.name-complete [v( d.nr )]=
 	localize( 
 		iter( lcstr( trim( %0, l, / )), 
 			strcat( 
@@ -144,7 +144,7 @@ think u( v( d.nr )/f.switch.name-complete, 8/w/no/dsfds/no-/ag=5/t/tr/fd/wp=4 )
 
 think [setr( z, /w/tr/e/ta=15 )] --> [setq( z, u( v( d.nr )/f.switch.name-complete, %qz ))]%qz
 
-This being more what it should probably look like when we're done.
+(This being more what it should probably look like when we're done.)
 
 
 --------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ returns: the full item
 
 */
 
-&f.getswitch nWoD Roller <nr>=
+&f.getswitch [v( d.nr )]=
 	regrabi( %qz, ^%0, / )
 
 
@@ -177,7 +177,7 @@ returns: 1 for true, 0 for false (null returns false)
 
 */
 
-&f.hasswitch? nWoD Roller <nr>=
+&f.hasswitch? [v( d.nr )]=
 	t( u( f.getswitch, %0 ))
 
 
@@ -191,7 +191,7 @@ A chance roll takes precident.
 
 */
 
-&f.roll/weakness nWoD Roller <nr>=
+&f.roll/weakness [v( d.nr )]=
 	strcat( 
 		setq( a, 11 ), 
 		if( not( strmatch( %qs, chance ), 
@@ -213,7 +213,7 @@ q0: the "again" type
 
 */
 
-&f.roll/again nWoD Roller <nr>=
+&f.roll/again [v( d.nr )]=
 	strcat( 
 		setq( 0, rest( %0, = )), 
 		case( 
@@ -261,7 +261,7 @@ qn: a GLOBAL REGISTER for number of times to roll
 
 */
 
-&f.roll/extended nWoD Roller <nr>=
+&f.roll/extended [v( d.nr )]=
 // .. if <num> is there, %q0 = <num>, else %q0 = %qn
 // .. this may be redundant, but allows us to check <num> and %qn 
 // .. with the same code
@@ -321,7 +321,7 @@ qt: a GLOBAL REGISTER for number of times to roll
 
 */
 
-&f.roll/target nWoD Roller <nr>=
+&f.roll/target [v( d.nr )]=
 	strcat( 
 		setq( 0, rest( %0, = )), 
 		setq( 1, 200 ), 
@@ -358,7 +358,7 @@ As a reminder:
 
 */
 
-&f.roll/willpower nWoD Roller <nr>=
+&f.roll/willpower [v( d.nr )]=
 	strcat( 
 		setq( 0, if( strlen(rest( %0, = )), rest( %0, = ), 3 )), 
 		setq( 1, 4 ), 

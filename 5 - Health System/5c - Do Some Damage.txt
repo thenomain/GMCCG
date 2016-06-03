@@ -32,7 +32,7 @@ This is the biggie
 
 */
 
-&f.do-some-dmg health=
+&f.do-some-dmg [v( d.whs )]=
 
 // Get type of min dmg.
 	[setq( t, u( f.conv-type, %3 ))]
@@ -91,7 +91,7 @@ see f.do-some-dmg for registers explanation
 
 */
 
-&f.do-some-dmg.push health=
+&f.do-some-dmg.push [v( d.whs )]=
 // Drop min dmg type
 	[setq( %qm, dec( r( %qm )))]
 
@@ -114,7 +114,7 @@ see f.do-some-dmg for registers explanation
 
 */
 
-&f.do-some-dmg.wrap health=
+&f.do-some-dmg.wrap [v( d.whs )]=
 	if( lte( inc( %qm ), words( u( d.health-types ))), 
 		[setq( %qm, dec( r( %qm )))]
 		[setq( inc( %qm ), inc( r( inc( %qm ))))]

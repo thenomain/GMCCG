@@ -47,7 +47,7 @@ all cases, there is to be no output.
 
 */
 
-&f.registers.output-add nWoD Roller <nr>=
+&f.registers.output-add [v( d.nr )]=
 	setq( o, 
         strcat( 
             %qo, `, 
@@ -62,7 +62,7 @@ all cases, there is to be no output.
 -- Add to Dice (qd) ------------------------------------------------------------
 */
 
-&f.registers.dice-add nWoD Roller <nr>=setq( d, add( %qd, %0 ))
+&f.registers.dice-add [v( d.nr )]=setq( d, add( %qd, %0 ))
 
 
 /*
@@ -70,7 +70,7 @@ all cases, there is to be no output.
 -- Add to Errors (qe) ----------------------------------------------------------
 */
 
-&f.registers.error-add nWoD Roller <nr>=setq( e, %qe`%0 )
+&f.registers.error-add [v( d.nr )]=setq( e, %qe`%0 )
 
 
 /*
@@ -78,7 +78,7 @@ all cases, there is to be no output.
 -- Add to Number of Extended Rolls To Make (qt) --------------------------------
 */
 
-&f.registers.extendednum-add nWoD Roller <nr>=setq( n, add( %qn, %0 ))
+&f.registers.extendednum-add [v( d.nr )]=setq( n, add( %qn, %0 ))
 
 
 
@@ -102,7 +102,7 @@ q0: health penalties
 
 */
 
-&f.stat-check.health nWoD Roller <nr>=
+&f.stat-check.health [v( d.nr )]=
 	if( 
 		cand( 
 			not( u( f.hasswitch?, nowound )), 
@@ -137,7 +137,7 @@ q2: Current full stat path
 
 */
 
-&f.stat-check.stats nWoD Roller <nr>=
+&f.stat-check.stats [v( d.nr )]=
 	iter( edit( %1, -%b, -, -, +- ), 
 
 		case( 1, 
@@ -176,7 +176,7 @@ See if this is a straight-up number.
 
 */
 
-&f.stat-check.number nWoD Roller <nr>=
+&f.stat-check.number [v( d.nr )]=
 	if( 
 		isint( %0 ), 
 		strcat( 
@@ -197,7 +197,7 @@ See if this is a straight-up number.
 
 */
 
-&f.stat-check.invalid-trait nWoD Roller <nr>=
+&f.stat-check.invalid-trait [v( d.nr )]=
 	if( 
 		not( %2 ), 
 		strcat( 
@@ -208,7 +208,7 @@ See if this is a straight-up number.
 
 /* -- Tests -- 
 
-think u( nr/f.stat-check.invalid-trait, beauty, +, beauty )
+think u( v( d.nr )/f.stat-check.invalid-trait, beauty, +, beauty )
 
 
 --------------------------------------------------------------------------------
@@ -221,7 +221,7 @@ think u( nr/f.stat-check.invalid-trait, beauty, +, beauty )
 
 */
 
-&f.stat-check.trait nWoD Roller <nr>=
+&f.stat-check.trait [v( d.nr )]=
 	if( 
 		u( f.stat-check.skill, %0, %1, %2, %3 ), 
 		1, 
@@ -249,7 +249,7 @@ Skills are handled separately.
 
 */
 
-&f.stat-check.trait.numeric nWoD Roller <nr>=
+&f.stat-check.trait.numeric [v( d.nr )]=
 	strcat( 
 		u( f.registers.dice-add, mul( ladd( %4, . ), case( %2, -, -1, 1 ))), 
 		u( f.registers.output-add, %3, %2 ), 
@@ -274,7 +274,7 @@ Don't roll this, sheesh.
 
 */
 
-&f.stat-check.trait.string nWoD Roller <nr>=
+&f.stat-check.trait.string [v( d.nr )]=
 	strcat( 
 		u( f.registers.output-add, %3, %2, nostat ), 
 		1 
@@ -293,7 +293,7 @@ Don't roll this, sheesh.
 
 */
 
-&f.stat-check.trait.list nWoD Roller <nr>=
+&f.stat-check.trait.list [v( d.nr )]=
 	strcat( 
 		u( f.registers.output-add, %2, %3, nostat ), 
 		1 
@@ -382,7 +382,7 @@ q2: 'nostat' if it's intended to be discarded (e.g., specialty doesn't exist)
 
 */
 
-&f.stat-check.skill.untrained nWoD Roller <nr>=
+&f.stat-check.skill.untrained [v( d.nr )]=
 	if( not( %2 ), 
 		strcat( 
 			setq( 6, 
@@ -456,7 +456,7 @@ q8: 'nostat' if the [not-a-stat] is meant to be used
 
 */
 
-&f.stat-check.skill.trained nWoD Roller <nr>=
+&f.stat-check.skill.trained [v( d.nr )]=
 	strcat( 
 		case( 1, 
 
@@ -508,8 +508,8 @@ At the moment we don't have 'f.hasswitch?' in, so we can't check '/nowound' or
 
 --
 
-think [u( nr/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
+think [u( v( d.nr )/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
 
-think [u( nr/f.stat-check.stats, pmatch(me), full name + str + beauty + will + stealth + occ.bla )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
+think [u( v( d.nr )/f.stat-check.stats, pmatch(me), full name + str + beauty + will + stealth + occ.bla )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
 
 */

@@ -4,24 +4,24 @@
 
 Health is not technically a "stat" so we need to make the commands to heal and hurt over here in the health system.
 
-	+hurt [<player>/]<type>[=<amt>|all]
-	+heal [<player>/]<type>[=<amt>|all]
+	hurt [<player>/]<type>[=<amt>|all]
+	heal [<player>/]<type>[=<amt>|all]
 
-	+health/hurt
-	+health/heal
+	health/hurt
+	health/heal
 
-Where is +health/hurt and +health/heal, anyway?
+(Where is 'health/hurt' and 'health/heal', anyway? Probably smartly killed it.)
 
 */
 
-&c.hurt WoD Health System <whs>=$^\+?hurt(.*)$:
+&c.hurt [v( d.whs )]=$^\+?hurt(.*)$:
 	@pemit %#=u( f.healhurt-workhorse, trim( %1 ), 0 )
 
-&c.heal WoD Health System <whs>=$^\+?heal(.*)$:
+&c.heal [v( d.whs )]=$^\+?heal(.*)$:
 	@pemit %#=u( f.healhurt-workhorse, trim( %1 ), 1 )
 
-@set whs/c.hurt=regex
-@set whs/c.heal=regex
+@set v( d.whs )/c.hurt=regex
+@set v( d.whs )/c.heal=regex
 
 
 /*
@@ -57,7 +57,7 @@ q1: New Damage: <same>
 
 */
 
-&f.healhurt-workhorse WoD Health System <whs>=
+&f.healhurt-workhorse [v( d.whs )]=
 	strcat( 
 
 // For these we do have to check to match */* or not
@@ -157,31 +157,31 @@ q1: New Damage: <same>
 // -- test --
 
 // hurting
-think u(whs/f.healhurt-workhorse, lethal)
-think u(whs/f.healhurt-workhorse, bashing=3, 0)
-think u(whs/f.healhurt-workhorse, thenomain/bashing, 0)
+think u( v( d.whs )/f.healhurt-workhorse, lethal )
+think u( v( d.whs )/f.healhurt-workhorse, bashing=3, 0 )
+think u( v( d.whs )/f.healhurt-workhorse, thenomain/bashing, 0 )
 
 // healing
-think u(whs/f.healhurt-workhorse, bashing, 1)
-think u(whs/f.healhurt-workhorse, bash=all, 1)
-think u(whs/f.healhurt-workhorse, thenomain/leth = 4, 1)
+think u( v( d.whs )/f.healhurt-workhorse, bashing, 1 )
+think u( v( d.whs )/f.healhurt-workhorse, bash=all, 1 )
+think u( v( d.whs )/f.healhurt-workhorse, thenomain/leth = 4, 1 )
 
 // hurting to 'all', and back again
-think u(whs/f.healhurt-workhorse, b = all)
-think u(whs/f.healhurt-workhorse, agg=all, 1)
+think u( v( d.whs )/f.healhurt-workhorse, b = all )
+think u( v( d.whs )/f.healhurt-workhorse, agg=all, 1 )
 
 // -- more testing --
 
-think u(whs/f.health/hurt, bash = 9)
-think u(whs/f.health/hurt, tributary/bash=1)
+think u( v( d.whs )/f.healhurt-workhorse, bash = 9 )
+think u( v( d.whs )/f.healhurt-workhorse, Pestilence/bash=1 )
 
-think u(whs/f.healhurt-workhorse, leth=3, 1)
-think u(whs/f.healhurt-workhorse, leth, 1)
-think u(whs/f.healhurt-workhorse, leth=a, 1)
-think u(whs/f.healhurt-workhorse, bash=all, 1)
+think u( v( d.whs )/f.healhurt-workhorse, leth=3, 1 )
+think u( v( d.whs )/f.healhurt-workhorse, leth, 1 )
+think u( v( d.whs )/f.healhurt-workhorse, leth=a, 1 )
+think u( v( d.whs )/f.healhurt-workhorse, bash=all, 1 )
 
-think u(whs/f.healhurt-workhorse, bash=1, 1)
-think u(whs/f.healhurt-workhorse, bash=all, 1)
+think u( v( d.whs )/f.healhurt-workhorse, bash=1, 0 )
+think u( v( d.whs )/f.healhurt-workhorse, bash=all, 1 )
 
 
 /*
@@ -196,7 +196,7 @@ Returns: Error message or null if none
 
 */
 
-&f.healhurt-errorcheck WoD Health System <whs>=
+&f.healhurt-errorcheck [v( d.whs )]=
 	case( 0, 
 		t( %0 ), 
 		msg( if( %4, heal, hurt ), Unknown player ), 

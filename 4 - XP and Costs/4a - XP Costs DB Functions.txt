@@ -65,7 +65,9 @@ We end up not doing this. Maybe we should.
 &prefix.calculations XP Cost Database <xpcd>=cost.
 &prefix.xp_costs XP Cost Database <xpcd>=xp.
 
-@force me=&d.dd XP Cost Database <xpcd>=[num( dd )]
+@force me=&d.dd XP Cost Database <xpcd>=[search( name=Data Dictionary <dd> )]
+
+@force me=&d.xpcd me=[num( xpcd )]
 
 
 
@@ -78,11 +80,11 @@ This version of lmax/lmin would need wiz-privileged, and I don't feel like expos
 At this point the game should have lmax() and lmin() anyhow.
 */
 
-&.lmax XP Cost Database <xpcd>=fold(.lmax.fold, %0)
-&.lmax.fold XP Cost Database <xpcd>=max(%0, %1)
+&.lmax [v( d.xpcd )]=fold( .lmax.fold, %0 )
+&.lmax.fold [v( d.xpcd )]=max( %0, %1 )
 
-&.lmin XP Cost Database <xpcd>=fold(.lmin.fold, %0)
-&.lmin.fold XP Cost Database <xpcd>=min(%0, %1)
+&.lmin [v( d.xpcd )]=fold( .lmin.fold, %0 )
+&.lmin.fold [v( d.xpcd )]=min( %0, %1 )
 
 
 
@@ -91,11 +93,11 @@ At this point the game should have lmax() and lmin() anyhow.
 == CALCULATION FUNCTIONS =======================================================
 */
 
-&.value XP Cost Database <xpcd>=u( v( d.dd )/.value, %0, %1, %2, %3 )
-&.value_full XP Cost Database <xpcd>=u( v( d.dd )/.value_full, %0, %1, %2, %3 )
-&.at_least XP Cost Database <xpcd>=u( v( d.dd )/.at_least, %0, %1, %2, %3 )
-&.is XP Cost Database <xpcd>=u( v( d.dd )/.is, %0, %1, %2, %3 )
-&.is_full XP Cost Database <xpcd>=u( v( d.dd )/.is_full, %0, %1, %2, %3 )
+&.value [v( d.xpcd )]=u( v( d.dd )/.value, %0, %1, %2, %3 )
+&.value_full [v( d.xpcd )]=u( v( d.dd )/.value_full, %0, %1, %2, %3 )
+&.at_least [v( d.xpcd )]=u( v( d.dd )/.at_least, %0, %1, %2, %3 )
+&.is [v( d.xpcd )]=u( v( d.dd )/.is, %0, %1, %2, %3 )
+&.is_full [v( d.xpcd )]=u( v( d.dd )/.is_full, %0, %1, %2, %3 )
 
 
 
@@ -123,7 +125,7 @@ think [setq(f, 3)][setq(t, 4)][setq(x, 2)][setq(f, inc(%qf))][mul(add(power(%qt,
 
 --
 
-&cost.standard XP Cost Database <xpcd>=
+&cost.standard [v( d.xpcd )]=
 	mul( 
 		add( 
 			power( %2, 2 ), 
@@ -145,7 +147,7 @@ think [setq(f, 4)][setq(t, 5)][setq(x, 8)][mul(%qx, sub(%qt, %qf))]
 
 */
 
-&cost.standard XP Cost Database <xpcd>=mul( %0, sub( %2, %1 ))
+&cost.standard [v( d.xpcd )]=mul( %0, sub( %2, %1 ))
 
 
 /*
@@ -162,7 +164,7 @@ We concentrate on the 'to' numbers.  1 -> 3 would look at 2 then 3.
 
 --
 
-&cost.contract-with-instance XP Cost Database <xpcd>=
+&cost.contract-with-instance [v( d.xpcd )]=
 	ladd( iter( 
 		lnum( inc( %1 ), %2 ), 
 		case( 1, 
@@ -171,8 +173,8 @@ We concentrate on the 'to' numbers.  1 -> 3 would look at 2 then 3.
 					iter( lattr(%0/_contract.%4_(*) ), first( u( %0/%i0 ), . ))
 				)
 			), 
-@@ "semi-affinity" on the half-price rule rounds up
-@@ (most of this is a Darkwater house rule)
+// "semi-affinity" on the half-price rule rounds up
+// (most of this is a Darkwater house rule)
 			ceil( fdiv( u( xp.contract, %0, dec( %i0 ), %i0, %3 ), 2 )), 
 			u( xp.contract, %0, dec( %i0 ), %i0, %3 )
 		)
