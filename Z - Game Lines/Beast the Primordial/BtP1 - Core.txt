@@ -100,6 +100,9 @@ We are not, and cannot, notate the merit that way. Instead, the merit is given
 the word 'Advanced' or 'Epic' at the end. In the above example, 'Danger Sense 
 Advanced'.
 
+Oh yeah, why didn't this CofD book categorize the merits into the usual:
+	physical, social, mental, fighting, supernatural
+
 */
 
 &merit.danger_sense_advanced DD=2
@@ -232,7 +235,7 @@ Advanced'.
 			)
 		) 
 	)
-&tags.library_advanced_() D:T=location.mental?
+&tags.library_advanced_() D:T=location.mental
 
 &merit.relentless_assault DD=1.2.3.4.5
 &prereq-text.merit.relentless_assault DD=Strength 3+, Stamina 3+, Brawl 2+
@@ -258,6 +261,10 @@ Advanced'.
 /*
 ================================================================================
 == BEAST NIGHTMARES ============================================================
+
+Commas have been removed from these names because they can't be set onto Mux 
+attributes. (The only change being 'Behold, My True Form!')
+
 */
 
 &class.nightmare.? DD=flag
