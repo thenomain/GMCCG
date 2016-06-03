@@ -168,7 +168,7 @@ Tags for the Core WoD stats.
 &tags.merit.light_weapons D:T=physical.fighting.style
 &tags.merit.marksmanship D:T=physical.fighting.style
 &tags.merit.martial_arts D:T=physical.fighting.style
-&tags.merit.police_tactics D:T=physical,fighting.style
+&tags.merit.police_tactics D:T=physical.fighting.style
 &tags.merit.shiv D:T=physical.fighting
 &tags.merit.street_fighting D:T=physical.fighting.style
 &tags.merit.unarmed_defense D:T=physical.fighting.style
