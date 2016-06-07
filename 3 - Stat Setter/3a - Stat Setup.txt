@@ -34,10 +34,10 @@ This probably needs to get fixed in this set of code, and not 'sheet'. Not sure.
 
 @create Stat Setter <ss>
 @set Stat Setter <ss>=inherit safe
+@fo me=&d.ss me=search( name=Stat Setter <ss> )
 
 @parent Stat Setter <ss>=codp
 
-@fo me=&d.ss me=[num( Stat Setter <ss> )]
 
 
 /*

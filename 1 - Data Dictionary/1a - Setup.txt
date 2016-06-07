@@ -13,23 +13,21 @@ The following is passed to every &prerequisite.<statpath>:
 */
 
 @create Data Dictionary <dd>
-@set dd=inherit safe
+@set  Data Dictionary <dd>=inherit safe
 
-@fo me=&d.dd me=[num( data dictionary <dd> )]
+@fo me=&d.dd me=search( name=Data Dictionary <dd> )
 
-// @fo me=&d.sfp dd=[num( Stat Functions Prototype <sfp> )]
-
-@parent dd=codp
-&prefix.functions dd=.
-&prefix.attributes dd=attribute.
-&prefix.skills dd=skill.
-&prefix.merits dd=merit.
-&prefix.advantages dd=advantage.
-&prefix.bio dd=bio.
-&prefix.specials dd=special.
-&prefix.health dd=health.
-&prefix.conditions dd=condition.
-&prefix.specials dd=special.
+@parent Data Dictionary <dd>=codp
+&prefix.functions Data Dictionary <dd>=.
+&prefix.attributes Data Dictionary <dd>=attribute.
+&prefix.skills Data Dictionary <dd>=skill.
+&prefix.merits Data Dictionary <dd>=merit.
+&prefix.advantages Data Dictionary <dd>=advantage.
+&prefix.bio Data Dictionary <dd>=bio.
+&prefix.specials Data Dictionary <dd>=special.
+&prefix.health Data Dictionary <dd>=health.
+&prefix.conditions Data Dictionary <dd>=condition.
+&prefix.specials Data Dictionary <dd>=special.
 
 
 /*
@@ -44,18 +42,19 @@ In the future, notes and page references should go here as well.
 */
 
 @create Data Tags <d:t>
-@set d:t=inherit safe
+@set Data Tags <d:t>=inherit safe
+@fo me=&d.dt me=search( name=Data Tags <d:t> )
 
-@parent d:t=codp
-&prefix.attributes d:t=tags.attribute.
-&prefix.skills d:t=tags.skill.
-&prefix.merits d:t=tags.merit.
-&prefix.advantages d:t=tags.advantage.
-&prefix.bio d:t=tags.bio.
-&prefix.specials d:t=tags.special.
-&prefix.health d:t=tags.health.
-&prefix.conditions d:t=tags.condition.
-&prefix.specials d:t=tags.special.
+@parent Data Tags <d:t>=codp
+&prefix.attributes Data Tags <d:t>=tags.attribute.
+&prefix.skills Data Tags <d:t>=tags.skill.
+&prefix.merits Data Tags <d:t>=tags.merit.
+&prefix.advantages Data Tags <d:t>=tags.advantage.
+&prefix.bio Data Tags <d:t>=tags.bio.
+&prefix.specials Data Tags <d:t>=tags.special.
+&prefix.health Data Tags <d:t>=tags.health.
+&prefix.conditions Data Tags <d:t>=tags.condition.
+&prefix.specials Data Tags <d:t>=tags.special.
 
 
 
@@ -145,7 +144,7 @@ What is the class of the stat?
 	0: stat path
 */
 
-&.Class dd=u( [u( d.sfp )]/f.get-class, %0 )
+&.Class [v( d.dd )]=u( [u( d.sfp )]/f.get-class, %0 )
 
 
 /*
@@ -153,8 +152,7 @@ What is the class of the stat?
 -- Value -----------------------------------------------------------------------
 
 The "value" directive just pulls the permanent part of a numeric stat (such as 
-Strength) or the first item from a text list (such as Template, which can be 
-Human.Psionic).
+Strength) or the first item from a text list.
 
 -- value --
 
@@ -165,7 +163,7 @@ Value of a primary stat, or the first item of a list
 		u( .value, %0, attribute.strength )
 */
 
-&.Value dd=
+&.Value [v( d.dd )]=
 	case( u( .class, %1 ), 
 		numeric, first( u( .value_full, %0, %1 ), . ), 
 		u( .value_full, %0, %1 )
@@ -177,10 +175,10 @@ Full text on a stat ("both" for numeric stats)
 	0: sheet dbref
 	1: stat.path
 	e.g.:
-		u( .value_full, %0, bio.template )
+		u( .value_full, %0, bio.full_name )
 */
 
-&.Value_Full dd=
+&.Value_Full [v( d.dd )]=
 	udefault( 
 		[u( d.sfp )]/f.getstat.workhorse.[u( .class, %1 )], 
 		u( %0/_%1 ), 
@@ -196,7 +194,7 @@ Total value of a numeric trait
 		u( .value_stats, %0, attribute.strength skill.brawl )
 */
 
-&.Value_Stats dd=
+&.Value_Stats [v( d.dd )]=
 	ladd( iter( %1 , u( .value_full, %0, %i0 ), , . ), . )
 
 
@@ -223,7 +221,7 @@ Stat is no lower than a value
 		u( .at_least, %0, skill.empathy, 2 )
 */
 
-&.At_Least dd=
+&.At_Least [v( d.dd )]=
 	gte( add( u( .value, %0, %1 ), %3 ), %2 )
 
 /* -- at least all --
@@ -236,7 +234,7 @@ Stats passed are all no lower than values associated ("and _at_least")
 		u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 )
 */
 
-&.At_Least_All dd=
+&.At_Least_All [v( d.dd )]=
 	land( iter( %1, u( .at_least, %0, first( %i0, : ), rest( %i0, : ))))
 
 /* -- at least one --
@@ -248,7 +246,7 @@ One stat passed is no lower than values associated ("or _at_least")
 	e.g.:
 		u( .at_least_one, %0, skill.weaponry:2 skill.firearms:2 )
 
-&.At_Least_One dd=
+&.At_Least_One [v( d.dd )]=
 	lor( iter( %1, u( .at_least, %0, first( %i0, : ), rest( %i0, : ))))
 
 /* -- at least stat --
@@ -263,7 +261,7 @@ This stat is no lower than another stat
 		u( .at_least_stat, %0, merit.hollow_(%1).size, advantage.wyrd + 2, %2 )
 */
 
-&.At_Least_Stat dd=
+&.At_Least_Stat [v( d.dd )]=
 	localize( 
 // .. sloppy, but gets the job done
 		[setq( t, trim( first( edit( %2, -, +- ), + )))]
@@ -305,7 +303,7 @@ Stat is no higher than a value
 		u( .at_most, %0, power.fubar, 3, %2 )
 */
 
-&.At_Most dd=
+&.At_Most [v( d.dd )]=
 	lte( add( u( .value, %0, %1 ), %3 ), %2 )
 
 /* -- at most all --
@@ -318,7 +316,7 @@ Stats passed are all no higher than values associated ("and _at_most")
 		u( .at_most_all, %0, attribute.strength:4 skill.athletics:1 )
 */
 
-&.At_Most_All dd=
+&.At_Most_All [v( d.dd )]=
 	land( iter( %1, u( .at_most, %0, first( %i0, : ), rest( %i0, : ))))
 
 /* -- at most one --
@@ -331,7 +329,7 @@ One stat passed is no higher than values associated ("or _at_most")
 		u( .at_most_one, %0, merit.fame:3 attribute.presence:3 )
 */
 
-&.At_Most_One dd=
+&.At_Most_One [v( d.dd )]=
 	lor( iter( %1, u( .at_most, %0, first( %i0, : ), rest( %i0, : ))))
 
 /* -- at most stat --
@@ -349,7 +347,7 @@ This stat is no higher than another stat
 		u( .at_most_stat, %0, skill.academics, advantage.wyrd+1, %2 )
 */
 
-&.At_Most_Stat dd=
+&.At_Most_Stat [v( d.dd )]=
 	localize( 
 // .. sloppy, but gets the job done
 		[setq( t, trim( first( edit( %2, -, +- ), + )))]
@@ -380,7 +378,7 @@ This stat is between *and includes* <value 1> and <value 2>
 	4: add-offset (send "%2" always, used in xp-spends)
 */
 
-&.Between dd=
+&.Between [v( d.dd )]=
 	cand( 
 		u( .at_least, %0, %1, %2, %4 ), 
 		u( .at_most, %0, %1, %3, %4 )
@@ -408,7 +406,7 @@ Stat's "first" text value matches exactly
 		u( .is_full, %0, bio.seeming, seemingless, %2 )
 */
 
-&.Is dd=
+&.Is [v( d.dd )]=
 	strmatch( %2, if( t( %3 ), %3, u( .value, %0, %1 )))
 
 /* -- is full --
@@ -423,7 +421,7 @@ Stat's "full" value matches
 		u( .is_full, %0, bio.template, changeling, %2 )
 */
 
-&.Is_Full dd=
+&.Is_Full [v( d.dd )]=
 	strmatch( %2, if( t( %3 ), %3, u( .value_full, %0, %1 )))
 
 
@@ -439,7 +437,7 @@ Stat's "first" text value doesn't match
 		u( .is_not, %0, bio.seeming, seemingless, %2 )
 */
 
-&.Is_Not dd=
+&.Is_Not [v( d.dd )]=
 	not( u( .is, %0, %1, %2, %3 ))
 
 /* -- is one of --
@@ -452,7 +450,7 @@ Stat's "first" text item matches one from a list
 		u( .is_one_of, %0, bio.template, changeling.human )
 */
 
-&.Is_One_Of dd=
+&.Is_One_Of [v( d.dd )]=
 	t( match(%2, first( u( %0/_%1 ), . ), . ))
 
 /* -- is none of --
@@ -465,7 +463,7 @@ Stat's "first" text value matches none from a list
 		u( .is_none_of, %0, bio.kith, %1.Kithless )
 */
 
-&.Is_None_Of dd=
+&.Is_None_Of [v( d.dd )]=
 	not( u( .is_one_of, %0, %1, %2 ))
 
 
@@ -485,7 +483,7 @@ Sheet has a stat
 		u( .has, %0, skill.crafts )
 */
 
-&.Has dd=
+&.Has [v( d.dd )]=
 	t( u( .value, %0, %1 ))
 
 /* -- has not --
@@ -497,7 +495,7 @@ Sheet doesn't have a stat
 		u( .has_not, %0, merit.fame )
 */
 
-&.Has_Not dd=
+&.Has_Not [v( d.dd )]=
 	not( u( .value, %0, %1 ))
 
 /* -- has one of --
@@ -509,7 +507,7 @@ Sheet has one of the stats from a list
 		u( .has_one_of, %0, merit.clairvoyance merit.channeling_(spirit) )
 */
 
-&.Has_One_Of dd=
+&.Has_One_Of [v( d.dd )]=
 	lor( iter( %1, u( .has, %0, %i0 )))
 
 /* -- has all of --
@@ -521,7 +519,7 @@ Sheet has all of the stats from a list
 		u( .has_all_of, %0, merit.astral_projection merit.thought_projection )
 */
 
-&.Has_All_Of dd=
+&.Has_All_Of [v( d.dd )]=
 	land( iter( %1, u( .has, %0, %i0 )))
 
 /* -- has none of --
@@ -533,7 +531,7 @@ Sheet has none of the stats from a list
 		u( .has_none_of, %0, merit.occlusion merit.hidden_life )
 */
 
-&.Has_None_Of dd=
+&.Has_None_Of [v( d.dd )]=
 	not( u( .has_one_of, %0, %1 ))
 
 
@@ -553,7 +551,7 @@ Returns the lowst or highest value of a list of stats.  We have to fold our own
 -- min of --
 */
 
-&.Min_Of dd=
+&.Min_Of [v( d.dd )]=
 	min( 
 		u( .value, %0, first( %1 )), 
 		if( 
@@ -566,7 +564,7 @@ Returns the lowst or highest value of a list of stats.  We have to fold our own
 
 // -- max of --
 
-&.Max_Of dd=
+&.Max_Of [v( d.dd )]=
 	max( 
 		u( .value, %0, first( %1 )), 
 		if( 
@@ -597,12 +595,12 @@ Item name must be exact or contain its own wildcards.
 -- list has --
 */
 
-&.List_Has dd=
+&.List_Has [v( d.dd )]=
 	t( match( u( .value_full, %0, %1 ), %2, . ))
 
 // -- list has all --
 
-&.List_Has_All dd=
+&.List_Has_All [v( d.dd )]=
 	eq( 
 		words( setinter( u( .value_full, %0, %1 ), %2, . ), . ), 
 		words( %2, . )
@@ -610,7 +608,7 @@ Item name must be exact or contain its own wildcards.
 
 // -- list has none --
 
-&.List_Has_None dd=
+&.List_Has_None [v( d.dd )]=
 	eq( 
 		words( setinter( u( .value_full, %0, %1 ), %2, . ), . ), 
 		0 
@@ -635,7 +633,7 @@ Else, assumes translating name->value
 -- class: translate list
 */
 
-&.class_translate_list dd=
+&.class_translate_list [v( d.dd )]=
 	case( 1, 
 @@ .. number value -> name
 		isnum( %1 ), 
@@ -670,7 +668,7 @@ think u( dd/.max_trait, num( *thenomain ), attribute.intelligence )
 -- max trait --
 */
 
-&.max_trait dd=
+&.max_trait [v( d.dd )]=
 	add( 
 		max( 5, 
 			u( .value, 
@@ -691,14 +689,14 @@ think u( dd/.max_trait, num( *thenomain ), attribute.intelligence )
 
 // -- max trait (template) --
 
-&.max_trait.Changeling dd=advantage.wyrd
-&.max_trait.Werewolf dd=advantage.primal_urge
-&.max_trait.Promethean dd=advantage.azoth
-&.max_trait.Mage dd=advantage.gnosis
-&.max_trait.Geist dd=advantage.psyche
-&.max_trait.Skinthief dd=advantage.supernatural_tolerance
+&.max_trait.Changeling [v( d.dd )]=advantage.wyrd
+&.max_trait.Werewolf [v( d.dd )]=advantage.primal_urge
+&.max_trait.Promethean [v( d.dd )]=advantage.azoth
+&.max_trait.Mage [v( d.dd )]=advantage.gnosis
+&.max_trait.Geist [v( d.dd )]=advantage.psyche
+&.max_trait.Skinthief [v( d.dd )]=advantage.supernatural_tolerance
 
-&.max_trait.Werewolf.Embodiment dd=
+&.max_trait.Werewolf.Embodiment [v( d.dd )]=
 	u( .has, %0, merit.embodiment_of_the_firstborn_([rest( %1, . )]) )
 
 
@@ -721,7 +719,7 @@ think u(dd/.max_trait, num( *thenomain ), attribute.presence )
 
 */
 
-&.trait_check dd=
+&.trait_check [v( d.dd )]=
 	u( .at_most, %0, %1, u( .max_trait, %0, %1 ), %2 )
 
 
@@ -737,7 +735,7 @@ same name as the major template from that game-line.
 
 */
 
-&.sphere dd=
+&.sphere [v( d.dd )]=
 	localize( strcat( 
 		setq( s, 
 			lcstr( 
@@ -756,19 +754,19 @@ same name as the major template from that game-line.
 
 // -- spheres for templates --
 
-&.sphere.human dd=Human
-&.sphere.vampire dd=Vampire Ghoul
-&.sphere.demon dd=Demon Stigmatic
-&.sphere.werewolf dd=Werewolf Wolf-Blooded
+&.sphere.human [v( d.dd )]=Human
+&.sphere.vampire [v( d.dd )]=Vampire Ghoul
+&.sphere.demon [v( d.dd )]=Demon Stigmatic
+&.sphere.werewolf [v( d.dd )]=Werewolf Wolf-Blooded
 
 /* a thought:
-	&bio.template dd=[iter( lattr( %!/bio.template.* ), v( %i0 ), , . )]
-	&bio.template.human dd=Human
-	&bio.template.demon dd=Demon.Stigmatic
-	&bio.template.werewolf dd=Werewolf.Wolf-Blooded
-	&bio.template.vampire dd=Vampire.Ghoul
+	&bio.template [v( d.dd )]=[iter( lattr( %!/bio.template.* ), v( %i0 ), , . )]
+	&bio.template.human [v( d.dd )]=Human
+	&bio.template.demon [v( d.dd )]=Demon.Stigmatic
+	&bio.template.werewolf [v( d.dd )]=Werewolf.Wolf-Blooded
+	&bio.template.vampire [v( d.dd )]=Vampire.Ghoul
 	
-	&sphere dd=
+	&sphere [v( d.dd )]=
 		lcstr( last( 
 			grepi( %!, bio.template., u( .value_full, %0, bio.template )), 
 			. 
@@ -791,7 +789,7 @@ Return the skill that has the passed specialty
 		u( .specialty_for, %0, drawing )
 */
 
-&.Specialty_For dd=
+&.Specialty_For [v( d.dd )]=
 	lcstr( 
 		rest( 
 			first( 
@@ -811,5 +809,5 @@ Does the sheet have this specialty?
 		u( .specialty_has, %0, Crafts Expression, * )
 */
 
-&.Specialty_Has dd=
+&.Specialty_Has [v( d.dd )]=
 	gt( words( iter( %1, lattr( %0/_skill.%i0.%2 ))), 0 )

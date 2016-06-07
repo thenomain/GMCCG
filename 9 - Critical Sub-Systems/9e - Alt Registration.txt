@@ -53,9 +53,10 @@ used by xp code for 'player experience'.
 */
 
 @create Alt Registration <ars>
-@set ars=inherit safe
+@set Alt Registration <ars>=inherit safe
+@fo me=&d.ars me=[search( name= Alt Registration <ars> )]
 
-@parent ars=codp
+@parent Alt Registration <ars>=codp
 
 
 

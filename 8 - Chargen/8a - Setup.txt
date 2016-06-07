@@ -11,6 +11,7 @@ mainly the "is this sheet chargen-compatible" system
 
 @create GMC Chargen <cg>
 @set GMC Chargen <cg>=inherit safe
+@fo me=&d.cg me=GMC Chargen <cg>
 
 @parent GMC Chargen <cg>=codp
 &prefix.dot-functions cg=.
@@ -24,10 +25,10 @@ mainly the "is this sheet chargen-compatible" system
 == DATA ========================================================================
 */
 
-@fo me=&d.dd cg=num( data dictionary <dd> )
-@fo me=&d.dt cg=num( data tags <d:t> )
-@fo me=&d.sfp cg=num( stat functions prototype <sfp> )
-@fo me=&d.asp cg=num( aspirations system <asp> )
+@fo me=&d.dd [v( d.cg )]=search( name=data dictionary <dd> )
+@fo me=&d.dt [v( d.cg )]=search( name=data tags <d:t> )
+@fo me=&d.sfp [v( d.cg )]=search( name=stat functions prototype <sfp> )
+@fo me=&d.asp [v( d.cg )]=search( name=aspirations system <asp> )
 
 
 
@@ -36,20 +37,20 @@ mainly the "is this sheet chargen-compatible" system
 == INITIAL COMMAND =============================================================
 */
 
-&c.cg cg=$^\+?cg$:@pemit %#=Yup, it's chargen. See Also: +help chargen
+&c.cg [v( d.cg )]=$^\+?cg$:@pemit %#=Yup, it's chargen. See Also: +help chargen
 
 // --
 
-@set cg/c.cg=regexp
+@set v( d.cg )/c.cg=regexp
 
 // -----------------------------------------------------------------------------
 
-&c.chargen cg=$^\+?chargen$:@pemit %#=You probably want 'cg'. 
+&c.chargen [v( d.cg )]=$^\+?chargen$:@pemit %#=You probably want 'cg'. 
 	See Also: +help chargen
 
 // --
 
-@set cg/c.chargen=regexp
+@set v( d.cg )/c.chargen=regexp
 
 
 /*
@@ -57,7 +58,7 @@ mainly the "is this sheet chargen-compatible" system
 == FUNCTIONS ===================================================================
 */
 
-&.msg cg=ansi( h, <%0>, n, %b%1 )
+&.msg [v( d.cg )]=ansi( h, <%0>, n, %b%1 )
 
 
 
@@ -84,7 +85,7 @@ List of stats on a sheet, based on passed tags
 	returns: character sheet statpaths
 */
 
-&f.list-stats-tags cg=
+&f.list-stats-tags [v( d.cg )]=
 	filter( 
 		[v( d.sfp )]/fil.list-stats-tags, 
 // .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
@@ -98,19 +99,19 @@ List of stats on a sheet, based on passed tags
 
 /* -- test --
 
-think u( cg/f.list-stats-tags, %#, attribute, mental )
-think u( cg/f.list-stats-tags, %#, attribute, resistance )
-think u( cg/f.list-stats-tags, %#, attribute, resistance.mental )
-think u( cg/f.list-stats-tags, %#, attribute, * )
+think u( v( d.cg )/f.list-stats-tags, %#, attribute, mental )
+think u( v( d.cg )/f.list-stats-tags, %#, attribute, resistance )
+think u( v( d.cg )/f.list-stats-tags, %#, attribute, resistance.mental )
+think u( v( d.cg )/f.list-stats-tags, %#, attribute, * )
 
-think u( cg/f.list-stats-tags, %#, skill, physical.mental.social, or )
+think u( v( d.cg )/f.list-stats-tags, %#, skill, physical.mental.social, or )
 
-think u( cg/f.list-stats-tags, %#, merit, human )
-think u( cg/f.list-stats-tags, %#, *, power level )
-think u( cg/f.list-stats-tags, %#, *, energy )
-think u( cg/f.list-stats-tags, %#, *, morality )
+think u( v( d.cg )/f.list-stats-tags, %#, merit, human )
+think u( v( d.cg )/f.list-stats-tags, %#, *, power level )
+think u( v( d.cg )/f.list-stats-tags, %#, *, energy )
+think u( v( d.cg )/f.list-stats-tags, %#, *, morality )
 
-think u( cg/f.list-stats-tags, %#, merit, supernatural )
+think u( v( d.cg )/f.list-stats-tags, %#, merit, supernatural )
 
 
 --------------------------------------------------------------------------------
@@ -129,24 +130,23 @@ Does not presently work for List stats
 	b: number
 */
 
-&f.points.category cg=
-strcat( 
-	setq( l, u( f.list-stats-tags, %0, %1, %2 )), 
-	setr( 
-		s, 
-		ladd( 
-			iter( 
-				%ql, 
-				first( u( %0/_%i0 ), . )
+&f.points.category [v( d.cg )]=
+	strcat( 
+		setq( l, u( f.list-stats-tags, %0, %1, %2 )), 
+		setr( s, 
+			ladd( 
+				iter( 
+					%ql, 
+					first( u( %0/_%i0 ), . )
+				)
 			)
 		)
 	)
-)
 
 /* -- test --
 
-think u( cg/f.points.category, %#, attribute, social )
-think u( cg/f.points.category, %#, skill, social )
-think u( cg/f.points.category, %#, merit, * )
+think u( v( d.cg )/f.points.category, %#, attribute, social )
+think u( v( d.cg )/f.points.category, %#, skill, social )
+think u( v( d.cg )/f.points.category, %#, merit, * )
 
 */

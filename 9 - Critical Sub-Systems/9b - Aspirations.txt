@@ -80,9 +80,10 @@ Aspirations Log System <asp>
 */
 
 @create Aspirations System <asp>
-@set asp=safe inherit
+@set Aspirations System <asp>=safe inherit
+@fo me=&d.asp me=[search( name=Aspirations System <asp> )]
 
-@parent asp=codp
+@parent Aspirations System <asp>=codp
 
 
 
@@ -96,28 +97,28 @@ Aspirations Log System <asp>
    If possible, I will make it easier for people to code their own.
 */
 
-@fo me=&d.jrs asp=search( name=Jobs Request System <jrs> )
-&d.bucket asp=u( get( v( d.jrs )/va )/FN_FIND-BUCKET, ASP )
-&d.jgroup asp=u( get( v( d.jrs )/va )/FN_FIND-JGROUP, +allstaff )
+@fo me=&d.jrs [v( d.asp )]=search( name=Jobs Request System <jrs> )
+&d.bucket [v( d.asp )]=u( get( v( d.jrs )/va )/FN_FIND-BUCKET, ASP )
+&d.jgroup [v( d.asp )]=u( get( v( d.jrs )/va )/FN_FIND-JGROUP, +allstaff )
 
 
 // -----------------------------------------------------------------------------
 // -- Basic Functions ----------------------------------------------------------
 
-&.msg asp=ansi( h, <%0>, n, %b%1 )
-&.lmax asp=lmax( %0, %1 )
+&.msg [v( d.asp )]=ansi( h, <%0>, n, %b%1 )
+&.lmax [v( d.asp )]=lmax( %0, %1 )
 
-&.wheader asp=wheader( %0 )
-&.wfooter asp=wfooter( %0 )
-&.wdivider asp=wdivider( %0 )
+&.wheader [v( d.asp )]=wheader( %0 )
+&.wfooter [v( d.asp )]=wfooter( %0 )
+&.wdivider [v( d.asp )]=wdivider( %0 )
 
-&.titlestr asp=titlestr( %0 )
+&.titlestr [v( d.asp )]=titlestr( %0 )
 
 
 // -----------------------------------------------------------------------------
 // -- Sortby(s) ----------------------------------------------------------------
 
-&sortby.index asp=sub( rest( %0, . ), rest( %1, . ))
+&sortby.index [v( d.asp )]=sub( rest( %0, . ), rest( %1, . ))
 
 
 
@@ -136,18 +137,18 @@ e.g.
 */
 
 // .. term: short-term, long-term
-&filter.term asp=strmatch( elements( get( %1/%0 ), 2, | ), %2 )
+&filter.term [v( d.asp )]=strmatch( elements( get( %1/%0 ), 2, | ), %2 )
 
 // .. status: pitched, approved, fulfilled
-&filter.status asp=
+&filter.status [v( d.asp )]=
 	strmatch( first( elements( get( %1/%0 ), 1, | ), : ), %2 )
 
 // .. find aspiration based on keyword in text
-&filter.aspiration.keyword asp=
+&filter.aspiration.keyword [v( d.asp )]=
 	strmatch( elements( get( %1/%0 ), 3, | ), *%2* )
 
 // .. find fullilled based on keyword in text
-&filter.fulfilled.keyword asp=
+&filter.fulfilled.keyword [v( d.asp )]=
 	strmatch( elements( get( %1/%0 ), 4, | ), *%2* )
 
 
@@ -173,7 +174,7 @@ f: fulfilled keyword (for filter)
 
 */
 
-&f.filter.all asp=
+&f.filter.all [v( d.asp )]=
 	strcat( 
 		setq( c, lattr( %0/_aspiration.* )), 
 
@@ -223,7 +224,7 @@ f: fulfilled keyword (for filter)
 
 */
 
-&f.next-index asp=
+&f.next-index [v( d.asp )]=
 	localize( 
 		first( setdiff(
 			lnum( 1, 
@@ -254,7 +255,7 @@ c: content
 
 */
 
-&c.aspiration asp=$^\+?asp(/[^ ]+)?(.*)?$:
+&c.aspiration [v( d.asp )]=$^\+?asp(/[^ ]+)?(.*)?$:
 	think strcat( 
 		switch entered:, %b, setr( s, trim( rest( %1, / ))), %r, 
 
@@ -316,8 +317,8 @@ c: content
 
 // --
 
-@set asp/c.aspiration=regex
-@set asp/c.aspiration=no_parse
+@set v( d.asp )/c.aspiration=regex
+@set v( d.asp )/c.aspiration=no_parse
 
 
 
@@ -337,7 +338,7 @@ r: rest (optional)
 
 */
 
-&c.aspiration/pitch asp=
+&c.aspiration/pitch [v( d.asp )]=
 	strcat( 
 		setq( f, trim( first( %0, = ))), 
 		setq( r, trim( rest( %0, = ))), 
@@ -363,7 +364,7 @@ Staff can approve 'pitched' -> 'approved'
 
 */
 
-&c.aspiration/approve asp=
+&c.aspiration/approve [v( d.asp )]=
 	strcat( 
 		setq( p, trim( first( %0, / ))), 
 		setq( r, trim( rest( %0, / ))), 
@@ -389,7 +390,7 @@ Staff can deny 'pitch' and 'fulfill'.
 
 */
 
-&c.aspiration/deny asp=
+&c.aspiration/deny [v( d.asp )]=
 	strcat( 
 		setq( p, trim( first( %0, = ))), 
 		setq( n, trim( rest( %0, = ))), 
@@ -407,7 +408,7 @@ Players request that a :
 
 */
 
-&c.aspiration/drop asp=
+&c.aspiration/drop [v( d.asp )]=
 	strcat( 
 		setq( n, trim( first( %0, = ))), 
 		setq( r, trim( rest( %0, = ))), 
@@ -431,7 +432,7 @@ r: rest (optional)
 
 */
 
-&c.aspiration/fulfill asp=
+&c.aspiration/fulfill [v( d.asp )]=
 	strcat( 
 		setq( f, trim( first( %0, = ))), 
 		setq( r, trim( rest( %0, = ))), 
@@ -460,7 +461,7 @@ r: rest (optional)
 // -- Switch: Filter -----------------------------------------------------------
 // asp/filter [<player>/]filter filter filter 
 
-&c.aspiration/filter asp=
+&c.aspiration/filter [v( d.asp )]=
 	u( .msg, planned, asp/list \[<player>/\]filter filter filter )
 
 
@@ -491,7 +492,7 @@ List the player's aspiration(s).
 
 */
 
-&c.aspiration/list asp=
+&c.aspiration/list [v( d.asp )]=
 	strcat( 
 		setq( p, pmatch( first( %0, = ))), 
 		setq( n, trim( rest( %0, = ))), 
@@ -520,7 +521,7 @@ List the player's aspiration(s).
 
 */
 
-&c.aspiration/filter asp=
+&c.aspiration/filter [v( d.asp )]=
 	u( .msg, planned, asp/filter \[<player>/\]<filter> <filter> <filter> )
 
 
@@ -551,7 +552,7 @@ List the player's aspiration(s).
 // 1: job title
 // 2: job contents
 
-&f.create.job asp=
+&f.create.job [v( d.asp )]=
 	trigger( v( d.jrs )/trig.create.job, 
 		%0, 
 		u( d.bucket ), 
@@ -588,7 +589,7 @@ A player has pitched a new aspiration
 
 */
 
-&f.aspiration/pitch.action asp=
+&f.aspiration/pitch.action [v( d.asp )]=
 	strcat( 
 		setq( t, grab( |long-term|short-term, %0*, | )), 
 		setq( a, translate( edit( %1, |, ), p )), 
@@ -646,7 +647,7 @@ think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [an
 // 2: long- or short-term
 // 3: aspiration text
 
-&display.pitch.player-message asp=
+&display.pitch.player-message [v( d.asp )]=
 	strcat( 
 		You have asked for a new %2 aspiration:, %b, ansi( h, %3 ), 
 		if( not( isapproved( %#, chargen )), 
@@ -666,7 +667,7 @@ think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [an
 // 0: enactor dbref
 // 1: term length
 
-&display.pitch.title asp=PITCH: [capstr( %1 )] aspiration for [name( %0 )]
+&display.pitch.title [v( d.asp )]=PITCH: [capstr( %1 )] aspiration for [name( %0 )]
 
 
 // -----------------------------------------------------------------------------
@@ -676,7 +677,7 @@ think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [an
 // 2: long- or short-term
 // 3: aspiration text
 
-&display.pitch.contents asp=
+&display.pitch.contents [v( d.asp )]=
 	strcat( 
 		setr( n, name( %0 )), %b, is pitching a new %2 aspiration:, %r%r, 
 		ansi( h, %3 ), %r%r, 
@@ -713,7 +714,7 @@ A player has pitched a new aspiration
 
 */
 
-&f.aspiration/fulfill.request asp=
+&f.aspiration/fulfill.request [v( d.asp )]=
 	strcat( 
 		setq( n, %0 ), 
 		setq( r, translate( edit( %1, |, ), p )), 
@@ -768,7 +769,7 @@ think u( asp/f.aspiration/fulfill.request, 1, this one will succeed! )
 
 */
 
-&display.fulfill.player-message asp=
+&display.fulfill.player-message [v( d.asp )]=
 	strcat( 
 		You have asked to fulfill aspiration #%1:, %b, 
 		ansi( h, %2 ), %r%r, 
@@ -785,7 +786,7 @@ think u( asp/f.aspiration/fulfill.request, 1, this one will succeed! )
 // 0: enactor dbref
 // 1: aspiration number
 
-&display.fulfill.title asp=FULFILL: Aspiration #%1 for [name( %0 )]
+&display.fulfill.title [v( d.asp )]=FULFILL: Aspiration #%1 for [name( %0 )]
 
 
 // -----------------------------------------------------------------------------
@@ -795,7 +796,7 @@ think u( asp/f.aspiration/fulfill.request, 1, this one will succeed! )
 // 2: aspiration text
 // 3: reason
 
-&display.fulfill.contents asp=
+&display.fulfill.contents [v( d.asp )]=
 	strcat( 
 		setr( n, name( %0 )), %b, is asking to fullfill Aspiration #%1:, %b, 
 		ansi( h, %2 ), %r%r, 
@@ -830,7 +831,7 @@ n: new attribute
 
 */
 
-&f.aspiration/fulfill.approve asp=
+&f.aspiration/fulfill.approve [v( d.asp )]=
 	strcat( 
 		setq( p, pmatch( %0 )), 
 		setq( a, get( %qp/_aspiration.%1 )), 
@@ -899,7 +900,7 @@ a: aspiration text
 
 */
 
-&f.aspiration/drop.request asp=
+&f.aspiration/drop.request [v( d.asp )]=
 	strcat( 
 		setq( n, %0 ), 
 		setq( r, translate( edit( %1, |, ), p )), 
@@ -961,7 +962,7 @@ a: aspiration text
 
 */
 
-&display.drop.player-message asp=
+&display.drop.player-message [v( d.asp )]=
 	strcat( 
 		You have asked to drop aspiration #%1:, %b, 
 		ansi( h, %2 ), %r%r, 
@@ -982,7 +983,7 @@ a: aspiration text
 
 */
 
-&display.drop.title asp=DROP: Aspiration #%1 for [name( %0 )]
+&display.drop.title [v( d.asp )]=DROP: Aspiration #%1 for [name( %0 )]
 
 
 /*
@@ -995,7 +996,7 @@ a: aspiration text
 
 */
 
-&display.drop.contents asp=
+&display.drop.contents [v( d.asp )]=
 	strcat( 
 		setr( n, name( %0 )), %b, is asking to drop Aspiration #%1:, %b, 
 		ansi( h, %2 ), %r%r, 
@@ -1028,7 +1029,7 @@ t: aspiration status
 
 */
 
-&f.aspiration/deny.action asp=
+&f.aspiration/deny.action [v( d.asp )]=
 	strcat( 
 		setq( p, pmatch( %0 )), 
 		setq( a, get( %qp/_aspiration.%1 )), 
@@ -1086,7 +1087,7 @@ s: aspiration status
 
 */
 
-&f.aspiration/approve.action asp=
+&f.aspiration/approve.action [v( d.asp )]=
 	strcat( 
 		setq( p, pmatch( %0 )), 
 		setq( a, get( %qp/_aspiration.%1 )), 
@@ -1134,7 +1135,7 @@ s: aspiration status
 ################################################################################
 ## LIST ASPIRATIONS ############################################################
 
-&f.aspiration/list.action asp=...
+&f.aspiration/list.action [v( d.asp )]=...
 
 So far is directly called by other functions
 
@@ -1157,7 +1158,7 @@ o: list to output
 
 */
 
-&f.list.aspirations asp=
+&f.list.aspirations [v( d.asp )]=
 	case( 0, 
 		t( hastype( setr( p, pmatch( %0 )), player )), 
 		u( .msg, %2, Cannot find '%0'. ), 
@@ -1189,7 +1190,7 @@ o: list to output
 // 0: player dbref
 // 1: aspiration type (qf)
 
-&f.get.aspirations.status asp=
+&f.get.aspirations.status [v( d.asp )]=
 	filter( filter.status, lattr( %0/_aspiration.* ), , , %0, %1 )
 
 /*
@@ -1216,7 +1217,7 @@ n: list of aspiration numbers (indecies) for those attrs
 
 */
 
-&display.aspiration.list asp=
+&display.aspiration.list [v( d.asp )]=
 	strcat( 
 		setq( t, if( words( %2 ), %2, approved pitched )), 
 
@@ -1280,7 +1281,7 @@ g: get current aspiration's contents
 
 */
 
-&format.aspiration.one-line asp=
+&format.aspiration.one-line [v( d.asp )]=
 	wrap( 
 		strcat( 
 			rjust( ansi( h, %i0. ), %2 ), %b, 
@@ -1305,7 +1306,7 @@ g: get current aspiration's contents
 
 */
 
-&display.aspiration.details asp=
+&display.aspiration.details [v( d.asp )]=
 	strcat( 
 		setq( a, get( %0/_aspiration.%1 )), 
 

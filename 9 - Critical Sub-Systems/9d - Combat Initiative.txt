@@ -176,8 +176,9 @@ be shifted back by .01.
 
 @create Initiative Tracker <it>=10
 @set Initiative Tracker <it>=inherit safe
+@fo me=&d.init me=[search( name= Initiative Tracker <it> )]
 
-@parent init=codp
+@parent Initiative Tracker <it>=codp
 
 
 
@@ -188,7 +189,7 @@ be shifted back by .01.
 // 'd' is 'delayed this turn, 'D' is 'delayed from last turn', may be redundant
 */
 
-&d.flags init=new:n|surprised:s|delayed:d|turn delayed:D
+&d.flags [v( d.init )]=new:n|surprised:s|delayed:d|turn delayed:D
 
 
 
@@ -197,13 +198,17 @@ be shifted back by .01.
 == DOT FUNCTIONS ===============================================================
 */
 
-&.msg init=ansi( h, <%0>, n, %b%1 )
-&.plural init=plural( %0, %1, %2  )
+&.msg [v( d.init )]=ansi( h, <%0>, n, %b%1 )
+&.plural [v( d.init )]=plural( %0, %1, %2  )
 
-&.pmatch init=if( strmatch( %0, me ), %#, pmatch( %0 ))
+&.pmatch [v( d.init )]=if( strmatch( %0, me ), %#, pmatch( %0 ))
 
-// &.operand init=u( .operand, %0 )
-&.operand init=case( 1, strmatch( %0, #-* ), %0, strmatch( %0, -* ), -, + )
+&.operand [v( d.init )]=
+	case( 1, 
+		strmatch( %0, #-* ), %0, 
+		strmatch( %0, -* ), -, 
+		+ 
+	)
 
 
 
@@ -212,7 +217,7 @@ be shifted back by .01.
 == PSUDEO-MISTRESS =============================================================
 */
 
-&c.init init=$^\+?init(.*)$:@pemit %#=
+&c.init [v( d.init )]=$^\+?init(.*)$:@pemit %#=
 	switch( setr( 0, secure( %1 )), 
 		, u( c.init.default ), 
 		/*, u( c.init.switch, after( first( %q0 ), / ), rest( %q0 )), 
@@ -220,7 +225,7 @@ be shifted back by .01.
 		u( .msg, init, Format is: init%[/<switch>%]%[ <input>%] )
 	)
 
-@set init/c.init=regexp
+@set v( d.init )/c.init=regexp
 
 
 /*
@@ -228,7 +233,7 @@ be shifted back by .01.
 == INIT SWITCHES ===============================================================
 */
 
-&c.init.switch init=
+&c.init.switch [v( d.init )]=
 	ifelse( 
 		setr( 0, grab( lattr( %!/c.init/* ), c.init/%0* )), 
 		u( %q0, %1 ), 
@@ -263,7 +268,7 @@ c: list of <init totals> being used, sorted
 z: a temp holder
 */
 
-&c.init.default init=
+&c.init.default [v( d.init )]=
 	strcat( 
 		setq( l, loc( %# )), 
 		setq( i, lattr( %ql/_init.* )), 
@@ -327,7 +332,7 @@ Takes the <full init>|<attribute> format and returns those matching <total init>
 (notice this does pretty much no checking)
 */
 
-&fil.display.init-total init=strmatch( %0, %1* )
+&fil.display.init-total [v( d.init )]=strmatch( %0, %1* )
 
 
 /*
@@ -352,7 +357,7 @@ a: attribute name
 
 */
 
-&f.display.one-init-entry init=
+&f.display.one-init-entry [v( d.init )]=
 	localize( strcat( 
 		setq( d, extract( get( %1/%0 ), 2, 1, | )), 
 		setq( f, setdiff( extract( get( %1/%0 ), 3, 1, |), n )), 
@@ -395,7 +400,7 @@ Init-specific is init-default; ignores 'init <foo>'
 
 */
 
-&c.init.specific init=u( c.init.default )
+&c.init.specific [v( d.init )]=u( c.init.default )
 
 
 
@@ -411,7 +416,7 @@ If staff, do it, else ask for 'init/clear YES'.
 
 */
 
-&c.init/clear init=
+&c.init/clear [v( d.init )]=
 	switch( 1, 
 		not( cor( isapproved( %# ), isstaff( %# ))), 
 		u( .msg, init/clear, Must be approved to clear an initiative roster ), 
@@ -467,7 +472,7 @@ f: final init flags
 
 */
 
-&c.init/set init=
+&c.init/set [v( d.init )]=
 	strcat( 
 
 // set things
@@ -552,7 +557,7 @@ returns: dbref if pc, name if npc, #-1 if not allowed
 
 */
 
-&f.validate.init-subject init=
+&f.validate.init-subject [v( d.init )]=
 	localize( strcat( 
 		setq( t, u( .pmatch, if( %0, %0, %1 ))), 
 		case( 1, 
@@ -587,7 +592,7 @@ should be removed as a precaution.
 
 */
 
-&f.clean-dbref init=
+&f.clean-dbref [v( d.init )]=
 	iter( 
 		setdiff( 
 			search( eroom=hasattr( ##, _init.%0 )), 
@@ -619,7 +624,7 @@ Needs to be recursive, so we prime the resolver
 
 */
 
-&f.init.add.new init=
+&f.init.add.new [v( d.init )]=
 	strcat( 
 		set( %1, 
 			_init.[edit( %0, %b, _ )]:
@@ -649,7 +654,7 @@ For determining the tiebreaker. We use this enough to pull it out, here.
 
 */
 
-&f.init.tiebreaker-roll init=rjust( rand( 1, 10 ), 2, 0 )
+&f.init.tiebreaker-roll [v( d.init )]=rjust( rand( 1, 10 ), 2, 0 )
 
 
 
@@ -672,7 +677,7 @@ This works recursively.
 
 */
 
-&f.init.resolve-init-conflicts init=
+&f.init.resolve-init-conflicts [v( d.init )]=
 	localize(
 		if( t( %2 ), 
 			strcat( 
@@ -713,7 +718,7 @@ c: conflicting inits
 
 */
 
-&f.init.conflict-list init=
+&f.init.conflict-list [v( d.init )]=
 	localize( strcat( 
 		setq( l, filter( fil.matching-inits, lattr( %1/_init.* ), , , %0, %1 )), 
 		setq( f, setunion( iter( %ql, first( get( %1/%i0 ), | )), )), 
@@ -753,7 +758,7 @@ Returns list of dbrefs whose <total><stat> inits match that passed
 
 */
 
-&fil.matching-inits init=
+&fil.matching-inits [v( d.init )]=
 	strmatch( 
 		%1, 
 		first( get( %2/%0 ), . )
@@ -773,7 +778,7 @@ Returns list of dbrefs whose <total><stat>.<tiebreaker> inits match that passed
 
 */
 
-&fil.exact-inits init=
+&fil.exact-inits [v( d.init )]=
 	strmatch( 
 		%1, 
 		first( get( %2/%0 ), | )
@@ -792,7 +797,7 @@ Returns list of dbrefs whose inits match the flag(s) passed.
 
 */
 
-&fil.init-flag init=
+&fil.init-flag [v( d.init )]=
 	t( setinter( 
 		extract( get( %1/%0 ), 3, 1, | ), 
 		%2 
@@ -857,7 +862,7 @@ Hey, past self, I have a question:
 
 */
 
-&c.init/roll init=
+&c.init/roll [v( d.init )]=
 	strcat( 
 		setq( 0, edit( %0, -, +- )), 
 
@@ -937,7 +942,7 @@ a: attribute for subject, if any
 
 */
 
-&c.init/remove init=
+&c.init/remove [v( d.init )]=
 	strcat(  
 		setq( s, ulocal( f.validate.init-subject, %0, %# )), 
 		setq( l, loc( %# )), 

@@ -1,7 +1,7 @@
 
 @create Sheet: Rows
 @set Sheet: Rows=inherit safe
-@parent Sheet: Rows=Newest Sheet Code <nsc>
+@fo me=@parent Sheet: Rows=[v( d.nsc )]
 
 /* 
 -=-=-=-=-=-=
@@ -20,7 +20,7 @@ header( <full name> (<template>) )
 xxx:yyy|xxx:yyy|xxx:yyy
 
 
-think u( nsc/bio.default, %# )
+think u( v( d.nsc )/bio.default, %# )
 
 --=-=-=-==-
 */
@@ -46,12 +46,13 @@ think u( nsc/bio.default, %# )
 		)
 	)
 
---
+// --
 
 think u( sheet: rows/block.bio, %#, get( %#/_bio.template ))
 
 
--==-=--=-=-=-=
+/*
+-==-=--=-=-=-==-=-=--=-==--=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-==--==-
 
 0: <trait>:<the.value>
 1: width for <trait>
@@ -68,9 +69,9 @@ output:
 	<trait>       : <value>
 	* <sub-trait>
 
---
+*/
 
-&display.trait-and-value nsc=
+&display.trait-and-value [v( d.nsc )]=
 	strcat( 
 		setq( v, rest( %0, : )), 
 		setq( s, ansi( xh, if( strmatch( %4, ), %b, %4 ))), 
@@ -95,16 +96,17 @@ output:
 		)
 	)
 
---
+// --
 
-&display.value.numeric nsc=
+&display.value.numeric [v( d.nsc )]=
 	if( eq( words( %0, . ), 1 ), 
 		u( display.check-zero, %0 ), 
 		[u( display.check-zero, ladd( %0, . ))] 
 		([u( display.check-zero, first( %0, . ))])
 	)
 
---
+/*
+-=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-==--==--==-=--==--=-=-=-=-==--==--=-=-=-=-=
 
 0: current.values
 1: permanent.values
@@ -113,9 +115,10 @@ c: current total
 o: 'out of' total
 m: normal 'max' for pool
 
-&display.value.pool nsc=
-localize( 
-	strcat( 
+*/
+
+&display.value.pool [v( d.nsc )]=
+	localize( strcat( 
 		setq( c, ladd( %0, . )), 
 		setq( o, ladd( %1, . )), 
 		setq( m, first( %1, . )), 
@@ -133,16 +136,19 @@ localize(
 				%b%), %) 
 			)
 		)
-	)
-)
+	))
 
---
+// --
 
-&display.check-zero nsc=if( eq( %0, 0 ), -, %0 )
+&display.check-zero [v( d.nsc )]=if( eq( %0, 0 ), -, %0 )
 
---=-=-=-=-=-=-=
 
-// display the trait name only; takes in the same inputs as above
+/*
+=-=--=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==-=-=-=
+
+display the trait name only; takes in the same inputs as above
+
+*/
 
 &display.trait-name-only [v( d.nsc )]=
 	strcat( 
@@ -167,7 +173,11 @@ localize(
 		)
 	)
 
--==--=-=-=-=-=-=
+
+/*
+-==--=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=--=-=-=-=-==--=--=-=-=-=
+*/
+
 &block.attributes sheet: rows=
 	strcat( 
 		setq( w, 26 ), 
@@ -200,15 +210,15 @@ localize(
 		)
 	)
 
---
+// --
 
 think u( sheet: rows/block.attributes, %# )
 
-=--=-=-=-=-=-=-=
+// =--=-=-=-=-=-=-=
 
-&display.subheader nsc=center( %b%1%b, %0, %xc.%xn )
+&display.subheader [v( d.nsc )]=center( %b%1%b, %0, %xh%xx.%xn )
 
--==--=-=-=-==-=-=-
+// -==--=-=-=-==-=-=-
 
 &block.skills sheet: rows=
 	strcat( 
@@ -242,32 +252,33 @@ think u( sheet: rows/block.attributes, %# )
 		)
 	)
 
---
+// --
 
 think u( sheet: rows/block.skills, %# )
 
 
--=-=-=-=-=-=-=-=-=-=-==-
+/*
+-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-==-=-=-=-=-=-=-=-=-=-==
 
 oooo...##
 
 0: pool.values
 1: pool_max.values
 
---
+*/
 
-&display.value.pool nsc=
+&display.value.pool [v( d.nsc )]=
 	strcat( 
 		repeat( o, ladd( %0, . )), 
 		ansi( xh, repeat( ., mul( -1, ladd( rest( %0, . ), . )))), 
 		ansi( xh, repeat( #, mul( -1, ladd( rest( %1, . ), . ))))
 	)
 
---
+// --
 
-think u( nsc/display.value.pool, 4.-2, 5.-1)
+think u( v( d.nsc )/display.value.pool, 4.-2, 5.-1)
 
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 &block.traits sheet: rows=
 	strcat( 
@@ -303,7 +314,7 @@ think u( nsc/display.value.pool, 4.-2, 5.-1)
 		)
 	)
 
---
+// --
 
 &_ADVANTAGE.WILLPOWER me=derived
 &_ADVANTAGE.WILLPOWER_MAXIMUM me=derived
@@ -316,7 +327,7 @@ think u( sheet: rows/block.traits, %# )
 think u( sheet: rows/block.traits, %# )
 
 
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 &block.merits sheet: rows=
 	strcat( 
@@ -337,13 +348,13 @@ think u( sheet: rows/block.traits, %# )
 		)
 	)
 
---
+// --
 
 think u( sheet: rows/block.merits, %# )
 
 
 
--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
 &block.advantages sheet: rows=
 	strcat( 
@@ -364,19 +375,19 @@ think u( sheet: rows/block.merits, %# )
 		)
 	)
 
---
+// --
 
 think u( sheet: rows/block.advantages, %# )
 
--=-=-=-=-=-==-=--=-=-=-=-=-=
+// -=-=-=-=-=-==-=--=-=-=-=-=-=
 
-&filter.out-zeros nsc=
+&filter.out-zeros [v( d.nsc )]=
 	cand( 
 		neq( rest( %0, : ), 0 ), 
 		not( strmatch( rest( %0, : ), ))
 	)
 
--==--=-=-=-=-=-=-=-=-=-=-=-=-
+// -==--=-=-=-=-=-=-=-=-=-=-=-=-
 
 &block.health sheet: rows=
 	strcat( 
@@ -402,11 +413,13 @@ think u( sheet: rows/block.advantages, %# )
 		)
 	)
 
---
+// --
 
 think u( sheet: rows/block.health, %# )
 
--==--==--=-=-=-=-=-=-=
+
+/*
+-==--==--=-=-=-=-=-=-==-=-=-=-=-=-=-==--=-=-=--=-==--=-=-=-=-==--==--=-=--==--=-
 
 FINAL SHEET:
 
@@ -414,7 +427,7 @@ FINAL SHEET:
 1: dbref of target
 2: template of sheet
 
---
+*/
 
 &display.sheet sheet: rows=
 	strcat( 
@@ -436,8 +449,10 @@ FINAL SHEET:
 		footer( )
 	)
 
---
+// --
 
 think u( sheet: rows/display.sheet, %#, %#, get( %#/_bio.template ))
 
-=--=-==--==-=-=--==-=-
+// =--=-==--==-=-=--==-=-
+
+@tel sheet: rows=[v( d.nsc )]

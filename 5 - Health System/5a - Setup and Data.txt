@@ -103,9 +103,9 @@ foreach (dmg-done): if (dmg-type < min-dmg) then (push 1 pt) else (wrap 1 pt)
 @create WoD Health System <whs>
 @set WoD Health System <whs>=inherit safe
 
-@fo me=&d.whs me=[num( whs )]
+@fo me=&d.whs me=search( name=WoD Health System <whs> )
 
-@parent whs=codp
+@parent WoD Health System <whs>=codp
 
 
 /*
@@ -113,10 +113,10 @@ foreach (dmg-done): if (dmg-type < min-dmg) then (push 1 pt) else (wrap 1 pt)
 == DATA ========================================================================
 */
 
-@fo me=&d.data-dictionary health=[search( name=Data Dictionary <dd> )]
-@fo me=&d.stat-funcs health=[search( name=Stat Functions Prototype <sfp> )]
+@fo me=&d.data-dictionary [v( d.whs )]=search( name=Data Dictionary <dd> )
+@fo me=&d.stat-funcs [v( d.whs )]=search( name=Stat Functions Prototype <sfp> )
 
-&d.health-types health=u( [u( d.data-dictionary )]/health.types )
+&d.health-types [v( d.whs )]=u( [u( d.data-dictionary )]/health.types )
 
 
 

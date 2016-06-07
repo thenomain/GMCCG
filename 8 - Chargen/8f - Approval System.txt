@@ -49,6 +49,8 @@ Requires TinyMUX 2.10+.
 Requires creating user-defined functions, and therefore @restart.
 
 Requires access to the `<game>.conf` file, and therefore @restart.
+
+Requires Thenomain's "Jobs Request System" for "cg/submit", else ignore.
 	
 Requires the following user-defined functions:
 	wheader()
@@ -84,6 +86,20 @@ flag_access marker3 wizard
 
 
 ================================================================================
+== @startup ====================================================================
+
+I'm leaving this commented out, but if you allow objects to use @function, use 
+this. Else, remember to have your function-creation object read here.
+
+@startup [v( d.cg )]=
+	@dolist lattr( %!/ufunc.* )=
+		@function/preserve [rest( ##, . )]=%!/##; 
+	@dolist lattr( %!/ufunc/privileged.* )=
+		@function/preserve/privileged [rest( ##, . )]=%!/##
+
+
+
+================================================================================
 ===== USER FUNCTION: ISAPPROVED ================================================
 
 isapproved( <player>[, <status>] )
@@ -107,7 +123,7 @@ for one reason or another, no longer is.
 
 */
 
-&d.approval_types cg=
+&d.approval_types [v( d.cg )]=
 	chargen|guest|approved|storyteller|npc|staff|unapproved|frozen|dead
 
 // --	
@@ -220,7 +236,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/approve ---------------------------------------------------------------
 
-&c.cg/approve cg=$^\+?cg/approve( .*)$:
+&c.cg/approve [v( d.cg )]=$^\+?cg/approve( .*)$:
 
 	@trigger %!/trig.approval.switch=
 		%#, 
@@ -237,7 +253,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/approve: triggers -----------------------------------------------------
 
-&trig.approval.switch/approve cg=
+&trig.approval.switch/approve [v( d.cg )]=
 	@set %1=approved !unapproved !frozen; 
 	@set %1=_approval.frozen:; 
 
@@ -245,7 +261,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/npc -------------------------------------------------------------------
 
-&c.cg/npc cg=$^\+?cg/npc( .*)$:
+&c.cg/npc [v( d.cg )]=$^\+?cg/npc( .*)$:
 	@trigger %!/trig.approval.switch=
 		%#, 
 		%1, 
@@ -261,7 +277,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/npc: triggers ---------------------------------------------------------
 
-&trig.approval.switch/npc cg=
+&trig.approval.switch/npc [v( d.cg )]=
 	@set %1=npc !unapproved !frozen; 
 	@set %1=_approval.frozen:; 
 
@@ -269,7 +285,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/storyteller -----------------------------------------------------------
 
-&c.cg/storyteller cg=$^\+?cg/storyteller( .*)$:
+&c.cg/storyteller [v( d.cg )]=$^\+?cg/storyteller( .*)$:
 	@trigger %!/trig.approval.switch=
 		%#, 
 		%1, 
@@ -283,7 +299,7 @@ cg/log
 
 // -- use '/st' as alias for '/storyteller'
 
-&c.cg/st cg=$^\+?cg/st( .*)$:
+&c.cg/st [v( d.cg )]=$^\+?cg/st( .*)$:
 	@trigger %!/trig.approval.switch=
 		%#, 
 		%1, 
@@ -299,7 +315,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/storyteller: triggers -------------------------------------------------
 
-&trig.approval.switch/storyteller cg=
+&trig.approval.switch/storyteller [v( d.cg )]=
 	@set %1=storyteller !unapproved !frozen; 
 	@set %1=_approval.frozen:; 
 
@@ -307,7 +323,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/unapprove -------------------------------------------------------------
 
-&c.cg/unapprove cg=$^\+?cg/unapprove( .*)$:
+&c.cg/unapprove [v( d.cg )]=$^\+?cg/unapprove( .*)$:
 	@trigger %!/trig.approval.switch=
 		%#, 
 		%1, 
@@ -323,7 +339,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/unapprove: triggers ---------------------------------------------------
 
-&trig.approval.switch/unapprove cg=
+&trig.approval.switch/unapprove [v( d.cg )]=
 	@set %1=unapproved !approved !npc !storyteller; 
 
 
@@ -333,7 +349,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/chargen ---------------------------------------------------------------
 
-&c.cg/chargen cg=$^\+?cg/chargen( .*)$:
+&c.cg/chargen [v( d.cg )]=$^\+?cg/chargen( .*)$:
 	@assert hasflag( %#, wizard )={ 
 		@pemit %#=u( .msg, cg/chargen, Wizards only )
 	}; 
@@ -353,7 +369,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/chargen: triggers ---------------------------------------------------
 
-&trig.approval.switch/chargen cg=
+&trig.approval.switch/chargen [v( d.cg )]=
 	@set %1=!approved !unapproved !npc !storyteller; 
 	@set %1=_approval.frozen:; 
 
@@ -362,7 +378,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/freeze -------------------------------------------------------------
 
-&c.cg/freeze cg=$^\+?cg/freeze( .*)$:
+&c.cg/freeze [v( d.cg )]=$^\+?cg/freeze( .*)$:
 	@trigger %!/trig.approval.switch=
 		%#, 
 		%1, 
@@ -389,7 +405,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/kill ------------------------------------------------------------------
 
-&c.cg/kill cg=$^\+?cg/kill(/YES)?( .*)$:
+&c.cg/kill [v( d.cg )]=$^\+?cg/kill(/YES)?( .*)$:
 	@assert not( comp( %1, /YES ))={ 
 		@pemit %#=u( .msg, cg/kill, 
 			If you really want to do this%, type: 
@@ -413,7 +429,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/kill: triggers --------------------------------------------------------
 
-&trig.approval.switch/kill cg=
+&trig.approval.switch/kill [v( d.cg )]=
 	@set %1=unapproved !approved !npc !storyteller; 
 	@set %1=_approval.frozen:; 
 	@set %1=_approval.dead:%2; 
@@ -423,7 +439,7 @@ cg/log
 // -----------------------------------------------------------------------------
 // -- cg/log -------------------------------------------------------------------
 
-&c.cg/log cg=$^\+?cg/log(\s?.*)$:
+&c.cg/log [v( d.cg )]=$^\+?cg/log(\s?.*)$:
 	think strcat( 
 		q1:%b, setr( 1, trim( %1 )), %r, 
 		qp:%b, setr( p, if( strlen( %q1 ), pmatch( %q1 ), %# )), %r, 
@@ -454,7 +470,7 @@ cg/log
 // -- cg/status ----------------------------------------------------------------
 // What is your/player's current status
 
-&c.cg/status cg=$^\+?cg/status(\s?.*)$:
+&c.cg/status [v( d.cg )]=$^\+?cg/status(\s?.*)$:
 	think strcat( 
 		q1:%b, setr( 1, trim( %1 )), %r, 
 		qp:%b, setr( p, if( strlen( %q1 ), pmatch( %q1 ), %# )), %r, 
@@ -513,7 +529,7 @@ r: resulting log entry (may be added to _approval.frozen or *.dead)
 
 */
 
-&trig.approval.switch cg=
+&trig.approval.switch [v( d.cg )]=
 
 	think strcat( 
 		q1:%b, setr( 1, trim( %1 )), %r, 
@@ -566,9 +582,9 @@ r: resulting log entry (may be added to _approval.frozen or *.dead)
 // -----------------------------------------------------------------------------
 // -- Global Functions ---------------------------------------------------------
 
-&.msg cg=ansi( h, <%0>, n, %b%1 )
+&.msg [v( d.cg )]=ansi( h, <%0>, n, %b%1 )
 
-&.plural cg=cat( %0, if( eq( %0, 1 ), %1, %2 ))
+&.plural [v( d.cg )]=cat( %0, if( eq( %0, 1 ), %1, %2 ))
 
 
 // -----------------------------------------------------------------------------
@@ -578,7 +594,7 @@ r: resulting log entry (may be added to _approval.frozen or *.dead)
 // 0: %# (enactor)
 // 1: raw input (target)
 
-&f.approval.not-self cg=
+&f.approval.not-self [v( d.cg )]=
 	cor( 
 		strlen( %1 ), 
 		not( strmatch( pmatch( %1 ), %0 )), 
@@ -599,7 +615,7 @@ r: resulting log entry (may be added to _approval.frozen or *.dead)
 3: reason
 */
 
-&f.approval.log.add cg=
+&f.approval.log.add [v( d.cg )]=
 	localize( strcat( 
 		set( %1, 
 			_approval.log:
@@ -635,7 +651,7 @@ returns: number of seconds
 */
 
 
-&f.total_secs_approved cg=
+&f.total_secs_approved [v( d.cg )]=
 	localize( 
 		strcat( 
 			setq( a, get( %0/_approval.log )), 
@@ -662,7 +678,7 @@ returns: number of seconds
 // -----------------------------------------------------------------------------
 // -- Display: Approval Change Error -------------------------------------------
 
-&display.approve.change.error cg=
+&display.approve.change.error [v( d.cg )]=
 	Character must be [itemize( %0, , or )]. Character is [lcstr( %1 )].
 
 
@@ -674,7 +690,7 @@ returns: number of seconds
 // 2: status to
 // 3: comment, optional (%qc)
 
-&display.approval.change cg=
+&display.approval.change [v( d.cg )]=
 	strcat( 
 		moniker( %0 ), %b, 
 		status changed from '%1' to '%2', 
@@ -685,7 +701,7 @@ returns: number of seconds
 // -----------------------------------------------------------------------------
 // -- Format: Log Add item -----------------------------------------------------
 
-&format.approve.log-add.comment cg=
+&format.approve.log-add.comment [v( d.cg )]=
 	strcat( '%0' -> '%1', if( %2, %, %2 ))
 
 
@@ -693,7 +709,7 @@ returns: number of seconds
 // -- Format: One Log-Item -----------------------------------------------------
 // (will be used by 'log.add', 'freeze', and 'dead'
 
-&format.approval.log-item cg=
+&format.approval.log-item [v( d.cg )]=
 	%2:[secs()]:[moniker( %0 )]:%0:%3
 
 
@@ -707,7 +723,7 @@ returns: number of seconds
 // t: length of longest timestamp (from &format.approval.timestamp)
 // s: length of longest staffer name (#dbref)
 
-&display.approval.log cg=
+&display.approval.log [v( d.cg )]=
 	localize( strcat( 
 		setq( a, 
 			lmax( iter( %2, strlen( elements( %i0, 1, : )), | ))
@@ -759,7 +775,7 @@ returns: number of seconds
 // 3: width of cell 3
 // 4: width of cell 4 (ignored)
 
-&format.approval.log.line cg=
+&format.approval.log.line [v( d.cg )]=
 	cat( 
 		ljust( titlestr( edit( elements( %0, 1, : ), _, %b )), %1 ), %b, 
 		ljust( u( format.approval.timestamp, elements( %0, 2, : )), %2 ), %b, 
@@ -775,7 +791,7 @@ returns: number of seconds
 // -- Format: Timestamp --------------------------------------------------------
 // 0: timestamp in seconds
 
-&format.approval.timestamp cg=
+&format.approval.timestamp [v( d.cg )]=
 	timefmt( $H:$M $d.$m.$y, %0 )
 
 
@@ -863,7 +879,7 @@ The rest is about dancing.
 
 */
 
-@fo me=&d.jrs me=[search( name=Jobs Request System <jrs>)]
+@fo me=&d.jrs me=[search( name=Jobs Request System <jrs> )]
 
 // 3 aspirations (2 short-term, 1 long-term)
 

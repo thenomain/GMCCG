@@ -1,3 +1,7 @@
+/*
+
 Sheet layout: Columns
 
-(This is the Darkwater sheet format)
+(This is the Darkwater sheet format. Still not done.)
+
+*/

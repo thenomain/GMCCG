@@ -1,3 +1,4 @@
+/*
 sheet formatting
 
 Things like:
@@ -71,3 +72,9 @@ derangement at 5 is 'Bloodlust'.
 All format needs to go like this:
 
 	item`item`item|newline
+
+... 
+
+Huh, doesn't look like I finished anything here, did I.
+
+*/

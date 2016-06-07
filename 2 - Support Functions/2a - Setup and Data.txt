@@ -14,11 +14,11 @@
 == DATA ========================================================================
 */
 
-@fo me=&d.data-dictionary sfp=[num( data dictionary <dd> )]
-@fo me=&d.sfp dd=[num( stat functions prototype <sfp> )]
-@fo me=&d.data-tags sfp=[num( data tags <d:t> )]
+@fo me=&d.data-dictionary [v( d.sfp )]=search( name=Data Dictionary <dd> )
+@fo me=&d.data-tags [v( d.sfp )]=search( name=Data Tags <d:t> )
+// @fo me=&d.cg [v( d.sfp )]=search( name=GMC Chargen <cg> )
 
-&d.cg sfp=<< location of character generation, may be obsolete >>
+@fo me=&d.sfp [v( d.dd )]=search( name=Stat Functions Prototype <sfp> )
 
 /*
 ================================================================================

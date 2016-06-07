@@ -51,12 +51,13 @@ system.
 */
 
 @create Pool Spend Regain System <psrs>
-@set psrs=safe inherit
+@set Pool Spend Regain System <psrs>=safe inherit
+@fo me=&d.psrs me=[search( name=Pool Spend Regain System <psrs> )]
 
-@parent psrs=codp
-&prefix.pool_spend_rules psrs=spend.
-&prefix.pool_regain_rules psrs=regain.
-&prefix.amount_calc psrs=amt.
+@parent Pool Spend Regain System <psrs>=codp
+&prefix.pool_spend_rules [v( d.psrs )]=spend.
+&prefix.pool_regain_rules [v( d.psrs )]=regain.
+&prefix.amount_calc [v( d.psrs )]=amt.
 
 
 
@@ -65,10 +66,10 @@ system.
 == DOT FUNCTIONS ===============================================================
 */
 
-&.msg psrs=ansi( xh, <%0>, n, %b%1 )
-&.possessive psrs=strcat( %0, if( strmatch( %0, *s ), ', 's ))
-&.plural psrs=strcat( %0, %b, plural( %0, %1, %2 ))
-&.be_quiet psrs=
+&.msg [v( d.psrs )]=ansi( xh, <%0>, n, %b%1 )
+&.possessive [v( d.psrs )]=strcat( %0, if( strmatch( %0, *s ), ', 's ))
+&.plural [v( d.psrs )]=strcat( %0, %b, plural( %0, %1, %2 ))
+&.be_quiet [v( d.psrs )]=
 	cand( andflags( loc( %0 ), bB ), not( elock( loc( %0 )/speechlock, %0 )))
 
 
@@ -86,7 +87,7 @@ system.
 	r: reason 
 */
 
-&c.spend psrs=$(?s)^\+?spend(/[^\s]+)*( .*)$:
+&c.spend [v( d.psrs )]=$(?s)^\+?spend(/[^\s]+)*( .*)$:
 	@assert isapproved( %# )={ 
 		@pemit %#=u( .msg, spend, You must be approved ); 
 	}; 
@@ -115,7 +116,7 @@ system.
 
 // -- 
 
-@set psrs/c.spend=regexp
+@set v( d.psrs )/c.spend=regexp
 
 
 
@@ -129,7 +130,7 @@ system.
 
 */
 
-&c.regain psrs=$(?s)^\+?regain(/[^\s]+)*( .*)$:
+&c.regain [v( d.psrs )]=$(?s)^\+?regain(/[^\s]+)*( .*)$:
 	@assert isapproved( %# )={ 
 		@pemit %#=u( .msg, regain, You must be approved ); 
 	}; 
@@ -158,7 +159,7 @@ system.
 
 // -- 
 
-@set psrs/c.regain=regexp
+@set v( d.psrs )/c.regain=regexp
 
 
 
@@ -180,7 +181,7 @@ Passed to all of these:
 	spend [<target>/]willpower [for <reason>]
 */
 
-&spend.trigger.willpower psrs=
+&spend.trigger.willpower [v( d.psrs )]=
 	@assert t( setr( e, u( f.pool.canchange, %1, willpower, -1 )))={ 
 		@pemit %0=u( .msg, willpower/spend, rest( %qe )) 
 	}; 
@@ -199,7 +200,7 @@ Passed to all of these:
 // Determine where a message goes.
 // 0: enactor -- 1: target -- 2: spend/regain -- 3: message
 
-&f.announcement psrs=
+&f.announcement [v( d.psrs )]=
 	case( 1, 
 		cand( u( .be_quiet, %0 ), strmatch( %0, %1 )), 
 		pemit( %0, u( .msg, %2, %3 %(not announced%) ))
@@ -235,15 +236,15 @@ Passed to all of these:
 */
 
 
-&regain.methods.willpower psrs=|all|rest
-// &regain.methods.willpower.demon psrs=[@@( an example )]
+&regain.methods.willpower [v( d.psrs )]=|all|rest
+// &regain.methods.willpower.demon [v( d.psrs )]=[@@( an example )]
 
 
 // 0: target -- 1: spend/regain -- 2: stat -- 3: method/amt
 // looks for: spend.methods.<stat>
 // possible expansion: spend.methods.<stat>.<%0's template>
 
-&f.match_method psrs=
+&f.match_method [v( d.psrs )]=
 	localize( strcat( 
 		setq( x, 
 			grab( 
@@ -262,14 +263,14 @@ Passed to all of these:
 
 
 
-&amt.regain.rest.default psrs=1
+&amt.regain.rest.default [v( d.psrs )]=1
 
 
 
 // m: method (or numeric value)
 // a: amt to gain
 
-&regain.trigger.willpower psrs=
+&regain.trigger.willpower [v( d.psrs )]=
 	think strcat( 
 		m:, %b, setr( m, u( f.match_method, %1, regain, willpower, %2 )), %r, 
 		a:, %b, setr( a, u( amt.regain, %1, willpower, %qm )), %r, 
@@ -327,7 +328,7 @@ Vera spends/regains 1 point of
 
 */
 
-&display.number psrs=
+&display.number [v( d.psrs )]=
 	strcat( 
 		name( %0 ), %b, %3s, %b, 
 		if( cand( strlen( %5 ), not( strmatch( %4, %5 ))), 
@@ -359,7 +360,7 @@ Vera spends/regains 1 point of
 */
 
 
-&display.roll psrs=
+&display.roll [v( d.psrs )]=
 	strcat( 
 		name( %0 ), %b,  
 		if( gte( %4, 0 ), 
@@ -383,7 +384,7 @@ Vera spends/regains 1 point of
 -- Change the Stat -------------------------------------------------------------
 */
 
-&f.pool.changestat psrs=shiftstat( %0/%1, %2, offset )
+&f.pool.changestat [v( d.psrs )]=shiftstat( %0/%1, %2, offset )
 
 
 /*
@@ -402,7 +403,7 @@ COMMAND[/<switches>] [<target>/]<stat>[=<input>] [for <reason>]
 	r: reason 
 */
 
-&f.registers.extract psrs=
+&f.registers.extract [v( d.psrs )]=
 	strcat( 
 		s:, %b, setr( s, trim( %0 )), %r, 
 		i:, %b, setr( i, trim( before( after( %1, = ), %bfor%b ))), %r, 
@@ -430,7 +431,7 @@ COMMAND[/<switches>] [<target>/]<stat>[=<input>] [for <reason>]
 
 */
 
-&f.pool.canchange psrs=
+&f.pool.canchange [v( d.psrs )]=
 	localize( strcat( 
 		setq( s, getstat( %0/%1 )), 
 		setq( m, getstat( %0/%1_maximum )), 
@@ -465,7 +466,7 @@ The failed 'regain.amt.%2' error will probably default to 'roll' later on.
 
 */
 
-&amt.regain psrs=
+&amt.regain [v( d.psrs )]=
 	case( 1, 
 
 		isint( %2 ), 
@@ -483,13 +484,13 @@ The failed 'regain.amt.%2' error will probably default to 'roll' later on.
 		#-1 Regain amount rules for '%2' not found 
 	)
 
-&amt.regain.numeric.default psrs=
+&amt.regain.numeric.default [v( d.psrs )]=
 	if( cand( isint( %2 ), gt( %2, 0 )), 
 		%2, 
 		#-1 Value must be a positive integer
 	)
 
-&amt.regain.all.default psrs=
+&amt.regain.all.default [v( d.psrs )]=
 	mul( getstat( %0/%1, offset ), -1 )
 
 
@@ -506,7 +507,7 @@ Identical to 'amt.regain...'
 
 */
 
-&amt.spend psrs=
+&amt.spend [v( d.psrs )]=
 	case( 1, 
 
 		isint( %2 ), 
@@ -525,12 +526,12 @@ Identical to 'amt.regain...'
 	)
 
 // spend numeric 
-&amt.spend.numeric.default psrs=
+&amt.spend.numeric.default [v( d.psrs )]=
 	if( cand( isint( %2 ), gt( %2, 0 )), 
 		mul( %2, -1 ), 
 		#-1 Value must be a positive integer
 	)
 
 // spend all
-&amt.spend.all.default psrs=
+&amt.spend.all.default [v( d.psrs )]=
 	mul( getstat( %0/%1 ), -1 )

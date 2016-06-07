@@ -34,59 +34,61 @@ t: temp validation results, used here and there
 
 */
 
-&f.statcheck cg=
-localize( strcat(  
-	setq( s, ulocal( v( d.sfp )/f.statpath-without-instance, rest( %1, _ ))), 
-	setq( c, ulocal( v( d.sfp )/f.get-class, %qs )), 
-	setq( v, case( %qc, numeric, first( u( %0/%1 ), . ), u( %0/%1 ))), 
+&f.statcheck [v( d.cg )]=
+	localize( strcat(  
+		setq( s, 
+			ulocal( v( d.sfp )/f.statpath-without-instance, rest( %1, _ ))
+		), 
+		setq( c, ulocal( v( d.sfp )/f.get-class, %qs )), 
+		setq( v, case( %qc, numeric, first( u( %0/%1 ), . ), u( %0/%1 ))), 
 
 // >> <stat value>
-	setq( t, 
-		case( 1, 
+		setq( t, 
+			case( 1, 
 
 // .. substat: _*.*.*: base item must be at least 1
-			strmatch( %1, _*.*.* ), 
-			u( f.statcheck.substat, %0, %1, %2 ), 
+				strmatch( %1, _*.*.* ), 
+				u( f.statcheck.substat, %0, %1, %2 ), 
 
 // .. derived: dd value matches [*]: check the sheet value is integer
-			ulocal( v( d.sfp )/f.hastag?.workhorse, %qs, derived ), 
-			ulocal( f.statcheck.derived, %0, %1, %qc ), 
+				ulocal( v( d.sfp )/f.hastag?.workhorse, %qs, derived ), 
+				ulocal( f.statcheck.derived, %0, %1, %qc ), 
 
 // .. list: stat with class of "list"
-			strmatch( %qc, list ), 
-			ulocal( f.statcheck.list, %qs, %qv, %2 ), 
+				strmatch( %qc, list ), 
+				ulocal( f.statcheck.list, %qs, %qv, %2 ), 
 
 // .. normal: anything else: validate stat as usual ( name then value )
-			ulocal( f.statcheck.normal, %1, %qs, %qv, %2 )
-		)
-	), 
-	if( t( %qt ), 1, %qt ), ., 
+				ulocal( f.statcheck.normal, %1, %qs, %qv, %2 )
+			)
+		), 
+		if( t( %qt ), 1, %qt ), ., 
 
 // >> <prereq>
-	iter( 
-		cg-only template other, 
-		ulocal( f.prerequsite.%i0, %0, %1, %2 ), , . 
-	)
-))
+		iter( 
+			cg-only template other, 
+			ulocal( f.prerequsite.%i0, %0, %1, %2 ), , . 
+		)
+	))
 
 /* -- test --
 
-think u( cg/f.statcheck, pmatch( hemi ), _skill.brawl.punching )
+think u( v( d.cg )/f.statcheck, pmatch( hemi ), _skill.brawl.punching )
 
-think u( cg/f.statcheck, %#, _merit.hardy )
-think u( cg/f.statcheck, %#, _advantage.willpower )
+think u( v( d.cg )/f.statcheck, %#, _merit.hardy )
+think u( v( d.cg )/f.statcheck, %#, _advantage.willpower )
 
-think u( cg/f.statcheck, %#, _merit.medium )
-think u( cg/f.statcheck, %#, _merit.medium, 1 )
-think u( cg/f.statcheck, %#, _merit.medium, 2 )
-think u( cg/f.statcheck, %#, _merit.etiquette )
-think u( cg/f.statcheck, %#, _merit.unseen_sense_(wyrd), 3 )
+think u( v( d.cg )/f.statcheck, %#, _merit.medium )
+think u( v( d.cg )/f.statcheck, %#, _merit.medium, 1 )
+think u( v( d.cg )/f.statcheck, %#, _merit.medium, 2 )
+think u( v( d.cg )/f.statcheck, %#, _merit.etiquette )
+think u( v( d.cg )/f.statcheck, %#, _merit.unseen_sense_(wyrd), 3 )
 
-think u( cg/f.statcheck.normal, _merit.etiquette, merit.etiquette, 1, @@(null) )
+think u( v( d.cg )/f.statcheck.normal, _merit.etiquette, merit.etiquette, 1, @@(null) )
 
-think u( cg/f.statcheck, %#, _skill.flubber )
+think u( v( d.cg )/f.statcheck, %#, _skill.flubber )
 
-think u( cg/f.statcheck, %#, _advantage.size )
+think u( v( d.cg )/f.statcheck, %#, _advantage.size )
 
 
 --------------------------------------------------------------------------------
@@ -109,73 +111,73 @@ v: value to check (if %3, then do a dance for num/non-num)
 
 */
 
-&f.statcheck.normal cg=
+&f.statcheck.normal [v( d.cg )]=
 
-localize( strcat( 
+	localize( strcat( 
 
 // >> see if the stat's even on the DD
-	setq( t, 
-		if( 
-			hasattr( [u( d.dd )], %1 ), 1, #-1 Stat not found
-		)
-	), 
+		setq( t, 
+			if( 
+				hasattr( [u( d.dd )], %1 ), 1, #-1 Stat not found
+			)
+		), 
 
 // >> grab the instance ( if any ) and check it against the dd.
 // .. ( shouldn't something like this be on the stat lookup? no? )
-	setq( t, 
-		if( 
-			cand( t( %qt ), strmatch( %0, _*.*_(*) )), 
+		setq( t, 
+			if( 
+				cand( t( %qt ), strmatch( %0, _*.*_(*) )), 
 
 // .. instance is there: process
-			strcat( 
-				setq( i, edit( strip( rest( %0, %( ), %) ), _, %b )), 
-				setq( d, extract( get( [u( d.dd )]/%1 ), 2, 1, | )), 
-				case( 1, 
-					t( member( %qd, * )), 1, 
-					and( member( %qd, # ), isint( %qi )), 1, 
-					t( match( %qd, %qi, . )), 1, 
-					#-1 Instance is not valid %(%qi%) 
-				)
-			), 
+				strcat( 
+					setq( i, edit( strip( rest( %0, %( ), %) ), _, %b )), 
+					setq( d, extract( get( [u( d.dd )]/%1 ), 2, 1, | )), 
+					case( 1, 
+						t( member( %qd, * )), 1, 
+						and( member( %qd, # ), isint( %qi )), 1, 
+						t( match( %qd, %qi, . )), 1, 
+						#-1 Instance is not valid %(%qi%) 
+					)
+				), 
 
 // .. instance is not there: pass %qt it on
-			%qt
-		)
-	), 
+				%qt
+			)
+		), 
 
 // >> now we did THAT dance, let's find the value we're checking
-	setq( v, 
-		case( 1, 
+		setq( v, 
+			case( 1, 
 // .. if sheet value is numeric and there's a new value, add them
-			and( isnum( %2 ), t( %3 )), add( %2, %3 ), 
+				and( isnum( %2 ), t( %3 )), add( %2, %3 ), 
 // .. if sheet value is NOT numeric and there's a new value, use the new value
-			t( %3 ), %3, 
+				t( %3 ), %3, 
 // .. else use sheet value
-			%2
-		)
-	), 
+				%2
+			)
+		), 
 
 // >> if instance was valid, check stat value
-	if( 
-		t( %qt ), 
+		if( 
+			t( %qt ), 
 // .. if statpath is ok, validate the value
-		ulocal( [u( d.sfp )]/f.statvalidate.workhorse, %1, %qv ), 
+			ulocal( [u( d.sfp )]/f.statvalidate.workhorse, %1, %qv ), 
 // .. if statpath is not ok, pass its error
-		%qt 
-	)
- ))
+			%qt 
+		)
+	))
 
 /* -- test --
 
-think u( cg/f.statcheck.normal, _merit.etiquette, merit.etiquette, 1, @@(null) )
+think u( v( d.cg )/f.statcheck.normal, _merit.etiquette, merit.etiquette, 1, @@(null) )
 
-think u( cg/f.statcheck.normal, _merit.unseen_sense_(god_machine), merit.unseen_sense_(), , 3 )
+think u( v( d.cg )/f.statcheck.normal, _merit.unseen_sense_(god_machine), merit.unseen_sense_(), , 3 )
 
-think u( cg/f.statcheck.normal, _merit.unseen_sense_(god_machine), merit.unseen_sense_(), , 2 )
+think u( v( d.cg )/f.statcheck.normal, _merit.unseen_sense_(god_machine), merit.unseen_sense_(), , 2 )
 
 --
 
-think u( dd/.specialty_for, %#, Portraiture )
+think u( v( d.dd) /.specialty_for, %#, Portraiture )
 
 
 
@@ -194,7 +196,7 @@ Check that a derived stat's value is valid.
 
 */
 
-&f.statcheck.derived cg=
+&f.statcheck.derived [v( d.cg )]=
 	case( 0, 
 		hasattr( %0, %1 ), 
 		#-1 Derived stat is not set, 
@@ -222,11 +224,11 @@ Check that a derived stat's value is valid.
 
 /* -- test --
 
-think u( sfp/f.getstat.workhorse.numeric, %#, _advantage.size )
-think u( cg/f.statcheck.derived, %#, _advantage.size, numeric )
-think u( cg/f.statcheck.derived, %#, _advantage.willpower, numeric )
-think u( cg/f.statcheck.derived, %#, _advantage.willpower_maximum, numeric )
-think u( cg/f.statcheck.derived, %#, _advantage.vitae_maximum, numeric )
+think u( v( d.sfp )/f.getstat.workhorse.numeric, %#, _advantage.size )
+think u( v( d.cg )/f.statcheck.derived, %#, _advantage.size, numeric )
+think u( v( d.cg )/f.statcheck.derived, %#, _advantage.willpower, numeric )
+think u( v( d.cg )/f.statcheck.derived, %#, _advantage.willpower_maximum, numeric )
+think u( v( d.cg )/f.statcheck.derived, %#, _advantage.vitae_maximum, numeric )
 
 
 --------------------------------------------------------------------------------
@@ -247,7 +249,7 @@ t: temp whatsit
 
 */
 
-&f.statcheck.substat cg=
+&f.statcheck.substat [v( d.cg )]=
 	localize(
 		case( 1, 
 
@@ -288,31 +290,30 @@ Class:List stats are checked similarly to other types, but each element
 
 */
 
-&f.statcheck.list cg=
-
-localize( strcat( 
-	setq( l, 
-		setinter( 
+&f.statcheck.list [v( d.cg )]=
+	localize( strcat( 
+		setq( l, 
+			setinter( 
 // .. valid stats vs.
-			first( get( v( d.dd )/%0 ), | ), 
-			setunion( 
+				first( get( v( d.dd )/%0 ), | ), 
+				setunion( 
 // .. .. sheet stats +
-				%1, 
+					%1, 
 // .. .. stat to add
-				edit( %2, %b, . ), 
+					edit( %2, %b, . ), 
+					.
+				), 
 				.
-			), 
-			.
-		)
-	), 
+			)
+		), 
 
 // Any matches?
-	if(
-		gte( words( %ql, . ), 1 ), 
-		%ql, 
-		#-1 No list items valid 
-	)
-))
+		if(
+			gte( words( %ql, . ), 1 ), 
+			%ql, 
+			#-1 No list items valid 
+		)
+	))
 
 
 
@@ -333,7 +334,7 @@ Does this stat pass the statcheck?
 
 */
 
-&f.badstat? cg=
+&f.badstat? [v( d.cg )]=
 	not( land( u( f.statcheck, %1, %0 ), . ))
 
 
@@ -346,7 +347,7 @@ output: All invalid stats on the sheet
 
 */
 
-&f.badstats cg=
+&f.badstats [v( d.cg )]=
 	iter( 
 		u( [u( d.sfp )]/d.search-order ), 
 		filter( f.badstat?, lattr( %0/_%i0.* ), , , %0 )
@@ -358,7 +359,7 @@ output: All invalid stats on the sheet
 ================================================================================
 == CG/CHECK ====================================================================
 
-Here's our old +sheet/check, temporarially called 'cg/check'
+Here's our old +sheet/check, temporarially called 'v( d.cg )/check'
 
 This switch is really a part of chargen.  That is, this system goes through a
 sheet validation.  For people who are not yet approved, it will check the cgen 
@@ -376,8 +377,7 @@ b: badstat list
 
 */
 
-&c.cg/check cg=$^\+?cg/check(.*):
-
+&c.cg/check [v( d.cg )]=$^\+?cg/check(.*):
 	think strcat( 
 		player dbref:, %b, 
 		setr( p, if( t( strlen( trim( %1 ))), pmatch( trim( %1 )), %# )), %r, 
@@ -405,7 +405,7 @@ b: badstat list
 		u( .msg, cg/check, No template set ), 
 
 		strcat( 
-			header( Checking [name( %qp )]'s Stats, width( %# )), %r, 
+			wheader( Checking [name( %qp )]'s Stats ), %r, 
 
 // .. chargen-level check happens only pre-approval
 			if( not( isapproved( %qp )), 
@@ -419,13 +419,13 @@ b: badstat list
 // .. valid stats check
 			ulocal( check.badstats, %qs ), %r, 
 
-			footer( , width( %# ))
+			wfooter( )
 		)
 	)
 
 // --
 
-@set cg/c.cg/check=regex
+@set v( d.cg )/c.cg/check=regex
 
 
 /*
@@ -433,7 +433,7 @@ b: badstat list
 -- Display: Check OK/NO --------------------------------------------------------
 */
 
-&display.check.ok-no cg=
+&display.check.ok-no [v( d.cg )]=
 	if( t( %0 ), 
 		ansi( n, \\[, g, OK, n, \\] ), 
 		ansi( n, \\[, r, no, n, \\] )
@@ -445,7 +445,7 @@ b: badstat list
 -- Display: Cgen Stamp ---------------------------------------------------------
 */
 
-&display.cgen_stamp cg=
+&display.cgen_stamp [v( d.cg )]=
 	cat( 
 		%b Chargen Approval Stamp:, 
 		elements( rest( setr( z, u( %0/_cgstamp )), | ), 2 3 5 ), 
@@ -465,7 +465,7 @@ output: Ob. yes/no in full prismatic color
 
 */
 
-&display.check.stats cg=
+&display.check.stats [v( d.cg )]=
 	u( display.check.ok-no, u( f.pts-valid?.%1, %0, %2 ))
 
 
@@ -489,7 +489,7 @@ uses: vcolumns(), our vertical-column system
 
 */
 
-&check.bio cg=
+&check.bio [v( d.cg )]=
 	strcat( 
 // >> column 1: Gender, Concept, Full Name, Birthdate
 		setq( 1, 
@@ -545,7 +545,7 @@ uses: vcolumns(), our vertical-column system
 
 */
 
-&check.bio.default cg=virtue vice
+&check.bio.default [v( d.cg )]=virtue vice
 
 
 /*
@@ -632,7 +632,7 @@ r: template-specific specialties
 
 */
 
-&check.chargen.specialties cg=
+&check.chargen.specialties [v( d.cg )]=
 	strcat(
 		setq( a, ulocal( f.allocated.specialties, %0 )), 
 		setq( s, first( %qa, ` )), 
@@ -656,9 +656,9 @@ r: template-specific specialties
 
 /* -- test --
 
-think u( cg/check.chargen.specialties, v( _special.sheet_location ), Demon ) -- %qa -- %qs -- %qr 
+think u( v( d.cg )/check.chargen.specialties, v( _special.sheet_location ), Demon ) -- %qa -- %qs -- %qr 
 
-think u( cg/check.chargen.specialties, pmatch( Hemi ), Human ) --> %qa --> %qs --> %qr 
+think u( v( d.cg )/check.chargen.specialties, pmatch( Hemi ), Human ) --> %qa --> %qs --> %qr 
 
 
 /*
@@ -673,7 +673,7 @@ Prettifies the output for the Werewolf specialties.
 
 */
 
-&check.specialties.changeling cg=
+&check.specialties.changeling [v( d.cg )]=
 	strcat( 
 // .. changeling
 		%b Changeling -%b, 
@@ -702,15 +702,15 @@ Prettifies the output for the Werewolf specialties.
 This is from the old system and needs integrated into the new system
 under the "are these points valid?" system
 
-*/
 
-&f.pts-valid?.specialties.changeling.beast cg=eq( words( extract( %0, 3, 1, ` )), 1 )
-&f.pts-valid?.specialties.changeling.soldier cg=eq( words( extract( %0, 4, 1, ` )), 1 )
-&f.pts-valid?.specialties.changeling.telluric cg=eq( words( extract( %0, 4, 1, ` )), 2 )
-&f.pts-valid?.specialties.changeling.razorhand cg=eq( words( extract( %0, 4, 1, ` )), 1 )
-&f.pts-valid?.specialties.changeling.riddleseeker cg=eq( words( extract( %0, 4, 1, ` )), 1 )
-&f.pts-valid?.specialties.changeling.nightsinger cg=eq( words( extract( %0, 4, 1, ` )), 1 )
-&f.pts-valid?.specialties.changeling.daitya cg=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.beast [v( d.cg )]=eq( words( extract( %0, 3, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.soldier [v( d.cg )]=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.telluric [v( d.cg )]=eq( words( extract( %0, 4, 1, ` )), 2 )
+&f.pts-valid?.specialties.changeling.razorhand [v( d.cg )]=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.riddleseeker [v( d.cg )]=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.nightsinger [v( d.cg )]=eq( words( extract( %0, 4, 1, ` )), 1 )
+&f.pts-valid?.specialties.changeling.daitya [v( d.cg )]=eq( words( extract( %0, 4, 1, ` )), 1 )
+*/
 
 
 /*
@@ -721,14 +721,14 @@ More examples
 
 0: dbref of sheet to check
 
-*/
 
-&check.chargen.changeling cg=
+&check.chargen.changeling [v( d.cg )]=
 	strcat( 
 		%b Contracts:%b, 
 			u( f.allocated.contracts, %0 ), %b, 
 			u( display.check.stats, %0, contracts ), %r
 	)
+*/
 
 
 /*
@@ -739,48 +739,49 @@ More examples
 
 */
 
-&check.badstats cg=
-strcat( 
-	divider( Invalid Stats, width( %# )), %r, 
-	setq( p, u( f.badstats, %0 )), 
+&check.badstats [v( d.cg )]=
+	strcat( 
+		wdivider( Invalid Stats ), %r, 
+		setq( p, u( f.badstats, %0 )), 
 
 // .. (cheat copiously)
-	setq( i, 
-		iter( %qp, 
-			strcat( 
-				%(, 
-				lcstr( first( rest( %i0, _ ), . )), 
-				%)%b, 
-				ansi( 
-					c, u( u( d.sfp )/f.statname.workhorse, rest( %i0, . ))
-				), 
-				:, %b, 
-				itemize( 
-					trim( 
-						iter( u( f.statcheck, %0, %i0 ), 
-							if( not( %i0 ), 
-								[titlestr( rest( %i0 ))]| 
-							), 
-							., @@ 
-						), 
-						b, | 
+		setq( i, 
+			iter( %qp, 
+				strcat( 
+					%(, 
+					lcstr( first( rest( %i0, _ ), . )), 
+					%)%b, 
+					ansi( 
+						c, u( u( d.sfp )/f.statname.workhorse, rest( %i0, . ))
 					), 
-					| 
-				)
-			), 
-			, %r
+					:, %b, 
+					itemize( 
+						trim( 
+							iter( u( f.statcheck, %0, %i0 ), 
+								if( not( %i0 ), 
+									[titlestr( rest( %i0 ))]| 
+								), 
+								., @@ 
+							), 
+							b, | 
+						), 
+						| 
+					)
+				), 
+				, %r
+			)
+		), 
+		if( strlen( %qi ), 
+			trim( wrap( %qi, sub( width( %# ), 4 ), left, %b%b ), r ), 
+			%b All Stats Valid 
 		)
-	), 
-	if( strlen( %qi ), 
-		trim( wrap( %qi, sub( width( %# ), 4 ), left, %b%b ), r ), 
-		%b All Stats Valid 
 	)
-)
 
 /* -- test --
 
-think u( cg/check.badstats, udefault( %#/_special.sheet_location, %# ))
+think u( v( d.cg )/check.badstats, udefault( %#/_special.sheet_location, %# ))
 
+*/
 
 
 /*
@@ -792,7 +793,7 @@ Otherwise identical.
 
 */
 
-&c.cg/forcecheck cg=$^\+?cg/forcecheck(.*):
+&c.cg/forcecheck [v( d.cg )]=$^\+?cg/forcecheck(.*):
 	@pemit %#='cg/check' should now work for anyone who is not approved.
 
 /*
@@ -821,7 +822,7 @@ Otherwise identical.
 		u( .msg, cg/check, No template set ), 
 
 		strcat( 
-			header( Checking [name( %qp )]'s Stats, width( %# )), %r, 
+			wheader( Checking [name( %qp )]'s Stats ), %r, 
 
 // .. chargen-level check normally happens only pre-approval
 			strcat( 
@@ -831,10 +832,11 @@ Otherwise identical.
 // .. valid stats check
 			ulocal( check.badstats, %qs ), %r, 
 
-			footer( , width( %# ))
+			wfooter()
 		)
 	)
 */
+
 // --
 
-@set cg/c.cg/forcecheck=regex
+@set v( d.cg )/c.cg/forcecheck=regex

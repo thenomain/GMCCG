@@ -25,7 +25,7 @@ if 'Strength' was the free attribute.
 	returns: <mental>/<physical>/<social>
 */
 
-&f.allocated.attributes cg=
+&f.allocated.attributes [v( d.cg )]=
 	iter( 
 		mental physical social, 
 		add( 
@@ -40,9 +40,9 @@ if 'Strength' was the free attribute.
 
 /* -- tests --
 
-think u( cg/f.allocated.attributes, %# )
-think u( v( d.cg )/f.allocated.attributes, *joseph )
-think u( v( d.cg )/f.allocated.attributes, *joseph, attribute.strength:-1 )
+think u( v( d.cg )/f.allocated.attributes, %# )
+think u( v( d.cg )/f.allocated.attributes, %# )
+think u( v( d.cg )/f.allocated.attributes, %#, attribute.strength:-1 )
 
 
 --------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ Specialties are ignored because they don't have tags, so fail the filter.
 
 /* --tests --
 
-think u( cg/f.allocated.skills, %# )
+think u( v( d.cg )/f.allocated.skills, %# )
 think u( v( d.cg )/f.allocated.skills, %#, skill.empathy:-1 )
 
 
@@ -88,7 +88,7 @@ Returns full stat paths.  The first part of the list are specialties that are no
 	f: free`specialties`for`template`and`species`et. al
 */
 
-&f.allocated.specialties cg=
+&f.allocated.specialties [v( d.cg )]=
 	strcat( 
 		setq( l, 
 			ulocal( f.list-stats-tags, %0, skill, mental.physical.social, or )
@@ -109,8 +109,8 @@ Returns full stat paths.  The first part of the list are specialties that are no
 
 /* -- test --
 
-think u( cg/f.allocated.specialties, %# )
-think u( cg/f.allocated.specialties, v( _special.sheet_location ))
+think u( v( d.cg )/f.allocated.specialties, %# )
+think u( v( d.cg )/f.allocated.specialties, v( _special.sheet_location ))
 think u( v( d.cg )/f.allocated.specialties, pmatch( hemi ))
 
 
@@ -120,7 +120,7 @@ think u( v( d.cg )/f.allocated.specialties, pmatch( hemi ))
 Humans themselves don't get additional specialties, so as a reminder:
 */
 
-&f.allocated.specialties.human cg=@@( nothing )
+&f.allocated.specialties.human [v( d.cg )]=@@( nothing )
 
 
 /*
@@ -134,7 +134,7 @@ Outputs: <number of short term>/<number of long-term>
 
 */
 
-&f.allocated.aspirations cg=
+&f.allocated.aspirations [v( d.cg )]=
 	localize( strcat( 
 		setq( a, u( v( d.asp )/f.get.aspirations.status, %0, pitched )), 
 		setq( s, filter( v( d.asp )/filter.term, %qa, , , short-term )), 
@@ -148,7 +148,7 @@ Outputs: <number of short term>/<number of long-term>
 -- Points Check: Aspirations ---------------------------------------------------
 */
 
-&f.pts-valid?.aspirations cg=
+&f.pts-valid?.aspirations [v( d.cg )]=
 	strcat( 
 		setq( a, u( f.allocated.aspirations, %0 )), 
 		cand( 
@@ -169,7 +169,7 @@ main merit, option add-ons, or other.
 	returns: points spent on <merits>/<merit points spent on power level raise>
 */
 
-&f.allocated.merits cg=
+&f.allocated.merits [v( d.cg )]=
 	strcat( 
 		setq( t, u( %0/_bio.template )), 
 		ladd( cat( 
@@ -192,7 +192,7 @@ main merit, option add-ons, or other.
 
 /* -- test --
 
-think u( cg/f.allocated.merits, %# )
+think u( v( d.cg )/f.allocated.merits, %# )
 
 
 --------------------------------------------------------------------------------
@@ -202,7 +202,7 @@ Each template will have their own. Humans? 0. Total 0.
 
 */
 
-&f.allocated.power-trait.human cg=0
+&f.allocated.power-trait.human [v( d.cg )]=0
 
 
 /*
@@ -216,7 +216,7 @@ t: template
 
 */
 
-&f.allocated.integrity cg=
+&f.allocated.integrity [v( d.cg )]=
 	strcat( 
 		setq( t, u( %0/_bio.template )), 
 		udefault( 
@@ -231,6 +231,6 @@ t: template
 -- Allocated: Integrity, Human -------------------------------------------------
 */
 
-&f.allocated.integrity.human cg=
+&f.allocated.integrity.human [v( d.cg )]=
 	u( u( d.dd )/.value, %0, advantage.integrity )
 

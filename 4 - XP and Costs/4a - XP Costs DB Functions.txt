@@ -60,6 +60,7 @@ We end up not doing this. Maybe we should.
 
 @create XP Cost Database <xpcd>=10
 @set XP Cost Database <xpcd>=inherit safe
+@force me=&d.xpcd me=[num( xpcd )]
 
 @parent XP Cost Database <xpcd>=codp
 &prefix.calculations XP Cost Database <xpcd>=cost.
@@ -67,7 +68,7 @@ We end up not doing this. Maybe we should.
 
 @force me=&d.dd XP Cost Database <xpcd>=[search( name=Data Dictionary <dd> )]
 
-@force me=&d.xpcd me=[num( xpcd )]
+
 
 
 

@@ -1,3 +1,5 @@
+/*
+
 The blocks are how the raw data is extracted from the character's sheet object 
 (at this stage that's the character object itself, but it doesn't have to be).
 
@@ -39,7 +41,6 @@ Blocks:
 The '#-1' is something I'm considering for formatting, guaranteeing breaks.
 Chances are 'Full Name' will be reflected in the header and stripped here.
 
---
 
 0: sheet dbref
 1: sheet template
@@ -48,8 +49,9 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 --------------------------------------------------------------------------------
 -- Bio.Default -----------------------------------------------------------------
+*/
 
-&bio.default nsc=
+&bio.default [v( d.nsc )]=
 	iter( 
 		default( %!/bio.default.%1, 
 			full_name birthdate concept template virtue vice  
@@ -61,12 +63,13 @@ output: <trait>:<value>[.<offset(s)>]|...
 		, | 
 	)
 
---
+// --
 
-think u( nsc/bio.default, %# )
+think u( v( d.nsc )/bio.default, %# )
 
 
 
+/*
 ================================================================================
 == BLOCK: ATTRIBUTES ===========================================================
 
@@ -82,47 +85,53 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 --------------------------------------------------------------------------------
 -- Attributes.Mental.Default ---------------------------------------------------
+*/
 
-&attributes.mental.default nsc=
+&attributes.mental.default [v( d.nsc )]=
 	iter( intelligence wits resolve, 
 		ulocal( f.cheat_getstat.with_name, %0, attribute.%i0, numeric ), 
 		, | 
 	)
 
---
+// --
 
-think u( nsc/attributes.mental.default, %# )
+think u( v( d.nsc )/attributes.mental.default, %# )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Attributes.Physical.Default -------------------------------------------------
+*/
 
-&attributes.physical.default nsc=
+&attributes.physical.default [v( d.nsc )]=
 	iter( strength dexterity stamina, 
 		ulocal( f.cheat_getstat.with_name, %0, attribute.%i0, numeric ), 
 		, | 
 	)
 
---
+// --
 
-think u( nsc/attributes.physical.default, %# )
+think u( v( d.nsc )/attributes.physical.default, %# )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Attributes.Social.Default ---------------------------------------------------
+*/
 
-&attributes.social.default nsc=
+&attributes.social.default [v( d.nsc )]=
 	iter( presence manipulation composure, 
 		ulocal( f.cheat_getstat.with_name, %0, attribute.%i0, numeric ), 
 		, | 
 	)
 
---
+// --
 
-think u( nsc/attributes.social.default, %# )
+think u( v( d.nsc )/attributes.social.default, %# )
 
 
 
+/*
 ================================================================================
 == BLOCK: SKILLS ===============================================================
 
@@ -138,8 +147,9 @@ output: <trait>:<value>[.<offset(s)>]|* <specialty>|...
 
 --------------------------------------------------------------------------------
 -- Skills.Default --------------------------------------------------------------
+*/
 
-&skills.default nsc=
+&skills.default [v( d.nsc )]=
 	iter( 
 		mental physical social, 
 		strcat( 
@@ -149,16 +159,18 @@ output: <trait>:<value>[.<offset(s)>]|* <specialty>|...
 		, | 
 	)
 
---
+// --
 
-think u( nsc/skills.default, %# )
+think u( v( d.nsc )/skills.default, %# )
 
 
 
+/*
 --------------------------------------------------------------------------------
 -- Skills.Mental.Default -------------------------------------------------------
+*/
 
-&skills.mental.default nsc=
+&skills.mental.default [v( d.nsc )]=
 	iter( 
 		academics computer crafts investigation medicine occult politics 
 		science, 
@@ -166,30 +178,34 @@ think u( nsc/skills.default, %# )
 		, | 
 	)
 
---
+// --
 
-think u( nsc/skills.mental.default, %# )
+think u( v( d.nsc )/skills.mental.default, %# )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Skills.Physical.Default -----------------------------------------------------
+*/
 
-&skills.physical.default nsc=
+&skills.physical.default [v( d.nsc )]=
 	iter( 
 		athletics brawl drive firearms larceny stealth survival weaponry, 
 		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), 
 		, | 
 	)
 
---
+// --
 
-think u( nsc/skills.physical.default, %# )
+think u( v( d.nsc )/skills.physical.default, %# )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Skills.Social.Default -------------------------------------------------------
+*/
 
-&skills.social.default nsc=
+&skills.social.default [v( d.nsc )]=
 	iter( 
 		animal_ken empathy expression intimidation persuasion socialize 
 		streetwise subterfuge, 
@@ -197,12 +213,13 @@ think u( nsc/skills.physical.default, %# )
 		, | 
 	)
 
---
+// --
 
-think u( nsc/skills.social.default, %# )
+think u( v( d.nsc )/skills.social.default, %# )
 
 
 
+/*
 ================================================================================
 == BLOCK: MERITS ===============================================================
 
@@ -221,19 +238,21 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 --------------------------------------------------------------------------------
 -- Merits.Default --------------------------------------------------------------
+*/
 
-&merits.default nsc=
+&merits.default [v( d.nsc )]=
 	iter( sort( edit( lattr( %0/_merit.* ), _MERIT., )), 
 		ulocal( f.cheat_getstat.with_name, %0, merit.%i0, numeric ), 
 		, | 
 	)
 
---
+// --
 
-think u( nsc/merits.default, %# )
+think u( v( d.nsc )/merits.default, %# )
 
 
 
+/*
 ================================================================================
 == BLOCK: TRAITS ===============================================================
 
@@ -249,45 +268,50 @@ output: see 'f.cheat_getstat.willpower', and '.morality'.
 
 --------------------------------------------------------------------------------
 -- Traits.Default --------------------------------------------------------------
+*/
 
-&traits.default nsc=
+&traits.default [v( d.nsc )]=
 	strcat( 
 		u( traits.willpower.default, %0 ), |, 
 		u( traits.morality.default, %0 )
 	)
 
---
+// --
 
-think u( nsc/traits.default, %# )
+think u( v( d.nsc )/traits.default, %# )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Traits.Willpower.Default ----------------------------------------------------
+*/
 
-&traits.willpower.default nsc=
+&traits.willpower.default [v( d.nsc )]=
 	ulocal( f.cheat_getstat.pool, %0, willpower )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Traits.Morality.Default -----------------------------------------------------
 
 This will probably be one of the most varied blocks, as each splat has its own.
 
---
+*/
 
-&traits.morality.default nsc=
+&traits.morality.default [v( d.nsc )]=
 	ulocal( f.cheat_getstat.morality, %0, integrity )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Traits.Supernatural_Advantage -----------------------------------------------
 
 Grab the supernatural resistance for the passed sheet's template
 	<< get 'attribute' with tags 'power' and '<template>' >>
 
---
+*/
 
-&traits.supernatural_resistance nsc=
+&traits.supernatural_resistance [v( d.nsc )]=
 	ulocal( f.cheat_getstat.with_name, 
 		%0, 
 		filter( 
@@ -299,15 +323,16 @@ Grab the supernatural resistance for the passed sheet's template
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Traits.Power_Pool -----------------------------------------------------------
 
 Grab the power pool name for the passed sheet's template
 	<< get 'attribute' with tags 'pool' and '<template>' >>
 
---
+*/
 
-&traits.power_pool nsc=
+&traits.power_pool [v( d.nsc )]=
 	ulocal( f.cheat_getstat.pool, 
 		%0, 
 		elements( 
@@ -322,6 +347,7 @@ Grab the power pool name for the passed sheet's template
 
 
 
+/*
 ================================================================================
 == BLOCK: ADVANTAGES ===========================================================
 
@@ -331,8 +357,9 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 --------------------------------------------------------------------------------
 -- Advantages.Default ----------------------------------------------------------
+*/
 
-&advantages.default nsc=
+&advantages.default [v( d.nsc )]=
 	iter( 
 		defense 
 		weaponry_defense brawl_defense 
@@ -342,11 +369,12 @@ output: <trait>:<value>[.<offset(s)>]|...
 		, | 
 	)
 
---
+// --
 
-think u( nsc/advantages.default, %# )
+think u( v( d.nsc )/advantages.default, %# )
 
 
+/*
 ================================================================================
 == BLOCK: HEALTH ===============================================================
 
@@ -361,10 +389,10 @@ output: <health boxes>|Penalty:<value>
 
 --------------------------------------------------------------------------------
 -- Health.Default --------------------------------------------------------------
+*/
 
-&health.default nsc=
-localize( 
-	strcat( 
+&health.default [v( d.nsc )]=
+	localize( strcat( 
 		ulocal( v( d.health )/display.health-bar, 
 			iter( 
 				u( v( d.dd )/health.types ), 
@@ -374,10 +402,9 @@ localize(
 		), |, 
 
 		ulocal( f.cheat_getstat.with_name, %0, health.penalty, numeric )
-	)
-)
+	))
 
---
+// --
 
-think u( nsc/health.default, %# )
+think u( v( d.nsc )/health.default, %# )
 

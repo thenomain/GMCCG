@@ -21,17 +21,19 @@ I'm stealing this from Reno (with permission).
 
 ================================================================================
 == SETUP =======================================================================
+*/
 
 @create +Cond and +Tilt Status Tracker <ctst>=10
 @set +Cond and +Tilt Status Tracker <ctst>=INHERIT SAFE
+@fo me=&d.ctst me=[num( +Cond and +Tilt Status Tracker <ctst> )]
 
 @create +Cond and +Tilt Status Tracker Database <ctdb>=10
 @set +Cond and +Tilt Status Tracker Database <ctdb>=SAFE
+@fo me=&d.ctdb me=[num( +Cond and +Tilt Status Tracker Database <ctdb> )]
 
 @desc ctst=Originally coded by Bingo@RenoMUX 
 	("the biggest little game on the net"), 
 	adapted to the Darkwater GMC Stat System by Thenomain.
-*/
 
 @parent ctst=codp
 &prefix.index ctst=i.
@@ -44,27 +46,28 @@ I'm stealing this from Reno (with permission).
 == DATA & INDICIES =============================================================
 */
 
-@fo me=&D.DB +Cond and +Tilt Status Tracker <ctst>=[num( ctdb )]
-&D.DEFAULT_MAX_LOG_LENGTH +Cond and +Tilt Status Tracker <ctst>=10
+@fo me=&D.DB [v( d.ctst )]=
+	search( name=+Cond and +Tilt Status Tracker Database <ctdb> )
+&D.DEFAULT_MAX_LOG_LENGTH [v( d.ctst )]=10
 
-&CMT.I.PLAYER +Cond and +Tilt Status Tracker <ctst>=
+&CMT.I.PLAYER [v( d.ctst )]=
 	Player attr format is _<type>.<name>.<timestamp> =db_attr | note | title
 
-&I.PLAYER.ATTR +Cond and +Tilt Status Tracker <ctst>=1
-&I.PLAYER.NOTE +Cond and +Tilt Status Tracker <ctst>=2
-&I.PLAYER.TITLE +Cond and +Tilt Status Tracker <ctst>=3
+&I.PLAYER.ATTR [v( d.ctst )]=1
+&I.PLAYER.NOTE [v( d.ctst )]=2
+&I.PLAYER.TITLE [v( d.ctst )]=3
 
-&CMT.I.STATUS +Cond and +Tilt Status Tracker <ctst>=
+&CMT.I.STATUS [v( d.ctst )]=
 	db_attr format is <type>.<name>=name | persistent | desc | sources/causes | 
 	resolution | beat | reference
 
-&I.STATUS.NAME +Cond and +Tilt Status Tracker <ctst>=1
-&I.STATUS.PERS +Cond and +Tilt Status Tracker <ctst>=2
-&I.STATUS.DESC +Cond and +Tilt Status Tracker <ctst>=3
-&I.STATUS.SOURCE +Cond and +Tilt Status Tracker <ctst>=4
-&I.STATUS.RES +Cond and +Tilt Status Tracker <ctst>=5
-&I.STATUS.BEAT +Cond and +Tilt Status Tracker <ctst>=6
-&I.STATUS.REF +Cond and +Tilt Status Tracker <ctst>=7
+&I.STATUS.NAME [v( d.ctst )]=1
+&I.STATUS.PERS [v( d.ctst )]=2
+&I.STATUS.DESC [v( d.ctst )]=3
+&I.STATUS.SOURCE [v( d.ctst )]=4
+&I.STATUS.RES [v( d.ctst )]=5
+&I.STATUS.BEAT [v( d.ctst )]=6
+&I.STATUS.REF [v( d.ctst )]=7
 
 
 
@@ -73,7 +76,7 @@ I'm stealing this from Reno (with permission).
 == CROSS-GAME FUNCTIONS ========================================================
 */
 
-&.msg +Cond and +Tilt Status Tracker <ctst>=ansi( h, <%0>, n, %b%1 )
+&.msg [v( d.ctst )]=ansi( h, <%0>, n, %b%1 )
 
 
 /*
@@ -81,28 +84,28 @@ I'm stealing this from Reno (with permission).
 == COMMANDS & SUCHWHAT =========================================================
 */
 
-&C.TILT +Cond and +Tilt Status Tracker <ctst>=$^\+?tilts?(.*)$:
+&C.TILT [v( d.ctst )]=$^\+?tilts?(.*)$:
 	@pemit %#=[u( c.status, %1, tilt )]
 
 @set ctst/c.tilt=regexp
 
 // -----------------------------------------------------------------------------
 
-&C.COND +Cond and +Tilt Status Tracker <ctst>=$^\+?conds?(.*)$:
+&C.COND [v( d.ctst )]=$^\+?conds?(.*)$:
 	@pemit %#=[u( c.status, %1, cond )]
 
 @set ctst/c.cond=regexp
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS [v( d.ctst )]=
 	This is the primary distinction between switched and <inputs> commands. 
 	Also distinguishes +<type>s, though they currently do the same thing as 
 	base +<type> commands, but if ever desired that +conds does something 
 	different than +cond, this could be modified.%r%r%0 is type of status that 
 	gets passed through the system.
 
-&C.STATUS +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS [v( d.ctst )]=
 	switch( strtrunc( %0, 1 ), 
 
 // null: default
@@ -122,21 +125,21 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS.DEFAULT +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS.DEFAULT [v( d.ctst )]=
 	Default to displaying the status list of %0 type
 
-&C.STATUS.DEFAULT +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS.DEFAULT [v( d.ctst )]=
 	u( f.format.player.all-status, %#, %0 )
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS.SWITCHED +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS.SWITCHED [v( d.ctst )]=
 	Handles the +<type>/<switch> <input> type inputs, and redirects to any 
 	C.STATUS/<switch> attrs set on this object%r
 	%r
 	%0 is the switch name, %1 is the inputs, %2 is the type
 
-&C.STATUS.SWITCHED +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS.SWITCHED [v( d.ctst )]=
 	[setq( m, lattr( %!/c.status/%0* ))]
 	[case( 0, 
 //		words( lattr( %!/c.status/* )), 
@@ -157,12 +160,12 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS.SPECIFIC +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS.SPECIFIC [v( d.ctst )]=
 	Called for status without switches, must either be staff <name>, <name>/#, 
 	or user #, which must be an int. Anything else passes into the search to 
 	try and find a status in the db
 
-&C.STATUS.SPECIFIC +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS.SPECIFIC [v( d.ctst )]=
 	switch( 1, 
 		regmatch( %0, .*\/.* ), 
 		u( c.status.player-status, %0, %1 ), 
@@ -181,10 +184,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS.PLAYER-STATUS +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS.PLAYER-STATUS [v( d.ctst )]=
 	Called for format of <name>/#, tests that <name exists and # is an integer
 
-&C.STATUS.PLAYER-STATUS +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS.PLAYER-STATUS [v( d.ctst )]=
 	case( 0, 
 		t( setr( p, pmatch( first( %0, / )))), 
 		u( .msg, %1, Player not found ), 
@@ -200,11 +203,11 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS.SPECIFIC.PLAYER-STATUS +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS.SPECIFIC.PLAYER-STATUS [v( d.ctst )]=
 	Tests if the user has any of the status types set and that the index passed 
 	in is found in their list and if so, shows the formatted status info
 
-&C.STATUS.SPECIFIC.PLAYER-STATUS +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS.SPECIFIC.PLAYER-STATUS [v( d.ctst )]=
 	strcat( 
 		setq( z, case( %2, cond, Condition, tilt, Tilt )), 
 		setq( n, name( %0 )), 
@@ -222,19 +225,19 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/LIST +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/LIST [v( d.ctst )]=
 	Lists all status types
 
-&C.STATUS/LIST +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/LIST [v( d.ctst )]=
 	u( c.status.specific.search-for, *, %1 )
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS.SPECIFIC.SEARCH-FOR +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS.SPECIFIC.SEARCH-FOR [v( d.ctst )]=
 	Search for %0 pattern in db of type %1 and either show multiple or show 
 	details of one match
 
-&C.STATUS.SPECIFIC.SEARCH-FOR +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS.SPECIFIC.SEARCH-FOR [v( d.ctst )]=
 	[setq( z, case( %1, cond, condition, tilt, tilt ))]
 	[setq( l, u( f.status.search-for, %0, %1 ))]
 	[case( 0, 
@@ -251,11 +254,11 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/ADD +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/ADD [v( d.ctst )]=
 	%0 has %[Optional staff-only <name>/%]<status name of type %1>
 	[=<optional note>]
 
-&C.STATUS/ADD +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/ADD [v( d.ctst )]=
 	switch( 1, 
 		regmatch( %0, .*\/.* ), 
 		switch( setr( s, rest( %0, / )), 
@@ -284,11 +287,11 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.PLAYER.STATUS.ADD +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.PLAYER.STATUS.ADD [v( d.ctst )]=
 	Test whether %1 is a status of type %3 and if so, add it to %0's player 
 	status with %2 note if %2 exists
 
-&C.PLAYER.STATUS.ADD +Cond and +Tilt Status Tracker <ctst>=
+&C.PLAYER.STATUS.ADD [v( d.ctst )]=
 	strcat( 
 		setq( z, case( %3, cond, condition, tilt, tilt )), 
 		setq( l, u( f.status.search-for, %1, %3 )), 
@@ -338,10 +341,10 @@ I'm stealing this from Reno (with permission).
 // 0: [<optional name>/]<#>=<text>
 // 1: 'cond' or 'tilt'
 
-&CMT.C.STATUS/NOTE +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/NOTE [v( d.ctst )]=
 	%0 has %[Optional staff-only <name>/%]<# of status of type %1>=<note text>
 
-&C.STATUS/NOTE +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/NOTE [v( d.ctst )]=
 	switch( 1, 
 		regmatch( %0, .*\/.* ), 
 		strmatch( 
@@ -365,17 +368,17 @@ I'm stealing this from Reno (with permission).
 // -----------------------------------------------------------------------------
 // 0: <target as entered>; 1: <#>; 2: <note>; 3: 'cond' or 'tilt'
 
-&CMT.C.PLAYER.STATUS.NOTE +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.PLAYER.STATUS.NOTE [v( d.ctst )]=
 	Modify the %0's %1 # status of %3 type note to %2
 
-&C.PLAYER.STATUS.NOTE +Cond and +Tilt Status Tracker <ctst>=
+&C.PLAYER.STATUS.NOTE [v( d.ctst )]=
 	u( c.player.status.set, %0, %1, %2, v( i.player.note ), note, %3 )
 
 // -----------------------------------------------------------------------------
 // 0: <target as entered>; 1: <#>; 2: <text>; 3: <position to set text>
 // 4: <type of text, e.g. 'note'>; 5: 'cond' or 'tilt'
 
-&CMT.C.PLAYER.STATUS.SET +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.PLAYER.STATUS.SET [v( d.ctst )]=
 	Sets the %0's %1 # status of %5 type's %3 index (which is named %4) to %2. 
 	Format is <player name>, <status index to edit>, <new value>, <player 
 	status object index in | list>, <description of what's being editted i.e. 
@@ -423,10 +426,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/TITLE +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/TITLE [v( d.ctst )]=
 	%0 has %[Optional staff-only <name>/%]<# of status of type %1>=<title>
 
-&C.STATUS/TITLE +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/TITLE [v( d.ctst )]=
 	switch( 1, 
 		regmatch( %0, .*\/.* ), 
 		strcat( 
@@ -449,18 +452,18 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.PLAYER.STATUS.TITLE +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.PLAYER.STATUS.TITLE [v( d.ctst )]=
 	Modify the %0's %1 status of %3 type title to %2
 
-&C.PLAYER.STATUS.TITLE +Cond and +Tilt Status Tracker <ctst>=
+&C.PLAYER.STATUS.TITLE [v( d.ctst )]=
 	u( c.player.status.set, %0, %1, %2, v( i.player.title ), title, %3 )
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/REM +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/REM [v( d.ctst )]=
 	%0 has %[Optional staff-only <name>/%]<# of status of type %1>
 
-&C.STATUS/REM +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/REM [v( d.ctst )]=
 	switch( 1, 
 		regmatch( %0, .*\/.* ), 
 		u( c.player.status.rem, first( %0,/ ), rest( %0, / ), %1 ), 
@@ -470,10 +473,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.PLAYER.STATUS.REM +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.PLAYER.STATUS.REM [v( d.ctst )]=
 	Delete %0's %1 # status of type %2
 
-&C.PLAYER.STATUS.REM +Cond and +Tilt Status Tracker <ctst>=
+&C.PLAYER.STATUS.REM [v( d.ctst )]=
 	strcat( 
 		setq( z, case( %2, cond, Condition, tilt, Tilt )), 
 		setq( p, pmatch( %0 )), 
@@ -525,12 +528,12 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/SHOW +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/SHOW [v( d.ctst )]=
 	%0 has %[Optional staff-only <name>/%]
 	<# of status of type %1>=
 	<comma-delmited player list to show or here>
 
-&C.STATUS/SHOW +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/SHOW [v( d.ctst )]=
 	switch( 1, 
 		regmatch( %0, .*\/.* ), 
 		u( c.player.status.show, 
@@ -550,10 +553,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.PLAYER.STATUS.SHOW +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.PLAYER.STATUS.SHOW [v( d.ctst )]=
 	Shows %0's %1 # status of type %3 to %2 list of players
 
-&C.PLAYER.STATUS.SHOW +Cond and +Tilt Status Tracker <ctst>=
+&C.PLAYER.STATUS.SHOW [v( d.ctst )]=
 	strcat( 
 		setq( z, case( %3, cond, Condition, tilt, Tilt )), 
 		setq( p, pmatch( %0 )), 
@@ -596,10 +599,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/CREATE +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/CREATE [v( d.ctst )]=
 	%0 has <name of type %1>[=<optional desc>] to add
 
-&C.STATUS/CREATE +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/CREATE [v( d.ctst )]=
 	[setq( z, case( %1, cond, condition, tilt, tilt ))]
 	[setq( n, capstr( first( %0,= )))]
 	[setq( a, %1.[edit( %qn, %b, _ )] )]
@@ -618,10 +621,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/DELETE +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/DELETE [v( d.ctst )]=
 	%0 has <name of type %1> to del
 
-&C.STATUS/DELETE +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/DELETE [v( d.ctst )]=
 	[setq( z, case( %1, cond, condition, tilt, tilt ))]
 	[case( 0, 
 		isstaff( %# ), 
@@ -640,10 +643,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/DESC +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/DESC [v( d.ctst )]=
 	%0 has <name of type %1>=<desc>
 
-&C.STATUS/DESC +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/DESC [v( d.ctst )]=
 	u( c.status.set, 
 		first( %0, = ), 
 		rest( %0, = ), 
@@ -654,11 +657,11 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS.SET +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS.SET [v( d.ctst )]=
 	Sets the %2 index setting of %0's status of type %4 to %1. 
 	input: condition name, new val, index of val, description of val, type
 
-&C.STATUS.SET +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS.SET [v( d.ctst )]=
 	[setq( z, case( %4, cond, condition, tilt, tilt ))]
 	[case( 0, 
 		isstaff( %# ), 
@@ -677,10 +680,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/PERS +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/PERS [v( d.ctst )]=
 	%0 has <name of type %1> to toggle pers
 
-&C.STATUS/PERS +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/PERS [v( d.ctst )]=
 	[setq( t, case( ucstr( rest( %0,= )), Y, 1, Y*, 1, TRUE, 1, 0 ))]
 	[u( c.status.set, 
 		first( %0, = ), 
@@ -692,10 +695,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/SOURCE +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/SOURCE [v( d.ctst )]=
 	%0 has <name of type %1>=<source text>
 
-&C.STATUS/SOURCE +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/SOURCE [v( d.ctst )]=
 	u( c.status.set, 
 		first( %0, = ), 
 		rest( %0, = ), 
@@ -706,10 +709,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/RES +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/RES [v( d.ctst )]=
 	%0 has <name of type %1>=<resolution text>
 
-&C.STATUS/RES +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/RES [v( d.ctst )]=
 	u( c.status.set, 
 		first( %0, = ), 
 		rest( %0, = ), 
@@ -720,10 +723,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/BEAT +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/BEAT [v( d.ctst )]=
 	%0 has <name of type %1>=<beat text>
 
-&C.STATUS/BEAT +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/BEAT [v( d.ctst )]=
 	u( c.status.set, 
 		first( %0, = ), 
 		rest( %0, = ), 
@@ -734,10 +737,10 @@ I'm stealing this from Reno (with permission).
 
 // -----------------------------------------------------------------------------
 
-&CMT.C.STATUS/REF +Cond and +Tilt Status Tracker <ctst>=
+&CMT.C.STATUS/REF [v( d.ctst )]=
 	%0 has <name of type %1>=<reference text>
 
-&C.STATUS/REF +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/REF [v( d.ctst )]=
 	u( c.status.set, 
 		first( %0, = ), 
 		rest( %0, = ), 
@@ -749,9 +752,9 @@ I'm stealing this from Reno (with permission).
 // -----------------------------------------------------------------------------
 // Logging has been turned off because it's currently broken
 
-&C.STATUS/LOG +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/LOG [v( d.ctst )]=
 /*
-&C.STATUS/LOG +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/LOG [v( d.ctst )]=
 	[setq( z, case( %1, cond, condition, tilt, tilt ))]
 	[if( strmatch( %qz, condition ), 
 		[setq( p, if( t( %0 ), pmatch( %0 ), %# ))]
@@ -794,9 +797,9 @@ I'm stealing this from Reno (with permission).
 // -----------------------------------------------------------------------------
 // Logging has been turned off because it's currently broken
 
-&C.STATUS/HISTORY +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/HISTORY [v( d.ctst )]=
 /*
-&C.STATUS/HISTORY +Cond and +Tilt Status Tracker <ctst>=
+&C.STATUS/HISTORY [v( d.ctst )]=
 	[setq( z, case( %1, cond, condition, tilt, tilt ))]
 	[if( strmatch( %qz, condition ), 
 		[setq( p, if( t( %0 ), pmatch( %0 ), %# ))]
@@ -831,34 +834,34 @@ I'm stealing this from Reno (with permission).
 == FUNCTIONS ===================================================================
 */
 
-&F.GET.PLAYER.ATTR +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.PLAYER.ATTR [v( d.ctst )]=
 	extract( %0, v( i.player.attr ), 1, | )
 
-&F.GET.PLAYER.NOTE +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.PLAYER.NOTE [v( d.ctst )]=
 	extract( %0, v( i.player.note ), 1, | )
 
-&F.GET.PLAYER.TITLE +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.PLAYER.TITLE [v( d.ctst )]=
 	extract( %0, v( i.player.title ), 1, | )
 
-&F.GET.STATUS.NAME +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.STATUS.NAME [v( d.ctst )]=
 	extract( %0, v( i.status.name ), 1, | )
 
-&F.GET.STATUS.PERS +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.STATUS.PERS [v( d.ctst )]=
 	extract( %0, v( i.status.pers ), 1, | )
 
-&F.GET.STATUS.DESC +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.STATUS.DESC [v( d.ctst )]=
 	extract( %0, v( i.status.desc ), 1, | )
 
-&F.GET.STATUS.SOURCE +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.STATUS.SOURCE [v( d.ctst )]=
 	extract( %0, v( i.status.source ), 1, | )
 
-&F.GET.STATUS.RES +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.STATUS.RES [v( d.ctst )]=
 	extract( %0, v( i.status.res ), 1, | )
 
-&F.GET.STATUS.BEAT +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.STATUS.BEAT [v( d.ctst )]=
 	extract( %0, v( i.status.beat ), 1, | )
 
-&F.GET.STATUS.REF +Cond and +Tilt Status Tracker <ctst>=
+&F.GET.STATUS.REF [v( d.ctst )]=
 	extract( %0, v( i.status.ref ), 1, | )
 
 
@@ -883,7 +886,7 @@ looks for:
 
 WARNING: Couldn't get this to work, so I'm turning it off for now. 
 
-&f.logtext +Cond and +Tilt Status Tracker <ctst>=
+&f.logtext [v( d.ctst )]=
 	localize( strcat( 
 		setq( s, if( strlen( %qs ), %qs, cond )), 
 		case( %0, 
@@ -915,7 +918,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 */
 
-&sortby.log.player +Cond and +Tilt Status Tracker <ctst>=
+&sortby.log.player [v( d.ctst )]=
 	sub( 
 		elements( %0, 3 4, . ), 
 		elements( %1, 3 4, . )
@@ -924,10 +927,10 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.FORMAT.PLAYER.ALL-STATUS +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.FORMAT.PLAYER.ALL-STATUS [v( d.ctst )]=
 	Display all %0's status items of type %1.
 
-&F.FORMAT.PLAYER.ALL-STATUS +Cond and +Tilt Status Tracker <ctst>=
+&F.FORMAT.PLAYER.ALL-STATUS [v( d.ctst )]=
 	case( 0, 
 		[setq( z, case( %1, cond, condition, tilt, tilt ))]
 		[t( setr( l, lattr( %0/_%1.* )))], 
@@ -948,11 +951,11 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.FORMAT.PLAYER.STATUS.DETAILS +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.FORMAT.PLAYER.STATUS.DETAILS [v( d.ctst )]=
 	Format specific player status details for %0 player's %1 status attr 
 	of type %2
 
-&F.FORMAT.PLAYER.STATUS.DETAILS +Cond and +Tilt Status Tracker <ctst>=
+&F.FORMAT.PLAYER.STATUS.DETAILS [v( d.ctst )]=
 	[setq( z, case( %2, cond, condition, tilt, tilt ))]
 	[setq( s, get( %0/%1 ))]
 	[setq( a, u( f.get.player.attr, %qs ))]
@@ -969,12 +972,12 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.FORMAT.PLAYER.STATUS.TITLE +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.FORMAT.PLAYER.STATUS.TITLE [v( d.ctst )]=
 	Get title either from user set title or the linked status name%r%r%0 is 
 	player status data, first of which is a link to the linked status attr in 
 	the db so that its name can be retrieved.
 
-&F.FORMAT.PLAYER.STATUS.TITLE +Cond and +Tilt Status Tracker <ctst>=
+&F.FORMAT.PLAYER.STATUS.TITLE [v( d.ctst )]=
 	[setq( 9, u( f.get.player.title, %0 ))]
 	[setq( 8, get( [v( d.db )]/[u( f.get.player.attr, %0 )] ))]
 	[ifelse( t( %q9 ), %q9, u( f.get.status.name, %q8 ))]
@@ -982,10 +985,10 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.FORMAT.STATUS.DETAILS +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.FORMAT.STATUS.DETAILS [v( d.ctst )]=
 	format status text.%r%r[v( CMT.i.STATUS )]
 
-&F.FORMAT.STATUS.DETAILS +Cond and +Tilt Status Tracker <ctst>=
+&F.FORMAT.STATUS.DETAILS [v( d.ctst )]=
 	[setq( z, case( %1, cond, condition, tilt, tilt ))]
 	[setq( s, get( [v( d.db )]/%0 ))]
 	[setq( p, u( f.get.status.pers, %qs ))]
@@ -999,11 +1002,11 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.FORMAT.STATUS.TEXT +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.FORMAT.STATUS.TEXT [v( d.ctst )]=
 	Takes a display name, a status db-attr string, and the index to draw from. 
 	Returns a simple <display name>: <text or Not set.> for now
 
-&F.FORMAT.STATUS.TEXT +Cond and +Tilt Status Tracker <ctst>=
+&F.FORMAT.STATUS.TEXT [v( d.ctst )]=
 	[setq( 9, extract( %1, %2, 1, | ))]
 	[ifelse( t( %q9 ), 
 		[ansi( h, %0: )] %q9, 
@@ -1012,12 +1015,12 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.STATUS.SEARCH-FOR +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.STATUS.SEARCH-FOR [v( d.ctst )]=
 	Get list of db statuses matching %0 pattern with %1 type. \\\\\\\\ required 
 	to match * due to it getting replaced during levels of processing, as stupid 
 	as that is.
 
-&F.STATUS.SEARCH-FOR +Cond and +Tilt Status Tracker <ctst>=
+&F.STATUS.SEARCH-FOR [v( d.ctst )]=
 	ifelse( 
 		hasattr( [v( d.db )],%1.%0 ), 
 		lattr( [v( d.db )]/%1.%0 ), 
@@ -1029,10 +1032,10 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.FORMAT.STATUS.LIST +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.FORMAT.STATUS.LIST [v( d.ctst )]=
 	Formats %0 list of %2 type status attrs matching %1 pattern
 
-&F.FORMAT.STATUS.LIST +Cond and +Tilt Status Tracker <ctst>=
+&F.FORMAT.STATUS.LIST [v( d.ctst )]=
 	[setq( z, case( %2, cond, condition, tilt, tilt ))]
 	[wheader( [capstr( %qz )]s matching '%1' )]%r
 	[iter( 
@@ -1044,11 +1047,11 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.FORMAT.STATUS.NAME +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.FORMAT.STATUS.NAME [v( d.ctst )]=
 	Takes in | list in format of db status type, spits out the name with 
 	%(Persistent%) if persitent
 
-&F.FORMAT.STATUS.NAME +Cond and +Tilt Status Tracker <ctst>=
+&F.FORMAT.STATUS.NAME [v( d.ctst )]=
 	[u( f.get.status.name, %0 )]
 	[if( 
 		u( f.get.status.pers, %0 ), 
@@ -1057,13 +1060,13 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.F.TEST.TO-LIST +Cond and +Tilt Status Tracker <ctst>=
+&CMT.F.TEST.TO-LIST [v( d.ctst )]=
 	filters comma-delimited list of players and turns them into dbrefs. Will 
 	error if stripped to nothing, so could add logic to return nothing if 
 	input/output length don't match for stricter handling rather than just 
 	ignoring invalid
 
-&F.TEST.TO-LIST +Cond and +Tilt Status Tracker <ctst>=
+&F.TEST.TO-LIST [v( d.ctst )]=
 	iter( 
 		filter( fil.isplayer, 
 			edit( %0, %,%b, %, ), 
@@ -1075,14 +1078,14 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&CMT.FIL.ISPLAYER +Cond and +Tilt Status Tracker <ctst>=
+&CMT.FIL.ISPLAYER [v( d.ctst )]=
 	Simple isplayer filter
 
-&FIL.ISPLAYER +Cond and +Tilt Status Tracker <ctst>=t( pmatch( %0 ))
+&FIL.ISPLAYER [v( d.ctst )]=t( pmatch( %0 ))
 
 // -----------------------------------------------------------------------------
 
-&F.STATUS_DISPLAY_LOG +Cond and +Tilt Status Tracker <ctst>=
+&F.STATUS_DISPLAY_LOG [v( d.ctst )]=
 	iter( %0, 
 		[ljust( ucstr( extract( %i0, 2, 1, | )), 4 )] 
 		[ljust( 
@@ -1112,7 +1115,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 -- Conditions ------------------------------------------------------------------
 */
 
-&COND.ADDICTED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.ADDICTED [v( d.ctdb )]=
 	Addicted|1|
 
 	Your character is addicted to something, whether drugs, gambling or other 
@@ -1135,7 +1138,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.AMNESIA +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.AMNESIA [v( d.ctdb )]=
 	Amnesia|1|
 
 	Your character is missing a portion of her memory. An entire period of her 
@@ -1155,7 +1158,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.BESTIAL +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.BESTIAL [v( d.ctdb )]=
 	Bestial|0|
 
 	Your character acts on primal, physical impulses. Frightening things make 
@@ -1181,7 +1184,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.BLIND +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.BLIND [v( d.ctdb )]=
 	Blind|1|
 
 	Your character cannot see. Any rolls requiring sight may only use a chance 
@@ -1201,7 +1204,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.BROKEN +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.BROKEN [v( d.ctdb )]=
 	Broken|1|
 
 	Whatever you did or saw, something inside you snapped. You can barely muster 
@@ -1222,7 +1225,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.BONDED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.BONDED [v( d.ctdb )]=
 	Bonded|0|
 
 	Your character has established an extensive bond with a specific animal. She 
@@ -1241,7 +1244,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.CHARMED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.CHARMED [v( d.ctdb )]=
 	Charmed|1|
 
 	Youve been charmed by a vampires supernatural force of personality. You dont 
@@ -1268,7 +1271,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.COMPETITIVE +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.COMPETITIVE [v( d.ctdb )]=
 	Competitive|0|
 
 	Your character must assert dominance and superiority. Either she gives it 
@@ -1293,7 +1296,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.CONFUSED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.CONFUSED [v( d.ctdb )]=
 	Confused|0|
 
 	Your character cannot think straight, either because of some mental power or 
@@ -1311,7 +1314,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.CONNECTED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.CONNECTED [v( d.ctdb )]=
 	Connected|1|
 
 	Your character has made inroads with a specified group. While she has this 
@@ -1334,7 +1337,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.DELUSIONAL +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.DELUSIONAL [v( d.ctdb )]=
 	Delusional|1|
 
 	You believe something that isnt actually true maybe you think that someone 
@@ -1358,7 +1361,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.DEPENDENT +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.DEPENDENT [v( d.ctdb )]=
 	Dependent|1|
 
 	Your character has become obsessed with a mortal. This obsession is for both 
@@ -1376,7 +1379,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.DISABLED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.DISABLED [v( d.ctdb )]=
 	Disabled|1|
 
 	Your character has limited or no ability to walk. Her Speed trait is 
@@ -1398,7 +1401,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.DEPRIVED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.DEPRIVED [v( d.ctdb )]=
 	Deprived|0|
 
 	Your character suffers from an addiction. She is unable to get her fix, 
@@ -1416,7 +1419,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.DOMINATED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.DOMINATED [v( d.ctdb )]=
 	Dominated|0|
 
 	A vampire has given your character a specific command that she cannot go 
@@ -1439,7 +1442,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.DRAINED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.DRAINED [v( d.ctdb )]=
 	Drained|0|
 
 	Your character has been fed from extensively, and suffers from blood loss. 
@@ -1460,7 +1463,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.ECSTATIC +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.ECSTATIC [v( d.ctdb )]=
 	Ecstatic|0|
 
 	Your Beast has been temporarily sated through the use of blood sorcery. For 
@@ -1478,7 +1481,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.EMBARRASSING_SECRET +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.EMBARRASSING_SECRET [v( d.ctdb )]=
 	Embarrassing Secret|0|
 
 	Your character has a secret from his past that could come back to haunt him. 
@@ -1496,7 +1499,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.ENERVATED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.ENERVATED [v( d.ctdb )]=
 	Enervated|1|
 
 	The character is in the second stage of soul loss. Her instinctive efforts 
@@ -1517,7 +1520,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.ENSLAVED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.ENSLAVED [v( d.ctdb )]=
 	Enslaved|1|
 
 	Youre totally in thrall to the vampire who inflicted this Condition. You can 
@@ -1540,7 +1543,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.ENTHRALLED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.ENTHRALLED [v( d.ctdb )]=
 	Enthralled|1|
 
 	You're fanatically loyal to a vampire, willing to go to any length for him. 
@@ -1565,7 +1568,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.FALSE_MEMORIES +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.FALSE_MEMORIES [v( d.ctdb )]=
 	False Memories|1|
 
 	The way you remember things doesnt match up with how they happened. You 
@@ -1586,7 +1589,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.FRIGHTENED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.FRIGHTENED [v( d.ctdb )]=
 	Frightened|0|
 
 	Somethings scared you to the point where you lose rational thought. Maybe 
@@ -1611,7 +1614,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.FUGUE +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.FUGUE [v( d.ctdb )]=
 	Fugue|1|
 
 	Something terrible happened. Rather than deal with it or let it break you, 
@@ -1633,7 +1636,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.GUILTY +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.GUILTY [v( d.ctdb )]=
 	Guilty|0|
 
 	Your character is experiencing deep-seated feelings of guilt and remorse. 
@@ -1653,7 +1656,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.HUMBLED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.HUMBLED [v( d.ctdb )]=
 	Humbled|0|
 
 	Your character has felt the touch of the divine and trembled. She feels 
@@ -1670,7 +1673,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.INFORMED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.INFORMED [v( d.ctdb )]=
 	Informed|0|
 
 	Your character has a breadth of research information based on the topic she 
@@ -1694,7 +1697,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.INSPIRED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.INSPIRED [v( d.ctdb )]=
 	Inspired|0|
 
 	Your character is deeply inspired. When your character takes an action 
@@ -1714,7 +1717,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.INTOXICATED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.INTOXICATED [v( d.ctdb )]=
 	Intoxicated|0|
 
 	Your character is drunk, drugged, or otherwise dulled to the world around 
@@ -1733,7 +1736,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.JADED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.JADED [v( d.ctdb )]=
 	Jaded|0|
 
 	Your character has no interest in the ways of the living. He eschews mortal 
@@ -1752,7 +1755,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.LANGUID +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.LANGUID [v( d.ctdb )]=
 	Languid|0|
 
 	Your character feels the draw of torpor. His actions grow sluggish each 
@@ -1771,7 +1774,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.LETHARGIC +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.LETHARGIC [v( d.ctdb )]=
 	Lethargic|0|
 
 	Your character is drained and lethargic, feeling the weight of 
@@ -1791,7 +1794,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.LEVERAGED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.LEVERAGED [v( d.ctdb )]=
 	Leveraged|0|
 
 	Your character has been blackmailed, tricked, convinced, or otherwise 
@@ -1812,7 +1815,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.LOST +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.LOST [v( d.ctdb )]=
 	Lost|0|
 
 	Your character has no idea where she is or how to reach her target. 
@@ -1834,7 +1837,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.MADNESS +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.MADNESS [v( d.ctdb )]=
 	Madness|1|
 
 	Your character saw or did something that jarred her loose from reality. This 
@@ -1856,7 +1859,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.MESMERIZED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.MESMERIZED [v( d.ctdb )]=
 	Mesmerized|0|
 
 	Your characters will is subordinate to that of a vampire. Youre not 
@@ -1881,7 +1884,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.MUTE +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.MUTE [v( d.ctdb )]=
 	Mute|1|
 
 	Your character cannot speak. Any communication must be done through writing, 
@@ -1899,7 +1902,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.NOTORIETY +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.NOTORIETY [v( d.ctdb )]=
 	Notoriety|0|
 
 	Whether or not your character actually did something heinous in the past, 
@@ -1918,7 +1921,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.OBSESSION +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.OBSESSION [v( d.ctdb )]=
 	Obsession|1|
 
 	Somethings on your characters mind and she just cant shake it. She gains the 
@@ -1936,7 +1939,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.RAPTURED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.RAPTURED [v( d.ctdb )]=
 	Raptured|0|
 
 	Your character is filled with the glory of Gods admonishment, the grace of 
@@ -1954,7 +1957,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.SATED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.SATED [v( d.ctdb )]=
 	Sated|0|
 
 	Your character gave her Beast an outlet that stopped it from driving her to 
@@ -1972,7 +1975,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.SCARRED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.SCARRED [v( d.ctdb )]=
 	Scarred|0|
 
 	Your character was subject to a violent bite from Kindred fangs. Hes 
@@ -1993,7 +1996,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.SPOOKED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.SPOOKED [v( d.ctdb )]=
 	Spooked|0|
 
 	Your character has seen something supernatural not overt enough to terrify 
@@ -2013,7 +2016,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.SOULLESS +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.SOULLESS [v( d.ctdb )]=
 	Soulless|1|
 
 	The character is in the first stage of soul loss. Without a soul, she cant 
@@ -2039,7 +2042,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.STEADFAST +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.STEADFAST [v( d.ctdb )]=
 	Steadfast|0|
 
 	Your character is confident and resolved. When youve failed a roll, you may 
@@ -2058,7 +2061,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.STUMBLED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.STUMBLED [v( d.ctdb )]=
 	Stumbled|0|
 
 	Your character has hit a complication while attempting a blood sorcery 
@@ -2075,7 +2078,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.SUBSERVIENT +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.SUBSERVIENT [v( d.ctdb )]=
 	Subservient|1|
 
 	A vampire has pressed down on your will, and you find it hard to resist 
@@ -2099,7 +2102,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.SWOONING +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.SWOONING [v( d.ctdb )]=
 	Swooning|0|
 
 	Your character is attracted to someone and is vulnerable where they are 
@@ -2127,7 +2130,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.TAINTED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.TAINTED [v( d.ctdb )]=
 	Tainted|0|
 
 	Your character committed diablerie, and now retains traces of her victims 
@@ -2150,7 +2153,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.TASKED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.TASKED [v( d.ctdb )]=
 	Tasked|0|
 
 	Your characters clan, covenant, or family tasked her with a duty, and the 
@@ -2168,7 +2171,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.TEMPTED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.TEMPTED [v( d.ctdb )]=
 	Tempted|0|
 
 	Your character came close to losing control. Her Beast came at her, and she 
@@ -2188,7 +2191,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.THRALL +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.THRALL [v( d.ctdb )]=
 	Thrall|1|
 
 	The character has fully succumbed to the effects of soullessness. She may 
@@ -2207,7 +2210,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.WANTON +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.WANTON [v( d.ctdb )]=
 	Wanton|0|
 
 	Your character wants, for the sake of wanting. Hes distracted with 
@@ -2236,7 +2239,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 -- Tilts -----------------------------------------------------------------------
 */
 
-&TILT.ARM_WRACK +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.ARM_WRACK [v( d.ctdb )]=
 	Arm Wrack|0|
 
 	Your arm burns with pain and then goes numb. It could be dislocated, 
@@ -2265,7 +2268,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.BEATEN_DOWN +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.BEATEN_DOWN [v( d.ctdb )]=
 	Beaten Down|0|
 
 	The character has had the fight knocked out of him.%rEffect: The character 
@@ -2289,7 +2292,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.BLINDED +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.BLINDED [v( d.ctdb )]=
 	Blinded|0|
 
 	The characters eyes are damaged or removed, or the character is placed in a 
@@ -2321,7 +2324,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.BLIZZARD +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.BLIZZARD [v( d.ctdb )]=
 	Blizzard|0|
 
 	(Environmental) Heavy snowfall carpets the ground and just keeps falling, 
@@ -2353,7 +2356,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.DEAFENED +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.DEAFENED [v( d.ctdb )]=
 	Deafened|0|
 
 	The character cant hear. Maybe hes suffering intense tinnitus or can only 
@@ -2383,7 +2386,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.DRUGGED +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.DRUGGED [v( d.ctdb )]=
 	Drugged|0|
 
 	The characters mind is addled by mind-altering substances, such as drink or 
@@ -2410,7 +2413,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.EARTHQUAKE +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.EARTHQUAKE [v( d.ctdb )]=
 	Earthquake|0|
 
 	(Environmental) Everything shudders and shakes; huge rents and holes tear 
@@ -2436,7 +2439,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.EXTREME_COLD +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.EXTREME_COLD [v( d.ctdb )]=
 	Extreme Cold|0|
 
 	(Environmental) Bone-chilling winds bite through the character, or trudging 
@@ -2468,7 +2471,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.EXTREME_HEAT +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.EXTREME_HEAT [v( d.ctdb )]=
 	Extreme Heat|0|
 
 	(Environmental) The character might be stumbling through the desert with the 
@@ -2503,7 +2506,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.FLOODED +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.FLOODED [v( d.ctdb )]=
 	Flooded|0|
 
 	(Environmental) Some liquid brackish water, mud, gore, or raw sewage is high 
@@ -2529,7 +2532,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.HEAVY_RAIN +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.HEAVY_RAIN [v( d.ctdb )]=
 	Heavy Rain|0|
 
 	(Environmental) Torrential rain lashes down in knives, bouncing high off the 
@@ -2554,7 +2557,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.HEAVY_WINDS +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.HEAVY_WINDS [v( d.ctdb )]=
 	Heavy Winds|0|
 
 	(Environmental) Howling winds buffet at the characters, whipping street 
@@ -2583,7 +2586,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.ICE +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.ICE [v( d.ctdb )]=
 	Ice|0|
 
 	(Environmental) The grounds covered in a mirror-smooth layer of ice that 
@@ -2613,7 +2616,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.IMMOBILIZED +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.IMMOBILIZED [v( d.ctdb )]=
 	Immobilized|0|
 
 	Something holds the character fast, preventing him from moving. This could 
@@ -2644,7 +2647,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.INSANE +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.INSANE [v( d.ctdb )]=
 	Insane|0|
 
 	The character suffers from a panic attack, sudden imbalance, or a full-on 
@@ -2691,7 +2694,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.INSENSATE +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.INSENSATE [v( d.ctdb )]=
 	Insensate|0|
 
 	The character shuts down, either due to extreme fear or sudden pleasure. He 
@@ -2719,7 +2722,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.KNOCKED_DOWN +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.KNOCKED_DOWN [v( d.ctdb )]=
 	Knocked Down|0|
 
 	Something knocks the character to the floor, either toppling her with a 
@@ -2751,7 +2754,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.LEG_WRACK +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.LEG_WRACK [v( d.ctdb )]=
 	Leg Wrack|0|
 
 	Your leg feels like its going to snap clean off whenever you move; when you 
@@ -2778,7 +2781,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.POISONED +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.POISONED [v( d.ctdb )]=
 	Poisoned|0|
 
 	Youve got poison inside you. Its tearing you apart from the inside; burning 
@@ -2811,7 +2814,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.SICK +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.SICK [v( d.ctdb )]=
 	Sick|0|
 
 	Your stomach churns. You retch and heave but only succeed in bringing up 
@@ -2850,7 +2853,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&TILT.STUNNED +Cond and +Tilt Status Tracker Database <ctdb>=
+&TILT.STUNNED [v( d.ctdb )]=
 	Stunned|0|
 
 	Your character is dazed and unable to think straight. Maybe her vision 
@@ -2878,7 +2881,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.DERANGED +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.DERANGED [v( d.ctdb )]=
 	Deranged|1|
 
 	You suffer from a chronic%b though mild%b mental impairment. This could be 
@@ -2895,7 +2898,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.SHAKEN +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.SHAKEN [v( d.ctdb )]=
 	Shaken|0|
 
 	Something has severely frightened your character. Any time your character is 
@@ -2912,7 +2915,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
-&COND.GLOWING +Cond and +Tilt Status Tracker Database <ctdb>=
+&COND.GLOWING [v( d.ctdb )]=
 	Glowing|0|
 
 	There's something about you - call it energy%b call it charisma%b call it je 
@@ -2936,4 +2939,4 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 == FINISH IT ===================================================================
 */
 
-@tel ctdb=ctst
+@tel [v( d.ctdb )]=[v( d.ctst )]

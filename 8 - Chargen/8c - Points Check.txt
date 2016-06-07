@@ -17,7 +17,7 @@ a: attributes
 
 */
 
-&f.pts-valid?.attributes cg=
+&f.pts-valid?.attributes [v( d.cg )]=
 	strcat( 
 		setq( a, sort( u( f.allocated.attributes, %0, %1 ), n, / )), 
 		cand( 
@@ -29,7 +29,7 @@ a: attributes
 
 /* -- test --
 
-think u( cg/f.pts-valid?.attributes, %# )
+think u( v( d.cg )/f.pts-valid?.attributes, %# )
 
 
 --------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ s: skills
 
 /* -- test --
 
-think u( cg/f.pts-valid?.skills, %# )
+think u( v( d.cg )/f.pts-valid?.skills, %# )
 
 
 --------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ t: template
 
 */
 
-&f.pts-valid?.specialties cg=
+&f.pts-valid?.specialties [v( d.cg )]=
 	strcat(
 		setq( s, u( f.allocated.specialties, %0 )), 
 		setq( t, u( %0/_bio.template )), 
@@ -86,8 +86,8 @@ t: template
 
 /* -- test --
 
-think u( cg/f.pts-valid?.specialties, %# )
-think u( cg/f.pts-valid?.specialties, v( _special.sheet_location ))
+think u( v( d.cg )/f.pts-valid?.specialties, %# )
+think u( v( d.cg )/f.pts-valid?.specialties, v( _special.sheet_location ))
 
 
 --------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ Thanks to Demon's Stigmatics, we also have to subtract '.<template>' values.
 
 */
 
-&f.pts-valid?.merits cg=
+&f.pts-valid?.merits [v( d.cg )]=
 	eq( 
 		ladd( u( f.allocated.merits, %0 ), / ), 
 		10 
@@ -123,7 +123,7 @@ Thanks to Demon's Stigmatics, we also have to subtract '.<template>' values.
 
 /* -- test --
 
-think u( cg/f.pts-valid?.merits, %# )
+think u( v( d.cg )/f.pts-valid?.merits, %# )
 
 
 
@@ -142,7 +142,7 @@ i: integrity trait, matching trait with both 'integrity' and '<template>' tags
 
 */
 
-&f.pts-valid?.integrity cg=
+&f.pts-valid?.integrity [v( d.cg )]=
 	strcat( 
 		setq( t, u( %0/_bio.template )), 
 		udefault( 
@@ -158,7 +158,7 @@ i: integrity trait, matching trait with both 'integrity' and '<template>' tags
 -- Pts Valid?: Integrity, Human ------------------------------------------------
 */
 
-&f.pts-valid?.integrity.human cg=
+&f.pts-valid?.integrity.human [v( d.cg )]=
 	eq( 
 		u( f.allocated.integrity.human, %0 ), 
 		udefault( u( d.dd )/default.advantage.integrity, 7 ) 
