@@ -6,6 +6,23 @@ This file includes all additions to the system for Vampire: The Requiem
 core rules
 
 
+--------------------------------------------------------------------------------
+-- Pre-Setting Attributes ------------------------------------------------------
+
+If you don't have the attributes set on yourself, run this code:
+
+@fo me=&d.sfp me=search( name=Stat Functions Prototype <sfp> )
+@fo me=&d.dd me=search( name=Data Dictionary <dd> )
+@fo me=&d.dt me=search( name=Data Tags <d:t> )
+
+@fo me=&d.xpas me=search( name=XP Advancement System <xpas> )
+@fo me=&d.xpcd me=search( name=XP Cost Database <xpcd> )
+
+@fo me=&d.cg me=search( name=GMC Chargen <cg> )
+@fo me=&d.sheet me=search( name=Sheet: Rows )
+
+@fo me=&d.psrs me=search( name=Pool Spend Regain System <psrs> )
+
 
 
 ################################################################################
@@ -18,8 +35,8 @@ Level 2 for powers
 Level 3 for very minor items
 */
 
-&d.search-order-02-vampire sfp=discipline
-&d.search-order-03-vampire sfp=devotion rite miracle scale
+&d.search-order-02-vampire [v( d.sfp )]=discipline
+&d.search-order-03-vampire [v( d.sfp )]=devotion rite miracle scale
 
 
 
@@ -34,27 +51,27 @@ Level 3 for very minor items
 */
 
 // CODP prefixes
-&prefix.vampire_-_disciplines dd=discipline.
+&prefix.vampire_-_disciplines [v( d.dd )]=discipline.
 
-&prefix.vampire_-_disciplines dd=tags.discipline.
+&prefix.vampire_-_disciplines [v( d.dd )]=tags.discipline.
 
 
 // add to templates
-@fo me=&bio.template dd=[get( dd/bio.template )].Vampire.Ghoul
+@fo me=&bio.template [v( d.dd )]=[get( v( d.dd )/bio.template )].Vampire.Ghoul
 
 
 // register "max trait" statpath
-&.max_trait.vampire dd=advantage.blood_potency
+&.max_trait.vampire [v( d.dd )]=advantage.blood_potency
 
 
 // register "sphere"'s templates (could this be folded into 'templates'?)
-&.sphere.vampire dd=Vampire Ghoul
+&.sphere.vampire [v( d.dd )]=Vampire Ghoul
 
 
 // -----------------------------------------------------------------------------
 // -- DD: Tags for Ghouls ------------------------------------------------------
 
-@edit d:t/tags.advantage.integrity=$, .ghoul
+@edit v( d.dt )/tags.advantage.integrity=$, .ghoul
 
 
 /*
@@ -62,24 +79,32 @@ Level 3 for very minor items
 == VAMPIRE BIO =================================================================
 */
 
-&bio.embrace_date DD=*
-&tags.bio.embrace_date D:T=vampire
+&bio.embrace_date [v( d.dd )]=*
+&tags.bio.embrace_date [v( d.dt )]=vampire
 
-&bio.clan DD=Daeva.Gangrel.Mekhet.Nosferatu.Ventrue
-&tags.bio.clan D:T=vampire.ghoul
+&bio.clan [v( d.dd )]=Daeva.Gangrel.Mekhet.Nosferatu.Ventrue
+&tags.bio.clan [v( d.dt )]=vampire.ghoul
 
-&bio.covenant DD=
+&bio.covenant [v( d.dd )]=
 	Carthian Movement.Circle of the Crone.Invictus.Lancea et Sanctum.Ordo Dracul
-&tags.bio.covenant D:T=vampire
+&tags.bio.covenant [v( d.dt )]=vampire
 
-&bio.coterie DD=*
-&tags.bio.coterie D:T=vampire.ghoul.clique
+&bio.coterie [v( d.dd )]=*
+&tags.bio.coterie [v( d.dt )]=vampire.ghoul.clique
 
-&bio.mask DD=Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Junkie.Martyr.Masochist.Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.Scholar.Social Chameleon.Spy.Survivor.Visionary
-&tags.bio.mask D:T=vampire
+&bio.mask [v( d.dd )]=
+	Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.
+	Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Junkie.Martyr.Masochist.
+	Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.Scholar.
+	Social Chameleon.Spy.Survivor.Visionary
+&tags.bio.mask [v( d.dt )]=vampire
 
-&bio.dirge DD=Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Junkie.Martyr.Masochist.Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.Scholar.Social Chameleon.Spy.Survivor.Visionary
-&tags.bio.dirge D:T=vampire
+&bio.dirge [v( d.dd )]=
+	Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.
+	Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Junkie.Martyr.Masochist.
+	Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.Scholar.
+	Social Chameleon.Spy.Survivor.Visionary
+&tags.bio.dirge [v( d.dt )]=vampire
 
 
 /*
@@ -87,19 +112,20 @@ Level 3 for very minor items
 == VAMPIRE ADVANTAGES ==========================================================
 */
 
-&advantage.humanity DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.humanity DD=7
-&tags.advantage.humanity D:T=integrity.vampire
+&advantage.humanity [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.humanity [v( d.dd )]=7
+&tags.advantage.humanity [v( d.dt )]=integrity.vampire
 
-&advantage.blood_potency DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.blood_potency DD=1
-&tags.advantage.blood_potency D:T=power.vampire
+&advantage.blood_potency [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.blood_potency [v( d.dd )]=1
+&tags.advantage.blood_potency [v( d.dt )]=power.vampire
 
-&advantage.vitae DD=ladd( u( .value_full, %0, advantage.vitae_maximum ), . )
-&default.advantage.vitae DD=derived
-&tags.advantage.vitae D:T=derived.vampire.ghoul
+&advantage.vitae [v( d.dd )]=
+	ladd( u( .value_full, %0, advantage.vitae_maximum ), . )
+&default.advantage.vitae [v( d.dd )]=derived
+&tags.advantage.vitae [v( d.dt )]=derived.vampire.ghoul
 
-&advantage.vitae_maximum DD=
+&advantage.vitae_maximum [v( d.dd )]=
 	if( u( .is_full, %0, bio.template, vampire ), 
 
 		elements( 
@@ -109,11 +135,11 @@ Level 3 for very minor items
 
 		u( .value_stats, %0, attribute.stamina discipline.resilience )
 	)
-&default.advantage.vitae_maximum DD=derived
-&tags.advantage.vitae_maximum D:T=derived.vampire.ghoul
+&default.advantage.vitae_maximum [v( d.dd )]=derived
+&tags.advantage.vitae_maximum [v( d.dt )]=derived.vampire.ghoul
 
-&health.maximum.vampire DD=u( .value_stats, %0, discipline.resilience )
-&health.maximum.ghoul DD=u( .value_stats, %0, discipline.resilience )
+&health.maximum.vampire [v( d.dd )]=u( .value_stats, %0, discipline.resilience )
+&health.maximum.ghoul [v( d.dd )]=u( .value_stats, %0, discipline.resilience )
 
 
 /*
@@ -121,334 +147,369 @@ Level 3 for very minor items
 == VAMPIRE MERITS ==============================================================
 */
 
-&merit.acute_senses DD=1
-&tags.merit.acute_senses D:T=vampire
+&merit.acute_senses [v( d.dd )]=1
+&tags.merit.acute_senses [v( d.dt )]=vampire
 
-&merit.altar DD=3
-&tags.merit.altar D:T=vampire.circle of the crone
-&prerequisite.merit.altar dd=u( .has, %0, merit.status_(circle_of_the_crone) )
-&prereq-text.merit.altar DD=Status (Circle of the Crone) 1
+&merit.altar [v( d.dd )]=3
+&tags.merit.altar [v( d.dt )]=vampire.circle of the crone
+&prerequisite.merit.altar [v( d.dd )]=
+	u( .has, %0, merit.status_(circle_of_the_crone) )
+&prereq-text.merit.altar [v( d.dd )]=Status (Circle of the Crone) 1
 
-&merit.anointed DD=2
-&tags.merit.anointed D:T=vampire.lancea et sanctum
-&prerequisite.merit.anointed dd=u( .has, %0, merit.status_(lancea_et_sanctum) )
-&prereq-text.merit.anointed DD=Status (Lancea et Sanctum) 1
+&merit.anointed [v( d.dd )]=2
+&tags.merit.anointed [v( d.dt )]=vampire.lancea et sanctum
+&prerequisite.merit.anointed [v( d.dd )]=
+	u( .has, %0, merit.status_(lancea_et_sanctum) )
+&prereq-text.merit.anointed [v( d.dd )]=Status (Lancea et Sanctum) 1
 
-&merit.atrocious DD=1
-&tags.merit.atrocious D:T=vampire
-&prerequisite.merit.atrocious DD=u( .has_none_of, %0, merit.cutthroat merit.enticing )
-&prereq-text.merit.atrocious DD=Cannot have the Cutthroat or Enticing Merits
+&merit.atrocious [v( d.dd )]=1
+&tags.merit.atrocious [v( d.dt )]=vampire
+&prerequisite.merit.atrocious [v( d.dd )]=
+	u( .has_none_of, %0, merit.cutthroat merit.enticing )
+&prereq-text.merit.atrocious [v( d.dd )]=
+	Cannot have the Cutthroat or Enticing Merits
 
-&merit.attache DD=1
-&tags.merit.attache D:T=vampire.invictus
-&prerequisite.merit.attache dd=u( .has, %0, merit.status_(invictus) )
-&prereq-text.merit.attache DD=Status (Invictus) 1
+&merit.attache [v( d.dd )]=1
+&tags.merit.attache [v( d.dt )]=vampire.invictus
+&prerequisite.merit.attache [v( d.dd )]=u( .has, %0, merit.status_(invictus) )
+&prereq-text.merit.attache [v( d.dd )]=Status (Invictus) 1
 
-&merit.bloodhound DD=2
-&tags.merit.bloodhound D:T=vampire
-&prerequisite.merit.bloodhound dd=u( .at_least, %0, attribute.wits, 3 )
-&prereq-text.merit.bloodhound DD=Wits 3
+&merit.bloodhound [v( d.dd )]=2
+&tags.merit.bloodhound [v( d.dt )]=vampire
+&prerequisite.merit.bloodhound [v( d.dd )]=u( .at_least, %0, attribute.wits, 3 )
+&prereq-text.merit.bloodhound [v( d.dd )]=Wits 3
 
-&merit.cacophony_savvy DD=1.2.3
-&tags.merit.cacophony_savvy D:T=vampire.praxis
-&prerequisite.merit.cacophony_savvy dd=u( .has, %0, merit.status_(praxis) )
-&prereq-text.merit.cacophony_savvy DD=Status (Praxis) 1
+&merit.cacophony_savvy [v( d.dd )]=1.2.3
+&tags.merit.cacophony_savvy [v( d.dt )]=vampire.praxis
+&prerequisite.merit.cacophony_savvy [v( d.dd )]=
+	u( .has, %0, merit.status_(praxis) )
+&prereq-text.merit.cacophony_savvy [v( d.dd )]=Status (Praxis) 1
 
-&merit.carthian_pull DD=1
-&tags.merit.carthian_pull D:T=vampire.carthian movement
-&prerequisite.merit.carthian_pull dd=u( .has, %0, merit.status_(carthian_movement) )
-&prereq-text.merit.carthian_pull DD=Status (Carthian Movement) 1
+&merit.carthian_pull [v( d.dd )]=1
+&tags.merit.carthian_pull [v( d.dt )]=vampire.carthian movement
+&prerequisite.merit.carthian_pull [v( d.dd )]=
+	u( .has, %0, merit.status_(carthian_movement) )
+&prereq-text.merit.carthian_pull [v( d.dd )]=Status (Carthian Movement) 1
 
-&merit.claws_of_the_unholy DD=1
-&tags.merit.claws_of_the_unholy D:T=vampire
-&prerequisite.merit.claws_of_the_unholy dd=u( .at_least, %0, discipline.protean, 4 )
-&prereq-text.merit.claws_of_the_unholy DD=Protean 4
+&merit.claws_of_the_unholy [v( d.dd )]=1
+&tags.merit.claws_of_the_unholy [v( d.dt )]=vampire
+&prerequisite.merit.claws_of_the_unholy [v( d.dd )]=
+	u( .at_least, %0, discipline.protean, 4 )
+&prereq-text.merit.claws_of_the_unholy [v( d.dd )]=Protean 4
 
-&merit.close_family DD=1
-&tags.merit.close_family D:T=vampire
+&merit.close_family [v( d.dd )]=1
+&tags.merit.close_family [v( d.dt )]=vampire
 
-&merit.cutthroat DD=1
-&tags.merit.cutthroat D:T=vampire
-&prerequisite.merit.cutthroat DD=u( .has_none_of, %0, merit.atrocious merit.enticing )
-&prereq-text.merit.cutthroat DD=Cannot have the Atrocious or Enticing Merits
+&merit.cutthroat [v( d.dd )]=1
+&tags.merit.cutthroat [v( d.dt )]=vampire
+&prerequisite.merit.cutthroat [v( d.dd )]=
+	u( .has_none_of, %0, merit.atrocious merit.enticing )
+&prereq-text.merit.cutthroat [v( d.dd )]=
+	Cannot have the Atrocious or Enticing Merits
 
-&merit.distinguished_palate DD=1
-&tags.merit.distinguished_palate D:T=vampire
+&merit.distinguished_palate [v( d.dd )]=1
+&tags.merit.distinguished_palate [v( d.dt )]=vampire
 
-&merit.dream_visions DD=1
-&tags.merit.dream_visions D:T=vampire.mekhet
-&prerequisite.merit.dream_visions DD=u( .is_full, %0, bio.clan, Mekhet )
-&prereq-text.merit.dream_visions DD=Must be Mekhet
+&merit.dream_visions [v( d.dd )]=1
+&tags.merit.dream_visions [v( d.dt )]=vampire.mekhet
+&prerequisite.merit.dream_visions [v( d.dd )]=
+	u( .is_full, %0, bio.clan, Mekhet )
+&prereq-text.merit.dream_visions [v( d.dd )]=Must be Mekhet
 
-&merit.dynasty_membership DD=1.2.3
-&tags.merit.dynasty_membership D:T=vampire
-&prerequisite.merit.dynasty_membership DD=
+&merit.dynasty_membership [v( d.dd )]=1.2.3
+&tags.merit.dynasty_membership [v( d.dt )]=vampire
+&prerequisite.merit.dynasty_membership [v( d.dd )]=
 	u( .has, %0, merit.status_([u( .value_full, %0, bio.clan )]) )
-&prereq-text.merit.dynasty_membership DD=Status (<clan>) 1
+&prereq-text.merit.dynasty_membership [v( d.dd )]=Status (<clan>) 1
 
-&merit.enticing DD=1
-&tags.merit.enticing D:T=vampire
-&prerequisite.merit.enticing DD=u( .has_none_of, %0, merit.atrocious merit.cutthroat )
-&prereq-text.merit.enticing DD=Cannot have the Atrocious or Cutthroat Merits
+&merit.enticing [v( d.dd )]=1
+&tags.merit.enticing [v( d.dt )]=vampire
+&prerequisite.merit.enticing [v( d.dd )]=
+	u( .has_none_of, %0, merit.atrocious merit.cutthroat )
+&prereq-text.merit.enticing [v( d.dd )]=
+	Cannot have the Atrocious or Cutthroat Merits
 
-&merit.feeding_grounds_() DD=1.2.3.4.5
-&tags.merit.feeding_grounds_() D:T=vampire.location
+&merit.feeding_grounds_() [v( d.dd )]=1.2.3.4.5
+&tags.merit.feeding_grounds_() [v( d.dt )]=vampire.location
 
-&merit.friends_in_high_places DD=1
-&tags.merit.friends_in_high_places D:T=vampire.invictus
-&prerequisite.merit.friends_in_high_places dd=u( .has, %0, merit.status_(invictus) )
-&prereq-text.merit.friends_in_high_places DD=Status (Invictus) 1
+&merit.friends_in_high_places [v( d.dd )]=1
+&tags.merit.friends_in_high_places [v( d.dt )]=vampire.invictus
+&prerequisite.merit.friends_in_high_places [v( d.dd )]=
+	u( .has, %0, merit.status_(invictus) )
+&prereq-text.merit.friends_in_high_places [v( d.dd )]=Status (Invictus) 1
 
-&merit.haven_() DD=1.2.3.4.5|*
-&tags.merit.haven_() D:T=vampire.location
-&prerequisite.merit.haven_() DD=
+&merit.haven_() [v( d.dd )]=1.2.3.4.5|*
+&tags.merit.haven_() [v( d.dt )]=vampire.location
+&prerequisite.merit.haven_() [v( d.dd )]=
 	u( .at_least, %0, 
 		merit.haven_(%1), 
 		u( .value, %0, merit.safe_place_(%1)), 
 		%2 
 	)
-&prereq-text.merit.haven_() DD=Safe Place (<place name>) must be same or higher
+&prereq-text.merit.haven_() [v( d.dd )]=
+	Safe Place (<place name>) must be same or higher
 
-&merit.herd DD=1.2.3.4.5
-&tags.merit.herd D:T=vampire
+&merit.herd [v( d.dd )]=1.2.3.4.5
+&tags.merit.herd [v( d.dt )]=vampire
 
-&merit.honey_trap DD=1
-&tags.merit.honey_trap D:T=vampire
+&merit.honey_trap [v( d.dd )]=1
+&tags.merit.honey_trap [v( d.dt )]=vampire
 
-&merit.invested DD=1
-&tags.merit.invested D:T=vampire.invictus
-&prerequisite.merit.invested dd=u( .has, %0, merit.status_(invictus) )
-&prereq-text.merit.invested DD=Status (Invictus) 1
+&merit.invested [v( d.dd )]=1
+&tags.merit.invested [v( d.dt )]=vampire.invictus
+&prerequisite.merit.invested [v( d.dd )]=u( .has, %0, merit.status_(invictus) )
+&prereq-text.merit.invested [v( d.dd )]=Status (Invictus) 1
 
-&merit.kiss_of_the_succubus DD=1
-&tags.merit.kiss_of_the_succubus D:T=vampire.daeva
-&prerequisite.merit.kiss_of_the_succubus DD=u( .is, %0, bio.clan, Daeva )
-&prereq-text.merit.kiss_of_the_succubus DD=Must be Daeva
+&merit.kiss_of_the_succubus [v( d.dd )]=1
+&tags.merit.kiss_of_the_succubus [v( d.dt )]=vampire.daeva
+&prerequisite.merit.kiss_of_the_succubus [v( d.dd )]=
+	u( .is, %0, bio.clan, Daeva )
+&prereq-text.merit.kiss_of_the_succubus [v( d.dd )]=Must be Daeva
 
-&merit.lineage DD=1
-&tags.merit.lineage D:T=vampire
-&prerequisite.merit.lineage DD=
+&merit.lineage [v( d.dd )]=1
+&tags.merit.lineage [v( d.dt )]=vampire
+&prerequisite.merit.lineage [v( d.dd )]=
 	u( .has, %0, merit.status_([u( .value_full, %0, bio.clan )]) )
-&prereq-text.merit.lineage DD=Status (<clan>) 1
+&prereq-text.merit.lineage [v( d.dd )]=Status (<clan>) 1
 
-&merit.lorekeeper DD=1
-&tags.merit.lorekeeper D:T=vampire.lancea et sanctum
-&prerequisite.merit.lorekeeper dd=u( .has, %0, merit.status_(lancea_et_sanctum) )
-&prereq-text.merit.lorekeeper DD=Status (Lancea et Sanctum) 1
+&merit.lorekeeper [v( d.dd )]=1
+&tags.merit.lorekeeper [v( d.dt )]=vampire.lancea et sanctum
+&prerequisite.merit.lorekeeper [v( d.dd )]=
+	u( .has, %0, merit.status_(lancea_et_sanctum) )
+&prereq-text.merit.lorekeeper [v( d.dd )]=Status (Lancea et Sanctum) 1
 
-&merit.the_mother_daughter_bond DD=1
-&tags.merit.the_mother_daughter_bond D:T=vampire.circle of the crone
-&prerequisite.merit.the_mother_daughter_bond dd=
+&merit.the_mother_daughter_bond [v( d.dd )]=1
+&tags.merit.the_mother_daughter_bond [v( d.dt )]=vampire.circle of the crone
+&prerequisite.merit.the_mother_daughter_bond [v( d.dd )]=
 	u( .has, %0, merit.status_(circle_of_the_crone) )
-&prereq-text.merit.the_mother_daughter_bond DD=Status (Circle of the Crone) 1
+&prereq-text.merit.the_mother_daughter_bond [v( d.dd )]=
+	Status (Circle of the Crone) 1
 
-&merit.night_doctor_surgery DD=3
-&tags.merit.night_doctor_surgery D:T=vampire.carthian movement
-&prerequisite.merit.night_doctor_surgery dd=
+&merit.night_doctor_surgery [v( d.dd )]=3
+&tags.merit.night_doctor_surgery [v( d.dt )]=vampire.carthian movement
+&prerequisite.merit.night_doctor_surgery [v( d.dd )]=
 	u( .at_least, %0, merit.status_(carthian_movement), 2 )
-&prereq-text.merit.night_doctor_surgery DD=Status (Carthian Movement) 2
+&prereq-text.merit.night_doctor_surgery [v( d.dd )]=Status (Carthian Movement) 2
 
-&merit.speaker_for_the_silent DD=3
-&tags.merit.speaker_for_the_silent D:T=vampire.invictus
-&prerequisite.merit.speaker_for_the_silent dd=
+&merit.speaker_for_the_silent [v( d.dd )]=3
+&tags.merit.speaker_for_the_silent [v( d.dt )]=vampire.invictus
+&prerequisite.merit.speaker_for_the_silent [v( d.dd )]=
 	u( .at_least_all, %0, merit.dynasty_membership:1 merit.status_(invictus):1 )
-&prereq-text.merit.speaker_for_the_silent DD=Dynasty Membership 1, Status (Invictus) 1
+&prereq-text.merit.speaker_for_the_silent [v( d.dd )]=
+	Dynasty Membership 1, Status (Invictus) 1
 
-&merit.pack_alpha DD=1
-&tags.merit.pack_alpha D:T=vampire.gangrel
-&prerequisite.merit.pack_alpha DD=u( .is, %0, bio.clan, Gangrel )
-&prereq-text.merit.pack_alpha DD=Must be Gangrel
+&merit.pack_alpha [v( d.dd )]=1
+&tags.merit.pack_alpha [v( d.dt )]=vampire.gangrel
+&prerequisite.merit.pack_alpha [v( d.dd )]=u( .is, %0, bio.clan, Gangrel )
+&prereq-text.merit.pack_alpha [v( d.dd )]=Must be Gangrel
 
-&merit.unnatural_affinity_() DD=1|*
-&tags.merit.unnatural_affinity_ D:T=vampire
+&merit.unnatural_affinity_() [v( d.dd )]=1|*
+&tags.merit.unnatural_affinity_ [v( d.dt )]=vampire
 
-&merit.swarm_form DD=2
-&tags.merit.swarm_form D:T=vampire
-&prerequisite.merit.swarm_form dd=u( .at_least, %0, discipline.protean, 3 )
-&prereq-text.merit.swarm_form DD=Protean 3
+&merit.swarm_form [v( d.dd )]=2
+&tags.merit.swarm_form [v( d.dt )]=vampire
+&prerequisite.merit.swarm_form [v( d.dd )]=
+	u( .at_least, %0, discipline.protean, 3 )
+&prereq-text.merit.swarm_form [v( d.dd )]=Protean 3
 
-&merit.secret_society_junkie DD=1
-&tags.merit.secret_society_junkie D:T=vampire.ordo dracul
-&prerequisite.merit.secret_society_junkie dd=u( .has, %0, merit.status_(ordo_dracul) )
-&prereq-text.merit.secret_society_junkie DD=Status (Ordo Dracul) 1
+&merit.secret_society_junkie [v( d.dd )]=1
+&tags.merit.secret_society_junkie [v( d.dt )]=vampire.ordo dracul
+&prerequisite.merit.secret_society_junkie [v( d.dd )]=
+	u( .has, %0, merit.status_(ordo_dracul) )
+&prereq-text.merit.secret_society_junkie [v( d.dd )]=Status (Ordo Dracul) 1
 
-&merit.sworn_() DD=1|Axe.Mysteries.Dying Light
-&tags.merit.sworn_() D:T=vampire.ordo dracul
-&prerequisite.merit.sworn_() dd=
+&merit.sworn_() [v( d.dd )]=1|Axe.Mysteries.Dying Light
+&tags.merit.sworn_() [v( d.dt )]=vampire.ordo dracul
+&prerequisite.merit.sworn_() [v( d.dd )]=
 	cand( 
 		u( .has, %0, merit.status_(ordo_dracul) ), 
 		not( lattr( %0/_merit.sworn_(*) ))
 	)
-&prereq-text.merit.sworn_() DD=Status (Ordo Dracul) 1, only one Sworn.
+&prereq-text.merit.sworn_() [v( d.dd )]=Status (Ordo Dracul) 1, only one Sworn.
 
-&merit.i_know_a_guy DD=1
-&tags.merit.i_know_a_guy D:T=vampire.carthian movement
-&prerequisite.merit.i_know_a_guy dd=u( .has, %0, merit.status_(carthian_movement) )
-&prereq-text.merit.i_know_a_guy DD=Status (Carthian Movement) 1
+&merit.i_know_a_guy [v( d.dd )]=1
+&tags.merit.i_know_a_guy [v( d.dt )]=vampire.carthian movement
+&prerequisite.merit.i_know_a_guy [v( d.dd )]=
+	u( .has, %0, merit.status_(carthian_movement) )
+&prereq-text.merit.i_know_a_guy [v( d.dd )]=Status (Carthian Movement) 1
 
-&merit.touchstone DD=1.2.3.4.5
-&tags.merit.touchstone D:T=vampire
+&merit.touchstone [v( d.dd )]=1.2.3.4.5
+&tags.merit.touchstone [v( d.dt )]=vampire
 
-&merit.undead_menses DD=2
-&tags.merit.undead_menses D:T=vampire
+&merit.undead_menses [v( d.dd )]=2
+&tags.merit.undead_menses [v( d.dt )]=vampire
 
-&merit.unsettling_gaze DD=1
-&tags.merit.unsettling_gaze D:T=vampire.nosferatu
-&prerequisite.merit.unsettling_gaze DD=u( .is, %0, bio.clan, Nosferatu )
-&prereq-text.merit.unsettling_gaze DD=Must be Nosferatu
+&merit.unsettling_gaze [v( d.dd )]=1
+&tags.merit.unsettling_gaze [v( d.dt )]=vampire.nosferatu
+&prerequisite.merit.unsettling_gaze [v( d.dd )]=
+	u( .is, %0, bio.clan, Nosferatu )
+&prereq-text.merit.unsettling_gaze [v( d.dd )]=Must be Nosferatu
 
-&merit.where_the_bodies_are_buried DD=2
-&tags.merit.where_the_bodies_are_buried D:T=vampire.invictus
-&prerequisite.merit.where_the_bodies_are_buried DD=
+&merit.where_the_bodies_are_buried [v( d.dd )]=2
+&tags.merit.where_the_bodies_are_buried [v( d.dt )]=vampire.invictus
+&prerequisite.merit.where_the_bodies_are_buried [v( d.dd )]=
 	u( .at_least, %0, merit.status_(invictus), 2 )
-&prereq-text.merit.where_the_bodies_are_buried DD=Status (Invictus) 2
+&prereq-text.merit.where_the_bodies_are_buried [v( d.dd )]=Status (Invictus) 2
 
 
 // -- Vampire Merits: Carthian Law --
 
-&merit.lex_terrae DD=1
-&tags.merit.lex_terrae D:T=vampire.location.carthian movement
-&prerequisite.merit.lex_terrae DD=
+&merit.lex_terrae [v( d.dd )]=1
+&tags.merit.lex_terrae [v( d.dt )]=vampire.location.carthian movement
+&prerequisite.merit.lex_terrae [v( d.dd )]=
 	u( .at_least_all, %0, 
 		merit.status_(carthian_movement):2 merit.feeding_grounds_(%1):1 
 	)
-&prereq-text.merit.lex_terrae DD=
+&prereq-text.merit.lex_terrae [v( d.dd )]=
 	Status (Carthian Movement) 2, Feeding Grounds (<place name>) 1
 
-&merit.mandate_from_the_masses DD=1
-&tags.merit.mandate_from_the_masses D:T=vampire.carthian movement
-&prerequisite.merit.mandate_from_the_masses dd=
+&merit.mandate_from_the_masses [v( d.dd )]=1
+&tags.merit.mandate_from_the_masses [v( d.dt )]=vampire.carthian movement
+&prerequisite.merit.mandate_from_the_masses [v( d.dd )]=
 	u( .at_least, %0, merit.status_(carthian_movement), 5 )
-&prereq-text.merit.mandate_from_the_masses DD=Status (Carthian Movement) 5
+&prereq-text.merit.mandate_from_the_masses [v( d.dd )]=
+	Status (Carthian Movement) 5
 
-&merit.right_of_return DD=1
-&tags.merit.right_of_return D:T=vampire.carthian movement.praxis
-&prerequisite.merit.right_of_return dd=
-	u( .at_least_all, %0, merit.status_(carthian_movement):2 merit.status_(praxis):1 )
-&prereq-text.merit.right_of_return DD=Status (Carthian Movement) 2, Status (Praxis) 1
+&merit.right_of_return [v( d.dd )]=1
+&tags.merit.right_of_return [v( d.dt )]=vampire.carthian movement.praxis
+&prerequisite.merit.right_of_return [v( d.dd )]=
+	u( .at_least_all, %0, 
+		merit.status_(carthian_movement):2 merit.status_(praxis):1 
+	)
+&prereq-text.merit.right_of_return [v( d.dd )]=
+	Status (Carthian Movement) 2, Status (Praxis) 1
 
-&merit.strength_of_resolution DD=1
-&tags.merit.strength_of_resolution D:T=vampire.carthian movement
-&prerequisite.merit.strength_of_resolution dd=
+&merit.strength_of_resolution [v( d.dd )]=1
+&tags.merit.strength_of_resolution [v( d.dt )]=vampire.carthian movement
+&prerequisite.merit.strength_of_resolution [v( d.dd )]=
 	u( .has, %0, merit.status_(carthian_movement) )
-&prereq-text.merit.strength_of_resolution DD=Status (Carthian Movement) 1
+&prereq-text.merit.strength_of_resolution [v( d.dd )]=
+	Status (Carthian Movement) 1
 
-&merit.plausible_deniability DD=1
-&tags.merit.plausible_deniability D:T=vampire.carthian movement
-&prerequisite.merit.plausible_deniability dd=
+&merit.plausible_deniability [v( d.dd )]=1
+&tags.merit.plausible_deniability [v( d.dt )]=vampire.carthian movement
+&prerequisite.merit.plausible_deniability [v( d.dd )]=
 	u( .at_least, %0, merit.status_(carthian_movement), 3 )
-&prereq-text.merit.plausible_deniability DD=Status (Carthian Movement) 3
+&prereq-text.merit.plausible_deniability [v( d.dd )]=
+	Status (Carthian Movement) 3
 
 
 // -- Vampire Merits: Invictus Oaths --
 
-&merit.notary DD=2
-&tags.merit.notary D:T=vampire.invictus
-&prerequisite.merit.notary dd=u( .at_least, %0, merit.status_(invictus), 3 )
-&prereq-text.merit.notary DD=Status (Invictus) 3
+&merit.notary [v( d.dd )]=2
+&tags.merit.notary [v( d.dt )]=vampire.invictus
+&prerequisite.merit.notary [v( d.dd )]=
+	u( .at_least, %0, merit.status_(invictus), 3 )
+&prereq-text.merit.notary [v( d.dd )]=Status (Invictus) 3
 
-&merit.oath_of_action DD=4
-&tags.merit.oath_of_action D:T=vampire
+&merit.oath_of_action [v( d.dd )]=4
+&tags.merit.oath_of_action [v( d.dt )]=vampire
 
-&merit.oath_of_fealty DD=1
-&tags.merit.oath_of_fealty D:T=vampire.invictus
-&prerequisite.merit.oath_of_fealty dd=u(.has, %0, merit.status_(invictus))
-&prereq-text.merit.oath_of_fealty DD=Status (Invictus) 1
+&merit.oath_of_fealty [v( d.dd )]=1
+&tags.merit.oath_of_fealty [v( d.dt )]=vampire.invictus
+&prerequisite.merit.oath_of_fealty [v( d.dd )]=
+	u(.has, %0, merit.status_(invictus))
+&prereq-text.merit.oath_of_fealty [v( d.dd )]=Status (Invictus) 1
 
-&merit.oath_of_penance DD=3
-&tags.merit.oath_of_penance D:T=vampire
+&merit.oath_of_penance [v( d.dd )]=3
+&tags.merit.oath_of_penance [v( d.dt )]=vampire
 
-&merit.oath_of_serfdom DD=2
-&tags.merit.oath_of_serfdom D:T=vampire
+&merit.oath_of_serfdom [v( d.dd )]=2
+&tags.merit.oath_of_serfdom [v( d.dt )]=vampire
 
 
 // -- Vampire Merits: Kindred Fighting Styles --
 
-&merit.kindred_dueling DD=1.2.3.4.5
-&tags.merit.kindred_dueling D:T=vampire.physical.fighting.style
-&prerequisite.merit.kindred_dueling DD=
+&merit.kindred_dueling [v( d.dd )]=1.2.3.4.5
+&tags.merit.kindred_dueling [v( d.dt )]=vampire.physical.fighting.style
+&prerequisite.merit.kindred_dueling [v( d.dd )]=
 	cand( 
 		t( lattr( %0/_merit.fighting_finesse_(*) )), 
 		u( .at_least_all, %0, attribute.composure:3 skill.weaponry:2 )
 	)
-&prereq-text.merit.kindred_dueling DD=Fighting Finesse (any), Composure 3, Weaponry 2
+&prereq-text.merit.kindred_dueling [v( d.dd )]=
+	Fighting Finesse (any), Composure 3, Weaponry 2
 
-&merit.riding_the_wave DD=1.2.3.4.5
-&tags.merit.riding_the_wave D:T=vampire.physical.fighting.style
-&prerequisite.merit.riding_the_wave DD=
+&merit.riding_the_wave [v( d.dd )]=1.2.3.4.5
+&tags.merit.riding_the_wave [v( d.dt )]=vampire.physical.fighting.style
+&prerequisite.merit.riding_the_wave [v( d.dd )]=
 	u( .at_least_all, %0, attribute.composure:3 attribute.resolve:3 )
-&prereq-text.merit.riding_the_wave DD=Composure 3, Resolve 3
+&prereq-text.merit.riding_the_wave [v( d.dd )]=Composure 3, Resolve 3
 
 
 // -- Ghoul Merits -------------------------------------------------------------
 
-&merit.taste_of_shadow DD=2
-&tags.merit.taste_of_shadow D:T=ghoul.mekhet
-&prereq-text.merit.taste_of_shadow DD=Mekhet Regnant
-&prerequisite.merit.taste_of_shadow DD=u( .is, %0, bio.clan, Mekhet )
+&merit.taste_of_shadow [v( d.dd )]=2
+&tags.merit.taste_of_shadow [v( d.dt )]=ghoul.mekhet
+&prereq-text.merit.taste_of_shadow [v( d.dd )]=Mekhet Regnant
+&prerequisite.merit.taste_of_shadow [v( d.dd )]=u( .is, %0, bio.clan, Mekhet )
 
-&merit.taste_of_serpent DD=2
-&tags.merit.taste_of_serpent D:T=ghoul.daeva
-&prerequisite.merit.taste_of_serpent DD=u( .is, %0, bio.clan, Daeva )
-&prereq-text.merit.taste_of_serpent DD=Daeva Regnant
+&merit.taste_of_serpent [v( d.dd )]=2
+&tags.merit.taste_of_serpent [v( d.dt )]=ghoul.daeva
+&prerequisite.merit.taste_of_serpent [v( d.dd )]=u( .is, %0, bio.clan, Daeva )
+&prereq-text.merit.taste_of_serpent [v( d.dd )]=Daeva Regnant
 
-&merit.taste_of_the_wild DD=2
-&tags.merit.taste_of_the_wild D:T=ghoul.gangrel
-&prerequisite.merit.taste_of_the_wild DD=u( .is, %0, bio.clan, Gangrel )
-&prereq-text.merit.taste_of_the_wild DD=Gangrel Regnant
+&merit.taste_of_the_wild [v( d.dd )]=2
+&tags.merit.taste_of_the_wild [v( d.dt )]=ghoul.gangrel
+&prerequisite.merit.taste_of_the_wild [v( d.dd )]=
+	u( .is, %0, bio.clan, Gangrel )
+&prereq-text.merit.taste_of_the_wild [v( d.dd )]=Gangrel Regnant
 
-&merit.taste_of_gold DD=2
-&tags.merit.taste_of_gold D:T=ghoul.ventrue
-&prerequisite.merit.taste_of_gold DD=u( .is, %0, bio.clan, Ventrue )
-&prereq-text.merit.taste_of_gold DD=Ventrue Regnant
+&merit.taste_of_gold [v( d.dd )]=2
+&tags.merit.taste_of_gold [v( d.dt )]=ghoul.ventrue
+&prerequisite.merit.taste_of_gold [v( d.dd )]=u( .is, %0, bio.clan, Ventrue )
+&prereq-text.merit.taste_of_gold [v( d.dd )]=Ventrue Regnant
 
-&merit.taste_of_fear DD=2
-&tags.merit.taste_of_fear D:T=ghoul.nosferatu
-&prerequisite.merit.taste_of_fear DD=u( .is, %0, bio.clan, Nosferatu )
-&prereq-text.merit.taste_of_fear DD=Nosferatu Regnant
+&merit.taste_of_fear [v( d.dd )]=2
+&tags.merit.taste_of_fear [v( d.dt )]=ghoul.nosferatu
+&prerequisite.merit.taste_of_fear [v( d.dd )]=u( .is, %0, bio.clan, Nosferatu )
+&prereq-text.merit.taste_of_fear [v( d.dd )]=Nosferatu Regnant
 
 // all other minor ("human") templates can gain producer, as well
-&merit.producer DD=1
-&tags.merit.producer D:T=ghoul.human
+&merit.producer [v( d.dd )]=1
+&tags.merit.producer [v( d.dt )]=ghoul.human
 
-&merit.weakened_bond DD=3
-&tags.merit.weakened_bond D:T=ghoul.human
+&merit.weakened_bond [v( d.dd )]=3
+&tags.merit.weakened_bond [v( d.dt )]=ghoul.human
 
-&merit.clear-sighted DD=2
-&tags.merit.clear-sighted D:T=human
+&merit.clear-sighted [v( d.dd )]=2
+&tags.merit.clear-sighted [v( d.dt )]=human
 
-&merit.source_sympathy DD=1
-&tags.merit.source_sympathy D:T=ghoul
-
-// can gain only if they have a Regnant.
-&merit.protected DD=2
-&prereq-text.merit.protected DD=Must be Thrall.
-&tags.merit.protected D:T=ghoul.human
+&merit.source_sympathy [v( d.dd )]=1
+&tags.merit.source_sympathy [v( d.dt )]=ghoul
 
 // can gain only if they have a Regnant.
-&merit.empowered_to_speak DD=1
-&prereq-text.merit.empowered_to_speak DD=Must be Thrall.
-&tags.merit.empowered_to_speak D:T=ghoul.human.stigmatic.wolf-blooded
-
-&merit.vitae_hound DD=1
-&tags.merit.vitae_hound D:T=ghoul
+&merit.protected [v( d.dd )]=2
+&prereq-text.merit.protected [v( d.dd )]=Must be Thrall.
+&tags.merit.protected [v( d.dt )]=ghoul.human
 
 // can gain only if they have a Regnant.
-&merit.beast_whispers DD=2
-&prereq-text.merit.beast_whispers DD=Must be Thrall.
-&tags.merit.beast_whispers D:T=ghoul.human
+&merit.empowered_to_speak [v( d.dd )]=1
+&prereq-text.merit.empowered_to_speak [v( d.dd )]=Must be Thrall.
+&tags.merit.empowered_to_speak [v( d.dt )]=ghoul.human.stigmatic.wolf-blooded
 
-&merit.beloved_() DD=1|*
-&tags.merit.beloved_() D:T=ghoul.human
-&prerequisite.merit.beloved_() DD=0
-&prereq-text.merit.beloved_() DD=Touchstone of the one they're beloved of
-// There is absolutely no way for code to determine this; with 'prereq' set to 0 it must be set by staff using the /override switch
+&merit.vitae_hound [v( d.dd )]=1
+&tags.merit.vitae_hound [v( d.dt )]=ghoul
 
-&merit.watch_dog DD=2
-&tags.merit.watch_dog D:T=ghoul
-&prerequisite.merit.watch_dog DD=0
-&prereq-text.merit.watch_dog DD=Regnant with Auspex
-// There is absolutely no way for code to determine this; with 'prereq' set to 0 it must be set by staff using the /override switch
+// can gain only if they have a Regnant.
+&merit.beast_whispers [v( d.dd )]=2
+&prereq-text.merit.beast_whispers [v( d.dd )]=Must be Thrall.
+&tags.merit.beast_whispers [v( d.dt )]=ghoul.human
+
+&merit.beloved_() [v( d.dd )]=1|*
+&tags.merit.beloved_() [v( d.dt )]=ghoul.human
+&prerequisite.merit.beloved_() [v( d.dd )]=0
+&prereq-text.merit.beloved_() [v( d.dd )]=
+	Touchstone of the one they're beloved of
+// There is absolutely no way for code to determine this; 
+// with 'prereq' set to 0 it must be set by staff using the /override switch
+
+&merit.watch_dog [v( d.dd )]=2
+&tags.merit.watch_dog [v( d.dt )]=ghoul
+&prerequisite.merit.watch_dog [v( d.dd )]=0
+&prereq-text.merit.watch_dog [v( d.dd )]=Regnant with Auspex
+// There is absolutely no way for code to determine this; 
+// with 'prereq' set to 0 it must be set by staff using the /override switch
 
 
 
@@ -457,35 +518,35 @@ Level 3 for very minor items
 == VAMPIRE DISCIPLINES =========================================================
 */
 
-&discipline.animalism DD=1.2.3.4.5
-&tags.discipline.animalism D:T=vampire.ghoul.gangrel.ventrue
+&discipline.animalism [v( d.dd )]=1.2.3.4.5
+&tags.discipline.animalism [v( d.dt )]=vampire.ghoul.gangrel.ventrue
 
-&discipline.auspex DD=1.2.3.4.5
-&tags.discipline.auspex D:T=vampire.ghoul.mekhet
+&discipline.auspex [v( d.dd )]=1.2.3.4.5
+&tags.discipline.auspex [v( d.dt )]=vampire.ghoul.mekhet
 
-&discipline.celerity DD=1.2.3.4.5
-&tags.discipline.celerity D:T=vampire.ghoul.daeva.mekhet
+&discipline.celerity [v( d.dd )]=1.2.3.4.5
+&tags.discipline.celerity [v( d.dt )]=vampire.ghoul.daeva.mekhet
 
-&discipline.dominate DD=1.2.3.4.5
-&tags.discipline.dominate D:T=vampire.ghoul.ventrue
+&discipline.dominate [v( d.dd )]=1.2.3.4.5
+&tags.discipline.dominate [v( d.dt )]=vampire.ghoul.ventrue
 
-&discipline.majesty DD=1.2.3.4.5
-&tags.discipline.majesty D:T=vampire.ghoul.daeva
+&discipline.majesty [v( d.dd )]=1.2.3.4.5
+&tags.discipline.majesty [v( d.dt )]=vampire.ghoul.daeva
 
-&discipline.nightmare DD=1.2.3.4.5
-&tags.discipline.nightmare D:T=vampire.ghoul.nosferatu
+&discipline.nightmare [v( d.dd )]=1.2.3.4.5
+&tags.discipline.nightmare [v( d.dt )]=vampire.ghoul.nosferatu
 
-&discipline.obfuscate DD=1.2.3.4.5
-&tags.discipline.obfuscate D:T=vampire.ghoul.mekhet.nosferatu
+&discipline.obfuscate [v( d.dd )]=1.2.3.4.5
+&tags.discipline.obfuscate [v( d.dt )]=vampire.ghoul.mekhet.nosferatu
 
-&discipline.protean DD=1.2.3.4.5
-&tags.discipline.protean D:T=vampire.ghoul.gangrel
+&discipline.protean [v( d.dd )]=1.2.3.4.5
+&tags.discipline.protean [v( d.dt )]=vampire.ghoul.gangrel
 
-&discipline.resilience DD=1.2.3.4.5
-&tags.discipline.resilience D:T=vampire.ghoul.gangrel.ventrue
+&discipline.resilience [v( d.dd )]=1.2.3.4.5
+&tags.discipline.resilience [v( d.dt )]=vampire.ghoul.gangrel.ventrue
 
-&discipline.vigor DD=1.2.3.4.5
-&tags.discipline.vigor D:T=vampire.ghoul.daeva.nosferatu
+&discipline.vigor [v( d.dd )]=1.2.3.4.5
+&tags.discipline.vigor [v( d.dt )]=vampire.ghoul.daeva.nosferatu
 
 
 /*
@@ -494,97 +555,97 @@ Level 3 for very minor items
 
 */
 
-// &tags.devotion.? D:T=vampire
-&class.devotion.? DD=flag
+// &tags.devotion.? [v( d.dt )]=vampire
+&class.devotion.? [v( d.dd )]=flag
 
-&devotion.Body_of_Will DD=Stamina + Survival + Resilience
-&prerequisite.devotion.Body_of_Will DD=
+&devotion.Body_of_Will [v( d.dd )]=Stamina + Survival + Resilience
+&prerequisite.devotion.Body_of_Will [v( d.dd )]=
 	u( .at_least_all, %0, discipline.resilience:3 disciplinevigor:1 )
-&prereq-text.devotion.Body_of_Will DD=Resilience 3, Vigor 1
-&tags.devotion.Body_of_Will D:T=vampire
-&xp.devotion.Body_of_Will XP Cost Database <xpcd>=2
+&prereq-text.devotion.Body_of_Will [v( d.dd )]=Resilience 3, Vigor 1
+&tags.devotion.Body_of_Will [v( d.dt )]=vampire
+&xp.devotion.Body_of_Will [v( d.xpcd )]=2
 
-&devotion.Chain_of_Command DD=
+&devotion.Chain_of_Command [v( d.dd )]=
 	Intelligence + Persuasion + Dominate, vs. Resolve + Blood Potency
-&prerequisite.devotion.Chain_of_Command DD=
+&prerequisite.devotion.Chain_of_Command [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Dominate:3 discipline.Vigor:1 )
-&prereq-text.devotion.Chain_of_Command DD=Dominate 3, Vigor 1
-&tags.devotion.Chain_of_Command D:T=vampire
-&xp.devotion.Chain_of_Command XP Cost Database <xpcd>=2
+&prereq-text.devotion.Chain_of_Command [v( d.dd )]=Dominate 3, Vigor 1
+&tags.devotion.Chain_of_Command [v( d.dt )]=vampire
+&xp.devotion.Chain_of_Command [v( d.xpcd )]=2
 
-&devotion.Cloak_the_Gathering DD=-
-&prerequisite.devotion.Cloak_the_Gathering DD=
+&devotion.Cloak_the_Gathering [v( d.dd )]=-
+&prerequisite.devotion.Cloak_the_Gathering [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Obfuscate:5 )
-&prereq-text.devotion.Cloak_the_Gathering DD=Obfuscate 5
-&tags.devotion.Cloak_the_Gathering D:T=vampire
-&xp.devotion.Cloak_the_Gathering XP Cost Database <xpcd>=2 
+&prereq-text.devotion.Cloak_the_Gathering [v( d.dd )]=Obfuscate 5
+&tags.devotion.Cloak_the_Gathering [v( d.dt )]=vampire
+&xp.devotion.Cloak_the_Gathering [v( d.xpcd )]=2 
 
-&devotion.Conditioning DD=
+&devotion.Conditioning [v( d.dd )]=
 	Wits + Subterfuge + Dominate vs. Resolve + Blood Potency
-&prerequisite.devotion.Conditioning DD=
+&prerequisite.devotion.Conditioning [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Dominate:4 )
-&prereq-text.devotion.Conditioning DD=Dominate 4
-&tags.devotion.Conditioning D:T=vampire
-&xp.devotion.Conditioning XP Cost Database <xpcd>=2
+&prereq-text.devotion.Conditioning [v( d.dd )]=Dominate 4
+&tags.devotion.Conditioning [v( d.dt )]=vampire
+&xp.devotion.Conditioning [v( d.xpcd )]=2
 
-&devotion.Cross-Contamination DD=
+&devotion.Cross-Contamination [v( d.dd )]=
 	Presence + Empathy + Lower of Majesty or Nightmare
-&prerequisite.devotion.Cross-Contamination DD=
+&prerequisite.devotion.Cross-Contamination [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Majesty:1 discipline.Nightmare:1 )
-&prereq-text.devotion.Cross-Contamination DD=Majesty 1, Nightmare 1
-&tags.devotion.Cross-Contamination D:T=vampire
-&xp.devotion.Cross-Contamination XP Cost Database <xpcd>=1
+&prereq-text.devotion.Cross-Contamination [v( d.dd )]=Majesty 1, Nightmare 1
+&tags.devotion.Cross-Contamination [v( d.dt )]=vampire
+&xp.devotion.Cross-Contamination [v( d.xpcd )]=1
 
-&devotion.Cult_of_Personality DD=Presence + Socialize + Majesty
-&prerequisite.devotion.Cult_of_Personality DD=
+&devotion.Cult_of_Personality [v( d.dd )]=Presence + Socialize + Majesty
+&prerequisite.devotion.Cult_of_Personality [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Majesty:4 discipline.Vigor:3 )
-&prereq-text.devotion.Cult_of_Personality DD=Majesty 4, Vigor 3
-&tags.devotion.Cult_of_Personality D:T=vampire
-&xp.devotion.Cult_of_Personality XP Cost Database <xpcd>=4
+&prereq-text.devotion.Cult_of_Personality [v( d.dd )]=Majesty 4, Vigor 3
+&tags.devotion.Cult_of_Personality [v( d.dt )]=vampire
+&xp.devotion.Cult_of_Personality [v( d.xpcd )]=4
 
-&devotion.Enchantment DD=Manipulation + Empathy + Majesty vs. Composure
-&prerequisite.devotion.Enchantment DD=
+&devotion.Enchantment [v( d.dd )]=Manipulation + Empathy + Majesty vs. Composure
+&prerequisite.devotion.Enchantment [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Majesty:4 discipline.Obfuscate:2 )
-&prereq-text.devotion.Enchantment DD=Majesty 4, Obfuscate 2
-&tags.devotion.Enchantment D:T=vampire
-&xp.devotion.Enchantment XP Cost Database <xpcd>=2 
+&prereq-text.devotion.Enchantment [v( d.dd )]=Majesty 4, Obfuscate 2
+&tags.devotion.Enchantment [v( d.dt )]=vampire
+&xp.devotion.Enchantment [v( d.xpcd )]=2 
 
-&devotion.Enfeebling_Aura DD=
+&devotion.Enfeebling_Aura [v( d.dd )]=
 	Presence + Intimidation + Majesty vs. Composure + Blood Potency
-&prerequisite.devotion.Enfeebling_Aura DD=
+&prerequisite.devotion.Enfeebling_Aura [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Majesty:1 discipline.Resilience:1 )
-&prereq-text.devotion.Enfeebling_Aura DD=Majesty 1, Resilience 1
-&tags.devotion.Enfeebling_Aura D:T=vampire
-&xp.devotion.Enfeebling_Aura XP Cost Database <xpcd>=3
+&prereq-text.devotion.Enfeebling_Aura [v( d.dd )]=Majesty 1, Resilience 1
+&tags.devotion.Enfeebling_Aura [v( d.dt )]=vampire
+&xp.devotion.Enfeebling_Aura [v( d.xpcd )]=3
 
-&devotion.Foul_Grave DD=-
-&prerequisite.devotion.Foul_Grave DD=
+&devotion.Foul_Grave [v( d.dd )]=-
+&prerequisite.devotion.Foul_Grave [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Protean:1 discipline.Nightmare:1 )
-&prereq-text.devotion.Foul_Grave DD=Protean 1, Nightmare 1
-&tags.devotion.Foul_Grave D:T=vampire
-&xp.devotion.Foul_Grave XP Cost Database <xpcd>=1
+&prereq-text.devotion.Foul_Grave [v( d.dd )]=Protean 1, Nightmare 1
+&tags.devotion.Foul_Grave [v( d.dt )]=vampire
+&xp.devotion.Foul_Grave [v( d.xpcd )]=1
 
-&devotion.Force_of_Nature DD=
+&devotion.Force_of_Nature [v( d.dd )]=
 	Removes limitation of Protean transformations. Shift physical attributes.
-&prerequisite.devotion.Force_of_Nature DD=
+&prerequisite.devotion.Force_of_Nature [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Protean:4 discipline.Resilience:4 )
-&prereq-text.devotion.Force_of_Nature DD=Protean 4, Resilience 4
-&tags.devotion.Force_of_Nature D:T=vampire
-&xp.devotion.Force_of_Nature XP Cost Database <xpcd>=5
+&prereq-text.devotion.Force_of_Nature [v( d.dd )]=Protean 4, Resilience 4
+&tags.devotion.Force_of_Nature [v( d.dt )]=vampire
+&xp.devotion.Force_of_Nature [v( d.xpcd )]=5
 
-&devotion.Gargoyle's_Vigilance_() DD=-|Basic.Advanced
-&prerequisite.devotion.Gargoyle's_Vigilance_() DD=
+&devotion.Gargoyle's_Vigilance_() [v( d.dd )]=-|Basic.Advanced
+&prerequisite.devotion.Gargoyle's_Vigilance_() [v( d.dd )]=
 	cand( 
 		u( .at_least_all, %0, discipline.Auspex:1 discipline.Resilience:2 ), 
 		if( strmatch( %1, Advanced ), 
 			u( .at_least, %0, discipline.protean, 5 )
 		)
 	)
-&prereq-text.devotion.Gargoyle's_Vigilance_() DD=
+&prereq-text.devotion.Gargoyle's_Vigilance_() [v( d.dd )]=
 	Auspex 1, Resilience 2, Advanced form takes Protean 5, Basic version must be 
 	upgraded to Advanced version
-&tags.devotion.Gargoyle's_Vigilance_() D:T=vampire
-&xp.devotion.Gargoyle's_Vigilance_() XP Cost Database <xpcd>=
+&tags.devotion.Gargoyle's_Vigilance_() [v( d.dt )]=vampire
+&xp.devotion.Gargoyle's_Vigilance_() [v( d.xpcd )]=
 	case( 1, 
 		strmatch( %3, devotion.Gargoyle's_Vigilance_(Basic) ), 
 		1, 
@@ -599,175 +660,180 @@ Level 3 for very minor items
 		4 
 	)
 
-&devotion.Hint_of_Fear DD=-
-&prerequisite.devotion.Hint_of_Fear DD=
+&devotion.Hint_of_Fear [v( d.dd )]=-
+&prerequisite.devotion.Hint_of_Fear [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Celerity:2 discipline.Nightmare:2 )
-&prereq-text.devotion.Hint_of_Fear DD=Celerity 2, Nightmare 2
-&tags.devotion.Hint_of_Fear D:T=vampire
-&xp.devotion.Hint_of_Fear XP Cost Database <xpcd>=2
+&prereq-text.devotion.Hint_of_Fear [v( d.dd )]=Celerity 2, Nightmare 2
+&tags.devotion.Hint_of_Fear [v( d.dt )]=vampire
+&xp.devotion.Hint_of_Fear [v( d.xpcd )]=2
 
-&devotion.Juggernaut's_Gait DD=-
-&prerequisite.devotion.Juggernaut's_Gait DD=
+&devotion.Juggernaut's_Gait [v( d.dd )]=-
+&prerequisite.devotion.Juggernaut's_Gait [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Resilience:5 discipline.Vigor:2 )
-&prereq-text.devotion.Juggernaut's_Gait DD=Resilience 5, Vigor 2
-&tags.devotion.Juggernaut's_Gait D:T=vampire
-&xp.devotion.Juggernaut's_Gait XP Cost Database <xpcd>=4
+&prereq-text.devotion.Juggernaut's_Gait [v( d.dd )]=Resilience 5, Vigor 2
+&tags.devotion.Juggernaut's_Gait [v( d.dt )]=vampire
+&xp.devotion.Juggernaut's_Gait [v( d.xpcd )]=4
 
-&devotion.Quicken_Sight DD=-
-&prerequisite.devotion.Quicken_Sight DD=
+&devotion.Quicken_Sight [v( d.dd )]=-
+&prerequisite.devotion.Quicken_Sight [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Auspex:1 discipline.Celerity:1 )
-&prereq-text.devotion.Quicken_Sight DD=Auspex 1, Celerity 1
-&tags.devotion.Quicken_Sight D:T=vampire
-&xp.devotion.Quicken_Sight XP Cost Database <xpcd>=1
+&prereq-text.devotion.Quicken_Sight [v( d.dd )]=Auspex 1, Celerity 1
+&tags.devotion.Quicken_Sight [v( d.dt )]=vampire
+&xp.devotion.Quicken_Sight [v( d.xpcd )]=1
 
-&devotion.Reason's_Salon DD=-
-&prerequisite.devotion.Reason's_Salon DD=
+&devotion.Reason's_Salon [v( d.dd )]=-
+&prerequisite.devotion.Reason's_Salon [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Animalism:4 discipline.Resilience:2 )
-&prereq-text.devotion.Reason's_Salon DD=Animalism 4, Resilience 2
-&tags.devotion.Reason's_Salon D:T=vampire
-&xp.devotion.Reason's_Salon XP Cost Database <xpcd>=3
+&prereq-text.devotion.Reason's_Salon [v( d.dd )]=Animalism 4, Resilience 2
+&tags.devotion.Reason's_Salon [v( d.dt )]=vampire
+&xp.devotion.Reason's_Salon [v( d.xpcd )]=3
 
-&devotion.Riot DD=
+&devotion.Riot [v( d.dd )]=
 	Imposes Bestial, Competitive and Wanton conditions on everyone in half mile.
-&prerequisite.devotion.Riot DD=
+&prerequisite.devotion.Riot [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Animalism:4 discipline.Majesty:5 )
-&prereq-text.devotion.Riot DD=Animalism 4, Majesty 5
-&tags.devotion.Riot D:T=vampire
-&xp.devotion.Riot xpcd=5
+&prereq-text.devotion.Riot [v( d.dd )]=Animalism 4, Majesty 5
+&tags.devotion.Riot [v( d.dt )]=vampire
+&xp.devotion.Riot [v( d.xpcd )]=5
 
-&devotion.Shared_Sight DD=Intelligence + Empathy + Auspex
-&prerequisite.devotion.Shared_Sight DD=
+&devotion.Shared_Sight [v( d.dd )]=Intelligence + Empathy + Auspex
+&prerequisite.devotion.Shared_Sight [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Auspex:4 discipline.Dominate:1 )
-&prereq-text.devotion.Shared_Sight DD=Auspex 4, Dominate 1
-&tags.devotion.Shared_Sight D:T=vampire
-&xp.devotion.Shared_Sight XP Cost Database <xpcd>=2
+&prereq-text.devotion.Shared_Sight [v( d.dd )]=Auspex 4, Dominate 1
+&tags.devotion.Shared_Sight [v( d.dt )]=vampire
+&xp.devotion.Shared_Sight [v( d.xpcd )]=2
 
-&devotion.Shatter_the_Shroud DD=-
-&prerequisite.devotion.Shatter_the_Shroud DD=
+&devotion.Shatter_the_Shroud [v( d.dd )]=-
+&prerequisite.devotion.Shatter_the_Shroud [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Auspex:2 discipline.Vigor:1 )
-&prereq-text.devotion.Shatter_the_Shroud DD=Auspex 2, Vigor 1
-&tags.devotion.Shatter_the_Shroud D:T=vampire
-&xp.devotion.Shatter_the_Shroud XP Cost Database <xpcd>=2
+&prereq-text.devotion.Shatter_the_Shroud [v( d.dd )]=Auspex 2, Vigor 1
+&tags.devotion.Shatter_the_Shroud [v( d.dt )]=vampire
+&xp.devotion.Shatter_the_Shroud [v( d.xpcd )]=2
 
-&devotion.Stalwart_Servant DD=-
-&prerequisite.devotion.Stalwart_Servant DD=
+&devotion.Stalwart_Servant [v( d.dd )]=-
+&prerequisite.devotion.Stalwart_Servant [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Dominate:3 discipline.Resilience:1 )
-&prereq-text.devotion.Stalwart_Servant DD=Dominate 3, Resilience 1
-&tags.devotion.Stalwart_Servant D:T=vampire
-&xp.devotion.Stalwart_Servant XP Cost Database <xpcd>=2
+&prereq-text.devotion.Stalwart_Servant [v( d.dd )]=Dominate 3, Resilience 1
+&tags.devotion.Stalwart_Servant [v( d.dt )]=vampire
+&xp.devotion.Stalwart_Servant [v( d.xpcd )]=2
 
-&devotion.Subsume_the_Lesser_Beast DD=
+&devotion.Subsume_the_Lesser_Beast [v( d.dd )]=
 	Manipulation + Animal Ken + Animalism – animal’s Resolve
-&prerequisite.devotion.Subsume_the_Lesser_Beast DD=
+&prerequisite.devotion.Subsume_the_Lesser_Beast [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Animalism:4 discipline.Dominate:2 )
-&prereq-text.devotion.Subsume_the_Lesser_Beast DD=Animalism 4, Dominate 2
-&tags.devotion.Subsume_the_Lesser_Beast D:T=vampire
-&xp.devotion.Subsume_the_Lesser_Beast XP Cost Database <xpcd>=3
+&prereq-text.devotion.Subsume_the_Lesser_Beast [v( d.dd )]=
+	Animalism 4, Dominate 2
+&tags.devotion.Subsume_the_Lesser_Beast [v( d.dt )]=vampire
+&xp.devotion.Subsume_the_Lesser_Beast [v( d.xpcd )]=3
 
-&devotion.Summoning DD=
+&devotion.Summoning [v( d.dd )]=
 	Manipulation + Persuasion + (Dominate or Majesty) 
 	vs. Composure + Blood Potency
-&prerequisite.devotion.Summoning DD=
+&prerequisite.devotion.Summoning [v( d.dd )]=
 	u( .at_least_one, %0, discipline.Dominate:4 discipline.Majesty:4 )
-&prereq-text.devotion.Summoning DD=Dominate 4 or Majesty 4
-&tags.devotion.Summoning D:T=vampire
-&xp.devotion.Summoning XP Cost Database <xpcd>=2
+&prereq-text.devotion.Summoning [v( d.dd )]=Dominate 4 or Majesty 4
+&tags.devotion.Summoning [v( d.dt )]=vampire
+&xp.devotion.Summoning [v( d.xpcd )]=2
 
-&devotion.Suns_Brutal_Dreamscape DD=
+&devotion.Suns_Brutal_Dreamscape [v( d.dd )]=
 	Manipulation + Empathy + Nightmare, vs. Composure + Blood Potency
-&prerequisite.devotion.Suns_Brutal_Dreamscape DD=u( .at_least_all, %0, discipline.Nightmare:5 discipline.Resilience:2 )
-&prereq-text.devotion.Suns_Brutal_Dreamscape DD=Nightmare 5, Resilience 2
-&tags.devotion.Suns_Brutal_Dreamscape D:T=vampire
-&xp.devotion.Suns_Brutal_Dreamscape XP Cost Database <xpcd>=4
+&prerequisite.devotion.Suns_Brutal_Dreamscape [v( d.dd )]=
+	u( .at_least_all, %0, discipline.Nightmare:5 discipline.Resilience:2 )
+&prereq-text.devotion.Suns_Brutal_Dreamscape [v( d.dd )]=
+	Nightmare 5, Resilience 2
+&tags.devotion.Suns_Brutal_Dreamscape [v( d.dt )]=vampire
+&xp.devotion.Suns_Brutal_Dreamscape [v( d.xpcd )]=4
 
-&devotion.Touch_of_Deprivation DD=
+&devotion.Touch_of_Deprivation [v( d.dd )]=
 	Intelligence + Medicine + Auspex vs. Resolve + Blood Potency
-&prerequisite.devotion.Touch_of_Deprivation DD=
+&prerequisite.devotion.Touch_of_Deprivation [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Obfuscate:4 discipline.Dominate:2 )
-&prereq-text.devotion.Touch_of_Deprivation DD=Obfuscate 4, Dominate 2
-&tags.devotion.Touch_of_Deprivation D:T=vampire
-&xp.devotion.Touch_of_Deprivation XP Cost Database <xpcd>=3
+&prereq-text.devotion.Touch_of_Deprivation [v( d.dd )]=Obfuscate 4, Dominate 2
+&tags.devotion.Touch_of_Deprivation [v( d.dt )]=vampire
+&xp.devotion.Touch_of_Deprivation [v( d.xpcd )]=3
 
-&devotion.Undying_Familiar DD=-
-&prerequisite.devotion.Undying_Familiar DD=
+&devotion.Undying_Familiar [v( d.dd )]=-
+&prerequisite.devotion.Undying_Familiar [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Animalism:2 discipline.Resilience:2 )
-&prereq-text.devotion.Undying_Familiar DD=Animalism 2, Resilience 2
-&tags.devotion.Undying_Familiar D:T=vampire
-&xp.devotion.Undying_Familiar XP Cost Database <xpcd>=1
+&prereq-text.devotion.Undying_Familiar [v( d.dd )]=Animalism 2, Resilience 2
+&tags.devotion.Undying_Familiar [v( d.dt )]=vampire
+&xp.devotion.Undying_Familiar [v( d.xpcd )]=1
 
-&devotion.Wet_Dreams DD=
+&devotion.Wet_Dreams [v( d.dd )]=
 	Manipulation + Empathy + Majesty, vs. Composure + Blood Potency
-&prerequisite.devotion.Wet_Dreams DD=
+&prerequisite.devotion.Wet_Dreams [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Majesty:2 discipline.Nightmare:2 )
-&prereq-text.devotion.Wet_Dreams DD=Majesty 2, Nightmare 2
-&tags.devotion.Wet_Dreams D:T=vampire
-&xp.devotion.Wet_Dreams XP Cost Database <xpcd>=2
+&prereq-text.devotion.Wet_Dreams [v( d.dd )]=Majesty 2, Nightmare 2
+&tags.devotion.Wet_Dreams [v( d.dt )]=vampire
+&xp.devotion.Wet_Dreams [v( d.xpcd )]=2
 
-&devotion.The_Wish DD=Manipulation + Persuasion + Majesty
-&prerequisite.devotion.The_Wish DD=
+&devotion.The_Wish [v( d.dd )]=Manipulation + Persuasion + Majesty
+&prerequisite.devotion.The_Wish [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Celerity:2 discipline.Majesty:4 )
-&prereq-text.devotion.The_Wish DD=Celerity 2, Majesty 4
-&tags.devotion.The_Wish D:T=vampire
-&xp.devotion.The_Wish XP Cost Database <xpcd>=2
+&prereq-text.devotion.The_Wish [v( d.dd )]=Celerity 2, Majesty 4
+&tags.devotion.The_Wish [v( d.dt )]=vampire
+&xp.devotion.The_Wish [v( d.xpcd )]=2
 
-&devotion.Vermin_Flood DD=
+&devotion.Vermin_Flood [v( d.dd )]=
 	Summons massive swarm of vermin. Do lethal damage to everything in an area.
-&prerequisite.devotion.Vermin_Flood DD=
+&prerequisite.devotion.Vermin_Flood [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Animalism:3 discipline.Celerity:2 )
-&prereq-text.devotion.Vermin_Flood DD=Animalism 3, Celerity 2
-&tags.devotion.Vermin_Flood D:T=vampire
-&xp.devotion.Vermin_Flood xpcd=4
+&prereq-text.devotion.Vermin_Flood [v( d.dd )]=Animalism 3, Celerity 2
+&tags.devotion.Vermin_Flood [v( d.dt )]=vampire
+&xp.devotion.Vermin_Flood [v( d.xpcd )]=4
 
-&devotion.Wraith's_Presence DD=Wits + Subterfuge + Obfuscate
-&prerequisite.devotion.Wraith's_Presence DD=
+&devotion.Wraith's_Presence [v( d.dd )]=Wits + Subterfuge + Obfuscate
+&prerequisite.devotion.Wraith's_Presence [v( d.dd )]=
 	u( .at_least_all, %0, discipline.Obfuscate:3 discipline.Nightmare:1 )
-&prereq-text.devotion.Wraith's_Presence DD=Obfuscate 3, Nightmare 1
-&tags.devotion.Wraith's_Presence D:T=vampire
-&xp.devotion.Wraith's_Presence XP Cost Database <xpcd>=2
+&prereq-text.devotion.Wraith's_Presence [v( d.dd )]=Obfuscate 3, Nightmare 1
+&tags.devotion.Wraith's_Presence [v( d.dt )]=vampire
+&xp.devotion.Wraith's_Presence [v( d.xpcd )]=2
 
 
 // -- Blood Sorcery: Theban Sorcery --------------------------------------------
 // not listed as denied to ghouls, but we haven't added them
 // add '.ghoul' to the tags if you want them to be able to take it
 
-&discipline.theban_sorcery DD=1.2.3.4.5
-&prerequisite.discipline.theban_sorcery DD=
+&discipline.theban_sorcery [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.theban_sorcery [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Lancea et Sanctum )
-&prereq-text.discipline.theban_sorcery DD=Covenant is Lancea et Sanctum
-&tags.discipline.theban_sorcery D:T=vampire.blood sorcery.lancea et sanctum
+&prereq-text.discipline.theban_sorcery [v( d.dd )]=Covenant is Lancea et Sanctum
+&tags.discipline.theban_sorcery [v( d.dt )]=
+	vampire.blood sorcery.lancea et sanctum
 
 
 // -- Blood Sorcery: Cruac -----------------------------------------------------
 // not listed as denied to ghouls, but we haven't added them
 // add '.ghoul' to the tags if you want them to be able to take it
 
-&discipline.cruac DD=1.2.3.4.5
-&prerequisite.discipline.cruac DD=
+&discipline.cruac [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.cruac [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Circle of the Crone )
-&prereq-text.discipline.cruac DD=Covenant is Circle of the Crone
-&tags.discipline.cruac D:T=vampire.blood sorcery.circle of the crone
+&prereq-text.discipline.cruac [v( d.dd )]=Covenant is Circle of the Crone
+&tags.discipline.cruac [v( d.dt )]=vampire.blood sorcery.circle of the crone
 
 
 // -- Coils --------------------------------------------------------------------
 // may not be taken by ghouls
 
-&discipline.coil_of_the_ascendant DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_the_ascendant DD=
+&discipline.coil_of_the_ascendant [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_ascendant [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.discipline.coil_of_the_ascendant DD=Covenant is Ordo Dracul
-&tags.discipline.coil_of_the_ascendant D:T=vampire.coil.ordo dracul
+&prereq-text.discipline.coil_of_the_ascendant [v( d.dd )]=
+	Covenant is Ordo Dracul
+&tags.discipline.coil_of_the_ascendant [v( d.dt )]=vampire.coil.ordo dracul
 
-&discipline.coil_of_the_wyrm DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_the_wyrm DD=
+&discipline.coil_of_the_wyrm [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_wyrm [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.discipline.coil_of_the_wyrm DD=Covenant is Ordo Dracul
-&tags.discipline.coil_of_the_wyrm D:T=vampire.coil.ordo dracul
+&prereq-text.discipline.coil_of_the_wyrm [v( d.dd )]=Covenant is Ordo Dracul
+&tags.discipline.coil_of_the_wyrm [v( d.dt )]=vampire.coil.ordo dracul
 
-&discipline.coil_of_the_voivode DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_the_voivode DD=
+&discipline.coil_of_the_voivode [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_voivode [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.discipline.coil_of_the_voivode DD=Covenant is Ordo Dracul
-&tags.discipline.coil_of_the_voivode D:T=vampire.coil.ordo dracul
+&prereq-text.discipline.coil_of_the_voivode [v( d.dd )]=Covenant is Ordo Dracul
+&tags.discipline.coil_of_the_voivode [v( d.dt )]=vampire.coil.ordo dracul
 
 
 
@@ -775,152 +841,159 @@ Level 3 for very minor items
 /* 
 page 107), and simply knowing the Discipline caps Humanity at 10 – Crúac dots.
 
-Could you not just make the Miracles have a prerequisite of their level in Humanity?
+Could you not just make the Miracles have a prerequisite of their level in 
+Humanity?
 
-A Dragon can have no more dots in each non-Mystery Coil than he possesses dots in the Status (Ordo Dracul) Merit
+A Dragon can have no more dots in each non-Mystery Coil than he possesses dots 
+in the Status (Ordo Dracul) Merit
 
-Ritualist characters may buy rites and miracles separately from the Ritual Discipline itself for two Experiences each. Every dot of Crúac or Theban Sorcery (including the first) also comes with a “free” rite or miracle, taught by the covenant as part of ongoing training. If a ritualist has lost the status needed to learn new rituals, he can still buy new dots of the Ritual Discipline, but does not receive free rituals.
+Ritualist characters may buy rites and miracles separately from the Ritual 
+Discipline itself for two Experiences each. Every dot of Crúac or Theban 
+Sorcery (including the first) also comes with a “free” rite or miracle, taught 
+by the covenant as part of ongoing training. If a ritualist has lost the status 
+needed to learn new rituals, he can still buy new dots of the Ritual Discipline, 
+but does not receive free rituals.
 
 --------------------------------------------------------------------------------
 -- Cruac -----------------------------------------------------------------------
 */
 
-&discipline.cruac DD=1.2.3.4.5
-&prerequisite.discipline.cruac DD=
+&discipline.cruac [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.cruac [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, merit.status_(circle_of_the_crone), 1 )
 	)
-&prereq-text.discipline.cruac DD=
+&prereq-text.discipline.cruac [v( d.dd )]=
 	Circle of the Crone, 
 	Status (Circle of the Crone) 1
-&tags.discipline.cruac D:T=vampire.circle of the crone
+&tags.discipline.cruac [v( d.dt )]=vampire.circle of the crone
 
 
 // -- Rites --
 
-&class.rite.? DD=flag
+&class.rite.? [v( d.dd )]=flag
 
-&rite.pangs_of_proserpina DD=1
-&prerequisite.rite.pangs_of_proserpina DD=
+&rite.pangs_of_proserpina [v( d.dd )]=1
+&prerequisite.rite.pangs_of_proserpina [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.pangs_of_proserpina )
 	)
-&prereq-text.rite.pangs_of_proserpina DD=
+&prereq-text.rite.pangs_of_proserpina [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.pangs_of_proserpina D:T=vampire.circle of the crone
+&tags.rite.pangs_of_proserpina [v( d.dt )]=vampire.circle of the crone
 
-&rite.rigor_mortis DD=1
-&prerequisite.rite.rigor_mortis DD=
+&rite.rigor_mortis [v( d.dd )]=1
+&prerequisite.rite.rigor_mortis [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.rigor_mortis )
 	)
-&prereq-text.rite.rigor_mortis DD=
+&prereq-text.rite.rigor_mortis [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.rigor_mortis D:T=vampire.circle of the crone
+&tags.rite.rigor_mortis [v( d.dt )]=vampire.circle of the crone
 
-&rite.cheval DD=2
-&prerequisite.rite.cheval DD=
+&rite.cheval [v( d.dd )]=2
+&prerequisite.rite.cheval [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.cheval )
 	)
-&prereq-text.rite.cheval DD=
+&prereq-text.rite.cheval [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.cheval D:T=vampire.circle of the crone
+&tags.rite.cheval [v( d.dt )]=vampire.circle of the crone
 
-&rite.the_hydra's_vitae DD=2
-&prerequisite.rite.the_hydra's_vitae DD=
+&rite.the_hydra's_vitae [v( d.dd )]=2
+&prerequisite.rite.the_hydra's_vitae [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.the_hydra's_vitae )
 	)
-&prereq-text.rite.the_hydra's_vitae DD=
+&prereq-text.rite.the_hydra's_vitae [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.the_hydra's_vitae D:T=vampire.circle of the crone
+&tags.rite.the_hydra's_vitae [v( d.dt )]=vampire.circle of the crone
 
-&rite.deflection_of_wooden_doom DD=3
-&prerequisite.rite.deflection_of_wooden_doom DD=
+&rite.deflection_of_wooden_doom [v( d.dd )]=3
+&prerequisite.rite.deflection_of_wooden_doom [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.deflection_of_wooden_doom )
 	)
-&prereq-text.rite.deflection_of_wooden_doom DD=
+&prereq-text.rite.deflection_of_wooden_doom [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.deflection_of_wooden_doom D:T=vampire.circle of the crone
+&tags.rite.deflection_of_wooden_doom [v( d.dt )]=vampire.circle of the crone
 
-&rite.shadowcall DD=3
-&prerequisite.rite.shadowcall DD=
+&rite.shadowcall [v( d.dd )]=3
+&prerequisite.rite.shadowcall [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
 	)
-&prereq-text.rite.shadowcall DD=
+&prereq-text.rite.shadowcall [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.shadowcall D:T=vampire.circle of the crone
+&tags.rite.shadowcall [v( d.dt )]=vampire.circle of the crone
 
-&rite.touch_of_the_morrigan DD=3
-&prerequisite.rite.touch_of_the_morrigan DD=
+&rite.touch_of_the_morrigan [v( d.dd )]=3
+&prerequisite.rite.touch_of_the_morrigan [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
 	)
-&prereq-text.rite.touch_of_the_morrigan DD=
+&prereq-text.rite.touch_of_the_morrigan [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.touch_of_the_morrigan D:T=vampire.circle of the crone
+&tags.rite.touch_of_the_morrigan [v( d.dt )]=vampire.circle of the crone
 
-&rite.blood_price DD=4
-&prerequisite.rite.blood_price DD=
+&rite.blood_price [v( d.dd )]=4
+&prerequisite.rite.blood_price [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.blood_price )
 	)
-&prereq-text.rite.blood_price DD=
+&prereq-text.rite.blood_price [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.blood_price D:T=vampire.circle of the crone
+&tags.rite.blood_price [v( d.dt )]=vampire.circle of the crone
 
-&rite.willful_vitae DD=4
-&prerequisite.rite.rigor_mortis DD=
+&rite.willful_vitae [v( d.dd )]=4
+&prerequisite.rite.rigor_mortis [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.rigor_mortis )
 	)
-&prereq-text.rite.rigor_mortis DD=
+&prereq-text.rite.rigor_mortis [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.rigor_mortis D:T=vampire.circle of the crone
+&tags.rite.rigor_mortis [v( d.dt )]=vampire.circle of the crone
 
-&rite.blood_blight DD=4
-&prerequisite.rite.blood_blight DD=
+&rite.blood_blight [v( d.dd )]=4
+&prerequisite.rite.blood_blight [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.blood_blight )
 	)
-&prereq-text.rite.blood_blight DD=
+&prereq-text.rite.blood_blight [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.blood_blight D:T=vampire.circle of the crone
+&tags.rite.blood_blight [v( d.dt )]=vampire.circle of the crone
 
-&rite.feeding_the_crone DD=4
-&prerequisite.rite.feeding_the_crone DD=
+&rite.feeding_the_crone [v( d.dd )]=4
+&prerequisite.rite.feeding_the_crone [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
 		u( .at_least, %0, discipline.cruac, v( rite.feeding_the_crone )
 	)
-&prereq-text.rite.feeding_the_crone DD=
+&prereq-text.rite.feeding_the_crone [v( d.dd )]=
 	Circle of the Crone, 
 	Cruac at this level or higher
-&tags.rite.feeding_the_crone D:T=vampire.circle of the crone
+&tags.rite.feeding_the_crone [v( d.dt )]=vampire.circle of the crone
 
 
 /*
@@ -928,22 +1001,22 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 -- Theban Sorcery --------------------------------------------------------------
 */
 
-&discipline.theban_sorcery DD=1.2.3.4.5
-&prerequisite.discipline.theban_sorcery DD=
+&discipline.theban_sorcery [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.theban_sorcery [v( d.dd )]=
 	cand( 
 		u( .is, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, merit.status_(lancea_et_sanctum), 1 )
 	)
-&prereq-text.discipline.theban_sorcery DD=Lancea et Sanctum, 
+&prereq-text.discipline.theban_sorcery [v( d.dd )]=Lancea et Sanctum, 
 	Status (Lancea et Sanctum) 1
-&tags.discipline.theban_sorcery D:T=vampire.lancea et sanctum
+&tags.discipline.theban_sorcery [v( d.dt )]=vampire.lancea et sanctum
 
 // -- Mircales --
 
-&class.miracle.? DD=flag
+&class.miracle.? [v( d.dd )]=flag
 
-&miracle.blood_scourge DD=1
-&prerequisite.miracle.blood_scourge DD=
+&miracle.blood_scourge [v( d.dd )]=1
+&prerequisite.miracle.blood_scourge [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -952,15 +1025,15 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 		), 
 		u( .at_least, %0, advantage.humanity, v( rite.blood_scourge ))
 	)
-&prereq-text.miracle.blood_scourge DD=
+&prereq-text.miracle.blood_scourge [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.feeding_the_crone D:T=vampire.lancea et sanctum
+&tags.miracle.feeding_the_crone [v( d.dt )]=vampire.lancea et sanctum
 
 
-&miracle.vitae_reliquary DD=1
-&prerequisite.miracle.vitae_reliquary DD=
+&miracle.vitae_reliquary [v( d.dd )]=1
+&prerequisite.miracle.vitae_reliquary [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -969,15 +1042,15 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 		), 
 		u( .at_least, %0, advantage.humanity, v( miracle.vitae_reliquary ))
 	)
-&prereq-text.miracle.vitae_reliquary DD=
+&prereq-text.miracle.vitae_reliquary [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.vitae_reliquary D:T=vampire.lancea et sanctum
+&tags.miracle.vitae_reliquary [v( d.dt )]=vampire.lancea et sanctum
 
 
-&miracle.blandishment_of_sin DD=1
-&prerequisite.miracle.blandishment_of_sin DD=
+&miracle.blandishment_of_sin [v( d.dd )]=1
+&prerequisite.miracle.blandishment_of_sin [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -986,15 +1059,15 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 		), 
 		u( .at_least, %0, advantage.humanity, v( miracle.blandishment_of_sin ))
 	)
-&prereq-text.miracle.blandishment_of_sin DD=
+&prereq-text.miracle.blandishment_of_sin [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.blandishment_of_sin D:T=vampire.lancea et sanctum
+&tags.miracle.blandishment_of_sin [v( d.dt )]=vampire.lancea et sanctum
 
 
-&miracle.curse_of_babel DD=2
-&prerequisite.miracle.curse_of_babel DD=
+&miracle.curse_of_babel [v( d.dd )]=2
+&prerequisite.miracle.curse_of_babel [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -1003,15 +1076,15 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 		), 
 		u( .at_least, %0, advantage.humanity, v( miracle.curse_of_babel ))
 	)
-&prereq-text.miracle.curse_of_babel DD=
+&prereq-text.miracle.curse_of_babel [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.curse_of_babel D:T=vampire.lancea et sanctum
+&tags.miracle.curse_of_babel [v( d.dt )]=vampire.lancea et sanctum
 
 
-&miracle.liar's_plague DD=2
-&prerequisite.miracle.liar's_plague DD=
+&miracle.liar's_plague [v( d.dd )]=2
+&prerequisite.miracle.liar's_plague [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -1020,15 +1093,15 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 		), 
 		u( .at_least, %0, advantage.humanity, v( miracle.liar's_plague ))
 	)
-&prereq-text.miracle.liar's_plague DD=
+&prereq-text.miracle.liar's_plague [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.liar's_plague D:T=vampire.lancea et sanctum
+&tags.miracle.liar's_plague [v( d.dt )]=vampire.lancea et sanctum
 
 
-&miracle.malediction_of_despair DD=3
-&prerequisite.miracle.malediction_of_despair DD=
+&miracle.malediction_of_despair [v( d.dd )]=3
+&prerequisite.miracle.malediction_of_despair [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -1040,15 +1113,15 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 			v( miracle.malediction_of_despair )
 		)
 	)
-&prereq-text.miracle.malediction_of_despair DD=
+&prereq-text.miracle.malediction_of_despair [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.malediction_of_despair D:T=vampire.lancea et sanctum
+&tags.miracle.malediction_of_despair [v( d.dt )]=vampire.lancea et sanctum
 
 
-&miracle.gift_of_lazarus DD=4
-&prerequisite.miracle.gift_of_lazarus DD=
+&miracle.gift_of_lazarus [v( d.dd )]=4
+&prerequisite.miracle.gift_of_lazarus [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -1057,15 +1130,15 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 		), 
 		u( .at_least, %0, advantage.humanity, v( miracle.gift_of_lazarus ))
 	)
-&prereq-text.miracle.gift_of_lazarus DD=
+&prereq-text.miracle.gift_of_lazarus [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.gift_of_lazarus D:T=vampire.lancea et sanctum
+&tags.miracle.gift_of_lazarus [v( d.dt )]=vampire.lancea et sanctum
 
 
-&miracle.stigmata DD=4
-&prerequisite.miracle.stigmata DD=
+&miracle.stigmata [v( d.dd )]=4
+&prerequisite.miracle.stigmata [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -1074,15 +1147,15 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 		), 
 		u( .at_least, %0, advantage.humanity, v( miracle.stigmata ))
 	)
-&prereq-text.miracle.stigmata DD=
+&prereq-text.miracle.stigmata [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.stigmata D:T=vampire.lancea et sanctum
+&tags.miracle.stigmata [v( d.dt )]=vampire.lancea et sanctum
 
 
-&miracle.transubstatiation DD=4
-&prerequisite.miracle.transubstatiation DD=
+&miracle.transubstatiation [v( d.dd )]=4
+&prerequisite.miracle.transubstatiation [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, lancea et sanctum ), 
 		u( .at_least, %0, 
@@ -1091,11 +1164,11 @@ Ritualist characters may buy rites and miracles separately from the Ritual Disci
 		), 
 		u( .at_least, %0, advantage.humanity, v( miracle.transubstatiation ))
 	)
-&prereq-text.miracle.transubstatiation DD=
+&prereq-text.miracle.transubstatiation [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.transubstatiation D:T=vampire.lancea et sanctum
+&tags.miracle.transubstatiation [v( d.dt )]=vampire.lancea et sanctum
 
 /* 
 --------------------------------------------------------------------------------
@@ -1107,14 +1180,16 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 
 */
 
-&bio.mystery_coil DD=Coil of the Ascendant.Coil of the Wyrm.Coil of the Voivode
-&prerequisite.bio.mystery_coil DD=u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.bio.mystery_coil DD=Covenant is Ordo Dracul
-&tags.bio.mystery_coil D:T=vampire.ordo dracul
+&bio.mystery_coil [v( d.dd )]=
+	Coil of the Ascendant.Coil of the Wyrm.Coil of the Voivode
+&prerequisite.bio.mystery_coil [v( d.dd )]=
+	u( .is_full, %0, bio.covenant, Ordo Dracul )
+&prereq-text.bio.mystery_coil [v( d.dd )]=Covenant is Ordo Dracul
+&tags.bio.mystery_coil [v( d.dt )]=vampire.ordo dracul
 
 
-&discipline.coil_of_the_ascendant DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_the_ascendant DD=
+&discipline.coil_of_the_ascendant [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_ascendant [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
 		cor( 
@@ -1126,10 +1201,11 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 			)
 		)
 	)
-&prereq-text.discipline.coil_of_the_ascendant DD=Covenant is Ordo Dracul, 
+&prereq-text.discipline.coil_of_the_ascendant [v( d.dd )]=
+	Covenant is Ordo Dracul, 
 	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
-&tags.discipline.coil_of_the_ascendant D:T=vampire.coil.ordo dracul
-&xp.discipline.coil_of_the_ascendant xpcd=
+&tags.discipline.coil_of_the_ascendant [v( d.dt )]=vampire.coil.ordo dracul
+&xp.discipline.coil_of_the_ascendant [v( d.xpcd )]=
 	if( 
 		u( .is_full, %0, bio.mystery_coil, Coil of the Ascendant ), 
 		u( cost.standard, 3, %1, %2 ), 
@@ -1137,8 +1213,8 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	)
 
 
-&discipline.coil_of_the_wyrm DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_the_wyrm DD=
+&discipline.coil_of_the_wyrm [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_wyrm [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
 		cor( 
@@ -1150,10 +1226,10 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 			)
 		)
 	)
-&prereq-text.discipline.coil_of_the_wyrm DD=Covenant is Ordo Dracul, 
+&prereq-text.discipline.coil_of_the_wyrm [v( d.dd )]=Covenant is Ordo Dracul, 
 	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
-&tags.discipline.coil_of_the_wyrm D:T=vampire.coil.ordo dracul
-&xp.discipline.coil_of_the_wyrm xpcd=
+&tags.discipline.coil_of_the_wyrm [v( d.dt )]=vampire.coil.ordo dracul
+&xp.discipline.coil_of_the_wyrm [v( d.xpcd )]=
 	if( 
 		u( .is_full, %0, bio.mystery_coil, Coil of the Wyrm ), 
 		u( cost.standard, 3, %1, %2 ), 
@@ -1161,8 +1237,8 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 	)
 
 
-&discipline.coil_of_the_voivode DD=1.2.3.4.5
-&prerequisite.discipline.coil_of_the_voivode DD=
+&discipline.coil_of_the_voivode [v( d.dd )]=1.2.3.4.5
+&prerequisite.discipline.coil_of_the_voivode [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, Ordo Dracul ), 
 		cor( 
@@ -1174,10 +1250,10 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 			)
 		)
 	)
-&prereq-text.discipline.coil_of_the_voivode DD=Covenant is Ordo Dracul, 
+&prereq-text.discipline.coil_of_the_voivode [v( d.dd )]=Covenant is Ordo Dracul, 
 	If not Mystery Coil then may not be higher than Status (Ordo Dracul)
-&tags.discipline.coil_of_the_voivode D:T=vampire.coil.ordo dracul
-&xp.discipline.coil_of_the_voivode xpcd=
+&tags.discipline.coil_of_the_voivode [v( d.dt )]=vampire.coil.ordo dracul
+&xp.discipline.coil_of_the_voivode [v( d.xpcd )]=
 	if( 
 		u( .is_full, %0, bio.mystery_coil, Coil of the Voivode ), 
 		u( cost.standard, 3, %1, %2 ), 
@@ -1187,95 +1263,95 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 // -- scales --
 // A little trickery for XP. 2 - (do they have the discount? 1 or 0)
 
-&class.scale.? DD=flag
+&class.scale.? [v( d.dd )]=flag
 
-&scale.Day-Wake_Conditioning DD=Coil of the Ascendant:1
-&prerequisite.scale.Day-Wake_Conditioning DD=
+&scale.Day-Wake_Conditioning [v( d.dd )]=Coil of the Ascendant:1
+&prerequisite.scale.Day-Wake_Conditioning [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Day-Wake_Conditioning DD=Covenant is Ordo Dracul
-&tags.scale.Day-Wake_Conditioning D:T=vampire.ordo dracul
-&xp.scale.Day-Wake_Conditioning xpcd=
+&prereq-text.scale.Day-Wake_Conditioning [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Day-Wake_Conditioning [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Day-Wake_Conditioning [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.coil_of_the_ascendant, 1 ))
 
 
-&scale.Epidermal_Shielding_Bath DD=Coil of the Ascendant:5
-&prerequisite.scale.Epidermal_Shielding_Bath DD=
+&scale.Epidermal_Shielding_Bath [v( d.dd )]=Coil of the Ascendant:5
+&prerequisite.scale.Epidermal_Shielding_Bath [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Epidermal_Shielding_Bath DD=Covenant is Ordo Dracul
-&tags.scale.Epidermal_Shielding_Bath D:T=vampire.ordo dracul
-&xp.scale.Epidermal_Shielding_Bath xpcd=
+&prereq-text.scale.Epidermal_Shielding_Bath [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Epidermal_Shielding_Bath [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Epidermal_Shielding_Bath [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil of the Ascendant, 5 ))
 
 
-&scale.Flesh_Graft_Treatment DD=Coil of the Ascendant:4
-&prerequisite.scale.Flesh_Graft_Treatment DD=
+&scale.Flesh_Graft_Treatment [v( d.dd )]=Coil of the Ascendant:4
+&prerequisite.scale.Flesh_Graft_Treatment [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Flesh_Graft_Treatment DD=Covenant is Ordo Dracul
-&tags.scale.Flesh_Graft_Treatment D:T=vampire.ordo dracul
-&xp.scale.Flesh_Graft_Treatment xpcd=
+&prereq-text.scale.Flesh_Graft_Treatment [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Flesh_Graft_Treatment [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Flesh_Graft_Treatment [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Ascendant, 4 ))
 
 
-&scale.Augmented_Vitae_Draught DD=Coil of the Wyrm:4
-&prerequisite.scale.Augmented_Vitae_Draught DD=
+&scale.Augmented_Vitae_Draught [v( d.dd )]=Coil of the Wyrm:4
+&prerequisite.scale.Augmented_Vitae_Draught [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Augmented_Vitae_Draught DD=Covenant is Ordo Dracul
-&tags.scale.Augmented_Vitae_Draught D:T=vampire.ordo dracul
-&xp.scale.Augmented_Vitae_Draught xpcd=
+&prereq-text.scale.Augmented_Vitae_Draught [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Augmented_Vitae_Draught [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Augmented_Vitae_Draught [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Wyrm, 4 ))
 
 
-&scale.Kindred_Sense_Endowment DD=Coil of the Wyrm:2
-&prerequisite.scale.Kindred_Sense_Endowment DD=
+&scale.Kindred_Sense_Endowment [v( d.dd )]=Coil of the Wyrm:2
+&prerequisite.scale.Kindred_Sense_Endowment [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Kindred_Sense_Endowment DD=Covenant is Ordo Dracul
-&tags.scale.Kindred_Sense_Endowment D:T=vampire.ordo dracul
-&xp.scale.Kindred_Sense_Endowment xpcd=
+&prereq-text.scale.Kindred_Sense_Endowment [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Kindred_Sense_Endowment [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Kindred_Sense_Endowment [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Wyrm, 2 ))
 
 
-&scale.Surgical_Heart_Removal DD=Coil of the Wyrm:5
-&prerequisite.scale.Surgical_Heart_Removal DD=
+&scale.Surgical_Heart_Removal [v( d.dd )]=Coil of the Wyrm:5
+&prerequisite.scale.Surgical_Heart_Removal [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Surgical_Heart_Removal DD=Covenant is Ordo Dracul
-&tags.scale.Surgical_Heart_Removal D:T=vampire.ordo dracul
-&xp.scale.Surgical_Heart_Removal xpcd=
+&prereq-text.scale.Surgical_Heart_Removal [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Surgical_Heart_Removal [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Surgical_Heart_Removal [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Wyrm, 5 ))
 
 
-&scale.Blood_Cleansing_Ritual DD=Coil of the Voivode:1
-&prerequisite.scale.Blood_Cleansing_Ritual DD=
+&scale.Blood_Cleansing_Ritual [v( d.dd )]=Coil of the Voivode:1
+&prerequisite.scale.Blood_Cleansing_Ritual [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Blood_Cleansing_Ritual DD=Covenant is Ordo Dracul
-&tags.scale.Blood_Cleansing_Ritual D:T=vampire.ordo dracul
-&xp.scale.Blood_Cleansing_Ritual xpcd=
+&prereq-text.scale.Blood_Cleansing_Ritual [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Blood_Cleansing_Ritual [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Blood_Cleansing_Ritual [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Voivode, 1 ))
 
 
-&scale.Fealty's_Reward DD=Coil of the Voivode:3
-&prerequisite.scale.Fealty's_Reward DD=
+&scale.Fealty's_Reward [v( d.dd )]=Coil of the Voivode:3
+&prerequisite.scale.Fealty's_Reward [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Fealty's_Reward DD=Covenant is Ordo Dracul
-&tags.scale.Fealty's_Reward D:T=vampire.ordo dracul
-&xp.scale.Fealty's_Reward xpcd=
+&prereq-text.scale.Fealty's_Reward [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Fealty's_Reward [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Fealty's_Reward [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Voivode, 3 ))
 
 
-&scale.Mass_Embrace DD=Coil of the Voivode:5
-&prerequisite.scale.Mass_Embrace DD=
+&scale.Mass_Embrace [v( d.dd )]=Coil of the Voivode:5
+&prerequisite.scale.Mass_Embrace [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Mass_Embrace DD=Covenant is Ordo Dracul
-&tags.scale.Mass_Embrace D:T=vampire.ordo dracul
-&xp.scale.Mass_Embrace xpcd=
+&prereq-text.scale.Mass_Embrace [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Mass_Embrace [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Mass_Embrace [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Voivode, 5 ))
 
 
-&scale.Sanguinary_Invigoration DD=Coil of the Voivode:2
-&prerequisite.scale.Sanguinary_Invigoration DD=
+&scale.Sanguinary_Invigoration [v( d.dd )]=Coil of the Voivode:2
+&prerequisite.scale.Sanguinary_Invigoration [v( d.dd )]=
 	u( .is_full, %0, bio.covenant, Ordo Dracul )
-&prereq-text.scale.Sanguinary_Invigoration DD=Covenant is Ordo Dracul
-&tags.scale.Sanguinary_Invigoration D:T=vampire.ordo dracul
-&xp.scale.Sanguinary_Invigoration xpcd=
+&prereq-text.scale.Sanguinary_Invigoration [v( d.dd )]=Covenant is Ordo Dracul
+&tags.scale.Sanguinary_Invigoration [v( d.dt )]=vampire.ordo dracul
+&xp.scale.Sanguinary_Invigoration [v( d.xpcd )]=
 	sub( 2, u( .at_least, %0, discipline.Coil_of_the_Voivode, 2 ))
 
 
@@ -1286,9 +1362,19 @@ A Dragon can have no more dots in each non-Mystery Coil than he possesses dots i
 --=-=-=-=-=-=-=-=-=-=
 
 
-System: A Dragon learns new tiers in his Mystery Coil for three Experiences per dot, and during character creation a player may spend one of his starting Discipline dots to take a dot in his Mystery Coil. Learning Coils outside a Dragon's chosen Mystery is possible, but the ideological and personal differences between the adherents of different mysteries mean that a Dragon from a different path may have to prove himself. A Dragon can have no more dots in each non-Mystery Coil than he possesses dots in the Status (Ordo Dracul) Merit. Non- Mystery Coils cost four Experiences per new dot, and cannot be learned during character creation.
+System: A Dragon learns new tiers in his Mystery Coil for three Experiences per 
+dot, and during character creation a player may spend one of his starting 
+Discipline dots to take a dot in his Mystery Coil. Learning Coils outside a 
+Dragon's chosen Mystery is possible, but the ideological and personal 
+differences between the adherents of different mysteries mean that a Dragon from 
+a different path may have to prove himself. A Dragon can have no more dots in 
+each non-Mystery Coil than he possesses dots in the Status (Ordo Dracul) Merit. 
+Non- Mystery Coils cost four Experiences per new dot, and cannot be learned 
+during character creation.
 
-System: All Scales have a prerequisite Coil, a particular tier with which the Scale resonates. For Dragons who do not meet this prerequisite Scales cost two Experiences, if the prerequisite is met the Experience cost drops to one.
+System: All Scales have a prerequisite Coil, a particular tier with which the 
+Scale resonates. For Dragons who do not meet this prerequisite Scales cost two 
+Experiences, if the prerequisite is met the Experience cost drops to one.
 
 --
 
@@ -1339,7 +1425,7 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 
 */
 
-&f.allocated.disciplines cg=
+&f.allocated.disciplines [v( d.cg )]=
 	localize( strcat( 
 		setq( d, edit( lattr( %0/_discipline.* ), _DISCIPLINE., DISCIPLINE. )), 
 		setq( i, u( f.list-stats-tags, %0, discipline, get( %0/_bio.clan ))), 
@@ -1362,8 +1448,8 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 
 */
 
-&check.bio.ghoul cg=virtue vice clan
-&check.bio.vampire cg=embrace_date mask dirge clan 
+&check.bio.ghoul [v( d.cg )]=virtue vice clan
+&check.bio.vampire [v( d.cg )]=embrace_date mask dirge clan 
 	[if( u( v( d.dd )/.is_full, %0, bio.covenant, Ordo Dracul ), mystery_coil )]
 
 
@@ -1414,11 +1500,11 @@ currently:
 		%]
 	)
 
-&d.vampire.favored_attributes.daeva cg=dexterity manipulation
-&d.vampire.favored_attributes.gangrel cg=composure stamina
-&d.vampire.favored_attributes.mekhet cg=intelligence wits
-&d.vampire.favored_attributes.nosferatu cg=composure strength
-&d.vampire.favored_attributes.ventrue cg=presence resolve
+&d.vampire.favored_attributes.daeva [v( d.cg )]=dexterity manipulation
+&d.vampire.favored_attributes.gangrel [v( d.cg )]=composure stamina
+&d.vampire.favored_attributes.mekhet [v( d.cg )]=intelligence wits
+&d.vampire.favored_attributes.nosferatu [v( d.cg )]=composure strength
+&d.vampire.favored_attributes.ventrue [v( d.cg )]=presence resolve
 
 /*
 --------------------------------------------------------------------------------
@@ -1426,7 +1512,7 @@ currently:
 
 */
 
-&check.chargen.vampire cg=
+&check.chargen.vampire [v( d.cg )]=
 	strcat( 
 		u( check.disciplines, %0, vampire ), 
 		case( get( %0/_bio.covenant ), 
@@ -1454,7 +1540,7 @@ currently:
 
 */
 
-&check.chargen.ghoul CG=
+&check.chargen.ghoul [v( d.cg )]=
 	u( check.disciplines, %0, ghoul )
 
 
@@ -1470,13 +1556,13 @@ ghoul: 2 disc, 2 in-clan
 
 */
 
-&check.disciplines [v(d.CG)]=
+&check.disciplines [v( d.cg )]=
 	udefault( check.disciplines.[get( %0/_bio.template )], 
 		** check failed **, 
 		%0 
 	) 
 
-&check.disciplines.vampire CG=
+&check.disciplines.vampire [v( d.cg )]=
 	strcat( 
 		setq( 9, u( f.allocated.disciplines, %0 )),
 		setq( t, ladd( %q9, ` )), 
@@ -1506,11 +1592,11 @@ ghoul: 2 disc, 2 in-clan
 		%r 
 	)
 
-&check.disciplines.vampire.total CG=u( display.check.ok-no, eq( %0, 3 ))
-&check.disciplines.vampire.in-clan CG=u( display.check.ok-no, gte( %0, 2 ))
-&check.disciplines.vampire.non-clan CG=u( display.check.ok-no, lte( %0, 1 ))
+&check.disciplines.vampire.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 3 ))
+&check.disciplines.vampire.in-clan [v( d.cg )]=u( display.check.ok-no, gte( %0, 2 ))
+&check.disciplines.vampire.non-clan [v( d.cg )]=u( display.check.ok-no, lte( %0, 1 ))
 
-&check.disciplines.ghoul CG=
+&check.disciplines.ghoul [v( d.cg )]=
 	strcat( 
 		setq( 9, u( f.allocated.disciplines, %0 )),
 		setq( t, ladd( %q9, ` )), 
@@ -1540,9 +1626,9 @@ ghoul: 2 disc, 2 in-clan
 		%r 
 	)
 
-&check.disciplines.ghoul.total CG=u( display.check.ok-no, eq( %0, 2 ))
-&check.disciplines.ghoul.in-clan CG=u( display.check.ok-no, eq( %0, 2 ))
-&check.disciplines.ghoul.non-clan CG=u( display.check.ok-no, eq( %0, 0 ))
+&check.disciplines.ghoul.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 2 ))
+&check.disciplines.ghoul.in-clan [v( d.cg )]=u( display.check.ok-no, eq( %0, 2 ))
+&check.disciplines.ghoul.non-clan [v( d.cg )]=u( display.check.ok-no, eq( %0, 0 ))
 
 
 /*
@@ -1553,7 +1639,7 @@ For each dot in Cruac, one dot of that level (or lower) in Rite
 
 */
 
-&check.disciplines.cruac cg=
+&check.disciplines.cruac [v( d.cg )]=
 	strcat( 
 		setq( r, lattr( %0/_rite.* )), 
 		setq( n, iter( %qr, get( %0/%i0 ))), 
@@ -1587,7 +1673,7 @@ For each dot in Theban Sorcery, one dot of that level (or lower) in Miracle
 
 */
 
-&check.disciplines.theban_sorcery cg=
+&check.disciplines.theban_sorcery [v( d.cg )]=
 	strcat( 
 		setq( r, lattr( %0/_miracle.* )), 
 		setq( n, iter( %qr, get( %0/%i0 ))), 
@@ -1622,7 +1708,7 @@ Character should have no Scales
 
 */
 
-&check.disciplines.coils cg=
+&check.disciplines.coils [v( d.cg )]=
 	strcat( 
 		setq( r, lattr( %0/_scale.* )), 
 
@@ -1650,13 +1736,13 @@ Character should have no Scales
 ## VAMPIRE: XP COSTS ###########################################################
 */
 
-&xp.advantage.blood_potency XP Cost Database <xpcd>=
+&xp.advantage.blood_potency [v( d.xpcd )]=
 	u( cost.standard, 5, %1, %2 )
 	
-&xp.advantage.humanity XP Cost Database <xpcd>=
+&xp.advantage.humanity [v( d.xpcd )]=
 	u( cost.standard, 2, %1, %2 )
 
-&xp.discipline XP Cost Database <xpcd>=
+&xp.discipline [v( d.xpcd )]=
 	case( 1, 
 		hastag?( %3, u( .value_full, %0, bio.clan )), 
 		u( cost.standard, 3, %1, %2 ), 
@@ -1664,8 +1750,9 @@ Character should have no Scales
 		u( cost.standard, 4, %1, %2 )
 	)
 
-&d.restricted.types.vampire xpas=discipline
-&d.restricted.stats.vampire xpas=advantage.humanity advantage.blood_potency
+&d.restricted.types.vampire [v( d.xpas )]=discipline
+&d.restricted.stats.vampire [v( d.xpas )]=
+	advantage.humanity advantage.blood_potency
 
 
 
@@ -1676,29 +1763,30 @@ Character should have no Scales
 
 // -- Bio ----------------------------------------------------------------------
 
-&bio.default.ghoul Newest Sheet Code <nsc>=
+&bio.default.ghoul [v( d.nsc )]=
 	birthdate concept clan coterie template virtue vice 
 
-&bio.default.vampire Newest Sheet Code <nsc>=embrace_date concept clan covenant template mask dirge coterie
+&bio.default.vampire [v( d.nsc )]=
+	embrace_date concept clan covenant template mask dirge coterie
 
 // -- Powers -------------------------------------------------------------------
 
-&powers.disciplines Newest Sheet Code <nsc>=
+&powers.disciplines [v( d.nsc )]=
 	iter( sort( edit( lattr( %0/_discipline.* ), _DISCIPLINE., )), 
 		ulocal( f.cheat_getstat.with_name, %0, discipline.%i0, numeric ), 
 		, | 
 	)
 
-&powers.devotions Newest Sheet Code <nsc>=
+&powers.devotions [v( d.nsc )]=
 	iter( sort( edit( lattr( %0/_devotion.* ), _DEVOTION., )), 
 		ulocal( f.cheat_getstat.name_only, %0, devotion.%i0 ), 
 		, | 
 	)
 
-&block.powers.vampire sheet: rows=u( block.powers.disciplines, %0, %1 )
-&block.powers.ghoul sheet: rows=u( block.powers.disciplines, %0, %1 )
+&block.powers.vampire [v( d.sheet )]=u( block.powers.disciplines, %0, %1 )
+&block.powers.ghoul [v( d.sheet )]=u( block.powers.disciplines, %0, %1 )
 
-&block.powers.disciplines sheet: rows=
+&block.powers.disciplines [v( d.sheet )]=
 	strcat( 
 		setq( w, 79 ), setq( t, 70 ), 
 		setq( d, u( powers.disciplines, %0 )), 
@@ -1752,7 +1840,7 @@ Character should have no Scales
 		, | 
 	)
 
-&block.powers.disciplines.rites sheet: rows=
+&block.powers.disciplines.rites [v( d.sheet )]=
 	strcat( 
 		setq( w, 79 ), setq( t, 70 ), 
 		setq( d, u( powers.disciplines.rites, %0 )), 
@@ -1778,7 +1866,7 @@ Character should have no Scales
 		, | 
 	)
 
-&block.powers.disciplines.miracles sheet: rows=
+&block.powers.disciplines.miracles [v( d.sheet )]=
 	strcat( 
 		setq( w, 79 ), setq( t, 70 ), 
 		setq( d, u( powers.disciplines.miracles, %0 )), 
@@ -1804,7 +1892,7 @@ Character should have no Scales
 		, | 
 	)
 
-&block.powers.disciplines.scales sheet: rows=
+&block.powers.disciplines.scales [v( d.sheet )]=
 	strcat( 
 		setq( w, 79 ), setq( t, 70 ), 
 		setq( d, u( powers.disciplines.scales, %0 )), 
@@ -1825,13 +1913,13 @@ Character should have no Scales
 
 // -- Advantages ---------------------------------------------------------------
 
-&traits.morality.vampire Newest Sheet Code <nsc>=
+&traits.morality.vampire [v( d.nsc )]=
 	ulocal( f.cheat_getstat.morality, %0, humanity )
 
-&traits.vitae Newest Sheet Code <nsc>=
+&traits.vitae [v( d.nsc )]=
 	u( f.cheat_getstat.pool, %0, vitae )
 
-&block.traits.vitae sheet: rows=
+&block.traits.vitae [v( d.sheet )]=
 	strcat( 
 		setq( w, 38 ), 
 		setq( t, 10 ), 
@@ -1846,7 +1934,7 @@ Character should have no Scales
 	)
 
 
-&block.traits.vampire sheet: rows=
+&block.traits.vampire [v( d.sheet )]=
 	strcat( 
 		setq( w, 38 ), 
 		setq( t, 10 ), 
@@ -1871,7 +1959,7 @@ Character should have no Scales
 	)
 
 
-&block.traits.ghoul sheet: rows=
+&block.traits.ghoul [v( d.sheet )]=
 	strcat( 
 		setq( w, 38 ), 
 		setq( t, 10 ), 
@@ -1891,13 +1979,15 @@ Character should have no Scales
 ################################################################################
 ## VAMPIRE: NOTES TO SELF ######################################################
 
-An in-clan Discipline dot costs three Experiences. Any other Discipline or blood sorcery costs four. As well, Disciplines sometimes require teachers
+An in-clan Discipline dot costs three Experiences. Any other Discipline or blood 
+sorcery costs four. As well, Disciplines sometimes require teachers
 
 
 Primary Coil is 3 XP, secondary Coils are 4.
 
 
-Choose a Mask and a Dirge for your character. Whereas a mortal character has a Virtue and a Vice, Kindred characters have Masks and Dirges.
+Choose a Mask and a Dirge for your character. Whereas a mortal character has a 
+Virtue and a Vice, Kindred characters have Masks and Dirges.
 
 Mask & Dirge Archetypes: 
 	Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.
@@ -1978,8 +2068,8 @@ regain methods:
 -- Spend/Regain Methods --------------------------------------------------------
 */
 
-&regain.methods.vitae psrs=|all
-&spend.methods.vitae psrs=[@@( nothing but numeric allowed here )]
+&regain.methods.vitae [v( d.psrs )]=|all
+&spend.methods.vitae [v( d.psrs )]=[@@( nothing but numeric allowed here )]
 
 
 /* 
@@ -1987,7 +2077,7 @@ regain methods:
 -- Spend/Regain Vitae Amts -----------------------------------------------------
 */
 
-&amt.spend.numeric.vitae psrs=
+&amt.spend.numeric.vitae [v( d.psrs )]=
 	if( t( u( amt.spend.numeric.default, %0, %1, %2 )), 
 		if( 
 			lte( %2, 
@@ -2008,7 +2098,7 @@ regain methods:
 -- Spend Vitae Trigger ---------------------------------------------------------
 */
 
-&spend.trigger.vitae psrs=
+&spend.trigger.vitae [v( d.psrs )]=
 	think strcat( 
 //	@pemit %0=strcat( 
 //		DEBUGGING:, %r, 
@@ -2055,7 +2145,7 @@ regain methods:
 -- Regain Vitae Trigger --------------------------------------------------------
 */
 
-&regain.trigger.vitae psrs=
+&regain.trigger.vitae [v( d.psrs )]=
 	think strcat( 
 		m:, %b, setr( m, u( f.match_method, %1, regain, vitae, %2 )), %r, 
 		a:, %b, setr( a, u( amt.regain, %1, vitae, %qm )), %r, 
