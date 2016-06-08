@@ -5,6 +5,27 @@
 This file includes all additions to the system for Werewolf: The Forsaken 
 core rules
 
+
+--------------------------------------------------------------------------------
+-- Pre-Setting Attributes ------------------------------------------------------
+
+If you don't have the attributes set on yourself, run this code:
+
+@fo me=&d.sfp me=search( name=Stat Functions Prototype <sfp> )
+@fo me=&d.dd me=search( name=Data Dictionary <dd> )
+@fo me=&d.dt me=search( name=Data Tags <d:t> )
+
+@fo me=&d.xpas me=search( name=XP Advancement System <xpas> )
+@fo me=&d.xpcd me=search( name=XP Cost Database <xpcd> )
+
+@fo me=&d.cg me=search( name=GMC Chargen <cg> )
+@fo me=&d.sheet me=search( name=Sheet: Rows )
+
+@fo me=&d.psrs me=search( name=Pool Spend Regain System <psrs> )
+
+
+
+
 ################################################################################
 ## WEREWOLF: STAT FUNCTIONS ####################################################
 
@@ -15,8 +36,8 @@ Level 2 for powers
 Level 3 for very minor items
 */
 
-&d.search-order-02-werewolf sfp=renown gift
-&d.search-order-03-werewolf sfp=rite
+&d.search-order-02-werewolf [v( d.sfp )]=renown gift
+&d.search-order-03-werewolf [v( d.sfp )]=rite
 
 
 
@@ -35,23 +56,23 @@ Stuff we need to put on the Data Dictionary
 */
 
 // CODP prefixes
-&prefix.werewolf_-_gifts dd=gift.
-&prefix.werewolf_-_gifts d:t=tags.gift.
+&prefix.werewolf_-_gifts [v( d.dd )]=gift.
+&prefix.werewolf_-_gifts [v( d.dt )]=tags.gift.
 
-&prefix.werewolf_-_rites dd=rite.
-&prefix.werewolf_-_rites d:t=tags.rite.
+&prefix.werewolf_-_rites [v( d.dd )]=rite.
+&prefix.werewolf_-_rites [v( d.dt )]=tags.rite.
 
 
 // add to templates
-@fo me=&bio.template dd=[get( dd/bio.template )].Werewolf.Wolf-Blooded
+@fo me=&bio.template [v( d.dd )]=[get( dd/bio.template )].Werewolf.Wolf-Blooded
 
 
 // register "max trait" statpath
-&.max_trait.werewolf dd=advantage.primal_urge
+&.max_trait.werewolf [v( d.dd )]=advantage.primal_urge
 
 
 // register "sphere"'s templates (could this be folded into 'templates'?)
-&.sphere.werewolf dd=Werewolf Wolf-Blooded
+&.sphere.werewolf [v( d.dd )]=Werewolf Wolf-Blooded
 
 // -- DD: Tags for Wolf-Blooded ------------------------------------------------
 
@@ -63,27 +84,27 @@ Stuff we need to put on the Data Dictionary
 ================================================================================
 == WEREWOLF BIO ================================================================
 
-&bio.xxx DD=...
-&tags.bio.xxx D:T=werewolf
+&bio.xxx [v( d.dd )]=...
+&tags.bio.xxx [v( d.dt )]=werewolf
 */
 
-&bio.pack DD=*
-&tags.bio.pack D:T=werewolf.wolf-blooded.clique
+&bio.pack [v( d.dd )]=*
+&tags.bio.pack [v( d.dt )]=werewolf.wolf-blooded.clique
 
-&bio.blood DD=Alpha.Challenger.Destroyer.Fox.Monster.Soldier.
-&tags.bio.blood D:T=werewolf
+&bio.blood [v( d.dd )]=Alpha.Challenger.Destroyer.Fox.Monster.Soldier.
+&tags.bio.blood [v( d.dt )]=werewolf
 
-&bio.bone DD=Community Organizer.Cub.Guru.Hedonist.Lone Wolf.Wallflower
-&tags.bio.bone D:T=werewolf
+&bio.bone [v( d.dd )]=Community Organizer.Cub.Guru.Hedonist.Lone Wolf.Wallflower
+&tags.bio.bone [v( d.dt )]=werewolf
 
-&bio.auspice DD=Cahalith.Elodoth.Irraka.Ithaeur.Rahu
-&tags.bio.auspice D:T=werewolf
+&bio.auspice [v( d.dd )]=Cahalith.Elodoth.Irraka.Ithaeur.Rahu
+&tags.bio.auspice [v( d.dt )]=werewolf
 
-&bio.tribe DD=
+&bio.tribe [v( d.dd )]=
 	Blood Talons.Bone Shadows.Hunters in Darkness.Iron Masters.Storm Lords.
 	Ghost Wolves
-&default.bio.tribe DD=Ghost Wolves
-&tags.bio.tribe D:T=werewolf
+&default.bio.tribe [v( d.dd )]=Ghost Wolves
+&tags.bio.tribe [v( d.dt )]=werewolf
 
 
 
@@ -98,7 +119,7 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 	1: statpath to check
 */
 
-&.Auspice_Skill_Check DD=
+&.Auspice_Skill_Check [v( d.dd )]=
 	t( setinter( 
 		%1, 
 		switch( u( .value_full, %0, bio.auspice ), 
@@ -116,31 +137,32 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 ================================================================================
 == WEREWOLF ADVANTAGES =========================================================
 
-&advantage.xxx DD=
-&tags.advantage.xxx D:T=werewolf
+&advantage.xxx [v( d.dd )]=
+&tags.advantage.xxx [v( d.dt )]=werewolf
 */
 
-&advantage.harmony DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.harmony DD=7
-&tags.advantage.harmony D:T=integrity.werewolf
+&advantage.harmony [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.harmony [v( d.dd )]=7
+&tags.advantage.harmony [v( d.dt )]=integrity.werewolf
 
-&advantage.primal_urge DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.primal_urge DD=1
-&tags.advantage.primal_urge D:T=power.werewolf
+&advantage.primal_urge [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.primal_urge [v( d.dd )]=1
+&tags.advantage.primal_urge [v( d.dt )]=power.werewolf
 
-&advantage.essence DD=ladd( u( .value_full, %0, advantage.essence_maximum ), . )
-&default.advantage.essence DD=derived
-&tags.advantage.essence D:T=derived.werewolf
+&advantage.essence [v( d.dd )]=
+	ladd( u( .value_full, %0, advantage.essence_maximum ), . )
+&default.advantage.essence [v( d.dd )]=derived
+&tags.advantage.essence [v( d.dt )]=derived.werewolf
 
-&advantage.essence_maximum DD=
+&advantage.essence_maximum [v( d.dd )]=
 	elements( 
 		10 11 12 13 14 15 20 30 50 100, 
 		u( .value, %0, advantage.primal_urge )
 	)
-&default.advantage.essence_maximum DD=derived
-&tags.advantage.essence_maximum D:T=derived.werewolf
+&default.advantage.essence_maximum [v( d.dd )]=derived
+&tags.advantage.essence_maximum [v( d.dt )]=derived.werewolf
 
-&health.maximum.werewolf DD=
+&health.maximum.werewolf [v( d.dd )]=
 	case( 1, 
 		u( .list_has, %0, gift.full_moon's_gift, 2 ), 
 		u( .value_stats, %0, renown.purity ), 
@@ -158,22 +180,22 @@ Cunning, Glory, Honor, Purity, and Wisdom
 Effective Rank.
 */
 
-&renown.cunning DD=1.2.3.4.5
-&tags.renown.cunning D:T=werewolf.irraka.iron masters
+&renown.cunning [v( d.dd )]=1.2.3.4.5
+&tags.renown.cunning [v( d.dt )]=werewolf.irraka.iron masters
 
-&renown.glory DD=1.2.3.4.5
-&tags.renown.glory D:T=werewolf.cahalith.blood talons
+&renown.glory [v( d.dd )]=1.2.3.4.5
+&tags.renown.glory [v( d.dt )]=werewolf.cahalith.blood talons
 
-&renown.honor DD=1.2.3.4.5
-&tags.renown.honor D:T=werewolf.elodoth.storm lords
+&renown.honor [v( d.dd )]=1.2.3.4.5
+&tags.renown.honor [v( d.dt )]=werewolf.elodoth.storm lords
 
-&renown.purity DD=1.2.3.4.5
-&tags.renown.purity D:T=werewolf.rahu.hunters in darkness
+&renown.purity [v( d.dd )]=1.2.3.4.5
+&tags.renown.purity [v( d.dt )]=werewolf.rahu.hunters in darkness
 
-&renown.wisdom DD=1.2.3.4.5
-&tags.renown.wisdom D:T=werewolf.ithaeur.bone shadows
+&renown.wisdom [v( d.dd )]=1.2.3.4.5
+&tags.renown.wisdom [v( d.dt )]=werewolf.ithaeur.bone shadows
 
-&advantage.effective_rank DD=
+&advantage.effective_rank [v( d.dd )]=
 	switch( ladd( iter( lattr( %0/_renown.* ), first( get( %0/%i0 ), . ))), 
 		<4, 1, 
 		<8, 2, 
@@ -182,8 +204,8 @@ Effective Rank.
 		<26, 5, 
 		0 
 	)
-&default.advantage.effective_rank DD=derived
-&tags.advantage.effective_rank D:T=werewolf.derived
+&default.advantage.effective_rank [v( d.dd )]=derived
+&tags.advantage.effective_rank [v( d.dt )]=werewolf.derived
 
 
 
@@ -196,31 +218,34 @@ Effective Rank.
 
 // Merit.Producer, from Vampire Core
 
-@if hasattr( DD, merit.producer )={ 
-		&tags.merit.producer D:T=[get( D:T/tags.merit.producer )].wolf-blooded
+@if cand( 
+		hasattr( v( d.dd ), merit.producer ), 
+		not( match( get( v( d.dt )/tags.merit.producer ), wolf-blooded, . )) 
+	)={ 
+		@edit [v( d.dt )]/tags.merit.producer=$, .wolf-blooded
 	}
 
 
 // -- Merits: Wolf-Blooded -----------------------------------------------------
 
-&merit.pack_bond dd=1.3
-&tags.merit.pack_bond d:t=wolf-blooded
+&merit.pack_bond [v( d.dd )]=1.3
+&tags.merit.pack_bond [v( d.dt )]=wolf-blooded
 
-&merit.tell_() dd=3|
+&merit.tell_() [v( d.dd )]=3|
 	A Wolf's Meat.Anger Issues.Bite.Bitten.Clever Fingers.Devil Inside.
 	Evil Eye.Exciting.Familiar.Fuck Ugly.Horse.Host-Ache.Liar's Skin.Marker.
 	Moon Marked.Phantom Pack.Piercing Eyes.Second Skin.Shape-Shifted.
 	Shadow Twin.Skinner.Spirit Double.Strong Scent.Third Nipple.Tongues.
 	Waystone.Wolf Sign
-&tags.merit.tell_() d:t=wolf-blooded
+&tags.merit.tell_() [v( d.dt )]=wolf-blooded
 
-&merit.raised_by_wolves dd=1
-&tags.merit.raised_by_wolves d:t=wolf-blooded
+&merit.raised_by_wolves [v( d.dd )]=1
+&tags.merit.raised_by_wolves [v( d.dt )]=wolf-blooded
 
 // Wolf-Blooded Merits: Tribal Affinity
 
-&merit.fenris-ur's_blood dd=2
-&prerequisite.merit.fenris-ur's_blood dd=
+&merit.fenris-ur's_blood [v( d.dd )]=2
+&prerequisite.merit.fenris-ur's_blood [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -233,11 +258,12 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.fenris-ur's_blood dd=Only one Tribal Affinity merit allowed
-&tags.merit.fenris-ur's_blood d:t=wolf-blooded.tribal affinity
+&prereq-text.merit.fenris-ur's_blood [v( d.dd )]=
+	Only one Tribal Affinity merit allowed
+&tags.merit.fenris-ur's_blood [v( d.dt )]=wolf-blooded.tribal affinity
 
-&merit.kamduis-ur's_blood dd=2
-&prerequisite.merit.kamduis-ur's_blood dd=
+&merit.kamduis-ur's_blood [v( d.dd )]=2
+&prerequisite.merit.kamduis-ur's_blood [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -250,11 +276,12 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.kamduis-ur's_blood dd=Only one Tribal Affinity merit allowed
-&tags.merit.kamduis-ur's_blood d:t=wolf-blooded.tribal affinity
+&prereq-text.merit.kamduis-ur's_blood [v( d.dd )]=
+	Only one Tribal Affinity merit allowed
+&tags.merit.kamduis-ur's_blood [v( d.dt )]=wolf-blooded.tribal affinity
 
-&merit.hikaon-ur's_blood dd=2
-&prerequisite.merit.hikaon-ur's_blood dd=
+&merit.hikaon-ur's_blood [v( d.dd )]=2
+&prerequisite.merit.hikaon-ur's_blood [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -267,11 +294,12 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.hikaon-ur's_blood dd=Only one Tribal Affinity merit allowed
-&tags.merit.hikaon-ur's_blood d:t=wolf-blooded.tribal affinity
+&prereq-text.merit.hikaon-ur's_blood [v( d.dd )]=
+	Only one Tribal Affinity merit allowed
+&tags.merit.hikaon-ur's_blood [v( d.dt )]=wolf-blooded.tribal affinity
 
-&merit.sagrim-ur's_blood dd=2
-&prerequisite.merit.sagrim-ur's_blood dd=
+&merit.sagrim-ur's_blood [v( d.dd )]=2
+&prerequisite.merit.sagrim-ur's_blood [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -284,11 +312,12 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.sagrim-ur's_blood dd=Only one Tribal Affinity merit allowed
-&tags.merit.sagrim-ur's_blood d:t=wolf-blooded.tribal affinity
+&prereq-text.merit.sagrim-ur's_blood [v( d.dd )]=
+	Only one Tribal Affinity merit allowed
+&tags.merit.sagrim-ur's_blood [v( d.dt )]=wolf-blooded.tribal affinity
 
-&merit.skolis-ur's_blood dd=2
-&prerequisite.merit.skolis-ur's_blood dd=
+&merit.skolis-ur's_blood [v( d.dd )]=2
+&prerequisite.merit.skolis-ur's_blood [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -301,11 +330,12 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.skolis-ur's_blood dd=Only one Tribal Affinity merit allowed
-&tags.merit.skolis-ur's_blood d:t=wolf-blooded.tribal affinity
+&prereq-text.merit.skolis-ur's_blood [v( d.dd )]=
+	Only one Tribal Affinity merit allowed
+&tags.merit.skolis-ur's_blood [v( d.dt )]=wolf-blooded.tribal affinity
 
-&merit.ghost_child dd=2
-&prerequisite.merit.ghost_child dd=
+&merit.ghost_child [v( d.dd )]=2
+&prerequisite.merit.ghost_child [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -318,14 +348,15 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.ghost_child dd=Only one Tribal Affinity merit allowed
-&tags.merit.ghost_child d:t=wolf-blooded.tribal affinity
+&prereq-text.merit.ghost_child [v( d.dd )]=
+	Only one Tribal Affinity merit allowed
+&tags.merit.ghost_child [v( d.dt )]=wolf-blooded.tribal affinity
 
 
 // Wolf-Blooded Merits: Moon Birth
 
-&merit.crescent_moon's_birth dd=2
-&prerequisite.merit.crescent_moon's_birth dd=
+&merit.crescent_moon's_birth [v( d.dd )]=2
+&prerequisite.merit.crescent_moon's_birth [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -338,11 +369,12 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.crescent_moon's_birth dd=Only one Moon Birth merit allowed
-&tags.merit.crescent_moon's_birth dd=wolf-blooded.moon birth
+&prereq-text.merit.crescent_moon's_birth [v( d.dd )]=
+	Only one Moon Birth merit allowed
+&tags.merit.crescent_moon's_birth [v( d.dd )]=wolf-blooded.moon birth
 
-&merit.full_moon's_birth dd=2
-&prerequisite.merit.full_moon's_birth dd=
+&merit.full_moon's_birth [v( d.dd )]=2
+&prerequisite.merit.full_moon's_birth [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -355,12 +387,13 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.full_moon's_birth dd=Only one Moon Birth merit allowed
-&tags.merit.full_moon's_birth dd=wolf-blooded.moon birth
+&prereq-text.merit.full_moon's_birth [v( d.dd )]=
+	Only one Moon Birth merit allowed
+&tags.merit.full_moon's_birth [v( d.dd )]=wolf-blooded.moon birth
 
-&merit.gibbous_moon's_birth_() dd=2|
+&merit.gibbous_moon's_birth_() [v( d.dd )]=2|
 	Academics.Computer.Crafts.Investigation.Medicine.Occult.Politics.Science
-&prerequisite.merit.gibbous_moon's_birth_() dd=
+&prerequisite.merit.gibbous_moon's_birth_() [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -373,11 +406,12 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.gibbous_moon's_birth_() dd=Only one Moon Birth merit allowed.
-&tags.merit.gibbous_moon's_birth_() dd=wolf-blooded.moon birth
+&prereq-text.merit.gibbous_moon's_birth_() [v( d.dd )]=
+	Only one Moon Birth merit allowed.
+&tags.merit.gibbous_moon's_birth_() [v( d.dd )]=wolf-blooded.moon birth
 
-&merit.half_moon's_birth dd=2
-&prerequisite.merit.half_moon's_birth dd=
+&merit.half_moon's_birth [v( d.dd )]=2
+&prerequisite.merit.half_moon's_birth [v( d.dd )]=
 	cand( 
 		lte( 
 			words( filter( 
@@ -393,12 +427,13 @@ Effective Rank.
 		), 
 		t( lattr( %0/_merit.safe_place_(*) ))
 	)
-&prereq-text.merit.half_moon's_birth dd=Only one Moon Birth merit allowed, 
+&prereq-text.merit.half_moon's_birth [v( d.dd )]=
+	Only one Moon Birth merit allowed, 
 	Must Have Safe Place 1+
-&tags.merit.half_moon's_birth dd=wolf-blooded.moon birth
+&tags.merit.half_moon's_birth [v( d.dd )]=wolf-blooded.moon birth
 
-&merit.no_moon's_birth dd=2
-&prerequisite.merit.no_moon's_birth dd=
+&merit.no_moon's_birth [v( d.dd )]=2
+&prerequisite.merit.no_moon's_birth [v( d.dd )]=
 	lte( 
 		words( filter( 
 			u( d.sfp )/f.hastag?.workhorse, 
@@ -411,66 +446,68 @@ Effective Rank.
 		)), 
 		1 
 	)
-&prereq-text.merit.no_moon's_birth dd=Only one Moon Birth merit allowed
-&tags.merit.no_moon's_birth dd=wolf-blooded.moon birth
+&prereq-text.merit.no_moon's_birth [v( d.dd )]=
+	Only one Moon Birth merit allowed
+&tags.merit.no_moon's_birth [v( d.dd )]=wolf-blooded.moon birth
 
 
 // -- Merits: Werewolf ---------------------------------------------------------
 
-&merit.anchored_() DD=1.2|*
-&tags.merit.anchored_() D:T=werewolf.mental
+&merit.anchored_() [v( d.dd )]=1.2|*
+&tags.merit.anchored_() [v( d.dt )]=werewolf.mental
 
-&merit.blood_or_bone_affinity DD=2.5|Blood.Bone.Both
-&prerequisite.merit.blood_or_bone_affinity DD=
+&merit.blood_or_bone_affinity [v( d.dd )]=2.5|Blood.Bone.Both
+&prerequisite.merit.blood_or_bone_affinity [v( d.dd )]=
 	u( .between, %0, advantage.harmony, 3, 8 )
-&prereq-text.merit.blood_or_bone_affinity DD=Harmony 3 to 8
-&tags.merit.blood_or_bone_affinity D:T=werewolf.mental.harmony
-&notes.merit.blood_or_bone_affinity D:T=Staff should also: 
+&prereq-text.merit.blood_or_bone_affinity [v( d.dd )]=Harmony 3 to 8
+&tags.merit.blood_or_bone_affinity [v( d.dt )]=werewolf.mental.harmony
+&notes.merit.blood_or_bone_affinity [v( d.dt )]=Staff should also: 
 	stat/set <player>/blood or bone affinity.<which one>=1
 
-&merit.code_of_honor DD=2
-&prerequisite.merit.code_of_honor DD=
+&merit.code_of_honor [v( d.dd )]=2
+&prerequisite.merit.code_of_honor [v( d.dd )]=
 	u( .at_least, %0, advantage.harmony, 8 )
-&prereq-text.merit.code_of_honor DD=Harmony 8
-&tags.merit.code_of_honor D:T=werewolf.mental.harmony
+&prereq-text.merit.code_of_honor [v( d.dd )]=Harmony 8
+&tags.merit.code_of_honor [v( d.dt )]=werewolf.mental.harmony
 
-&merit.controlled_burn DD=2
-&prerequisite.merit.controlled_burn DD=
+&merit.controlled_burn [v( d.dd )]=2
+&prerequisite.merit.controlled_burn [v( d.dd )]=
 	u( .at_least_all, %0, attribute.resolve:3 attribute.composure:3 )
-&prereq-text.merit.controlled_burn DD=Resolve 3, Composure 3
-&tags.merit.controlled_burn D:T=werewolf.mental
+&prereq-text.merit.controlled_burn [v( d.dd )]=Resolve 3, Composure 3
+&tags.merit.controlled_burn [v( d.dt )]=werewolf.mental
 
-&merit.creative_tactician DD=3
-&prerequisite.merit.creative_tactician DD=u( .at_least, %0, renown.purity, 2 )
-&prereq-text.merit.creative_tactician DD=Purity 2
-&tags.merit.creative_tactician D:T=werewolf.mental.purity
+&merit.creative_tactician [v( d.dd )]=3
+&prerequisite.merit.creative_tactician [v( d.dd )]=
+	u( .at_least, %0, renown.purity, 2 )
+&prereq-text.merit.creative_tactician [v( d.dd )]=Purity 2
+&tags.merit.creative_tactician [v( d.dt )]=werewolf.mental.purity
 
-&merit.dedicated_locus_() DD=1.2.3.4.5|*
-&prerequisite.merit.haven_() DD=u( .has, %0, merit.haven_(%1) )
-&prereq-text.merit.haven_() DD=Safe Place (<place name>) 1
-&tags.merit.dedicated_locus_() D:T=werewolf.social.location
+&merit.dedicated_locus_() [v( d.dd )]=1.2.3.4.5|*
+&prerequisite.merit.haven_() [v( d.dd )]=u( .has, %0, merit.haven_(%1) )
+&prereq-text.merit.haven_() [v( d.dd )]=Safe Place (<place name>) 1
+&tags.merit.dedicated_locus_() [v( d.dt )]=werewolf.social.location
 
-&merit.embodiment_of_the_firstborn_() dd=
+&merit.embodiment_of_the_firstborn_() [v( d.dd )]=
 	5|
 	Intelligence.Wits.Resolve.
 	Strength.Dexterity.Stamina.
 	Presence.Manipulation.Composure
-&prerequisite.merit.embodiment_of_the_firstborn_() dd=
+&prerequisite.merit.embodiment_of_the_firstborn_() [v( d.dd )]=
 	cand( 
 		u( .is_not, %0, bio.tribe, Ghost Wolves ), 
 		not( lattr( %0/_merit.emobdiment_of_the_firstborn_(*) )) 
 	)
-&prereq-text.merit.embodiment_of_the_firstborn_() dd=
+&prereq-text.merit.embodiment_of_the_firstborn_() [v( d.dd )]=
 	May not be taken if Tribe is Ghost Wolf, may only be taken once
-&tags.merit.embodiment_of_the_firstborn_() d:t=werewolf.physical
+&tags.merit.embodiment_of_the_firstborn_() [v( d.dt )]=werewolf.physical
 
-&merit.fading DD=3
-&prerequisite.merit.fading DD=u( .at_least, %0, renown.cunning, 2 )
-&prereq-text.merit.fading DD=Cunning 2
-&tags.merit.fading D:T=werewolf.physical.cunning
+&merit.fading [v( d.dd )]=3
+&prerequisite.merit.fading [v( d.dd )]=u( .at_least, %0, renown.cunning, 2 )
+&prereq-text.merit.fading [v( d.dd )]=Cunning 2
+&tags.merit.fading [v( d.dt )]=werewolf.physical.cunning
 
-&merit.favored_form_() DD=1.2.3.4.5|Dalu.Gauru.Urshul.Urhan|*
-&prerequisite.merit.favored_form_() DD=
+&merit.favored_form_() [v( d.dd )]=1.2.3.4.5|Dalu.Gauru.Urshul.Urhan|*
+&prerequisite.merit.favored_form_() [v( d.dd )]=
 	cand( 
 		u( .at_most_stat, %0, 
 			merit.favored_form_(%1), 
@@ -483,90 +520,99 @@ Effective Rank.
 			)
 		)
 	)
-&prereq-text.merit.favored_form_() DD=
+&prereq-text.merit.favored_form_() [v( d.dd )]=
 	Primal Urge 1 higher than Merit rating, Cannot take any other Favored Forms 
-&tags.merit.favored_form_() D:T=werewolf.physical
-&note.merit.favored_form_() D:T=
+&tags.merit.favored_form_() [v( d.dt )]=werewolf.physical
+&note.merit.favored_form_() [v( d.dt )]=
 	For each dot, set a substat with the name of the stat affected and the value 
 	of Favored Form it was gained at. 
 	e.g.: stat/set <name>/favored form (urhan).stealth=1
 // +shift MUST respect this stat
 
-&merit.fortified_form_() DD=3.4.5|Dalu.Gauru.Urshul.Urhan
-&prerequisite.merit.fortified_form_() DD=
+&merit.fortified_form_() [v( d.dd )]=3.4.5|Dalu.Gauru.Urshul.Urhan
+&prerequisite.merit.fortified_form_() [v( d.dd )]=
 	u( .at_least_all, %0, attribute.stamina:3 skill.survival:2 )
-&prereq-text.merit.favored_form_() DD=Stamina 3, Survival 2
-&tags.merit.fortified_form_() D:T=werewolf.physical
+&prereq-text.merit.favored_form_() [v( d.dd )]=Stamina 3, Survival 2
+&tags.merit.fortified_form_() [v( d.dt )]=werewolf.physical
 // +shift MIGHT respect this stat
 
-&merit.hearing_whispers DD=2
-&prerequisite.merit.hearing_whispers DD=u( .is, %0, bio.tribe, Bone Shadows )
-&prereq-text.merit.hearing_whispers DD=Tribe is Bone Shadows
-&tags.merit.hearing_whispers D:T=werewolf.bone shadows.mental
+&merit.hearing_whispers [v( d.dd )]=2
+&prerequisite.merit.hearing_whispers [v( d.dd )]=
+	u( .is, %0, bio.tribe, Bone Shadows )
+&prereq-text.merit.hearing_whispers [v( d.dd )]=Tribe is Bone Shadows
+&tags.merit.hearing_whispers [v( d.dt )]=werewolf.bone shadows.mental
 
-&merit.impartial_mediator DD=3
-&prerequisite.merit.impartial_mediator DD=u( .at_least, %0, renown.honor, 2 )
-&prereq-text.merit.impartial_mediator DD=Honor 2
-&tags.merit.impartial_mediator D:T=werewolf.social.honor
+&merit.impartial_mediator [v( d.dd )]=3
+&prerequisite.merit.impartial_mediator [v( d.dd )]=
+	u( .at_least, %0, renown.honor, 2 )
+&prereq-text.merit.impartial_mediator [v( d.dd )]=Honor 2
+&tags.merit.impartial_mediator [v( d.dt )]=werewolf.social.honor
 
-&merit.living_weapon_() DD=3.4.5|Dalu.Gauru.Urshul.Urhan
-&prerequisite.merit.living_weapon_() DD=
+&merit.living_weapon_() [v( d.dd )]=3.4.5|Dalu.Gauru.Urshul.Urhan
+&prerequisite.merit.living_weapon_() [v( d.dd )]=
 	u( .at_least_all, %0, attribute.stamina:3 skill.survival:2 )
-&prereq-text.merit.living_weapon_() DD=Stamina 3, Survival 2
-&tags.merit.living_weapon_() D:T=werewolf.physical
+&prereq-text.merit.living_weapon_() [v( d.dd )]=Stamina 3, Survival 2
+&tags.merit.living_weapon_() [v( d.dt )]=werewolf.physical
 
-&merit.moon-kissed_() DD=1|*
-&prerequisite.merit.moon-kissed_() DD=
+&merit.moon-kissed_() [v( d.dd )]=1|*
+&prerequisite.merit.moon-kissed_() [v( d.dd )]=
 	cand( 
 		u( .at_least, %0, skill.%1, 2 ), 
 		u( .auspice_skill_check, %0, skill.%1 )
 	)
-&prereq-text.merit.moon-kissed_() DD=Type must be an Auspice Skill at 2+
-&tags.merit.moon-kissed_() D:T=werewolf
+&prereq-text.merit.moon-kissed_() [v( d.dd )]=
+	Type must be an Auspice Skill at 2+
+&tags.merit.moon-kissed_() [v( d.dt )]=werewolf
 /*
-When taking this Merit, choose one of her three auspice Skills. That Skill has the 9-again quality. If you already have 9-again available, use 8-again.
+When taking this Merit, choose one of her three auspice Skills. That Skill has 
+the 9-again quality. If you already have 9-again available, use 8-again.
 */
 
-&merit.nowhere_to_run DD=2
-&prerequisite.merit.nowhere_to_run DD=
+&merit.nowhere_to_run [v( d.dd )]=2
+&prerequisite.merit.nowhere_to_run [v( d.dd )]=
 	u( .is, %0, bio.tribe, Hunters in Darkness )
-&prereq-text.merit.nowhere_to_run DD=Tribe is Hunters in Darkness
-&tags.merit.nowhere_to_run D:T=werewolf.hunters in darkness
+&prereq-text.merit.nowhere_to_run [v( d.dd )]=Tribe is Hunters in Darkness
+&tags.merit.nowhere_to_run [v( d.dt )]=werewolf.hunters in darkness
 
-&merit.pack_dynamics DD=3.4.5
-&tags.merit.pack_dynamics D:T=werewolf.pack.social
+&merit.pack_dynamics [v( d.dd )]=3.4.5
+&tags.merit.pack_dynamics [v( d.dt )]=werewolf.pack.social
 
-&merit.residential_area DD=1.2.3.4.5
-&tags.merit.residential_area D:T=werewolf.social
+&merit.residential_area [v( d.dd )]=1.2.3.4.5
+&tags.merit.residential_area [v( d.dt )]=werewolf.social
 
-&merit.resonance_shaper DD=3
-&prerequisite.merit.resonance_shaper DD=u( .at_least, %0, renown.wisdom, 2 )
-&prereq-text.merit.resonance_shaper DD=Wisdom 2
-&tags.merit.resonance_shaper D:T=werewolf.mental.wisdom
+&merit.resonance_shaper [v( d.dd )]=3
+&prerequisite.merit.resonance_shaper [v( d.dd )]=
+	u( .at_least, %0, renown.wisdom, 2 )
+&prereq-text.merit.resonance_shaper [v( d.dd )]=Wisdom 2
+&tags.merit.resonance_shaper [v( d.dt )]=werewolf.mental.wisdom
 
-&merit.self-control DD=2
-&prerequisite.merit.self-control DD=u( .at_least, %0, attribute.resolve, 4 )
-&prereq-text.merit.self-control DD=Resolve 4
-&tags.merit.self-control D:T=werewolf.physical
+&merit.self-control [v( d.dd )]=2
+&prerequisite.merit.self-control [v( d.dd )]=
+	u( .at_least, %0, attribute.resolve, 4 )
+&prereq-text.merit.self-control [v( d.dd )]=Resolve 4
+&tags.merit.self-control [v( d.dt )]=werewolf.physical
 
-&merit.song_in_your_heart DD=3
-&prerequisite.merit.song_in_your_heart DD=u( .at_least, %0, renown.glory, 2 )
-&prereq-text.merit.song_in_your_heart DD=Glory 2
-&tags.merit.song_in_your_heart D:T=werewolf.glory.social
+&merit.song_in_your_heart [v( d.dd )]=3
+&prerequisite.merit.song_in_your_heart [v( d.dd )]=
+	u( .at_least, %0, renown.glory, 2 )
+&prereq-text.merit.song_in_your_heart [v( d.dd )]=Glory 2
+&tags.merit.song_in_your_heart [v( d.dt )]=werewolf.glory.social
 
-&merit.sounds_of_the_city DD=2
-&prerequisite.merit.sounds_of_the_city DD=u( .is, %0, bio.tribe, Iron Masters )
-&prereq-text.merit.sounds_of_the_city DD=Tribe is Iron Masters
-&tags.merit.sounds_of_the_city D:T=werewolf.iron masters.social
+&merit.sounds_of_the_city [v( d.dd )]=2
+&prerequisite.merit.sounds_of_the_city [v( d.dd )]=
+	u( .is, %0, bio.tribe, Iron Masters )
+&prereq-text.merit.sounds_of_the_city [v( d.dd )]=Tribe is Iron Masters
+&tags.merit.sounds_of_the_city [v( d.dt )]=werewolf.iron masters.social
 
-&merit.strings_of_the_heart DD=2
-&prerequisite.merit.strings_of_the_heart DD=u( .is, %0, bio.tribe, Storm Lords )
-&prereq-text.merit.strings_of_the_heart DD=Tribe is Storm Lords
-&tags.merit.strings_of_the_heart D:T=werewolf.storm lords.social
+&merit.strings_of_the_heart [v( d.dd )]=2
+&prerequisite.merit.strings_of_the_heart [v( d.dd )]=
+	u( .is, %0, bio.tribe, Storm Lords )
+&prereq-text.merit.strings_of_the_heart [v( d.dd )]=Tribe is Storm Lords
+&tags.merit.strings_of_the_heart [v( d.dt )]=werewolf.storm lords.social
 
 // totem can be bought to 1 or 5 for wolf-blooded with merit.pack_bond
-&merit.totem DD=1.2.3.4.5
-&prerequisite.merit.totem DD=
+&merit.totem [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.totem [v( d.dd )]=
   localize( if( 
 		u( .is_full, %0, bio.template, wolf-blooded ), 
 		case( 
@@ -577,82 +623,87 @@ When taking this Merit, choose one of her three auspice Skills. That Skill has t
 		), 
 		1 
 	))
-&prereq-text.merit.totem DD=Wolf-Blooded must have Pack Bond merit 
+&prereq-text.merit.totem [v( d.dd )]=Wolf-Blooded must have Pack Bond merit 
 	at 1 for 1, at 3 for up to 5
-&tags.merit.totem D:T=werewolf.wolf-blooded.shared
+&tags.merit.totem [v( d.dt )]=werewolf.wolf-blooded.shared
 
-&merit.weakest_link DD=2
-&prerequisite.merit.weakest_link DD=u( .is, %0, bio.tribe, Blood Talons )
-&prereq-text.merit.weakest_link DD=Tribe is Blood Talons
-&tags.merit.weakest_link D:T=werewolf.blood talons.social
+&merit.weakest_link [v( d.dd )]=2
+&prerequisite.merit.weakest_link [v( d.dd )]=
+	u( .is, %0, bio.tribe, Blood Talons )
+&prereq-text.merit.weakest_link [v( d.dd )]=Tribe is Blood Talons
+&tags.merit.weakest_link [v( d.dt )]=werewolf.blood talons.social
 
 
 // -- Merits: Fighting Merits --------------------------------------------------
 
-&merit.call_out DD=2
-&prerequisite.merit.call_out DD=
+&merit.call_out [v( d.dd )]=2
+&prerequisite.merit.call_out [v( d.dd )]=
 	u( .at_least_all, %0, 
 		renown.honor:3 attribute.composure:3 skill.intimidation:2 
 	)
-&prereq-text.merit.call_out DD=Honor 2, Intimidation 2, Composure 3
-&tags.merit.call_out D:T=werewolf.fighting.honor
+&prereq-text.merit.call_out [v( d.dd )]=Honor 2, Intimidation 2, Composure 3
+&tags.merit.call_out [v( d.dt )]=werewolf.fighting.honor
 
-&merit.efficient_killer DD=2
-&prerequisite.merit.efficient_killer DD=
+&merit.efficient_killer [v( d.dd )]=2
+&prerequisite.merit.efficient_killer [v( d.dd )]=
 	u( .at_least_all, %0, 
 		renown.purity:2 attribute.strength:3 skill.brawl:3 skill.medicine:2 
 	)
-&prereq-text.merit.efficient_killer DD=Purity 2, Brawl 3, Medicine 2, Strength 3
-&tags.merit.efficient_killer D:T=werewolf.fighting.purity
-&notes.merit.efficient_killer D:T=May only be used in Gauru form
+&prereq-text.merit.efficient_killer [v( d.dd )]=
+	Purity 2, Brawl 3, Medicine 2, Strength 3
+&tags.merit.efficient_killer [v( d.dt )]=werewolf.fighting.purity
+&notes.merit.efficient_killer [v( d.dt )]=May only be used in Gauru form
 
-&merit.flanking DD=2
-&prerequisite.merit.flanking DD=
+&merit.flanking [v( d.dd )]=2
+&prerequisite.merit.flanking [v( d.dd )]=
 	u( .at_least_all, %0, 
 		renown.cunning:2 attribute.wits:3 skill.stealth:2 skill.brawl:2 
 	)
-&prereq-text.merit.flanking DD=Cunning 2, Wits 3, Stealth 2, Brawl 2
-&tags.merit.flanking D:T=werewolf.fighting.cunning
+&prereq-text.merit.flanking [v( d.dd )]=Cunning 2, Wits 3, Stealth 2, Brawl 2
+&tags.merit.flanking [v( d.dt )]=werewolf.fighting.cunning
 
-&merit.instinctive_defense DD=2
-&prerequisite.merit.instinctive_defense DD=
+&merit.instinctive_defense [v( d.dd )]=2
+&prerequisite.merit.instinctive_defense [v( d.dd )]=
 	u( .at_least_all, %0, advantage.primal_urge:2 skill.athletics:2 )
-&prereq-text.merit.instinctive_defense DD=Primal Urge 2, Athletics 2
-&tags.merit.instinctive_defense D:T=werewolf.fighting
+&prereq-text.merit.instinctive_defense [v( d.dd )]=Primal Urge 2, Athletics 2
+&tags.merit.instinctive_defense [v( d.dt )]=werewolf.fighting
 
-&merit.relentless_assault DD=1.2.3.4.5
-&prerequisite.merit.relentless_assault DD=
+&merit.relentless_assault [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.relentless_assault [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.strength:3 attribute.stamina:3 skill.brawl:2 
 	)
-&prereq-text.merit.relentless_assault DD=Strength 3, Stamina 3, Brawl 2
-&tags.merit.relentless_assault D:T=werewolf.style.fighting
+&prereq-text.merit.relentless_assault [v( d.dd )]=Strength 3, Stamina 3, Brawl 2
+&tags.merit.relentless_assault [v( d.dt )]=werewolf.style.fighting
 
-&merit.spiritual_blockage DD=2
-&prerequisite.merit.spiritual_blockage DD=
+&merit.spiritual_blockage [v( d.dd )]=2
+&prerequisite.merit.spiritual_blockage [v( d.dd )]=
 	u( .at_least_all, %0, 
 		renown.wisdom:2 attribute.wits:3 skill.brawl:1 skill.occult:3 
 	)
-&prereq-text.merit.spiritual_blockage DD=Wisdom 2, Brawl 1, Occult 3, Wits 3
-&tags.merit.spiritual_blockage D:T=werewolf.fighting.wisdom
+&prereq-text.merit.spiritual_blockage [v( d.dd )]=
+	Wisdom 2, Brawl 1, Occult 3, Wits 3
+&tags.merit.spiritual_blockage [v( d.dt )]=werewolf.fighting.wisdom
 
-&merit.tactical_shifting DD=1.2.3.4.5
-&prerequisite.merit.tactical_shifting DD=
+&merit.tactical_shifting [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.tactical_shifting [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.wits:3 attribute.dexterity:3 skill.athletics:2 
 	)
-&prereq-text.merit.tactical_shifting DD=Wits 3, Dexterity 3, Athletics 2
-&tags.merit.tactical_shifting D:T=werewolf.style.fighting
+&prereq-text.merit.tactical_shifting [v( d.dd )]=
+	Wits 3, Dexterity 3, Athletics 2
+&tags.merit.tactical_shifting [v( d.dt )]=werewolf.style.fighting
 
-&merit.warcry DD=2
-&prerequisite.merit.warcry DD=
+&merit.warcry [v( d.dd )]=2
+&prerequisite.merit.warcry [v( d.dd )]=
 	u( .at_least_all, %0, 
 		renown.glory:2 attribute.presence:3 skill.expression:2 
 		skill.intimidation:2 
 	)
-&prereq-text.merit.warcry DD=Glory 2, Presence 3, Expression 2, Intimidation 2
-&tags.merit.warcry D:T=werewolf.style.fighting.glory
-&notes.warcry D:T=May only be used in Gauru, Urshul, or Urhan form
+&prereq-text.merit.warcry [v( d.dd )]=
+	Glory 2, Presence 3, Expression 2, Intimidation 2
+&tags.merit.warcry [v( d.dt )]=werewolf.style.fighting.glory
+&notes.warcry [v( d.dt )]=May only be used in Gauru, Urshul, or Urhan form
 
 
 
@@ -664,80 +715,80 @@ Vampire also uses the 'rite' stat type, and it's also always a 'flag'.
 
 */
 
-&class.rite.? dd=flag
+&class.rite.? [v( d.dd )]=flag
 
 // -- Rites: Wolf --------------------------------------------------------------
 
-&rite.chain_rage dd=1
-&tags.rite.chain_rage d:t=werewolf.wolf
+&rite.chain_rage [v( d.dd )]=1
+&tags.rite.chain_rage [v( d.dt )]=werewolf.wolf
 
-&rite.messenger dd=1
-&tags.rite.messenger d:t=werewolf.wolf
+&rite.messenger [v( d.dd )]=1
+&tags.rite.messenger [v( d.dt )]=werewolf.wolf
 
-&rite.bottle_spirit dd=2
-&tags.rite.bottle_spirit d:t=werewolf.wolf
+&rite.bottle_spirit [v( d.dd )]=2
+&tags.rite.bottle_spirit [v( d.dt )]=werewolf.wolf
 
-&rite.sacred_hunt dd=2
-&tags.rite.sacred_hunt d:t=werewolf.wolf
+&rite.sacred_hunt [v( d.dd )]=2
+&tags.rite.sacred_hunt [v( d.dt )]=werewolf.wolf
 
-&rite.kindle_fury dd=3
-&tags.rite.kindle_fury d:t=werewolf.wolf
+&rite.kindle_fury [v( d.dd )]=3
+&tags.rite.kindle_fury [v( d.dt )]=werewolf.wolf
 
-&rite.shadowbind dd=3
-&tags.rite.shadowbind d:t=werewolf.wolf
+&rite.shadowbind [v( d.dd )]=3
+&tags.rite.shadowbind [v( d.dt )]=werewolf.wolf
 
-&rite.fetish dd=4
-&tags.rite.fetish d:t=werewolf.wolf
+&rite.fetish [v( d.dd )]=4
+&tags.rite.fetish [v( d.dt )]=werewolf.wolf
 
-&rite.twilight_purge dd=4
-&tags.rite.twilight_purge d:t=werewolf.wolf
+&rite.twilight_purge [v( d.dd )]=4
+&tags.rite.twilight_purge [v( d.dt )]=werewolf.wolf
 
-&rite.forge_alliance dd=5
-&tags.rite.forge_alliance d:t=werewolf.wolf
+&rite.forge_alliance [v( d.dd )]=5
+&tags.rite.forge_alliance [v( d.dt )]=werewolf.wolf
 
-&rite.urfarah's_bane dd=5
-&tags.rite.urfarah's_bane d:t=werewolf.wolf
+&rite.urfarah's_bane [v( d.dd )]=5
+&tags.rite.urfarah's_bane [v( d.dt )]=werewolf.wolf
 
-&rite.veil dd=5
-&tags.rite.veil d:t=werewolf.wolf
+&rite.veil [v( d.dd )]=5
+&tags.rite.veil [v( d.dt )]=werewolf.wolf
 
 // -- Rites: Pack --------------------------------------------------------------
 
-&rite.banish dd=1
-&tags.rite.banish d:t=werewolf.wolf-blooded.pack
+&rite.banish [v( d.dd )]=1
+&tags.rite.banish [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.harness_the_circle dd=1
-&tags.rite.harness_the_circle d:t=werewolf.wolf-blooded.pack
+&rite.harness_the_circle [v( d.dd )]=1
+&tags.rite.harness_the_circle [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.totemic_empowerment dd=1
-&tags.rite.totemic_empowerment d:t=werewolf.wolf-blooded.pack
+&rite.totemic_empowerment [v( d.dd )]=1
+&tags.rite.totemic_empowerment [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.hunting_ground dd=2
-&tags.rite.hunting_ground d:t=werewolf.wolf-blooded.pack
+&rite.hunting_ground [v( d.dd )]=2
+&tags.rite.hunting_ground [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.moon's_mad_love dd=2
-&tags.rite.moon's_mad_love d:t=werewolf.wolf-blooded.pack
+&rite.moon's_mad_love [v( d.dd )]=2
+&tags.rite.moon's_mad_love [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.wellspring dd=1
-&tags.rite.wellspring d:t=werewolf.wolf-blooded.pack
+&rite.wellspring [v( d.dd )]=1
+&tags.rite.wellspring [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.raiment_of_the_storm dd=3
-&tags.rite.raiment_of_the_storm d:t=werewolf.wolf-blooded.pack
+&rite.raiment_of_the_storm [v( d.dd )]=3
+&tags.rite.raiment_of_the_storm [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.shadowcall dd=3
-&tags.rite.raiment_of_the_storm d:t=werewolf.wolf-blooded.pack
+&rite.shadowcall [v( d.dd )]=3
+&tags.rite.raiment_of_the_storm [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.supplication dd=3
-&tags.rite.supplication d:t=werewolf.wolf-blooded.pack
+&rite.supplication [v( d.dd )]=3
+&tags.rite.supplication [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.hidden_path dd=4
-&tags.rite.hidden_path d:t=werewolf.wolf-blooded.pack
+&rite.hidden_path [v( d.dd )]=4
+&tags.rite.hidden_path [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.expel dd=4
-&tags.rite.expel d:t=werewolf.wolf-blooded.pack
+&rite.expel [v( d.dd )]=4
+&tags.rite.expel [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.great_hunt dd=5
-&tags.rite.great_hunt d:t=werewolf.wolf-blooded.pack
+&rite.great_hunt [v( d.dd )]=5
+&tags.rite.great_hunt [v( d.dt )]=werewolf.wolf-blooded.pack
 
 
 
@@ -759,7 +810,7 @@ agenda
 ('pack' doesn't need to be set)
 */
 
-&check.bio.wolf-blooded cg=
+&check.bio.wolf-blooded [v( d.cg )]=
 
 
 /*
@@ -775,11 +826,11 @@ one free merit.tell_()
 
 */
 
-&f.allocated.merits.wolf-blooded cg=
+&f.allocated.merits.wolf-blooded [v( d.cg )]=
 	get( %0/[first( lattr( %0/_merit.tell_(*) ))] )
 
 
-&check.chargen.wolf-blooded cg=
+&check.chargen.wolf-blooded [v( d.cg )]=
 	strcat( 
 		%b, %b, ansi( h, Free Tell ), :, %b, 
 		u( display.check.ok-no, 
@@ -804,16 +855,16 @@ Renown 3
 Primal Urge 5
 */
 
-// &xp.advantage.<power> XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
+// &xp.advantage.<power> [v( d.xpcd )]=u( cost.standard, 5, %1, %2 )
 
-&xp.advantage.harmony XP Cost Database <xpcd>=0
+&xp.advantage.harmony [v( d.xpcd )]=0
 
-&d.restricted.types.werewolf xpas=gift
-&d.restricted.stats.werewolf xpas=
+&d.restricted.types.werewolf [v( d.xpas )]=gift
+&d.restricted.stats.werewolf [v( d.xpas )]=
 
-&xp.renown xpcd=u( cost.standard, 3, %1, %2 )
-&xp.advantage.primal_urge xpcd=u( cost.standard, 5, %1, %2 )
-&xp.rite xpcd=u( cost.standard, 1, %1, %2 )
+&xp.renown [v( d.xpcd )]=u( cost.standard, 3, %1, %2 )
+&xp.advantage.primal_urge [v( d.xpcd )]=u( cost.standard, 5, %1, %2 )
+&xp.rite [v( d.xpcd )]=u( cost.standard, 1, %1, %2 )
 
 /*
 Following is sent from XP: 
@@ -824,7 +875,7 @@ Following is sent from XP:
 	%4: value.list.of.statpath
 */
 
-&xp.gift xpcd=
+&xp.gift [v( d.xpcd )]=
 	case( 1, 
 		cand( 
 			strmatch( %2, unlock ), 
@@ -848,7 +899,7 @@ Following is sent from XP:
 
 // -- Bio ----------------------------------------------------------------------
 
-&bio.default.wolf-blooded Newest Sheet Code <nsc>=
+&bio.default.wolf-blooded [v( d.nsc )]=
 	birthdate concept pack template virtue vice 
 
 &bio.default.werewolf [v( d.nsc )]=
@@ -892,7 +943,7 @@ Following is sent from XP:
 
 // -- 
 
-&block.powers.werewolf sheet: rows=
+&block.powers.werewolf [v( d.sheet )]=
   strcat( 
 
 // .. renown
@@ -978,8 +1029,9 @@ Following is sent from XP:
 	s: does stat take 'unlock'?
 	t: text for first line (priming read stuff)
 	l: length of padding between 'name' and 'value'
+*/
 
-&display.gift sheet: rows=
+&display.gift [v( d.sheet )]=
 	strcat( 
 		setq( n, first( %0, : )), 
 		setq( r, rest( %0, : )), 
@@ -1028,8 +1080,8 @@ Following is sent from XP:
 
 // --
 
-&block.powers.wolf-blooded sheet: rows=
-  strcat( 
+&block.powers.wolf-blooded [v( d.sheet )]=
+	strcat( 
 
 // .. rites, if any 
 		setq( x, u( powers.rites.werewolf, %0 )), 
@@ -1063,13 +1115,13 @@ Following is sent from XP:
 
 // -- Advantages ---------------------------------------------------------------
 
-&traits.morality.werewolf Newest Sheet Code <nsc>=
+&traits.morality.werewolf [v( d.nsc )]=
 	ulocal( f.cheat_getstat.morality, %0, harmony )
 
-&traits.essence Newest Sheet Code <nsc>=
+&traits.essence [v( d.nsc )]=
 	u( f.cheat_getstat.pool, %0, essence )
 
-&block.traits.essence sheet: rows=
+&block.traits.essence [v( d.sheet )]=
 	strcat( 
 		setq( w, 38 ), 
 		setq( t, 10 ), 
@@ -1084,7 +1136,7 @@ Following is sent from XP:
 	)
 
 
-&block.traits.werewolf sheet: rows=
+&block.traits.werewolf [v( d.sheet )]=
 	strcat( 
 		setq( w, 38 ), 
 		setq( t, 10 ), 
@@ -1111,7 +1163,7 @@ Following is sent from XP:
 
 // -- Gifts --------------------------------------------------------------------
 
-&.gifts.facet_check.moon DD=
+&.gifts.facet_check.moon [v( d.dd )]=
 	cand( 
 // check auspice
 		u( .is, %0, bio.auspice, %1 ), 
@@ -1131,7 +1183,7 @@ Following is sent from XP:
 	)
 
 
-&.gifts.facet_check.wolf DD=
+&.gifts.facet_check.wolf [v( d.dd )]=
 		switch( %2, 
 			@@( null ), 1, 
 			Unlock, 1, 
@@ -1140,7 +1192,7 @@ Following is sent from XP:
 			u( .has, %0, renown.%2 )
 		)
 
-&.gifts.facet_check.shadow DD=
+&.gifts.facet_check.shadow [v( d.dd )]=
 	cand( 
 		cor( 
 			u( .list_has, %0, %1, Unlock ), 
@@ -1149,226 +1201,232 @@ Following is sent from XP:
 		u( .gifts.facet_check.wolf, %0, %1, %2 )
 	)
 
-&class.gift.? DD=list
+&class.gift.? [v( d.dd )]=list
 
 
 // -- Moon Gifts ---------------------------------------------------------------
 
-&gift.crescent_moon's_gift DD=1.2.3.4.5|
+&gift.crescent_moon's_gift [v( d.dd )]=1.2.3.4.5|
 	Shadow Gaze.Spirit Whispers.Shadow Hunter.Shadow Masquerade.Panopticon
-&prerequisite.gift.crescent_moon's_gift DD=
+&prerequisite.gift.crescent_moon's_gift [v( d.dd )]=
 	u( .gifts.facet_check.moon, %0, Ithaeur, gift.crescent_moon's_gift, %2 )
-&prereq-text.gift.crescent_moon's_gift DD=Auspice is Ithaeur, must be set 
-	or unset in order
-&tags.gift.crescent_moon's_gift D:T=werewolf.moon.ithaeur
+&prereq-text.gift.crescent_moon's_gift [v( d.dd )]=
+	Auspice is Ithaeur, must be set or unset in order
+&tags.gift.crescent_moon's_gift [v( d.dt )]=werewolf.moon.ithaeur
 
-&gift.full_moon's_gift DD=1.2.3.4.5|
+&gift.full_moon's_gift [v( d.dd )]=1.2.3.4.5|
 	Killer Instinct.Warrior's Hide.Bloody-Handed Hunter.Butchery.Crimson Spasm
-&prerequisite.gift.full_moon's_gift DD=
+&prerequisite.gift.full_moon's_gift [v( d.dd )]=
 	u( .gifts.facet_check.moon, %0, Rahu, gift.full_moon's_gift, %2 )
-&prereq-text.gift.full_moon's_gift DD=
+&prereq-text.gift.full_moon's_gift [v( d.dd )]=
 	Auspice is Rahu, must be set or unset in order
-&tags.gift.full_moon's_gift D:T=werewolf.moon.rahu
+&tags.gift.full_moon's_gift [v( d.dt )]=werewolf.moon.rahu
 
-&gift.gibbous_moon's_gift DD=1.2.3.4.5|
+&gift.gibbous_moon's_gift [v( d.dd )]=1.2.3.4.5|
 	War Howl.Voice of Glory.Dream Hunter.Thousand-Throat Howl.End of Story
-&prerequisite.gift.gibbous_moon's_gift DD=
+&prerequisite.gift.gibbous_moon's_gift [v( d.dd )]=
 	u( .gifts.facet_check.moon, %0, Cahalith, gift.gibbous_moon's_gift, %2 )
-&prereq-text.gift.gibbous_moon's_gift DD=
+&prereq-text.gift.gibbous_moon's_gift [v( d.dd )]=
 	Auspice is Cahalith, must be set or unset in order
-&tags.gift.gibbous_moon's_gift D:T=werewolf.moon.cahalith
+&tags.gift.gibbous_moon's_gift [v( d.dt )]=werewolf.moon.cahalith
 
-&gift.half_moon's_gift DD=1.2.3.4.5|
+&gift.half_moon's_gift [v( d.dd )]=1.2.3.4.5|
 	Scent Beneath the Surface.Binding Oath.Sly Hunter.
 	Ties of Word and Promise.Ties of Blood and Bone
-&prerequisite.gift.half_moon's_gift DD=
+&prerequisite.gift.half_moon's_gift [v( d.dd )]=
 	u( .gifts.facet_check.moon, %0, Elodoth, gift.half_moon's_gift, %2 )
-&prereq-text.gift.half_moon's_gift DD=
+&prereq-text.gift.half_moon's_gift [v( d.dd )]=
 	Auspice is Elodoth, must be set or unset in order
-&tags.gift.half_moon's_gift D:T=werewolf.moon.elodoth
+&tags.gift.half_moon's_gift [v( d.dt )]=werewolf.moon.elodoth
 
-&gift.new_moon's_gift DD=1.2.3.4.5|
+&gift.new_moon's_gift [v( d.dd )]=1.2.3.4.5|
 	Eviscerate.Slip Away.Relentless Hunter.Divide and Conquer.Breach
-&prerequisite.gift.new_moon's_gift DD=
+&prerequisite.gift.new_moon's_gift [v( d.dd )]=
 	u( .gifts.facet_check.moon, %0, Irraka, gift.new_moon's_gift, %2 )
-&prereq-text.gift.new_moon's_gift DD=
+&prereq-text.gift.new_moon's_gift [v( d.dd )]=
 	Auspice is Irraka, must be set or unset in order
-&tags.gift.new_moon's_gift D:T=werewolf.moon.irraka
+&tags.gift.new_moon's_gift [v( d.dt )]=werewolf.moon.irraka
 
 // -- Shadow Gifts (first draft) -----------------------------------------------
 
-&gift.gift_of_death DD=
+&gift.gift_of_death [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Cold Embrace.Barghest.Memento Mori.Bone Gnaw.Eyes of the Dead
-&prerequisite.gift.gift_of_death DD=
+&prerequisite.gift.gift_of_death [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_death, %2 )
-&prereq-text.gift.gift_of_death DD=
+&prereq-text.gift.gift_of_death [v( d.dd )]=
 	Must have Renown of the Facet entered (%2) and must have 'Unlock'.
-&tags.gift.gift_of_death D:T=werewolf.shadow.bone shadows
+&tags.gift.gift_of_death [v( d.dt )]=werewolf.shadow.bone shadows
 
-&gift.gift_of_dominance DD=
+&gift.gift_of_dominance [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Primal Allure.Glorious Lunacy.Lay Low the Challenger.
 	Snarl of the Predator.Lead the Lesser Pack
-&prerequisite.gift.gift_of_dominance DD=
+&prerequisite.gift.gift_of_dominance [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_dominance, %2 )
-&prereq-text.gift.gift_of_dominance DD=
+&prereq-text.gift.gift_of_dominance [v( d.dd )]=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_dominance D:T=werewolf.shadow.rahu.storm lords
+&tags.gift.gift_of_dominance [v( d.dt )]=werewolf.shadow.rahu.storm lords
 
-&gift.gift_of_the_elementals DD=
+&gift.gift_of_the_elementals [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Breath of Air.Catastrophe.Flesh of Earth.Tongue of Flame.
 	Heart of Water
-&prerequisite.gift.gift_of_the_elementals DD=
+&prerequisite.gift.gift_of_the_elementals [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_the_elementals, %2 )
-&prereq-text.gift.gift_of_the_elementals DD=
+&prereq-text.gift.gift_of_the_elementals [v( d.dd )]=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_the_elementals D:T=werewolf.shadow.ithaeur.bone shadows
+&tags.gift.gift_of_the_elementals [v( d.dt )]=
+	werewolf.shadow.ithaeur.bone shadows
 
-&gift.gift_of_evasion DD=
+&gift.gift_of_evasion [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Feet of Mist.Fog of War.Deny Everything.Hit and Run.Exit Strategy
-&prerequisite.gift.gift_of_evasion DD=
+&prerequisite.gift.gift_of_evasion [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_evasion, %2 )
-&prereq-text.gift.gift_of_evasion DD=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_evasion D:T=werewolf.shadow.irraka.storm lords
+&prereq-text.gift.gift_of_evasion [v( d.dd )]=
+	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
+&tags.gift.gift_of_evasion [v( d.dt )]=werewolf.shadow.irraka.storm lords
 
-&gift.gift_of_insight DD=
+&gift.gift_of_insight [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Prey on Weakness.Read the World's Loom.Echo Dream.
 	Scent the Unnatural.One Step Ahead
-&prerequisite.gift.gift_of_insight DD=
+&prerequisite.gift.gift_of_insight [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_insight, %2 )
-&prereq-text.gift.gift_of_insight DD=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_insight D:T=werewolf.shadow.elodoth.bone shadows
+&prereq-text.gift.gift_of_insight [v( d.dd )]=
+	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
+&tags.gift.gift_of_insight [v( d.dt )]=werewolf.shadow.elodoth.bone shadows
 
-&gift.gift_of_inspiration DD=
+&gift.gift_of_inspiration [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Lunatic Inspiration.Fearless Hunter.Pack Triumphs Together.Unity.
 	Still Small Voice
-&prerequisite.gift.gift_of_inspiration DD=
+&prerequisite.gift.gift_of_inspiration [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_inspiration, %2 )
-&prereq-text.gift.gift_of_inspiration DD=
+&prereq-text.gift.gift_of_inspiration [v( d.dd )]=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_inspiration D:T=werewolf.shadow.cahalith.blood talons
+&tags.gift.gift_of_inspiration [v( d.dt )]=werewolf.shadow.cahalith.blood talons
 
-&gift.gift_of_knowledge DD=
+&gift.gift_of_knowledge [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Needle.This Story is True.Know Thy Prey.Lore of the Land.
 	Sift the Sands
-&prerequisite.gift.gift_of_knowledge DD=
+&prerequisite.gift.gift_of_knowledge [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_knowledge, %2 )
-&prereq-text.gift.gift_of_knowledge DD=
+&prereq-text.gift.gift_of_knowledge [v( d.dd )]=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_knowledge D:T=werewolf.shadow.cahalith.iron masters
+&tags.gift.gift_of_knowledge [v( d.dt )]=werewolf.shadow.cahalith.iron masters
 
-&gift.nature's_gift DD=
+&gift.nature's_gift [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Nature's Lure.Black Earth, Red Hunger.Knotted Paths.Pack Kin.
 	Beast Ride
-&prerequisite.gift.nature's_gift DD=
+&prerequisite.gift.nature's_gift [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.nature's_gift, %2 )
-&prereq-text.gift.nature's_gift DD=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.nature's_gift D:T=werewolf.shadow.hunters in darkness
+&prereq-text.gift.nature's_gift [v( d.dd )]=
+	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
+&tags.gift.nature's_gift [v( d.dt )]=werewolf.shadow.hunters in darkness
 
-&gift.gift_of_rage DD=
+&gift.gift_of_rage [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Incite Fury.Berserker's Might.Perfected Rage.Slaughterer.
 	Raging Lunacy
-&prerequisite.gift.gift_of_rage DD=
+&prerequisite.gift.gift_of_rage [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_rage, %2 )
-&prereq-text.gift.gift_of_rage DD=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_rage D:T=werewolf.shadow.blood talons
+&prereq-text.gift.gift_of_rage [v( d.dd )]=
+	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
+&tags.gift.gift_of_rage [v( d.dt )]=werewolf.shadow.blood talons
 
-&gift.gift_of_shaping DD=
+&gift.gift_of_shaping [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Moldywarp.Shield-Breaker.Entropy's Toll.Perfection of Form.Sculpt
-&prerequisite.gift.gift_of_shaping DD=
+&prerequisite.gift.gift_of_shaping [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_shaping, %2 )
-&prereq-text.gift.gift_of_shaping DD=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_shaping D:T=werewolf.shadow.ithaeur.iron masters
+&prereq-text.gift.gift_of_shaping [v( d.dd )]=
+	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
+&tags.gift.gift_of_shaping [v( d.dt )]=werewolf.shadow.ithaeur.iron masters
 
-&gift.gift_of_stealth DD=
+&gift.gift_of_stealth [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Shadow Pelt.Predator's Shadow.Pack Stalks to Prey.The Hunter Waits.
 	Running Silent
-&prerequisite.gift.gift_of_stealth DD=
+&prerequisite.gift.gift_of_stealth [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_stealth, %2 )
-&prereq-text.gift.gift_of_stealth DD=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_stealth D:T=werewolf.shadow.irraka.hunters in darkness
+&prereq-text.gift.gift_of_stealth [v( d.dd )]=
+	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
+&tags.gift.gift_of_stealth [v( d.dt )]=
+	werewolf.shadow.irraka.hunters in darkness
 
-&gift.gift_of_strength DD=
+&gift.gift_of_strength [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Unchained.Predator's Unmatched Pursuit.Crushing Blow.
 	Primal Strength.Rending Claws
-&prerequisite.gift.gift_of_strength DD=
+&prerequisite.gift.gift_of_strength [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_strength, %2 )
-&prereq-text.gift.gift_of_strength DD=
+&prereq-text.gift.gift_of_strength [v( d.dd )]=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_strength D:T=werewolf.shadow.rahu.blood talons
+&tags.gift.gift_of_strength [v( d.dt )]=werewolf.shadow.rahu.blood talons
 
-&gift.gift_of_technology DD=
+&gift.gift_of_technology [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Garble.Unmake.Command Artiface.Shutdown.Iron Slave
-&prerequisite.gift.gift_of_technology DD=
+&prerequisite.gift.gift_of_technology [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_technology, %2 )
-&prereq-text.gift.gift_of_technology DD=
+&prereq-text.gift.gift_of_technology [v( d.dd )]=
 	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_technology D:T=werewolf.shadow.iron masters
+&tags.gift.gift_of_technology [v( d.dt )]=werewolf.shadow.iron masters
 
-&gift.gift_of_warding DD=
+&gift.gift_of_warding [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Maze Ward.Ward the Wolf's Den.All Doors Locked.
 	Predator's Claim.Boundary Ward
-&prerequisite.gift.gift_of_warding DD=
+&prerequisite.gift.gift_of_warding [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_warding, %2 )
-&prereq-text.gift.gift_of_warding DD=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_warding D:T=werewolf.shadow.elodoth.hunters in darkness
+&prereq-text.gift.gift_of_warding [v( d.dd )]=
+	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
+&tags.gift.gift_of_warding [v( d.dt )]=
+	werewolf.shadow.elodoth.hunters in darkness
 
-&gift.gift_of_weather DD=
+&gift.gift_of_weather [v( d.dd )]=
 	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
 	Unlocked.Cloak of Mist and Haze.Heavens Unleashed.Hunt Under Iron Skies.
 	Grasp of Howling Winds.Hunt of Fire and Ice
-&prerequisite.gift.gift_of_weather DD=
+&prerequisite.gift.gift_of_weather [v( d.dd )]=
 	u( .gifts.facet_check.shadow, %0, gift.gift_of_weather, %2 )
-&prereq-text.gift.gift_of_weather DD=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_weather D:T=werewolf.shadow.storm lords
+&prereq-text.gift.gift_of_weather [v( d.dd )]=
+	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
+&tags.gift.gift_of_weather [v( d.dt )]=werewolf.shadow.storm lords
 
 // -- Wolf Gifts (first draft) -------------------------------------------------
 
-&gift.gift_of_change DD=
+&gift.gift_of_change [v( d.dd )]=
 	Cunning.Glory.Honor.Purity.Wisdom|
 	Skin Thief.Gaze of the Moon.Luna's Embrace.The Father's Form.
 	Quicksilver Flesh
-&prerequisite.gift.gift_of_change DD=
+&prerequisite.gift.gift_of_change [v( d.dd )]=
 	u( .gifts.facet_check.wolf, %0, gift.gift_of_change, %2 )
-&prereq-text.gift.gift_of_change DD=Must have Renown of the Facet entered (%2).
-&tags.gift.gift_of_change D:T=werewolf.wolf
+&prereq-text.gift.gift_of_change [v( d.dd )]=
+	Must have Renown of the Facet entered (%2).
+&tags.gift.gift_of_change [v( d.dt )]=werewolf.wolf
 
-&gift.gift_of_hunting DD=
+&gift.gift_of_hunting [v( d.dd )]=
 	Cunning.Glory.Honor.Purity.Wisdom|
 	Honed Senses.Cow the Prey.Beast Talker.Tireless Hunter.Impossible Spoor
-&prerequisite.gift.gift_of_hunting DD=
+&prerequisite.gift.gift_of_hunting [v( d.dd )]=
 	u( .gifts.facet_check.wolf, %0, gift.gift_of_hunting, %2 )
-&prereq-text.gift.gift_of_hunting DD=Must have Renown of the Facet entered (%2).
-&tags.gift.gift_of_hunting D:T=werewolf.wolf
+&prereq-text.gift.gift_of_hunting [v( d.dd )]=
+	Must have Renown of the Facet entered (%2).
+&tags.gift.gift_of_hunting [v( d.dt )]=werewolf.wolf
 
-&gift.gift_of_pack DD=
+&gift.gift_of_pack [v( d.dd )]=
 	Cunning.Glory.Honor.Purity.Wisdom|
 	Reflected Facets.Down the Prey.Totem's Wrath.Maw of Madness.Pack Awareness
-&prerequisite.gift.gift_of_pack DD=
+&prerequisite.gift.gift_of_pack [v( d.dd )]=
 	u( .gifts.facet_check.wolf, %0, gift.gift_of_pack, %2 )
-&prereq-text.gift.gift_of_pack DD=Must have Renown of the Facet entered (%2).
-&tags.gift.gift_of_pack D:T=werewolf.wolf
+&prereq-text.gift.gift_of_pack [v( d.dd )]=
+	Must have Renown of the Facet entered (%2).
+&tags.gift.gift_of_pack [v( d.dt )]=werewolf.wolf
 
 
 
@@ -1388,7 +1446,7 @@ Yeah, let's see how this works.
 -- Allocated Merits: Primal Urge -----------------------------------------------
 */
 
-&f.allocated.power-trait.werewolf [v(d.cg)]=
+&f.allocated.power-trait.werewolf [v( d.cg )]=
 	mul( 
 		dec( u( v( d.dd )/.value, %0, advantage.primal_urge )), 
 		5 
@@ -1513,7 +1571,7 @@ Total points in rites (should be 2)
 
 */
 
-&check.bio.werewolf cg=blood bone auspice tribe
+&check.bio.werewolf [v( d.cg )]=blood bone auspice tribe
 
 
 
@@ -1590,7 +1648,7 @@ Should be easier than 'favored attribute':
 
 // -- test --
 
-think u( [v( d.cg )]/check.chargen.skills.werewolf, pmatch( thenomain ))
+think u( v( d.cg )/check.chargen.skills.werewolf, pmatch( thenomain ))
 
 /*
 --------------------------------------------------------------------------------
@@ -1891,11 +1949,18 @@ think u( v( d.cg )/check.gifts, %# )
 ################################################################################
 ## WEREWOLF: ONGOING NOTES #####################################################
 
-Willpower is equal to Resolve + Composure. Harmony is 7. Size is 5. Health is Size + Stamina. Speed is Size + Strength + Dexterity. Defense is the lower of Dexterity and Wits, plus Athletics. Primal Urge is 1, plus any bought with Merits.
+Willpower is equal to Resolve + Composure. Harmony is 7. Size is 5. Health is 
+Size + Stamina. Speed is Size + Strength + Dexterity. Defense is the lower of 
+Dexterity and Wits, plus Athletics. Primal Urge is 1, plus any bought with 
+Merits.
 
-Primal Urge starts at 1 dot. Additional dots may be purchased with five Merit dots each. A character cannot start with Primal Urge higher than 3.
+Primal Urge starts at 1 dot. Additional dots may be purchased with five Merit 
+dots each. A character cannot start with Primal Urge higher than 3.
 
-Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the second Facet of your Moon Gift if you have two dots in your auspice Renown. You cannot choose a Facet in which your character has no dots of Renown.
+Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two 
+Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the 
+second Facet of your Moon Gift if you have two dots in your auspice Renown. You 
+cannot choose a Facet in which your character has no dots of Renown.
 
 --
 
@@ -2027,8 +2092,8 @@ regain methods:
 -- Spend/Regain Methods --------------------------------------------------------
 */
 
-&regain.methods.essence psrs=|all
-&spend.methods.essence psrs=[@@( nothing but numeric allowed here )]
+&regain.methods.essence [v( d.psrs )]=|all
+&spend.methods.essence [v( d.psrs )]=[@@( nothing but numeric allowed here )]
 
 
 /* 
@@ -2036,7 +2101,7 @@ regain methods:
 -- Spend/Regain Essence Amts ---------------------------------------------------
 */
 
-&amt.spend.numeric.essence psrs=
+&amt.spend.numeric.essence [v( d.psrs )]=
 	if( t( u( amt.spend.numeric.default, %0, %1, %2 )), 
 		if( 
 			lte( %2, 
@@ -2057,7 +2122,7 @@ regain methods:
 -- Spend Essence Trigger -------------------------------------------------------
 */
 
-&spend.trigger.essence psrs=
+&spend.trigger.essence [v( d.psrs )]=
 	think strcat( 
 		m:, %b, setr( m, u( f.match_method, %1, spend, essence, %2 )), %r, 
 		a:, %b, setr( a, u( amt.spend, %1, essence, %qm )), %r, 
@@ -2102,7 +2167,7 @@ regain methods:
 -- Regain Essence Trigger ------------------------------------------------------
 */
 
-&regain.trigger.essence psrs=
+&regain.trigger.essence [v( d.psrs )]=
 	think strcat( 
 		m:, %b, setr( m, u( f.match_method, %1, regain, essence, %2 )), %r, 
 		a:, %b, setr( a, u( amt.regain, %1, essence, %qm )), %r, 
