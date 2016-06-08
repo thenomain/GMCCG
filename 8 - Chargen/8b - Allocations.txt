@@ -41,7 +41,6 @@ if 'Strength' was the free attribute.
 /* -- tests --
 
 think u( v( d.cg )/f.allocated.attributes, %# )
-think u( v( d.cg )/f.allocated.attributes, %# )
 think u( v( d.cg )/f.allocated.attributes, %#, attribute.strength:-1 )
 
 
