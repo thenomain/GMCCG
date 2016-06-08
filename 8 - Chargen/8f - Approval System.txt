@@ -919,6 +919,8 @@ think u( [v( d.jrs )]/d.content.cg/submit )
 		/cgsubmit [moniker( %# )]=[u( d.content.cg/submit, %# )], 
 		%#; 
 
+@set v( d.jrs )/c.cg/submit=regexp
+
 &d.cgsubmit.bucket [v( d.jrs )]=APPS
 
 &d.cgsubmit.assign [v( d.jrs )]=+allstaff
