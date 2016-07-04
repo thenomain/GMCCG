@@ -46,6 +46,7 @@ The God Machine Chronicles (nWoD2) now features flat payments per dot.
 /*
 --------------------------------------------------------------------------------
 -- Merits ----------------------------------------------------------------------
+*/
 
 &xp.merit [v( d.xpcd )]=u( cost.standard, 1, %1, %2 )
 
