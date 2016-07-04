@@ -98,8 +98,17 @@ Aspirations Log System <asp>
 */
 
 @fo me=&d.jrs [v( d.asp )]=search( name=Jobs Request System <jrs> )
-&d.bucket [v( d.asp )]=u( get( v( d.jrs )/va )/FN_FIND-BUCKET, ASP )
-&d.jgroup [v( d.asp )]=u( get( v( d.jrs )/va )/FN_FIND-JGROUP, +allstaff )
+@fo me=&d.bucket [v( d.asp )]=u( get( v( d.jrs )/va )/FN_FIND-BUCKET, ASP )
+@fo me=&d.jgroup [v( d.asp )]=u( get( v( d.jrs )/va )/FN_FIND-JGROUP, +allstaff )
+
+@assert search( name=Jobs Request System <jrs> )=
+	{ 
+		think ansi( 
+			rhu, WARNING!!!, 
+			nh, %bCould not find "Jobs Request System <jrs>"! 
+			Aspirations code will not work until this is fixed. 
+		) 
+	}
 
 
 // -----------------------------------------------------------------------------
