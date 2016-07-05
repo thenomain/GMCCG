@@ -776,7 +776,27 @@ Vampire also uses the 'rite' stat type, and it's also always a 'flag'.
 &tags.rite.raiment_of_the_storm [v( d.dt )]=werewolf.wolf-blooded.pack
 
 &rite.shadowcall [v( d.dd )]=3
-&tags.rite.raiment_of_the_storm [v( d.dt )]=werewolf.wolf-blooded.pack
+&tags.rite.shadowcall [v( d.dt )]=werewolf.wolf-blooded.pack
+
+/* *** WARNING ***
+If you also have Vampire, you may need this:
+
+&rite.shadowcall [v( d.dd )]=3
+&tags.rite.shadowcall [v( d.dt )]=werewolf.wolf-blooded.pack.vampire.circle of the crone
+
+&prerequisite.rite.shadowcall [v( d.dd )]=
+	if( u( .is_full, %0, bio.template, vampire ), 
+		cand( 
+			u( .is_full, %0, bio.covenant, circle of the crone ), 
+			u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
+		)
+	)
+
+&prereq-text.rite.shadowcall [v( d.dd )]=
+	If Vampire: 
+	Circle of the Crone, 
+	Cruac at this level or higher
+*/
 
 &rite.supplication [v( d.dd )]=3
 &tags.rite.supplication [v( d.dt )]=werewolf.wolf-blooded.pack

@@ -940,6 +940,26 @@ but does not receive free rituals.
 	Cruac at this level or higher
 &tags.rite.shadowcall [v( d.dt )]=vampire.circle of the crone
 
+/* *** WARNING ***
+If you also have Werewolf, you may need this:
+
+&rite.shadowcall [v( d.dd )]=3
+&tags.rite.shadowcall [v( d.dt )]=werewolf.wolf-blooded.pack.vampire.circle of the crone
+
+&prerequisite.rite.shadowcall [v( d.dd )]=
+	if( u( .is_full, %0, bio.template, vampire ), 
+		cand( 
+			u( .is_full, %0, bio.covenant, circle of the crone ), 
+			u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
+		)
+	)
+
+&prereq-text.rite.shadowcall [v( d.dd )]=
+	If Vampire: 
+	Circle of the Crone, 
+	Cruac at this level or higher
+*/
+
 &rite.touch_of_the_morrigan [v( d.dd )]=3
 &prerequisite.rite.touch_of_the_morrigan [v( d.dd )]=
 	cand( 
