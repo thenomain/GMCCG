@@ -974,7 +974,7 @@ Valid award:
 &d.xp_types [v( d.xpas )]=normal player
 &d.log_types [v( d.xpas )]=gain spend freebie auto unspend unaward
 
-&default.special.xp.normal dd=0 0
+&default.special.beats.normal [v( d.dd )]=0 0
 
 
 /*
