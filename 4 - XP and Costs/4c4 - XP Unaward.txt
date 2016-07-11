@@ -45,6 +45,11 @@ q5: attempt at set( %qd, _special.beats.%qt:<new value> )
 		@pemit %#=u( .msg, xp/unward, Wizard only ) 
 	}; 
 
+	@assert sql( select 1 )={ 
+		@pemit %#=
+			u( .msg, xp/unaward, SQL connection is down%; unaward not processed )
+	}; 
+
 	think strcat( 
 		entry num:, setr( e, first( %1 )), %r, 
 		reason:, setr( r, trim( rest( %1, for ))), %r, 

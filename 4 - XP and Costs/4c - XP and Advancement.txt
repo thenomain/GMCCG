@@ -21,8 +21,8 @@ Warning: This is a mess coded in a crunch.
 
 Illegal characters: | and ` 
 
-&d.xp_types xpas=normal player
-&d.log_types xpas=gain spend freebie auto
+&d.xp_types [v( d.xpas )]=normal player arcane
+&d.log_types [v( d.xpas )]=gain spend freebie auto
 
 -=-=-=-=-=-=-=-=-=-=-=
 
@@ -69,17 +69,17 @@ COMMANDS:
 */
 
 @create XP Advancement System <xpas>
-@fo me=&d.xpas me=num( XP Advancement System <xpas> )
-@set xpas=INHERIT SAFE
+@fo me=&d.xpas me=search( name=XP Advancement System <xpas> )
+@set XP Advancement System <xpas>=INHERIT SAFE
 
-@fo me=&d.sfp xpas=[search( name=Stat Functions Prototype <sfp> )]
-@fo me=&d.dd xpas=[search( name=Data Dictionary <dd> )]
-@fo me=&d.xpcd xpas=[search( name=XP Cost Database <xpcd> )]
-@fo me=&d.cg xpas=[search( name=GMC Chargen <cg> )]
+@fo me=&d.sfp [v( d.xpas )]=[search( name=Stat Functions Prototype <sfp> )]
+@fo me=&d.dd [v( d.xpas )]=[search( name=Data Dictionary <dd> )]
+@fo me=&d.xpcd [v( d.xpas )]=[search( name=XP Cost Database <xpcd> )]
+@fo me=&d.cg [v( d.xpas )]=[search( name=GMC Chargen <cg> )]
 
-@parent xpas=codp
-&prefix.sql xpas=sql.
-&prefix.validations xpas=validate.
+@parent [v( d.xpas )]=codp
+&prefix.sql [v( d.xpas )]=sql.
+&prefix.validations [v( d.xpas )]=validate.
 
 
 
@@ -111,15 +111,13 @@ COMMANDS:
 
 	xp/cost [<name>/]<stat>[=<value>]
 
-a very temporary thing
-
 */
 
-&c.xp/cost xpas=$xp/cost *:@pemit %#=[u( f.xp/cost, %0 )]
+&c.xp/cost [v( d.xpas )]=$xp/cost *:@pemit %#=[u( f.xp/cost, %0 )]
 
-&c.xp/spend xpas=$xp/spend *:@pemit %#=[u( f.xp/spend, %0 )]
+&c.xp/spend [v( d.xpas )]=$xp/spend *:@pemit %#=[u( f.xp/spend, %0 )]
 
-&c.xp/freebie xpas=$xp/freebie *:@pemit %#=[u( f.xp/freebie, %0 )]
+&c.xp/freebie [v( d.xpas )]=$xp/freebie *:@pemit %#=[u( f.xp/freebie, %0 )]
 
 
 
@@ -131,11 +129,11 @@ a very temporary thing
 -- Short Functions -------------------------------------------------------------
 */
 
-&.isapproved xpas=isapproved( %0, %1 )
-&.value xpas=u( v( d.dd )/.value, %0, %1 )
-&.msg xpas=ansi( h, <%0>, n, %b%1 )
-&.plural xpas=if( eq( %0, 1 ), %0 %1, %0 %2 )
-&.lmax xpas=lmax( %0 )
+&.isapproved [v( d.xpas )]=isapproved( %0, %1 )
+&.value [v( d.xpas )]=u( v( d.dd )/.value, %0, %1 )
+&.msg [v( d.xpas )]=ansi( h, <%0>, n, %b%1 )
+&.plural [v( d.xpas )]=if( eq( %0, 1 ), %0 %1, %0 %2 )
+&.lmax [v( d.xpas )]=lmax( %0 )
 
 // expands trunc(): Truncate '%0' to '%1' significant digits.
 &.trunc [v( d.xpas )]=
@@ -156,7 +154,7 @@ Outputs: <#dbref>:<creation time in secondss>
 
 */
 
-&.objid xpas=localize( 
+&.objid [v( d.xpas )]=localize( 
 		if( t( setr( l, locate( %#, %0, * ))), 
 			[num( %ql )]:[convtime( get( %ql/created ))], 
 			#-1 NOT FOUND 
@@ -182,11 +180,11 @@ I removed the nested edits, here. Rhost and TinyMUSH will choke here.
 
 */
 
-&f.sql.escape xpas=edit( %0, \\, \\\\\\, ', \\\\', ", \\\\", \%, \\\\\\\% )
+&f.sql.escape [v( d.xpas )]=edit( %0, \\, \\\\\\, ', \\\\', ", \\\\", \%, \\\\\\\% )
 
 /* -- test --
 
-think u( xpas/f.sql.escape, lit(She said, "Oh my god!". \\ I said, "Relax; It's only a test."))
+think u( v( d.xpas )/f.sql.escape, lit(She said, "Oh my god!". \\ I said, "Relax; It's only a test."))
 
 
 --------------------------------------------------------------------------------
@@ -195,7 +193,7 @@ think u( xpas/f.sql.escape, lit(She said, "Oh my god!". \\ I said, "Relax; It's 
 	(not needed at this time)
 */ 
 
-&f.html.escape xpas=
+&f.html.escape [v( d.xpas )]=
 	edit( edit( edit( edit( %0, &, &amp; ), %%, &#37; ), <, &lt; ), >, &gt; )
 
 
@@ -206,7 +204,7 @@ think u( xpas/f.sql.escape, lit(She said, "Oh my god!". \\ I said, "Relax; It's 
 	(not needed at this time)
 */
 
-&f.html.unescape xpas=
+&f.html.unescape [v( d.xpas )]=
 	edit( edit( edit( edit( %0, &#37;, %% ), &lt;, < ), &gt;, > ), &amp;, & )
 
 
@@ -218,11 +216,11 @@ think u( xpas/f.sql.escape, lit(She said, "Oh my god!". \\ I said, "Relax; It's 
 
 */
 
-&f.time.unix2sql xpas=if( %0, timefmt( $Y-$m-$d $H:$M:$S $z, %0 ), none )
+&f.time.unix2sql [v( d.xpas )]=if( %0, timefmt( $Y-$m-$d $H:$M:$S $z, %0 ), none )
 
 /* -- test --
 
-think u( xpas/f.time.unix2sql, secs())
+think u( v( d.xpas )/f.time.unix2sql, secs())
 
 think sql( SELECT FROM_UNIXTIME( [secs()] ))
 think timefmt( $Y-$m-$d $H:$M:$S $z, secs())
@@ -235,13 +233,13 @@ think timefmt( $Y-$m-$d $H:$M:$S $z, secs())
 
 */
 
-&f.time.sql2unix xpas=sql( SELECT UNIX_TIMESTAMP( '%0' ))
+&f.time.sql2unix [v( d.xpas )]=sql( SELECT UNIX_TIMESTAMP( '%0' ))
 
 /* -- test --
 
-think u( xpas/f.time.sql2unix, u( sja/f.time.unix2sql, secs() ))
+think u( v( d.xpas )/f.time.sql2unix, u( sja/f.time.unix2sql, secs() ))
 
-think sql( SELECT UNIX_TIMESTAMP( '[u( xpas/f.time.unix2sql, secs() )]' ))
+think sql( SELECT UNIX_TIMESTAMP( '[u( v( d.xpas )/f.time.unix2sql, secs() )]' ))
 think secs()
 
 
@@ -252,7 +250,7 @@ Technically an sql.* function, but easier to do this way.
 
 */
 
-&f.transaction.begin xpas=
+&f.transaction.begin [v( d.xpas )]=
 	strcat( 
 		sql( START TRANSACTION ), 
 		sql( SET autocommit = 0 )
@@ -260,7 +258,7 @@ Technically an sql.* function, but easier to do this way.
 
 // --
 
-&f.transaction.end xpas=
+&f.transaction.end [v( d.xpas )]=
 	strcat( 
 		sql( COMMIT ), 
 		sql( SET autocommit = 1 )
@@ -280,7 +278,7 @@ Technically an sql.* function, but easier to do this way.
 
 */
 
-&sql.xp_log.add xpas=
+&sql.xp_log.add [v( d.xpas )]=
 	INSERT 
 		INTO xp_log (
 			target_objid, target_name, 
@@ -307,7 +305,7 @@ Technically an sql.* function, but easier to do this way.
 
 */
 
-&sql.xp_log.auto-add xpas=
+&sql.xp_log.auto-add [v( d.xpas )]=
 	INSERT 
 		INTO xp_log (
 			target_objid, target_name, 
@@ -333,7 +331,7 @@ A summary used for xp/log
 
 */
 
-&sql.xp_log.type-character xpas=
+&sql.xp_log.type-character [v( d.xpas )]=
 	SELECT entry_num, enactor_objid, enactor_name, log_time, xp_amt, reason 
 	FROM xp_log 
 	WHERE target_objid='[u( .objid, %0 )]' 
@@ -366,7 +364,7 @@ Important data:
 
 */
 
-&c.xp.general xpas=$^\+?xp$:
+&c.xp.general [v( d.xpas )]=$^\+?xp$:
 	@assert not( isapproved( %#, guest ))={ 
 		@pemit %#=u( .msg, xp, Players only )
 	}; 
@@ -391,7 +389,7 @@ Important data:
 
 // -- 
 
-&c.xp.specific xpas=$^\+?xp (.+)$:
+&c.xp.specific [v( d.xpas )]=$^\+?xp (.+)$:
 	think setr( p, pmatch( trim( %1 ))); 
 
 	@assert cor( isstaff( %# ), strmatch( %#, %qp ))={ 
@@ -450,11 +448,11 @@ e: earned
 		%b- Spent:, %b%b, u( .trunc, fdiv( abs( %qs ), v( d.beat-to-exp )), 1 )
 	)
 
-think u( xpas/display.xp-and-beats.one-line, *vera, normal )
+think u( v( d.xpas )/display.xp-and-beats.one-line, *vera, normal )
 
 // --
 
-&display.approval-deets xpas=
+&display.approval-deets [v( d.xpas )]=
 	localize( strcat( 
 		setq( y, strmatch( %#, %0 )), 
 		setq( n, name( %0 )), 
@@ -482,7 +480,7 @@ think u( xpas/display.xp-and-beats.one-line, *vera, normal )
 			), %r, 
 	))
 
-think u( xpas/display.approval-deets, pmatch( vera ))
+think u( v( d.xpas )/display.approval-deets, pmatch( vera ))
 
 /* 
 ================================================================================
@@ -522,6 +520,11 @@ l: log sql results
 &c.xp/log [v( d.xpas )]=$^\+?xp/log(.*)$:
 	@assert not( isapproved( %#, guest ))={ 
 		@pemit %#=u( .msg, xp/log, Players only )
+	}; 
+
+	@assert sql( select 1 )={ 
+		@pemit %#=
+			u( .msg, xp/log, SQL connection is down%; log cannot be retrieved )
 	}; 
 
     think strcat( 
@@ -725,6 +728,7 @@ w: enactor's width
 /*
 --------------------------------------------------------------------------------
 -- Format One Line -------------------------------------------------------------
+
 input: 
 	entry_num|
 	enactor_objid|enactor_name|
@@ -733,6 +737,7 @@ input:
 	action|reason|
 	trait_name|trait_value
 output: entry_num|who|when|amt|reason or stat -> 'value'|entry_num
+
 */
 
 &format.xp/log.one-line [v( d.xpas )]=
@@ -843,9 +848,14 @@ Valid award:
 
 */
 
-&c.xp/award xpas=$^\+?xp/award(.+)$:
+&c.xp/award [v( d.xpas )]=$^\+?xp/award(.+)$:
 	@assert isstaff( %# )={ 
 		@pemit %#=u( .msg, xp/award, Staff only )
+	}; 
+
+	@assert sql( select 1 )={ 
+		@pemit %#=
+			u( .msg, xp/award, SQL connection is down%; award not processed )
 	}; 
 
 	think strcat( 
@@ -959,9 +969,9 @@ Valid award:
 == SETUP =======================================================================
 */
 
-&d.beat-to-exp xpas=5
+&d.beat-to-exp [v( d.xpas )]=5
 
-&d.xp_types xpas=normal player
+&d.xp_types [v( d.xpas )]=normal player
 &d.log_types [v( d.xpas )]=gain spend freebie auto unspend unaward
 
 &default.special.xp.normal dd=0 0
@@ -972,11 +982,11 @@ Valid award:
 -- Restricted Stats ------------------------------------------------------------
 */
 
-&d.restricted.types xpas=iter( lattr( %!/d.restricted.types.*, u( %i0 )))
-&d.restricted.types.default xpas=bio
+&d.restricted.types [v( d.xpas )]=iter( lattr( %!/d.restricted.types.*, u( %i0 )))
+&d.restricted.types.default [v( d.xpas )]=bio
 
-&d.restricted.stats xpas=iter( lattr( %!/d.restricted.stats.*, u( %i0 )))
-&d.restricted.stats.default xpas=advantage.integrity merit.status_(*) 
+&d.restricted.stats [v( d.xpas )]=iter( lattr( %!/d.restricted.stats.*, u( %i0 )))
+&d.restricted.stats.default [v( d.xpas )]=advantage.integrity merit.status_(*) 
 
 /* 
 Eldritch is also restricting all supernatural merits.
@@ -984,7 +994,7 @@ This includes human-only merits.
 
 If you'd like to use this, run the code below:
 
-&d.restricted.stats xpas=
+&d.restricted.stats [v( d.xpas )]=
 	cat( 
 		iter( lattr( %!/d.restricted.stats.*, u( %i0 ))), 
 		edit( 
@@ -1018,7 +1028,7 @@ f: formula's attribute name
 
 */
 
-&f.cost.calculator xpas=
+&f.cost.calculator [v( d.xpas )]=
 	localize( strcat( 
 		setq( s, u( v( d.sfp )/f.statpath-without-instance, trim( %3, l, _ ))), 
 		setq( f, u( f.formula_finder, %qs, %0 )), 
@@ -1071,7 +1081,7 @@ x: temp statpaths for the degrading search
 
 */
 
-&f.formula_finder xpas=
+&f.formula_finder [v( d.xpas )]=
 	localize( strcat( 
 
 // set registers
@@ -1137,11 +1147,11 @@ x: temp statpaths for the degrading search
 
 // --
 
-&fil.formula_finder xpas=hasattr( v( d.xpcd ), %1.%0 )
+&fil.formula_finder [v( d.xpas )]=hasattr( v( d.xpcd ), %1.%0 )
 
 // --
 // &xp.skill.?.?~[get( %#/_bio.template)] xpcd=1
-// think u( xpas/f.formula_finder, %#, skill.academics.history )
+// think u( v( d.xpas )/f.formula_finder, %#, skill.academics.history )
 // &xp.skill.?.?~[get( %#/_bio.template)] xpcd=
 
 
@@ -1168,7 +1178,7 @@ x: current 'beats' attribute
 
 */
 
-&f.xp/cost xpas=
+&f.xp/cost [v( d.xpas )]=
 	strcat( 
 
 // break %0 down to p, n, v
@@ -1218,8 +1228,8 @@ x: current 'beats' attribute
 
 // -- test --
 
-think u( xpas/f.xp/cost, strength )
-think u( xpas/f.xp/cost, *vera/strength=1 )
+think u( v( d.xpas )/f.xp/cost, strength )
+think u( v( d.xpas )/f.xp/cost, *vera/strength=1 )
 
 /*
 --------------------------------------------------------------------------------
@@ -1236,7 +1246,7 @@ f: other error check results
 
 */
 
-&display.xp/cost xpas=
+&display.xp/cost [v( d.xpas )]=
 	strcat( 
 		The cost, %b,  
 
@@ -1306,7 +1316,7 @@ v: valid values
 n: next rank, if applicable
 */
 
-&f.stat.next_rank xpas=
+&f.stat.next_rank [v( d.xpas )]=
 	localize( strcat( 
 		setq( d, 
 			ulocal( v( d.sfp )/f.statpath-without-instance, trim( %1, l, _ ))
@@ -1427,7 +1437,7 @@ n: statname
 				), 
 				#-* 
 			), 
-			u( .msg, xp/spend, XP log entry failed. Spend not processed. ), 
+			u( .msg, xp/spend, SQL connection is down%; spend not processed ), 
 
 // spend 2: run setstat and check - stop if failed
 			strmatch( 
@@ -1494,7 +1504,7 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 
 */
 
-&d.regex.freebie xpas=(.+)/(.+?)(=(.+))? for (.+)
+&d.regex.freebie [v( d.xpas )]=(.+)/(.+?)(=(.+))? for (.+)
 
 // -- 
 
@@ -1550,7 +1560,9 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 				), 
 				#-* 
 			), 
-			u( .msg, xp/freebie, XP log entry failed. Spend not processed. ), 
+			u( .msg, xp/freebie, 
+				SQL connection is down%; freebie not processed 
+			), 
 
 // spend 2: run setstat and check - stop if failed
 			strmatch( 
@@ -1593,7 +1605,7 @@ on an object shared by alts, each character object stores their own Player
 Experience and these beats can be converted into spendable Normal Experience 
 on an alt object.
 
-Requires '9e - Alt Registration.txt'.
+Requires: '9e - Alt Registration.txt'.
 
 	xp/convert <number> from <name>
 	xp/convert all from <name>
@@ -1601,7 +1613,7 @@ Requires '9e - Alt Registration.txt'.
 
 */
 
-@fo me=&d.ars xpas=[search( name=Alt Registration <ars> )]
+@fo me=&d.ars [v( d.xpas )]=[search( name=Alt Registration <ars> )]
 
 // -- 
 
@@ -1620,6 +1632,13 @@ Requires '9e - Alt Registration.txt'.
 */
 
 &c.xp/convert [v( d.xpas )]=$^\+?xp/convert (.+) from (.+)$:
+	@assert sql( select 1 )={ 
+		@pemit %#=
+			u( .msg, xp/convert, 
+				SQL connection is down%; conversion not processed 
+			)
+	}; 
+
 	think strcat( 
 		** initial registers **, %r, 
 		-- amt/type --, %r, 
@@ -1806,7 +1825,8 @@ s: sql error
 --------------------------------------------------------------------------------
 -- Validate: Player ------------------------------------------------------------
 
-Everything there is to validate about a player. Sheet, approved, staff status, etc. Staff can check or set non-approved players.
+Everything there is to validate about a player. Sheet, approved, staff status, 
+etc. Staff can check or set non-approved players.
 
 0: character dbref (qp)
 1: sheet dbref (qw)
@@ -1814,7 +1834,7 @@ Everything there is to validate about a player. Sheet, approved, staff status, e
 
 */
 
-&validate.player xpas=
+&validate.player [v( d.xpas )]=
 	case( 0, 
 		cor( isstaff( %# ), match( %0, %# )), 
 		Yourself only, 
@@ -1842,7 +1862,7 @@ v: chargen's stat validation
 
 */
 
-&validate.stat xpas=
+&validate.stat [v( d.xpas )]=
 	localize( strcat( 
 
 		setq( v, 
@@ -1883,7 +1903,7 @@ v: chargen's stat validation
 
 */
 
-&validate.cost xpas=
+&validate.cost [v( d.xpas )]=
 	case( 1, 
 		cand( isstaff( %# ), not( t( %0 ))), 
 		This stat has no Experience cost and must be set using 'stat/set', 
@@ -1907,7 +1927,7 @@ returns: <null> if ok, otherwise error message
 
 */
 
-&validate.value xpas=
+&validate.value [v( d.xpas )]=
 	localize( strcat( 
 		setq( c, ulocal( v( d.sfp )/f.get-class, %0 )), 
 		setq( v, lcstr( first( get( v( d.dd )/%0 ), | ))), 
@@ -1962,7 +1982,7 @@ After we've validated everything else, can the person afford it?
 
 */
 
-&validate.spend xpas=
+&validate.spend [v( d.xpas )]=
 	if( 
 		gt( %0, fdiv( ladd( %1 ), v( d.beat-to-exp ))), 
 		Not enough Experience 
@@ -1983,7 +2003,7 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 
 */
 
-&validate.restricted xpas=
+&validate.restricted [v( d.xpas )]=
 	localize(
 		case( 1, 
 			isstaff( %# ), @@( ignore entirely ), 
@@ -2012,10 +2032,10 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 ## AUTO XP GAINING #############################################################
 
 
-&d.one-day xpas=86400
-&d.one-week xpas=604800
-&d.beats.max_weekly xpas=20
-&d.period.weeks xpas=26
+&d.one-day [v( d.xpas )]=86400
+&d.one-week [v( d.xpas )]=604800
+&d.beats.max_weekly [v( d.xpas )]=20
+&d.period.weeks [v( d.xpas )]=26
 
 
 ================================================================================
@@ -2026,9 +2046,9 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 // Week's End calculation: 
 // Every 7th day after most recent Approval, reset the 'earned beats this week'.
 
-&f.at_weeks_end? xpas=eq( u( f.day_in_approval_week, %0 ), 0 )
+&f.at_weeks_end? [v( d.xpas )]=eq( u( f.day_in_approval_week, %0 ), 0 )
 
-&f.day_in_approval_week xpas=
+&f.day_in_approval_week [v( d.xpas )]=
 	localize( strcat( 
 		setq( a, grab( revwords( get( %0/_approval.log ), | ), approved:*, | )), 
 		setq( a, elements( %qa, 2, : )), 
@@ -2040,7 +2060,7 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 // which << 26-week >> period is the character's approval time in? 
 // start at 1
 
-&f.current_period xpas=
+&f.current_period [v( d.xpas )]=
 	ceil( fdiv( 
 		u( [v( d.cg )]/f.total_secs_approved, %0 ), 
 		mul( v( d.one-week ), inc( v( d.period.weeks )))
@@ -2048,7 +2068,7 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 
 
 
-&f.auto.beats.weekly xpas=
+&f.auto.beats.weekly [v( d.xpas )]=
 	case( u( f.current_period, %0 ), 
 		0, 0, 
 		1, 10, 
@@ -2058,12 +2078,12 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 	)
 	
 
-&f.auto.beats.daily xpas=
+&f.auto.beats.daily [v( d.xpas )]=
 	fdiv( u( f.auto.beats.weekly, %0 ), 7 )
 
 
 // max beats per week = 20 - auto beats per week
-&f.weekly_beats.max_earnable xpas=
+&f.weekly_beats.max_earnable [v( d.xpas )]=
 	sub( v( d.beats.max_weekly ), u( f.auto.beats.weekly, %0 ))
 
 
@@ -2073,7 +2093,7 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 
 
 
-&f.approved_characters xpas=
+&f.approved_characters [v( d.xpas )]=
 	search( eplayer=cand( isapproved( ## ),  not( isstaff( ## ))))
 
 
@@ -2099,7 +2119,7 @@ c: current normal xp attribute for <character>
 
 */
 
-&trig.daily.xp xpas=
+&trig.daily.xp [v( d.xpas )]=
 	@eval 
 	strcat( 
 		list( 1, sql( u( f.transaction.begin ))), 

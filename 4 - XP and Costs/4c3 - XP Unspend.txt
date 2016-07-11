@@ -50,6 +50,11 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 		@pemit %#=u( .msg, xp/unspend, Wizard only ) 
 	}; 
 
+	@assert sql( select 1 )={ 
+		@pemit %#=
+			u( .msg, xp/unspend, SQL connection is down%; unspend not processed )
+	}; 
+
 	think strcat( 
 		entry num:, setr( e, first( %1 )), %r, 
 		reason:, setr( r, trim( rest( %1, for ))), %r, 
