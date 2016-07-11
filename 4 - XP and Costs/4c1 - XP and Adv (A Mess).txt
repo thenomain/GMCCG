@@ -192,7 +192,7 @@ UPDATE xp_log
 			xp_type, xp_amt, action, reason
 		) 
 		VALUES (
-			'[u( .objid, %0 )]', '[name( %0 )]', 
+			'[u( .objid, %0 )]', '[u( f.sql.escape, name( %0 ))]', 
 			'[u( .objid, %1 )]', 'Auto-Experience System <xpas>', 
 			'%2', %3, 'auto', 'Daily Auto'
 		)
@@ -221,8 +221,8 @@ We don't use trait_* for awards.
 			action, reason
 		) 
 		VALUES (
-			'[u( .objid, %0 )]', '[name( %0 )]', 
-			'[u( .objid, %1 )]', '[name( %1 )]', 
+			'[u( .objid, %0 )]', '[u( f.sql.escape, name( %0 ))]', 
+			'[u( .objid, %1 )]', '[u( f.sql.escape, name( %1 ))]', 
 			'%2', %3, 
 			'gain', '%4'
 		)
@@ -306,8 +306,8 @@ A detail used for xp/log.
 			action, reason
 		) 
 		VALUES (
-			'[u( .objid, %0 )]', '[name( %0 )]', 
-			'[u( .objid, %1 )]', '[name( %1 )]', 
+			'[u( .objid, %0 )]', '[u( f.sql.escape, name( %0 ))]', 
+			'[u( .objid, %1 )]', '[u( f.sql.escape, name( %1 ))]', 
 			'%2', %3, 
 			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', '%6', '%7', 
 			[if( eq( %3, 0 ), 'freebie', 'spend' )], 

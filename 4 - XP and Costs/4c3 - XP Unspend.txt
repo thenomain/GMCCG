@@ -309,8 +309,8 @@ do not forget to 'start transaction'
 			action, reason
 		) 
 		VALUES (
-			'[u( .objid, %0 )]', '[name( %0 )]', 
-			'[u( .objid, %1 )]', '[name( %1 )]', 
+			'[u( .objid, %0 )]', '[u( f.sql.escape, name( %0 ))]', 
+			'[u( .objid, %1 )]', '[u( f.sql.escape, name( %1 ))]', 
 			'%2', %3, 
 			'[lcstr( first( %4, . ))]', '[lcstr( rest( %4, . ))]', '%6', '%7', 
 			'unspend', 

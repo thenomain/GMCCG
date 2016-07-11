@@ -287,8 +287,8 @@ Technically an sql.* function, but easier to do this way.
 			action, reason
 		) 
 		VALUES (
-			'[u( .objid, %0 )]', '[name( %0 )]', 
-			'[u( .objid, %1 )]', '[name( %1 )]', 
+			'[u( .objid, %0 )]', '[u( f.sql.escape, name( %0 ))]', 
+			'[u( .objid, %1 )]', '[u( f.sql.escape, name( %1 ))]', 
 			'%2', %3, 
 			'%5', '%4'
 		)
@@ -313,7 +313,7 @@ Technically an sql.* function, but easier to do this way.
 			xp_type, xp_amt, reason
 		) 
 		VALUES (
-			'[u( .objid, %0 )]', '[name( %0 )]', 
+			'[u( .objid, %0 )]', '[u( f.sql.escape, name( %0 ))]', 
 			'[u( .objid, %1 )]', 'Auto-Experience System', 
 			'%2', %3, 'Daily Auto'
 		)
