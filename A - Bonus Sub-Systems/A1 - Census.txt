@@ -743,8 +743,8 @@ outputs: <value name>:<approved list>:<chargen list>|...
 			ulocal( f.roster.string, %0, %1, l )
 		), 
 		strcat( 
-			first( %i0, : ):
-			filter( fil.approved, rest( %i0, : )), :
+			first( %i0, : ):, 
+			filter( fil.approved, rest( %i0, : )), :, 
 			filter( fil.chargen, rest( %i0, : ))
 		), 
 		|, | 
@@ -752,7 +752,7 @@ outputs: <value name>:<approved list>:<chargen list>|...
 
 // --
 
-think u( v( d.cs )/f.roster.order-approved, _bio.bloodline, get( get( v( d.cs )/d.dd )/bio.bloodline ), 0 )
+think [setq( 0, bio.bloodline )][u( v( d.cs )/f.roster.order-approved, _%q0, get( get( v( d.cs )/d.dd )/%q0 ), 0 )]
 
 
 /*
