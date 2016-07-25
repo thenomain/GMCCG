@@ -2098,14 +2098,11 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 
 
 	
-/*
 
 @daily [v( d.xpas )]=
-	@pemit *thenomain=XPAS: Triggering Daily
 	@trigger %!/trig.daily.xp; 
 	@trigger %!/trig.weekly.reset; 
 
-*/
 
 
 /* 
