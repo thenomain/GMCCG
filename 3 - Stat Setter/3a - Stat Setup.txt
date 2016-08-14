@@ -45,12 +45,12 @@ This probably needs to get fixed in this set of code, and not 'sheet'. Not sure.
 == DATA ========================================================================
 */
 
-@fo me=&d.stat-funcs Stat Setter <ss>=num( Stat Functions Prototype <sfp> )
-@fo me=&d.data-dictionary Stat Setter <ss>=num( Data Dictionary <dd> )
+@fo me=&d.stat-funcs [v( d.ss )]=search( name=Stat Functions Prototype <sfp> )
+@fo me=&d.data-dictionary [v( d.ss )]=search( name=Data Dictionary <dd> )
 
 // &d.stat-reference Stat Setter <ss>=#382
 
-&f.find-sheet Stat Setter <ss>=u([u(d.stat-funcs)]/f.find-sheet, %0)
+&f.find-sheet [v( d.ss )]=u( u( d.stat-funcs )/f.find-sheet, %0 )
 
 
 
