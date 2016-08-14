@@ -181,7 +181,7 @@ qz, qa, qb: Regmatch results
 --------------------------------------------------------------------------------
 */
 
-&f.statpath-validate-name sfp=
+&f.statpath-validate-name [v( d.sfp )]=
 	localize( 
 
 // spaces to underscores
@@ -189,11 +189,15 @@ qz, qa, qb: Regmatch results
 		[setq( 0, edit( first( %0, . ), %b, _ ))]
 
 // instanced?
+		[setq( 0, 
+			if( regmatch( %q0, %(.*%)%\(%(.*%)%\), z a b ), 
+				[trim( %qa, b, _ )]_%(%), 
+				%q0 
+			)
+		)]
 		[setq( 1, 
-			if( 
-				regmatch( %q0, %(.*%)%\(%(.*%)%\), z a b ), 
-				[trim( %qa, b, _ )]*_%(%), 
-				%q0* 
+			if( strmatch( %q0, *_%(%) ), 
+				[before( %q0, _%( )]*_%(%), %q0* 
 			)
 		)]
 
