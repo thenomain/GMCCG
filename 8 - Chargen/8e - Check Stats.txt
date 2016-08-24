@@ -50,7 +50,7 @@ t: temp validation results, used here and there
 				strmatch( %1, _*.*.* ), 
 				u( f.statcheck.substat, %0, %1, %2 ), 
 
-// .. derived: dd value matches [*]: check the sheet value is integer
+// .. derived: dd value matches [*]: check the sheet value is integer or string
 				ulocal( v( d.sfp )/f.hastag?.workhorse, %qs, derived ), 
 				ulocal( f.statcheck.derived, %0, %1, %qc ), 
 
@@ -201,6 +201,9 @@ Check that a derived stat's value is valid.
 		hasattr( %0, %1 ), 
 		#-1 Derived stat is not set, 
 
+		not( strmatch( %2, string )), 
+		1, 
+
 		strmatch( %2, numeric ), 
 		if(
 			isint( 
@@ -210,7 +213,7 @@ Check that a derived stat's value is valid.
 				)
 			), 
 			1, 
-			#-1 Derived stat is non-numeric
+			#-1 Derived stat is non-numeric 
 		), 
 
 		if( 
