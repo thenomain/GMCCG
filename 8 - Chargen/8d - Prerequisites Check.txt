@@ -124,7 +124,7 @@ p: return for &prerequisite.<statpath>
 // .. if null was returned, that's a 1, else check in more detail
 		case( 0, 
 			comp( %qp, ), 1, 
-			%qp, #-1 [u( [u( d.dd )]/prereq-text.[rest( %qs, _ )] )], 
+			%qp, #-1 [u( [u( d.dd )]/prereq-text.[rest( %qs, _ )], %0 )], 
 			1 
 		)
 	))
