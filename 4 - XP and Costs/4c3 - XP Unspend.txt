@@ -212,6 +212,11 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 		)
 	}; 
 
+// --
+
+@set v( d.xpas )/c.xp/unspend=regex
+@set v( d.xpas )/c.xp/unspend=no_parse
+
 
 /*
 --------------------------------------------------------------------------------
