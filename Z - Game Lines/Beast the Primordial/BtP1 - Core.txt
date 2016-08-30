@@ -204,11 +204,11 @@ Oh yeah, why didn't this CofD book categorize the merits into the usual:
 // staff must limit it themselves.
 
 &merit.library_advanced_() DD=1.2.3.4.5|*|*
-&prereq-text.library_advanced_() DD=
+&prereq-text.merit.library_advanced_() DD=
 	Library (any) at 3, 
 	Safe Place (<type>) equal to dots rating or a dedicated Lair room, 
 	Can only be taken once
-&prerequisite.library_advanced_() DD=
+&prerequisite.merit.library_advanced_() DD=
 	cand( 
 // .. any library at 3
 		lor( 
@@ -235,7 +235,7 @@ Oh yeah, why didn't this CofD book categorize the merits into the usual:
 			)
 		) 
 	)
-&tags.library_advanced_() D:T=location.mental
+&tags.merit.library_advanced_() D:T=location.mental
 
 &merit.relentless_assault DD=1.2.3.4.5
 &prereq-text.merit.relentless_assault DD=Strength 3+, Stamina 3+, Brawl 2+
