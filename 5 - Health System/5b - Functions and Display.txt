@@ -360,7 +360,7 @@ qh: <bashing> <lethal> <agg> stripped down from %1
 		setq( h, 
 			iter( %1, 
 // .. .. from that type of dmg, subtract less of counter or remains of that dmg
-				[sub( %i0 min( %qi, %i0 ))]
+				[sub( %i0, min( %qi, %i0 ))]
 // .. .. then reduce from the counter 
 				[setq( i, sub( %qi, min( %qi, %i0 )))]
 			)
