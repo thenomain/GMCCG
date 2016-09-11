@@ -2,10 +2,25 @@
 ================================================================================
 == NOTES =======================================================================
 
+HOLY SMOKES THIS IS A LOT OF INFORMATION.
+
+Most of this section is about setting up the code for evaluating trait 
+prerequisites. 
+
+If you plan on creating or adding game books, be sure to read the summaries in 
+the "functions" section.
+
 The following is passed to every &prerequisite.<statpath>:
 	0: sheet dbref
 	1: instance (if exists)
 	2: value to raise by
+
+This information can then be passed to the functions set up below. They are 
+meant to be powerful shortcuts to the usual things that new World of Darkness/
+Chronicles of Darkness wants for prerequisites, usually for merits and sometimes 
+for powers.
+
+Use these functions for good, not evil.
 
 
 ================================================================================
@@ -135,6 +150,9 @@ Core Stat Checks - Check against Supernatural Tollerance (power trait)
 Specialty - Get information about specialties
 	.Specialty_For  Return the skill that has the passed specialty
 	.Specialty_Has  Has the specialty named in a certain or any skill
+
+Instanced - Information about Instanced <stat>(<type>) stats
+	.Instanced_Once		Item has one or zero existing instances
 
 
 --------------------------------------------------------------------------------
@@ -811,3 +829,29 @@ Does the sheet have this specialty?
 
 &.Specialty_Has [v( d.dd )]=
 	gt( words( iter( %1, lattr( %0/_skill.%i0.%2 ))), 0 )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Instanced -------------------------------------------------------------------
+
+-- instanced once --
+
+Does the trait have one or zero existing instances?
+	0: sheet dbref
+	1: complete statpath: stat.path_(instanced)
+	e.g.:
+		u( .instanced_once, %0, merit.language_(french) )
+*/
+
+&.instanced_once [v( d.dd )]=
+	localize( strcat( 
+		setq( p, first( %1 ), _%(%) ), 
+		setq( i, before( rest( %1, _(, )), ) ), 
+		not( 
+			setdiff( 
+				lattr( %0/%qp_(*) ), 
+				_%qp_(%qi) 
+			)
+		)
+	))
