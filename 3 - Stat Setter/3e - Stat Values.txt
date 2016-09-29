@@ -334,18 +334,6 @@ Returns Templates (%0) that match tags on Statpath (%1)
 				)
 		), 
 
-/*
-		if( t( %qn ), 
-			wrap( 
-				strcat( 
-					%r, ansi( h, Notes ), :, %qn 
-				), 
-				sub( width( %# ), 2 ), 
-				left, %b%b 
-			)
-		), 
-*/
-
 // THE END
 		%r, 
 		wfooter( 
