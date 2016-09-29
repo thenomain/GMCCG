@@ -237,7 +237,7 @@ Returns Templates (%0) that match tags on Statpath (%1)
 		%b, %b, ansi( h, Values ), :, %b, 
 		if( t( %qx ), 
 			Derived Function, 
-			u( display.stat-valuelist, first( %qs, | ))			
+			u( display.stat-valuelist, first( %qs, | ))
 		), 
 
 // defaults
@@ -279,7 +279,7 @@ Returns Templates (%0) that match tags on Statpath (%1)
 
 // prerequsites and notes
 		setq( r, ulocal( display.stat-prereqlist, %qp )), 
-		setq( n, ulocal( [u(d.stat-reference)]/notes.%qp )), 
+		setq( n, ulocal( [u( d.data-tags )]/notes.%qp )), 
 		if( cor( t( trim( %qr, b, | )), t( %qn )), %r ), 
 
 // prerequisites: <templates>
@@ -322,14 +322,29 @@ Returns Templates (%0) that match tags on Statpath (%1)
 		if( cand( t( trim( %qr, b, | )), t( %qn )), %r ), 
 
 		if( t( %qn ), 
-			wrap(
+				ansi( 
+					n, %b%b, h, Notes, n, :%r, n, 
+					iter( %qn, 
+						wrap( * %i0, 
+							sub( width( %# ), 4 ), 
+							left, %b%b%b%b, , 2 
+						), 
+						|, %r 
+					)
+				)
+		), 
+
+/*
+		if( t( %qn ), 
+			wrap( 
 				strcat( 
 					%r, ansi( h, Notes ), :, %qn 
 				), 
 				sub( width( %# ), 2 ), 
-				left, %b%b
+				left, %b%b 
 			)
 		), 
+*/
 
 // THE END
 		%r, 

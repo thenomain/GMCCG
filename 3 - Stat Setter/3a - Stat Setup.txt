@@ -47,6 +47,7 @@ This probably needs to get fixed in this set of code, and not 'sheet'. Not sure.
 
 @fo me=&d.stat-funcs [v( d.ss )]=search( name=Stat Functions Prototype <sfp> )
 @fo me=&d.data-dictionary [v( d.ss )]=search( name=Data Dictionary <dd> )
+@fo me=&d.data-tags [v( d.ss )]=search( name=Data Tags <d:t> )
 
 // &d.stat-reference Stat Setter <ss>=#382
 
