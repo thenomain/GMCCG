@@ -194,23 +194,41 @@ output: <value>, but if lookup is null then return something
 
 /*
 --------------------------------------------------------------------------------
--- Cheat Getstat Skill and Specs -----------------------------------------------
+-- Cheat Getstat Trait and Subtraits -------------------------------------------
+
+Mostly for skills, where a skill can have a specialty, do this to list them all 
+in-line. However, some merits can have sub-traits, so we have set it up to be 
+more generic.
 
 0: sheet dbref
-1: skill_name
+1: trait_name (e.g., animal_ken)
+2: trait category (e.g., skill)
 
 */
 
-&f.cheat_getstat.skill-n-specs [v( d.nsc )]=
+
+&f.cheat_getstat.trait-n-subtrait [v( d.nsc )]=
 	strcat( 
-		ulocal( f.cheat_getstat.with_name, %0, skill.%1, numeric ), 
-		if( words( setr( s, sort( lattr( %0/_skill.%1.* )))), 
+		ulocal( f.cheat_getstat.with_name, %0, %2.%1, numeric ), 
+		if( words( setr( s, sort( lattr( %0/_%2.%1.* )))), 
 			|[iter( %qs, 
-				* [u( .titlestr, edit( %i0, _SKILL.[ucstr( %1 )]., ))], 
+				* [u( .titlestr, edit( %i0, ucstr( _%2.%1. ), ))], 
 				, | 
 			)] 
 		)
 	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Cheat Getstat Skill and Specs -----------------------------------------------
+
+For backwards compatibility.
+
+*/
+
+&f.cheat_getstat.skill-n-specs [v( d.nsc )]=
+	u( f.cheat_getstat.trait-n-subtrait, %0, %1, skill )
 
 
 /*

@@ -238,13 +238,24 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 --------------------------------------------------------------------------------
 -- Merits.Default --------------------------------------------------------------
-*/
 
+OLD:
 &merits.default [v( d.nsc )]=
 	iter( sort( edit( lattr( %0/_merit.* ), _MERIT., )), 
 		ulocal( f.cheat_getstat.with_name, %0, merit.%i0, numeric ), 
 		, | 
 	)
+
+*/
+
+&merits.default [v( d.nsc )]=
+	iter( 
+		filter( fil.subtraits, sort( edit( lattr( %0/_merit.* ), _MERIT., ))), 
+		ulocal( f.cheat_getstat.trait-n-subtrait, %0, %i0, merit ), 
+		, | 
+	)
+
+&fil.subtraits [v( d.nsc )]=not( strmatch( %0, *.* ))
 
 // --
 
