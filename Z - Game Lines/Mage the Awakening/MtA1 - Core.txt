@@ -5,9 +5,29 @@
 This file includes all additions to the system for Mage: The Awakening 
 core rules.
 
+CREDITS
+First and foremost: This file would not have been possible without the insane 
+amount of work of Skew and DosBot for Fallen World (with a nod to Tennyson for 
+debugging). I may forget to out which code comes from them specifically, but 
+assume their input is all over this file.
+
 ARCANE XP
 This system does not use Arcane XP. These XP rules have caused enough work that 
 for now, we are skipping it. Sorry.
+
+SLEEPWALKERS
+Sleepwalkers are a merit in the core book and therefore we're keeping it that 
+way here. If you want them to be a template, add them to the @fo that adds 
+`.Mage.Proximus`, remove &merit.sleepwalker, and remove checks for 
+`u( .value_full, %0, merit.sleepwalker )` to add `.sleepwalker` to that items 
+&tags.<statpath> attribute.
+
+This may need applied:
+
+	&.between [v( d.xpcd )]=
+		cand( gte( %0, min( %1, %2 )), lte( %0, max( %1, %2 )))
+	&.between_else [v( d.xpcd )]=
+		cand( gt( %0, min( %1, %2 )), lt( %0, max( %1, %2 )))
 
 
 
@@ -143,6 +163,14 @@ returns: 1 if the sphere is allowed by Gnosis, 0 otherwise
 	Free Council.Apostate.Nameless
 &default.bio.order [v( d.dd )]=Apostate
 &tags.bio.order [v( d.dt )]=mage.proximus
+
+&bio.legacy [v( d.dd )]=x.x.x.x.x.x.x.x
+&tags.bio.legacy [v( d.dd )]=mage
+&class.bio.legacy [v( d.dd )]=string
+// restrict this stat to staff only, so players can't mess with it in chargen
+
+&bio.dynasty [v( d.dd )]=*
+&tags.bio.dynasty [v( d.dt )]=proximus
 
 
 
@@ -318,8 +346,8 @@ returns: 1 if the sphere is allowed by Gnosis, 0 otherwise
 	(may be connected without being the same place)
 &tags.merit.sanctum_() [v( d.dt )]=mage.supernatural.location
 
-// making the 'demesne' option for 'santum' a separate merit; easier to track
-&merit.demesne_() [v( d.dd )]=3
+// making the 'demesne' option for 'sanctum' a separate merit; easier to track
+&merit.demesne_() [v( d.dd )]=3|*
 &prerequisite.merit.demesne_() [v( d.dd )]=u( .has, %0, merit.sanctum_(%1) )
 &prereq-text.merit.demesne_() [v( d.dd )]=Sanctum (<place name>) 1+
 &tags.merit.demesne_() [v( d.dt )]=mage.supernatural.location
@@ -345,7 +373,7 @@ returns: 1 if the sphere is allowed by Gnosis, 0 otherwise
 &merit.library_advanced_() [v( d.dd )]=1.2.3.4.5|*|*
 &prereq-text.merit.library_advanced_() [v( d.dd )]=
 	Library (any) at 3, 
-	Safe Place (<type>) equal to dots rating, 
+	Safe Place (<location>) equal to dots rating, 
 	Can only be taken once
 &prerequisite.merit.library_advanced_() [v( d.dd )]=
 	cand( 
@@ -375,6 +403,11 @@ returns: 1 if the sphere is allowed by Gnosis, 0 otherwise
 		) 
 	)
 &tags.merit.library_advanced_() [v( d.dt )]=location.mental
+&notes.merit.library_advanced_() [v( d.dt )]=
+	The location from Library Advanced (<location>) and Safe Place (<location>) 
+	must match
+	`
+	Use notes for each level of Library Advanced
 
 
 /*
@@ -2062,29 +2095,262 @@ path
 order
 
 --------------------------------------------------------------------------------
--- Bio Check: Sleepwalker ------------------------------------------------------
+-- Bio Check: Proximus ---------------------------------------------------------
 
-pretty sure nothing needs set for sleepwalkers
+looks like nothing needed for proximi.
 */
 
-&check.bio.sleepwalker cg=
+&check.bio.proximus cg=
+
 
 
 /*
 ================================================================================
 == CHARGEN CHECK: MAGE =========================================================
+*/
 
-Pretty sure nothing needs checked here, either? Something seems off here.
-Check back later.
+&check.chargen.mage [v( d.cg )]=
+	strcat( 
+		u( check.arcanum, %0 ), 
+		u( check.rotes_&_praxis, %0 )
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Favored Attribute -----------------------------------------------------------
+
+currently: 
+	stat/set <attribute>.favored=1
+	stat/set <attribute> + 1
+
+(I hope to get this changed.)
+
+1. check that attributes with 'favored' subtype are allowed
+2. check that there's only one
+3. check what happens if we -1 that from the system
+
+*/
+
+&check.chargen.attributes.mage [v( d.cg )]=
+	strcat( 
+		setq( f, v( d.mage.favored_attributes )), 
+		setq( a, 
+			lcstr( 
+				iter( lattr( %0/_attribute.*.favored ), elements( %i0, 2, . ))
+			)
+		), 
+		setq( i, setinter( %qa, %qf )), 
+		setq( c, ulocal( f.pts-valid?.attributes, %0, attribute.%qi:-1 )), 
+
+		ulocal( f.allocated.attributes, %0 ), %b, %(of 5/4/3 + favored%), %b, 
+		ulocal( display.check.stats, %0, attributes, attribute.%qa:-1 ), %r, 
+
+		%b %b%b, ansi( h, Favored Attribute ), :, %b, 
+		titlestr( itemize( %qa )), %b, 
+		%[, 
+		case( 1, 
+			eq( words( %qa ), 0 ), 
+			ansi( r, none set%, try: stat/set <attr>.favored = 1 ), 
+			gt( words( %qa ), 1 ), ansi( r, too many set ), 
+			neq( words( %qi ), 1 ), 
+			ansi( r, this favored not allowed for Mage ), 
+			not( %qc ), ansi( r, is the bonus missing? check your %qa ), 
+			lt( first( get( %0/_attribute.%qa ), . ), 2 ), 
+			ansi( r, %qa must be at least 2 ), 
+			ansi( g, OK )
+		), 
+		%]
+	)
+
+&d.mage.favored_attributes [v( d.cg )]=resolve stamina composure 
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Arcanum ------------------------------------------------------
+*/
+
+&check.arcanum [v( d.cg )]=
+	strcat( 
+		setq( l, u( f.allocated.arcana, %0 )), 
+		setq( r, rest( grab( %ql, #ruling*, ` ))), 
+		setq( c, rest( grab( %ql, #common*, ` ))), 
+		setq( i, rest( grab( %ql, #inferior*, ` ))), 
+
+		setq( t, ladd( iter( %qr %qc %qi, rest( %i0, : )))), 
+
+		ansi( h, %b Arcana ), : , %b, %qt, %b, (of 6), %b, 
+		u( check.arcanum.mage.total, %qt, 6 ), %r, 
+
+		u( check.arcanum.ruling, %0, %qr ), 
+		u( check.arcanum.common, %0, %qc ), 
+		u( check.arcanum.inferior, %0, %qi ), 
+	)
+
+
+// ruling: at least 3 spent, at most 5 spent, 
+// no higher than 3, all ruling must have 1 dot
+
+&check.arcanum.ruling [v( d.cg )]=
+	strcat( 
+		setq( t, ladd( iter( %1, rest( %i0, : )))), 
+		setq( e, 
+			case( 0, 
+				u( .between, %qt, 3, 5 ), 
+				#-1 at least 3 and no more than 5 dots, 
+				eq( 
+					words( %1 ), 
+					words( 
+						first( 
+							v( 
+								d.mage_path_arcana.
+								[u( v( d.dd )/.value_full, %0, bio.path )] 
+							), 
+							: 
+						)
+					)
+				), 
+				#-1 at least 1 dot in each ruling arcana, 
+				1 
+			)
+		), 
+
+		space( 4 ), ansi( h, Ruling ), : %qt dots, %b, 
+		if( not( %qe ), 
+			ansi( n, %[, r, rest( %qe ), n, %] ), 
+			ansi( n, %[, g, OK, n, %] )
+		), %r, 
+
+		setq( e, 
+			iter( %1, 
+				strcat( 
+					space( 6 ), 
+					ljust( capstr( first( %i0, : )), 7 ), :, %b, 
+					rest( %i0, : ), 
+					if( gt( rest( %i0, : ), 3 ), 
+						ansi( n, %b%[, r, no, n, %] )
+					)
+				), 
+				, %r 
+			) 
+		), 
+		if( t( %qe ), %qe%r )
+	)
+
+
+// common: no higher than 3 (I know how odd the [OK] line looks)
+
+&check.arcanum.common [v( d.cg )]=
+	strcat( 
+		setq( t, ladd( iter( %1, rest( %i0, : )))), 
+
+		space( 4 ), ansi( h, Common ), : %qt dots, %b, 
+		ansi( n, %[, g, OK, n, %] ), %r, 
+		setq( e, 
+			iter( %1, 
+				strcat( 
+					space( 6 ), 
+					ljust( capstr( first( %i0, : )), 7 ), :, %b, 
+					rest( %i0, : ), 
+					if( gt( rest( %i0, : ), 3 ), 
+						ansi( n, %b%[, r, no, n, %] )
+					)
+				), 
+				, %r 
+			) 
+		), 
+		if( t( %qe ), %qe%r )
+	)
+
+
+// inferior: none allowed 
+
+&check.arcanum.inferior [v( d.cg )]=
+	strcat( 
+		setq( t, ladd( iter( %1, rest( %i0, : )))), 
+		setq( e, 
+			case( 1, 
+				t( %qt ), 
+				#-1 no inferior arcanum allowed at chargen, 
+				1 
+			)
+		), 
+
+		space( 4 ), ansi( h, Inferior ), : %qt dots, %b, 
+		if( not( %qe ), 
+			ansi( n, %[, r, rest( %qe ), n, %] ), 
+			ansi( n, %[, g, OK, n, %] )
+		), %r, 
+
+		setq( e, 
+			iter( %1, 
+				strcat( 
+					space( 6 ), 
+					ljust( capstr( first( %i0, : )), 7 ), :, %b, 
+					rest( %i0, : ), 
+					if( gt( rest( %i0, : ), 3 ), 
+						ansi( n, %b%[, r, no, n, %] )
+					)
+				), 
+				, %r 
+			) 
+		), 
+		if( t( %qe ), %qe%r )
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Rotes & Praxis -----------------------------------------------
+
+Straight from Fallen World. (Tweaked how 'allocated' works.)
+
+*/
+
+&check.rotes_&_praxis [v( d.cg )]=
+	udefault( check.rotes.[get( %0/_bio.template )], ** check failed **, %0 )
+
+&check.rotes_&_praxis.mage [v( d.cg )]=
+	localize( strcat( 
+		setq( a, u( f.allocated.rotes_&_praxes, %0 )), 
+		setq( r, elements( %qa, 1, ` )), 
+		setq( p, elements( %qa, 2, ` )), 
+		%b, %b, ansi( h, Total Rotes ), :, %b, 
+		if( eq( %qr, 0 ), ansi( xh, <none> ), %qr ), %b, %(of 3%), %b, 
+		u( check.rotes.mage.total, %qr ), %r, 
+		%b, %b, ansi( h, Total Praxis ), :, %b, 
+		if( eq( %qp, 0 ), ansi( xh, <none> ), %qp ), %b, %(of 1%), %b, 
+		u( check.praxes.mage.total, %qp ), %r 
+	))
+
+&f.allocated.rotes_&_praxes [v( d.cg )]=
+	localize( strcat( 
+		setq( t, attrcnt( %0/_ROTE.* )), 
+		setq( p, attrcnt( %0/_ROTE.*(PRAXIS) )), 
+		setq( r, sub( %qt, %qp )), 
+		%qr, `, %qp 
+	))
+
+&check.rotes.mage.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 3 ))
+&check.praxes.mage.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 1 ))
 
 
 
 
-
+/*
 ################################################################################
 ## MAGE: XP COSTS ##############################################################
 
-Trait Experience
+NOTES
+This system was not set up for buying some things with one kind of Experience 
+let alone with buying something with two kinds of Experience. In the meantime, 
+only Normal Experience may be auto-spent on these. There is probably a way to 
+get staff involved and have them manually alter the Experiences.
+
+--
+
+Trait : Experience
 Rote 1
 Praxis 1 (with Arcane Experiences)
 Arcanum to Limit 4 (mix of Arcane and Normal Experiences)
@@ -2092,21 +2358,22 @@ Arcanum above Limit 5 (Normal Experiences only)
 Gnosis 5
 Legacy Attainment 1 (with tutor may use Arcane or Normal, otherwise Arcane)
 
-
 */
 
-// &xp.advantage.<power> XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
-
-&xp.advantage.wisdom XP Cost Database <xpcd>=0
-
 &d.restricted.types.mage xpas=
+	arcanum rote
 &d.restricted.stats.mage xpas=
+	advantage.gnosis advantage.wisdom
 
-&xp.renown xpcd=u( cost.standard, 3, %1, %2 )
-&xp.advantage.primal_urge xpcd=u( cost.standard, 5, %1, %2 )
-&xp.rite xpcd=u( cost.standard, 1, %1, %2 )
+&xp.advantage.gnosis XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
+&xp.advantage.wisdom XP Cost Database <xpcd>=u( cost.standard, 3, %1, %2 )	
+&xp.rote xpcd=u( cost.standard, 1, %1, %2 )
+
 
 /*
+--------------------------------------------------------------------------------
+-- XP: Arcanum -----------------------------------------------------------------
+
 Following is sent from XP: 
 	%0: dbref of sheet
 	%1: from
@@ -2114,37 +2381,106 @@ Following is sent from XP:
 	%3: name of stat, sans instance
 	%4: value.list.of.statpath
 
-&xp.gift xpcd=
-	case( 1, 
-		cand( 
-			strmatch( %2, unlock ), 
-			hastag?( 
-				%3, 
-					[u( .value_full, %0, bio.tribe )].
-					[u( .value_full, %0, bio.auspice )], 0 
-			) 
-		), 3, 
-		strmatch( %2, unlock ), 5, 
-		hastag?( %3, wolf ), 1, 
-		2
-	)
-
+	a: path
+	b: <ruling spheres>:<inferior spheres>
+	c: limit for this arcana (2, 4, or 5)
+	d: 4xp if new value >= limit, 5xp otherwise
 */
+
+&xp.arcanum [v( d.xpcd )]=
+	localize( strcat( 
+		setq( a, u( .value_full, %0, bio.path )), 
+		setq( b, u( v( d.cg )/d.mage_path_arcana.%qa, %0 )), 
+		setq( c, 
+			case( 1, 
+				t( match( %3, first( %qb, : ))), 5, 
+				t( match( %3, last( %qb, : ))), 2, 
+				4 
+			)
+		), 
+		setq( d, if( lte( %2, %qc ), 4, 5 )), 
+
+// .. if raising arcana over the Limit: split up cost
+
+		if( not( u( .between_else, %qc, %1, %2 )), 
+			u( cost.standard, %qd, %1, %2 ), 
+			add( 
+				u( cost.standard, 4, %1, %qc ), 
+				u( cost.standard, 5, %qc, %2 )
+			)
+		)
+	))
+
 
 
 
 /*
 ################################################################################
-## WEREWOLF: SHEET #############################################################
+## MAGE: SHEET #################################################################
+
+More from the "Fallen World" Power Hour.
+
 */
 
 // -- Bio ----------------------------------------------------------------------
 
-&bio.default.sleepwalker Newest Sheet Code <nsc>=
-	birthdate concept pack template virtue vice 
+&bio.default.proximus [v( d.nsc )]=
+	birthdate concept cabal dynasty virtue vice
 
 &bio.default.mage [v( d.nsc )]=
-	birthdate concept pack lodge template blood bone auspice tribe
+	birthdate concept cabal path order legacy virtue vice
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ ---------------------------------- Arcanum ----------------------------------
+Death    : -    Fate     : -    Forces   : 3    Life     : -    Matter   : 2   
+Mind     : -    Prime    : 1    Space    : -    Spirit   : -    Time     : 1   
+ ----------------------------- Rotes and Praxes ------------------------------
+                                    Forces                                    
+Transmission (Science) ............ 2 Turn Momentum (Science) ........... 3
+                                    Matter                                    
+Machine Invisibility (Praxis) ..... 2 Shaping (Praxis) .................. 2
+                                    Prime                                     
+Dispel Magic (Athletics) .......... 1 Pierce Deception (Investigation) .. 1
+Sacred Geometry (Academics) ....... 1 
+
+
+
+
+ ---------------------------------- Arcanum ----------------------------------
+Death    : -    Fate     : -    Forces   : 3    Life     : -    Matter   : 2   
+Mind     : -    Prime    : 1    Space    : -    Spirit   : -    Time     : 1   
+ ----------------------------- Rotes and Praxes ------------------------------
+                                    Forces                                    
+Transmission (Science) ............ 2 Turn Momentum (Science) ........... 3
+                                    Matter                                    
+Machine Invisibility (Praxis) ..... 2 Shaping (Praxis) .................. 2
+                                    Prime                                     
+Dispel Magic (Athletics) .......... 1 Pierce Deception (Investigation) .. 1
+Sacred Geometry (Academics) ....... 1 
+
+
+
+
+
+
+
+
 
 // -- Powers: Gifts ------------------------------------------------------------
 // 0: sheet dbref
@@ -2886,18 +3222,32 @@ think u( [v( d.cg )]/check.chargen.skills.mage, pmatch( thenomain ))
 
 /*
 --------------------------------------------------------------------------------
--- Chargen Check: Werewolf -----------------------------------------------------
+-- Chargen Check: Mage ---------------------------------------------------------
 
 
 */
 
-&check.chargen.mage [v( d.cg )]=
-	strcat( 
-		u( check.renown, %0 ), 
-		u( check.gifts, %0 ), 
-		u( check.rites, %0 ), 
-		
-	)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /*
