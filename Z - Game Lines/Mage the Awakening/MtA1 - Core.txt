@@ -406,8 +406,8 @@ returns: 1 if the sphere is allowed by Gnosis, 0 otherwise
 &notes.merit.library_advanced_() [v( d.dt )]=
 	The location from Library Advanced (<location>) and Safe Place (<location>) 
 	must match
-	`
-	Use notes for each level of Library Advanced
+	|
+	For each level of Library Advanced: stat/set <target>/Library Advanced (<location>).<specialty>=<anything here, really>
 
 
 /*
