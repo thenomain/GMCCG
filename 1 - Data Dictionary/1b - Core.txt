@@ -1,13 +1,12 @@
 /*
 ################################################################################
-## CORE WOD ####################################################################
+## CORE CHRONICLES OF DARKNESS #################################################
  
-And so comes the GMC update
-
-We expect a few games to want 'favored' Attributes, so we make it a subtype
+A few games (vampire, mage ) want 'favored' Attributes, so we make it a subtype 
 in order to keep track of it.
 
 This is mainly meant for `cg/check` but may be needed outside of chargen.
+
 
 ================================================================================
 == CORE ATTRIBUTES =============================================================

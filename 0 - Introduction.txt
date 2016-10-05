@@ -98,7 +98,7 @@ For any list validation, # means any non-zero integer, * means any value
 		e.g. (simple-stat "athletics" with sub-stat "quick reflexes")
 			&_skill.athletics: 2
 			&_skill.athletics.quick_reflexes: 1
-	WoD Note:
+	CoD Note:
 		Skill sub-stats are limited to a value of "1" and are added to the skill 
 		simple stat.
 
@@ -206,8 +206,8 @@ NOTE:
 
 -- HEALTH ----------------------------------------------------------------------
 
-The WoD health system, found in a different file, works much differently than 
-other stats, but we keep it as close as we can to this system as possible. 
+The CoD health system, found in a different file, works much differently 
+than other stats, but we keep it as close as we can to this system as possible. 
 Health is not part of the search-order path for stat types.
 
 
@@ -228,6 +228,8 @@ kind of tag that is inseperable from the basic stat system. If you need the stat
 type, please check that.
 
 Tags are never used for storage.
+
+Tags are kept on a different object than the data.
 
 
 -- TAGS USED SO FAR ------------------------------------------------------------
@@ -282,7 +284,7 @@ changes in the formula affected all stats immediately.
 
 Derived stats must be set up with several things in mind:
 	* The stat must be tagged "derived".
-	-- we might be able to get away by checking for the formula itself
+	  (we might be able to get away by checking for the formula itself)
 	* The <value.list> is the formula that checks for other stored stats and 
 	  must be a simple stat.
 	* The storage is a function call to this formula, passing the dbref of the 
@@ -313,23 +315,29 @@ Stored derived stats may be overwritten, making them normal simple stats. e.g.
 
 -- THE "SPECIAL" TYPE ----------------------------------------------------------
 
-nWoD has several items which are used in derived stats that are themselves not 
-explicitly stats. That is, they don't appear on the character sheet. These stats 
-have a type of "special".
+CoD has several items which are used in derived stats that are themselves 
+not explicitly stats. That is, they don't appear on the character sheet. These 
+stats have a type of "special".
 
 The "special" type should never appear in the "search-order" list.
 
 For instance, "species factor" is used in the "speed" derived stat.
 
 Validation e.g.
-	&advantage.speed: [add(u(%0/_attribute.strength), u(%0/_attribute.dexterity), u(%0/_special.species_factor), u(%0/_merit.fleet_of_foot))]
+	&advantage.speed: 
+		add( 
+			u( %0/_attribute.strength ), 
+			u( %0/_attribute.dexterity ), 
+			u( %0/_special.species_factor ), 
+			u( %0/_merit.fleet_of_foot )
+		)
 
 	&tags.advantage.speed: derived
 
 	&special.species_factor: #
 
 Storage e.g.
-	&_advantage.speed: [u(#xxx/advantage.speed, %!)]
+	&_advantage.speed: derived
 	&_special.species_factor: 5
 
 Except for never being used except in derived stats, the "special" stat type 
@@ -388,14 +396,28 @@ Failed prerequisites should always return #-3 <reason> and be checked after
 value-checking.
 
 
+-- TRAIT NOTES -----------------------------------------------------------------
+
+Some traits are too complex to code or need special setup instructions. These 
+notes are intended to show with the trait summary (currently 'stat/view <trait>' 
+or 'stat <trait>').
+
+For these, use:
+	&notes.<statpath>: <note 1>|<note 2>|..<note n>
+
+Each note will show on its own line.
+
+Notes are stored on the same object as Tags.
+
+
 -- ILLEGAL CHARACTERS ----------------------------------------------------------
 
 Due to various systems, the following values are illegal:
 
 Names:
-	:	- the colon can't be set as an attribute name
-	.	- the period is a delimiter for the stat name
+	:   - the colon can't be set as an attribute name
+	.   - the period is a delimiter for the stat name
 
 Stats:
-	`			- we're using the backtick to columnize
-
+	`   - we're using the backtick to columnize
+	|   - the pipe is used to separate trait data

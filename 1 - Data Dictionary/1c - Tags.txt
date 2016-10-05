@@ -1,8 +1,8 @@
 /*
 ###############################################################################
-## CORE WOD: TAGS #############################################################
+## CORE COD: TAGS #############################################################
 
-Tags for the Core WoD stats.
+Tags for the Core CoD stats.
 (Later, use this for page number and note references)
 
 */
