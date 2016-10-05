@@ -39,8 +39,8 @@ COMMANDS:
 √	xp/cost <stat>=<level>[/<xp type>] : how much it be costin'?
 √	xp/cost <name>/<stat>=<level> : how much it be costin' for them?
 
-√	xp/spend <stat>=<level> : spend some xps on some mad skillz
-√	xp/spend <stat>=<level>/<xp type> : spend some specific xpz
+√	xp/spend <stat>[=<level>] : spend some Normal xps on some mad skillz
+	xp/spend <stat>=<level>/<xp type> : spend some specific xpz
 
 √	xp/freebie <stat>=<level> for <reason> : Give <stat> spending xpz.
 	(rewrite this and xp/spend and xp/cost to share redundant functions!)
@@ -901,7 +901,14 @@ Valid award:
 
 	think strcat( 
 		experience:, setr( x, get( %qp/_special.beats.%qt )), %r, 
-		beats earned:, setr( b, u( f.beats_earned.%qt, %qp )), %r, 
+//		beats earned:, setr( b, u( f.beats_earned.%qt, %qp )), %r, 
+		beats earned:, 
+			setr( b, 
+				udefault( f.beats_earned.%qt, 
+					get( %qp/_special.beats_earned.%qt ), 
+					%qp 
+				)
+			), %r, 
 		final award attribute:, setr( f, add( %qa, %qb )), %r, 
 		total weekly earnable:, setr( e, u( f.weekly_beats.max_earnable, %qp ))
 	); 
@@ -2187,7 +2194,7 @@ c: current normal xp attribute for <character>
 	think setr( r, footer()); 
 
 // .. debug ..
-	@mail/quick thenomain/Daily Beats Reset=iter( m n o p q r, r( %i0 ), , %r ); 
+// 	@mail/quick thenomain/Daily Beats Reset=iter( m n o p q r, r( %i0 ), , %r ); 
 
 // --
 
