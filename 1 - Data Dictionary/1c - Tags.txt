@@ -11,17 +11,17 @@ Tags for the Core WoD stats.
 
 // == CORE ATTRIBUTES ==========================================================
 
-&tags.attribute.intelligence D:T=mental.power
-&tags.attribute.wits D:T=mental.finesse
-&tags.attribute.resolve D:T=mental.resistance
+&tags.attribute.intelligence [v( d.dt )]=mental.power
+&tags.attribute.wits [v( d.dt )]=mental.finesse
+&tags.attribute.resolve [v( d.dt )]=mental.resistance
 
-&tags.attribute.strength D:T=physical.power
-&tags.attribute.dexterity D:T=physical.finesse
-&tags.attribute.stamina D:T=physical.resistance
+&tags.attribute.strength [v( d.dt )]=physical.power
+&tags.attribute.dexterity [v( d.dt )]=physical.finesse
+&tags.attribute.stamina [v( d.dt )]=physical.resistance
 
-&tags.attribute.presence D:T=social.power
-&tags.attribute.manipulation D:T=social.finesse
-&tags.attribute.composure D:T=social.resistance
+&tags.attribute.presence [v( d.dt )]=social.power
+&tags.attribute.manipulation [v( d.dt )]=social.finesse
+&tags.attribute.composure [v( d.dt )]=social.resistance
 
 
 
@@ -29,36 +29,36 @@ Tags for the Core WoD stats.
 
 // -- Skills: Mental -----------------------------------------------------------
 
-&tags.skill.academics D:T=mental
-&tags.skill.computer D:T=mental
-&tags.skill.crafts D:T=mental
-&tags.skill.investigation D:T=mental
-&tags.skill.medicine D:T=mental
-&tags.skill.occult D:T=mental
-&tags.skill.politics D:T=mental
-&tags.skill.science D:T=mental
+&tags.skill.academics [v( d.dt )]=mental
+&tags.skill.computer [v( d.dt )]=mental
+&tags.skill.crafts [v( d.dt )]=mental
+&tags.skill.investigation [v( d.dt )]=mental
+&tags.skill.medicine [v( d.dt )]=mental
+&tags.skill.occult [v( d.dt )]=mental
+&tags.skill.politics [v( d.dt )]=mental
+&tags.skill.science [v( d.dt )]=mental
 
 // -- Skills: Physical ---------------------------------------------------------
 
-&tags.skill.athletics D:T=physical
-&tags.skill.brawl D:T=physical
-&tags.skill.drive D:T=physical
-&tags.skill.firearms D:T=physical
-&tags.skill.larceny D:T=physical
-&tags.skill.stealth D:T=physical
-&tags.skill.survival D:T=physical
-&tags.skill.weaponry D:T=physical
+&tags.skill.athletics [v( d.dt )]=physical
+&tags.skill.brawl [v( d.dt )]=physical
+&tags.skill.drive [v( d.dt )]=physical
+&tags.skill.firearms [v( d.dt )]=physical
+&tags.skill.larceny [v( d.dt )]=physical
+&tags.skill.stealth [v( d.dt )]=physical
+&tags.skill.survival [v( d.dt )]=physical
+&tags.skill.weaponry [v( d.dt )]=physical
 
 // -- Skills: Social -----------------------------------------------------------
 
-&tags.skill.animal_ken D:T=social
-&tags.skill.empathy D:T=social
-&tags.skill.expression D:T=social
-&tags.skill.intimidation D:T=social
-&tags.skill.persuasion D:T=social
-&tags.skill.socialize D:T=social
-&tags.skill.streetwise D:T=social
-&tags.skill.subterfuge D:T=social
+&tags.skill.animal_ken [v( d.dt )]=social
+&tags.skill.empathy [v( d.dt )]=social
+&tags.skill.expression [v( d.dt )]=social
+&tags.skill.intimidation [v( d.dt )]=social
+&tags.skill.persuasion [v( d.dt )]=social
+&tags.skill.socialize [v( d.dt )]=social
+&tags.skill.streetwise [v( d.dt )]=social
+&tags.skill.subterfuge [v( d.dt )]=social
 
 
 
@@ -67,171 +67,175 @@ Tags for the Core WoD stats.
 
 // -- Merits: Special ----------------------------------------------------------
 
-&tags.merit.sanctity_of_merits D:T=special
+&tags.merit.sanctity_of_merits [v( d.dt )]=special
 
 
 // -- Merits: Mental -----------------------------------------------------------
 
-&tags.merit.area_of_expertise_() D:T=mental
-&tags.merit.common_sense D:T=mental
-&tags.merit.danger_sense D:T=mental
-&tags.merit.direction_sense D:T=mental
-&tags.merit.eidetic_memory D:T=mental
-&tags.merit.encyclopedic_knowledge_() D:T=mental
-&tags.merit.eye_for_the_strange D:T=mental
-&tags.merit.fast_reflexes D:T=mental
-&tags.good_time_management D:T=mental
-&tags.merit.holistic_awareness D:T=mental
-&tags.merit.indomitable D:T=mental
-&tags.merit.interdisciplinary_specialty_() D:T=mental
-&tags.merit.investigative_aide_() D:T=mental
-&tags.merit.investigative_prodigy D:T=mental
-&tags.merit.language_() D:T=mental
-&tags.merit.library_() D:T=mental
-&tags.merit.meditative_mind D:T=mental
-&tags.merit.multilingual_() D:T=mental
-&tags.merit.patient D:T=mental
-&tags.merit.professional_training_() D:T=mental
-&tags.merit.tolerance_for_biology D:T=mental
-&tags.good_time_management D:T=mental
-&tags.merit.virtuous D:T=mental
-&tags.merit.vice-ridden_() D:T=mental
+&tags.merit.area_of_expertise_() [v( d.dt )]=mental
+&tags.merit.common_sense [v( d.dt )]=mental
+&tags.merit.danger_sense [v( d.dt )]=mental
+&tags.merit.direction_sense [v( d.dt )]=mental
+&tags.merit.eidetic_memory [v( d.dt )]=mental
+&tags.merit.encyclopedic_knowledge_() [v( d.dt )]=mental
+&tags.merit.eye_for_the_strange [v( d.dt )]=mental
+&tags.merit.fast_reflexes [v( d.dt )]=mental
+&tags.good_time_management [v( d.dt )]=mental
+&tags.merit.holistic_awareness [v( d.dt )]=mental
+&tags.merit.indomitable [v( d.dt )]=mental
+&tags.merit.interdisciplinary_specialty_() [v( d.dt )]=mental
+&tags.merit.investigative_aide_() [v( d.dt )]=mental
+&tags.merit.investigative_prodigy [v( d.dt )]=mental
+&tags.merit.language_() [v( d.dt )]=mental
+&tags.merit.library_() [v( d.dt )]=mental
+&tags.merit.meditative_mind [v( d.dt )]=mental
+&tags.merit.multilingual_() [v( d.dt )]=mental
+&tags.merit.patient [v( d.dt )]=mental
+&tags.merit.professional_training_() [v( d.dt )]=mental
+&tags.merit.tolerance_for_biology [v( d.dt )]=mental
+&tags.good_time_management [v( d.dt )]=mental
+&tags.merit.virtuous [v( d.dt )]=mental
+&tags.merit.vice-ridden_() [v( d.dt )]=mental
 
 
 // -- Merits: Physical ---------------------------------------------------------
 
-&tags.merit.ambidextrous D:T=chargen-only.physical
-&tags.merit.automotive_genius D:T=physical
-&tags.merit.crack_driver D:T=physical
-&tags.merit.demolisher D:T=physical
-&tags.merit.double_jointed D:T=physical
-&tags.merit.fleet_of_foot D:T=physical
-&tags.merit.giant D:T=chargen-only.physical
-&tags.merit.hardy D:T=physical
+&tags.merit.ambidextrous [v( d.dt )]=chargen-only.physical
+&tags.merit.automotive_genius [v( d.dt )]=physical
+&tags.merit.crack_driver [v( d.dt )]=physical
+&tags.merit.demolisher [v( d.dt )]=physical
+&tags.merit.double_jointed [v( d.dt )]=physical
+&tags.merit.fleet_of_foot [v( d.dt )]=physical
+&tags.merit.giant [v( d.dt )]=chargen-only.physical
+&tags.merit.hardy [v( d.dt )]=physical
 &tags.merit.greyhound DD=physical
-&tags.merit.iron_stamina D:T=physical
-&tags.merit.parkour D:T=physical.style
-&tags.merit.quick_draw_() D:T=physical
-&tags.merit.relentless D:T=physical
-&tags.merit.seizing_the_edge D:T=physical
-&tags.merit.sleight_of_hand D:T=physical
-&tags.merit.small_framed D:T=chargen-only.physical
-&tags.merit.stunt_driver D:T=physical.style
+&tags.merit.iron_stamina [v( d.dt )]=physical
+&tags.merit.parkour [v( d.dt )]=physical.style
+&tags.merit.quick_draw_() [v( d.dt )]=physical
+&tags.merit.relentless [v( d.dt )]=physical
+&tags.merit.seizing_the_edge [v( d.dt )]=physical
+&tags.merit.sleight_of_hand [v( d.dt )]=physical
+&tags.merit.small_framed [v( d.dt )]=chargen-only.physical
+&tags.merit.stunt_driver [v( d.dt )]=physical.style
 
 
 // -- Merits: Social -----------------------------------------------------------
 
-&tags.merit.allies_() D:T=social
-&tags.merit.allies_() D:T=social
-&tags.merit.anonymity D:T=social
-&tags.merit.barfly D:T=social
-&tags.merit.contacts D:T=social
-&tags.merit.etiquette D:T=social
-&tags.merit.fame D:T=social
-&tags.merit.fast_talking D:T=social
-&tags.merit.fixer D:T=social
-&tags.merit.hobbyist_clique_() D:T=social
-&tags.merit.inspiring D:T=social
-&tags.merit.iron_will D:T=social
-&tags.merit.mentor_() D:T=social
-&tags.merit.mystery_cult_initiation_() D:T=social
-&tags.merit.pusher D:T=social
-&tags.merit.resources D:T=social
-&tags.merit.retainer_() D:T=social
-&tags.merit.safe_place_() D:T=social
-&tags.merit.small_unit_tactics D:T=social
-&tags.merit.spin_doctor D:T=social
-&tags.merit.status_() D:T=social
-&tags.merit.staff_() D:T=social
-&tags.merit.striking_looks_() D:T=social
-&tags.merit.sympathetic D:T=social
-&tags.merit.table_turner D:T=social
-&tags.merit.takes_one_to_know_one D:T=social
-&tags.merit.taste D:T=social
-&tags.merit.true_friend_() D:T=social
-&tags.merit.untouchable D:T=social
+&tags.merit.allies_() [v( d.dt )]=social
+&tags.merit.allies_() [v( d.dt )]=social
+&tags.merit.anonymity [v( d.dt )]=social
+&tags.merit.barfly [v( d.dt )]=social
+&tags.merit.closed_book [v( d.dt )]=social
+&tags.merit.contacts_() [v( d.dt )]=social
+&tags.merit.etiquette [v( d.dt )]=social
+&tags.merit.fame [v( d.dt )]=social
+&tags.merit.fast_talking [v( d.dt )]=social
+&tags.merit.fixer [v( d.dt )]=social
+&tags.merit.hobbyist_clique_() [v( d.dt )]=social
+&tags.merit.inspiring [v( d.dt )]=social
+&tags.merit.iron_will [v( d.dt )]=social
+&tags.merit.mentor_() [v( d.dt )]=social
+&tags.merit.mystery_cult_initiation_() [v( d.dt )]=social
+&tags.merit.pusher [v( d.dt )]=social
+&tags.merit.resources [v( d.dt )]=social
+&tags.merit.retainer_() [v( d.dt )]=social
+&tags.merit.safe_place_() [v( d.dt )]=social
+&tags.merit.small_unit_tactics [v( d.dt )]=social
+&tags.merit.spin_doctor [v( d.dt )]=social
+&tags.merit.status_() [v( d.dt )]=social
+&tags.merit.staff_() [v( d.dt )]=social
+&tags.merit.striking_looks_() [v( d.dt )]=social
+&tags.merit.sympathetic [v( d.dt )]=social
+&tags.merit.table_turner [v( d.dt )]=social
+&tags.merit.takes_one_to_know_one [v( d.dt )]=social
+&tags.merit.taste [v( d.dt )]=social
+&tags.merit.true_friend_() [v( d.dt )]=social
+&tags.merit.untouchable [v( d.dt )]=social
 
 
 // -- Merits: Fighting Merits --------------------------------------------------
 
-&tags.merit.armed_defense D:T=physical.fighting.style
-&tags.merit.cheap_shot D:T=physical.fighting
-&tags.merit.choke_hold D:T=physical.fighting
-&tags.merit.close_quarters_combat D:T=physical.fighting.style
-&tags.merit.defensive_combat_() D:T=physical.fighting
-&tags.merit.fighting_finesse_() D:T=physical.fighting
-&tags.merit.firefight D:T=physical.fighting.style
-&tags.merit.grappling D:T=physical.fighting.style
-&tags.merit.heavy_weapons D:T=physical.fighting.style
-&tags.merit.improvised_weaponry D:T=physical.fighting.style
-&tags.merit.iron_skin D:T=physical.fighting
-&tags.merit.light_weapons D:T=physical.fighting.style
-&tags.merit.marksmanship D:T=physical.fighting.style
-&tags.merit.martial_arts D:T=physical.fighting.style
-&tags.merit.police_tactics D:T=physical.fighting.style
-&tags.merit.shiv D:T=physical.fighting
-&tags.merit.street_fighting D:T=physical.fighting.style
-&tags.merit.unarmed_defense D:T=physical.fighting.style
+&tags.merit.armed_defense [v( d.dt )]=physical.fighting.style
+&tags.merit.cheap_shot [v( d.dt )]=physical.fighting
+&tags.merit.choke_hold [v( d.dt )]=physical.fighting
+&tags.merit.close_quarters_combat [v( d.dt )]=physical.fighting.style
+&tags.merit.defensive_combat_() [v( d.dt )]=physical.fighting
+&tags.merit.fighting_finesse_() [v( d.dt )]=physical.fighting
+&tags.merit.firefight [v( d.dt )]=physical.fighting.style
+&tags.merit.grappling [v( d.dt )]=physical.fighting.style
+&tags.merit.heavy_weapons [v( d.dt )]=physical.fighting.style
+&tags.merit.improvised_weaponry [v( d.dt )]=physical.fighting.style
+&tags.merit.iron_skin [v( d.dt )]=physical.fighting
+&tags.merit.light_weapons [v( d.dt )]=physical.fighting.style
+&tags.merit.marksmanship [v( d.dt )]=physical.fighting.style
+&tags.merit.martial_arts [v( d.dt )]=physical.fighting.style
+&tags.merit.police_tactics [v( d.dt )]=physical.fighting.style
+&tags.merit.shiv [v( d.dt )]=physical.fighting
+&tags.merit.street_fighting [v( d.dt )]=physical.fighting.style
+&tags.merit.unarmed_defense [v( d.dt )]=physical.fighting.style
 
 
 // -- Core Merits: Supernatural ------------------------------------------------
 
-&tags.merit.aura_reading D:T=human.supernatural.mental
-&tags.merit.biokinesis D:T=human.supernatural.physical
-&tags.merit.clairvoyance D:T=human.supernatural.mental
-&tags.merit.cursed D:T=human.supernatural.mental
-&tags.merit.medium D:T=human.supernatural.mental
-&tags.merit.mind_of_a_madman D:T=human.supernatural.mental
-&tags.merit.omen_sensitivity D:T=human.supernatural.mental
-&tags.merit.psychokinesis D:T=human.supernatural.mental
-&tags.merit.psychometry D:T=human.supernatural.mental
-&tags.merit.telepathy D:T=human.supernatural.mental
-&tags.merit.telepathy D:T=human.supernatural.mental
-&tags.merit.thief_of_fate D:T=human.supernatural.social
-&tags.merit.unseen_sense_() D:T=human.supernatural.mental
+&tags.merit.aura_reading [v( d.dt )]=human.supernatural.mental
+&tags.merit.automatic_writing [v( d.dt )]=human.supernatural
+&tags.merit.biokinesis [v( d.dt )]=human.supernatural.physical
+&tags.merit.clairvoyance [v( d.dt )]=human.supernatural.mental
+&tags.merit.cursed [v( d.dt )]=human.supernatural.mental
+&tags.merit.laying_on_hands [v( d.dt )]=human.supernatural
+&tags.merit.medium [v( d.dt )]=human.supernatural.mental
+&tags.merit.mind_of_a_madman [v( d.dt )]=human.supernatural.mental
+&tags.merit.numbing_touch [v( d.dt )]=human.supernatural
+&tags.merit.omen_sensitivity [v( d.dt )]=human.supernatural.mental
+&tags.merit.psychokinesis_() [v( d.dt )]=human.supernatural.mental
+&tags.merit.psychometry [v( d.dt )]=human.supernatural.mental
+&tags.merit.telekinesis [v( d.dt )]=human.supernatural.mental
+&tags.merit.telepathy [v( d.dt )]=human.supernatural.mental
+&tags.merit.thief_of_fate [v( d.dt )]=human.supernatural.social
+&tags.merit.unseen_sense_() [v( d.dt )]=human.supernatural.mental
 
 
 
 // == CORE ADVANTAGES ==========================================================
 
-&tags.advantage.integrity D:T=integrity.human
-&tags.advantage.willpower D:T=derived.pool
-&tags.advantage.willpower_maximum D:T=derived.pool
+&tags.advantage.integrity [v( d.dt )]=integrity.human
+&tags.advantage.willpower [v( d.dt )]=derived.pool
+&tags.advantage.willpower_maximum [v( d.dt )]=derived.pool
 
 
 // -- Other Advantages ---------------------------------------------------------
 
-&tags.advantage.defense D:T=derived
-&tags.advantage.weaponry_defense D:T=derived
-&tags.advantage.brawl_defense D:T=derived
-&tags.advantage.size D:T=derived
-&tags.advantage.speed D:T=derived
-&tags.advantage.initiative D:T=derived
-&tags.advantage.perception D:T=derived
+&tags.advantage.defense [v( d.dt )]=derived
+&tags.advantage.weaponry_defense [v( d.dt )]=derived
+&tags.advantage.brawl_defense [v( d.dt )]=derived
+&tags.advantage.size [v( d.dt )]=derived
+&tags.advantage.speed [v( d.dt )]=derived
+&tags.advantage.initiative [v( d.dt )]=derived
+&tags.advantage.perception [v( d.dt )]=derived
 
 
 
 // == BIO ======================================================================
 
-&tags.bio.sphere D:T=derived
+&tags.bio.sphere [v( d.dt )]=derived
 
 
 
 /*
 // == CONDITIONS ===============================================================
 
-&tags.condition.addicted_() D:T=persistent
-&tags.condition.amnesia D:T=persistent
-&tags.condition.blind D:T=persistent
-&tags.condition.broken D:T=persistent
-&tags.condition.connected_() D:T=persistent
-&tags.condition.disabled_() D:T=persistent
-&tags.condition.fugue D:T=persistent
-&tags.condition.madness_() D:T=persistent
-&tags.condition.broken D:T=persistent
-&tags.condition.obsession_() D:T=persistent
-&tags.condition.soulless D:T=persistent.soul_loss
-&tags.condition.enervated D:T=persistent.soul_loss
-&tags.condition.thrall D:T=persistent.soul_loss
+&tags.condition.addicted_() [v( d.dt )]=persistent
+&tags.condition.amnesia [v( d.dt )]=persistent
+&tags.condition.blind [v( d.dt )]=persistent
+&tags.condition.broken [v( d.dt )]=persistent
+&tags.condition.connected_() [v( d.dt )]=persistent
+&tags.condition.disabled_() [v( d.dt )]=persistent
+&tags.condition.fugue [v( d.dt )]=persistent
+&tags.condition.madness_() [v( d.dt )]=persistent
+&tags.condition.broken [v( d.dt )]=persistent
+&tags.condition.obsession_() [v( d.dt )]=persistent
+&tags.condition.soulless [v( d.dt )]=persistent.soul_loss
+&tags.condition.enervated [v( d.dt )]=persistent.soul_loss
+&tags.condition.thrall [v( d.dt )]=persistent.soul_loss
 
 */

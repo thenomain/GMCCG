@@ -13,277 +13,340 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 == CORE ATTRIBUTES =============================================================
 */
 
-&attribute.intelligence DD=1.2.3.4.5.6.7.8.9.10|favored
-&attribute.wits DD=1.2.3.4.5.6.7.8.9.10|favored
-&attribute.resolve DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.intelligence [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.wits [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.resolve [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
 
-&attribute.strength DD=1.2.3.4.5.6.7.8.9.10|favored
-&attribute.dexterity DD=1.2.3.4.5.6.7.8.9.10|favored
-&attribute.stamina DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.strength [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.dexterity [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.stamina [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
 
-&attribute.presence DD=1.2.3.4.5.6.7.8.9.10|favored
-&attribute.manipulation DD=1.2.3.4.5.6.7.8.9.10|favored
-&attribute.composure DD=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.presence [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.manipulation [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
+&attribute.composure [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|favored
 
 
 // -- Attributes: Defaults -----------------------------------------------------
 
-&default.attribute.intelligence DD=1
-&default.attribute.wits DD=1
-&default.attribute.resolve DD=1
+&default.attribute.intelligence [v( d.dd )]=1
+&default.attribute.wits [v( d.dd )]=1
+&default.attribute.resolve [v( d.dd )]=1
 
-&default.attribute.strength DD=1
-&default.attribute.dexterity DD=1
-&default.attribute.stamina DD=1
+&default.attribute.strength [v( d.dd )]=1
+&default.attribute.dexterity [v( d.dd )]=1
+&default.attribute.stamina [v( d.dd )]=1
 
-&default.attribute.presence DD=1
-&default.attribute.manipulation DD=1
-&default.attribute.composure DD=1
+&default.attribute.presence [v( d.dd )]=1
+&default.attribute.manipulation [v( d.dd )]=1
+&default.attribute.composure [v( d.dd )]=1
 
 
 // -- Attributes: Prereqs for Supernatural Power Level -------------------------
 
-&prerequisite.attribute.intelligence DD=u( .trait_check, %0, attribute.intelligence, %2 )
-&prereq-text.attribute.intelligence DD=Limited by power level stat
+&prerequisite.attribute.intelligence [v( d.dd )]=
+	u( .trait_check, %0, attribute.intelligence, %2 )
+&prereq-text.attribute.intelligence [v( d.dd )]=Limited by power level stat
 
-&prerequisite.attribute.wits DD=u( .trait_check, %0, attribute.wits, %2 )
-&prereq-text.attribute.wits DD=Limited by power level stat
+&prerequisite.attribute.wits [v( d.dd )]=
+	u( .trait_check, %0, attribute.wits, %2 )
+&prereq-text.attribute.wits [v( d.dd )]=Limited by power level stat
 
-&prerequisite.attribute.resolve DD=u( .trait_check, %0, attribute.resolve, %2 )
-&prereq-text.attribute.resolve DD=Limited by power level stat
+&prerequisite.attribute.resolve [v( d.dd )]=
+	u( .trait_check, %0, attribute.resolve, %2 )
+&prereq-text.attribute.resolve [v( d.dd )]=Limited by power level stat
 
 
-&prerequisite.attribute.strength DD=u( .trait_check, %0, attribute.strength, %2 )
-&prereq-text.attribute.strength DD=Limited by power level stat
+&prerequisite.attribute.strength [v( d.dd )]=
+	u( .trait_check, %0, attribute.strength, %2 )
+&prereq-text.attribute.strength [v( d.dd )]=Limited by power level stat
 
-&prerequisite.attribute.dexterity DD=u( .trait_check, %0, attribute.dexterity, %2 )
-&prereq-text.attribute.dexterity DD=Limited by power level stat
+&prerequisite.attribute.dexterity [v( d.dd )]=
+	u( .trait_check, %0, attribute.dexterity, %2 )
+&prereq-text.attribute.dexterity [v( d.dd )]=Limited by power level stat
 
-&prerequisite.attribute.stamina DD=u( .trait_check, %0, attribute.stamina, %2 )
-&prereq-text.attribute.stamina DD=Limited by power level stat
+&prerequisite.attribute.stamina [v( d.dd )]=
+	u( .trait_check, %0, attribute.stamina, %2 )
+&prereq-text.attribute.stamina [v( d.dd )]=Limited by power level stat
 
-&prerequisite.attribute.presence DD=u( .trait_check, %0, attribute.presence, %2 )
-&prereq-text.attribute.presence DD=Limited by power level stat
+&prerequisite.attribute.presence [v( d.dd )]=
+	u( .trait_check, %0, attribute.presence, %2 )
+&prereq-text.attribute.presence [v( d.dd )]=Limited by power level stat
 
-&prerequisite.attribute.manipulation DD=u( .trait_check, %0, attribute.manipulation, %2 )
-&prereq-text.attribute.manipulation DD=Limited by power level stat
+&prerequisite.attribute.manipulation [v( d.dd )]=
+	u( .trait_check, %0, attribute.manipulation, %2 )
+&prereq-text.attribute.manipulation [v( d.dd )]=Limited by power level stat
 
-&prerequisite.attribute.composure DD=u( .trait_check, %0, attribute.composure, %2 )
-&prereq-text.attribute.composure DD=Limited by power level stat
+&prerequisite.attribute.composure [v( d.dd )]=
+	u( .trait_check, %0, attribute.composure, %2 )
+&prereq-text.attribute.composure [v( d.dd )]=Limited by power level stat
 
 
 // == CORE SKILLS ==============================================================
 
 // -- Skills: Mental -----------------------------------------------------------
 
-&skill.academics DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.computer DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.crafts DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.investigation DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.medicine DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.occult DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.politics DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.science DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.academics [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.computer [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.crafts [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.investigation [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.medicine [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.occult [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.politics [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.science [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
 
-&prerequisite.skill.academics DD=u( .trait_check, %0, skill.academics, %2 )
-&prereq-text.skill.academics DD=Limited by power level stat
-&prerequisite.skill.computer DD=u( .trait_check, %0, skill.computer, %2 )
-&prereq-text.skill.computer DD=Limited by power level stat
-&prerequisite.skill.crafts DD=u( .trait_check, %0, skill.crafts, %2 )
-&prereq-text.skill.crafts DD=Limited by power level stat
-&prerequisite.skill.investigation DD=u( .trait_check, %0, skill.investigation, %2 )
-&prereq-text.skill.investigation DD=Limited by power level stat
-&prerequisite.skill.medicine DD=u( .trait_check, %0, skill.medicine, %2 )
-&prereq-text.skill.medicine DD=Limited by power level stat
-&prerequisite.skill.occult DD=u( .trait_check, %0, skill.occult, %2 )
-&prereq-text.skill.occult DD=Limited by power level stat
-&prerequisite.skill.politics DD=u( .trait_check, %0, skill.politics, %2 )
-&prereq-text.skill.politics DD=Limited by power level stat
-&prerequisite.skill.science DD=u( .trait_check, %0, skill.science, %2 )
-&prereq-text.skill.science DD=Limited by power level stat
+&prerequisite.skill.academics [v( d.dd )]=
+	u( .trait_check, %0, skill.academics, %2 )
+&prereq-text.skill.academics [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.computer [v( d.dd )]=
+	u( .trait_check, %0, skill.computer, %2 )
+&prereq-text.skill.computer [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.crafts [v( d.dd )]=
+	u( .trait_check, %0, skill.crafts, %2 )
+&prereq-text.skill.crafts [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.investigation [v( d.dd )]=
+	u( .trait_check, %0, skill.investigation, %2 )
+&prereq-text.skill.investigation [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.medicine [v( d.dd )]=
+	u( .trait_check, %0, skill.medicine, %2 )
+&prereq-text.skill.medicine [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.occult [v( d.dd )]=
+	u( .trait_check, %0, skill.occult, %2 )
+&prereq-text.skill.occult [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.politics [v( d.dd )]=
+	u( .trait_check, %0, skill.politics, %2 )
+&prereq-text.skill.politics [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.science [v( d.dd )]=
+	u( .trait_check, %0, skill.science, %2 )
+&prereq-text.skill.science [v( d.dd )]=Limited by power level stat
 
 // -- Skills: Physical ---------------------------------------------------------
 
-&skill.athletics DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.brawl DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.drive DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.firearms DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.larceny DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.stealth DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.survival DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.weaponry DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.athletics [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.brawl [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.drive [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.firearms [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.larceny [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.stealth [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.survival [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.weaponry [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
 
-&prerequisite.skill.athletics DD=u( .trait_check, %0, skill.athletics, %2 )
-&prereq-text.skill.athletics DD=Limited by power level stat
-&prerequisite.skill.brawl DD=u( .trait_check, %0, skill.brawl, %2 )
-&prereq-text.skill.brawl DD=Limited by power level stat
-&prerequisite.skill.drive DD=u( .trait_check, %0, skill.drive, %2 )
-&prereq-text.skill.drive DD=Limited by power level stat
-&prerequisite.skill.firearms DD=u( .trait_check, %0, skill.firearms, %2 )
-&prereq-text.skill.firearms DD=Limited by power level stat
-&prerequisite.skill.larceny DD=u( .trait_check, %0, skill.larceny, %2 )
-&prereq-text.skill.larceny DD=Limited by power level stat
-&prerequisite.skill.stealth DD=u( .trait_check, %0, skill.stealth, %2 )
-&prereq-text.skill.stealth DD=Limited by power level stat
-&prerequisite.skill.survival DD=u( .trait_check, %0, skill.survival, %2 )
-&prereq-text.skill.survival DD=Limited by power level stat
-&prerequisite.skill.weaponry DD=u( .trait_check, %0, skill.weaponry, %2 )
-&prereq-text.skill.weaponry DD=Limited by power level stat
+&prerequisite.skill.athletics [v( d.dd )]=
+	u( .trait_check, %0, skill.athletics, %2 )
+&prereq-text.skill.athletics [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.brawl [v( d.dd )]=u( .trait_check, %0, skill.brawl, %2 )
+&prereq-text.skill.brawl [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.drive [v( d.dd )]=u( .trait_check, %0, skill.drive, %2 )
+&prereq-text.skill.drive [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.firearms [v( d.dd )]=
+	u( .trait_check, %0, skill.firearms, %2 )
+&prereq-text.skill.firearms [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.larceny [v( d.dd )]=u( .trait_check, %0, skill.larceny, %2 )
+&prereq-text.skill.larceny [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.stealth [v( d.dd )]=u( .trait_check, %0, skill.stealth, %2 )
+&prereq-text.skill.stealth [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.survival [v( d.dd )]=
+	u( .trait_check, %0, skill.survival, %2 )
+&prereq-text.skill.survival [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.weaponry [v( d.dd )]=
+	u( .trait_check, %0, skill.weaponry, %2 )
+&prereq-text.skill.weaponry [v( d.dd )]=Limited by power level stat
 
 // -- Skills: Social -----------------------------------------------------------
 
-&skill.animal_ken DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.empathy DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.expression DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.intimidation DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.persuasion DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.socialize DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.streetwise DD=1.2.3.4.5.6.7.8.9.10|*
-&skill.subterfuge DD=1.2.3.4.5.6.7.8.9.10|*
+&skill.animal_ken [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.empathy [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.expression [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.intimidation [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.persuasion [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.socialize [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.streetwise [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&skill.subterfuge [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
 
-&prerequisite.skill.animal_ken DD=u( .trait_check, %0, skill.animal_ken, %2 )
-&prereq-text.skill.animal_ken DD=Limited by power level stat
-&prerequisite.skill.empathy DD=u( .trait_check, %0, skill.empathy, %2 )
-&prereq-text.skill.empathy DD=Limited by power level stat
-&prerequisite.skill.expression DD=u( .trait_check, %0, skill.expression, %2 )
-&prereq-text.skill.expression DD=Limited by power level stat
-&prerequisite.skill.intimidation DD=u( .trait_check, %0, skill.intimidation, %2 )
-&prereq-text.skill.intimidation DD=Limited by power level stat
-&prerequisite.skill.persuasion DD=u( .trait_check, %0, skill.persuasion, %2 )
-&prereq-text.skill.persuasion DD=Limited by power level stat
-&prerequisite.skill.socialize DD=u( .trait_check, %0, skill.socialize, %2 )
-&prereq-text.skill.socialize DD=Limited by power level stat
-&prerequisite.skill.streetwise DD=u( .trait_check, %0, skill.streetwise, %2 )
-&prereq-text.skill.streetwise DD=Limited by power level stat
-&prerequisite.skill.subterfuge DD=u( .trait_check, %0, skill.subterfuge, %2 )
-&prereq-text.skill.subterfuge DD=Limited by power level stat
+&prerequisite.skill.animal_ken [v( d.dd )]=
+	u( .trait_check, %0, skill.animal_ken, %2 )
+&prereq-text.skill.animal_ken [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.empathy [v( d.dd )]=u( .trait_check, %0, skill.empathy, %2 )
+&prereq-text.skill.empathy [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.expression [v( d.dd )]=
+	u( .trait_check, %0, skill.expression, %2 )
+&prereq-text.skill.expression [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.intimidation [v( d.dd )]=
+	u( .trait_check, %0, skill.intimidation, %2 )
+&prereq-text.skill.intimidation [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.persuasion [v( d.dd )]=
+	u( .trait_check, %0, skill.persuasion, %2 )
+&prereq-text.skill.persuasion [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.socialize [v( d.dd )]=
+	u( .trait_check, %0, skill.socialize, %2 )
+&prereq-text.skill.socialize [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.streetwise [v( d.dd )]=
+	u( .trait_check, %0, skill.streetwise, %2 )
+&prereq-text.skill.streetwise [v( d.dd )]=Limited by power level stat
+&prerequisite.skill.subterfuge [v( d.dd )]=
+	u( .trait_check, %0, skill.subterfuge, %2 )
+&prereq-text.skill.subterfuge [v( d.dd )]=Limited by power level stat
 
 
 // == CORE MERITS ==============================================================
 
 // -- Merits: Special ----------------------------------------------------------
 
-&merit.sanctity_of_merits DD=#
+&merit.sanctity_of_merits [v( d.dd )]=#
 
 // -- Merits: Mental -----------------------------------------------------------
 
-&merit.area_of_expertise_() DD=1|*
-&prerequisite.merit.area_of_expertise_() DD=cand( u( .at_least, %0, attribute.resolve, 2 ), u( .specialty_has, %0, *, %1 ))
-&prereq-text.merit.area_of_expertise_() DD=Resolve 2+ and Expertise must match an existing specialty
+&merit.area_of_expertise_() [v( d.dd )]=1|*
+&prerequisite.merit.area_of_expertise_() [v( d.dd )]=
+	cand( 
+		u( .at_least, %0, attribute.resolve, 2 ), 
+		u( .specialty_has, %0, *, %1 )
+	)
+&prereq-text.merit.area_of_expertise_() [v( d.dd )]=
+	Resolve 2+ and Expertise must match an existing specialty
 
-&merit.common_sense DD=3
+&merit.common_sense [v( d.dd )]=3
 
-&merit.danger_sense DD=2
+&merit.danger_sense [v( d.dd )]=2
 
-&merit.direction_sense DD=1
+&merit.direction_sense [v( d.dd )]=1
 
-&merit.eidetic_memory DD=2
+&merit.eidetic_memory [v( d.dd )]=2
 
-&merit.encyclopedic_knowledge_() DD=2|academics.animal_ken.athletics.brawl.computer.crafts.drive.empathy.expression.firearms.intimidation.investigation.larceny.medicine.occult.persuasion.politics.science.socialize.stealth.streetwise.subterfuge.survival.weaponry
+&merit.encyclopedic_knowledge_() [v( d.dd )]=2|
+	Academics.Animal Ken.Athletics.Brawl.Computer.Crafts.Drive.Empathy.
+	Expression.Firearms.Intimidation.Investigation.Larceny.Medicine.
+	Occult.Persuasion.Politics.Science.Socialize.Stealth.Streetwise.
+	Subterfuge.Survival.Weaponry
 
-&merit.eye_for_the_strange DD=2
-&prerequisite.merit.eye_for_the_strange DD=u( .at_least_all, %0, attribute.resolve:2 skill.occult:1 )
-&prereq-text.merit.eye_for_the_strange DD=Resolve 2+ and Occult 1+
+&merit.eye_for_the_strange [v( d.dd )]=2
+&prerequisite.merit.eye_for_the_strange [v( d.dd )]=
+	u( .at_least_all, %0, attribute.resolve:2 skill.occult:1 )
+&prereq-text.merit.eye_for_the_strange [v( d.dd )]=Resolve 2+ and Occult 1+
 
-&merit.fast_reflexes DD=1.2.3
-&prerequisite.merit.fast_reflexes DD=u( .at_least_one, %0, attribute.dexterity:3 attribute.wits:3 )
-&prereq-text.merit.fast_reflexes DD=Dexterity 3+ or Wits 3+
+&merit.fast_reflexes [v( d.dd )]=1.2.3
+&prerequisite.merit.fast_reflexes [v( d.dd )]=
+	u( .at_least_one, %0, attribute.dexterity:3 attribute.wits:3 )
+&prereq-text.merit.fast_reflexes [v( d.dd )]=Dexterity 3+ or Wits 3+
 
-&merit.good_time_management DD=1
-&prerequisite.merit.good_time_management DD=u( .at_least_one, %0, skill.science:2 skill.academics:2 )
-&prereq-text.good_time_management DD=Science 2+ or Academics 2+
+&merit.good_time_management [v( d.dd )]=1
+&prerequisite.merit.good_time_management [v( d.dd )]=
+	u( .at_least_one, %0, skill.science:2 skill.academics:2 )
+&prereq-text.good_time_management [v( d.dd )]=Science 2+ or Academics 2+
 
-&merit.holistic_awareness DD=1
+&merit.holistic_awareness [v( d.dd )]=1
 
-&merit.indomitable DD=2
-&prerequisite.merit.indomitable DD=u( .at_least, %0, attribute.resolve, 3 )
-&prereq-text.merit.indomitable DD=Resolve 3+
+&merit.indomitable [v( d.dd )]=2
+&prerequisite.merit.indomitable [v( d.dd )]=
+	u( .at_least, %0, attribute.resolve, 3 )
+&prereq-text.merit.indomitable [v( d.dd )]=Resolve 3+
 
-&merit.interdisciplinary_specialty_() DD=1|*
-&prerequisite.merit.interdisciplinary_specialty_() DD=u( .at_least, %0, u( .specialty_for, %0, %1 ), 3 )
-&prereq-text.merit.interdisciplinary_specialty_() DD=Chosen specialty must belong to a Skill at 3+
+&merit.interdisciplinary_specialty_() [v( d.dd )]=1|*
+&prerequisite.merit.interdisciplinary_specialty_() [v( d.dd )]=
+	u( .at_least, %0, u( .specialty_for, %0, %1 ), 3 )
+&prereq-text.merit.interdisciplinary_specialty_() [v( d.dd )]=
+	Chosen specialty must belong to a Skill at 3+
 
-&merit.investigative_aide_() DD=1|Academics.Animal Ken.Athletics.Brawl.Computer.Crafts.Drive.Empathy.Expression.Firearms.Intimidation.Investigation.Larceny.Medicine.Occult.Persuasion.Politics.Science.Socialize.Stealth.Streetwise.Subterfuge.Survival.Weaponry
-&prerequisite.merit.investigative_aide_() DD=u( .at_least, %0, skill.[edit( %1, %b, _ )], 3 )
-&prereq-text.merit.investigative_aide_() DD=Chosen Skill must be at 3+
+&merit.investigative_aide_() [v( d.dd )]=1|
+	Academics.Animal Ken.Athletics.Brawl.Computer.Crafts.Drive.Empathy.
+	Expression.Firearms.Intimidation.Investigation.Larceny.Medicine.
+	Occult.Persuasion.Politics.Science.Socialize.Stealth.Streetwise.
+	Subterfuge.Survival.Weaponry
+&prerequisite.merit.investigative_aide_() [v( d.dd )]=
+	u( .at_least, %0, skill.[edit( %1, %b, _ )], 3 )
+&prereq-text.merit.investigative_aide_() [v( d.dd )]=Chosen Skill must be at 3+
 
-&merit.investigative_prodigy DD=1.2.3.4.5
-&prerequisite.merit.investigative_prodigy DD=u( .at_least_all, %0, attribute.wits:3 skill.investigation:3 )
-&prereq-text.merit.investigative_prodigy DD=Wits 3+ and Investigation 3+
+&merit.investigative_prodigy [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.investigative_prodigy [v( d.dd )]=
+	u( .at_least_all, %0, attribute.wits:3 skill.investigation:3 )
+&prereq-text.merit.investigative_prodigy [v( d.dd )]=
+	Wits 3+ and Investigation 3+
 
-&merit.language_() DD=1|*
+&merit.language_() [v( d.dd )]=1|*
 
-&merit.library_() DD=1.2.3|academics.computer.crafts.investigation.medicine.occult.politics.science
+&merit.library_() [v( d.dd )]=1.2.3|
+	Academics.Computer.Crafts.Investigation.Medicine.Occult.Politics.Science
 
-&merit.meditative_mind DD=1.2.4
+&merit.meditative_mind [v( d.dd )]=1.2.4
 
-&merit.multilingual_() DD=1|*
+&merit.multilingual_() [v( d.dd )]=1|*
 
-&merit.patient DD=1
+&merit.patient [v( d.dd )]=1
 
-&merit.professional_training_() DD=1.2.3.4.5|
+&merit.professional_training_() [v( d.dd )]=1.2.3.4.5|
 	Academic.Artist.Athlete.Cop.Criminal.Detective.Doctor.Engineer.Hacker.
 	Hit Man.Journalist.Laborer.Occultist.Politician.Professional.
 	Religious Leader.Scientist.Socialite.Stuntman.Survivalist.Soldier.
 	Technician.Thug.Vagrant
 
-&merit.tolerance_for_biology DD=1
-&prerequisite.merit.tolerance_for_biology DD=u( .at_least, %0, attribute.resolve, 3 )
-&prereq-text.merit.tolerance_for_biology DD=Resolve 3+
+&merit.tolerance_for_biology [v( d.dd )]=1
+&prerequisite.merit.tolerance_for_biology [v( d.dd )]=
+	u( .at_least, %0, attribute.resolve, 3 )
+&prereq-text.merit.tolerance_for_biology [v( d.dd )]=Resolve 3+
 
-&merit.trained_observer DD=1.3
-&prerequisite.merit.trained_observer DD=u( .at_least_one, %0, attribute.wits:3 attribute.composure:3 )
-&prereq-text.merit.trained_observer DD=Wits 3+ or Composure 3+
+&merit.trained_observer [v( d.dd )]=1.3
+&prerequisite.merit.trained_observer [v( d.dd )]=
+	u( .at_least_one, %0, attribute.wits:3 attribute.composure:3 )
+&prereq-text.merit.trained_observer [v( d.dd )]=Wits 3+ or Composure 3+
 
-&merit.virtuous_() DD=2|*
+&merit.virtuous_() [v( d.dd )]=2|*
 
-&merit.vice-ridden_() DD=2|*
+&merit.vice-ridden_() [v( d.dd )]=2|*
 
 
 // -- Merits: Physical ---------------------------------------------------------
 
-&merit.ambidextrous DD=3
+&merit.ambidextrous [v( d.dd )]=3
 
-&merit.automotive_genius DD=1
-&prerequisite.merit.automotive_genius DD=u( .at_least_all, %0, skill.crafts:3 skill.drive:1 skill.science:1 )
-&prereq-text.merit.automotive_genius DD=Crafts 3+, Drive 1+, and Science 1+
+&merit.automotive_genius [v( d.dd )]=1
+&prerequisite.merit.automotive_genius [v( d.dd )]=
+	u( .at_least_all, %0, skill.crafts:3 skill.drive:1 skill.science:1 )
+&prereq-text.merit.automotive_genius [v( d.dd )]=
+	Crafts 3+, Drive 1+, and Science 1+
 
-&merit.crack_driver DD=2.3
-&prerequisite.merit.crack_driver DD=u( .at_least, %0, skill.drive, 3 )
-&prereq-text.merit.crack_driver DD=Drive 3+
+&merit.crack_driver [v( d.dd )]=2.3
+&prerequisite.merit.crack_driver [v( d.dd )]=u( .at_least, %0, skill.drive, 3 )
+&prereq-text.merit.crack_driver [v( d.dd )]=Drive 3+
 
-&merit.demolisher DD=1.2.3
-&prerequisite.merit.demolisher DD=u( .at_least_one, %0, attribute.strength:3 attribute.intelligence:3 )
-&prereq-text.merit.demolisher DD=Strength 3+ or Intelligence 3+
+&merit.demolisher [v( d.dd )]=1.2.3
+&prerequisite.merit.demolisher [v( d.dd )]=
+	u( .at_least_one, %0, attribute.strength:3 attribute.intelligence:3 )
+&prereq-text.merit.demolisher [v( d.dd )]=Strength 3+ or Intelligence 3+
 
-&merit.double_jointed DD=2
-&prerequisite.merit.double_jointed DD=u( .at_least, %0, attribute.dexterity, 3 )
-&prereq-text.merit.double_jointed DD=Dexterity 3+
+&merit.double_jointed [v( d.dd )]=2
+&prerequisite.merit.double_jointed [v( d.dd )]=
+	u( .at_least, %0, attribute.dexterity, 3 )
+&prereq-text.merit.double_jointed [v( d.dd )]=Dexterity 3+
 
-&merit.fleet_of_foot DD=1.2.3
-&prerequisite.merit.fleet_of_foot DD=u( .at_least, %0, skill.athletics, 2 )
-&prereq-text.merit.fleet_of_foot DD=Athletics 2+
+&merit.fleet_of_foot [v( d.dd )]=1.2.3
+&prerequisite.merit.fleet_of_foot [v( d.dd )]=
+	u( .at_least, %0, skill.athletics, 2 )
+&prereq-text.merit.fleet_of_foot [v( d.dd )]=Athletics 2+
 
-&merit.giant DD=3
+&merit.giant [v( d.dd )]=3
 
-&merit.hardy DD=1.2.3
-&prerequisite.merit.hardy DD=u( .at_least, %0, attribute.stamina, 3 )
-&prereq-text.merit.hardy DD=Stamina 3+
+&merit.hardy [v( d.dd )]=1.2.3
+&prerequisite.merit.hardy [v( d.dd )]=u( .at_least, %0, attribute.stamina, 3 )
+&prereq-text.merit.hardy [v( d.dd )]=Stamina 3+
 
-&merit.greyhound DD=1
-&prerequisite.merit.greyhound DD=u( .at_least_all, %0, skill.athletics:3 attribute.wits:3 attribute.stamina:3 )
-&prereq-text.merit.greyhound DD=Athletics 3+, Wits 3+, and Stamina 3+
+&merit.greyhound [v( d.dd )]=1
+&prerequisite.merit.greyhound [v( d.dd )]=
+	u( .at_least_all, %0, 
+		skill.athletics:3 attribute.wits:3 attribute.stamina:3 
+	)
+&prereq-text.merit.greyhound [v( d.dd )]=Athletics 3+, Wits 3+, and Stamina 3+
 
-&merit.iron_stamina DD=1.2.3
-&prerequisite.merit.iron_stamina DD=u( .at_least_one, %0, attribute.stamina:3 attribute.resolve:3 )
-&prereq-text.merit.iron_stamina DD=Stamina 3+ or Resolve 3+
+&merit.iron_stamina [v( d.dd )]=1.2.3
+&prerequisite.merit.iron_stamina [v( d.dd )]=
+	u( .at_least_one, %0, attribute.stamina:3 attribute.resolve:3 )
+&prereq-text.merit.iron_stamina [v( d.dd )]=Stamina 3+ or Resolve 3+
 
-&merit.parkour DD=1.2.3.4.5
-&prerequisite.merit.parkour DD=u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 )
-&prereq-text.merit.parkour DD=Dexterity 3+ & Athletics 2+
+&merit.parkour [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.parkour [v( d.dd )]=
+	u( .at_least_all, %0, attribute.dexterity:3 skill.athletics:2 )
+&prereq-text.merit.parkour [v( d.dd )]=Dexterity 3+ & Athletics 2+
 
-&merit.quick_draw_() DD=1|*
-&prerequisite.merit.quick_draw_() DD=
+&merit.quick_draw_() [v( d.dd )]=1|*
+&prerequisite.merit.quick_draw_() [v( d.dd )]=
 	cand( 
 		u( .at_least, %0, attribute.Wits, 3 ), 
 		cor( 
@@ -291,209 +354,244 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 			u( .has, %0, merit.[edit( %1, %b, _ )] )
 		)
 	)
-&prereq-text.merit.quick_draw_() DD=Wits 3+, and the type is either a specialty for Brawl, Weaponry, Firearms, or a learned Fighting Style
+&prereq-text.merit.quick_draw_() [v( d.dd )]=
+	Wits 3+, and the type is either a specialty for Brawl, Weaponry, Firearms, 
+	or a learned Fighting Style
 
-&merit.relentless DD=1
-&prerequisite.merit.relentless DD=u( .at_least_all, %0, skill.athletics:2 attribute.stamina:3 )
-&prereq-text.merit.relentless DD=Athletics 2+ and Stamina 3+
+&merit.relentless [v( d.dd )]=1
+&prerequisite.merit.relentless [v( d.dd )]=
+	u( .at_least_all, %0, skill.athletics:2 attribute.stamina:3 )
+&prereq-text.merit.relentless [v( d.dd )]=Athletics 2+ and Stamina 3+
 
-&merit.seizing_the_edge DD=2
-&prerequisite.merit.seizing_the_edge DD=u( .at_least_all, %0, attribute.wits:3 attribute.composure:3 )
-&prereq-text.merit.seizing_the_edge DD=Wits 2+ and Composure 3+
+&merit.seizing_the_edge [v( d.dd )]=2
+&prerequisite.merit.seizing_the_edge [v( d.dd )]=
+	u( .at_least_all, %0, attribute.wits:3 attribute.composure:3 )
+&prereq-text.merit.seizing_the_edge [v( d.dd )]=Wits 2+ and Composure 3+
 
-&merit.sleight_of_hand DD=2
-&prerequisite.merit.sleight_of_hand DD=u( .at_least, %0, skill.larceny, 3 )
-&prereq-text.merit.sleight_of_hand DD=Larceny 3+
+&merit.sleight_of_hand [v( d.dd )]=2
+&prerequisite.merit.sleight_of_hand [v( d.dd )]=
+	u( .at_least, %0, skill.larceny, 3 )
+&prereq-text.merit.sleight_of_hand [v( d.dd )]=Larceny 3+
 
-&merit.small_framed DD=2
+&merit.small_framed [v( d.dd )]=2
 
-&merit.stunt_driver DD=1.2.3.4
-&prerequisite.merit.stunt_driver DD=u( .at_least_all, %0, attribute.dexterity:3 skill.drive:3 attribute.wits:3 )
-&prereq-text.merit.stunt_driver DD=Dexterity 3+, Drive 3+, and Wits 3+
+&merit.stunt_driver [v( d.dd )]=1.2.3.4
+&prerequisite.merit.stunt_driver [v( d.dd )]=
+	u( .at_least_all, %0, attribute.dexterity:3 skill.drive:3 attribute.wits:3 )
+&prereq-text.merit.stunt_driver [v( d.dd )]=Dexterity 3+, Drive 3+, and Wits 3+
 
 
 // -- Merits: Social -----------------------------------------------------------
 
-&merit.allies_() DD=1.2.3.4.5|*
+&merit.allies_() [v( d.dd )]=1.2.3.4.5|*
 
-&merit.alternate_identity_() DD=1.2.3|*
+&merit.alternate_identity_() [v( d.dd )]=1.2.3|*
 
-&merit.anonymity DD=1.2.3.4.5
-&prerequisite.merit.anonymity DD=not( lattr( %0/_merit.fame_(*) ))
-&prereq-text.merit.anonymity DD=Cannot have the merit 'Fame'
+&merit.anonymity [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.anonymity [v( d.dd )]=not( lattr( %0/_merit.fame_(*) ))
+&prereq-text.merit.anonymity [v( d.dd )]=Cannot have the merit 'Fame'
 
-&merit.barfly DD=2
-&prerequisite.merit.barfly DD=u( .at_least, %0, skill.socialize, 2 )
-&prereq-text.merit.barfly DD=Socialize 2+
+&merit.barfly [v( d.dd )]=2
+&prerequisite.merit.barfly [v( d.dd )]=u( .at_least, %0, skill.socialize, 2 )
+&prereq-text.merit.barfly [v( d.dd )]=Socialize 2+
 
-&merit.closed_book DD=1.2.3.4.5
-&prerequisite.merit.closed_book DD=
-&prereq-text.merit.closed_book DD=
-&tags.merit.closed_book D:T=social
+&merit.closed_book [v( d.dd )]=1.2.3.4.5
 
-&merit.contacts_() DD=1|*
+&merit.contacts_() [v( d.dd )]=1|*
 // I made this a 1-dot Merit because in GMC you can’t have more than a single 
 // dot per tpye of Contacts and it’s just easier to keep track of if they are 
 // 1-dot Merits with specifiers. This is how the Vampire book does it.
 
-&merit.fame_() DD=1.2.3|*
-&prerequisite.merit.fame_() DD=u( .has_not, %0, merit.anonymity )
-&prereq-text.merit.fame_() DD=Cannot have the 'Anonymity' merit
+
+&merit.fame_() [v( d.dd )]=1.2.3|*
+&prerequisite.merit.fame_() [v( d.dd )]=u( .has_not, %0, merit.anonymity )
+&prereq-text.merit.fame_() [v( d.dd )]=Cannot have the 'Anonymity' merit
 // cannot have 'anonymity'
 
-&merit.fast_talking DD=1.2.3.4.5
-&prerequisite.merit.fast_talking DD=u( .at_least_all, %0, attribute.manipulation:3 skill.subterfuge:2 )
-&prereq-text.merit.fast_talking DD=Manipulation 3+ and Subterfuge 2+
+&merit.fast_talking [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.fast_talking [v( d.dd )]=
+	u( .at_least_all, %0, attribute.manipulation:3 skill.subterfuge:2 )
+&prereq-text.merit.fast_talking [v( d.dd )]=Manipulation 3+ and Subterfuge 2+
 
-&merit.fixer DD=2
-&prerequisite.merit.fixer DD=cand( u( .at_least, %0, attribute.wits, 3 ), cor( gte( words( lattr( %0/_merit.contacts_* )), 2 ), t( lattr( %0/_merit.professional_training_(*) ))))
-&prereq-text.merit.fixer DD=Wits 3+ & 2 or more Contacts, or Professional Training (which gives you 2 Contacts)
+&merit.fixer [v( d.dd )]=2
+&prerequisite.merit.fixer [v( d.dd )]=
+	cand( 
+		u( .at_least, %0, attribute.wits, 3 ), 
+		cor( 
+			gte( words( lattr( %0/_merit.contacts_* )), 2 ), 
+			t( lattr( %0/_merit.professional_training_(*) ))
+		)
+	)
+&prereq-text.merit.fixer [v( d.dd )]=
+	Wits 3+ & 2 or more Contacts, 
+	or Professional Training (which gives you 2 Contacts)
 // GENERAL NOTE: Need a way to look up a list of traits by name with wildcard
 
-&merit.hobbyist_clique_() DD=2|*|*
-// &prerequisite.merit.hobbyist_clique_() DD=
+&merit.hobbyist_clique_() [v( d.dd )]=2|*|*
+// &prerequisite.merit.hobbyist_clique_() [v( d.dd )]=
 //	u( .at_least_all, %0, attribute.wits:3 merit.contacts:2 )
-// &prereq-text.merit.hobbyist_clique_() DD=
+// &prereq-text.merit.hobbyist_clique_() [v( d.dd )]=
 // Not sure how to code it so that the prerequisite is a 2 in the Skill 
 // associated with the Merit.
 // Thought: "Hobbyist Clique (Computer Club).Computers"
 
-&merit.inspiring DD=3
-&prerequisite.merit.inspiring DD=u( .at_least, %0, attribute.presence, 3 )
-&prereq-text.merit.inspiring DD=Presence 3+
+&merit.inspiring [v( d.dd )]=3
+&prerequisite.merit.inspiring [v( d.dd )]=
+	u( .at_least, %0, attribute.presence, 3 )
+&prereq-text.merit.inspiring [v( d.dd )]=Presence 3+
 
-&merit.iron_will DD=2
-&prerequisite.merit.iron_will DD=u( .at_least, %0, attribute.resolve, 4 )
-&prereq-text.merit.iron_will DD=Resolve 4+
+&merit.iron_will [v( d.dd )]=2
+&prerequisite.merit.iron_will [v( d.dd )]=
+	u( .at_least, %0, attribute.resolve, 4 )
+&prereq-text.merit.iron_will [v( d.dd )]=Resolve 4+
 
-&merit.mentor_() DD=1.2.3.4.5|*
+&merit.mentor_() [v( d.dd )]=1.2.3.4.5|*
 // Mentor requires that the character pick 3 stats to give to the Mentor as 
 // fields where the mentor can be helpful; Use +note
 
-&merit.mystery_cult_initiation_() DD=1.2.3.4.5|*
+&merit.mystery_cult_initiation_() [v( d.dd )]=1.2.3.4.5|*
 // Will probably require a +note for all the bennies to be noted.
 
-&merit.pusher DD=1
-&prerequisite.merit.pusher DD=u( .at_least, %0, skill.persuasion, 2 )
-&prereq-text.merit.pusher DD=Persuasion 2+
+&merit.pusher [v( d.dd )]=1
+&prerequisite.merit.pusher [v( d.dd )]=u( .at_least, %0, skill.persuasion, 2 )
+&prereq-text.merit.pusher [v( d.dd )]=Persuasion 2+
 
-&merit.resources DD=1.2.3.4.5
+&merit.resources [v( d.dd )]=1.2.3.4.5
 
-&merit.retainer_() DD=1.2.3.4.5|*
+&merit.retainer_() [v( d.dd )]=1.2.3.4.5|*
 // Like Mentor, since we are going to be using Blackjack/Baltimore’s House Rules 
 // for Retainers. I’ll get more into it later.
 
-&merit.safe_place_() DD=1.2.3.4.5|*
+&merit.safe_place_() [v( d.dd )]=1.2.3.4.5|*
 
-&merit.small_unit_tactics DD=2
-&prerequisite.merit.small_unit_tactics DD=u( .at_least, %0, attribute.presence, 3 )
-&prereq-text.merit.small_unit_tactics DD=Presence 3+
+&merit.small_unit_tactics [v( d.dd )]=2
+&prerequisite.merit.small_unit_tactics [v( d.dd )]=
+	u( .at_least, %0, attribute.presence, 3 )
+&prereq-text.merit.small_unit_tactics [v( d.dd )]=Presence 3+
 
-&merit.spin_doctor DD=1
-&prerequisite.merit.spin_doctor DD=u( .at_least_all, %0, attribute.manipulation:3 skill.subterfuge:2 )
-&prereq-text.merit.spin_doctor DD=Manipulation 3+ and Subterfuge 2+
+&merit.spin_doctor [v( d.dd )]=1
+&prerequisite.merit.spin_doctor [v( d.dd )]=
+	u( .at_least_all, %0, attribute.manipulation:3 skill.subterfuge:2 )
+&prereq-text.merit.spin_doctor [v( d.dd )]=Manipulation 3+ and Subterfuge 2+
 
-&merit.staff_() DD=1.2.3.4.5|*
+&merit.staff_() [v( d.dd )]=1.2.3.4.5|*
 
-&merit.status_() DD=1.2.3.4.5|*
+&merit.status_() [v( d.dd )]=1.2.3.4.5|*
 
-&merit.striking_looks_() DD=1.2|*
+&merit.striking_looks_() [v( d.dd )]=1.2|*
 
-&merit.sympathetic DD=2
+&merit.sympathetic [v( d.dd )]=2
 
-&merit.table_turner DD=1
-&prerequisite.merit.table_turner DD=u( .at_least_all, %0, attribute.composure: 3 attribute.manipulation:3 attribute.wits:3 )
-&prereq-text.merit.table_turner DD=Composure 3+, Manipulation 3+, and Wits 3+
+&merit.table_turner [v( d.dd )]=1
+&prerequisite.merit.table_turner [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.composure: 3 attribute.manipulation:3 attribute.wits:3 
+	)
+&prereq-text.merit.table_turner [v( d.dd )]=
+	Composure 3+, Manipulation 3+, and Wits 3+
 
-&merit.takes_one_to_know_one DD=1
+&merit.takes_one_to_know_one [v( d.dd )]=1
 
-&merit.taste DD=1
-&prerequisite.merit.taste DD=cand( u( .at_least, %0, skill.crafts, 2 ), u( .specialty_has, %0, Crafts Expression, * ))
-&prereq-text.merit.taste DD=Crafts 2+ and Specialty in Crafts or Expression
+&merit.taste [v( d.dd )]=1
+&prerequisite.merit.taste [v( d.dd )]=
+	cand( 
+		u( .at_least, %0, skill.crafts, 2 ), 
+		u( .specialty_has, %0, Crafts Expression, * )
+	)
+&prereq-text.merit.taste [v( d.dd )]=
+	Crafts 2+ and Specialty in Crafts or Expression
 
-&merit.true_friend_() DD=3|*
+&merit.true_friend_() [v( d.dd )]=3|*
 
-&merit.untouchable DD=1
-&prerequisite.merit.untouchable DD=u( .at_least_all, %0, skill.manipulation:3 skill.subterfuge:2 )
-&prereq-text.merit.untouchable DD=Manipulation 3+ and Subterfuge 2+
+&merit.untouchable [v( d.dd )]=1
+&prerequisite.merit.untouchable [v( d.dd )]=
+	u( .at_least_all, %0, skill.manipulation:3 skill.subterfuge:2 )
+&prereq-text.merit.untouchable [v( d.dd )]=Manipulation 3+ and Subterfuge 2+
 
 
 // -- Merits: Fighting Merits --------------------------------------------------
 
-&merit.armed_defense DD=1.2.3.4.5
-&prerequisite.merit.armed_defense DD=
+&merit.armed_defense [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.armed_defense [v( d.dd )]=
 	cand( 
 		u( .has, %0, defensive_combat_(weaponry) ), 
 		u( .at_least_all, %0, attribute.dexterity:3 skill.weaponry:2 )
 	)
-&prereq-text.merit.armed_defense DD=
+&prereq-text.merit.armed_defense [v( d.dd )]=
 	Dexterity 3+, Weaponry 2+, and Defensive Combat (Weaponry)
 
-&merit.cheap_shot DD=2
-&prerequisite.merit.cheap_shot DD=
+&merit.cheap_shot [v( d.dd )]=2
+&prerequisite.merit.cheap_shot [v( d.dd )]=
 	u( .at_least_all, %0, merit.street_fighting:3 skill.subterfuge:2 )
-&prereq-text.merit.cheap_shot DD=Street Fighting 3+ and Subterfuge 2+
+&prereq-text.merit.cheap_shot [v( d.dd )]=Street Fighting 3+ and Subterfuge 2+
 
-&merit.choke_hold DD=2
-&prerequisite.merit.choke_hold DD=u( .at_least, %0, skill.brawl, 2 )
-&prereq-text.merit.choke_hold DD=Brawl 2+
+&merit.choke_hold [v( d.dd )]=2
+&prerequisite.merit.choke_hold [v( d.dd )]=u( .at_least, %0, skill.brawl, 2 )
+&prereq-text.merit.choke_hold [v( d.dd )]=Brawl 2+
 
-&merit.close_quarters_combat DD=1.2.3.4.5
-&prerequisite.merit.close_quarters_combat DD=u( .at_least_all, %0, attribute.wits:3 skill.brawl:3 skill.athletics:2 )
-&prereq-text.merit.close_quarters_combat DD=Wits 3+, Athletics 2, and Brawl 3+
+&merit.close_quarters_combat [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.close_quarters_combat [v( d.dd )]=
+	u( .at_least_all, %0, attribute.wits:3 skill.brawl:3 skill.athletics:2 )
+&prereq-text.merit.close_quarters_combat [v( d.dd )]=
+	Wits 3+, Athletics 2, and Brawl 3+
 
-&merit.defensive_combat_() DD=1|*
-&prerequisite.merit.defensive_combat_() DD=
+&merit.defensive_combat_() [v( d.dd )]=1|*
+&prerequisite.merit.defensive_combat_() [v( d.dd )]=
 	u( .has_one_of, %0, skill.brawl skill.weaponry )
-&prereq-text.merit.defensive_combat_() DD=Brawl 1+ or Weaponry 1+
+&prereq-text.merit.defensive_combat_() [v( d.dd )]=Brawl 1+ or Weaponry 1+
 
-&merit.fighting_finesse_() DD=2|*
-&prerequisite.merit.fighting_finesse_() DD=
+&merit.fighting_finesse_() [v( d.dd )]=2|*
+&prerequisite.merit.fighting_finesse_() [v( d.dd )]=
 	cand( 
 		u( .at_least, %0, attribute.dexterity:3 ), 
 		match( skill.brawl skill.weaponry, u( .specialty_for, %0, %1 ))
 	)
-&prereq-text.merit.fighting_finesse_() DD=Dexterity 3+, 'type' is an 
+&prereq-text.merit.fighting_finesse_() [v( d.dd )]=Dexterity 3+, 'type' is an 
 	existing specialty you have in Weaponry or Brawl
 
-&merit.firefight DD=1.2.3
-&prerequisite.merit.firefight DD=
+&merit.firefight [v( d.dd )]=1.2.3
+&prerequisite.merit.firefight [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.composure:3 attribute.dexterity:3 skill.firearms:2 
 		skill.athletics:2 
 	)
-&prereq-text.merit.firefight DD=
+&prereq-text.merit.firefight [v( d.dd )]=
 	Composure 3+, Dexterity 3+, Athletics 2+, and Firearms 2+
 
-&merit.grappling DD=1.2.3
-&prerequisite.merit.grappling DD=u( .at_least_all, %0, attribute.stamina:3 attribute.strength:2 skill.brawl:2 skill.athletics:2 )
-&prereq-text.merit.grappling DD=
+&merit.grappling [v( d.dd )]=1.2.3
+&prerequisite.merit.grappling [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.stamina:3 attribute.strength:2 skill.brawl:2 
+		skill.athletics:2 
+	)
+&prereq-text.merit.grappling [v( d.dd )]=
 	Stamina 3+, Strength 2+, Athletics 2+, and Brawl 2
 
-&merit.heavy_weapons DD=1.2.3.4.5
-&prerequisite.merit.heavy_weapons DD=
+&merit.heavy_weapons [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.heavy_weapons [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.stamina:3 attribute.strength:3 skill.weaponry:2 
 		skill.athletics:2 
 	)
-&prereq-text.merit.heavy_weapons DD=
+&prereq-text.merit.heavy_weapons [v( d.dd )]=
 	Stamina 3, Strength 3, Athletics 2, & Weaponry 2
 
-&merit.improvised_weaponry DD=1.2.3
-&prerequisite.merit.improvised_weaponry DD=u( .at_least_all, %0, attribute.wits:3 skill.weaponry:1 )
-&prereq-text.merit.improvised_weaponry DD=Wits 3+ and Weaponry 1+
+&merit.improvised_weaponry [v( d.dd )]=1.2.3
+&prerequisite.merit.improvised_weaponry [v( d.dd )]=
+	u( .at_least_all, %0, attribute.wits:3 skill.weaponry:1 )
+&prereq-text.merit.improvised_weaponry [v( d.dd )]=Wits 3+ and Weaponry 1+
 
-&merit.iron_skin DD=2.4
-&prerequisite.merit.iron_skin DD=
+&merit.iron_skin [v( d.dd )]=2.4
+&prerequisite.merit.iron_skin [v( d.dd )]=
 	cand( 
 		u( .at_least, %0, attribute.stamina, 3 ), 
 		u( .at_least_one, %0, merit.martial_arts:2 merit.street_fighting:2 )
 	)
-&prereq-text.merit.iron_skin DD=
+&prereq-text.merit.iron_skin [v( d.dd )]=
 	Stamina 3+ and either Martial Arts 2+ or Street Fighting 2+
 
-&merit.light_weapons DD=1.2.3.4.5
-&prerequisite.merit.light_weapons DD=
+&merit.light_weapons [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.light_weapons [v( d.dd )]=
 	cand( 
 		cor( 
 			u( .at_least, %0, attribute.wits, 3 ), 
@@ -503,139 +601,118 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 			attribute.dexterity:3 skill.athletics:2 skill.weaponry:2 
 		)
 	)
-&prereq-text.merit.light_weapons DD=
+&prereq-text.merit.light_weapons [v( d.dd )]=
 	Wits 3+ or Fighting Finesse, plus Dexterity 3+, Athletics 2+, 
 	and Weaponry 2+
 
-&merit.marksmanship DD=1.2.3.4
-&prerequisite.merit.marksmanship DD=
+&merit.marksmanship [v( d.dd )]=1.2.3.4
+&prerequisite.merit.marksmanship [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.composure:3 attribute.resolve:3 skill.firearms:2 
 	)
-&prereq-text.merit.marksmanship DD=Composure 3+, Resolve 3+, and Firearms 2+
+&prereq-text.merit.marksmanship [v( d.dd )]=
+	Composure 3+, Resolve 3+, and Firearms 2+
 
-&merit.martial_arts DD=1.2.3.4.5
-&prerequisite.merit.martial_arts DD=
+&merit.martial_arts [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.martial_arts [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.resolve:3 attribute.dexterity:3 skill.brawl:2 
 		skill.athletics:2 
 	)
-&prereq-text.merit.martial_arts DD=
+&prereq-text.merit.martial_arts [v( d.dd )]=
 	Resolve 3+, Dexterity 3+, Athletics 2+, and Brawl 2+
 
-&merit.police_tactics DD=1.2.3
-&prerequisite.merit.police_tactics DD=
+&merit.police_tactics [v( d.dd )]=1.2.3
+&prerequisite.merit.police_tactics [v( d.dd )]=
 	u( .at_least_all, %0, skill.brawl:2 skill.weaponry:1 )
-&prereq-text.merit.police_tactics DD=Brawl 2+ and Weaponry 1+
+&prereq-text.merit.police_tactics [v( d.dd )]=Brawl 2+ and Weaponry 1+
 
-&merit.shiv DD=1.2
-&prerequisite.merit.shiv DD=
+&merit.shiv [v( d.dd )]=1.2
+&prerequisite.merit.shiv [v( d.dd )]=
 	u( .at_least_all, %0, merit.street_fighting:2 skill.weaponry:1 )
-&prereq-text.merit.shiv DD=Street Fighting 2+ and Weaponry 1+
+&prereq-text.merit.shiv [v( d.dd )]=Street Fighting 2+ and Weaponry 1+
 
-&merit.street_fighting DD=1.2.3.4.5
-&prerequisite.merit.street_fighting DD=
+&merit.street_fighting [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.street_fighting [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.stamina:3 attribute.composure:3 skill.brawl:2 
 		skill.streetwise:2 
 	)
-&prereq-text.merit.street_fighting DD=
+&prereq-text.merit.street_fighting [v( d.dd )]=
 	Stamina 3+, Composure 3+, Brawl 2+, and Streetwise 2+
 
-&merit.unarmed_defense DD=1.2.3.4.5
-&prerequisite.merit.unarmed_defense DD=
+&merit.unarmed_defense [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.unarmed_defense [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.dexterity:3 skill.brawl:2 merit.defensive_combat_(brawl):1 
 	)
-&prereq-text.merit.unarmed_defense DD=
+&prereq-text.merit.unarmed_defense [v( d.dd )]=
 	Dexterity 3+, Brawl 2+ & Defensive Combat (Brawl)
 
 
 // -- Core Merits: Supernatural ------------------------------------------------
 
-&merit.aura_reading DD=3
-&tags.merit.aura_reading D:T=human.supernatural
+&merit.aura_reading [v( d.dd )]=3
+&merit.automatic_writing [v( d.dd )]=2
+&merit.biokinesis [v( d.dd )]=1.2.3.4.5
+&merit.clairvoyance [v( d.dd )]=3
+&merit.cursed [v( d.dd )]=2
+&merit.laying_on_hands [v( d.dd )]=3
 
-&merit.automatic_writing DD=2
-&tags.merit.automatic_writing D:T=human.supernatural
+&merit.medium [v( d.dd )]=3
+&prerequisite.merit.medium [v( d.dd )]=u( .at_least, %0, skill.empathy, 2 )
+&prereq-text.merit.medium [v( d.dd )]=Empathy 2+
 
-&merit.biokinesis DD=1.2.3.4.5
-&tags.merit.biokinesis D:T=human.supernatural
+&merit.mind_of_a_madman [v( d.dd )]=2
+&prerequisite.merit.mind_of_a_madman [v( d.dd )]=
+	u( .at_least, %0, skill.empathy, 2 )
+&prereq-text.merit.mind_of_a_madman [v( d.dd )]=Empathy 2+
 
-&merit.clairvoyance DD=3
-&tags.merit.clairvoyance D:T=human.supernatural
+&merit.omen_sensitivity [v( d.dd )]=3
 
-&merit.cursed DD=2
-&tags.merit.cursed D:T=human.supernatural
-
-&merit.laying_on_hands DD=3
-&tags.merit.laying_on_hands D:T=human.supernatural
-
-&merit.medium DD=3
-&prerequisite.merit.medium DD=u( .at_least, %0, skill.empathy, 2 )
-&prereq-text.merit.medium DD=Empathy 2+
-&tags.merit.medium D:T=human.supernatural
-
-&merit.mind_of_a_madman DD=2
-&prerequisite.merit.mind_of_a_madman DD=u( .at_least, %0, skill.empathy, 2 )
-&prereq-text.merit.mind_of_a_madman DD=Empathy 2+
-&tags.merit.mind_of_a_madman D:T=human.supernatural
-
-&merit.omen_sensitivity DD=3
-&tags.merit.omen_sensitivity D:T=human.supernatural
-
-&merit.numbing_touch DD=1.2.3.4.5
-&tags.merit.numbing_touch D:T=human.supernatural
+&merit.numbing_touch [v( d.dd )]=1.2.3.4.5
 
 // this is not really an instanced stat, so can only be taken once
 // prereq: person has no psychokinesis or they're taking one they already have
-&merit.psychokinesis_() DD=3.5|Fire.Cold.Electricity
-&prerequisite.merit.psychokinesis_() DD=
+&merit.psychokinesis_() [v( d.dd )]=3.5|Fire.Cold.Electricity
+&prerequisite.merit.psychokinesis_() [v( d.dd )]=
 	cor( 
 		not( lattr( %0/_merit.psychokinesis_(*) )), 
 		u( .has, %0, merit.psychokinesis_(%1) )
 	)
-&prereq-text.merit.psychokinesis_() DD=Only one form may be taken
-&tags.merit.psychokinesis_() D:T=human.supernatural
+&prereq-text.merit.psychokinesis_() [v( d.dd )]=Only one form may be taken
 
-&merit.psychometry DD=3
-&tags.merit.psychometry D:T=human.supernatural
-
-&merit.telekinesis DD=1.2.3.4.5
-&tags.merit.telekinesis D:T=human.supernatural
-
-&merit.telepathy DD=3.5
-&tags.merit.telepathy D:T=human.supernatural
-
-&merit.thief_of_fate DD=3
-&tags.merit.thief_of_fate D:T=human.supernatural
-
-&merit.unseen_sense_() DD=2|
+&merit.psychometry [v( d.dd )]=3
+&merit.telekinesis [v( d.dd )]=1.2.3.4.5
+&merit.telepathy [v( d.dd )]=3.5
+&merit.thief_of_fate [v( d.dd )]=3
+&merit.unseen_sense_() [v( d.dd )]=2|
 	Vampires.Werewolves.God Machine.Spirits.Ghosts.Angels
-&tags.merit.unseen_sense_() D:T=human.supernatural
 
 
 // == CORE ADVANTAGES ==========================================================
 
 // -- Integrity: the, er, integrity stat for humans ----------------------------
 
-&advantage.integrity DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.integrity DD=7
+&advantage.integrity [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.integrity [v( d.dd )]=7
 
 // -- pools like "willpower" need a separate "max" trait which may go up & down
 // -- the current pool trait is pulled from the max trait & applied an offset
 // -- spending "a dot of willpower" is an offset applied to the maximum
 
-&advantage.willpower DD=ladd( u( .value_full, %0, advantage.willpower_maximum ), . )
-&default.advantage.willpower DD=derived
+&advantage.willpower [v( d.dd )]=
+	ladd( u( .value_full, %0, advantage.willpower_maximum ), . )
+&default.advantage.willpower [v( d.dd )]=derived
 
-&advantage.willpower_maximum DD=u( .value_stats, %0, attribute.resolve attribute.composure )
-&default.advantage.willpower_maximum DD=derived
+&advantage.willpower_maximum [v( d.dd )]=
+	u( .value_stats, %0, attribute.resolve attribute.composure )
+&default.advantage.willpower_maximum [v( d.dd )]=derived
 
 
 // -- Other Advantages ---------------------------------------------------------
 
-&advantage.defense DD=
+&advantage.defense [v( d.dd )]=
 	add( 
 		ladd( u( .value_full, %0, skill.athletics ), . ), 
 		min( 
@@ -643,9 +720,9 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 			ladd( u( .value_full, %0, attribute.dexterity ), . )
 		)
 	)
-&default.advantage.defense DD=derived
+&default.advantage.defense [v( d.dd )]=derived
 
-&advantage.weaponry_defense DD=
+&advantage.weaponry_defense [v( d.dd )]=
 	if( u( .has, %0, merit.defensive_combat_(weaponry) ), 
 		add( 
 			ladd( u( .value_full, %0, skill.weaponry ), . ), 
@@ -656,9 +733,9 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 		), 
 		0 
 	)
-&default.advantage.weaponry_defense DD=derived
+&default.advantage.weaponry_defense [v( d.dd )]=derived
 
-&advantage.brawl_defense DD=
+&advantage.brawl_defense [v( d.dd )]=
 	if( u( .has, %0, merit.defensive_combat_(brawl) ), 
 		add( 
 			ladd( u( .value_full, %0, skill.brawl ), . ), 
@@ -669,66 +746,80 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 		), 
 		0 
 	)
-&default.advantage.brawl_defense DD=derived
+&default.advantage.brawl_defense [v( d.dd )]=derived
 
-&advantage.size DD=
+&advantage.size [v( d.dd )]=
 	add( 
 		u( .value_stats, %0, special.size ), 
 		u( .has, %0, merit.giant ), 
 		mul( u( .has, %0, merit.small_framed ), -1 )
 	)
 
-&default.advantage.size DD=derived
+&default.advantage.size [v( d.dd )]=derived
 
-&advantage.speed DD=u( .value_stats, %0, attribute.strength attribute.dexterity special.species_factor merit.fleet_of_foot )
-&default.advantage.speed DD=derived
+&advantage.speed [v( d.dd )]=
+	u( .value_stats, %0, 
+		attribute.strength attribute.dexterity 
+		special.species_factor merit.fleet_of_foot 
+	)
+&default.advantage.speed [v( d.dd )]=derived
 
-&advantage.initiative DD=u( .value_stats, %0, attribute.dexterity attribute.composure merit.fast_reflexes )
-&default.advantage.initiative DD=derived
+&advantage.initiative [v( d.dd )]=
+	u( .value_stats, %0, 
+		attribute.dexterity attribute.composure merit.fast_reflexes 
+	)
+&default.advantage.initiative [v( d.dd )]=derived
 
-&advantage.perception DD=u( .value_stats, %0, attribute.wits attribute.composure )
-&default.advantage.perception DD=derived
+&advantage.perception [v( d.dd )]=
+	u( .value_stats, %0, attribute.wits attribute.composure )
+&default.advantage.perception [v( d.dd )]=derived
 
 // I replaced the base virtues and vices with the GMC ones rather than 
 // appending, yes?
 // aren't those mostly suggestions? do we want to list all taken virt/vices?
-// yes, they are suggestion. It would be cool to list all taken virtues/vices so we could have a list on the wiki that people could look at for inspiration/choices.
+// yes, they are suggestion. It would be cool to list all taken virtues/vices 
+// so we could have a list on the wiki that people could look at for 
+// inspiration/choices.
 
-&bio.virtue DD=Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.Loyal.Patient.Peaceful.Righteous.Trustworthy
-&class.bio.virtue DD=string
+&bio.virtue [v( d.dd )]=
+	Ambitious.Courageous.Generous.Honest.Hopeful.Humble.Just.Loving.Loyal.
+	Patient.Peaceful.Righteous.Trustworthy
+&class.bio.virtue [v( d.dd )]=string
 
-&bio.vice DD=Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.Hasty.Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
-&class.bio.vice DD=string
+&bio.vice [v( d.dd )]=
+	Ambitious.Arrogant.Corrupt.Cowardly.Cruel.Deceitful.Greedy.Hasty.
+	Hateful.Pessimistic.Treacherous.Untrustworthy.Violent
+&class.bio.vice [v( d.dd )]=string
 
-// &advantage.aspiration DD=*
-// &class.advantage.aspiration DD=string
+// &advantage.aspiration [v( d.dd )]=*
+// &class.advantage.aspiration [v( d.dd )]=string
 
 
 
 // == CORE BIO =================================================================
 
-&class.bio.? DD=string
+&class.bio.? [v( d.dd )]=string
 
-&bio.full_name DD=*
+&bio.full_name [v( d.dd )]=*
 
-&bio.birthdate DD=*
+&bio.birthdate [v( d.dd )]=*
 
-&bio.concept DD=*
+&bio.concept [v( d.dd )]=*
 
-&bio.template DD=Human
+&bio.template [v( d.dd )]=Human
 
-&bio.sphere DD=u( .sphere, %0 )
-&default.bio.sphere DD=derived
+&bio.sphere [v( d.dd )]=u( .sphere, %0 )
+&default.bio.sphere [v( d.dd )]=derived
 
 
 
 // == CORE SPECIAL TYPES =======================================================
 
-&special.size DD=#
-&default.special.size dd=5
+&special.size [v( d.dd )]=#
+&default.special.size [v( d.dd )]=5
 
-&special.species_factor DD=#
-&default.special.species_factor dd=5
+&special.species_factor [v( d.dd )]=#
+&default.special.species_factor [v( d.dd )]=5
 
 
 
@@ -742,60 +833,60 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 /* 
 
-&class.condition.? dd=flag
+&class.condition.? [v( d.dd )]=flag
 
 // -- 
 
-&condition.addicted_() dd=1|*
+&condition.addicted_() [v( d.dd )]=1|*
 
-&condition.amnesia dd=1
+&condition.amnesia [v( d.dd )]=1
 
-&condition.blind dd=1
+&condition.blind [v( d.dd )]=1
 
-&condition.broken dd=1
+&condition.broken [v( d.dd )]=1
 
-&condition.bonded_() dd=1|*
+&condition.bonded_() [v( d.dd )]=1|*
 
-&condition.connected_() dd=1|*
+&condition.connected_() [v( d.dd )]=1|*
 
-&condition.disabled_() dd=1|*
+&condition.disabled_() [v( d.dd )]=1|*
 
-&condition.deprived dd=1
+&condition.deprived [v( d.dd )]=1
 
-&condition.embarrassing_secret_() dd=1|*
+&condition.embarrassing_secret_() [v( d.dd )]=1|*
 
-&condition.fugue dd=1
+&condition.fugue [v( d.dd )]=1
 
-&condition.guilty dd=1
+&condition.guilty [v( d.dd )]=1
 
-&condition.informed_() dd=1|*
+&condition.informed_() [v( d.dd )]=1|*
 
-&condition.inspired_() dd=1|*
+&condition.inspired_() [v( d.dd )]=1|*
 
-&condition.leveraged_() dd=1|*
+&condition.leveraged_() [v( d.dd )]=1|*
 
-&condition.lost dd=1
+&condition.lost [v( d.dd )]=1
 
-&condition.madness_() dd=1|*
+&condition.madness_() [v( d.dd )]=1|*
 
-&condition.mute dd=1
+&condition.mute [v( d.dd )]=1
 
-&condition.noteriety_() dd=1|*
+&condition.noteriety_() [v( d.dd )]=1|*
 
-&condition.obsession_() dd=1|*
+&condition.obsession_() [v( d.dd )]=1|*
 
-&condition.shaken_() dd=1|*
+&condition.shaken_() [v( d.dd )]=1|*
 
-&condition.spooked dd=1
+&condition.spooked [v( d.dd )]=1
 
-&condition.steadfast dd=1
+&condition.steadfast [v( d.dd )]=1
 
-&condition.swooning_() dd=1|*
+&condition.swooning_() [v( d.dd )]=1|*
 
-&condition.soulless dd=1
+&condition.soulless [v( d.dd )]=1
 
-&condition.enervated dd=1
+&condition.enervated [v( d.dd )]=1
 
-&condition.thrall dd=1
+&condition.thrall [v( d.dd )]=1
 
 */
