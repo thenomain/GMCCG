@@ -1509,6 +1509,17 @@ think regmatchi( <player>/<stat>=<value> for <reason>, v( testreg ), -1 p s -1 v
 
 think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- [iter( p n v r, r( %i0 ), , %b--%b )]
 
+--
+
+NOTE: 
+
+We added transaction control in here to try and solve a 'database not available' 
+error when you throw multiple spends (or in this case freebies) at the same 
+time. It didn't help. 
+
+I'm leaving it in the 'freebie' code in case it resolves a different issue later 
+on.
+
 */
 
 &d.regex.freebie [v( d.xpas )]=(.+)/(.+?)(=(.+))? for (.+)
@@ -1552,7 +1563,15 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 			t( setr( e, ulocal( validate.restricted, %qs, %qv ))), 
 			u( .msg, xp/freebie, %qe ), 
 
+// tranaction begin
+
+			strmatch( v( d.transaction.begin ), *#-* ), 
+			u( .msg, xp/freebie, 
+				Transaction begin failed%; freebie not processed 
+			), 
+
 // spend 1: log to sql and check - stop if failed
+
 			strmatch( 
 				setr( e, 
 					sql( u( sql.insert.spend, 
@@ -1568,7 +1587,8 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 				#-* 
 			), 
 			u( .msg, xp/freebie, 
-				SQL connection is down%; freebie not processed 
+				Unable to connect to database%; freebie not processed
+				[null( v( f.transaction.end ))] 
 			), 
 
 // spend 2: run setstat and check - stop if failed
@@ -1578,7 +1598,9 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 				), 
 				#-* 
 			), 
-			u( .msg, xp/freebie, Error from Setstat: %qe ), 
+			u( .msg, xp/freebie, Error from Setstat: %qe 
+				[null( v( f.transaction.end ))] 
+			), 
 
 			strcat( 
 
@@ -1597,9 +1619,11 @@ think regmatchi( <player>/<stat> for <reason>, v( testreg ), -1 p n -1 v r ) -- 
 						because '%qr'
 					)
 				), 
+				null( v( f.transaction.end ))
 			)
 		)
 	)
+
 
 
 
