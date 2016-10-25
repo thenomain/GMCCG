@@ -6,12 +6,17 @@
 @create Stat Functions Prototype <sfp>
 @set sfp=inherit safe
 
-@fo me=&d.sfp me=[num( stat functions prototype <sfp> )]
+@fo me=&d.sfp me=[search( name=stat functions prototype <sfp> )]
 
 
 /*
 ================================================================================
 == DATA ========================================================================
+
+Register the Data Dictionary and the Data Tags with the SFP.
+
+Register the SFP with the Data Dictionary.
+
 */
 
 @fo me=&d.data-dictionary [v( d.sfp )]=search( name=Data Dictionary <dd> )
@@ -19,6 +24,7 @@
 // @fo me=&d.cg [v( d.sfp )]=search( name=GMC Chargen <cg> )
 
 @fo me=&d.sfp [v( d.dd )]=search( name=Stat Functions Prototype <sfp> )
+
 
 /*
 ================================================================================

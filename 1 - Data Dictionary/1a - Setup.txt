@@ -59,17 +59,18 @@ In the future, notes and page references should go here as well.
 @create Data Tags <d:t>
 @set Data Tags <d:t>=inherit safe
 @fo me=&d.dt me=search( name=Data Tags <d:t> )
+@fo me=&d.dt [v( d.dd )]=search( name=Data Tags <d:t> )
 
-@parent Data Tags <d:t>=codp
-&prefix.attributes Data Tags <d:t>=tags.attribute.
-&prefix.skills Data Tags <d:t>=tags.skill.
-&prefix.merits Data Tags <d:t>=tags.merit.
-&prefix.advantages Data Tags <d:t>=tags.advantage.
-&prefix.bio Data Tags <d:t>=tags.bio.
-&prefix.specials Data Tags <d:t>=tags.special.
-&prefix.health Data Tags <d:t>=tags.health.
-&prefix.conditions Data Tags <d:t>=tags.condition.
-&prefix.specials Data Tags <d:t>=tags.special.
+@fo me=@parent [v( d.dt )]=[v( d.codp )]
+&prefix.attributes [v( d.dt )]=tags.attribute.
+&prefix.skills [v( d.dt )]=tags.skill.
+&prefix.merits [v( d.dt )]=tags.merit.
+&prefix.advantages [v( d.dt )]=tags.advantage.
+&prefix.bio [v( d.dt )]=tags.bio.
+&prefix.specials [v( d.dt )]=tags.special.
+&prefix.health [v( d.dt )]=tags.health.
+&prefix.conditions [v( d.dt )]=tags.condition.
+&prefix.specials [v( d.dt )]=tags.special.
 
 
 

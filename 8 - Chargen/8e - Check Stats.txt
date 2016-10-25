@@ -411,7 +411,7 @@ b: badstat list
 			wheader( Checking [name( %qp )]'s Stats ), %r, 
 
 // .. chargen-level check happens only pre-approval
-			if( not( isapproved( %qp )), 
+			if( cor( isapproved( %qp, chargen ), isapproved( %qp, unapproved )), 
 				strcat( 
 					ulocal( check.bio, %qp, %qs, %qt ), %r, 
 					ulocal( check.chargen, %qs, %qt ), 
