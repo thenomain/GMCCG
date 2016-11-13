@@ -8,7 +8,7 @@
 * Add beats from table to offset in &_special.beats.<type>
 * Call it a day
 
-Wizard-only (??).
+Wizard-only. Be more careful, staffers!
 
 	xp/unspend <entry num> for <reason>
 
@@ -108,8 +108,11 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 		) 
 	}; 
 
-	@assert strmatch( %qt, normal )={ 
-		@pemit %#=u( .msg, xp/unspend, XP type is '%qt'%; must be 'normal' ) 
+	@assert strlen( setinter( %qt, v( d.unspend.allowed_types )))={ 
+		@pemit %#=u( .msg, xp/unspend, 
+			XP type is '%qt'%; must be 
+			[itemize( iter( v( d.unspend.allowed_types ), '%i0' ), , or )]
+		) 
 	}; 
 
 // everything else is okay; display basic info
@@ -216,6 +219,17 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 
 @set v( d.xpas )/c.xp/unspend=regex
 @set v( d.xpas )/c.xp/unspend=no_parse
+
+
+/*
+--------------------------------------------------------------------------------
+-- xp/unspend: Allowed Types ---------------------------------------------------
+
+What kind of xp types are we allowed to unspend?
+
+*/
+
+&d.unspend.allowed_types [v( d.xpas )]=normal story
 
 
 /*
