@@ -961,7 +961,8 @@ Valid award:
 
 // -- 
 
-@set xpas/c.xp/award=regexp
+@set v( d.xpas )/c.xp/award=regexp
+@set v( d.xpas )/c.xp/award=no_parse
 
 
 
