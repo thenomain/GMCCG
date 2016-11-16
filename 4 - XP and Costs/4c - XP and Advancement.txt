@@ -663,6 +663,14 @@ l: xp_log entry
 t: target dbref
 w: enactor's width
 
+e: enactor name (dbref)
+t: target name (dbref)
+x: timetamp
+a: action
+r: reason
+n: trait name -> new value
+z: xp amount (xp type)
+
 */
 
 &trig.xp/log.detail [v( d.xpas )]=
@@ -707,6 +715,24 @@ w: enactor's width
             statname( elements( %ql, 10, | )), %b, %[, %qy, %], 
 			%b', elements( %ql, 13, | ) ,' -> ', elements( %ql, 11, | ), ' 
         )), %r, 
+		xp amt & type:, %b, 
+			setr( z, 
+//				if( not( strmatch( %qa, freebie )), 
+				if( t( elements( %ql, 6, | )), 
+					strcat( 
+						setq( z, elements( %ql, 12, | )), 
+						setq( z, 
+							if( not( strmatch( %qz, normal )), 
+								[capstr( %qz )]%b 
+							)
+						), 
+						u( .plural, 
+							fdiv( elements( %ql, 6, | ), v( d.beat-to-exp )), 
+							%qzExperience, %qzExperiences 
+						)
+					)
+				)
+			), %r, 
     ); 
 
 // .. 'display' section - should be split in the future
@@ -716,9 +742,9 @@ w: enactor's width
         ansi( h, Target ), :, %b, %qt, %r, 
         ansi( h, Action ), :, %b, %qa, %r, 
         ansi( h, Timestamp ), :, %b, %qx, %r, 
-        if( strlen( %qy ), 
-            strcat( ansi( h, Trait ), :, %b, %qn, %r ), 
-        ), 
+        ansi( h, Trait ), :, %b, if( strlen( %qy ), %qn, ansi( xh, <n/a> )), %r, 
+		ansi( h, Amount ), :, %b, if( strlen( %qz ), %qz, ansi( xh, <n/a> )), 
+		%r, 
         ansi( h, Reason ), :%b, if( strlen( %qr ), %qr, ansi( xh, <none> )), 
 		%r, 
         footer( , %qw )
@@ -2011,13 +2037,18 @@ After we've validated everything else, can the person afford it?
 
 0: cost (qc), in experience
 1: experience attribute (qx), in beats
+2: xp type (optional)
 
 */
 
 &validate.spend [v( d.xpas )]=
 	if( 
 		gt( %0, fdiv( ladd( %1 ), v( d.beat-to-exp ))), 
-		Not enough Experience 
+		Not enough
+		[if( not( cor( strmatch( %2, ), strmatch( %2, normal ))), 
+			%bcapstr( %2 )%b 
+		)]
+		Experience 
 	)
 
 
