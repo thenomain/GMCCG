@@ -14,6 +14,18 @@ Wizard-only. Be more careful, staffers!
 
 --
 
+NOTE: Unspending "xp/deduct" spends
+
+We've added a new kind of spend command: xp/deduct. This command allows wizards 
+to spend experiences from characters without raising stats. A statless spend, 
+for games and situations where you can spend on non-sheet-related items.
+
+Unspending this kind of spend still means removing the spend and noting the log, 
+but without manipulating sheet-related stats. That is, this rather convoluted 
+stat system is no longer involved, except to keep track of some numbers.
+
+--
+
 e: entry num, as entered
 r: reason, as entered
 
@@ -27,6 +39,8 @@ t: xp type
 
 s: xp (beats) spent
 b: current ('normal') beats on target (%qd)
+
+z: changed traits? (did the original spend change a sheet trait?)
 
 1: stat category
 2: stat name
@@ -120,6 +134,8 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 		xp (beats) spent:, setr( s, elements( %ql, 6, | )), %r, 
 		current beats:, setr( b, get( %qd/_special.beats.%qt )), %r, 
 
+		changed traits?:, setr( z, t( elements( %ql, 10, | ))), %r, 
+
 		stat category:, setr( 1, elements( %ql, 9, | )), %r, 
 		stat name:, setr( 2, elements( %ql, 10, | )), %r, 
 		statpath:, setr( p, %q1.%q2 ), %r, 
@@ -141,30 +157,11 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 		@pemit %#=u( .msg, xp/unspend, rest( %qm )); 
 	}; 
 
-	@pemit %#=strcat( 
-		header( 
-			Unspend: [statname( %q2 )] \[[capstr( %q1 )]\], 
-			width()
-		), %r, 
-
-// .. stat change
-		ansi( h, statname( %q2 )), : '%qx' -> ', 
-		udefault( display.xp/unspend.%qc, %qm, %qx, %qm ), ', 
-		%r%r, 
-// .. refund amt
-		Refunding, %b, 
-			case( %qa, 
-				freebie, no Exp %(freebie%), 
-				strcat( 
-					div( %qs, v( d.beat-to-exp )), %b, Exp, %b, 
-					%(, u( .plural, floor( %qs ), Beat, Beats ), %), 
-				)
-			), %b, 
-			if( strmatch( %qd, %# ), you, to [name( %qd )] ), %b, 
-			for reason ', %qr, ', 
-		%r, 
-		footer( %qe, width())
-	); 
+// display
+	@pemit %#=if( t( %qz ), 
+		u( display.unspend.stat ), 
+		u( display.unspend.nostat )
+	);
 
 // record into 'xp_log' and 'xp_log_unspend'
 	think strcat( 
@@ -184,7 +181,9 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 	); 
 
 	@break strmatch( %q3, #-* )={ 
-		@pemit %#=u( .msg, xp/unspend, Error logging unspend%; unspend canceled )
+		@pemit %#=u( .msg, xp/unspend, 
+			Error logging unspend%; unspend canceled 
+		)
 	}; 
 
 // apply beats
@@ -195,7 +194,6 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 				[cat( first( %qb ), add( rest( %qb ), %qs ))] 
 			)
 		), %r, 
-		set trait:, setr( 6, setstat( %qd/[rest( %qp, . )], %qm )), %r, 
 	); 
 
 	@if strmatch( %q5, #-* )={ 
@@ -207,11 +205,17 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 		) 
 	}; 
 
-	@if strmatch( %q6, #-* )={ 
+	think if( t( %qz ), 
+		strcat( 
+			set trait:, setr( 6, setstat( %qd/[rest( %qp, . )], %qm )), %r, 
+		)
+	);
+
+	@if cand( t( %qz ), strmatch( %q6, #-* ))={ 
 		@pemit %#=u( .msg, xp/unspend, 
 			I tried to 'setstat %qd/[rest( %qp, . )]=%qm', but I got the 
 			message: [rest( %q6 )]. Please set this properly or this character 
-			will still have their refunded stat.
+			will still have their refunded stat. 
 		)
 	}; 
 
@@ -219,6 +223,63 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 
 @set v( d.xpas )/c.xp/unspend=regex
 @set v( d.xpas )/c.xp/unspend=no_parse
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Display: Unspend from 'xp/spend', with stats --------------------------------
+*/
+
+&display.unspend.stat [v( d.xpas )]=
+	strcat( 
+		header( 
+			Unspend: [statname( %q2 )] \[[capstr( %q1 )]\], 
+			width()
+		), %r, 
+
+// .. stat change
+		ansi( h, statname( %q2 )), : '%qx' -> ', 
+		udefault( display.xp/unspend.%qc, %qm, %qx, %qm ), ', 
+		%r%r, 
+
+// .. refund amt
+		Refunding, %b, 
+			case( %qa, 
+				freebie, no Exp %(freebie%), 
+				strcat( 
+					div( %qs, v( d.beat-to-exp )), %b, 
+					if( not( strmatch( %qt, normal )), %qt%b ), 
+					Exp, %b, 
+					%(, u( .plural, floor( %qs ), Beat, Beats ), %), 
+				)
+			), %b, 
+			if( strmatch( %qd, %# ), you, to [name( %qd )] ), %b, 
+			for reason '%qr', 
+		%r, 
+		footer( %qe, width())
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Display: Unspend from 'xp/deduct', no stats ---------------------------------
+*/
+
+&display.unspend.nostat [v( d.xpas )]=
+	strcat( 
+		header( Unspend Without Stat, width()), %r, 
+
+// .. refund amt
+		Refunding, %b, 
+			div( %qs, v( d.beat-to-exp )), %b, 
+			if( not( strmatch( %qt, normal )), %qt%b ), 
+			Exp, %b, 
+			%(, u( .plural, floor( %qs ), Beat, Beats ), %), %b, 
+			if( strmatch( %qd, %# ), you, to [name( %qd )] ), %b, 
+			for reason '%qr', 
+		%r, 
+		footer( %qe, width())
+	)
 
 
 /*
