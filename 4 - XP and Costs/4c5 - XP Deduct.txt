@@ -16,9 +16,13 @@ Wizard-only. This command makes it too easy to bypass 'xp/spend' checks.
 NOTE: I'm using 'xp/unspend' as the template. If this goes pear-shaped, 
 that's why.
 
-WARNING: xp/unspend is not ready for this.
+*/
 
 
+&d.deduct.allowed_types [v( d.xpas )]=normal story arcane
+
+
+/*
 ================================================================================
 == Command: xp/deduct ==========================================================
 
@@ -26,6 +30,7 @@ WARNING: xp/unspend is not ready for this.
 	xp/deduct <name>/<xp type>=<amt> for <reason> : give out specific goodies
 
 	<amt>: <n> [XP|BEATS] - default 'xp'
+
 --
 
 	n: name passed
@@ -38,6 +43,8 @@ WARNING: xp/unspend is not ready for this.
 
 	d: character dbref
 	x: current beats attr (for type) : _special.beats.<type>
+
+	z: Type of experience if not normal, plus one space. e.g., 'Story ' 
 
 */
 
@@ -59,9 +66,9 @@ WARNING: xp/unspend is not ready for this.
 		reason:, setr( r, trim( %qr )), %r, 
 
 		type (validated):, 
-			setr( v, capstr( grab( cat( normal, v( d.xp_types )), %qt* ))), %r, 
+			setr( v, grab( cat( normal, v( d.xp_types )), %qt* )), %r, 
 
-// converts '4 beats' -> '0.8'
+// converts '4 beats' -> '0.8', leaves 'xp' or blank as experiences
  		value in experience:, 
 	 		setr( b, 
 	 			switch( rest( %qa ), 
@@ -72,12 +79,22 @@ WARNING: xp/unspend is not ready for this.
 	 			)
 	 		), %r, 
 
-		character dbref:, setr( d, pmatch( %qn )), %r, 
-		current beats attr:, setr( x, get( %qd/_special.beats.%qv )), %r, 
-		
- 		), 
- 		%r, 
+			character dbref:, setr( d, pmatch( %qn )), %r, 
+			current beats attr:, setr( x, get( %qd/_special.beats.%qv )), %r, 
 	); 
+
+	@assert match( v( d.deduct.allowed_types ), %qv )={ 
+		@pemit %#=u( .msg, xp/unspend, 
+			strcat( 
+				XP type is, %b,  
+				if( strmatch( %qt, ), 
+					unset (implied 'normal'), 
+					'%qt'
+				), %b%; must be, %b, 
+				itemize( iter( v( d.deduct.allowed_types ), '%i0' ), , or )
+			)
+		) 
+	}; 
 
 	@assert cand( strlen( %qn ), strlen( %qa ), strlen( %qr ))={ 
 		@pemit %#=u( .msg, xp/deduct, 
@@ -113,23 +130,42 @@ WARNING: xp/unspend is not ready for this.
 		@pemit %#=u( .msg, xp/deduct, May not use | or ` in reason )
 	}; 
 
-	@break setr( e, u( validate.spend, %qb, %qx ))={ 
-		@pemit %#=u( .msg, xp/deduct, 
-			%qe [if( not( strmatch( %qv, normal )), %(%qv%)%b )] 
-		)
+	@break setr( e, u( validate.spend, %qb, %qx, %qv ))={ 
+		@pemit %#=u( .msg, xp/deduct, %qe )
 	}; 
 
+// add to offset in '_special.beats.<type>'
+	@set/quiet %qd=
+		_special.beats.%qv:
+		[first( %qx )] [sub( rest( %qx ), mul( %qb, v( d.beat-to-exp )))];
 
-// -- data manipulation goes here ----------------------------------------------
+// add to xp_log (sql)
+	think strcat( 
+		tranaction begin, u( f.transaction.begin ), %r, 
+		sanitized reason:, setr( s, u( f.sql.escape, %qr )), %r, 
+		add to xp_log:, 
+			sql( 
+				u( sql.insert.spend, 
+					%qd, %#, %qv, mul( %qb, v( d.beat-to-exp )), 
+					@@( no statpath ), %qr, 
+					@@( no new value ), @@( no old value )
+				)
+			), 
+			, %r, 
+		tranaction end, u( f.transaction.end )
 
+		type of experiences:, 
+		setr( z, 
+			if( not( strmatch( %qv, normal )), [capstr( %qv )]%b )
+		), %r, 
+	);
 
 // notify enactor and target
 	@pemit %#=u( .msg, 
 		xp/deduct, 
 		strcat( 
 			You have deducted, %b, 
-			u( .plural, %qb, Experience, Experiences ), %b, 
-			if( not( strmatch( %qv, normal )), %(%qv%)%b ), 
+			u( .plural, %qb, %qzExperience, %qzExperiences ), %b, 
 			from, %b, name( %qd ), %b, 
 			for reason '%qr'
 		)
@@ -140,8 +176,7 @@ WARNING: xp/unspend is not ready for this.
 		strcat( 
 			moniker( %# ), %b, 
 			has just deducted you, %b, 
-			u( .plural, %qb, Experience, Experiences ), %b, 
-			if( not( strmatch( %qv, normal )), %(%qv%)%b ), 
+			u( .plural, %qb, %qzExperience, %qzExperiences ), %b, 
 			for reason '%qr'
 		)
 	); 
@@ -150,40 +185,3 @@ WARNING: xp/unspend is not ready for this.
 
 @set v( d.xpas )/c.xp/deduct=regexp
 @set v( d.xpas )/c.xp/deduct=no_parse
-
-
-
-
-
-
-
-
-
-
-/* 
-
-UNUSED NOTES FROM XP/SPEND
-(the 'data manipulation' part)
-
-
-// add to '_special.beats.<type>'
-	@set/quiet %qp=
-		_special.beats.%qt:
-		[add( first( %qx ), %qa )] [rest( %qx )];
-
-// if approved, add to '_special.beats_earned.<type>'
-	@set/quiet %qp=
-		_special.beats_earned.%qt:
-		[if( isapproved( %qp ), %qf )]; 
-
-// add to xp_log (sql)
-
-	think strcat( 
-		tranaction begin, u( f.transaction.begin ), %r, 
-		sanitized reason:, setr( s, u( f.sql.escape, %qr )), %r, 
-		add to xp_log:, sql( u( sql.insert.award, %qp, %#, %qt, %qa, %qs )), %r, 
-		tranaction end, u( f.transaction.end )
-	); 
-
-
-*/
