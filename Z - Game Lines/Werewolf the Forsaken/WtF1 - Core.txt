@@ -1816,7 +1816,7 @@ think u( v( d.cg )/check.gifts, %# )
 				setq( f, 
 					setdiff( 
 						u( v( d.dd )/.value_full, %0, gift.%qx ), 
-						unlock, 
+						Unlock, 
 						. 
 					)
 				), 
@@ -1847,7 +1847,7 @@ think u( v( d.cg )/check.gifts, %# )
 				setq( f, 
 					setdiff( 
 						u( v( d.dd )/.value_full, %0, gift.%qx ), 
-						unlock, 
+						Unlock, 
 						. 
 					)
 				), 
