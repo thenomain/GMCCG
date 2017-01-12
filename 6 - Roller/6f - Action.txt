@@ -48,7 +48,7 @@ uses: alert(), god help us
 
 */
 
-&c.action nWoD Roller <nr>=$^\+?actions?(.*)$:@pemit %#=
+&c.action [v( d.nr )]=$^\+?actions?(.*)$:@pemit %#=
 	strcat( 
 // treat 'actions' as 'action' and go from there
 		setq( 0, %1 ), 
@@ -88,7 +88,7 @@ r: rest of %qe, drop =target
 
 */
 
-&f.action.workhorse nWoD Roller <nr>=
+&f.action.workhorse [v( d.nr )]=
 	strcat(
 // .. process the macro
 		setq( e, objeval( %0, u( %0/%1 ))), 
@@ -122,7 +122,7 @@ eventual @force
 
 */
 
-&tr.action nWoD Roller <nr>=@force %0={ roll%2 %1 }
+&tr.action [v( d.nr )]=@force %0={ roll%2 %1 }
 
 
 /*
@@ -133,7 +133,7 @@ List all actions on %0
 
 */
 
-&f.action.list nWoD Roller <nr>=
+&f.action.list [v( d.nr )]=
 	strcat(
 		setq( a, lattr( %0/action.* )), 
 		if( t( %qa ), 
