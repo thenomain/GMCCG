@@ -138,16 +138,16 @@ List all actions on %0
 		setq( a, lattr( %0/action.* )), 
 		if( t( %qa ), 
 			strcat(
-				header( Actions on [name( %0 )] )]%r
+				header( Actions on [name( %0 )] ), %r
 				iter( %qa, 
 					strcat( 
 						%b, %b, 
-						ansi( h, capstr( lcstr( rest(%i0, . )))), :, %b, 
+						ansi( h, capstr( lcstr( rest( %i0, . )))), :, %b, 
 						get( %0/%i0 )
 					)
 					, %r 
 				), %r
-				footer( words( %qa ))], 
+				footer( words( %qa )), 
 			), 
 			msg( Action, No actions on [name( %0 )] )
 		)
