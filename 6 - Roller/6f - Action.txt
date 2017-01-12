@@ -158,7 +158,30 @@ List all actions on %0
 --------------------------------------------------------------------------------
 -- Help: Action ---------------------------------------------------------------
 
-&help~stat_topics~action #96=Roll Macros~action\[/<switches>] <action_name> \[+|- <more items>]\[ = <send to>]%r%rThis command allows you to set up and use your own often-used rolls by setting them on an attribute. Any switches you use with action will override any switches you set on the attribute.%r%rYou may shorten <action_name> to the closest unique name. Due to coding shortcuts, you must put a space after <action_name> if anything follows it.%r%r&action.<action_name> me=<roll format>%r%re.g.: &action.perception me=/again=9 Wits + Composure%r%rYou may also add code to the attribute. For instance, the perception rolls for werewolves depend upon their form.%r%re.g.: %r%b &form me=gauru%r%b &action.perception me=Wits + Composure + \[case(v(form), gauru, 3, ...)\]%r%raction: Typed alone will list which action macros you've set.%r%r[ansi(h, See Also)]: +help roll
+action\[/<switches>] <action_name> \[+|- <more items>]\[ = <send to>]
+
+This command allows you to set up and use your own often-used rolls by setting 
+them on an attribute. Any switches you use with action will override any 
+switches you set on the attribute.
+
+You may shorten <action_name> to the closest unique name. Due to coding 
+shortcuts, you must put a space after <action_name> if anything follows it.
+
+&action.<action_name> me=<roll format>
+
+e.g.: 
+  &action.perception me=/again=9 Wits + Composure
+
+You may also add code to the attribute. For instance, the perception rolls for 
+werewolves depend upon their form.
+
+e.g.: 
+  &form me=gauru
+  &action.perception me=Wits + Composure + [case(v(form), gauru, 3, ...)]
+
+action: Typed alone will list which action macros you've set.
+
+[ansi(h, See Also)]: +help roll
 
 */
 
