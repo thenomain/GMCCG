@@ -142,6 +142,7 @@ List Class Checks  - Checks specifically about the 'list' stat class
 	.List_Has		'List' stat class includes value passed
 	.List_Has_All	Includes all of a dot-delimited list passed
 	.List_Has_Not	Includes none of a dot-delimited list passed
+	.List_At_Least	Has a level of at least value
 
 Core Stat Checks - Check against Supernatural Tollerance (power trait)
 	.Max_Trait		How high can they take skills/attributes?
@@ -298,7 +299,6 @@ This stat is no lower than another stat
 			%3 
 		)] 
 	)
-
 
 /*
 --------------------------------------------------------------------------------
@@ -634,6 +634,21 @@ Item name must be exact or contain its own wildcards.
 	)
 
 
+/* -- list at least --
+
+List-class stat passed has a value of at least value
+	0: sheet dbref
+	1: statpath
+	2: value
+	e.g.:
+		u( .at_least_list, %0, merit.martial_arts, 2 )
+*/
+
+&.List_At_Least [v( d.dd )]=gte( lmax( u( .value, %0, %1 ), . ), %2 )
+
+
+
+
 /* 
 --------------------------------------------------------------------------------
 -- Class: List -----------------------------------------------------------------
@@ -644,24 +659,24 @@ Turns the number portion of a class:list statpath and returns the name portion.
 Looks up text in the value portion and, if match, returns the name portion.
 Else, assumes translating name->value
 
-(This is the first dd _function that does not use the sheet)
+(This is the first dd .function that does not use the sheet)
 
-	0: ??
-	1: ?? (I know these do something, but if they're not using the sheet...)
+	0: full.statpath
+	1: value
 
 -- class: translate list
 */
 
 &.class_translate_list [v( d.dd )]=
 	case( 1, 
-@@ .. number value -> name
+// .. number value -> name
 		isnum( %1 ), 
 		elements( rest( v( %0 ), | ), %1, . ), 
-@@ .. text value -> name
-		t( match( first( v( %0), |), %1, . )), 
-		elements( rest( v( %0), | ), match( first( v( %0), | ), %1, . ), . ), 
-@@ .. name -> value
-		elements( first( v( %0), | ), match( rest( v( %0), | ), %1*, .), . )
+// .. text value -> name
+		t( match( first( v( %0 ), | ), %1, . )), 
+		elements( rest( v( %0 ), | ), match( first( v( %0 ), | ), %1, . ), . ), 
+// .. name -> value
+		elements( first( v( %0 ), | ), match( rest( v( %0 ), | ), %1*, .), . )
 	)
 
 
