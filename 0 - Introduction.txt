@@ -152,7 +152,7 @@ For any list validation, # means any non-zero integer, * means any value
 	
 	List class of stats may not be instanced or have substats!!!(oneoneeleven)
 	
-	(Use the data-dictionary function _class_translate_list to convert from 
+	(Use the data-dictionary function .class_translate_list to convert from 
 	value to name and visa-versa.)
 
 	Validated:
