@@ -33,9 +33,12 @@ We'll see where this goes.
 */
 
 @create Shifting Forms System <sfs>
+@fo me=&d.sfs me=search( name=Shifting Forms System <sfs> )
+@fo me=&d.codp me=search( name=Code Object Data Parent <codp> )
+
 @set sfs=inherit safe
 
-@parent sfs=codp
+@fo me=@parent sfs=[v( d.codp )]
 &prefix.forms sfs=form.
 
 
@@ -44,12 +47,12 @@ We'll see where this goes.
 == DATA ========================================================================
 */
 
-@fo me=&d.sfp sfs=[search( name=Stat Functions Prototype <sfp> )]
-@fo me=&d.health sfs=[search( name=WoD Health System <whs> )]
+@fo me=&d.sfp [v( d.sfs )]=[search( name=Stat Functions Prototype <sfp> )]
+@fo me=&d.health [v( d.sfs )]=[search( name=WoD Health System <whs> )]
 
-&d.forms.werewolf sfs=Hishu.Dalu.Gauru.Urshul.Urhan
-&d.forms.skinthief sfs=Human.*
-&d.forms.changeling sfs=Human.*
+&d.forms.werewolf [v( d.sfs )]=Hishu.Dalu.Gauru.Urshul.Urhan
+&d.forms.skinthief [v( d.sfs )]=Human.*
+&d.forms.changeling [v( d.sfs )]=Human.*
 
 
 /*
@@ -68,36 +71,36 @@ Offsets - <statpath>:+/-<value>
 Notes - Things you might want to know
 */
 
-&form.human.offsets sfs=@@('human' === 'default' === 'null')
-&form.human.oshift sfs=returns back to %p normal form.
+&form.human.offsets [v( d.sfs )]=@@('human' === 'default' === 'null')
+&form.human.oshift [v( d.sfs )]=returns back to %p normal form.
 
 // -- Werewolf --
 
-&form.Hishu.offsets sfs=@@( nothing )
-&form.Hishu.notes sfs=
+&form.Hishu.offsets [v( d.sfs )]=@@( nothing )
+&form.Hishu.notes [v( d.sfs )]=
 	Perception +1 w/ Wolfy Things, 
 	Sheep's Clothing
-&form.Hishu.oshift sfs=returns back to %p human (Hishu) form.
+&form.Hishu.oshift [v( d.sfs )]=returns back to %p human (Hishu) form.
 
-&form.Dalu.offsets sfs=
+&form.Dalu.offsets [v( d.sfs )]=
 	attribute.strength:+1 
 	attribute.stamina:+1 
 	attribute.manipulation:-1 
 	attribute.size:+1 
-&form.Dalu.notes sfs=
+&form.Dalu.notes [v( d.sfs )]=
 	Perception +2 w/ Wolfy Things, 
 	Teeth/Claws +0L, 
 	Mild Lunacy (+2 to resist), 
 	Defense vs. Firearms, 
 	Badass Motherfucker
-&form.Dalu.oshift sfs=changes to %p near-man (dalu) form.
+&form.Dalu.oshift [v( d.sfs )]=changes to %p near-man (dalu) form.
 
-&form.Gauru.offsets sfs=
+&form.Gauru.offsets [v( d.sfs )]=
 	attribute.strength:+3 
 	attribute.dexterity:+1 
 	attribute.stamina:+2 
 	advantage.size:+2 
-&form.Gauru.notes sfs=
+&form.Gauru.notes [v( d.sfs )]=
 	Perception +3 w/ Wolfy Things, 
 	Regeneration, 
 	Teeth/Claws +2L (no grapple) & +3 Init, 
@@ -107,35 +110,35 @@ Notes - Things you might want to know
 	Fail Any Non-Intimidation Social Rolls, 
 	Fail Any Non-Perception & Non-Resistance Mental Rolls, 
 	Primal Fear
-&form.Gauru.oshift sfs=changes to %p gauru war-form. 
+&form.Gauru.oshift [v( d.sfs )]=changes to %p gauru war-form. 
 	[switch( rand( 10 ), 0, Rar! )]
 
-&form.Urshul.offsets sfs=
+&form.Urshul.offsets [v( d.sfs )]=
 	attribute.strength:+2 
 	attribute.dexterity:+2 
 	attribute.stamina:+2 
 	attribute.manipulation:-1 
 	advantage.size:+1 
 	special.species_factor:+3 
-&form.Urshul.notes sfs=
+&form.Urshul.notes [v( d.sfs )]=
 	Perception +3 w/ Wolfy Things, 
 	Claws +1L, 
 	Teeth +2L (no grapple), 
 	Average Lunacy (-0 to resist), 
 	Weaken the Prey
-&form.Urshul.oshift sfs=changes to %p near-wolf (urshul) form.
+&form.Urshul.oshift [v( d.sfs )]=changes to %p near-wolf (urshul) form.
 
-&form.Urhan.offsets sfs=
+&form.Urhan.offsets [v( d.sfs )]=
 	attribute.dexterity:+2 
 	attribute.stamina:+1 
 	attribute.manipulation:-1 
 	advantage.size:-1 
 	special.species_factor:+3 
-&form.Urhan.notes sfs=
+&form.Urhan.notes [v( d.sfs )]=
 	Perception +4 w/ Wolfy Things, 
 	Teeth +1L (no grapple), 
 	Chase Down
-&form.Urhan.oshift sfs=changes to %p wolf (urhan) form.
+&form.Urhan.oshift [v( d.sfs )]=changes to %p wolf (urhan) form.
 
 
 /*
@@ -143,12 +146,12 @@ Notes - Things you might want to know
 == FUNCTIONS ===================================================================
 */
 
-&.msg sfs=ansi( h, <%0%>, n, %b%1 )
-&.isapproved sfs=isapproved( %0, approved )
+&.msg [v( d.sfs )]=ansi( h, <%0%>, n, %b%1 )
+&.isapproved [v( d.sfs )]=isapproved( %0, approved )
 
-&f.default-form sfs=switch( %0, *Werewolf*, Hishu, Human )
+&f.default-form [v( d.sfs )]=switch( %0, *Werewolf*, Hishu, Human )
 
-&f.offset.set sfs=
+&f.offset.set [v( d.sfs )]=
 	if( 
 		t( setr( e, ulocal( 
 			v( d.sfp )/f.setstat.workhorse, 
@@ -165,7 +168,7 @@ Notes - Things you might want to know
 	)
 
 // 0: sheet, 1: statpath
-&f.getstat.derived sfs=u( v( d.sfp )/f.getstat.workhorse.numeric, %0, %1 )
+&f.getstat.derived [v( d.sfs )]=u( v( d.sfp )/f.getstat.workhorse.numeric, %0, %1 )
 
 
 
@@ -198,7 +201,7 @@ qt: total new offset
 
 */
 
-&f.offset.calculate sfs=
+&f.offset.calculate [v( d.sfs )]=
 	localize( strcat( 
 		setq( 1, first( %1, : )), 
 		setq( 2, rest(%1, : )), 
@@ -257,7 +260,7 @@ qt: valid forms for sheet's template <- expand to user-defined later
 qf: full name of matched form
 */
 
-&c.shift sfs=$^\+?shift(.*)$: @pemit %#=
+&c.shift [v( d.sfs )]=$^\+?shift(.*)$: @pemit %#=
 	strcat( 
 		setq( 0, trim( %1 )), 
 		setq( s, u( v( d.sfp )/f.find-sheet, %# )), 
@@ -314,7 +317,7 @@ qf: full name of matched form
 
 // --
 
-@set sfs/c.shift=regexp
+@set v( d.sfs )/c.shift=regexp
 
 /*
 --------------------------------------------------------------------------------
@@ -339,7 +342,7 @@ qh: pre-shift health (bashing lethal agg)
 qn: post-shift health (bashing lethal agg)
 */
 
-&f.shift-workhorse sfs=
+&f.shift-workhorse [v( d.sfs )]=
 	strcat( 
 // -- FROM: 
 		iter( u( %0/_form.offsets ), 
