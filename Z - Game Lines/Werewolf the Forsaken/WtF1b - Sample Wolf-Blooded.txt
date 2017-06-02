@@ -1,0 +1,87 @@
+@create Wolf-Blooded Chargen Sheet <cs:wtf:wb>
+@fo me=&_special.sheet_location me=num( Wolf-Blooded Chargen Sheet <cs:wtf:wb> )
+
+
+&_bio.template cs:wtf:wb=Wolf-Blooded
+&_bio.sphere cs:wtf:wb=derived
+
+&_bio.full_name cs:wtf:wb=Eve Abeilard
+&_bio.concept cs:wtf:wb=Political Wolf-Blooded College Student
+&_bio.virtue cs:wtf:wb=Hopeful
+&_bio.vice cs:wtf:wb=Ambitious
+&_bio.birthdate cs:wtf:wb=September 17, 1995
+
+
+&_advantage.willpower cs:wtf:wb=derived
+&_advantage.willpower_maximum cs:wtf:wb=derived
+&_advantage.weaponry_defense cs:wtf:wb=derived
+&_advantage.brawl_defense cs:wtf:wb=derived
+&_advantage.defense cs:wtf:wb=derived
+&_advantage.size cs:wtf:wb=derived
+&_advantage.speed cs:wtf:wb=derived
+&_advantage.initiative cs:wtf:wb=derived
+&_advantage.perception cs:wtf:wb=derived
+
+&_advantage.integrity cs:wtf:wb=7
+
+&_special.size cs:wtf:wb=5
+&_special.species_factor cs:wtf:wb=5
+
+&_health.maximum cs:wtf:wb=derived
+&_health.damage cs:wtf:wb=derived
+&_health.penalty cs:wtf:wb=derived
+
+
+&_attribute.intelligence cs:wtf:wb=3
+&_attribute.wits cs:wtf:wb=2
+&_attribute.resolve cs:wtf:wb=2
+
+&_attribute.strength cs:wtf:wb=2
+&_attribute.dexterity cs:wtf:wb=2
+&_attribute.stamina cs:wtf:wb=2
+
+&_attribute.presence cs:wtf:wb=3
+&_attribute.manipulation cs:wtf:wb=3
+&_attribute.composure cs:wtf:wb=2
+
+
+&_skill.academics cs:wtf:wb=2
+&_skill.computer cs:wtf:wb=1
+&_skill.crafts cs:wtf:wb=
+&_skill.investigation cs:wtf:wb=2
+&_skill.medicine cs:wtf:wb=
+&_skill.occult cs:wtf:wb=
+&_skill.politics cs:wtf:wb=2
+&_skill.science cs:wtf:wb=
+
+&_skill.athletics cs:wtf:wb=1
+&_skill.academics.history cs:wtf:wb=1
+&_skill.brawl cs:wtf:wb=
+&_skill.drive cs:wtf:wb=
+&_skill.firearms cs:wtf:wb=1
+&_skill.larceny cs:wtf:wb=
+&_skill.stealth cs:wtf:wb=1
+&_skill.survival cs:wtf:wb=1
+&_skill.weaponry cs:wtf:wb=
+
+&_skill.animal_ken cs:wtf:wb=
+&_skill.empathy cs:wtf:wb=2
+&_skill.empathy.emotion cs:wtf:wb=1
+&_skill.expression cs:wtf:wb=1
+&_skill.intimidation cs:wtf:wb=1
+&_skill.persuasion cs:wtf:wb=2
+&_skill.socialize cs:wtf:wb=2
+&_skill.streetwise cs:wtf:wb=1
+&_skill.subterfuge cs:wtf:wb=2
+&_skill.subterfuge.lying cs:wtf:wb=1
+
+&_merit.allies_(student_union) cs:wtf:wb=1
+&_merit.allies_(black_student_alliance) cs:wtf:wb=1
+&_merit.allies_(young_democrats) cs:wtf:wb=1
+&_merit.language_(creole) cs:wtf:wb=1
+&_merit.language_(spanish) cs:wtf:wb=1
+&_merit.raised_by_wolves cs:wtf:wb=1
+&_merit.resources cs:wtf:wb=1
+&_merit.tell_(shadow_twin) cs:wtf:wb=3
+&_merit.fast_talking cs:wtf:wb=1
+&_merit.hikaon-ur's_blood cs:wtf:wb=2

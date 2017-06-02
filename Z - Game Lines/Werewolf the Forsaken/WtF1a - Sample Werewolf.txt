@@ -1,0 +1,107 @@
+
+@create Werewolf Chargen Sheet <cs:wtf>
+@fo me=&_special.sheet_location me=num( Werewolf Chargen Sheet <cs:wtf> )
+
+
+&_bio.template cs:wtf=Werewolf
+&_bio.sphere cs:wtf=derived
+
+&_bio.full_name cs:wtf=Byron E. Hemingway
+&_bio.concept cs:wtf=Hemingway of Wolves
+&_bio.bone cs:wtf=Role Model
+&_bio.blood cs:wtf=The Legend
+&_bio.auspice cs:wtf=Cahalith
+&_bio.tribe cs:wtf=Storm Lords
+&_bio.birthdate cs:wtf=July 21 1992
+
+&_advantage.willpower cs:wtf=derived
+&_advantage.willpower_maximum cs:wtf=derived
+&_advantage.weaponry_defense cs:wtf=derived
+&_advantage.brawl_defense cs:wtf=derived
+&_advantage.defense cs:wtf=derived
+&_advantage.size cs:wtf=derived
+&_advantage.speed cs:wtf=derived
+&_advantage.initiative cs:wtf=derived
+&_advantage.perception cs:wtf=derived
+
+&_advantage.harmony cs:wtf=7
+&_advantage.primal_urge cs:wtf=1
+&_advantage.effective_rank cs:wtf=derived
+&_advantage.essence cs:wtf=derived
+&_advantage.essence_maximum cs:wtf=derived
+
+&_special.size cs:wtf=5
+&_special.species_factor cs:wtf=5
+
+&_health.maximum cs:wtf=derived
+&_health.damage cs:wtf=derived
+&_health.penalty cs:wtf=derived
+
+
+&_attribute.intelligence cs:wtf=2
+&_attribute.wits cs:wtf=2
+&_attribute.resolve cs:wtf=3
+
+&_attribute.strength cs:wtf=2
+&_attribute.dexterity cs:wtf=3
+&_attribute.stamina cs:wtf=3
+
+&_attribute.presence cs:wtf=2
+&_attribute.manipulation cs:wtf=2
+&_attribute.composure cs:wtf=2
+
+
+&_skill.academics cs:wtf=2
+&_skill.computer cs:wtf=
+&_skill.crafts cs:wtf=1
+&_skill.investigation cs:wtf=2
+&_skill.medicine cs:wtf=
+&_skill.occult cs:wtf=
+&_skill.politics cs:wtf=
+&_skill.science cs:wtf=
+
+&_skill.athletics cs:wtf=3
+&_skill.brawl cs:wtf=3
+&_skill.brawl.striking cs:wtf=1
+&_skill.drive cs:wtf=1
+&_skill.firearms cs:wtf=1
+&_skill.larceny cs:wtf=
+&_skill.stealth cs:wtf=
+&_skill.survival cs:wtf=2
+&_skill.survival.hunting cs:wtf=1
+&_skill.weaponry cs:wtf=1
+
+&_skill.animal_ken cs:wtf=1
+&_skill.empathy cs:wtf=
+&_skill.expression cs:wtf=2
+&_skill.expression.journalism cs:wtf=1
+&_skill.intimidation cs:wtf=1
+&_skill.persuasion cs:wtf=2
+&_skill.socialize cs:wtf=1
+&_skill.streetwise cs:wtf=
+&_skill.subterfuge cs:wtf=
+
+
+&_merit.language_(french) cs:wtf=1
+&_merit.martial_arts cs:wtf=3
+&_merit.professional_training_(journalist) cs:wtf=2
+&_merit.resources cs:wtf=2
+&_merit.iron_stamina cs:wtf=2
+
+
+&_renown.glory cs:wtf=1
+&_renown.purity cs:wtf=
+&_renown.wisdom cs:wtf=1
+&_renown.honor cs:wtf=1
+&_renown.cunning cs:wtf=
+
+
+&_gift.gibbous_moon's_gift cs:wtf=1
+&_gift.gift_of_inspiration cs:wtf=Unlock.Glory
+&_gift.gift_of_dominance cs:wtf=Unlock.Honor
+&_gift.gift_of_change cs:wtf=Wisdom
+
+
+&_rite.sacred_hunt cs:wtf=2
+
+
