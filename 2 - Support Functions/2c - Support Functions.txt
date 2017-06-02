@@ -103,11 +103,11 @@ think
 		human 
 	)
 
-	think 
-		filter( sfp/fil.list-stats-tags, 
-			trim( edit( lattr( me/_*.* ), %b_, %b ), b, _ ), , , 
-			attribute merit 
-		)
+think 
+	filter( sfp/fil.list-stats-tags, 
+		trim( edit( lattr( me/_*.* ), %b_, %b ), b, _ ), , , 
+		attribute merit 
+	)
 
 think 
 	[setq( 0, merit )]
@@ -198,10 +198,11 @@ think
 	u( sfp/f.prereq-check-other, 
 		pmatch( thenomain ), merit.language_(), spring, 1 
 	)
-	think 
-		u( sfp/f.prereq-check-other, 
-			pmatch( thenomain ), merit.language_(), spring, 5 
-		)
+
+think 
+	u( sfp/f.prereq-check-other, 
+		pmatch( thenomain ), merit.language_(), spring, 5 
+	)
 
 
 
@@ -354,7 +355,9 @@ qo: offset
 	))
 
 // -----------------------------------------------------------------------------
-// -- test --
+// -- test ---------------------------------------------------------------------
+// 
+// this test won't be possible until statname() or statnum() are in, derp.
 
 think 
 	[ansi( c, statname( setr( 0, thenomain/str )))] 
