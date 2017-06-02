@@ -1,0 +1,97 @@
+@@ SAMPLE GHOUL
+@@ This is a ghoul from EldritchMUX (the book doesn't have a sample sheet)
+
+@create Ghoul Chargen Sheet <cs:vtr:g>
+@fo me=&_special.sheet_location me=num( Ghoul Chargen Sheet <cs:vtr:g> )
+
+
+&_bio.template cs:vtr:g=Ghoul
+&_bio.sphere cs:vtr:g=derived
+
+
+&_bio.full_name cs:vtr:g=Felicia Anne Johnson
+&_bio.concept cs:vtr:g=Involuntary Sinner
+
+&_bio.clan cs:vtr:g=Daeva
+&_bio.virtue cs:vtr:g=Courageous
+&_bio.vice cs:vtr:g=Ambitious
+&_bio.birthdate cs:vtr:g=July 4, 1986
+
+
+&_advantage.willpower cs:vtr:g=derived
+&_advantage.willpower_maximum cs:vtr:g=derived
+&_advantage.defense cs:vtr:g=derived
+&_advantage.weaponry_defense cs:vtr:g=derived
+&_advantage.brawl_defense cs:vtr:g=derived
+&_advantage.size cs:vtr:g=derived
+&_advantage.speed cs:vtr:g=derived
+&_advantage.initiative cs:vtr:g=derived
+&_advantage.perception cs:vtr:g=derived
+
+&_advantage.integrity cs:vtr:g=7
+&_advantage.vitae cs:vtr:g=derived
+&_advantage.vitae_maximum cs:vtr:g=derived
+
+
+&_special.size cs:vtr:g=5
+&_special.species_factor cs:vtr:g=5
+
+
+&_health.maximum cs:vtr:g=derived
+&_health.damage cs:vtr:g=derived
+&_health.penalty cs:vtr:g=derived
+
+
+&_attribute.intelligence cs:vtr:g=3
+&_attribute.wits cs:vtr:g=3
+&_attribute.resolve cs:vtr:g=2
+
+&_attribute.strength cs:vtr:g=1
+&_attribute.dexterity cs:vtr:g=4
+&_attribute.stamina cs:vtr:g=2
+
+&_attribute.presence cs:vtr:g=2
+&_attribute.manipulation cs:vtr:g=2
+&_attribute.composure cs:vtr:g=2
+
+
+&_skill.academics cs:vtr:g=2
+&_skill.computer cs:vtr:g=
+&_skill.crafts cs:vtr:g=1
+&_skill.investigation cs:vtr:g=
+&_skill.medicine cs:vtr:g=
+&_skill.occult cs:vtr:g=1
+&_skill.politics cs:vtr:g=
+&_skill.science cs:vtr:g=
+
+&_skill.athletics cs:vtr:g=3
+&_skill.athletics.gymnastics cs:vtr:g=1
+&_skill.brawl cs:vtr:g=
+&_skill.drive cs:vtr:g=
+&_skill.firearms cs:vtr:g=
+&_skill.larceny cs:vtr:g=1
+&_skill.stealth cs:vtr:g=1
+&_skill.survival cs:vtr:g=
+&_skill.weaponry cs:vtr:g=2
+
+&_skill.animal_ken cs:vtr:g=
+&_skill.empathy cs:vtr:g=3
+&_skill.empathy.vices cs:vtr:g=1
+&_skill.expression cs:vtr:g=2
+&_skill.intimidation cs:vtr:g=
+&_skill.persuasion cs:vtr:g=2
+&_skill.socialize cs:vtr:g=1
+&_skill.streetwise cs:vtr:g=2
+&_skill.subterfuge cs:vtr:g=1
+&_skill.subterfuge.cops cs:vtr:g=1
+
+
+&_merit.mentor_(the_holy_one) cs:vtr:g=1
+&_merit.taste_of_serpent cs:vtr:g=2
+&_merit.status_(street_crime) cs:vtr:g=1
+&_merit.double_jointed cs:vtr:g=2
+&_merit.professional_training_(prostitute) cs:vtr:g=4
+
+
+&_discipline.vigor cs:vtr:g=1
+&_discipline.celerity cs:vtr:g=1
