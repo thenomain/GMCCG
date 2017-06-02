@@ -82,6 +82,130 @@ COMMANDS:
 &prefix.validations [v( d.xpas )]=validate.
 
 
+/*
+--------------------------------------------------------------------------------
+-- CREATE TABLE ----------------------------------------------------------------
+
+DROP TABLE IF EXISTS xp_log;
+
+--
+
+CREATE TABLE IF NOT EXISTS xp_log ( 
+	target_objid VARCHAR(255) NOT NULL, 
+	target_name VARCHAR(255) NOT NULL, 
+
+	enactor_objid VARCHAR(255) NOT NULL, 
+	enactor_name VARCHAR(255) NOT NULL, 
+
+	log_time TIMESTAMP NOT NULL DEFAULT NOW(), 
+
+	xp_type VARCHAR(255) NOT NULL, 
+	xp_amt DECIMAL(21,17) NOT NULL,
+
+	trait_category VARCHAR(255),
+	trait_name VARCHAR(255), 
+	trait_value VARCHAR(255), 
+
+	action VARCHAR(255) NOT NULL, 
+	reason VARCHAR(255), 
+	
+	entry_num BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, 
+	trait_value_old VARCHAR(255), 
+
+	PRIMARY KEY (target_objid, log_time), 
+	INDEX (entry_num) 
+) ENGINE=INNODB; 
+
+
+*** If this is your first time in this installer, do not run any more SQL! *** 
+
+-- UPDATE VERSION: Only run if you used the older xp_log table
+CREATE TABLE xp_log_old LIKE xp_log; 
+INSERT xp_log_old SELECT * FROM xp_log;
+
+ALTER TABLE xp_log 
+	ADD entry_num BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, 
+	ADD INDEX (entry_num);
+
+
+*** ANOTHER UPDATE: Again, don't run if this is your first time ***
+DROP TABLE IF EXISTS xp_log_old; 
+CREATE TABLE xp_log_old LIKE xp_log; 
+INSERT xp_log_old SELECT * FROM xp_log;
+
+ALTER TABLE xp_log ADD trait_value_old VARCHAR(255); 
+
+*** THIS WILL BE HARD TO POPULATE FROM THE EXISTING SETUP ***
+-- This is how I did it:
+
+DROP TABLE IF EXISTS xp_log_old; 
+CREATE TABLE xp_log_old LIKE xp_log; 
+INSERT xp_log_old SELECT * FROM xp_log;
+
+-- Clear and start from scratch.
+UPDATE xp_log SET trait_value_old=NULL; 
+
+-- Main update.
+UPDATE xp_log AS a 
+  INNER JOIN xp_log AS b ON a.entry_num = b.entry_num 
+  SET a.trait_value_old = 
+    SUBSTRING( 
+      a.reason 
+      FROM LOCATE( '\'', a.reason ) + 1 
+      FOR LOCATE( 
+        '\'', 
+        a.reason, 
+        LOCATE( '\'', a.reason ) + 1 ) - 
+        LOCATE( '\'', a.reason ) - 1 
+    ) 
+  WHERE a.action=('spend' OR 'freebie') 
+  AND a.trait_value_old IS NULL 
+  AND a.trait_name IS NOT NULL;
+
+-- Catch false nonsense from 's and 't.
+UPDATE xp_log AS a 
+  INNER JOIN xp_log AS b ON a.entry_num = b.entry_num 
+  SET a.trait_value_old = 
+    SUBSTRING_INDEX( substring_index( a.reason, '\'', 5 ), '\'', -1 ) 
+  WHERE (a.trait_value_old REGEXP '^s.*$' OR a.trait_value_old REGEXP '^t.*$')
+  AND a.trait_name IS NOT NULL;
+
+-- Turn '' into NULL.
+UPDATE xp_log 
+  SET trait_value_old = NULL 
+  WHERE 
+    (trait_value_old NOT REGEXP '^-?[0-9]+$') AND 
+    (trait_value_old NOT REGEXP '^.+\\..+$') AND 
+    (trait_value_old NOT IN 
+      ('Unlock','Cunning','Glory','Honor','Purity','Wisdom')
+    ); 
+
+-- Check that everything went through alright.
+-- If not, you'll have to set this all by hand.
+SELECT entry_num, trait_value_old 
+  FROM xp_log 
+  WHERE 
+    (trait_value_old NOT REGEXP '^-?[0-9]+$') AND 
+    (trait_value_old NOT REGEXP '^.+\\..+$') AND 
+    (trait_value_old NOT IN 
+      ('Unlock','Cunning','Glory','Honor','Purity','Wisdom')
+    ) AND 
+    (trait_value_old IS NOT NULL); 
+
+-- If everything is okay, let's simplify the 'reason' field ...
+UPDATE xp_log 
+  SET reason=
+    if( 
+      locate( 'for reason', reason ), 
+      trim( 
+        BOTH '\'' 
+        FROM substring( reason FROM locate( 'for reason', reason ) + 11 )
+      ), 
+      NULL 
+    ) 
+  WHERE (action='spend' OR action='freebie') AND trait_name IS NOT NULL; 
+
+
 
 /*
 ================================================================================
@@ -2047,8 +2171,8 @@ After we've validated everything else, can the person afford it?
 		gt( %0, fdiv( ladd( %1 ), v( d.beat-to-exp ))), 
 		Not enough
 		[if( not( cor( strmatch( %2, ), strmatch( %2, normal ))), 
-			%bcapstr( %2 )%b 
-		)]
+			%bcapstr( %2 )
+		)] 
 		Experience 
 	)
 
