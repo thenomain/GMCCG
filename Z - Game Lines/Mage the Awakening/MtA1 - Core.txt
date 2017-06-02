@@ -254,7 +254,7 @@ The fun of Proximi taking spells as 'Blessings'.
 &tags.advantage.gnosis [v( d.dt )]=power.mage
 
 &advantage.mana [v( d.dd )]=
-	ladd( u( .value_full, %0, advantage.essence_maximum ), . )
+	ladd( u( .value_full, %0, advantage.mana_maximum ), . )
 &default.advantage.mana [v( d.dd )]=derived
 &tags.advantage.mana [v( d.dt )]=derived.mage.proximus
 
@@ -281,14 +281,19 @@ The fun of Proximi taking spells as 'Blessings'.
 */
 
 &merit.order_status [v( d.dd )]=1.2.3.4.5
-&prerequisite.merit.order_status [v( d.dd )]=<belongs to an order>
+&prerequisite.merit.order_status [v( d.dd )]=
+	cand( 
+		u( .has, %0, bio.order ), 
+		u( .is_not, %0, bio.order, Apostate )
+	)
 &prereq-text.merit.order_status [v( d.dd )]=Belongs to an Order
 &tags.merit.order_status [v( d.dt )]=mage.social
 
 &merit.consilium_status [v( d.dd )]=1.2.3.4.5
-&prerequisite.merit.consilium_status [v( d.dd )]=???
-&prereq-text.merit.consilium_status [v( d.dd )]=???
+// &prerequisite.merit.consilium_status [v( d.dd )]=u( .has, %0, bio.consilium )
+// &prereq-text.merit.consilium_status [v( d.dd )]=Belongs to a Consilium
 &tags.merit.consilium_status [v( d.dt )]=mage.social
+&notes.merit.consilium_status [v( d.dt )]=Use the honor system on this one.
 
 &merit.adamant_hand_() [v( d.dd )]=2|Athletics.Brawl.Weaponry
 &prerequisite.merit.adamant_hand_() [v( d.dd )]=
@@ -470,7 +475,8 @@ The fun of Proximi taking spells as 'Blessings'.
 	The location from Library Advanced (<location>) and Safe Place (<location>) 
 	must match
 	|
-	For each level of Library Advanced: stat/set <target>/Library Advanced (<location>).<specialty>=<anything here, really>
+	For each level of Library Advanced: stat/set <target>/Library Advanced 
+	(<location>).<specialty>=<anything here, really>
 
 
 /*
@@ -542,11 +548,8 @@ The fun of Proximi taking spells as 'Blessings'.
 ================================================================================
 == MAGE ARCANA =================================================================
 
-does this work? please tell me this works.
-
-	&tags.arcanum.? [v( d.dt )]=mage 
-
-note: it does not. who's coding this mess?
+There is a distinction in the book between "trained" and "untrained" arcana 
+for XP spending. We don't do that here. Should be looked into.
 
 */
 
@@ -633,7 +636,7 @@ Skew has designed a perfectly working system for Fallen World Mux, so we'll be
 using that.
 
 The premise is that if it's '<rote name> (Praxis)', then it's a Praxis. 
-If it's '<spell name> (<skill>)', then it's a rote.
+If it's '<rote name> (<skill>)', then it's a Rote.
 
 */
 
@@ -3034,6 +3037,37 @@ If it's '<spell name> (<skill>)', then it's a rote.
 
 
 /*
+================================================================================
+== SETTING UP A NEW PROXIMUS DYNASTY ===========================================
+
+@fo me=&bio.dynasty [v( d.dd )]=
+	[setunion( get( v( d.dd )/bio.dynasty ), Sisters of the Mountain, . )]
+
+@dolist/delimit | 
+	Oaths Fulfilled|
+	Exceptional Luck|
+	Shifting the Odds|
+	Monkey's Paw|
+	Shared Fate|
+	Cleanse the Body|
+	Analyze Life|
+	Body Control|
+	Lure and Repel|
+	Purge Illness|
+	Degrading the Form|
+	Honing the Form|
+	Knit|
+	Gremlins={ 
+		@edit v( d.dt )/tags.rote.[edit( ##, %b, _ )]_()=$, 
+		.sisters of the mountain
+	}
+
+*/
+
+
+
+
+/*
 ################################################################################
 ## MAGE CHARGEN ################################################################
 
@@ -3041,7 +3075,7 @@ TO DO:
 If in an Order, add a dot of Occult
 
 Distribute ten Merit dots, less any spent on Gnosis; characters in an Order 
-receive Order Status • and High Speech for free.
+receive Order Status • and High Speech • for free.
 
 
 ================================================================================
@@ -3051,11 +3085,20 @@ path
 order
 
 --------------------------------------------------------------------------------
+-- Bio Check: Mage -------------------------------------------------------------
+
+*/
+
+&check.bio.mage [v( d.cg )]=Virtue Vice Path Prder
+
+
+/*
+--------------------------------------------------------------------------------
 -- Bio Check: Proximus ---------------------------------------------------------
 
 */
 
-&check.bio.proximus [v( d.cg )]=Dynasty
+&check.bio.proximus [v( d.cg )]=Virtue Vice Dynasty
 
 
 /*
@@ -3072,7 +3115,7 @@ order
 
 /*
 --------------------------------------------------------------------------------
--- Favored Attribute -----------------------------------------------------------
+-- Chargen Check: Favored Attribute --------------------------------------------
 
 currently: 
 	stat/set <attribute>.favored=1
@@ -3135,12 +3178,17 @@ currently:
 		setq( t, ladd( iter( %qr %qc %qi, rest( %i0, : )))), 
 
 		ansi( h, %b Arcana ), : , %b, %qt, %b, (of 6), %b, 
-		u( check.arcanum.mage.total, %qt, 6 ), %r, 
+		u( check.arcanum.total, %qt, 6 ), %r, 
 
 		u( check.arcanum.ruling, %0, %qr ), 
 		u( check.arcanum.common, %0, %qc ), 
 		u( check.arcanum.inferior, %0, %qi ), 
 	)
+
+
+// mages may have 6 dots in arcana
+
+&check.arcanum.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 6 ))
 
 
 // ruling: at least 3 spent, at most 5 spent, 
@@ -3253,6 +3301,28 @@ currently:
 		if( t( %qe ), %qe%r )
 	)
 
+// --
+
+&d.mage_path_arcana.acanthus [v( d.cg )]=fate time:forces
+&d.mage_path_arcana.mastigos [v( d.cg )]=mind space:matter
+&d.mage_path_arcana.moros [v( d.cg )]=death matter:spirit
+&d.mage_path_arcana.obrimos [v( d.cg )]=forces prime:death
+&d.mage_path_arcana.thyrsus [v( d.cg )]=life spirit:mind
+
+&.mage_path_arcana [v( d.cg )]=
+	localize( strcat( 
+		setq( a, edit( lcstr( lattr( v( d.dd )/arcanum.* )), arcanum., )), 
+		setq( d, u( v( d.dd )/.value_full, %0, bio.path )), 
+		setq( p, 
+			v( d.mage_path_arcana.%qd )
+		), 
+		switch( %1, 
+			ruling, first( %qp, : ), 
+			inferior, rest( %qp, : ), 
+			setdiff( %qa, edit( %qp, :, %b ))
+		)
+	))
+
 
 /*
 --------------------------------------------------------------------------------
@@ -3263,7 +3333,11 @@ Straight from Fallen World. (Tweaked how 'allocated' works.)
 */
 
 &check.rotes_&_praxis [v( d.cg )]=
-	udefault( check.rotes.[get( %0/_bio.template )], ** check failed **, %0 )
+	udefault( 
+		check.rotes_&_praxis.[get( %0/_bio.template )], 
+		** check failed **, 
+		%0 
+	)
 
 &check.rotes_&_praxis.mage [v( d.cg )]=
 	localize( strcat( 
@@ -3302,28 +3376,24 @@ let alone with buying something with two kinds of Experience. In the meantime,
 only Normal Experience may be auto-spent on these. There is probably a way to 
 get staff involved and have them manually alter the Experiences.
 
---
-
-Trait : Experience
-Rote 1
-Praxis 1 (with Arcane Experiences)
-Arcanum to Limit 4 (mix of Arcane and Normal Experiences)
-Arcanum above Limit 5 (Normal Experiences only)
-Gnosis 5
-Legacy Attainment 1 (with tutor may use Arcane or Normal, otherwise Arcane)
-
 */
 
-&d.restricted.types.mage xpas=
+&d.restricted.types.mage [v( d.xpas )]=
 	arcanum rote
-&d.restricted.stats.mage xpas=
+&d.restricted.stats.mage [v( d.xpas )]=
 	advantage.gnosis advantage.wisdom
 
 &xp.advantage.gnosis XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
 &xp.advantage.wisdom XP Cost Database <xpcd>=u( cost.standard, 3, %1, %2 )	
-&xp.rote xpcd=1
+&xp.rote [v( d.xpcd )]=1
 
-// &xp.rote xpcd=case( <template>, Mage, 1, Proximus, u( cost.standard, 1, %1, %2 ))
+/*
+&xp.rote [v( d.xpcd )]=
+	case( u( v( d.dd )/.value, %0, template ), 
+		Mage, 1, 
+		Proximus, u( cost.standard, 1, %1, %2 )
+	)
+*/
 
 
 /*
@@ -3376,32 +3446,6 @@ Following is sent from XP:
 
 More from the "Fallen World" Power Hour.
 
-*/
-
-// -- Bio ----------------------------------------------------------------------
-
-&bio.default.proximus [v( d.nsc )]=
-	birthdate concept cabal dynasty virtue vice
-
-&bio.default.mage [v( d.nsc )]=
-	birthdate concept cabal path order legacy virtue vice
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
  ---------------------------------- Arcanum ----------------------------------
 Death    : -    Fate     : -    Forces   : 3    Life     : -    Matter   : 2   
 Mind     : -    Prime    : 1    Space    : -    Spirit   : -    Time     : 1   
@@ -3414,16 +3458,56 @@ Machine Invisibility (Praxis) ..... 2 Shaping (Praxis) .................. 2
 Dispel Magic (Athletics) .......... 1 Pierce Deception (Investigation) .. 1
 Sacred Geometry (Academics) ....... 1 
 
-
-
-
 */
 
+// -- Bio ----------------------------------------------------------------------
+
+&bio.default.proximus [v( d.nsc )]=
+	birthdate concept cabal dynasty virtue vice
+
+&bio.default.mage [v( d.nsc )]=
+	birthdate concept cabal path order legacy virtue vice
 
 
+// -- Sheet: Advantages --------------------------------------------------------
+
+&traits.morality.mage [v( d.nsc )]=
+	ulocal( f.cheat_getstat.morality, %0, wisdom )
+
+&traits.mana [v( d.nsc )]=
+	u( f.cheat_getstat.pool, %0, mana )
+
+&block.traits.mana [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), setq( t, 10 ), 
+		setq( x, ulocal( traits.mana, %0 )), 
+		setq( c, rest( setr( y, first( %qx, | )), : )), 
+		setq( p, last( %qx, : )), 
+		u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )
+	)
+
+&block.traits.mage [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), setq( t, 10 ), 
+		setq( r, ulocal( block.traits.mana, %0 )), 
+		setq( z, 
+			u( display.trait-and-value, 
+				u( traits.supernatural_resistance, %0 ), 
+				%qt, %qw, numeric 
+			)
+		), 
+		vcolumns( %qw:%qr, %qw:%qz, |, %b ), %r, 
+	)
+
+&block.traits.proximus [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), setq( t, 10 ), 
+		setq( r, ulocal( block.traits.mana, %0 )), 
+		vcolumns( %qw:%qr, |, %b ), %r, 
+	)
 
 
-// -- 
+// -- Sheet: Powers ------------------------------------------------------------
 
 &block.powers.mage [v( d.sheet )]=
 	localize( strcat( 
@@ -3432,16 +3516,11 @@ Sacred Geometry (Academics) ....... 1
 	))
 
 
-
-
-
-
 &powers.arcanum [v( d.nsc )]=
 	iter( death fate forces life matter mind prime space spirit time, 
 		ulocal( f.cheat_getstat.with_name, %0, arcanum.%i0, numeric ), 
 		, | 
 	)
-
 
 
 &block.powers.arcanum [v( d.sheet )]=
@@ -3458,7 +3537,6 @@ Sacred Geometry (Academics) ....... 1
 		divider( Arcanum ), %r, 
 		columns( %qy, %qw, | ), 
 	)
-
 
 
 &powers.rote [v( d.nsc )]=
@@ -3481,7 +3559,6 @@ Sacred Geometry (Academics) ....... 1
 			if( strlen( %qx ), %qx )
 		)
 	)
-
 
 
 &block.powers.rote [v( d.sheet )]=
@@ -3509,132 +3586,11 @@ Sacred Geometry (Academics) ....... 1
 	)
 
 
-// --
-// -- And now: PROXIMUS SHEET
-
 &block.powers.proximus [v( d.sheet )]=
-		ulocal( block.powers.rote, %0 )
-
-	
+	ulocal( block.powers.rote, %0 )
 
 
-/*
---------------------------------------------------------------------------------
--- SAMPLE PROXIMUS DYNASTY -----------------------------------------------------
-
-@fo me=&bio.dynasty [v( d.dd )]=
-	[setunion( get( v( d.dd )/bio.dynasty), Sisters of the Mountain, . )]
-
-@dolist/delimit | 
-	Oaths Fulfilled|
-	Exceptional Luck|
-	Shifting the Odds|
-	Monkey's Paw|
-	Shared Fate|
-	Cleanse the Body|
-	Analyze Life|
-	Body Control|
-	Lure and Repel|
-	Purge Illness|
-	Degrading the Form|
-	Honing the Form|
-	Knit|
-	Gremlins={ 
-		@edit v( d.dt )/tags.rote.[edit( ##, %b, _ )]_()=$, 
-		.sisters of the mountain
-	}
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// --
-
-/*
-	n: name
-	r: rest of the gifts
-	u: 'unlock' value, if set
-	s: does stat take 'unlock'?
-	t: text for first line (priming read stuff)
-	l: length of padding between 'name' and 'value'
-
-&display.gift sheet: rows=
-	strcat( 
-		setq( n, first( %0, : )), 
-		setq( r, rest( %0, : )), 
-		setq( u, grab( %qr, Unlock.*, : )),
-		setq( s, 
-			match( 
-				first( get( v( d.dd )/gift.[edit( %qn, %b, _ )] ), | ), 
-				Unlock, . 
-			)
-		), 
-
-		if( cand( strmatch( %qr, Unlock.* ), eq( words( %qr, : ), 1 )), 
-			setq( r, .[rest( %qu, . )]), 
-			setq( r, remove( %qr, %qu, : ))
-		), 
-
-		if( cand( %qs, not( %qu )), 
-			setq( n, ansi( n, %qn%b, xh, %(not unlocked%) ))
-		), 
-
-		setq( t, 
-			strcat( 
-				rest( first( %qr, : ), . ), 
-				if( t( setr( z, first( first( %qr, : ), . ))), 
-					strcat( 
-						%b, %(, first( first( %qr, : ), . ), %)
-					)
-				)
-			)
-		), 
-
-		setq( l, 
-			sub( %1, add( strlen( %qn ), strlen( %qt ), 4 ))
-		), 
-
-		%qn, %b, ansi( xh, repeat( %2, %ql )), %b, %qt, 
-		iter( rest( %qr, : ), 
-			%r
-			[rjust( 
-				strcat( rest( %i0, . ), %b, %(, first( %i0, . ), %) ), 
-				sub( %1, 2 )
-			)], 
-			:, @@ 
-		)
-	)
-
-// --
-
-&block.powers.sleepwalker sheet: rows=
+&block.powers.sleepwalker [v( d.sheet )]=
   strcat( 
 
 // .. rites, if any 
@@ -3667,1002 +3623,43 @@ Sacred Geometry (Academics) ....... 1
 	)
 
 
-// -- Advantages ---------------------------------------------------------------
-
-&traits.morality.mage Newest Sheet Code <nsc>=
-	ulocal( f.cheat_getstat.morality, %0, harmony )
-
-&traits.essence Newest Sheet Code <nsc>=
-	u( f.cheat_getstat.pool, %0, essence )
-
-&block.traits.essence sheet: rows=
-	strcat( 
-		setq( w, 38 ), 
-		setq( t, 10 ), 
-
-// .. essence
-		setq( x, ulocal( traits.essence, %0 )), 
-		setq( c, rest( setr( y, first( %qx, | )), : )), 
-		setq( p, last( %qx, : )), 
-
-// .. return
-		u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )
-	)
-
-
-&block.traits.mage sheet: rows=
-	strcat( 
-		setq( w, 38 ), 
-		setq( t, 10 ), 
-
-// .. essence (power pool)
-		setq( r, ulocal( block.traits.essence, %0 )), 
-
-// .. primal urge (supernatural resistance)
-		setq( z, 
-			u( display.trait-and-value, 
-				u( traits.supernatural_resistance, %0 ), 
-				inc( strlen( Primal Urge )), %qw, numeric 
-			)
-		), 
-
-// .. display
-		vcolumns( 
-			%qw:%qr, 
-			%qw:%qz, 
-			|, %b 
-		), %r, 
-	)
-
-
-// -- Gifts --------------------------------------------------------------------
-
-&.gifts.facet_check.moon [v( d.dd )]=
-	cand( 
-// check auspice
-		u( .is, %0, bio.auspice, %1 ), 
-
-// check that 1 comes before 2; this is harder because it's a 'list' stat class
-		case( 1, 
-			strmatch( %3, ), 1, 
-			cor( 
-				u( .list_has_all, %0, %2, lnum( 1, %3, . )), 
-				cand( 
-					u( .has_not, %0, %2 ), 
-					eq( %3, 1 )
-				), 
-				strmatch( %3, ![last( u( .value_full, %0, %2 ), . )])
-			)
-		)
-	)
-
-
-&.gifts.facet_check.wolf [v( d.dd )]=
-		switch( %2, 
-			@@( null ), 1, 
-			Unlock, 1, 
-			!Unlock, 1, 
-			!*, u( .has, %0, renown.[rest( %2, ! )] ), 
-			u( .has, %0, renown.%2 )
-		)
-
-&.gifts.facet_check.shadow [v( d.dd )]=
-	cand( 
-		cor( 
-			u( .list_has, %0, %1, Unlock ), 
-			strmatch( %2, Unlock )
-		), 
-		u( .gifts.facet_check.wolf, %0, %1, %2 )
-	)
-
-&class.gift.? [v( d.dd )]=list
-
-
-// -- Moon Gifts ---------------------------------------------------------------
-
-&gift.crescent_moon's_gift [v( d.dd )]=1.2.3.4.5|
-	Shadow Gaze.Spirit Whispers.Shadow Hunter.Shadow Masquerade.Panopticon
-&prerequisite.gift.crescent_moon's_gift [v( d.dd )]=
-	u( .gifts.facet_check.moon, %0, Ithaeur, gift.crescent_moon's_gift, %2 )
-&prereq-text.gift.crescent_moon's_gift [v( d.dd )]=Auspice is Ithaeur, must be set 
-	or unset in order
-&tags.gift.crescent_moon's_gift [v( d.dt )]=mage.moon.ithaeur
-
-&gift.full_moon's_gift [v( d.dd )]=1.2.3.4.5|
-	Killer Instinct.Warrior's Hide.Bloody-Handed Hunter.Butchery.Crimson Spasm
-&prerequisite.gift.full_moon's_gift [v( d.dd )]=
-	u( .gifts.facet_check.moon, %0, Rahu, gift.full_moon's_gift, %2 )
-&prereq-text.gift.full_moon's_gift [v( d.dd )]=
-	Auspice is Rahu, must be set or unset in order
-&tags.gift.full_moon's_gift [v( d.dt )]=mage.moon.rahu
-
-&gift.gibbous_moon's_gift [v( d.dd )]=1.2.3.4.5|
-	War Howl.Voice of Glory.Dream Hunter.Thousand-Throat Howl.End of Story
-&prerequisite.gift.gibbous_moon's_gift [v( d.dd )]=
-	u( .gifts.facet_check.moon, %0, Cahalith, gift.gibbous_moon's_gift, %2 )
-&prereq-text.gift.gibbous_moon's_gift [v( d.dd )]=
-	Auspice is Cahalith, must be set or unset in order
-&tags.gift.gibbous_moon's_gift [v( d.dt )]=mage.moon.cahalith
-
-&gift.half_moon's_gift [v( d.dd )]=1.2.3.4.5|
-	Scent Beneath the Surface.Binding Oath.Sly Hunter.
-	Ties of Word and Promise.Ties of Blood and Bone
-&prerequisite.gift.half_moon's_gift [v( d.dd )]=
-	u( .gifts.facet_check.moon, %0, Elodoth, gift.half_moon's_gift, %2 )
-&prereq-text.gift.half_moon's_gift [v( d.dd )]=
-	Auspice is Elodoth, must be set or unset in order
-&tags.gift.half_moon's_gift [v( d.dt )]=mage.moon.elodoth
-
-&gift.new_moon's_gift [v( d.dd )]=1.2.3.4.5|
-	Eviscerate.Slip Away.Relentless Hunter.Divide and Conquer.Breach
-&prerequisite.gift.new_moon's_gift [v( d.dd )]=
-	u( .gifts.facet_check.moon, %0, Irraka, gift.new_moon's_gift, %2 )
-&prereq-text.gift.new_moon's_gift [v( d.dd )]=
-	Auspice is Irraka, must be set or unset in order
-&tags.gift.new_moon's_gift [v( d.dt )]=mage.moon.irraka
-
-// -- Shadow Gifts (first draft) -----------------------------------------------
-
-&gift.gift_of_death [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Cold Embrace.Barghest.Memento Mori.Bone Gnaw.Eyes of the Dead
-&prerequisite.gift.gift_of_death [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_death, %2 )
-&prereq-text.gift.gift_of_death [v( d.dd )]=
-	Must have Renown of the Facet entered (%2) and must have 'Unlock'.
-&tags.gift.gift_of_death [v( d.dt )]=mage.shadow.bone shadows
-
-&gift.gift_of_dominance [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Primal Allure.Glorious Lunacy.Lay Low the Challenger.
-	Snarl of the Predator.Lead the Lesser Pack
-&prerequisite.gift.gift_of_dominance [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_dominance, %2 )
-&prereq-text.gift.gift_of_dominance [v( d.dd )]=
-	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_dominance [v( d.dt )]=mage.shadow.rahu.storm lords
-
-&gift.gift_of_the_elementals [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Breath of Air.Catastrophe.Flesh of Earth.Tongue of Flame.
-	Heart of Water
-&prerequisite.gift.gift_of_the_elementals [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_the_elementals, %2 )
-&prereq-text.gift.gift_of_the_elementals [v( d.dd )]=
-	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_the_elementals [v( d.dt )]=mage.shadow.ithaeur.bone shadows
-
-&gift.gift_of_evasion [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Feet of Mist.Fog of War.Deny Everything.Hit and Run.Exit Strategy
-&prerequisite.gift.gift_of_evasion [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_evasion, %2 )
-&prereq-text.gift.gift_of_evasion [v( d.dd )]=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_evasion [v( d.dt )]=mage.shadow.irraka.storm lords
-
-&gift.gift_of_insight [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Prey on Weakness.Read the World's Loom.Echo Dream.
-	Scent the Unnatural.One Step Ahead
-&prerequisite.gift.gift_of_insight [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_insight, %2 )
-&prereq-text.gift.gift_of_insight [v( d.dd )]=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_insight [v( d.dt )]=mage.shadow.elodoth.bone shadows
-
-&gift.gift_of_inspiration [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Lunatic Inspiration.Fearless Hunter.Pack Triumphs Together.Unity.
-	Still Small Voice
-&prerequisite.gift.gift_of_inspiration [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_inspiration, %2 )
-&prereq-text.gift.gift_of_inspiration [v( d.dd )]=
-	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_inspiration [v( d.dt )]=mage.shadow.cahalith.blood talons
-
-&gift.gift_of_knowledge [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Needle.This Story is True.Know Thy Prey.Lore of the Land.
-	Sift the Sands
-&prerequisite.gift.gift_of_knowledge [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_knowledge, %2 )
-&prereq-text.gift.gift_of_knowledge [v( d.dd )]=
-	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_knowledge [v( d.dt )]=mage.shadow.cahalith.iron masters
-
-&gift.nature's_gift [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Nature's Lure.Black Earth, Red Hunger.Knotted Paths.Pack Kin.
-	Beast Ride
-&prerequisite.gift.nature's_gift [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.nature's_gift, %2 )
-&prereq-text.gift.nature's_gift [v( d.dd )]=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.nature's_gift [v( d.dt )]=mage.shadow.hunters in darkness
-
-&gift.gift_of_rage [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Incite Fury.Berserker's Might.Perfected Rage.Slaughterer.
-	Raging Lunacy
-&prerequisite.gift.gift_of_rage [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_rage, %2 )
-&prereq-text.gift.gift_of_rage [v( d.dd )]=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_rage [v( d.dt )]=mage.shadow.blood talons
-
-&gift.gift_of_shaping [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Moldywarp.Shield-Breaker.Entropy's Toll.Perfection of Form.Sculpt
-&prerequisite.gift.gift_of_shaping [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_shaping, %2 )
-&prereq-text.gift.gift_of_shaping [v( d.dd )]=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_shaping [v( d.dt )]=mage.shadow.ithaeur.iron masters
-
-&gift.gift_of_stealth [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Shadow Pelt.Predator's Shadow.Pack Stalks to Prey.The Hunter Waits.
-	Running Silent
-&prerequisite.gift.gift_of_stealth [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_stealth, %2 )
-&prereq-text.gift.gift_of_stealth [v( d.dd )]=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_stealth [v( d.dt )]=mage.shadow.irraka.hunters in darkness
-
-&gift.gift_of_strength [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Unchained.Predator's Unmatched Pursuit.Crushing Blow.
-	Primal Strength.Rending Claws
-&prerequisite.gift.gift_of_strength [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_strength, %2 )
-&prereq-text.gift.gift_of_strength [v( d.dd )]=
-	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_strength [v( d.dt )]=mage.shadow.rahu.blood talons
-
-&gift.gift_of_technology [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Garble.Unmake.Command Artiface.Shutdown.Iron Slave
-&prerequisite.gift.gift_of_technology [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_technology, %2 )
-&prereq-text.gift.gift_of_technology [v( d.dd )]=
-	Must have Renown of the Facet entered (%2), and must have 'Unlock'.
-&tags.gift.gift_of_technology [v( d.dt )]=mage.shadow.iron masters
-
-&gift.gift_of_warding [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Maze Ward.Ward the Wolf's Den.All Doors Locked.
-	Predator's Claim.Boundary Ward
-&prerequisite.gift.gift_of_warding [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_warding, %2 )
-&prereq-text.gift.gift_of_warding [v( d.dd )]=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_warding [v( d.dt )]=mage.shadow.elodoth.hunters in darkness
-
-&gift.gift_of_weather [v( d.dd )]=
-	Unlock.Cunning.Glory.Honor.Purity.Wisdom|
-	Unlocked.Cloak of Mist and Haze.Heavens Unleashed.Hunt Under Iron Skies.
-	Grasp of Howling Winds.Hunt of Fire and Ice
-&prerequisite.gift.gift_of_weather [v( d.dd )]=
-	u( .gifts.facet_check.shadow, %0, gift.gift_of_weather, %2 )
-&prereq-text.gift.gift_of_weather [v( d.dd )]=Must have Renown of the Facet entered (%2), 
-	and must have 'Unlock'.
-&tags.gift.gift_of_weather [v( d.dt )]=mage.shadow.storm lords
-
-// -- Wolf Gifts (first draft) -------------------------------------------------
-
-&gift.gift_of_change [v( d.dd )]=
-	Cunning.Glory.Honor.Purity.Wisdom|
-	Skin Thief.Gaze of the Moon.Luna's Embrace.The Father's Form.
-	Quicksilver Flesh
-&prerequisite.gift.gift_of_change [v( d.dd )]=
-	u( .gifts.facet_check.wolf, %0, gift.gift_of_change, %2 )
-&prereq-text.gift.gift_of_change [v( d.dd )]=Must have Renown of the Facet entered (%2).
-&tags.gift.gift_of_change [v( d.dt )]=mage.wolf
-
-&gift.gift_of_hunting [v( d.dd )]=
-	Cunning.Glory.Honor.Purity.Wisdom|
-	Honed Senses.Cow the Prey.Beast Talker.Tireless Hunter.Impossible Spoor
-&prerequisite.gift.gift_of_hunting [v( d.dd )]=
-	u( .gifts.facet_check.wolf, %0, gift.gift_of_hunting, %2 )
-&prereq-text.gift.gift_of_hunting [v( d.dd )]=Must have Renown of the Facet entered (%2).
-&tags.gift.gift_of_hunting [v( d.dt )]=mage.wolf
-
-&gift.gift_of_pack [v( d.dd )]=
-	Cunning.Glory.Honor.Purity.Wisdom|
-	Reflected Facets.Down the Prey.Totem's Wrath.Maw of Madness.Pack Awareness
-&prerequisite.gift.gift_of_pack [v( d.dd )]=
-	u( .gifts.facet_check.wolf, %0, gift.gift_of_pack, %2 )
-&prereq-text.gift.gift_of_pack [v( d.dd )]=Must have Renown of the Facet entered (%2).
-&tags.gift.gift_of_pack [v( d.dt )]=mage.wolf
-
-
-
-
-/* 
-################################################################################
-## WEREWOLF CHARGEN ############################################################
-
-Yeah, let's see how this works.
-
-
-
-================================================================================
-== CHARGEN: ALLOCATIONS ========================================================
-
---------------------------------------------------------------------------------
--- Allocated Merits: Primal Urge -----------------------------------------------
-*/
-
-&f.allocated.power-trait.mage [v(d.cg)]=
-	mul( 
-		dec( u( v( d.dd )/.value, %0, advantage.primal_urge )), 
-		5 
-	)
-
-
-/*
---------------------------------------------------------------------------------
--- Allocated Gifts -------------------------------------------------------------
-
-moon gift`shadow gift (auspice)`shadow gift (tribe)`other gifts (probably wolf)
-
-*/
-
-&f.allocated.gifts [v( d.cg )]=
-	localize( strcat( 
-		edit( setr( m, u( f.allocated.gifts.moon, %0 )), GIFT., ), `, 
-		edit( setr( a, u( f.allocated.gifts.shadow.auspice, %0 )), GIFT., ), `, 
-		edit( setr( t, 
-			setdiff( 
-				u( f.allocated.gifts.shadow.tribe, %0 ), 
-				%q1 
-			)
-		), GIFT., ), `, 
-		edit( setr( w, u( f.allocated.gifts.wolf, %0 )), GIFT., ), `, 
-		edit( 
-			setdiff( 
-				edit( lattr( %0/_gift.* ), _GIFT., GIFT. ), 
-				%qm %qa %qt %qw 
-			), 
-			GIFT., 
-		), 
-	))
-
-// --
-
-&f.allocated.gifts.moon [v( d.cg )]=
-	localize( strcat( 
-		setq( g, lattr( v( d.dd )/gift.* )), 
-		setq( m, 
-			filter( 
-				v( d.sfp )/fil.list-stats-tags, %qg, , , 
-				moon.[get( %0/_bio.auspice )], and 
-			)
-		), 
-		setq( c, 
-			u( f.list-stats-tags, 
-				%0, gift, moon.[get( %0/_bio.auspice )], and 
-			)
-		), 
-		setinter( %qm, %qc )
-	))
-
-// --
-
-&f.allocated.gifts.shadow.auspice [v( d.cg )]=
-	localize( strcat( 
-		setq( g, lattr( v( d.dd )/gift.* )), 
-		setq( m, 
-			filter( 
-				v( d.sfp )/fil.list-stats-tags, %qg, , , 
-				shadow.[get( %0/_bio.auspice )], 1 
-			)
-		), 
-		setq( c, 
-			u( f.list-stats-tags, 
-				%0, gift, shadow.[get( %0/_bio.auspice )], and 
-			)
-		), 
-		setinter( %qm, %qc )
-	))
-
-// --
-
-&f.allocated.gifts.shadow.tribe [v( d.cg )]=
-	localize( strcat( 
-		setq( g, lattr( v( d.dd )/gift.* )), 
-		setq( m, 
-			filter( 
-				v( d.sfp )/fil.list-stats-tags, %qg, , , 
-				shadow.[get( %0/_bio.tribe )], 1 
-			)
-		), 
-		setq( c, 
-			u( f.list-stats-tags, 
-				%0, gift, shadow.[get( %0/_bio.tribe )], and 
-			)
-		), 
-// take out auspice gifts that have already been accounted for 
-		setq( a, u( f.allocated.gifts.shadow.auspice, %0 )), 
-		setdiff( setinter( %qm, %qc ), %qa )
-	))
-
-// --
-
-&f.allocated.gifts.wolf [v( d.cg )]=ulocal( f.list-stats-tags, %0, gift, wolf )
-
-
-/*
---------------------------------------------------------------------------------
--- Allocated Rites -------------------------------------------------------------
-
-Total points in rites (should be 2)
-
-*/
-
-&f.allocated.rites [v( d.cg )]=
-	ladd( 
-		iter( lattr( %0/_rite.* ), 
-			get( %0/%i0 )
-		)
-	)
-
-
-
-/*
-================================================================================
-== CHARGEN: BIO ================================================================
-
---------------------------------------------------------------------------------
--- Bio Check -------------------------------------------------------------------
-
-*/
-
-&check.bio.mage cg=blood bone auspice tribe
-
-
-
-/* 
-================================================================================
-== CHARGEN CHECK ===============================================================
-
-
---------------------------------------------------------------------------------
--- Favored Skill ---------------------------------------------------------------
-
-Should be easier than 'favored attribute':
-	11/7/4
-	find the one that's one higher
-	scan that for auspice skills
-	make sure at least one has 1 dot in it
-
-*/
-
-&check.chargen.skills.mage [v( d.cg )]=
-  localize( strcat( 
-		setq( a, v( d.mage.auspice_skills.[get( %0/_bio.auspice )] )), 
-		setq( s, ulocal( f.allocated.skills, %0 )), 
-		setq( k, edit( lattr( %0/_skill.* ), _SKILL., SKILL. )), 
-		setq( x, 
-			iter( mental physical social, 
-				setinter( 
-					lcstr( edit( 
-						filter( u( d.sfp )/f.hastag?.workhorse, 
-							%qk, , , %i0, 0 
-						), SKILL., 
-					)), 
-					%qa 
-				), 
-				, | 
-			)
-		), 
-		setq( f, 
-			first( iter( %qs, 
-				if( 
-					lor( iter( 11 7 4, eq( %i0, dec( %i1 )))), 
-					elements( %qx, inum( 0 ), | )
-				), 
-				/ 
-			))
-		), 
-
-		ulocal( f.allocated.skills, %0 ), %b, %(of 11/7/4 + auspice skill%), %b, 
-		ulocal( display.check.stats, %0, skills, skill.%qf:-1 ), 
-		if( eq( words( %qf ), 0 ), 
-			ansi( n, %b%[, r, but no auspice skill found, n, %] )
-		), 
-		%r, 
-
-		%b %b%b, ansi( h, Auspice Skill ), :, %b, 
-		titlestr( edit( itemize( %qf, , or ), _, %b )), %b, 
-		%[, 
-		case( 1, 
-			eq( words( %qf ), 0 ), ansi( r, none found ), 
-			ansi( g, OK )
-		), 
-		%] 
-	))
-
-
-// ... it would be easier if the following could be tagged and we'd 
-// ... use the system created exactly for this kind of thing
-
-&d.mage.auspice_skills.cahalith [v( d.cg )]=crafts expression persuasion
-&d.mage.auspice_skills.elodoth [v( d.cg )]=empathy investigation politics
-&d.mage.auspice_skills.irraka [v( d.cg )]=larceny stealth subterfuge
-&d.mage.auspice_skills.ithaeur [v( d.cg )]=animal_ken medicine occult
-&d.mage.auspice_skills.rahu [v( d.cg )]=brawl intimidation survival
-
-// -- test --
-
-think u( [v( d.cg )]/check.chargen.skills.mage, pmatch( thenomain ))
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Mage ---------------------------------------------------------
-
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Renown -------------------------------------------------------
-
-Check that each renown's tags == (auspice + tribe) + 1
-
-This stuff should be in some 'f.allocated.renown' or whatnot, but this 
-will do.
-
-r: renown available (dd)
-a: renown for auspice & tribe
-c: character's current renown
-x: temp sheet renown
-y: temp number of renown allowed
-
-*/
-
-&check.renown [v( d.cg )]=
-	strcat( 
-		setq( r, lattr( v( d.dd )/renown.* )), 
-		setq( a, 
-			edit( 
-				filter( 
-					v( d.sfp )/fil.list-stats-tags, %qr, , , 
-					[get( %0/_bio.auspice )].[get( %0/_bio.tribe )] 
-				), 
-				RENOWN., 
-			)
-		), 
-		setq( c, edit( lattr( %0/_renown.* ), _RENOWN., )), 
-		setq( t, 0 ), 
-
-		wdivider( Chargen Levels: Renown ), %r, 
-		iter( setunion( %qc, %qa ), 
-			strcat( 
-				%b%b, 
-				ansi( h, titlestr( %i0 )), :, %b, 
-				setr( x, default( %0/_renown.%i0, 0 )), 
-				setq( t, add( %qt, %qx )), 
-				if( 
-					cand( 
-						t( match( %qa, %i0 )), 
-						lt( %qx, 1 )
-					), 
-					ansi( n, %b%[, r, must exist, n, %] )
-				), 
-			), , %r 
-		), %r, 
-		%b%b, ansi( h, Points Spent ), : %qt/3, 
-		%b, u( display.check.ok-no, eq( %qt, 3 )), 
-		%r, 
-	)
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Gifts --------------------------------------------------------
-
-p.84: 
-
-Start with one Facet of your auspice’s Moon Gift. 
-Choose one Facet each of two Shadow Gifts from tribe and auspice. 
-Choose one facet of a Wolf Gift, or the second Facet of your Moon Gift if you 
-have two dots in your auspice Renown. 
-You cannot choose a Facet in which your character has no dots of Renown.
-
-Moon Gift (1 gift, 1-2 facets)
-- Pretty easy to determine
-- 1 facet (lvl 1) or 2 if Auspice Renown >= 2
-
-Shadow Gifts (1-2 gifts, 1 facet each)
-- Must be 2 different gifts
-- 1 from Auspice Shadow list
-- 1 from Tribe Shadow list (unless Ghost Wolf, who don't get one)
-
-Wolf Gifts (0-1 gifts, 1 facet each)
-- 0 if Auspice Renown >=2, otherwise 1 facet
-
-Total: 3-4
-
-0: sheet dbref
-
-g: allocated gifts: moon`shadow (auspice)`shadow (tribal)`wolf`other/unaccounted
-a: auspice
-r: auspice renown
-v: auspice renown's value
-t: tribe
-
-*/
-
-&check.gifts [v( d.cg )]=
-	strcat( 
-		setq( g, u( f.allocated.gifts, %0 )), 
-
-		wdivider( Chargen Levels: Gifts ), %r, 
-
-		u( check.gifts.moon, %0, %qg ), 
-		u( check.gifts.auspice, %0, %qg ), 
-		u( check.gifts.tribe, %0, %qg ), 
-		u( check.gifts.wolf, %0, %qg ), 
-		u( check.gifts.other, %0, %qg ), 
-	)
-
-// -- 
-
-think u( v( d.cg )/check.gifts, %# )
-
-// -- check gifts: moon -- 
-// 0: target sheet -- 1: %qg
-
-&check.gifts.moon [v( d.cg )]=
-	strcat( 
-		setq( a, u( v( d.dd )/.value_full, %0, bio.auspice )), 
-		setq( r, 
-			filter( v( d.sfp )/fil.list-stats-tags, 
-				lattr( v( d.dd )/renown.* ), , , %qa 
-			)
-		), 
-		setq( v, u( v( d.dd )/.value, %0, %qr )), 
-		setq( x, elements( %1, 1, ` )), 
-		setq( k, eq( words( %qx ), 1 )), 
-
-		%b%b, 
-		ansi( h, Moon Gift ), :, %b, 
-		titlestr( edit( itemize( %qx ), _, %b )), %b, 
-		u( display.check.ok-no, %qk ), 
-		if( %qk, 
-			strcat( 
-				setq( f, 
-					setdiff( 
-						u( v( d.dd )/.value_full, %0, gift.%qx ), 
-						unlock, 
-						. 
-					)
-				), 
-				%r, %b %b%b, %(, 
-				ansi( h, Facets ), :, %b, 
-				setr( x, words( %qf, . )), %b, out of %qv, %), 
-				%b, u( display.check.ok-no, eq( %qx, %qv )), 
-			)
-		), %r 
-	)
-
-// -- check gifts: auspice -- 
-// 0: target sheet -- 1: %qg
-
-&check.gifts.auspice [v( d.cg )]=
-	strcat( 
-		setq( a, u( v( d.dd )/.value_full, %0, bio.auspice )), 
-		setq( x, elements( %1, 2, ` )), 
-		setq( k, eq( words( %qx ), 1 )), 
-
-		%b%b, 
-		ansi( h, Shadow Gift%, Auspice ), :, %b, 
-		titlestr( edit( itemize( %qx ), _, %b )), %b, 
-		%(of one%), %b, 
-		u( display.check.ok-no, %qk ), 
-		if( %qk, 
-			strcat( 
-				setq( f, 
-					setdiff( 
-						u( v( d.dd )/.value_full, %0, gift.%qx ), 
-						unlock, 
-						. 
-					)
-				), 
-				%r, %b %b%b, %(, 
-				ansi( h, Facets ), :, %b, 
-				setr( x, words( %qf, . )), %b, out of 1, 
-				%), 
-				%b, u( display.check.ok-no, eq( %qx, 1 ))
-			)
-		), 
-		%r 
-	)
-
-// -- check gifts: tribe -- 
-// 0: target sheet -- 1: %qg
-
-&check.gifts.tribe [v( d.cg )]=
-	strcat( 
-		setq( x, setdiff( elements( %1, 3, ` ), elements( %1, 2, ` ))), 
-		%b%b, 
-		ansi( h, Shadow Gift%, Tribe ), :, %b, 
-		titlestr( edit( %qx, %b, %,%b , _, %b )), 
-		%b, 
-		setq( k, 
-			eq( 
-				words( %qx ), 
-				mul( 1, 
-					setr( w, u( v( d.dd )/.is_not, %0, tribe, Ghost Wolves ))
-				)
-			)
-		), 
-		%(of, %b, if( strmatch( %qt, Ghost Wolves ), none, one ), %)%b, 
-		u( display.check.ok-no, %qk ), 
-		if( cand( %qk, %qw ), 
-			strcat( 
-				%r, %b %b%b, %(, 
-				ansi( h, Facets ), :, %b, 
-				setr( x, words( %qf, . )), %b, out of 1, 
-				%), 
-				%b, u( display.check.ok-no, eq( %qx, 1 ))
-			)
-		), 
-		%r 
-	)
-
-// -- check gifts: wolf -- 
-// 0: target sheet -- 1: %qg
-// NEEDS ADDED (?): If Auspice Renown = 2+, additional gifts are Wolf Gifts.
-
-&check.gifts.wolf [v( d.cg )]=
-	strcat( 
-		%b%b, 
-		ansi( h, Wolf Gifts ), :, %b, 
-		titlestr( edit( itemize( setr( x, elements( %1, 4, ` ))), _, %b )), %b, 
-		setq( k, 
-			eq( 
-				words( %qx ), mul( 1, eq( %qv, 1 ))
-			)
-		), 
-		u( display.check.ok-no, %qk ), 
-		if( %qk, 
-			strcat( 
-				%r%b %b %(, 
-				ansi( h, Facets ), :, %b, 
-				setr( x, 
-					words( u( v( d.dd )/.value_full, %0, gift.%qx ), . )
-				), %), 
-				%b, u( display.check.ok-no, eq( %qx, mul( 1, eq( %qv, 1 )))), 
-			)
-		), 
-	)
-
-// -- check gifts: other -- 
-// 0: target sheet -- 1: %qg
-
-&check.gifts.other [v( d.cg )]=
-	strcat( 
-		setq( x, elements( %1, 5, ` )), 
-		setq( k, eq( words( %qx ), 0 )), 
-		if( not( %qk ), 
-			strcat( 
-				%r%b%b, 
-				ansi( h, Other Gifts ), :, %b, 
-				titlestr( edit( itemize( %qx ), _, %b )), %b, 
-				u( display.check.ok-no, %qk ), 
-			)
-		), %r, 
-	)
-
-
-
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Rites --------------------------------------------------------
-
-2 dots of rites 
-
-*/
-
-&check.rites [v( d.cg )]=
-	strcat( 
-		setq( g, u( f.allocated.rites, %0 )), 
-		%b%b, 
-		ansi( h, Rites ), :, %b, 
-		%qg out of 2, %b, 
-		u( display.check.ok-no, eq( %qg, 2 )), 
-		%r 
-	)
-
-
-
-
-
-
 
 
 /*
 ################################################################################
-## WEREWOLF: ONGOING NOTES #####################################################
-
-Willpower is equal to Resolve + Composure. Harmony is 7. Size is 5. Health is Size + Stamina. Speed is Size + Strength + Dexterity. Defense is the lower of Dexterity and Wits, plus Athletics. Primal Urge is 1, plus any bought with Merits.
-
-Primal Urge starts at 1 dot. Additional dots may be purchased with five Merit dots each. A character cannot start with Primal Urge higher than 3.
-
-Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the second Facet of your Moon Gift if you have two dots in your auspice Renown. You cannot choose a Facet in which your character has no dots of Renown.
-
---
-
-Cahalith: 
-	Crafts, Expression, and Persuasion
-	Glory
-	Gibbous Moon, Inspiration, Knowledge
-Elodoth: 
-	Empathy, Investigation, and Politics
-	Honor
-	Half Moon, Insight, Warding
-Irraka: 
-	Larceny, Stealth, and Subterfuge
-	Cunning
-	New Moon, Evasion, Stealth
-Ithaeur: 
-	Animal Ken, Medicine, and Occult
-	Wisdom
-	Crescent Moon, Elemental, Shaping
-Rahu: 
-	Brawl, Intimidation, and Survival
-	Purity
-	Full Moon, Dominance, Strength
-
-each tribe has an associated Renown; mark a dot in that Renown
-
-Blood Talons: 
-	Glory
-	Inspiration, Rage, Strength
-Bone Shadows: 
-	Wisdom
-	Death, Elemental, and Insight
-Hunters in Darkness: 
-	Purity
-	Nature, Stealth, and Warding
-Iron Masters: 
-	Cunning
-	Knowledge, Shaping, and Technology
-Storm Lords: 
-	Honor
-	Evasion, Dominance, and Weather
-
---
-
-Anchors: 
-Anchors keep Uratha grounded. They’re concepts, philosophies, people, places, 
-and things that help her find herself when lost. Werewolf: The Forsaken 
-characters have three Anchors: Blood, Bone, and Touchstones
-
-Blood: thingy
-Bone: thingy
-Touchstone: thingy
-
---
-
-AUSPICE
-From a character creation standpoint, auspice offers you a free dot of one of 
-three Skills, and one of your starting Renown dots. You can choose any of the 
-three auspice Skills, but this free dot cannot take the Skill beyond five dots. 
-Mark the Renown dot in the relevant Renown category.
-
-TRIBE
-Each tribe has an associated Renown. Mark a dot in that Renown.
-
-GIFTS AND RITES
-Start with one Facet of your auspice’s Moon Gift. Choose one Facet each of two 
-Shadow Gifts from tribe or auspice. Choose one facet of a Wolf Gift, or the 
-second Facet of your Moon Gift if you have two dots in your auspice Renown. You 
-cannot choose a Facet in which your character has no dots of Renown.
-
-	Aspirations 3 + 1 Totem
-	Attributes 5/4/3
-	Skills 11/7/4 (+3 Specialties)
-	Auspice, Tribe
-	Primal Urge 1
-	Renown 1 auspice, 1 tribe, 1 free
-	1 Moon Gift, 2 Shadow Gifts, 1 Moon/Wolf Gift
-	Merits 10
-
---
-
-Wolf-Blooded: p. 296
-
---
-
-Primal Urge chart: p.93
-Shapeshifting chart: p.96
-Renown (& effective rank): p.98-9
-Harmony: p.104
-Merits: pp.105-110
-Gifts: p.114
-
-*/
-
-
-
-
-
-
-/*
-** TO DO! **
-================================================================================
-== TOTEM ASPIRATION ============================================================
-
-p. 92
-
-*/
-
-
-/*
-================================================================================
-== SPEND/REGAIN ESSENCE ========================================================
+## MAGE: SPEND/REGAIN MANA #####################################################
 
 expands: 9c - Spend and Regain
 
-	spend essence=<amt/method> for <reason>
+	spend mana=<amt/method> for <reason>
 
-spend limit per Primal Urge: 
+spend limit per Gnosis: 
 	1 2 3 4 5 6 7 8 10 15
 
 regain methods:
-	moon (once/night)
-	locus
-	rite of the spirit hunt
-	cannibalism
+	... dunno right now
 
 
 --------------------------------------------------------------------------------
 -- Spend/Regain Methods --------------------------------------------------------
 */
 
-&regain.methods.essence psrs=|all
-&spend.methods.essence psrs=[@@( nothing but numeric allowed here )]
+&regain.methods.mana [v( d.psrs )]=|all
+&spend.methods.mana [v( d.psrs )]=[@@( nothing but numeric allowed here )]
 
 
 /* 
 --------------------------------------------------------------------------------
--- Spend/Regain Essence Amts ---------------------------------------------------
+-- Spend/Regain Mana Amts ---------------------------------------------------
 */
 
-&amt.spend.numeric.essence psrs=
+&amt.spend.numeric.mana [v( d.psrs )]=
 	if( t( u( amt.spend.numeric.default, %0, %1, %2 )), 
 		if( 
 			lte( %2, 
 				elements( 
 					1 2 3 4 5 6 7 8 10 15, 
-					getstat( %0/Primal Urge )
+					getstat( %0/Gnosis )
 				)
 			), 
 			mul( %2, -1 ), 
@@ -4674,90 +3671,90 @@ regain methods:
 
 /* 
 --------------------------------------------------------------------------------
--- Spend Essence Trigger -------------------------------------------------------
+-- Spend Mana Trigger ----------------------------------------------------------
 */
 
-&spend.trigger.essence psrs=
+&spend.trigger.mana [v( d.psrs )]=
 	think strcat( 
-		m:, %b, setr( m, u( f.match_method, %1, spend, essence, %2 )), %r, 
-		a:, %b, setr( a, u( amt.spend, %1, essence, %qm )), %r, 
-		u:, %b, setr( u, hasattr( %1, _advantage.Primal_Urge )), %r, 
-		s:, %b, setr( s, hasattr( %1, _advantage.Essence_Maximum )), %r, 
+		m:, %b, setr( m, u( f.match_method, %1, spend, mana, %2 )), %r, 
+		a:, %b, setr( a, u( amt.spend, %1, mana, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, _advantage.gnosis )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.mana_maximum )), %r, 
 	); 
 
 	@assert cand( %qu, %qs )={ 
-		@pemit %0=u( .msg, essence/spend, 
+		@pemit %0=u( .msg, mana/spend, 
 			cat( 
 				if( strmatch( %0, %1 ), You, name( %1 )), 
-				must have both Primal Urge and an Essence pool 
+				must have both Gnosis and an Mana pool 
 			)
 		) 
 	}; 
 
 	@assert strlen( %qm )={ 
-		@pemit %0=u( .msg, essence/spend, I could not find the method '%2' ) 
+		@pemit %0=u( .msg, mana/spend, I could not find the method '%2' ) 
 	}; 
 
 	@assert t( %qa )={ 
-		@pemit %0=u( .msg, essence/spend, rest( %qa )) 
+		@pemit %0=u( .msg, mana/spend, rest( %qa )) 
 	}; 
 
-	@assert t( setr( e, u( f.pool.canchange, %1, Essence, %qa )))={ 
-		@pemit %0=u( .msg, essence/spend, rest( %qe )) 
+	@assert t( setr( e, u( f.pool.canchange, %1, Mana, %qa )))={ 
+		@pemit %0=u( .msg, mana/spend, rest( %qe )) 
 	}; 
 
-	@assert t( setr( e, u( f.pool.changestat, %1, essence, %qa )))={ 
-		@pemit %0=u( .msg, essence/spend, rest( %qe )) 
+	@assert t( setr( e, u( f.pool.changestat, %1, mana, %qa )))={ 
+		@pemit %0=u( .msg, mana/spend, rest( %qe )) 
 	}; 
 
 	think e: 
 		[setr( e, 
-			u( display.number, %0, %1, essence, spend, %qa, %qm, %4 )
+			u( display.number, %0, %1, mana, spend, %qa, %qm, %4 )
 		)]; 
 	@eval u( f.announcement, %0, %1, spend, %qe ); 
 
 
 /* 
 --------------------------------------------------------------------------------
--- Regain Essence Trigger ------------------------------------------------------
+-- Regain Mana Trigger ---------------------------------------------------------
 */
 
-&regain.trigger.essence psrs=
+&regain.trigger.mana [v( d.psrs )]=
 	think strcat( 
-		m:, %b, setr( m, u( f.match_method, %1, regain, essence, %2 )), %r, 
-		a:, %b, setr( a, u( amt.regain, %1, essence, %qm )), %r, 
-		u:, %b, setr( u, hasattr( %1, _advantage.Primal_Urge )), %r, 
-		s:, %b, setr( s, hasattr( %1, _advantage.Essence_Maximum )), %r, 
+		m:, %b, setr( m, u( f.match_method, %1, regain, mana, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, mana, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, _advantage.Gnosis )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.mana_maximum )), %r, 
 	); 
 
 	@assert cand( %qu, %qs )={ 
-		@pemit %0=u( .msg, essence/regain, 
+		@pemit %0=u( .msg, mana/regain, 
 			cat( 
 				if( strmatch( %0, %1 ), You, name( %1 )), 
-				must have both Primal Urge and an Essence pool 
+				must have both Gnosis and an Mana pool 
 			)
 		) 
 	}; 
 
 	@assert strlen( %qm )={ 
-		@pemit %0=u( .msg, essence/regain, I could not find the method '%2' ) 
+		@pemit %0=u( .msg, mana/regain, I could not find the method '%2' ) 
 	}; 
 
 	@assert t( %qa )={ 
-		@pemit %0=u( .msg, essence/regain, rest( %qa )) 
+		@pemit %0=u( .msg, mana/regain, rest( %qa )) 
 	}; 
 
-	@assert t( setr( e, u( f.pool.canchange, %1, Essence, %qa )))={ 
-		@pemit %0=u( .msg, essence/regain, rest( %qe )) 
+	@assert t( setr( e, u( f.pool.canchange, %1, mana, %qa )))={ 
+		@pemit %0=u( .msg, mana/regain, rest( %qe )) 
 	}; 
 
-	@assert t( setr( e, u( f.pool.changestat, %1, essence, %qa )))={ 
-		@pemit %0=u( .msg, essence/regain, rest( %qe )) 
+	@assert t( setr( e, u( f.pool.changestat, %1, mana, %qa )))={ 
+		@pemit %0=u( .msg, mana/regain, rest( %qe )) 
 	}; 
 
 	think e: 
 		[setr( e, 
-			u( display.number, %0, %1, essence, regain, %qa, %qm, %4 )
+			u( display.number, %0, %1, mana, regain, %qa, %qm, %4 )
 		)]; 
 	@eval u( f.announcement, %0, %1, regain, %qe ); 
 
@@ -4847,11 +3844,6 @@ Gnosis		Trait		Obsessions 		Arcanum		Arcanum		Mana
 10			10			4				5			5			75
 
 
-
-Arcanum			Maximum Untrained
-Ruling			5 dots
-Common			4 dots
-Inferior		2 dots
 
 --==--=-=-=-=-=-=
 
