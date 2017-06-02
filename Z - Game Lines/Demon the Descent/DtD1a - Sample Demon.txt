@@ -13,7 +13,7 @@
 &_bio.vice cs:dtd=Autonomous
 &_bio.incarnation cs:dtd=Messenger
 &_bio.agenda cs:dtd=Inquisitor
-&_bio.catalyst cs:dtd=Saw the Lines
+@@ &_bio.catalyst cs:dtd=Saw the Lies
 
 &_advantage.willpower cs:dtd=derived
 &_advantage.willpower_maximum cs:dtd=derived
@@ -89,7 +89,7 @@
 &_merit.contracts_(gabrielle_washington) cs:dtd=2
 
 &_demonic_form.glory_and_terror cs:dtd=1
-&_demonic_form.inuman_reflexes cs:dtd=1
+&_demonic_form.inhuman_reflexes cs:dtd=1
 &_demonic_form.insect_swarm cs:dtd=1
 &_demonic_form.night_vision cs:dtd=1
 &_demonic_form.slippery_body cs:dtd=1

@@ -1,7 +1,5 @@
-*** RE-DO THIS TO BE A STIGMATIC ***
-
-@@ SAMPLE DEMON
-@@ This is the demon from the core Demon book character sheet
+@@ SAMPLE STIGMATIC
+@@ This is a made-up Stigmatic, based almost entirely on the sample Demon
 
 @create Stigmatic Chargen Sheet <cs:dtd:s>
 @fo me=&_special.sheet_location me=num( Stigmatic Chargen Sheet <cs:dtd:s> )
@@ -78,4 +76,4 @@
 &_merit.fleet_of_foot cs:dtd:s=3
 &_merit.resources cs:dtd:s=1
 
-
+&_merit.clairvoyance cs:dtd:s=3
