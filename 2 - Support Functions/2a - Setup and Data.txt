@@ -8,6 +8,8 @@
 
 @fo me=&d.sfp me=[search( name=stat functions prototype <sfp> )]
 
+@fo me=@parent Stat Functions Prototype <sfp>=
+search( name=Code Object Data Parent <codp> )
 
 /*
 ================================================================================
