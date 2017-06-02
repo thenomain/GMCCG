@@ -53,6 +53,7 @@
 
 &_skill.athletics cs:gmc=3
 &_skill.brawl cs:gmc=2
+&_skill.drive cs:gmc=
 &_skill.firearms cs:gmc=1
 &_skill.larceny cs:gmc=1
 &_skill.stealth cs:gmc=
