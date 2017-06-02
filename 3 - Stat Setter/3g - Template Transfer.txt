@@ -1,4 +1,7 @@
 /*
+
+************* THIS IS NOWHERE CLOSE TO FINISHED *************
+
 sheet/transition <player>=<new template>
 
 Transition from one template to another.
