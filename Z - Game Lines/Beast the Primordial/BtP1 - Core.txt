@@ -3,8 +3,13 @@
 ## BEAST: THE PRIMORDIAL #######################################################
 
 This file includes all additions to the system for Beast: The Primordial 
-core rules
+core rules.
 
+Some of this was coded by the fine folks at...a game I can't remember.
+Let me know so I can credit you.
+
+There is a lot that's not coded, here. A "Kinship" system was beyond my ability 
+at the time and therefore was never done; there is a summary in the end notes.
 
 
 
@@ -18,8 +23,8 @@ Level 2 for powers
 Level 3 for very minor items
 */
 
-&d.search-order-02-beast sfp=atavism nightmare
-&d.search-order-03-beast sfp=
+&d.search-order-02-beast [v( d.sfp )]=atavism nightmare
+&d.search-order-03-beast [v( d.sfp )]=
 
 
 
@@ -33,23 +38,23 @@ Level 3 for very minor items
 */
 
 // CODP prefixes
-&prefix.beast_-_atavism dd=atavism.
-&prefix.beast_-_nightmares dd=nightmare.
+&prefix.beast_-_atavism [v( d.dd )]=atavism.
+&prefix.beast_-_nightmares [v( d.dd )]=nightmare.
 
-&prefix.beast_-_atavism d:t=tags.atavism.
-&prefix.beast_-_nightmare d:t=tags.nightmare.
+&prefix.beast_-_atavism [v( d.dt )]=tags.atavism.
+&prefix.beast_-_nightmare [v( d.dt )]=tags.nightmare.
 
 
 // add to templates
-@fo me=&bio.template dd=[get( dd/bio.template )].Beast
+@fo me=&bio.template [v( d.dd )]=[get( dd/bio.template )].Beast
 
 
 // register "max trait" statpath
-&.max_trait.beast dd=advantage.lair
+&.max_trait.beast [v( d.dd )]=advantage.lair
 
 
 // register "sphere"'s templates (could this be folded into 'templates'?)
-&.sphere.beast dd=Beast
+&.sphere.beast [v( d.dd )]=Beast
 
 
 /*
@@ -57,20 +62,20 @@ Level 3 for very minor items
 == BEAST BIO ===================================================================
 */
 
-&bio.family DD=Anakim.Eshmaki.Makra.Namtaru.Ugallu
-&tags.bio.family D:T=beast
+&bio.family [v( d.dd )]=Anakim.Eshmaki.Makra.Namtaru.Ugallu
+&tags.bio.family [v( d.dt )]=beast
 
-&bio.hunger DD=Tyrant.Collector.Predator.Nemesis.Ravager
-&tags.bio.hunger D:T=beast
+&bio.hunger [v( d.dd )]=Tyrant.Collector.Predator.Nemesis.Ravager
+&tags.bio.hunger [v( d.dt )]=beast
 
-// &bio.??? DD=*
-// &tags.bio.??? D:T=beast.clique
+// &bio.??? [v( d.dd )]=*
+// &tags.bio.??? [v( d.dt )]=beast.clique
 
-&bio.legend DD=???
-&tags.bio.legend D:T=beast
+&bio.legend [v( d.dd )]=???
+&tags.bio.legend [v( d.dt )]=beast
 
-&bio.life DD=???
-&tags.bio.life D:T=beast
+&bio.life [v( d.dd )]=???
+&tags.bio.life [v( d.dt )]=beast
 
 
 
@@ -79,13 +84,13 @@ Level 3 for very minor items
 == BEAST ADVANTAGES ============================================================
 */
 
-&advantage.satiety DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.satiety DD=2
-&tags.advantage.satiety D:T=integrity.beast
+&advantage.satiety [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.satiety [v( d.dd )]=2
+&tags.advantage.satiety [v( d.dt )]=integrity.beast
 
-&advantage.lair DD=1.2.3.4.5.6.7.8.9.10
-&default.advantage.lair DD=1
-&tags.advantage.lair D:T=power.beast
+&advantage.lair [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.lair [v( d.dd )]=1
+&tags.advantage.lair [v( d.dt )]=power.beast
 
 
 
@@ -96,106 +101,106 @@ Level 3 for very minor items
 Beast introduces a new kind of merit, the 'Advanced' (and 'Epic'), which are 
 extensions of a basic merit. For instance, 'Danger Sense (Advanced)'.
 
-We are not, and cannot, notate the merit that way. Instead, the merit is given 
-the word 'Advanced' or 'Epic' at the end. In the above example, 'Danger Sense 
-Advanced'.
+We are not notating, and cannot notate, the merit that way. Instead, the merit 
+is given the word 'Advanced' or 'Epic' at the end. In the above example, 'Danger 
+Sense Advanced'.
 
 Oh yeah, why didn't this CofD book categorize the merits into the usual:
 	physical, social, mental, fighting, supernatural
 
 */
 
-&merit.danger_sense_advanced DD=2
-&prereq-text.merit.danger_sense_advanced DD=Has Danger Sense
+&merit.danger_sense_advanced [v( d.dd )]=2
+&prereq-text.merit.danger_sense_advanced [v( d.dd )]=Has Danger Sense
 &prerequisite.merit.danger_sense_advanced=u( .has, %0, merit.danger_sense )
-&tags.merit.danger_sense_advanced D:T=beast
+&tags.merit.danger_sense_advanced [v( d.dt )]=beast
 
-&merit.direction_sense_advanced DD=2
-&prereq-text.merit.direction_sense_advanced DD=Has Direction Sense
+&merit.direction_sense_advanced [v( d.dd )]=2
+&prereq-text.merit.direction_sense_advanced [v( d.dd )]=Has Direction Sense
 &prerequisite.merit.direction_sense_advanced=
 	u( .has, %0, merit.direction_sense )
-&tags.merit.direction_sense_advanced D:T=beast
+&tags.merit.direction_sense_advanced [v( d.dt )]=beast
 
-&merit.direction_sense_epic DD=2
-&prereq-text.merit.direction_sense_epic DD=Has Direction Sense Advanced
+&merit.direction_sense_epic [v( d.dd )]=2
+&prereq-text.merit.direction_sense_epic [v( d.dd )]=Has Direction Sense Advanced
 &prerequisite.merit.direction_sense_epic=
 	u( .has, %0, merit.direction_sense_advanced )
-&tags.merit.direction_sense_epic D:T=beast
+&tags.merit.direction_sense_epic [v( d.dt )]=beast
 
-&merit.double_jointed_advanced DD=1
-&prereq-text.merit.double_jointed_advanced DD=Has Double Jointed
+&merit.double_jointed_advanced [v( d.dd )]=1
+&prereq-text.merit.double_jointed_advanced [v( d.dd )]=Has Double Jointed
 &prerequisite.merit.double_jointed_advanced=u( .has, %0, merit.double_jointed )
-&tags.merit.double_jointed_advanced D:T=beast
+&tags.merit.double_jointed_advanced [v( d.dt )]=beast
 
-&merit.eidetic_memory_advanced DD=1
-&prereq-text.merit.eidetic_memory_advanced DD=
+&merit.eidetic_memory_advanced [v( d.dd )]=1
+&prereq-text.merit.eidetic_memory_advanced [v( d.dd )]=
 	Eidetic Memory or Mimir's Wisdom Atavism
-&prerequisite.merit.eidetic_memory_advanced DD=
+&prerequisite.merit.eidetic_memory_advanced [v( d.dd )]=
 	u( .has_one_of, %0, merit.eidetic_memory atavism.mimir's_wisdom )
-&tags.merit.eidetic_memory_advanced D:T=beast
+&tags.merit.eidetic_memory_advanced [v( d.dt )]=beast
 
-&merit.epic_potential DD=1
-&tags.merit.epic_potential D:T=beast
+&merit.epic_potential [v( d.dd )]=1
+&tags.merit.epic_potential [v( d.dt )]=beast
 
-&merit.fame_advanced DD=1.2.3
-&prereq-text.merit.fame_advanced DD=Fame (equal level or higher)
-&prerequisite.merit.fame_advanced DD=
+&merit.fame_advanced [v( d.dd )]=1.2.3
+&prereq-text.merit.fame_advanced [v( d.dd )]=Fame (equal level or higher)
+&prerequisite.merit.fame_advanced [v( d.dd )]=
 	u( .at_most_stat, %0, merit.fame_advanced, merit.fame, %2 )
-&tags.merit.fame_advanced DD=beast
+&tags.merit.fame_advanced [v( d.dd )]=beast
 
-&merit.fast_reflexes_advanced DD=1
-&prereq-text.merit.fast_reflexes_advanced DD=Fast Reflexes 3
-&prerequisite.merit.fast_reflexes_advanced DD=
+&merit.fast_reflexes_advanced [v( d.dd )]=1
+&prereq-text.merit.fast_reflexes_advanced [v( d.dd )]=Fast Reflexes 3
+&prerequisite.merit.fast_reflexes_advanced [v( d.dd )]=
 	u( .at_least, %0, merit.fast_reflexes, 3 )
-&tags.merit.fast_reflexes_advanced D:T=beast
+&tags.merit.fast_reflexes_advanced [v( d.dt )]=beast
 
-&merit.fist_of_nightmares DD=2
-&prereq-text.merit.fist_of_nightmares DD=Brawl 2+, Occult 2+
-&prerequisite.merit.fist_of_nightmares DD=
+&merit.fist_of_nightmares [v( d.dd )]=2
+&prereq-text.merit.fist_of_nightmares [v( d.dd )]=Brawl 2+, Occult 2+
+&prerequisite.merit.fist_of_nightmares [v( d.dd )]=
 	u( .at_least_all, %0, skill.brawl:2 skill.occult:2 )
-&tags.merit.fist_of_nightmares D:T=beast
+&tags.merit.fist_of_nightmares [v( d.dt )]=beast
 
-&merit.giant_advanced DD=2
-&prereq-text.merit.giant_advanced DD=Has Giant
-&prerequisite.merit.giant_advanced DD=u( .has, %0, merit.giant )
-&tags.merit.giant_advanced D:T=beast
+&merit.giant_advanced [v( d.dd )]=2
+&prereq-text.merit.giant_advanced [v( d.dd )]=Has Giant
+&prerequisite.merit.giant_advanced [v( d.dd )]=u( .has, %0, merit.giant )
+&tags.merit.giant_advanced [v( d.dt )]=beast
 
-&merit.guilty_pleasure_() DD=1|*
-&prereq-text.merit.guilty_pleasure_() DD=May only be taken once
-&prerequisite.merit.guilty_pleasure_() DD=
+&merit.guilty_pleasure_() [v( d.dd )]=1|*
+&prereq-text.merit.guilty_pleasure_() [v( d.dd )]=May only be taken once
+&prerequisite.merit.guilty_pleasure_() [v( d.dd )]=
 	not( lattr( %0/_merit.guilty_pleasure_(*) ))
-&tags.merit.guilty_pleasure_() D:T=beast
+&tags.merit.guilty_pleasure_() [v( d.dt )]=beast
 
-&merit.hunger_management DD=1.2.3
-&prereq-text.merit.hunger_management DD=Resolve 3+
-&prerequisite.merit.hunger_management DD=
+&merit.hunger_management [v( d.dd )]=1.2.3
+&prereq-text.merit.hunger_management [v( d.dd )]=Resolve 3+
+&prerequisite.merit.hunger_management [v( d.dd )]=
 	u( .at_least, %0, attribute.resolve, 3 )
-&tags.merit.hunger_management D:T=beast
+&tags.merit.hunger_management [v( d.dt )]=beast
 
-&merit.iron_skin_advanced DD=1.2
-&prereq-text.merit.iron_skin_advanced DD=Stamina 4+
-&prerequisite.merit.iron_skin_advanced DD=
+&merit.iron_skin_advanced [v( d.dd )]=1.2
+&prereq-text.merit.iron_skin_advanced [v( d.dd )]=Stamina 4+
+&prerequisite.merit.iron_skin_advanced [v( d.dd )]=
 	u( .at_least, %0, attribute.stamina, 4 )
-&tags.merit.iron_skin_advanced D:T=beast
+&tags.merit.iron_skin_advanced [v( d.dt )]=beast
 
-&merit.iron_skin_epic DD=2
-&prereq-text.merit.iron_skin_epic DD=Stamina 5+
-&prerequisite.merit.iron_skin_epic DD=u( .at_least, %0, attribute.stamina, 5 )
-&tags.merit.iron_skin_epic D:T=beast
+&merit.iron_skin_epic [v( d.dd )]=2
+&prereq-text.merit.iron_skin_epic [v( d.dd )]=Stamina 5+
+&prerequisite.merit.iron_skin_epic [v( d.dd )]=u( .at_least, %0, attribute.stamina, 5 )
+&tags.merit.iron_skin_epic [v( d.dt )]=beast
 
-&merit.killer_instinct DD=1.2.3
-&prereq-text.merit.killer_instinct DD=Composure 3+, Medicine 1+, Wits 3+
-&prerequisite.merit.killer_instinct DD=
+&merit.killer_instinct [v( d.dd )]=1.2.3
+&prereq-text.merit.killer_instinct [v( d.dd )]=Composure 3+, Medicine 1+, Wits 3+
+&prerequisite.merit.killer_instinct [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.composure:3 skill.medicine:1 attribute.wits:3 
 	)
-// &tags.merit.killer_instinct D:T=mental? social?
+// &tags.merit.killer_instinct [v( d.dt )]=mental? social?
 
-&merit.killer_instinct_advanced DD=1.2.3
-&prereq-text.merit.killer_instinct_advanced DD=Killer Instinct 3
-&prerequisite.merit.killer_instinct_advanced DD=
+&merit.killer_instinct_advanced [v( d.dd )]=1.2.3
+&prereq-text.merit.killer_instinct_advanced [v( d.dd )]=Killer Instinct 3
+&prerequisite.merit.killer_instinct_advanced [v( d.dd )]=
 	u( .at_least, merit.killer_instinct, 3 )
-&tags.merit.killer_instinct_advanced D:T=beast
+&tags.merit.killer_instinct_advanced [v( d.dt )]=beast
 
 // Library Advanced: We are linking it to a Safe Place via <Type> as a way to 
 // check validity, but it isn't otherwise set up this way and can only be 
@@ -203,12 +208,12 @@ Oh yeah, why didn't this CofD book categorize the merits into the usual:
 // If used by a Beast (having advantage.lair), this limitation is ignored and 
 // staff must limit it themselves.
 
-&merit.library_advanced_() DD=1.2.3.4.5|*|*
-&prereq-text.merit.library_advanced_() DD=
+&merit.library_advanced_() [v( d.dd )]=1.2.3.4.5|*|*
+&prereq-text.merit.library_advanced_() [v( d.dd )]=
 	Library (any) at 3, 
 	Safe Place (<type>) equal to dots rating or a dedicated Lair room, 
 	Can only be taken once
-&prerequisite.merit.library_advanced_() DD=
+&prerequisite.merit.library_advanced_() [v( d.dd )]=
 	cand( 
 // .. any library at 3
 		lor( 
@@ -235,26 +240,26 @@ Oh yeah, why didn't this CofD book categorize the merits into the usual:
 			)
 		) 
 	)
-&tags.merit.library_advanced_() D:T=location.mental
+&tags.merit.library_advanced_() [v( d.dt )]=location.mental
 
-&merit.relentless_assault DD=1.2.3.4.5
-&prereq-text.merit.relentless_assault DD=Strength 3+, Stamina 3+, Brawl 2+
-&prerequisite.merit.relentless_assault DD=
+&merit.relentless_assault [v( d.dd )]=1.2.3.4.5
+&prereq-text.merit.relentless_assault [v( d.dd )]=Strength 3+, Stamina 3+, Brawl 2+
+&prerequisite.merit.relentless_assault [v( d.dd )]=
 	u( .at_least_all, %0, 
 		attribute.strength:3 attribute.stamina:3 skill.brawl:2 
 	)
-&tags.merit.relentless_assault D:T=fighting.style
+&tags.merit.relentless_assault [v( d.dt )]=fighting.style
 
-&merit.spoor DD=1.2.3.4.5
-&prereq-text.merit.spoor DD=Cannot have the 'Fame' merit
-&prerequisite.merit.spoor DD=not( lattr( %0/_merit.fame_(*) ))
-&tags.merit.spoor D:T=beast
+&merit.spoor [v( d.dd )]=1.2.3.4.5
+&prereq-text.merit.spoor [v( d.dd )]=Cannot have the 'Fame' merit
+&prerequisite.merit.spoor [v( d.dd )]=not( lattr( %0/_merit.fame_(*) ))
+&tags.merit.spoor [v( d.dt )]=beast
 
-&merit.striking_looks_advanced_() DD=2|*
-&prereq-text.striking_looks_advanced_() DD=Has Striking Looks (<type>)
-&prerequisite.striking_looks_advanced_() DD=
+&merit.striking_looks_advanced_() [v( d.dd )]=2|*
+&prereq-text.striking_looks_advanced_() [v( d.dd )]=Has Striking Looks (<type>)
+&prerequisite.striking_looks_advanced_() [v( d.dd )]=
 	u( .has, %0, merit.striking_looks_(%1) )
-&tags.striking_looks_advanced_() D:T=beast
+&tags.striking_looks_advanced_() [v( d.dt )]=beast
 
 
 
@@ -267,128 +272,128 @@ attributes. (The only change being 'Behold, My True Form!')
 
 */
 
-&class.nightmare.? DD=flag
+&class.nightmare.? [v( d.dd )]=flag
 
 
 // -- Nightmares: Common (available to all) ------------------------------------
 
-&nightmare.all_your_teeth_are_falling_out DD=1
-&tags.nightmare.all_your_teeth_are_falling_out D:T=beast.common
+&nightmare.all_your_teeth_are_falling_out [v( d.dd )]=1
+&tags.nightmare.all_your_teeth_are_falling_out [v( d.dt )]=beast.common
 
-&nightmare.behold_my_true_form! DD=1
-&tags.nightmare.behold_my_true_form! D:T=beast.common
+&nightmare.behold_my_true_form! [v( d.dd )]=1
+&tags.nightmare.behold_my_true_form! [v( d.dt )]=beast.common
 
-&nightmare.bugs_everywhere! DD=1
-&tags.nightmare.bugs_everywhere! D:T=beast.common
+&nightmare.bugs_everywhere! [v( d.dd )]=1
+&tags.nightmare.bugs_everywhere! [v( d.dt )]=beast.common
 
-&nightmare.everything_you_do_is_worthless DD=1
-&tags.nightmare.everything_you_do_is_worthless D:T=beast.common
+&nightmare.everything_you_do_is_worthless [v( d.dd )]=1
+&tags.nightmare.everything_you_do_is_worthless [v( d.dt )]=beast.common
 
-&nightmare.fear_is_contagious DD=1
-&tags.nightmare.fear_is_contagious D:T=beast.common
+&nightmare.fear_is_contagious [v( d.dd )]=1
+&tags.nightmare.fear_is_contagious [v( d.dt )]=beast.common
 
-&nightmare.flying_and_falling DD=1
-&tags.nightmare.flying_and_falling D:T=beast.common
+&nightmare.flying_and_falling [v( d.dd )]=1
+&tags.nightmare.flying_and_falling [v( d.dt )]=beast.common
 
-&nightmare.run_away DD=1
-&tags.nightmare.run_away D:T=beast.common
+&nightmare.run_away [v( d.dd )]=1
+&tags.nightmare.run_away [v( d.dt )]=beast.common
 
-&nightmare.they_are_all_around_you DD=1
-&tags.nightmare.they_are_all_around_you D:T=beast.common
+&nightmare.they_are_all_around_you [v( d.dd )]=1
+&tags.nightmare.they_are_all_around_you [v( d.dt )]=beast.common
 
-&nightmare.you_are_alone DD=1
-&tags.nightmare.you_are_alone D:T=beast.common
+&nightmare.you_are_alone [v( d.dd )]=1
+&tags.nightmare.you_are_alone [v( d.dt )]=beast.common
 
-&nightmare.you_are_not_alone DD=1
-&tags.nightmare.you_are_not_alone D:T=beast.common
+&nightmare.you_are_not_alone [v( d.dd )]=1
+&tags.nightmare.you_are_not_alone [v( d.dt )]=beast.common
 
-&nightmare.you_can't_wake_up DD=1
-&tags.nightmare.you_can't_wake_up D:T=beast.common
+&nightmare.you_can't_wake_up [v( d.dd )]=1
+&tags.nightmare.you_can't_wake_up [v( d.dt )]=beast.common
 
-&nightmare.you_cannot_run DD=1
-&tags.nightmare.you_cannot_run D:T=beast.common
+&nightmare.you_cannot_run [v( d.dd )]=1
+&tags.nightmare.you_cannot_run [v( d.dt )]=beast.common
 
-&nightmare.you_deserve_this DD=1
-&tags.nightmare.you_deserve_this D:T=beast.common
+&nightmare.you_deserve_this [v( d.dd )]=1
+&tags.nightmare.you_deserve_this [v( d.dt )]=beast.common
 
-&nightmare.you_must_obey DD=1
-&tags.nightmare.you_must_obey D:T=beast.common
+&nightmare.you_must_obey [v( d.dd )]=1
+&tags.nightmare.you_must_obey [v( d.dt )]=beast.common
 
-&nightmare.you_will_never_rest DD=1
-&tags.nightmare.you_will_never_rest D:T=beast.common
+&nightmare.you_will_never_rest [v( d.dd )]=1
+&tags.nightmare.you_will_never_rest [v( d.dt )]=beast.common
 
 
 // -- Nightmares: Kinship (given the Family Ties Condition to a different type) 
 
-&nightmare.you_are_infected DD=1
-&prereq-text.nightmare.you_are_infected DD=
+&nightmare.you_are_infected [v( d.dd )]=1
+&prereq-text.nightmare.you_are_infected [v( d.dd )]=
 	Family Ties Condition with Vampire
-&tags.nightmare.you_are_infected D:T=beast.kinship
+&tags.nightmare.you_are_infected [v( d.dt )]=beast.kinship
 
-&nightmare.we_know_all_your_secrets DD=1
-&prereq-text.nightmare.we_know_all_your_secrets DD=
+&nightmare.we_know_all_your_secrets [v( d.dd )]=1
+&prereq-text.nightmare.we_know_all_your_secrets [v( d.dd )]=
 	Family Ties Condition with Mekhet Vampire
-&tags.nightmare.we_know_all_your_secrets D:T=beast.kinship
+&tags.nightmare.we_know_all_your_secrets [v( d.dt )]=beast.kinship
 
-&nightmare.your_rage_consumes_you DD=1
-&prereq-text.nightmare.your_rage_consumes_you DD=
+&nightmare.your_rage_consumes_you [v( d.dd )]=1
+&prereq-text.nightmare.your_rage_consumes_you [v( d.dd )]=
 	Family Ties Condition with Werewolf
-&tags.nightmare.your_rage_consumes_you D:T=beast.kinship
+&tags.nightmare.your_rage_consumes_you [v( d.dt )]=beast.kinship
 
-&nightmare.your_tools_betray_you DD=1
-&prereq-text.nightmare.your_tools_betray_you DD=
+&nightmare.your_tools_betray_you [v( d.dd )]=1
+&prereq-text.nightmare.your_tools_betray_you [v( d.dd )]=
 	Family Ties Condition with Iron Master Werewolf
-&tags.nightmare.your_tools_betray_you D:T=beast.kinship
+&tags.nightmare.your_tools_betray_you [v( d.dt )]=beast.kinship
 
-&nightmare.you_are_better_than_them DD=1
-&prereq-text.nightmare.you_are_better_than_them DD=
+&nightmare.you_are_better_than_them [v( d.dd )]=1
+&prereq-text.nightmare.you_are_better_than_them [v( d.dd )]=
 	Family Ties Condition with Mage
-&tags.nightmare.you_are_better_than_them D:T=beast.kinship
+&tags.nightmare.you_are_better_than_them [v( d.dt )]=beast.kinship
 
-&nightmare.the_void_is_waiting DD=1
-&prereq-text.nightmare.the_void_is_waiting DD=
+&nightmare.the_void_is_waiting [v( d.dd )]=1
+&prereq-text.nightmare.the_void_is_waiting [v( d.dd )]=
 	Family Ties Condition with Low-Wisdom Mage
-&tags.nightmare.the_void_is_waiting D:T=beast.kinship
+&tags.nightmare.the_void_is_waiting [v( d.dt )]=beast.kinship
 
-&nightmare.everyone_hates_you DD=1
-&prereq-text.nightmare.everyone_hates_you DD=
+&nightmare.everyone_hates_you [v( d.dd )]=1
+&prereq-text.nightmare.everyone_hates_you [v( d.dd )]=
 	Family Ties Condition with Promethean
-&tags.nightmare.everyone_hates_you D:T=beast.kinship
+&tags.nightmare.everyone_hates_you [v( d.dt )]=beast.kinship
 
-&nightmare.you_cannot_kill_it DD=1
-&prereq-text.nightmare.you_cannot_kill_it DD=
+&nightmare.you_cannot_kill_it [v( d.dd )]=1
+&prereq-text.nightmare.you_cannot_kill_it [v( d.dd )]=
 	Family Ties Condition with Tammuz Promethean
-&tags.nightmare.you_cannot_kill_it D:T=beast.kinship
+&tags.nightmare.you_cannot_kill_it [v( d.dt )]=beast.kinship
 
-&nightmare.you_are_lost DD=1
-&prereq-text.nightmare.you_are_lost DD=
+&nightmare.you_are_lost [v( d.dd )]=1
+&prereq-text.nightmare.you_are_lost [v( d.dd )]=
 	Family Ties Condition with Changeling
-&tags.nightmare.you_are_lost D:T=beast.kinship
+&tags.nightmare.you_are_lost [v( d.dt )]=beast.kinship
 
-&nightmare.you_are_an_impostor DD=1
-&prereq-text.nightmare.you_are_an_impostor DD=
+&nightmare.you_are_an_impostor [v( d.dd )]=1
+&prereq-text.nightmare.you_are_an_impostor [v( d.dd )]=
 	Family Ties Condition with Mannikin Changeling
-&tags.nightmare.you_are_an_impostor D:T=beast.kinship
+&tags.nightmare.you_are_an_impostor [v( d.dt )]=beast.kinship
 
-&nightmare.death_is_a_prison DD=1
-&prereq-text.nightmare.death_is_a_prison DD=
+&nightmare.death_is_a_prison [v( d.dd )]=1
+&prereq-text.nightmare.death_is_a_prison [v( d.dd )]=
 	Family Ties Condition with Sin-Eater
-&tags.nightmare.death_is_a_prison D:T=beast.kinship
+&tags.nightmare.death_is_a_prison [v( d.dt )]=beast.kinship
 
-&nightmare.you_can't_take_it_with_you DD=1
-&prereq-text.nightmare.you_can't_take_it_with_you DD=
+&nightmare.you_can't_take_it_with_you [v( d.dd )]=1
+&prereq-text.nightmare.you_can't_take_it_with_you [v( d.dd )]=
 	Family Ties Condition with Bonepicker Sin-Eater
-&tags.nightmare.you_can't_take_it_with_you D:T=beast.kinship
+&tags.nightmare.you_can't_take_it_with_you [v( d.dt )]=beast.kinship
 
-&nightmare.tabula_rasa DD=1
-&prereq-text.nightmare.tabula_rasa DD=
+&nightmare.tabula_rasa [v( d.dd )]=1
+&prereq-text.nightmare.tabula_rasa [v( d.dd )]=
 	Family Ties Condition with Mummy
-&tags.nightmare.tabula_rasa D:T=beast.kinship
+&tags.nightmare.tabula_rasa [v( d.dt )]=beast.kinship
 
-&nightmare.cursed_object DD=1
-&prereq-text.nightmare.cursed_object DD=
+&nightmare.cursed_object [v( d.dd )]=1
+&prereq-text.nightmare.cursed_object [v( d.dd )]=
 	Family Ties Condition with Maa-Kep Mummy
-&tags.nightmare.cursed_object D:T=beast.kinship
+&tags.nightmare.cursed_object [v( d.dt )]=beast.kinship
 
 
 
@@ -397,90 +402,238 @@ attributes. (The only change being 'Behold, My True Form!')
 == BEAST ATAVISMS ==============================================================
 */
 
-&class.atavism.? DD=flag
+&class.atavism.? [v( d.dd )]=flag
 
-&atavism.alien_allure DD=1
-&tags.atavism.alien_allure D:T=beast.makara
+&atavism.alien_allure [v( d.dd )]=1
+&tags.atavism.alien_allure [v( d.dt )]=beast.makara
 
-&atavism.basilisk's_touch DD=1
-&tags.atavism.basilisk's_touch D:T=beast.namtaru
+&atavism.basilisk's_touch [v( d.dd )]=1
+&tags.atavism.basilisk's_touch [v( d.dt )]=beast.namtaru
 
-&atavism.cyclopean_strength DD=1
-&tags.atavism.cyclopean_strength D:T=beast.anakim
+&atavism.cyclopean_strength [v( d.dd )]=1
+&tags.atavism.cyclopean_strength [v( d.dt )]=beast.anakim
 
-&atavism.dragonfire DD=1
-&tags.atavism.dragonfire D:T=beast.eshmaki
+&atavism.dragonfire [v( d.dd )]=1
+&tags.atavism.dragonfire [v( d.dt )]=beast.eshmaki
 
-&atavism.eye_of_heaven DD=1
-&tags.atavism.eye_of_heaven D:T=beast.ugallu
+&atavism.eye_of_heaven [v( d.dd )]=1
+&tags.atavism.eye_of_heaven [v( d.dt )]=beast.ugallu
 
-&atavism.from_the_shadows DD=1
-&tags.atavism.from_the_shadows D:T=beast.eshmaki
+&atavism.from_the_shadows [v( d.dd )]=1
+&tags.atavism.from_the_shadows [v( d.dt )]=beast.eshmaki
 
-&atavism.heart_of_the_ocean DD=1
-&tags.atavism.heart_of_the_ocean D:T=beast.makara
+&atavism.heart_of_the_ocean [v( d.dd )]=1
+&tags.atavism.heart_of_the_ocean [v( d.dt )]=beast.makara
 
-&atavism.infestation DD=1
-&tags.atavism.infestation D:T=beast.namtaru
+&atavism.infestation [v( d.dd )]=1
+&tags.atavism.infestation [v( d.dt )]=beast.namtaru
 
-&atavism.limb_from_limb DD=1
-&tags.atavism.limb_from_limb D:T=beast.eshmaki
+&atavism.limb_from_limb [v( d.dd )]=1
+&tags.atavism.limb_from_limb [v( d.dt )]=beast.eshmaki
 
-&atavism.looming_presence DD=1
-&tags.atavism.looming_presence D:T=beast.anakim
+&atavism.looming_presence [v( d.dd )]=1
+&tags.atavism.looming_presence [v( d.dt )]=beast.anakim
 
-&atavism.mimir's_wisdom DD=1
-&tags.atavism.mimir's_wisdom D:T=beast.anakim
+&atavism.mimir's_wisdom [v( d.dd )]=1
+&tags.atavism.mimir's_wisdom [v( d.dt )]=beast.anakim
 
-&atavism.monster_from_the_deep DD=1
-&tags.atavism.monster_from_the_deep D:T=beast.makara
+&atavism.monster_from_the_deep [v( d.dd )]=1
+&tags.atavism.monster_from_the_deep [v( d.dt )]=beast.makara
 
-&atavism.needs_must DD=1
-&tags.atavism.needs_must D:T=beast.ugallu
+&atavism.needs_must [v( d.dd )]=1
+&tags.atavism.needs_must [v( d.dt )]=beast.ugallu
 
-&atavism.relentless_hunter DD=1
-&tags.atavism.relentless_hunter D:T=beast.eshmaki
+&atavism.relentless_hunter [v( d.dd )]=1
+&tags.atavism.relentless_hunter [v( d.dt )]=beast.eshmaki
 
-&atavism.shadowed_soul DD=1
-&tags.atavism.shadowed_soul D:T=beast.namtaru
+&atavism.shadowed_soul [v( d.dd )]=1
+&tags.atavism.shadowed_soul [v( d.dt )]=beast.namtaru
 
-&atavism.siren's_treacherous_song DD=1
-&tags.atavism.siren's_treacherous_song D:T=beast.makara
+&atavism.siren's_treacherous_song [v( d.dd )]=1
+&tags.atavism.siren's_treacherous_song [v( d.dt )]=beast.makara
 
-&atavism.storm-lashed DD=1
-&tags.atavism.storm-lashed D:T=beast.ugallu
+&atavism.storm-lashed [v( d.dd )]=1
+&tags.atavism.storm-lashed [v( d.dt )]=beast.ugallu
 
-&atavism.titanic_blow DD=1
-&tags.atavism.titanic_blow D:T=beast.anakim
+&atavism.titanic_blow [v( d.dd )]=1
+&tags.atavism.titanic_blow [v( d.dt )]=beast.anakim
 
-&atavism.unbreakable DD=1
-&tags.atavism.unbreakable D:T=beast.namtaru
+&atavism.unbreakable [v( d.dd )]=1
+&tags.atavism.unbreakable [v( d.dt )]=beast.namtaru
 
-&atavism.wings_of_the_raptor DD=1
-&tags.atavism.wings_of_the_raptor D:T=beast.ugallu
+&atavism.wings_of_the_raptor [v( d.dd )]=1
+&tags.atavism.wings_of_the_raptor [v( d.dt )]=beast.ugallu
 
 
 
 
 /* 
 ################################################################################
-## BEAST CHARGEN ###############################################################
+## BEAST: CHARGEN ##############################################################
 
+This was completed by ... I can't remember who did this, 'ADHDev' on GitHub. 
+I have not tested this, but they are running a game with this code and their 
+work looks complete and correct.
 
+Unlike the other core chargen sections, I am not breaking this down at all.
 
-================================================================================
-== CHARGEN: BIO ================================================================
-
-
---------------------------------------------------------------------------------
--- Bio Check -------------------------------------------------------------------
 */
 
-&check.bio.demon cg=legend life family hunger
+&check.bio.beast [v( d.cg )]=legend life family hunger
 
 
-// I have no idea what to do next, so taking a break.
+&f.allocated.power-trait.beast [v( d.cg )]=
+	mul( dec( first( get( %0/_advantage.lair ), . )), 5 )
 
+&f.allocated.nightmares [v( d.cg )]=
+	ladd( iter( lattr( %0/_nightmare.* ), get( %0/%i0 )))
+
+&f.allocated.atavisms [v( d.cg )]=
+	localize( strcat( 
+		setq( d, edit( lattr( %0/_ATAVISM.* ), ATAVISM., ATAVISM. )), 
+		setq( i, u( f.list-stats-tags, %0, atavism, get( %0/bio.family ))), 
+		ladd( iter( setdiff( %qd, %qi ), get( %0/%i0 ))), 
+		`, 
+		ladd( iter( %qi, get( %0/%i0 ))), 
+	))
+
+&check.atavisms [v( d.cg )]=
+	udefault( check.atavisms.[get( %0/_bio.template )], ** check failed **, %0 )
+
+&check.atavisms.beast [v( d.cg )]=
+	strcat( 
+		setq( 9, u( f.allocated.atavisms, %0 )), 
+		setq( t, ladd( %q9, )), 
+		setq( i, elements( %q9, 1, )), 
+		%b, %b, ansi( h, Total atavisms ), :, %b, 
+		if( eq( %qt, 0 ), ansi( xh, ), %qt ), %b, %(of 2%), %b, 
+		u( check.atavisms.beast.total, %qt ), %r, 
+		%b, %b, %b, %b, ansi( h, In-family ), :, %b, 
+		if( eq( %qi, 0 ), ansi( xh, ), %qi ), %b, %(at least 1%), 
+		%b, u( check.atavisms.beast.in-family, %qi ), %r 
+	)
+
+&check.atavisms.beast.total [v( d.cg )]=
+	u( display.check.ok-no, eq( %0, 2 ))
+
+&check.atavisms.beast.in-family [v( d.cg )]=
+	u( display.check.ok-no, gte( %0, 1 ))
+
+&check.nightmares [v( d.cg )]=
+	udefault( check.nightmares.[get( %0/_bio.template )], 
+		** check failed **, 
+		%0 
+	)
+
+&check.nightmares.beast [v( d.cg )]=
+	strcat( 
+		setq( 9, u( f.allocated.nightmares, %0 )), 
+		setq( t, ladd( %q9, )), 
+		setq( i, elements( %q9, 2, )), 
+		setq( o, elements( %q9, 1, ` )), 
+		%b, %b, ansi( h, Total nightmares ), :, %b, 
+		if( eq( %qt, 0 ), ansi( xh, ), %qt ), %b, %(of 2%), %b, 
+		u( check.nightmares.beast.total, %qt ), %r 
+	)
+
+&check.nightmares.beast.total [v( d.cg )]=
+	u( display.check.ok-no, eq( %0, 2 ))
+
+&check.chargen.beast [v( d.cg )]=
+	strcat( u( check.atavisms, %0, beast ), u( check.nightmares, %0, beast ))
+
+
+
+
+/* 
+################################################################################
+## BEAST: SHEET ################################################################
+
+See above regarding comments on who did this code and how it's not commented nor 
+organized.
+
+*/
+
+
+&bio.default.beast [v( d.nsc )]=
+	full_name birthdate concept template legend life family hunger
+
+&traits.morality.beast [v( d.nsc )]=
+	ulocal( f.cheat_getstat.morality, %0, satiety )
+
+&block.traits.beast [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+		setq( z, 
+			u( display.trait-and-value, 
+				u( traits.supernatural_resistance, %0 ), 
+				inc( strlen( Lair )), 
+				%qw, 
+				numeric 
+			)
+		), 
+		vcolumns( %qw:%qz, |, %b ), %r, 
+	)
+
+&powers.nightmares [v( d.nsc )]=
+	iter( 
+		sort( edit( lattr( %0/_nightmare.* ), _NIGHTMARE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, nightmare.%i0, numeric ), 
+		, | 
+	)
+
+&powers.atavisms [v( d.nsc )]=
+	iter( 
+		sort( edit( lattr( %0/_atavism.* ), _ATAVISM., )), 
+		ulocal( f.cheat_getstat.with_name, %0, atavism.%i0, numeric ), 
+		, | 
+	)
+
+&block.powers.beast [v( d.sheet )]=
+	strcat( 
+		setq( w, 79 ), 
+		setq( t, 70 ), 
+		setq( d, u( powers.nightmares, %0 )), 
+		setq( v, u( powers.atavisms, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+		divider( Nightmares ), %r, 
+		iter( %qb, %i0, |, %r ), %r, 
+		strcat( divider( Atavisms ), %r, table( %qv, %qt, %qw, | ), %r, ), 
+		null( to be continued ), 
+//		iter( %qv, %i0, |, %r ), %r, 
+	)
+
+
+
+
+/* 
+################################################################################
+## BEAST: XP COSTS #############################################################
+
+See above regarding comments on who did this code and how it's not commented nor 
+organized.
+
+*/
+
+&d.restricted.types.beast [v( d.xpas )]=atavism.nightmare
+
+&d.restricted.stats.beast [v( d.xpas )]=lair
+
+&xp.nightmare [v( d.xpcd )]=u( cost.standard, 3, %1, %2 )
+
+&xp.atavism [v( d.xpcd )]=
+	u( cost.standard, 
+		if( hastag?( %3, u( .value_full, %0, bio.family )), 3, 4 ), 
+		%1, %2 
+	)
+
+&xp.advantage.lair [v( d.xpcd )]=u( cost.standard, 5, %1, %2 )
 
 
 
@@ -586,5 +739,4 @@ Satiety: (integrity) - start at 2 to 7, see p. 80
 
 
 -==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=
-
 */
