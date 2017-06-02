@@ -10,13 +10,12 @@ mainly the "is this sheet chargen-compatible" system
 */
 
 @create GMC Chargen <cg>
-@set GMC Chargen <cg>=inherit safe
 @fo me=&d.cg me=GMC Chargen <cg>
+@set GMC Chargen <cg>=inherit safe
 
 @parent GMC Chargen <cg>=codp
-&prefix.dot-functions cg=.
-&prefix.checks cg=check.
-&prefix.display cg=format. display.
+&prefix.checks [v( d.cg )]=check.
+&prefix.display [v( d.cg )]=format. display.
 
 
 
@@ -30,6 +29,7 @@ mainly the "is this sheet chargen-compatible" system
 @fo me=&d.sfp [v( d.cg )]=search( name=stat functions prototype <sfp> )
 @fo me=&d.asp [v( d.cg )]=search( name=aspirations system <asp> )
 
+@fo me=&d.cg [v( d.nsc )]=search( name=GMC Chargen <cg> )
 
 
 /*
