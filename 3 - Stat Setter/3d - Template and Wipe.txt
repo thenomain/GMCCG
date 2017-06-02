@@ -46,6 +46,7 @@ qs: setting self? (1/0)
 			setq( 1, after( %0, = )), 
 			setq( 1, %0 )
 		), 
+		if( strmatch( %q0, me ), setq( 0, %# )),
 		setq( p, pmatch( %q0 )), 
 		setq( w, u( f.find-sheet, %qp )), 
 		setq( s, strmatch( %#, %qp )), 
