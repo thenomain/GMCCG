@@ -44,15 +44,17 @@ does not have the ability to handle nesting.
 */
 
 @create Newest Sheet Code <nsc>=10
-@set [v( d.nsc )]=inherit safe
 @fo me=&d.nsc me=[num( Newest Sheet Code <nsc> )]
+@set Newest Sheet Code <nsc>=inherit safe
 
 // --
 
 @fo me=&d.sfp [v( d.nsc )]=search( name=Stat Functions Prototype <sfp> )
 @fo me=&d.health [v( d.nsc )]=search( name=WoD Health System <whs> )
 @fo me=&d.dd [v( d.nsc )]=search( name=Data Dictionary <dd> )
-@fo me=&d.cg [v( d.nsc )]=search( name=GMC Chargen <cg> )
+
+// below happens before cg is installed: moving it to Chargen Setup, '8a'
+// @fo me=&d.cg [v( d.nsc )]=search( name=GMC Chargen <cg> )
 
 
 // --
