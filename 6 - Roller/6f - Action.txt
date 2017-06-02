@@ -44,8 +44,6 @@ n: action name
 
 a: attribute - action.<action name>
 
-uses: alert(), god help us
-
 */
 
 &c.action [v( d.nr )]=$^\+?actions?(.*)$:@pemit %#=
@@ -62,8 +60,8 @@ uses: alert(), god help us
 
 		case( 0, 
 			t( %q0 ), u( f.action.list, %# ), 
-			t( %qn ), [alert( Action )] Action name not entered., 
-			t( %qa ), [alert( Action )] Action '%qn' not found., 
+			t( %qn ), u( .msg, Action, Action name not entered ), 
+			t( %qa ), u( .msg, Action, Action '%qn' not found ), 
 			u( f.action.workhorse, %#, %qa, %qs, %qr )
 		)
 	)
@@ -102,7 +100,7 @@ r: rest of %qe, drop =target
 
 // .. error check and go
 		case( 0, 
-			t( %qe ), [alert( Action )] Action has no content%, so use roll., 
+			t( %qe ), u( Action, Action has no content%, so use roll ), 
 // .. 'roll' uses %qe to report errors, so we need to clear it
 			[setq( e, )][trigger( tr.action, %0, %qr, %qs )]
 		)
