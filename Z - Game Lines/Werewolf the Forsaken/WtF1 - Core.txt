@@ -761,8 +761,8 @@ Vampire also uses the 'rite' stat type, and it's also always a 'flag'.
 &rite.banish [v( d.dd )]=1
 &tags.rite.banish [v( d.dt )]=werewolf.wolf-blooded.pack
 
-&rite.harness_the_circle [v( d.dd )]=1
-&tags.rite.harness_the_circle [v( d.dt )]=werewolf.wolf-blooded.pack
+&rite.harness_the_cycle [v( d.dd )]=1
+&tags.rite.harness_the_cycle [v( d.dt )]=werewolf.wolf-blooded.pack
 
 &rite.totemic_empowerment [v( d.dd )]=1
 &tags.rite.totemic_empowerment [v( d.dt )]=werewolf.wolf-blooded.pack
