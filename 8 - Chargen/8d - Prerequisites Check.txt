@@ -30,7 +30,7 @@ returns: 1 if ok, #-1 <reason> if not
 
 */
 
-&f.prerequsite.cg-only [v( d.cg )]=
+&f.prerequisite.cg-only [v( d.cg )]=
 	if( 
 		cor( 
 			not( hastag?( rest( %1, . ), chargen-only )), 
@@ -64,7 +64,7 @@ t: templates for this stat
 
 */
 
-&f.prerequsite.template [v( d.cg )]=
+&f.prerequisite.template [v( d.cg )]=
 	localize( strcat( 
 		setq( s, ulocal([u( d.sfp )]/f.statpath-without-instance, %1 )), 
 
@@ -113,7 +113,7 @@ p: return for &prerequisite.<statpath>
 
 */
 
-&f.prerequsite.other [v( d.cg )]=
+&f.prerequisite.other [v( d.cg )]=
 	localize( strcat( 
 		setq( i, before( rest(%1, %( ), %) )), 
 		setq( s, ulocal( [u( d.sfp )]/f.statpath-without-instance, %1 )), 
