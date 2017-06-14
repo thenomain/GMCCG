@@ -53,7 +53,7 @@ Our old stand-by.
 		, u( c.census.default ), 
 		/*, u( c.census.switch, after( first( %q0 ), / ), rest( %q0 )), 
 		%b*, u( c.census.specific, trim( %q0 )), 
-		u( .msg. census, 
+		u( .msg, census, 
 			Census' format is census%[/<switch>%]%[ <input>%]
 		)
 	)]
