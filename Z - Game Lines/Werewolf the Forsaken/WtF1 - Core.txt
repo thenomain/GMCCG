@@ -122,14 +122,19 @@ Werewolf Stat Checks - Move these to "Werewolf" when it comes out
 &.Auspice_Skill_Check [v( d.dd )]=
 	t( setinter( 
 		%1, 
-		switch( u( .value_full, %0, bio.auspice ), 
-			cahalith, skill.crafts skill.expression skill.persuasion, 
-			elodoth, skill.empathy skill.investigation skill.politics, 
-			irraka, skill.larceny skill.stealth skill.subterfuge, 
-			ithaeur, skill.animal_ken skill.medicine skill.occult, 
-			rahu, skill.brawl skill.intimidation skill.survival 
-		)
+		v( d.auspice.skills.[u( .value_full, %0, bio.auspice )] )
 	))
+
+&d.auspice.skills.cahalith [v( d.dd )]=
+	skill.crafts skill.expression skill.persuasion
+&d.auspice.skills.elodoth [v( d.dd )]=
+	skill.empathy skill.investigation skill.politics
+&d.auspice.skills.irraka [v( d.dd )]=
+	skill.larceny skill.stealth skill.subterfuge
+&d.auspice.skills.ithaeur [v( d.dd )]=
+	skill.animal_ken skill.medicine skill.occult
+&d.auspice.skills.rahu [v( d.dd )]=
+	skill.brawl skill.intimidation skill.survival
 
 
 
