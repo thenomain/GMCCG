@@ -1,0 +1,1311 @@
+/*
+################################################################################
+## PROMETHEAN: THE CREATED #####################################################
+
+This file includes all additions to the system for Promethean: The Created
+core rules
+
+
+--------------------------------------------------------------------------------
+-- Pre-Setting Attributes ------------------------------------------------------
+
+If you don't have the attributes set on yourself, run this code:
+
+@fo me=&d.sfp me=search( name=Stat Functions Prototype <sfp> )
+@fo me=&d.dd me=search( name=Data Dictionary <dd> )
+@fo me=&d.dt me=search( name=Data Tags <d:t> )
+
+@fo me=&d.xpas me=search( name=XP Advancement System <xpas> )
+@fo me=&d.xpcd me=search( name=XP Cost Database <xpcd> )
+
+@fo me=&d.cg me=search( name=GMC Chargen <cg> )
+@fo me=&d.sheet me=search( name=Sheet: Rows )
+
+@fo me=&d.psrs me=search( name=Pool Spend Regain System <psrs> )
+
+
+
+################################################################################
+## PROMETHEAN: STAT FUNCTIONS ##################################################
+
+--------------------------------------------------------------------------------
+-- SFP: Search Order -----------------------------------------------------------
+
+Level 2 for powers 
+Level 3 for very minor items
+*/
+
+&d.search-order-02-promethean [v( d.sfp )]=
+	alchemicus benefice contamination corporeum deception disquietism 
+	electrification luciferus metamorphosis mesmerism saturninus sensorium 
+	spiritus vitality vulcanus
+&d.search-order-03-promethean [v( d.sfp )]=
+
+
+
+/*
+################################################################################
+## PROMETHEAN: DATA DICTIONARY #################################################
+
+
+
+================================================================================
+== DD: SETUP ===================================================================
+*/
+
+// CODP prefixes
+&prefix.promethean_-_xxxxxx [v( d.dd )]=discipline.
+&prefix.promethean_-_xxxxxx [v( d.dd )]=tags.discipline.
+
+
+// add to templates
+@fo me=&bio.template [v( d.dd )]=[get( v( d.dd )/bio.template )].Promethean
+
+
+// register "max trait" statpath
+&.max_trait.promethean [v( d.dd )]=advantage.azoth
+
+
+// register "sphere"'s templates (could this be folded into 'templates'?)
+&.sphere.promethean [v( d.dd )]=Promethean
+
+
+
+/*
+================================================================================
+== PROMETHEAN BIO ==============================================================
+*/
+
+&bio.lineage [v( d.dd )]=
+	Frankenstein.Galateid.Osiran.Tammuz.Ulgan.Unfleshed.Extempore
+&tags.bio.lineage [v( d.dt )]=promethean
+
+&bio.refinement [v( d.dd )]=
+	Aes.Argentum.Aurum.Cobalus.Cuprum.Ferrum.Mercurius.Plumbum.Stannum
+&tags.bio.refinement [v( d.dt )]=promethean
+
+&bio.elpsis [v( d.dd )]=
+	Courage.Drive.Empathy.Fear.Fury.Inspiration.Joy.Love.Sorrow.Pain
+&tags.bio.elpsis [v( d.dt )]=promethean
+
+&bio.dirge [v( d.dd )]=
+	Alienated.Awkward.Dejection.Logical.Merciless.Methodical.Obsession.
+	Paranoia.Passion.Naive
+&tags.bio.dirge [v( d.dt )]=promethean
+
+&bio.role [v( d.dd )]=
+	sort( 
+		iter( lattr( %!/d.promethean.role.* ), v( %i0 ), , . ), 
+		a, ., . 
+	)
+&tags.bio.role [v( d.dt )]=promethean
+&prerequisite.bio.role [v( d.dd )]=
+	u( .is_one_of, 
+		%0, bio.role, 
+		v( d.promethean.role.[u( .value_full, %0, bio.refinement)] )
+	)
+&prereq-text.bio.role [v( d.dd )]=Based on Refinement; please check the book
+
+&d.promethean.role.aes [v( d.dd )]=Bodyguard.Servant.Seeker
+&d.promethean.role.argentum [v( d.dd )]=Envoy.Observer.Warden
+&d.promethean.role.aurum [v( d.dd )]=Companion.Follower.Leader
+&d.promethean.role.cobalus [v( d.dd )]=Confessor.Deviant.Provocateur
+&d.promethean.role.cuprum [v( d.dd )]=Hermit.Sage.Watcher
+&d.promethean.role.ferrum [v( d.dd )]=Exemplar.Martyr.Soldier
+&d.promethean.role.mercurius [v( d.dd )]=Craftsman.Explorer.Scientist
+&d.promethean.role.phosphorum [v( d.dd )]=Daredevil.Psychopomp.Whip
+&d.promethean.role.plumbum [v( d.dd )]=Ascetic.Chronicler.Pilgrim
+&d.promethean.role.stannum [v( d.dd )]=Outcast.Savage.Vigilante
+
+// think u( v( d.dd )/bio.role )
+
+
+/*
+================================================================================
+== PROMETHEAN ADVANTAGES =======================================================
+*/
+
+&advantage.pilgrimage [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.pilgrimage [v( d.dd )]=1
+&tags.advantage.pilgrimage [v( d.dt )]=integrity.promethean
+
+&advantage.azoth [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.azoth [v( d.dd )]=1
+&tags.advantage.azoth [v( d.dt )]=power.promethean
+
+&advantage.pyros [v( d.dd )]=
+	ladd( u( .value_full, %0, advantage.pyros_maximum ), . )
+&default.advantage.pyros [v( d.dd )]=derived
+&tags.advantage.pyros [v( d.dt )]=derived.promethean
+
+&advantage.pyros_maximum [v( d.dd )]=
+	elements( 
+		10 11 12 13 14 15 20 30 50 100, 
+		u( .value, %0, advantage.azoth )
+	)
+&default.advantage.pyros_maximum [v( d.dd )]=derived
+&tags.advantage.pyros_maximum [v( d.dt )]=derived.promethean
+
+// &health.maximum.vampire [v( d.dd )]=
+//	u( .value_stats, %0, discipline.resilience )
+
+
+/*
+================================================================================
+== PROMETHEAN MERITS ===========================================================
+*/
+
+&merit.acid_stomach [v( d.dd )]=1
+&tags.merit.acid_stomach [v( d.dt )]=promethean
+
+&merit.azothic_object_() [v( d.dd )]=1.2.3.4.5|*
+&tags.merit.azothic_object_() [v( d.dt )]=promethean
+
+&merit.benign_festering [v( d.dd )]=1.2.3
+&tags.merit.benign_festering [v( d.dt )]=promethean
+
+&merit.brute_force [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.armed_defense [v( d.dd )]=
+	u( .at_least_all, %0, attribute.strength:3 skill.brawl:2 advantage.size:5 )
+&prereq-text.merit.brute_force [v( d.dd )]=
+	Strength 3+, Brawl 2+, and Size 5+
+
+
+Companion (• to •••••)
+Prerequisite: Ephemeral Flesh Bestowment
+
+
+&merit.driven [v( d.dd )]=1.2.3.4.5
+&tags.merit.driven [v( d.dt )]=promethean
+
+&merit.efficient_conductor [v( d.dd )]=1
+&tags.merit.efficient_conductor [v( d.dt )]=promethean
+
+&merit.famous_face [v( d.dd )]=1.2.3
+&tags.merit.famous_face [v( d.dt )]=promethean
+
+&merit.good_brain [v( d.dd )]=1.2.3.4.5|*
+&tags.merit.good_brain [v( d.dt )]=promethean
+&notes.merit.good_brain [v( d.dt )]=
+	For each dot in this Merit, choose a Skill.|
+	stat/set Good Brain.<skill>=1
+
+&merit.hovel_() [v( d.dd )]=1.2.3.4.5|*
+&tags.merit.hovel_() [v( d.dt )]=promethean.location
+&prerequisite.merit.hovel_() [v( d.dd )]=
+	u( .at_least, %0, 
+		merit.hovel_(%1), 
+		u( .value, %0, merit.safe_place_(%1)), 
+		%2 
+	)
+&prereq-text.merit.hovel_() [v( d.dd )]=
+	Safe Place (<place name>) must be same or higher
+
+&merit.moth_to_the_flame [v( d.dd )]=1
+&tags.merit.moth_to_the_flame [v( d.dt )]=promethean
+&prerequisite.merit.moth_to_the_flame [v( d.dd )]=
+	u( .at_least, %0, attribute.stamina, 3 )
+&prereq-text.merit.moth_to_the_flame [v( d.dd )]=Stamina 3+
+
+&merit.repute [v( d.dd )]=1.2.3
+&tags.merit.repute [v( d.dt )]=promethean
+
+&merit.residual_memory [v( d.dd )]=1.2.3.4.5|*
+&tags.merit.residual_memory [v( d.dt )]=promethean
+&notes.merit.residual_memory [v( d.dt )]=
+	For each dot in this Merit, choose a Skill.|
+	stat/set Good Brain.<skill>=1
+
+&merit.sleepless [v( d.dd )]=1
+&tags.merit.sleepless [v( d.dt )]=promethean
+
+&merit.terrible_disfigurement [v( d.dd )]=1
+&tags.merit.sleepless [v( d.dt )]=promethean
+
+&merit.vivid_dreams [v( d.dd )]=1.2.3.4.5
+&tags.merit.vivid_dreams [v( d.dt )]=promethean
+&prerequisite.merit.vivid_dreams [v( d.dd )]=
+	u( .at_least, %0, attribute.wits, 3 )
+&prereq-text.merit.vivid_dreams [v( d.dd )]=Wits 3+
+
+&merit.weatherproof [v( d.dd )]=1
+&tags.merit.weatherproof [v( d.dt )]=promethean
+
+
+
+/*
+================================================================================
+== PROMETHEAN TRANSMUTATIONS ===================================================
+
+Based on Refinement & Roles
+
+Transmutations: Alchemicus, Benfice, etc.
+Alembic: Stone, Aqua Regia, etc.
+Distillation: Purification, Fortification, etc.
+
+'unlocked': through mastering rolls, allows entire Alembic while in that Refinement
+
+
+*/
+
+// Not that this works...
+// &tags.alchemicus.* [v( d.dt )]=Mercurius
+
+&alchemicus.stone [v( d.dd )]=Purification.Fortification.Transformation
+&alchemicus.aqua_regia [v( d.dd )]=Decay.Degradation.Dissolution
+&alchemicus.spagyra [v( d.dd )]=Temperature Modification.Alteration.Resize
+&alchemicus.elixir [v( d.dd )]=Apprentice's Brooms.Spark of Life.Flesh to Stone
+
+
+// &tags.benefice.* [v( d.dt )]=Aes
+
+&benefice.command [v( d.dd )]=
+	Many Hands Make Light Work.Able Worker.The Community of Power
+&benefice.consortium [v( d.dd )]=
+	The Fortified Compact.Common Perception.Unspoken Words
+&benefice.control [v( d.dd )]=Protective Boon.Inviolable Unity.Bulwark
+&benefice.community [v( d.dd )]=Communal Font.We Are As One.What's Mine is Yours
+
+
+// &tags.contamination.* [v( d.dt )]=Cobalus
+
+&contamination.indulgence [v( d.dd )]=
+	Encourage Impulse.Remove Inhibitions.Plague of Desire
+&contamination.leverage [v( d.dd )]=Confession.Guilt Trip.Scandal
+&contamination.madness [v( d.dd )]=Psychotic Flash.Onset of Madness.Catharsis
+&contamination.suffering [v( d.dd )]=Purge.Affliction.Pain
+
+
+// &tags.corporeum.* [v( d.dt )]=Ferrum.Aes
+
+&corporeum.charites [v( d.dd )]=Athletic Grace.Uncanny Dexterity.Rarified Grace
+&corporeum.zephyrus [v( d.dd )]=Swift Feet.Serpent Strike.Perfected Reflexes
+&corporeum.hygeius [v( d.dd )]=Human Flesh.Impossible Flesh.Resilient Flesh
+&corporeum.motus [v( d.dd )]=
+	Uncanny Athleticism.Mighty Bound.Exemplary Athleticism
+
+
+// &tags.deception.* [v( d.dt )]=Aurum
+
+&deception.anonymity [v( d.dd )]=Nameless.Traceless.Forgotten
+&deception.assimilation [v( d.dd )]=Conformity.Tongues.Hive Mind
+&deception.doppelganger [v( d.dd )]=Incriminate.Impersonate.Deep Cover
+&deception.stalker [v( d.dd )]=Shadow.Lurker.Phantom
+
+
+// &tags.disquietism.* [v( d.dt )]=Plumbum
+
+&disquietism.externalize [v( d.dd )]=Safe Sojourn.Maelstrom.Assault
+&disquietism.internalize [v( d.dd )]=Temper.Soothe.Quell
+&disquietism.redirect [v( d.dd )]=Scapegoat.Rabid Rage.Iago's Whisper
+&disquietism.weaponize [v( d.dd )]=Tension.Vanquish.Rampage
+
+
+// &tags.electrification.* [v( d.dt )]=Stannum
+
+&electrification.machinus [v( d.dd )]=Jolt.Generator.Ghost in the Machine
+&electrification.arc [v( d.dd )]=Spark.Shock.Divine Lightning
+&electrification.oscillitus [v( d.dd )]=Insulation.Blackout.Azothic Detonation
+&electrification.imperatus [v( d.dd )]=
+	Lightning Therapy.Remote Absorption.Power Sink
+
+
+// &tags.luciferus.* [v( d.dt )]=Phosphorum
+
+&luciferus.solar_flare [v( d.dd )]=
+	Dazzling Corona.Searing Corona.Volatile Corona
+&luciferus.morning_star [v( d.dd )]=Ignis Fatuus.Beckon.Ringleader
+&luciferus.blaze_of_glory [v( d.dd )]=
+	Outshining the Sun.Roman Candle.All or Nothing
+&luciferus.beacon_of_helios [v( d.dd )]=
+	Daybreak.Guidepost.Lighthouse for the Dead
+
+
+// &tags.metamorphosis.* [v( d.dt )]=Cuprum
+
+&metamorphosis.aptare [v( d.dd )]=
+	Blessing of Tethys.Scuttling Spider.Procrustean Shape
+&metamorphosis.bestiae_facies [v( d.dd )]=
+	Natural Weaponry.Form of the Barghest.Chimera
+&metamorphosis.tegere [v( d.dd )]=
+	Impermeable Shell.Retributive Protection.Quill Assault
+&metamorphosis.verto [v( d.dd )]=Medusa's Visage.Everyman.Body Like Clay
+
+
+// &tags.mesmerism.* [v( d.dt )]=Aurum.Cobalus
+
+&mesmerism.phobos [v( d.dd )]=Rattle.Terrify.Swoon
+&mesmerism.eros [v( d.dd )]=Lure.Seduce.Inflame
+&mesmerism.eris [v( d.dd )]=Misdirect.Baffle.Fog
+&mesmerism.penthos [v( d.dd )]=Undermine.Defeat.Depress
+
+
+// &tags.saturninus.* [v( d.dt )]=Plumbum
+
+&saturninus.heed_the_call [v( d.dd )]=
+	Inscribed in Flame.Controlled Burn.Sublimation by Fire
+&saturninus.plumb_the_fathoms [v( d.dd )]=
+	Pilgrim's Landmarks.Wisdom of Ages.Glimpsing the Crasis
+&saturninus.stoke_the_furnace [v( d.dd )]=
+	Catalytic Affirmation.Chasing Hope.Transhuman Adaptation
+&saturninus.prime_the_vessel [v( d.dd )]=
+	Shielding Pod.Humour Electrolysis.Pyros Branding
+
+
+// &tags.sensorium.* [v( d.dt )]=Cuprum.Argentum
+
+&sensorium.vitreous_humour [v( d.dd )]=Fire Sight.Piercing Sight.Ephemeral Sight
+&sensorium.receptive_humour [v( d.dd )]=
+	Translator's Memory.Rarified Senses.Circle of Perception
+&sensorium.stereo_humour [v( d.dd )]=
+	Aura Sight.Hearing the Inner Voice.Clairvoyance
+&sensorium.somatic_humour [v( d.dd )]=
+	Bloodhound's Nose.Discriminating Tongue.Sensitive Ears
+
+
+// &tags.spiritus.* [v( d.dt )]=Argentum
+
+&spiritus.clades [v( d.dd )]=Strike the Heart.Biting Aura.Burning Strike.
+&spiritus.clupeum [v( d.dd )]=Personal Shield.Interposing Shield.Mystic Fortress
+&spiritus.veritas [v( d.dd )]=
+	Finding the Wellspring.Walking the Path of Memory.
+	Disrupting the Vital Humours
+&spiritus.laruae [v( d.dd )]=Plumb Azothic Memory.One of the Tribe.Pyros Decoy
+
+
+// &tags.vitality.* [v( d.dt )]=Ferrum
+
+&vitality.unbowed [v( d.dd )]=
+	Resolution of Steel.Crucible of Will.Roar of the Defiant
+&vitality.unbroken [v( d.dd )]=Armor of Will.Drive On.Rebuke the Shroud
+&vitality.unconquered [v( d.dd )]=
+	Cyclopean Might.Titan's Throw.Wrath of the Gods
+&vitality.unfettered [v( d.dd )]=
+	Close Combat Defense.Shattered Chains.No Walls May Hold Me
+
+
+// &tags.vulcanus.* [v( d.dt )]=Mercurius.Phosphorum
+
+// Hey, are these 'List' types? That have to be bought in order? 
+// Then level 4 is 'Calcify', right?
+&vulcanus.cauterio [v( d.dd )]=
+	Alter Firetouched.Animate Firetouched.Evolve Firetouched.Calcify|1.2.3.4
+&vulcanus.ignus_aspiratus [v( d.dd )]=
+	Direct Fire.Fire Grasp.Divine Guidance|1.2.3.4
+&vulcanus.mutatus_aspiratus [v( d.dd )]=
+	Contain Flux.Drawing Flux.Expel Pyros.Calcify|1.2.3.4
+&vulcanus.sanctus_aspiratus [v( d.dd )]=
+	Refine Pyros.Steal Pyros.Drain Pyros.Calcify|1.2.3.4
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* 
+################################################################################
+## PROMETHEAN CHARGEN ##########################################################
+
+
+================================================================================
+== CHARGEN: ATTRIBUTES =========================================================
+
+Doing something slightly different here until the chargen system can handle it.
+Instead we will be reporting in cg/check, 'what if we reduce each 
+Favored Attribute by 1? Then what would it look like?'
+
+It is wildly substandard.
+
+*/
+
+
+
+/*
+================================================================================
+== CHARGEN: ALLOCATIONS ========================================================
+
+--------------------------------------------------------------------------------
+-- Allocated Merits: Blood Potency ---------------------------------------------
+*/
+
+&f.allocated.power-trait.vampire [v(d.cg)]=
+	mul( 
+		dec( first( get( %0/_advantage.blood_potency ), . )), 
+		5 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Allocated Disciplines -------------------------------------------------------
+
+disciplines`in-clan disciplines`in-bloodline disciplines
+
+(we don't have bloodline yet, but you know we will)
+
+*/
+
+&f.allocated.disciplines [v( d.cg )]=
+	localize( strcat( 
+		setq( d, edit( lattr( %0/_discipline.* ), _DISCIPLINE., DISCIPLINE. )), 
+		setq( i, u( f.list-stats-tags, %0, discipline, get( %0/_bio.clan ))), 
+//		setq( b, 
+//			u( f.list-stats-tags, %0, discipline, get( %0/_bio.bloodline ))
+//		), 
+		ladd( iter( setdiff( %qd, %qi ), first( get( %0/_%i0 ), . ))), `, 
+		ladd( iter( %qi, first( get( %0/_%i0 ), . ))), 
+//		`, ladd( iter( %qi, first( get( %0/_%i0 ), . )))
+	))
+
+
+
+/*
+================================================================================
+== CHARGEN: BIO ================================================================
+
+--------------------------------------------------------------------------------
+-- Bio Check -------------------------------------------------------------------
+
+*/
+
+&check.bio.ghoul [v( d.cg )]=virtue vice clan
+&check.bio.vampire [v( d.cg )]=embrace_date mask dirge clan 
+	[if( u( v( d.dd )/.is_full, %0, bio.covenant, Ordo Dracul ), mystery_coil )]
+
+
+
+/* 
+================================================================================
+== CHARGEN CHECK ===============================================================
+
+
+--------------------------------------------------------------------------------
+-- Favored Attribute -----------------------------------------------------------
+
+currently: 
+	stat/set <attribute>.favored=1
+
+(I hope to get this changed.)
+
+1. check that attributes with 'favored' subtype are allowed
+2. check that there's only one
+3. check what happens if we -1 that from the system
+
+*/
+
+&check.chargen.attributes.vampire [v( d.cg )]=
+	strcat( 
+		setq( f, v( d.vampire.favored_attributes.[get( %0/_bio.clan )] )), 
+		setq( a, 
+			lcstr( 
+				iter( lattr( %0/_attribute.*.favored ), elements( %i0, 2, . ))
+			)
+		), 
+		setq( i, setinter( %qa, %qf )), 
+		setq( c, ulocal( f.pts-valid?.attributes, %0, attribute.%qi:-1 )), 
+
+		ulocal( f.allocated.attributes, %0 ), %b, %(of 5/4/3 + favored%), %b, 
+		ulocal( display.check.stats, %0, attributes, attribute.%qa:-1 ), %r, 
+
+		%b %b%b, ansi( h, Favored Attribute ), :, %b, 
+		titlestr( itemize( %qa )), %b, 
+		%[, 
+		case( 1, 
+			eq( words( %qa ), 0 ), ansi( r, none set ), 
+			gt( words( %qa ), 1 ), ansi( r, too many set ), 
+			neq( words( %qi ), 1 ), ansi( r, not allowed for your clan ), 
+			not( %qc ), ansi( r, bonus point not spent ), 
+			ansi( g, OK )
+		), 
+		%]
+	)
+
+&d.vampire.favored_attributes.daeva [v( d.cg )]=dexterity manipulation
+&d.vampire.favored_attributes.gangrel [v( d.cg )]=composure stamina
+&d.vampire.favored_attributes.mekhet [v( d.cg )]=intelligence wits
+&d.vampire.favored_attributes.nosferatu [v( d.cg )]=composure strength
+&d.vampire.favored_attributes.ventrue [v( d.cg )]=presence resolve
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Vampire ------------------------------------------------------
+
+*/
+
+&check.chargen.vampire [v( d.cg )]=
+	strcat( 
+		u( check.disciplines, %0, vampire ), 
+		case( get( %0/_bio.covenant ), 
+			Circle of the Crone, 
+			if( hasattr( %0, _discipline.cruac ), 
+				u( check.disciplines.cruac, %0 )
+			), 
+
+			Lancea et Sanctum, 
+			if( hasattr( %0, _discipline.theban_sorcery ), 
+				u( check.disciplines.theban_sorcery, %0 )
+			), 
+
+			Ordo Dracul, 
+			if( t( lattr( %0/_scale.* )), 
+				u( check.disciplines.coils, %0 )
+			)
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Ghoul --------------------------------------------------------
+
+*/
+
+&check.chargen.ghoul [v( d.cg )]=
+	u( check.disciplines, %0, ghoul )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Disciplines --------------------------------------------------
+
+vampire: 3 disc, 2 in-clan
+ghoul: 2 disc, 2 in-clan
+
+0: sheet dbref
+1: template 
+
+*/
+
+&check.disciplines [v( d.cg )]=
+	udefault( check.disciplines.[get( %0/_bio.template )], 
+		** check failed **, 
+		%0 
+	) 
+
+&check.disciplines.vampire [v( d.cg )]=
+	strcat( 
+		setq( 9, u( f.allocated.disciplines, %0 )),
+		setq( t, ladd( %q9, ` )), 
+		setq( i, elements( %q9, 2, ` )), 
+		setq( o, elements( %q9, 1, ` )), 
+
+		%b, %b, 
+		ansi( h, Total Disciplines ), :, %b, 
+		if( eq( %qt, 0 ), ansi( xh, <none> ), %qt ), %b, 
+		%(of 3%), %b, 
+		u( check.disciplines.vampire.total, %qt ), 
+		%r, 
+
+		%b, %b, %b, %b, 
+		ansi( h, In-Clan ), :, %b, 
+		if( eq( %qi, 0 ), ansi( xh, <none> ), %qi ), %b, 
+		%(at least 2%), %b, 
+		u( check.disciplines.vampire.in-clan, %qi ), 
+		%r, 
+
+		%b, %b, %b, %b, 
+		ansi( h, Non-Clan ), :, %b, 
+		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
+		%(at most 1%), %b, 
+		u( check.disciplines.vampire.non-clan, %qo ), 
+
+		%r 
+	)
+
+&check.disciplines.vampire.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 3 ))
+&check.disciplines.vampire.in-clan [v( d.cg )]=u( display.check.ok-no, gte( %0, 2 ))
+&check.disciplines.vampire.non-clan [v( d.cg )]=u( display.check.ok-no, lte( %0, 1 ))
+
+&check.disciplines.ghoul [v( d.cg )]=
+	strcat( 
+		setq( 9, u( f.allocated.disciplines, %0 )),
+		setq( t, ladd( %q9, ` )), 
+		setq( i, elements( %q9, 2, ` )), 
+		setq( o, elements( %q9, 1, ` )), 
+
+		%b, %b, 
+		ansi( h, Total Disciplines ), :, %b, 
+		if( eq( %qt, 0 ), ansi( xh, <none> ), %qt ), %b, 
+		%(of 2%), %b, 
+		u( check.disciplines.ghoul.total, %qt ), 
+		%r, 
+
+		%b, %b, %b, %b, 
+		ansi( h, In-Clan ), :, %b, 
+		if( eq( %qi, 0 ), ansi( xh, <none> ), %qi ), %b, 
+		%(of 2%), %b, 
+		u( check.disciplines.ghoul.in-clan, %qi ), 
+		%r, 
+
+		%b, %b, %b, %b, 
+		ansi( h, Non-Clan ), :, %b, 
+		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
+		%(of none%), %b, 
+		u( check.disciplines.ghoul.non-clan, %qo ), 
+
+		%r 
+	)
+
+&check.disciplines.ghoul.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 2 ))
+&check.disciplines.ghoul.in-clan [v( d.cg )]=u( display.check.ok-no, eq( %0, 2 ))
+&check.disciplines.ghoul.non-clan [v( d.cg )]=u( display.check.ok-no, eq( %0, 0 ))
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Cruac --------------------------------------------------------
+
+For each dot in Cruac, one dot of that level (or lower) in Rite
+
+*/
+
+&check.disciplines.cruac [v( d.cg )]=
+	strcat( 
+		setq( r, lattr( %0/_rite.* )), 
+		setq( n, iter( %qr, get( %0/%i0 ))), 
+		setq( l, first( get( %0/_discipline.cruac ), . )), 
+		setq( t, ladd( %qn )), 
+		setq( o, ladd( lnum( 1, %ql ))), 
+
+		%b%b, ansi( h, Rites ), :, %b, 
+		iter( %qr, 
+			strcat( 
+				titlestr( edit( rest( %i0, . ), _, %b )), 
+				%b%(, 
+				get( %0/%i0 ), 
+				%) 
+			), 
+			, %,%b 
+		), 
+		%r, 
+		%b %b%b, ansi( h, Rite Count ), :, %b, words( %qr ), %b, %(of %ql%), %b, 
+		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
+		%b %b%b, ansi( h, Rite Levels ), :, %b, %qt %(of %qo%), %b, 
+		u( display.check.ok-no, eq( %qt, %qo )), %r, 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Theban Sorcery  ----------------------------------------------
+
+For each dot in Theban Sorcery, one dot of that level (or lower) in Miracle
+
+*/
+
+&check.disciplines.theban_sorcery [v( d.cg )]=
+	strcat( 
+		setq( r, lattr( %0/_miracle.* )), 
+		setq( n, iter( %qr, get( %0/%i0 ))), 
+		setq( l, first( get( %0/_discipline.theban_sorcery ), . )), 
+		setq( t, ladd( %qn )), 
+		setq( o, ladd( lnum( 1, %ql ))), 
+
+		%b%b, ansi( h, Miracles ), :, %b, 
+		iter( %qr, 
+			strcat( 
+				titlestr( edit( rest( %i0, . ), _, %b )), 
+				%b%(, 
+				get( %0/%i0 ), 
+				%) 
+			), 
+			, %,%b 
+		), 
+		%r, 
+		%b %b%b, ansi( h, Miracle Count ), :, 
+		%b, words( %qr ), %b, %(of %ql%), %b, 
+		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
+		%b %b%b, ansi( h, Miracle Levels ), :, %b, %qt %(of %qo%), %b, 
+		u( display.check.ok-no, eq( %qt, %qo )), %r, 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Coils  -------------------------------------------------------
+
+Character should have no Scales
+
+*/
+
+&check.disciplines.coils [v( d.cg )]=
+	strcat( 
+		setq( r, lattr( %0/_scale.* )), 
+
+		%b%b, ansi( h, Scales ), :, %b, 
+		iter( %qr, 
+			strcat( 
+				titlestr( edit( rest( %i0, . ), _, %b )), 
+				%b%(, 
+				get( %0/%i0 ), 
+				%) 
+			), 
+			, %,%b 
+		), 
+		%r, 
+		%b %b%b, ansi( h, Scale Count ), :, %b, words( %qr ), %b, 
+		%[, ansi( r, no scales at chargen ), %], 
+		%r, 
+	)
+
+
+
+
+/*
+################################################################################
+## PROMETHEAN: XP COSTS ###########################################################
+*/
+
+&xp.advantage.blood_potency [v( d.xpcd )]=
+	u( cost.standard, 5, %1, %2 )
+	
+&xp.advantage.humanity [v( d.xpcd )]=
+	u( cost.standard, 2, %1, %2 )
+
+&xp.discipline [v( d.xpcd )]=
+	case( 1, 
+		hastag?( %3, u( .value_full, %0, bio.clan )), 
+		u( cost.standard, 3, %1, %2 ), 
+
+		u( cost.standard, 4, %1, %2 )
+	)
+
+&d.restricted.types.vampire [v( d.xpas )]=discipline
+&d.restricted.stats.vampire [v( d.xpas )]=
+	advantage.humanity advantage.blood_potency
+
+
+
+/*
+################################################################################
+## PROMETHEAN: SHEET ##############################################################
+*/
+
+// -- Bio ----------------------------------------------------------------------
+
+&bio.default.ghoul [v( d.nsc )]=
+	birthdate concept clan coterie template virtue vice 
+
+&bio.default.vampire [v( d.nsc )]=
+	embrace_date concept clan covenant template mask dirge coterie
+
+// -- Powers -------------------------------------------------------------------
+
+&powers.disciplines [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_discipline.* ), _DISCIPLINE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, discipline.%i0, numeric ), 
+		, | 
+	)
+
+&powers.devotions [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_devotion.* ), _DEVOTION., )), 
+		ulocal( f.cheat_getstat.name_only, %0, devotion.%i0 ), 
+		, | 
+	)
+
+&block.powers.vampire [v( d.sheet )]=u( block.powers.disciplines, %0, %1 )
+&block.powers.ghoul [v( d.sheet )]=u( block.powers.disciplines, %0, %1 )
+
+&block.powers.disciplines [v( d.sheet )]=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines, %0 )), 
+		setq( v, u( powers.devotions, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Disciplines ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+
+		case( get( %0/_bio.covenant ), 
+			Circle of the Crone, 
+			if( hasattr( %0, _discipline.cruac ), 
+				ulocal( block.powers.disciplines.rites, %0 )
+			), 
+
+			Lancea et Sanctum, 
+			if( hasattr( %0, _discipline.theban_sorcery ), 
+				ulocal( block.powers.disciplines.miracles, %0 )
+			), 
+
+			Ordo Dracul, 
+			if( t( lattr( %0/_scale.* )), 
+				ulocal( block.powers.disciplines.scales, %0 )
+			)
+		), 
+
+		if( strlen( %qv ), 
+			strcat( 
+				divider( Devotions ), %r, 
+				table( %qv, %qt, %qw, | ), %r, 
+			)
+		), 
+
+		@@( to be continued ), 
+	)
+
+
+// -- Disciplines: Rites (Cruac) -----------------------------------------------
+
+&powers.disciplines.rites [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_rite.* ), _RITE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, rite.%i0, numeric ), 
+		, | 
+	)
+
+&block.powers.disciplines.rites [v( d.sheet )]=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines.rites, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Rites ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+	)
+
+// -- Disciplines: Miracles (Theban Sorcery) -----------------------------------
+
+&powers.disciplines.miracles [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_miracle.* ), _MIRACLE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, miracle.%i0, numeric ), 
+		, | 
+	)
+
+&block.powers.disciplines.miracles [v( d.sheet )]=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines.miracles, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Miracles ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+	)
+
+// -- Disciplines: Scales (Coil)  ----------------------------------------------
+
+&powers.disciplines.scales [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_scale.* ), _SCALE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, miracle.%i0, numeric ), 
+		, | 
+	)
+
+&block.powers.disciplines.scales [v( d.sheet )]=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines.scales, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Scales ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+	)
+
+
+// -- Advantages ---------------------------------------------------------------
+
+&traits.morality.vampire [v( d.nsc )]=
+	ulocal( f.cheat_getstat.morality, %0, humanity )
+
+&traits.vitae [v( d.nsc )]=
+	u( f.cheat_getstat.pool, %0, vitae )
+
+&block.traits.vitae [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+
+// .. vitae
+		setq( x, ulocal( traits.vitae, %0 )), 
+		setq( c, rest( setr( y, first( %qx, | )), : )), 
+		setq( p, last( %qx, : )), 
+
+// .. return
+		u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )
+	)
+
+
+&block.traits.vampire [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+
+// .. vitae (power pool)
+		setq( r, ulocal( block.traits.vitae, %0 )), 
+
+// .. blood potency (supernatural resistance)
+		setq( z, 
+			u( display.trait-and-value, 
+				u( traits.supernatural_resistance, %0 ), 
+				inc( strlen( Blood Potency )), %qw, numeric 
+			)
+		), 
+
+// .. display
+		vcolumns( 
+			%qw:%qr, 
+			%qw:%qz, 
+			|, %b 
+		), %r, 
+	)
+
+
+&block.traits.ghoul [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+		vcolumns( 
+			%qw:[u( block.traits.vitae, %0 )], 
+			|, %b 
+		), %r, 
+	)
+
+
+
+
+
+
+
+/*
+################################################################################
+## PROMETHEAN: NOTES TO SELF ######################################################
+
+An in-clan Discipline dot costs three Experiences. Any other Discipline or blood 
+sorcery costs four. As well, Disciplines sometimes require teachers
+
+
+Primary Coil is 3 XP, secondary Coils are 4.
+
+
+Choose a Mask and a Dirge for your character. Whereas a mortal character has a 
+Virtue and a Vice, Kindred characters have Masks and Dirges.
+
+Mask & Dirge Archetypes: 
+	Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.
+	Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Jester.Junkie.Martyr.
+	Masochist.Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.
+	Scholar.Social Chameleon.Survivor.Visionary
+
+touchstone
+
+devotions
+
+* Favored Attributes:
+Daeva: Dexterity or Manipulation
+Gangrel: Composure or Stamina
+Mekhet: Intelligence or Wits
+Nosferatu: Composure or Strength
+Ventrue: Presence or Resolve
+
+if ( group total = group total + 1 )
+	if ( group section = group section + 1 )
+		if( attribute - 1 sets everything right )
+			ok!
+
+
+
+* Favored Disciplines: 
+
+Daeva Disciplines: *Celerity, *Majesty, *Vigor
+Gangrel Disciplines: *Animalism, *Protean, *Resilience 
+Mekhet Disciplines: *Auspex, *Celerity, *Obfuscate 
+Nosferatu Disciplines: *Nightmare, *Obfuscate, *Vigor 
+Ventrue Disciplines: *Animalism, *Dominate, *Resilience
+
+Blood Potency: p.90
+Humanity:p.106
+
+Coils of the Dragon - Coils, three types
+Crúac - blood sorcery 
+Theban Sorcery - blood sorcery
+
+
+-- Ghoul Cgen Notes ------------------------------------------------------------
+
+Clan: Your ghoul has a regnant, usually the vampire who first gave her Vitae and 
+spent a point of Willpower on her. Think about who this regnant is (maybe one of 
+the other player’s characters), and decide on his clan.
+
+Disciplines: Select two dots of Disciplines that are in-clan for your 
+character’s regnant. At least one physical Discipline dot is recommended, but 
+not required. (You might want to look at the ghoul Discipline rules below 
+first.)
+
+Blood Potency: Your character gains the Blood Potency trait at 0, allowing him 
+to store and spend Vitae. This trait cannot be increased with Experiences or 
+time.
+
+*/
+
+
+
+
+/*
+================================================================================
+== SPEND/REGAIN ESSENCE ========================================================
+
+expands: 9c - Spend and Regain
+
+	spend vitae=<amt/method> for <reason>
+
+spend limit per Blood Potency: 
+	1 2 3 4 5 6 7 8 10 15
+
+regain methods:
+	suckin' da blood
+
+
+--------------------------------------------------------------------------------
+-- Spend/Regain Methods --------------------------------------------------------
+*/
+
+&regain.methods.vitae [v( d.psrs )]=|all
+&spend.methods.vitae [v( d.psrs )]=[@@( nothing but numeric allowed here )]
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend/Regain Vitae Amts -----------------------------------------------------
+*/
+
+&amt.spend.numeric.vitae [v( d.psrs )]=
+	if( t( u( amt.spend.numeric.default, %0, %1, %2 )), 
+		if( 
+			lte( %2, 
+				elements( 
+					1 1 2 3 4 5 6 7 8 10 15, 
+					inc( getstat( %0/Blood Potency ))
+				)
+			), 
+			mul( %2, -1 ), 
+			#-1 You can't spend that much at one time 
+		), 
+		u( amt.spend.numeric.default, %0, %1, %2 )
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend Vitae Trigger ---------------------------------------------------------
+*/
+
+&spend.trigger.vitae [v( d.psrs )]=
+	think strcat( 
+//	@pemit %0=strcat( 
+//		DEBUGGING:, %r, 
+		m:, %b, setr( m, u( f.match_method, %1, spend, vitae, %2 )), %r, 
+		a:, %b, setr( a, u( amt.spend, %1, vitae, %qm )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.Vitae_Maximum )), %r, 
+	); 
+
+	@assert strlen( %qs )={ 
+		@pemit %0=u( .msg, vitae/spend, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				must have a Vitae pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, vitae/spend, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, vitae/spend, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Vitae, %qa )))={ 
+		@pemit %0=u( .msg, vitae/spend, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, vitae, %qa )))={ 
+		@pemit %0=u( .msg, vitae/spend, rest( %qe )) 
+	}; 
+
+	think e: 
+//	@pemit %0=e: 
+		[setr( e, 
+			u( display.number, %0, %1, vitae, spend, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, spend, %qe ); 
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Regain Vitae Trigger --------------------------------------------------------
+*/
+
+&regain.trigger.vitae [v( d.psrs )]=
+	think strcat( 
+		m:, %b, setr( m, u( f.match_method, %1, regain, vitae, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, vitae, %qm )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.Vitae_Maximum )), %r, 
+	); 
+
+	@assert strlen( %qs )={ 
+		@pemit %0=u( .msg, vitae/regain, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				must have a Vitae pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, vitae/regain, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, vitae/regain, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Vitae, %qa )))={ 
+		@pemit %0=u( .msg, vitae/regain, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, vitae, %qa )))={ 
+		@pemit %0=u( .msg, vitae/regain, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, vitae, regain, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, regain, %qe ); 
+
+
+
+/*
+################################################################################
+## PROMETHEAN: NOTES ###########################################################
+
+
+Step Five: Promethean Traits
+Choose Lineage, Refinement, Elpis, Torment, Bestowment, and one Alembic from 
+each of the Refinement’s Transmutations.
+
+Transmutations
+Choose one Alembic from each of the Transmutations granted by the character’s 
+Refinement
+
+Each Refinement has 3 Roles. Attach one Alembic from each Refinement's 
+Transmutations to that Role. Each Refinement/Role combo has its own mastered 
+Distillations. Once an Alembic is completed, it can be Calcified, allowing it 
+for any situation. 
+
+
+-- Vitriol Experience --
+A single Vitriol Experience is created when a character accumulates five Vitriol 
+Beats. These work the same way as Experiences and Beats, but have different 
+criteria and are spent on different things. While they function under the same 
+system, they are not interchangeable; regular Beats can’t be converted into 
+Vitriol Beats and vice versa.
+
+Characters accumulate Vitriol Beats when they do one of the following:
+• Getting an exceptional success on a Resist Torment roll (p. 172) grants one 
+  Vitriol Beat
+• Completing a minor milestone grants one Vitriol Beat.
+• Completing a major milestone grants one Vitriol Experience.
+• Completing a superlative milestone gives a Vitriol Experience and raises 
+  Pilgrimage by 1.
+
+-- Vitriol Experience Costs --
+• Azoth: 4 Vitriol Experiences per dot
+• Pilgrimage: 3 Vitriol Experiences per dot 
+• Calcify an Alembic: 2 Vitriol Experiences 
+• Create an Athanor: 1 Vitriol Experience
+
+-- Bestowments --
+When creating your Promethean, choose one of the two listed Bestowments for her 
+Lineage or work with your Storyteller to create a new one. While each Lineage 
+has two listed Bestowments, others can exist in your chronicles. Use these as a 
+baseline.
+
+Frankenstein Bestowments:
+	Titan’s Strength, Spare Parts
+Galateid Bestowments:
+	Unearthly Mein, Symbiotic Muse
+Osiran Bestowments:
+	Revivification, Corpse Tongue
+Tammuz Bestowments:
+	Heart of Clay, Inscription
+Ulgan Bestowments:
+	Twilight Fluidity, Ephemeral Flesh
+Unfleshed Bestowments:
+	Heart of Steel, The Soul is in the Software
+Extempore Bestowments:
+	Nuada’s Bestowment: The Void
+	Anthony’s Bestowment: Big Brother
+
+
+-- Refinements --
+Aurum: Transmutations: Deception, Mesmerism
+Cuprum: Transmutations: Metamorphosis, Sensorium
+Ferrum: Transmutations: Corporeum, Vitality
+Plumbum: Transmutations: Disquietism, Saturninis
+Stannum: Transmutations: Electrification, Disquietism
+
+Aes: Transmutations: Benefice, Corporeum
+Argentum: Transmutations: Sensorium, Spiritism
+Cobalus: Transmutations: Contamination, Mesmerism
+Mercurius: Transmutations: Alchemicus, Vulcanus
+Phosphorum: Transmutations: Luciferus, Vulcanus
+
+Chargen Refinements: Aurum.Cuprum.Ferrum.Plumbum.Stannum
+
+
+NOTES FOR A SUB-SHEET SYSTEM (for Refinements and Demon's Covers)
+* Sub-sheets will each need a prefix name. 
+* In this case, that prefix name is the Refinement.
+* stat/set, sheet, and xp/spend will all need a way to know if a sub-sheet 
+  is being invoked
+* -> stat/set thenomain/ferrum:motus=1
+* getstat() must look on the main sheet and all(?) or one specific sub-sheet
+* -> does it need to do either, interchangeably? setstat() does.
+* -> getstat( thenomain/ferrum:motus )
+* -> getstat( thenomain/motus )-> thenomain:|ferrum:1.2|aes:1.2.3
+* -> that looks ugly.
+* Derived traits don't need to be messed with right now. Even Demon's Covers 
+  only affect social merits.
+
+
+
+*/
