@@ -1428,8 +1428,9 @@ t: tribe
 		wdivider( Chargen Levels: Gifts ), %r, 
 
 		u( check.gifts.moon, %0, %qg ), 
-		u( check.gifts.auspice, %0, %qg ), 
-		u( check.gifts.tribe, %0, %qg ), 
+//		u( check.gifts.auspice, %0, %qg ), 
+//		u( check.gifts.tribe, %0, %qg ), 
+		u( check.gifts.shadow, %0, %qg ), 
 		u( check.gifts.wolf, %0, %qg ), 
 		u( check.gifts.other, %0, %qg ), 
 	)
@@ -1474,6 +1475,44 @@ think u( v( d.cg )/check.gifts, %# )
 			)
 		), %r 
 	)
+
+
+&check.gifts.shadow [v( d.cg )]=
+	strcat( 
+		setq( x, extract( %1, 2, 2, `, )), 
+		setq( k, gte( words( %qx ), 1 )), 
+
+		%b%b, 
+		ansi( h, Shadow Gift%, Auspice or Tribe ), :, %b, 
+		titlestr( edit( itemize( %qx ), _, %b )), %b, 
+		%(of two%), %b, 
+		u( display.check.ok-no, %qk ), 
+		if( %qk, 
+			strcat( 
+				setq( f, 
+					iter( %qx, 
+						setdiff( 
+							u( v( d.dd )/.value_full, %0, gift.%i0 ), 
+							Unlock, 
+							. 
+						), 
+						, . 
+					)
+				), 
+				%r, %b %b%b, %(, 
+				ansi( h, Facets ), :, %b, 
+				setr( x, words( %qf, . )), %b, out of 2, 
+				%), 
+				%b, u( display.check.ok-no, eq( %qx, 2 ))
+			)
+		), 
+		%r 
+	)
+
+
+/*
+***************** Merging 'auspice' and 'tribe' into 'shadow' *****************
+                      (leaving old code in, just in case)
 
 // -- check gifts: auspice -- 
 // 0: target sheet -- 1: %qg
@@ -1539,6 +1578,9 @@ think u( v( d.cg )/check.gifts, %# )
 		), 
 		%r 
 	)
+
+*** end merge ***
+*/
 
 // -- check gifts: wolf -- 
 // 0: target sheet -- 1: %qg
