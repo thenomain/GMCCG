@@ -277,4 +277,8 @@ For backwards compatibility.
 */
 
 &f.cheat_getstat.morality [v( d.nsc )]=
-	ulocal( f.cheat_getstat.with_name, %0, advantage.%1, numeric )
+  if( strlen( %2 ), 
+		%2:[ulocal( f.cheat_getstat.numeric, %0, advantage.%1, numeric )], 
+		ulocal( f.cheat_getstat.with_name, %0, advantage.%1, numeric )
+	)
+
