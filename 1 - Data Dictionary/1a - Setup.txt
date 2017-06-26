@@ -841,6 +841,8 @@ Does the sheet have this specialty?
 	2: specialty to find, '*' means 'any'
 	e.g.:
 		u( .specialty_has, %0, Crafts Expression, * )
+		u( .specialty_has, %0, Crafts, Pottery )
+		u( .specialty_has, %0, *, Engineering )
 */
 
 &.Specialty_Has [v( d.dd )]=
