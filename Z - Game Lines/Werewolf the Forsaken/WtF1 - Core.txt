@@ -112,8 +112,8 @@ Stuff we need to put on the Data Dictionary
 ================================================================================
 == DATA DICTIONARY =============================================================
 
-Werewolf Stat Checks - Move these to "Werewolf" when it comes out
-	.Auspice_Skills	(?? should this be in cgen?)
+Werewolf Stat Checks 
+	.Auspice_Skill_Check : drives both skills and cgen
 
 	0: sheet dbref
 	1: statpath to check
@@ -1254,11 +1254,22 @@ Should be easier than 'favored attribute':
 	scan that for auspice skills
 	make sure at least one has 1 dot in it
 
+
+	a: list of auspice skills, grabbed from the Data Dictionary
+	s: allocated skills
+	k: I have no idea
+	x: break down skills by mental, physical, social
+	f: make sure there is only one 11, one 7, and one 4 (after skill adjustment)
 */
 
 &check.chargen.skills.werewolf [v( d.cg )]=
   localize( strcat( 
-		setq( a, v( d.werewolf.auspice_skills.[get( %0/_bio.auspice )] )), 
+  		setq( a, 
+  			edit( 
+	  			get( v( d.dd )/d.auspice.skills.[get( %0/_bio.auspice )] ), 
+	  			skill., 
+	  		)
+  		), 
 		setq( s, ulocal( f.allocated.skills, %0 )), 
 		setq( k, edit( lattr( %0/_skill.* ), _SKILL., SKILL. )), 
 		setq( x, 
@@ -1300,16 +1311,6 @@ Should be easier than 'favored attribute':
 		), 
 		%] 
 	))
-
-
-// ... it would be easier if the following could be tagged and we'd 
-// ... use the system created exactly for this kind of thing
-
-&d.werewolf.auspice_skills.cahalith [v( d.cg )]=crafts expression persuasion
-&d.werewolf.auspice_skills.elodoth [v( d.cg )]=empathy investigation politics
-&d.werewolf.auspice_skills.irraka [v( d.cg )]=larceny stealth subterfuge
-&d.werewolf.auspice_skills.ithaeur [v( d.cg )]=animal_ken medicine occult
-&d.werewolf.auspice_skills.rahu [v( d.cg )]=brawl intimidation survival
 
 /* -- test --
 
@@ -1364,7 +1365,7 @@ y: temp number of renown allowed
 		setq( c, edit( lattr( %0/_renown.* ), _RENOWN., )), 
 		setq( t, 0 ), 
 
-		wdivider( Chargen Levels: Renown ), %r, 
+		divider( Chargen Levels: Renown ), %r, 
 		iter( setunion( %qc, %qa ), 
 			strcat( 
 				%b%b, 
@@ -1425,7 +1426,7 @@ t: tribe
 	strcat( 
 		setq( g, u( f.allocated.gifts, %0 )), 
 
-		wdivider( Chargen Levels: Gifts ), %r, 
+		divider( Chargen Levels: Gifts ), %r, 
 
 		u( check.gifts.moon, %0, %qg ), 
 //		u( check.gifts.auspice, %0, %qg ), 
