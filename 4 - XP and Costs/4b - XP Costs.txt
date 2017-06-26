@@ -40,7 +40,15 @@ The God Machine Chronicles (nWoD2) now features flat payments per dot.
 
 */
 &xp.advantage.willpower [v( d.xpcd )]=u( cost.standard, 1, %1, %2 )
-&xp.advantage.integrity [v( d.xpcd )]=u( cost.standard, 3, %1, %2 )	
+
+&xp.advantage.integrity [v( d.xpcd )]=
+	udefault( 
+		xp.advantage.integrity.[get( %0/_bio.template )], 
+		u( xp.advantage.integrity.default ), 
+		%0, %1, %2 
+	)
+
+&xp.advantage.integrity.default [v( d.xpcd )]=u( cost.standard, 3, %1, %2 )	
 
 
 /*

@@ -245,9 +245,8 @@ The fun of Proximi taking spells as 'Blessings'.
 &tags.advantage.xxx [v( d.dt )]=mage
 */
 
-&advantage.wisdom [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
-&default.advantage.wisdom [v( d.dd )]=7
-&tags.advantage.wisdom [v( d.dt )]=integrity.mage
+// 'Wisdom' is now 'Integrity'
+@edit [v( d.dt )]/tags.advantage.integrity=$, .mage
 
 &advantage.gnosis [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
 &default.advantage.gnosis [v( d.dd )]=1
@@ -533,9 +532,7 @@ The fun of Proximi taking spells as 'Blessings'.
 &tags.merit.ritual_savvy [v( d.dt )]=sleepwalker
 
 &merit.sleepwalker [v( d.dd )]=1
-&prerequisite.merit.sleepwalker [v( d.dd )]=u( .has, %0, advantage.integrity )
-&prereq-text.merit.sleepwalker [v( d.dd )]=Integrity advantage
-&tags.merit.sleepwalker [v( d.dt )]=
+&tags.merit.sleepwalker [v( d.dt )]=human
 
 &merit.slippery [v( d.dd )]=3
 &prerequisite.merit.slippery [v( d.dd )]=u( .has, %0, merit.sleepwalker )
@@ -3381,10 +3378,9 @@ get staff involved and have them manually alter the Experiences.
 &d.restricted.types.mage [v( d.xpas )]=
 	arcanum rote
 &d.restricted.stats.mage [v( d.xpas )]=
-	advantage.gnosis advantage.wisdom
+	advantage.gnosis 
 
-&xp.advantage.gnosis XP Cost Database <xpcd>=u( cost.standard, 5, %1, %2 )
-&xp.advantage.wisdom XP Cost Database <xpcd>=u( cost.standard, 3, %1, %2 )	
+&xp.advantage.gnosis [v( d.xpcd )]=u( cost.standard, 5, %1, %2 )
 &xp.rote [v( d.xpcd )]=1
 
 /*
@@ -3472,7 +3468,7 @@ Sacred Geometry (Academics) ....... 1
 // -- Sheet: Advantages --------------------------------------------------------
 
 &traits.morality.mage [v( d.nsc )]=
-	ulocal( f.cheat_getstat.morality, %0, wisdom )
+	ulocal( f.cheat_getstat.morality, %0, integrity, Wisdom )
 
 &traits.mana [v( d.nsc )]=
 	u( f.cheat_getstat.pool, %0, mana )

@@ -112,9 +112,8 @@ Level 3 for very minor items
 == VAMPIRE ADVANTAGES ==========================================================
 */
 
-&advantage.humanity [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
-&default.advantage.humanity [v( d.dd )]=7
-&tags.advantage.humanity [v( d.dt )]=integrity.vampire
+// 'Humanity' is now 'Integrity'
+@edit [v( d.dt )]/tags.advantage.integrity=$, .vampire
 
 &advantage.blood_potency [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
 &default.advantage.blood_potency [v( d.dd )]=1
@@ -1043,7 +1042,7 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.blood_scourge )
 		), 
-		u( .at_least, %0, advantage.humanity, v( rite.blood_scourge ))
+		u( .at_least, %0, advantage.integrity, v( rite.blood_scourge ))
 	)
 &prereq-text.miracle.blood_scourge [v( d.dd )]=
 	Lancea et Sanctum, 
@@ -1060,7 +1059,7 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.vitae_reliquary )
 		), 
-		u( .at_least, %0, advantage.humanity, v( miracle.vitae_reliquary ))
+		u( .at_least, %0, advantage.integrity, v( miracle.vitae_reliquary ))
 	)
 &prereq-text.miracle.vitae_reliquary [v( d.dd )]=
 	Lancea et Sanctum, 
@@ -1077,7 +1076,7 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.blandishment_of_sin )
 		), 
-		u( .at_least, %0, advantage.humanity, v( miracle.blandishment_of_sin ))
+		u( .at_least, %0, advantage.integrity, v( miracle.blandishment_of_sin ))
 	)
 &prereq-text.miracle.blandishment_of_sin [v( d.dd )]=
 	Lancea et Sanctum, 
@@ -1094,7 +1093,7 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.curse_of_babel )
 		), 
-		u( .at_least, %0, advantage.humanity, v( miracle.curse_of_babel ))
+		u( .at_least, %0, advantage.integrity, v( miracle.curse_of_babel ))
 	)
 &prereq-text.miracle.curse_of_babel [v( d.dd )]=
 	Lancea et Sanctum, 
@@ -1111,7 +1110,7 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.liar's_plague )
 		), 
-		u( .at_least, %0, advantage.humanity, v( miracle.liar's_plague ))
+		u( .at_least, %0, advantage.integrity, v( miracle.liar's_plague ))
 	)
 &prereq-text.miracle.liar's_plague [v( d.dd )]=
 	Lancea et Sanctum, 
@@ -1129,7 +1128,7 @@ If you also have Werewolf, you may need this:
 			v( miracle.malediction_of_despair )
 		), 
 		u( .at_least, %0, 
-			advantage.humanity, 
+			advantage.integrity, 
 			v( miracle.malediction_of_despair )
 		)
 	)
@@ -1148,7 +1147,7 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.gift_of_lazarus )
 		), 
-		u( .at_least, %0, advantage.humanity, v( miracle.gift_of_lazarus ))
+		u( .at_least, %0, advantage.integrity, v( miracle.gift_of_lazarus ))
 	)
 &prereq-text.miracle.gift_of_lazarus [v( d.dd )]=
 	Lancea et Sanctum, 
@@ -1165,7 +1164,7 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.stigmata )
 		), 
-		u( .at_least, %0, advantage.humanity, v( miracle.stigmata ))
+		u( .at_least, %0, advantage.integrity, v( miracle.stigmata ))
 	)
 &prereq-text.miracle.stigmata [v( d.dd )]=
 	Lancea et Sanctum, 
@@ -1182,7 +1181,7 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.transubstatiation )
 		), 
-		u( .at_least, %0, advantage.humanity, v( miracle.transubstatiation ))
+		u( .at_least, %0, advantage.integrity, v( miracle.transubstatiation ))
 	)
 &prereq-text.miracle.transubstatiation [v( d.dd )]=
 	Lancea et Sanctum, 
@@ -1759,9 +1758,6 @@ Character should have no Scales
 &xp.advantage.blood_potency [v( d.xpcd )]=
 	u( cost.standard, 5, %1, %2 )
 	
-&xp.advantage.humanity [v( d.xpcd )]=
-	u( cost.standard, 2, %1, %2 )
-
 &xp.discipline [v( d.xpcd )]=
 	case( 1, 
 		hastag?( %3, u( .value_full, %0, bio.clan )), 
@@ -1772,7 +1768,7 @@ Character should have no Scales
 
 &d.restricted.types.vampire [v( d.xpas )]=discipline
 &d.restricted.stats.vampire [v( d.xpas )]=
-	advantage.humanity advantage.blood_potency
+	advantage.blood_potency
 
 
 
@@ -1934,7 +1930,7 @@ Character should have no Scales
 // -- Advantages ---------------------------------------------------------------
 
 &traits.morality.vampire [v( d.nsc )]=
-	ulocal( f.cheat_getstat.morality, %0, humanity )
+	ulocal( f.cheat_getstat.morality, %0, integrity, Humanity )
 
 &traits.vitae [v( d.nsc )]=
 	u( f.cheat_getstat.pool, %0, vitae )

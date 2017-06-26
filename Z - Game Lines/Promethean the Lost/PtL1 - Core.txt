@@ -125,9 +125,8 @@ Level 3 for very minor items
 == PROMETHEAN ADVANTAGES =======================================================
 */
 
-&advantage.pilgrimage [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
-&default.advantage.pilgrimage [v( d.dd )]=1
-&tags.advantage.pilgrimage [v( d.dt )]=integrity.promethean
+// 'Pilgrimage' is now 'Integrity'
+@edit [v( d.dt )]/tags.advantage.integrity=$, .promethean
 
 &advantage.azoth [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
 &default.advantage.azoth [v( d.dd )]=1
@@ -1305,6 +1304,13 @@ NOTES FOR A SUB-SHEET SYSTEM (for Refinements and Demon's Covers)
 * -> that looks ugly.
 * Derived traits don't need to be messed with right now. Even Demon's Covers 
   only affect social merits.
+
+
+
+
+
+
+
 
 
 

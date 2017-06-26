@@ -692,6 +692,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 // == CORE ADVANTAGES ==========================================================
 
 // -- Integrity: the, er, integrity stat for humans ----------------------------
+// This is now the integrity trait for ALL game lines, except maybe Demon
 
 &advantage.integrity [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
 &default.advantage.integrity [v( d.dd )]=7

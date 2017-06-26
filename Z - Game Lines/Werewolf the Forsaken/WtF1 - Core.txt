@@ -146,9 +146,8 @@ Werewolf Stat Checks
 &tags.advantage.xxx [v( d.dt )]=werewolf
 */
 
-&advantage.harmony [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
-&default.advantage.harmony [v( d.dd )]=7
-&tags.advantage.harmony [v( d.dt )]=integrity.werewolf
+// 'Harmony' is now 'Integrity'
+@edit [v( d.dt )]/tags.advantage.integrity=$, .werewolf
 
 &advantage.primal_urge [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
 &default.advantage.primal_urge [v( d.dd )]=1
@@ -463,17 +462,17 @@ Effective Rank.
 
 &merit.blood_or_bone_affinity [v( d.dd )]=2.5|Blood.Bone.Both
 &prerequisite.merit.blood_or_bone_affinity [v( d.dd )]=
-	u( .between, %0, advantage.harmony, 3, 8 )
+	u( .between, %0, advantage.integrity, 3, 8 )
 &prereq-text.merit.blood_or_bone_affinity [v( d.dd )]=Harmony 3 to 8
-&tags.merit.blood_or_bone_affinity [v( d.dt )]=werewolf.mental.harmony
+&tags.merit.blood_or_bone_affinity [v( d.dt )]=werewolf.mental.integrity
 &notes.merit.blood_or_bone_affinity [v( d.dt )]=Staff should also: 
 	stat/set <player>/blood or bone affinity.<which one>=1
 
 &merit.code_of_honor [v( d.dd )]=2
 &prerequisite.merit.code_of_honor [v( d.dd )]=
-	u( .at_least, %0, advantage.harmony, 8 )
-&prereq-text.merit.code_of_honor [v( d.dd )]=Harmony 8
-&tags.merit.code_of_honor [v( d.dt )]=werewolf.mental.harmony
+	u( .at_least, %0, advantage.integrity, 8 )
+&prereq-text.merit.code_of_honor [v( d.dd )]=Harmony 8+
+&tags.merit.code_of_honor [v( d.dt )]=werewolf.mental.integrity
 
 &merit.controlled_burn [v( d.dd )]=2
 &prerequisite.merit.controlled_burn [v( d.dd )]=
@@ -1689,7 +1688,6 @@ Primal Urge 5
 
 // &xp.advantage.<power> [v( d.xpcd )]=u( cost.standard, 5, %1, %2 )
 
-&xp.advantage.harmony [v( d.xpcd )]=0
 
 &d.restricted.types.werewolf [v( d.xpas )]=gift
 &d.restricted.stats.werewolf [v( d.xpas )]=
@@ -1948,7 +1946,7 @@ Following is sent from XP:
 // -- Advantages ---------------------------------------------------------------
 
 &traits.morality.werewolf [v( d.nsc )]=
-	ulocal( f.cheat_getstat.morality, %0, harmony )
+	ulocal( f.cheat_getstat.morality, %0, integrity, Harmony )
 
 &traits.essence [v( d.nsc )]=
 	u( f.cheat_getstat.pool, %0, essence )
