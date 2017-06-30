@@ -39,20 +39,20 @@ To find middle matches, pass *<name>* or *<name>
 --------------------------------------------------------------------------------
 */
 
-&f.stat-list-selected sfp=
-	setunion(
-		iter(
-			[u(d.search-order)] [v(d.type.specials)], 
-			lattr([u(d.data-dictionary)]/%i0.%0*)
+&f.stat-list-selected [v( d.sfp )]=
+	setunion( 
+		iter( 
+			[u( d.search-order )] [v( d.type.specials )], 
+			lattr( [u( d.data-dictionary )]/%i0.%0*)
 		), 
 	)
 
 // -----------------------------------------------------------------------------
 // -- test --
 
-think u(sfp/f.stat-list-selected, st)
-think u(sfp/f.stat-list-selected, *str*)
-think u(sfp/f.stat-list-selected, *ual_k*)
+think u( v( d.sfp )/f.stat-list-selected, st )
+think u( v( d.sfp )/f.stat-list-selected, *str* )
+think u( v( d.sfp )/f.stat-list-selected, *ual_k* )
 
 
 
@@ -72,7 +72,7 @@ else assume the sheet is on the player
 --------------------------------------------------------------------------------
 */
 
-&f.find-sheet sfp=
+&f.find-sheet [v( d.sfp )]=
 	udefault( %0/_special.sheet_location, %0 )
 
 
@@ -89,7 +89,7 @@ Returns: 1 if instance is there but null, 0 otherwise
 --------------------------------------------------------------------------------
 */
 
-&f.stat-input-instance-is-null? sfp=regmatch(%0, .*%\(%\))
+&f.stat-input-instance-is-null? [v( d.sfp )]=regmatch( %0, .*%\(%\) )
 
 
 
@@ -110,20 +110,20 @@ returns: 0 if bad, 1 if good
 --------------------------------------------------------------------------------
 */
 
-&f.statvalue-good sfp=not(strmatch(%0, *`*))
+&f.statvalue-good [v( d.sfp )]=not( strmatch( %0, *`* ))
 
 // -----------------------------------------------------------------------------
 // -- test --
 
-think u( sfp/f.statvalue-good, blah )
+think u( v( d.sfp )/f.statvalue-good, blah )
 
-think u( sfp/f.statvalue-good, .blah )
-think u( sfp/f.statvalue-good, blah.blah )
-think u( sfp/f.statvalue-good, 10.blah )
+think u( v( d.sfp )/f.statvalue-good, .blah )
+think u( v( d.sfp )/f.statvalue-good, blah.blah )
+think u( v( d.sfp )/f.statvalue-good, 10.blah )
 
-think u( sfp/f.statvalue-good, `blah )
-think u( sfp/f.statvalue-good, b`lah )
-think u( sfp/f.statvalue-good, blah` )
+think u( v( d.sfp )/f.statvalue-good, `blah )
+think u( v( d.sfp )/f.statvalue-good, b`lah )
+think u( v( d.sfp )/f.statvalue-good, blah` )
 
 
 
@@ -145,7 +145,7 @@ qz: sub-trait/specialty
 --------------------------------------------------------------------------------
 */
 
-&f.stat-input-breakdown-registers sfp=
+&f.stat-input-breakdown-registers [v( d.sfp )]=
 	[setq( z, squish( edit( %0, %(, %b%( )))]
 	[setq( x, trim( before( before( %qz, . ), %( )))]
 	[setq( y, before( rest( before( %qz, . ), %( ), %) ))]
@@ -154,7 +154,7 @@ qz: sub-trait/specialty
 // -----------------------------------------------------------------------------
 // -- test --
 
-think [u( sfp/f.stat-input-breakdown-registers, lit( get(foo).yay ))]%qx.%qy.%qz
+think [u( v( d.sfp )/f.stat-input-breakdown-registers, lit( get(foo).yay ))]%qx.%qy.%qz
 
 // -=> get.foo.yay
 
@@ -172,7 +172,7 @@ This is a much more powerful function than I realized, as it does the following 
 
 --
 
-Simply find a stat in the data dictionary (does little checking)
+Find a stat in the data dictionary (does little checking)
 
 0: stat name searched for
 1: instance, if applicable
@@ -191,7 +191,7 @@ qz, qa, qb: Regmatch results
 */
 
 &f.statpath-validate-name [v( d.sfp )]=
-	localize( 
+	localize( strcat( 
 
 // spaces to underscores
 // (and, cheating, ignore the instance)
@@ -239,14 +239,14 @@ qz, qa, qb: Regmatch results
 // -----------------------------------------------------------------------------
 // -- Statpath: Validate Name Tests --------------------------------------------
 
-think u( sfp/f.statpath-validate-name, stren )
-think u( sfp/f.statpath-validate-name, lang, fr )
-think u( sfp/f.statpath-validate-name, court )
-think u( sfp/f.statpath-validate-name, cour )
+think u( v( d.sfp )/f.statpath-validate-name, stren )
+think u( v( d.sfp )/f.statpath-validate-name, lang, fr )
+think u( v( d.sfp )/f.statpath-validate-name, court )
+think u( v( d.sfp )/f.statpath-validate-name, cour )
 
-think u( sfp/f.statpath-validate-name, lang(french) )
+think u( v( d.sfp )/f.statpath-validate-name, lang(french) )
 
-think u( sfp/f.statpath-validate-name, la* )
+think u( v( d.sfp )/f.statpath-validate-name, la* )
 
 
 
@@ -257,7 +257,7 @@ think u( sfp/f.statpath-validate-name, la* )
 Use this if we know that the path we're looking for is on the data dictionary 
 itself.
 
-Because the "substat" section for List stats is only for lookup, we will return 
+Because the "sub-stat" section for List stats is only for lookup, we will return 
 only the type.name portion for list stats. (Remember to do the same for sheet, 
 below.)
 
@@ -280,7 +280,7 @@ Used for validating new purchases if sheet-lookup fails.
 --------------------------------------------------------------------------------
 */
 
-&f.statpath-lookup-dd sfp=
+&f.statpath-lookup-dd [v( d.sfp )]=
 	strcat( 
 
 // Break down stat into registers x, y, z
@@ -374,11 +374,11 @@ Used for validating new purchases if sheet-lookup fails.
 // -----------------------------------------------------------------------------
 // -- Statpath: Data Dictionary Lookup Tests -----------------------------------
 
-think u( sfp/f.statpath-lookup-dd, str )
-think u( sfp/f.statpath-lookup-dd, lang (test) )
+think u( v( d.sfp )/f.statpath-lookup-dd, str )
+think u( v( d.sfp )/f.statpath-lookup-dd, lang (test) )
 
-think u( sfp/f.statpath-lookup-dd, c (su) )
-think u( sfp/f.statpath-lookup-dd, aca.lib )
+think u( v( d.sfp )/f.statpath-lookup-dd, c (su) )
+think u( v( d.sfp )/f.statpath-lookup-dd, aca.lib )
 
 think statpath( court )
 think statpath( cour )
@@ -388,7 +388,7 @@ think statpath( lang ().ft )
 
 think 
 	## [setr( 0, lit( str|l (French)|aca.Library Science|mantle (courtless) ))] 
-	%r--> [iter( %q0, u( sfp/f.statpath-lookup-dd, ## ), |, %r-->%b )]
+	%r--> [iter( %q0, u( v( d.sfp )/f.statpath-lookup-dd, ## ), |, %r-->%b )]
 
 
 
@@ -404,19 +404,19 @@ qz: temp holder to grab just the name portion of a stapath
 --------------------------------------------------------------------------------
 */
 
-&f.statpath-without-instance sfp=
+&f.statpath-without-instance [v( d.sfp )]=
 	localize( if( regmatchi( %0, %(.*%)%\(.*%\), z z), %qz%(%), %0 ))
 
 // -----------------------------------------------------------------------------
 // -- test --
 
-think u( sfp/f.statpath-without-instance, 
-		u( sfp/f.statpath-lookup-dd, lang (sumerian) )
+think u( v( d.sfp )/f.statpath-without-instance, 
+		u( v( d.sfp )/f.statpath-lookup-dd, lang (sumerian) )
 	)
 
-think u( sfp/f.statpath-without-instance, statpath( strength ))
-think u( sfp/f.statpath-without-instance, statpath( cour(sp) ))
-think u( sfp/f.statpath-without-instance, statpath( lang (spanish) ))
+think u( v( d.sfp )/f.statpath-without-instance, statpath( strength ))
+think u( v( d.sfp )/f.statpath-without-instance, statpath( cour(sp) ))
+think u( v( d.sfp )/f.statpath-without-instance, statpath( lang (spanish) ))
 
 
 
@@ -591,7 +591,7 @@ returns: class.<statpath> or "numeric" if null
 --------------------------------------------------------------------------------
 */
 
-&f.get-class sfp=
+&f.get-class [v( d.sfp )]=
 	udefault(
 		[u(d.data-dictionary)]/
 		class.
@@ -607,9 +607,9 @@ returns: class.<statpath> or "numeric" if null
 // -----------------------------------------------------------------------------
 // -- test --
 
-think u( sfp/f.get-class, attribute.strength )
-think u( sfp/f.get-class, bio.template )
-think u( sfp/f.get-class, bio.full_name )
+think u( v( d.sfp )/f.get-class, attribute.strength )
+think u( v( d.sfp )/f.get-class, bio.template )
+think u( v( d.sfp )/f.get-class, bio.full_name )
 
 
 
@@ -626,12 +626,12 @@ returns: 1 or 0
 --------------------------------------------------------------------------------
 */
 
-&f.isclass? sfp=t(match(%1, ulocal(f.get-class, %0)))
+&f.isclass? [v( d.sfp )]=t(match(%1, ulocal(f.get-class, %0)))
 
 // -----------------------------------------------------------------------------
 // -- test --
 
-think u( sfp/f.isclass?, attribute.strength, string )
-think u( sfp/f.isclass?, attribute.strength, numeric string )
+think u( v( d.sfp )/f.isclass?, attribute.strength, string )
+think u( v( d.sfp )/f.isclass?, attribute.strength, numeric string )
 
-think u( sfp/f.isclass?, gift.full_moon, list )
+think u( v( d.sfp )/f.isclass?, gift.full_moon, list )
