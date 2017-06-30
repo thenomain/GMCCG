@@ -421,3 +421,28 @@ Names:
 Stats:
 	`   - we're using the backtick to columnize
 	|   - the pipe is used to separate trait data
+
+
+-- SUB-SHEETS ------------------------------------------------------------------
+
+Some games, such as Demon and Promethean, expose only certain stats in some 
+conditions. Unlike Werewolf, these are stats that can be purchased and 
+potentially modified. We are calling these "sub-sheets".
+
+A sub-sheet exists as specially formatted stat paths with the name of the 
+sub-sheet before the stat path:
+
+	Stored:
+		&_<sub-sheet>/<stat type>.<stat name>[.<sub-stat>][_(<instance>)]
+
+Otherwise, the statpath is treated exactly as it would be otherwise.
+
+Gaining access to this information will be used with the format of 
+'<sheet>:<sub-sheet>'. For example:
+
+	stat/set thenomain:mary/resources=2
+
+The use of ':' for sub-sheets is slightly different from the '.' for sub-stats, 
+but should provide a visual distinction for players and a character difference 
+for code.
+

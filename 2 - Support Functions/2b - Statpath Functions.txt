@@ -14,6 +14,15 @@ dictionary (without trait instance) and the sheet (may have instance).
 That is, 'merit.language_()' on the data dictionary is the source of 
 '_merit.language_(french)' on the character sheet.
 
+** Subsheets **
+
+Subsheet storing will need to have the subsheet data first. 
+i.e., a subsheet named 'mary':
+	&_mary/merit.resources: 2
+
+We cannot use the ':' character in attribute names, though ':' will still be 
+used for user accessing of sub-sheets, such as 'thenomain:mary/resources'.
+
 
 
 ================================================================================
