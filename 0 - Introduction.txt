@@ -433,7 +433,7 @@ A sub-sheet exists as specially formatted stat paths with the name of the
 sub-sheet before the stat path:
 
 	Stored:
-		&_<sub-sheet>/<stat type>.<stat name>[.<sub-stat>][_(<instance>)]
+		&_<sub-sheet>!<stat type>.<stat name>[.<sub-stat>][_(<instance>)]
 
 Otherwise, the statpath is treated exactly as it would be otherwise.
 

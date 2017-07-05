@@ -18,7 +18,7 @@ That is, 'merit.language_()' on the data dictionary is the source of
 
 Subsheet storing will need to have the subsheet data first. 
 i.e., a subsheet named 'mary':
-	&_mary/merit.resources: 2
+	&_mary!merit.resources: 2
 
 We cannot use the ':' character in attribute names, though ':' will still be 
 used for user accessing of sub-sheets, such as 'thenomain:mary/resources'.
@@ -430,89 +430,96 @@ YES, LOOKUP-SHEET PRACTICALLY VALIDATES THE STAT ON THE SHEET, BUT NOT ENTIRELY
 
 --
 
-0: player dbref
+0: player dbref[:sub-sheet]
 1: stat name[ (instance)][.substat]
 returns: stat path: stat_name[_(instance)][.substat]
 
 qn: Validated stat name
-qs: stat dd entry
-qc: class from stat dd entry
+qd: stat's data dictionary entry
+qc: class from stat's data dictionary entry
 q0: tmp result holder
 qx, y, z: stat name, instance, substat to be validated (from another func)
+
+qt: target's sheet
+qs: target's subsheet, if passed
 
 NOTE: Instances and Substats on sheet are stored with _ for spaces
 
 */
 
 &f.statpath-lookup-sheet [v( d.sfp )]=
-
+	strcat( 
 // until I can figure out how to have this and lookup-dd work together:
 // Break down stat into registers x, y, z
-	[setq( 0, edit( %1, _, %b ))]
-	[u( f.stat-input-breakdown-registers, %q0 )]
-	[setq( y, edit( %qy, %b, _ ))]
+		setq( 0, edit( %1, _, %b )), 
+		u( f.stat-input-breakdown-registers, %q0 ), 
+		setq( y, edit( %qy, %b, _ )), 
+
+		setq( t, u( f.find-sheet, first( %0, : ))), 
+		setq( s, if( t( setr( s, rest( %0, : ))), %qs!, )), 
 
 // validate stat name:
-	[if( 
-		setr( n, u( f.statpath-validate-name, %q0 )), 
-		[setq( s, u( v( d.data-dictionary )/%qn ))]
-		[setq( c, u( f.get-class, %qn ))]
+		if( 
+			setr( q, setr( n, u( f.statpath-validate-name, %q0 ))), 
+			strcat( 
+				setq( d, get( v( d.data-dictionary )/%qn )), 
+				setq( c, ulocal( f.get-class, %qn )), 
 
 // .. validate instance, if any
 // .. we are expecting an instance if validated stat name ends in ()
-		[if( 
-			strmatch( %qn, *_%(%) ), 
+				if( 
+					strmatch( %qn, *_%(%) ), 
 // .. .. dd lookup, else sheet lookup, else error
-			switch( 
-				1, 
+					switch( 1, 
 // .. .. .. instance nowhere, because it wasn't passed
-				match( %qy, ), 
-				setq( n, #-2 INSTANCE NOT FOUND ), 
+						match( %qy, ), 
+						setq( n, #-2 INSTANCE NOT FOUND ), 
 // .. .. .. instance on dd
-				t( setr( 0, grab( extract( %qs, 2, 1, | ), %qy*, . ))), 
-				setq( n, [before( %qn, _%(%) )]_%(%q0%) ), 
+						t( setr( 0, grab( extract( %qd, 2, 1, | ), %qy*, . ))), 
+						setq( n, [before( %qn, _%(%) )]_%(%q0%) ), 
 
 // .. .. .. instance on sheet
-				t( setr( 0, 
-					lattr( 
-						u( f.find-sheet, %0 )/
-						_[before( %qn, _%(%) )]_%(%qy*%) 
-					)
-				)), 
-				setq( n, rest( %q0, _ )), 
+						t( setr( 0, 
+							lattr( 
+								%qt/_%qs[before( %qn, _%(%) )]_%(%qy*%) 
+							)
+						)), 
+						setq( n, rest( %q0, _ )), 
 // .. .. .. instance nowhere, because nothing else matched
-				setq( n, #-2 INSTANCE NOT FOUND )
-			)
-		)]
-
-		[if( 
-			cand( t( %qz ), t( %qn )), 
-// .. .. dd lookup, else sheet lookup, else error
-			switch( 1, 
-
-				t( setr( 0, 
-					grab( extract( %qs, add( 2, t( %qy )), 1, | ), %qz*, . )
-				)), 
-				setq( n, %qn.%q0 ), 
-
-				t( setr( 0, 
-					u( f.statpath.lookup.substats.sheet, 
-						u( f.find-sheet, %0 ), %qn, %qz 
+						setq( n, #-2 INSTANCE NOT FOUND )
 					)
-				)), 
-				setq( n, %qn.%q0 ), 
+				), 
 
-				setq( n, #-2 SUBSTAT(S) NOT FOUND )
+				if( 
+					cand( t( %qz ), t( %qn )), 
+// .. .. dd lookup, else sheet lookup, else error
+					switch( 1, 
+
+						t( setr( 0, 
+							grab( extract( %qd, add( 2, t( %qy )), 1, | ), %qz*, . )
+						)), 
+						setq( n, %qn.%q0 ), 
+
+						t( setr( 0, 
+							u( f.statpath.lookup.substats.sheet, 
+								%qt, %qs%qn, %qz 
+							)
+						)), 
+						setq( n, %q0 ), 
+
+						setq( n, #-2 SUBSTAT(S) NOT FOUND )
+					)
+				)
 			)
-		)] 
-	)]
+		), 
 
 // return built stat, or error -- for class:list stats, type.name only
-	[if( 
-		cand( t( %qn ), strmatch( %qc, list )), 
-		extract( %qn, 1, 2, . ), 
-		%qn 
-	)]
+		if( 
+			cand( t( %qn ), strmatch( %qc, list )), 
+			extract( %qn, 1, 2, . ), 
+			%qn 
+		)
+	)
 
 /* 
 --------------------------------------------------------------------------------
@@ -526,7 +533,7 @@ In order to do that, we pull out how that works from the core lookup system.
 We might as well.
 
 	0: sheet dbref (validated)
-	1: class.trait (validated)
+	1: [sub-sheet/]class.trait (validated)
 	2: list.of.substats (not validated)
 	returns: list.of.valid.substats 
 */
@@ -557,10 +564,10 @@ We might as well.
 // -----------------------------------------------------------------------------
 // -- Statpath: Sheet Tests ----------------------------------------------------
 
-think u(sfp/f.statpath-lookup-sheet, %!, str)
-think u(sfp/f.statpath-lookup-sheet, %!, c (s))
-think u(sfp/f.statpath-lookup-sheet, %!, cont.rep)
-think u(sfp/f.statpath-lookup-sheet, %!, lang (fr))
+think u( v( d.sfp )/f.statpath-lookup-sheet, %!, str )
+think u( v( d.sfp )/f.statpath-lookup-sheet, %!, c (s) )
+think u( v( d.sfp )/f.statpath-lookup-sheet, %!, cont.rep )
+think u( v( d.sfp )/f.statpath-lookup-sheet, %!, lang (fr) )
 
 think 
 	[setq( 0, lit( str|l (French)|athl.quick r|mantle (sp) ))]
