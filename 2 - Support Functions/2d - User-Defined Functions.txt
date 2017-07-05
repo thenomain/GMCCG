@@ -38,11 +38,11 @@ qs: Stat to check.
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.statpath sfp=u\\( [num( sfp )]/f.statpath, \\\%0 \\)
+@fo me=&ufunc.statpath [v( d.sfp )]=u\\( [num( sfp )]/f.statpath, \\\%0 \\)
 
 // -----------------------------------------------------------------------------
 
-&f.statpath sfp=
+&f.statpath [v( d.sfp )]=
 
 // Prime the registers. If it hurts your brain, it hurts mine too.
 	[setq( s, )][setq( p, )]
@@ -81,7 +81,7 @@ qp: Dbref of player then of player's sheet
 --------------------------------------------------------------------------------
 */
 
-&f.statpath.workhorse sfp=
+&f.statpath.workhorse [v( d.sfp )]=
 
 // If player, do the player dance, else do the dd-lookup dance.
 // If player but player lookup failed, also do the dd-lookup dance.
@@ -122,11 +122,11 @@ qr: results of f.statpath
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.statname sfp=u\\( [num( sfp )]/f.statname, \\\%0 \\)
+@fo me=&ufunc.statname [v( d.sfp )]=u\\( [num( sfp )]/f.statname, \\\%0 \\)
 
 // -----------------------------------------------------------------------------
 
-&f.statname sfp=
+&f.statname [v( d.sfp )]=
 	if( 
 		t( setr( r, u( f.statpath, %0 ))), 
 // .. dd stat: send the name portion of the statpath
@@ -144,7 +144,7 @@ qr: results of f.statpath
 
 */
 
-&f.statname.workhorse sfp=
+&f.statname.workhorse [v( d.sfp )]=
 	iter( 
 // .. Step 1: Capitalize Words
 		edit( %0, _, %b ), 
@@ -197,11 +197,11 @@ requires: isstaff(<dbref>)
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.getstat sfp=u\\( [num( sfp )]/f.getstat, \\\%0 , \\\%1 \\)
+@fo me=&ufunc.getstat [v( d.sfp )]=u\\( [num( sfp )]/f.getstat, \\\%0 , \\\%1 \\)
 
 // -----------------------------------------------------------------------------
 
-&f.getstat sfp=
+&f.getstat [v( d.sfp )]=
 	[setq( p, pmatch( before( %0, / )))]
 	[setq( s, rest( %0, / ))]
 
@@ -235,7 +235,7 @@ qc: class of <stat path>: numeric, string, list, flag
 
 */
 
-&f.getstat.workhorse sfp=
+&f.getstat.workhorse [v( d.sfp )]=
 	strcat( 
 		setq( s, ulocal( f.statpath.workhorse, %1, %0 )), 
 		setq( d, u( %2/_%qs )), 
@@ -297,7 +297,7 @@ this code to it at the moment, anyhow. You never know.
 
 */
 
-&f.getstat.workhorse.numeric sfp=
+&f.getstat.workhorse.numeric [v( d.sfp )]=
 	localize( strcat( 
 	 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
 		setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
@@ -326,7 +326,7 @@ s: statpath without instance
 
 */
 
-&f.getstat.workhorse.string sfp=
+&f.getstat.workhorse.string [v( d.sfp )]=
 	localize( strcat( 
 	 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
 		setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
@@ -351,7 +351,7 @@ s: statpath without instance
 
 */
 
-&f.getstat.workhorse.flag sfp=
+&f.getstat.workhorse.flag [v( d.sfp )]=
 	localize( strcat( 
 	 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
 		setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
@@ -422,11 +422,11 @@ qs: stat path
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.hastag? sfp=u\\( [num( sfp )]/f.hastag?, \\\%0, \\\%1, \\\%2 \\)
+@fo me=&ufunc.hastag? [v( d.sfp )]=u\\( [num( sfp )]/f.hastag?, \\\%0, \\\%1, \\\%2 \\)
 
 // -----------------------------------------------------------------------------
 
-&f.hastag? sfp=
+&f.hastag? [v( d.sfp )]=
 	[setq( s, u( f.statpath.workhorse, %0 ))]
 	
 	[if( 
@@ -450,7 +450,7 @@ qb: boolean list of matches
 --------------------------------------------------------------------------------
 */
 
-&f.hastag?.workhorse sfp=
+&f.hastag?.workhorse [v( d.sfp )]=
 	[setq( t, lcstr( u( v( d.data-tags )/tags.%0 )))]
 	[setq( b, iter( %1, match( %qt, ##, . ), . ))]
 
@@ -465,7 +465,7 @@ qb: boolean list of matches
 // -----------------------------------------------------------------------------
 // -- Hastag? Tests ------------------------------------------------------------
 
-think u( sfp/f.hastag?.workhorse, advantage.speed, derived )
+think u( v( d.sfp )/f.hastag?.workhorse, advantage.speed, derived )
 
 think hastag?( speed, derived )
 think hastag?( speed, derived.pool )
@@ -487,11 +487,11 @@ class.<statpath>: list
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.statvalidate sfp=u\\( [num( sfp )]/f.statvalidate, \\\%0, \\\%1 \\)
+@fo me=&ufunc.statvalidate [v( d.sfp )]=u\\( [num( sfp )]/f.statvalidate, \\\%0, \\\%1 \\)
 
 // -----------------------------------------------------------------------------
 
-&f.statvalidate sfp=
+&f.statvalidate [v( d.sfp )]=
 // .. strip instance from the statpath to pull value list directly from the DD
 	[setq( s, u( f.statpath-without-instance, u( f.statpath.workhorse, %0 )))]
 	[switch( 0, 
@@ -515,7 +515,7 @@ qv: matched value, if any
 
 */
 
-&f.statvalidate.workhorse sfp=
+&f.statvalidate.workhorse [v( d.sfp )]=
 	localize( switch( 0, 
 
 // error
@@ -639,11 +639,11 @@ Probably not needed
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.statvalidate? sfp=u\\( [num( sfp )]/f.statvalidate?, \\\%0, \\\%1 \\)
+@fo me=&ufunc.statvalidate? [v( d.sfp )]=u\\( [num( sfp )]/f.statvalidate?, \\\%0, \\\%1 \\)
 
 // -----------------------------------------------------------------------------
 
-&f.statvalidate? sfp=t( ulocal( f.statvalidate, %0, %1 ))
+&f.statvalidate? [v( d.sfp )]=t( ulocal( f.statvalidate, %0, %1 ))
 
 
 
@@ -667,28 +667,34 @@ NOTE THIS SOMEWHERE: Offsets must always be numeric, 0 = null = erase
 
 --
 
-0: player/[!]stat 					<--- I hate this now
+0: target/[!]stat 					<--- I hate the / in this now
 1: value - if null, erase stat or reset default
 2: [of]fset, [ov]erride validation
 
 qp: player dbref
+qx: sub-sheet, if any
 qw: where-is-sheet location (just to pass it along)
 qs: stat path
 qi: statpath without instance
 qv: value to set, validated
 qr: prerequisite checks
 
+--
+
+<target> may be 'charobj' or 'charobj:subsheet'.
+
 */
 
-@fo me=&ufunc.setstat sfp=u\\( [num( sfp )]/f.setstat, \\\%0, \\\%1, \\\%2 \\)
+@fo me=&ufunc.setstat [v( d.sfp )]=u\\( [num( sfp )]/f.setstat, \\\%0, \\\%1, \\\%2 \\)
 
-// -----------------------------------------------------------------------------
+// --
 
-&f.setstat sfp=
+&f.setstat [v( d.sfp )]=
 	if( isstaff( %@ ), 
 // Staff?  OK.
 		strcat( 
-			setq( p, pmatch( first( %0, / ))), 
+			setq( p, pmatch( first( first( %0, / ), : ))), 
+			setq( x, rest( first( %0, / ), : )), 
 			setq( w, u( f.find-sheet, %qp )), 
 // statpath: If we can grab it from the player, great, else grab it from the dd.
 			setq( s, 
@@ -821,7 +827,7 @@ qu: "un-add" these list items (for type:class only)
 --------------------------------------------------------------------------------
 */
 
-&f.setstat.workhorse sfp=
+&f.setstat.workhorse [v( d.sfp )]=
 	strcat( 
 		setq( v, ), 
 		setq( c, ulocal( f.get-class, %1 )), 
@@ -1000,11 +1006,11 @@ qr: prerequisites check, 'template' and 'other' only
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.shiftstat sfp=u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
+@fo me=&ufunc.shiftstat [v( d.sfp )]=u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
 
 // -----------------------------------------------------------------------------
 
-&f.shiftstat sfp=
+&f.shiftstat [v( d.sfp )]=
 	[setq( p, pmatch( first( %0, / )))]
 	[setq( w, u( f.find-sheet, %qp ))]
 
@@ -1078,7 +1084,7 @@ qc: stat class (must be numeric)
 --------------------------------------------------------------------------------
 */
 
-&f.shiftstat.workhorse sfp=
+&f.shiftstat.workhorse [v( d.sfp )]=
 	localize( 
 		[setq( d, u( %0/_%1 ))]
 		[setq( f, first( %qd, . ))]
