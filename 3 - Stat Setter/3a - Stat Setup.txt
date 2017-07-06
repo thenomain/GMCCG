@@ -11,16 +11,17 @@ stat theno/str = 2 >> sets Strength to 2
 stat theno/str - 1 >> reduces Strength by 1
 stat theno/str + 3 >> increases Strength by 3
 
-stat/values [<flag(s)>/]<stat> -- what values are good for this stat?
-
 stat/template <target>=<template>
 stat/wipe <target> -- devoids them of stats
 
 --
 
-Parts of this command could probably be partially renamed.
-'stat/values' is a lookup function.
-The rest are sheet-setting functions.
+stat/values [<flag(s)>/]<stat> -- what values are good for this stat?
+
+stat/setvalue <stat>=[!]<value> -- adds/removes value option to/from stat.
+stat/settype <stat>=[!]<instance> -- adds/removes instance option to/from stat.
+
+--
 
 There's no command here to switch sheets, even though we set up 
 "_special.sheet_location" specifically for this purpose.
@@ -28,15 +29,34 @@ There's no command here to switch sheets, even though we set up
 This probably needs to get fixed in this set of code, and not 'sheet'. Not sure.
 
 
+*** SUB-SHEETS ***
+
+<target> can be a character object or their subsheet:
+	<character>
+	<character>:<subsheet>
+
+e.g.:
+	Thenomain
+	Thenomain:Mary
+
+
+Players don't use the <character> part of <target>. Staff must use the full 
+<target>. The above examples are for staff, while a player may simply use:
+	(nothing)
+	Mary
+
+The system needs to enforce these rules.
+
+
 ================================================================================
 == SETUP =======================================================================
 */
 
 @create Stat Setter <ss>
-@set Stat Setter <ss>=inherit safe
 @fo me=&d.ss me=search( name=Stat Setter <ss> )
+@set Stat Setter <ss>=inherit safe
 
-@parent Stat Setter <ss>=codp
+@fo me=@parent Stat Setter <ss>=[v( d.codp )]
 
 
 
