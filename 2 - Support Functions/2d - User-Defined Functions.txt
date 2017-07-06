@@ -189,6 +189,7 @@ p, o, b and t are ignored if the stat is non-numeric.
 1: [p]ermanent, [o]ffset, [b]oth, [t]otal, if any
 
 qp: <player>
+qx: <sub-sheet_name>
 qs: <stat>
 qd: dbref of sheet
 
@@ -202,55 +203,68 @@ requires: isstaff(<dbref>)
 // -----------------------------------------------------------------------------
 
 &f.getstat [v( d.sfp )]=
-	[setq( p, pmatch( before( %0, / )))]
-	[setq( s, rest( %0, / ))]
+	strcat( 
+		setq( p, pmatch( before( before( %0, / ), : ))), 
+		setq( x, edit( trim( after( before( %0, / ), : )), %b, _ )), 
+		setq( s, rest( %0, / )), 
 
-	[case( 0, 
+		case( 0, 
 // the following may work without objeval(<wiz>, getstat(xx/yy))
-// 	cor( isstaff( %@ ), strmatch( %qp, %# )), 
-		isstaff( %@ ), 
-		#-1 PERMISSION DENIED, 
-		t( %qp ), 
-		#-1 PLAYER NOT FOUND, 
-		t( setr( d, u( f.find-sheet, %qp ))), 
-		#-1 SHEET NOT FOUND, 
-		t( %qs ), 
-		#-1 STAT MUST BE PROVIDED, 
-		u( f.getstat.workhorse, %qp, %qs, %qd, %1 )
-	)]
+// [cor( isstaff( %@ ), strmatch( %qp, %# ))]
+			isstaff( %@ ), 
+			#-1 PERMISSION DENIED, 
+			t( %qp ), 
+			#-1 PLAYER NOT FOUND, 
+			t( setr( d, u( f.find-sheet, %qp ))), 
+			#-1 SHEET NOT FOUND, 
+			t( %qs ), 
+			#-1 STAT MUST BE PROVIDED, 
+			u( f.getstat.workhorse, %qp[if( t( %qx ), :%qx )], %qs, %qd, %1 )
+		)
+	)
 
 
 /*
 --------------------------------------------------------------------------------
 -- Getstat Workhorse -----------------------------------------------------------
 
-0: Player dbref
+0: Player dbref[:Sub-Sheet_Name]
 1: Stat to Get
 2: Sheet Loc
 3: [p]ermanent, [o]ffset, [b]oth, [t]otal, if any
 
+qp: player dbref
+qx: sub-sheet_name
+
 qs: <stat path>, then <stat>'s location if character would have it
-qd: <stat> details if on sheet
 qc: class of <stat path>: numeric, string, list, flag
+
+qa: attribute to look stat details
+qd: <stat> details if on sheet
 
 */
 
 &f.getstat.workhorse [v( d.sfp )]=
 	strcat( 
-		setq( s, ulocal( f.statpath.workhorse, %1, %0 )), 
-		setq( d, u( %2/_%qs )), 
+		setq( p, first( %0, : )), 
+		setq( x, rest( %0, : )), 
+
+		setq( s, ulocal( f.statpath.workhorse, %1, %qp )), 
 		setq( c, ulocal( f.get-class, %qs )), 
+
+		setq( a, if( t( %qx ), %qx!%qs, %qs )), 
+		setq( d, u( %2/_%qa )), 
 
 		if( t( %qs ), 
 // If Stat Location Valid & Found ...
 			case( %qc, 
 // Class: Flag (ignore %2, give 1/<null> for set/not set)
 				flag, 
-				ulocal( f.getstat.workhorse.flag, %0, _%qs ), 
+				ulocal( f.getstat.workhorse.flag, %qp, _%qa ), 
 
 // Class: String (ignore %3, give all)
 				string, 
-				ulocal( f.getstat.workhorse.string, %0, _%qs ), 
+				ulocal( f.getstat.workhorse.string, %qp, _%qa ), 
 
 // Class: List (ignore %3, give all)
 				list, 
@@ -260,9 +274,8 @@ qc: class of <stat path>: numeric, string, list, flag
 // .. first, convert 'derived' to value
 				numeric, 
 				strcat( 
-					setq( d, ulocal( f.getstat.workhorse.numeric, %0, _%qs )), 
-					switch(
-						%3, 
+					setq( d, ulocal( f.getstat.workhorse.numeric, %qp, _%qa )), 
+					switch( %3, 
 						p*, first( %qd, . ), 
 						o*, rest( %qd, . ), 
 						b*, %qd, 
@@ -284,10 +297,11 @@ qc: class of <stat path>: numeric, string, list, flag
 -- Getstat Numeric -------------------------------------------------------------
 
 0: sheet dbref
-1: _sheet statpath (to pull 'instance' from, if appropriate)
+1: _sheet.statpath[!sub-sheet_name] (to pull 'instance' from, if appropriate)
 returns: value list
 
 i: instance (if exists) with underscores
+x: sub-sheet_name
 s: statpath without instance
 
 uses: crumple() -- squish + trim
@@ -299,13 +313,16 @@ this code to it at the moment, anyhow. You never know.
 
 &f.getstat.workhorse.numeric [v( d.sfp )]=
 	localize( strcat( 
-	 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
-		setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
+		setq( s, first( %1, ! )), 
+		setq( x, rest( %!, ! )), 
+	 	setq( i, crumple( before( rest( %qs, %( ), %) ))), 
+		setq( s, u( f.statpath-without-instance, trim( %qs, b, _ ))), 
 		iter( 
 			get( %0/%1 ), 
+// .. this won't pass 'sub-sheet' information; sub-sheets cannot do 'derived'
 			if( 
 				strmatch( %i0, derived ), 
-				ulocal( [u( d.data-dictionary )]/%qs, %0, %qi ), 
+				ulocal( u( d.data-dictionary )/%qs, %0, %qi ), 
 				%i0 
 			), 
 			., . 
@@ -318,7 +335,7 @@ this code to it at the moment, anyhow. You never know.
 -- Getstat String --------------------------------------------------------------
 
 0: sheet dbref
-1: _sheet statpath (to pull 'instance' from, if appropriate)
+1: _sheet statpath[!sub-sheet_name] (to pull 'instance' from, if appropriate)
 returns: value
 
 i: instance (if exists) with underscores
@@ -328,8 +345,11 @@ s: statpath without instance
 
 &f.getstat.workhorse.string [v( d.sfp )]=
 	localize( strcat( 
-	 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
-		setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
+		setq( s, first( %1, ! )), 
+		setq( x, rest( %!, ! )), 
+	 	setq( i, crumple( before( rest( %qs, %( ), %) ))), 
+		setq( s, u( f.statpath-without-instance, trim( %qs, b, _ ))), 
+// .. again, sub-sheets cannot look up 'derived' traits
 		if( 
 			strmatch( get( %0/%1 ), derived ), 
 			ulocal( [u( d.data-dictionary )]/%qs, %0, %qi ), 
@@ -353,15 +373,17 @@ s: statpath without instance
 
 &f.getstat.workhorse.flag [v( d.sfp )]=
 	localize( strcat( 
-	 	setq( i, crumple( before( rest( %1, %( ), %) ))), 
-		setq( s, u( f.statpath-without-instance, trim( %1, b, _ ))), 
+		setq( s, first( %1, ! )), 
+		setq( x, rest( %!, ! )), 
+	 	setq( i, crumple( before( rest( %qs, %( ), %) ))), 
+		setq( s, u( f.statpath-without-instance, trim( %qs, b, _ ))), 
+// .. again, sub-sheets cannot look up 'derived' traits
 		if( 
 			strmatch( get( %0/%1 ), derived ), 
 			ulocal( [u( d.data-dictionary )]/%qs, %0, %qi ), 
 			hasattr( %0, %1 ) 
 		)
 	))
-
 
 
 /*
@@ -693,10 +715,14 @@ qr: prerequisite checks
 	if( isstaff( %@ ), 
 // Staff?  OK.
 		strcat( 
+
+// qp: player dbref
 			setq( p, pmatch( first( first( %0, / ), : ))), 
-			setq( x, rest( first( %0, / ), : )), 
+
+// qw: where is the sheet
 			setq( w, u( f.find-sheet, %qp )), 
-// statpath: If we can grab it from the player, great, else grab it from the dd.
+
+// qs: statpath: If we can grab it from the player, else grab it from the DD.
 			setq( s, 
 				if( 
 					setr( s, 
@@ -706,9 +732,30 @@ qr: prerequisite checks
 					ulocal( f.statpath.workhorse, rest( %0, / ))
 				)
 			), 
+
+// qi: statpath without instance
 			setq( i, ulocal( f.statpath-without-instance, %qs )), 
 
-// value validation
+// qx: sub-sheet name (with underscores)
+			setq( x, 
+				edit( 
+					trim( rest( first( %0, / ), : )), 
+					%b, _ 
+				)
+			), 
+			setq( x, 
+				if( 
+					cor( 
+						strmatch( %qx, ), 
+						valid( attrname, %qx ), 
+						not( strmatch( %qx, ! ))
+					),
+					%qx, 
+					#-1 Sub-Sheet Name Illegal
+				)
+			), 
+
+// qv: value validation
 			setq( v, 
 				switch( %2, 
 // .. override - whatever we want
@@ -767,11 +814,14 @@ qr: prerequisite checks
 				)
 			), 
 
-// >> make sure qp, qw, qs and qv are all good!
+// >> make sure qp, qw, qx, qs and qv are all good!
 			switch( 0, 
 
 				t( %qp ), 
 				#-1 Player Not Found, 
+
+// .. sub-sheet name check
+				not( strmatch( %qx, #-* )), %qx, 
 
 // .. must have a template unless "override" switch
 				or( t( get( %qw/_bio.template )), strmatch( %2, ov* )), 
@@ -789,8 +839,13 @@ qr: prerequisite checks
 // .. stat prerequisite check
 				t( %qr ), %qr, 
 
-// .. else: good!
-				u( f.setstat.workhorse, %qw, edit( %qs, %b, _ ), %qv, %2 )
+// .. else: good! - pass target, statpath with underscores, value, offset
+				u( f.setstat.workhorse, 
+					%qw[if( t( %qx ), :%qx )], 
+					edit( %qs, %b, _ ), 
+					%qv, 
+					%2 
+				)
 			) 
 		), 
 
@@ -803,15 +858,18 @@ qr: prerequisite checks
 --------------------------------------------------------------------------------
 -- Setstat Workhorse -----------------------------------------------------------
 
-0: Sheet Loc
+0: Sheet Loc[:Sub-Sheet_Name]
 1: Full Stat Path
 2: <value> -- for 'flag' type, ignore %2 for setting, honor if <null>
 3: [of]ffset  ([ov]veride may be passed, but ignored)
 
-q0 - q3: regexp results
-qd: <stat> details if on sheet, if any
+qp: sheet location
+qx: sub-sheet_name
+
 qc: stat's class
-qs: statpath, edited if class:list (to remove substat)
+qs: statpath, edited if class is 'list' (to remove substat)
+
+qd: <stat> details if on sheet, if any
 qf: first (permanent) value on %qd
 qr: offset ("rest") on %qd, if any
 
@@ -830,9 +888,11 @@ qu: "un-add" these list items (for type:class only)
 &f.setstat.workhorse [v( d.sfp )]=
 	strcat( 
 		setq( v, ), 
+		setq( p, first( %0, : )), 
+		setq( x, rest( %0, : )), 
 		setq( c, ulocal( f.get-class, %1 )), 
 
-// .. oh yeah, if class:list + type.stat.substat, strip the substat
+// .. oh yeah, if class:list & type.stat.substat, strip the substat
 		if( 
 			cand( 
 				strmatch( %qc, list ), 
@@ -841,57 +901,66 @@ qu: "un-add" these list items (for type:class only)
 			setq( s, extract( %1, 1, 2, . )), 
 			setq( s, %1 )
 		), 
-		setq( d, get( %0/_%qs )), 
 
-// >> ( \[.*\] )( \..* )?|( .* ) -> <derived>.<substat> | <other>
-//		setq( 0, 
-//			regmatch( %qd, %( %\%[.*%\%]% )%( %\..*% )?|%( .*% ), 0 1 2 3 )
-//		), 
-//		if( 
-//			t( %q3 ), 
-//			[setq( f, first( %qd, . ))][setq( r, rest( %qd, . ))], 
-//			[setq( f, %q1 )][setq( r, rest( %q2, . ))]
-//		), 
+// .. add statpath & sub-sheet when appropriate 
+		if( t( %qx ), 
+			setq( s, %qx!%qs )
+		), 
+
+// get existing stat data
+		setq( d, get( %qp/_%qs )), 
 		setq( f, first( %qd, . )), 
 		setq( r, rest( %qd, . )), 
 
 		setq( m, case( 1, 
+
 // >> switch is "offset", replace remove or set - "numeric" type only.
 			strmatch( %3, of* ), 
 			case( 0, 
-// .. .. stat class is not "numeric", deny offset
+
+// .. .. offset: stat class is not "numeric", deny offset
 				strmatch( %qc, numeric ), 
 				#-1 CANNOT OFFSET NON-NUMERIC STAT, 
-// .. .. offset is null or 0 = erase offset
-				and( comp( %2, ), neq( %2, 0 )), 
-				set( %0, _%qs:%qf ), 
-// .. .. stat doesn't exist, set 0.<offset>
+
+// .. .. offset: offset is null or 0 = erase offset
+				cand( comp( %2, ), neq( %2, 0 )), 
+				set( %qp, _%qs:%qf ), 
+
+// .. .. offset: stat doesn't exist, set 0.<offset>
 				comp( %qf, ), 
-				set( %0, _%qs:0.%2 ), 
-// .. .. else set <perm>.<offset>
-				set( %0, _%qs:%qf.%2 )
+				set( %qp, _%qs:0.%2 ), 
+
+// .. .. offset: else set <perm>.<offset>
+				set( %qp, _%qs:%qf.%2 )
 			), 
+
 // >> switch is "override", replace the whole thing without checking anything
 			strmatch( %3, ov* ), 
-			set( %0, _%qs:%2 ), 
+			set( %qp, _%qs:%2 ), 
+
 // >> value is null, erase stat ( this could be in the "else", too )
 			not( comp( %2, )), 
-			set( %0, _%qs: ),
+			set( %qp, _%qs: ),
+
 // >> stat class is "numeric", replace permanent
 			strmatch( %qc, numeric ), 
-			set( %0, _%qs:%2[if( %qr, .%qr )] ), 
+			set( %qp, _%qs:%2[if( %qr, .%qr )] ), 
+
 // >> stat class is "list", set or un-set ( !value ) each item in list
-// .. right now, lists may be space-delimited, editing space to .
+// .. list: right now, lists may be space-delimited, editing space to .
 			strmatch( %qc, list ), 
 			[setq( v, edit( %2, %b, . ))]
 			[setq( u, graball( %qv, !*, ., . ))]
 			[setq( a, setdiff( %qv, %qu, . ))]
 			[setq( u, edit( %qu, !, ))]
-// .. .. qv: remove the remove stuff then add the add stuff
+
+// .. .. list: qv: remove the remove stuff then add the add stuff
 			[setq( v, setunion( setdiff( %qd, %qu, . ), %qa, . ))]
-			[set( %0, _%qs:%qv )], 
+			[set( %qp, _%qs:%qv )], 
+
 // >> else, replace all
-			set( %0, _%qs:%2 )
+			set( %qp, _%qs:%2 )
+
 		)), 
 
 // Display
@@ -1084,16 +1153,155 @@ qc: stat class (must be numeric)
 --------------------------------------------------------------------------------
 */
 
-&f.shiftstat.workhorse [v( d.sfp )]=
-	localize( 
-		[setq( d, u( %0/_%1 ))]
-		[setq( f, first( %qd, . ))]
-		[setq( r, rest( %qd, . ))]
-		[setq( a, if( setr( a, add( %qf, %2 )), %qa, ))]
-		[setq( i, u( f.statpath-without-instance, %1 ))]
-		[setq( c, u( f.get-class, %1 ))]
+/*
+================================================================================
+-- shiftstat(<stat>, <value>[, <option>]) -----------------------------------
 
-		[case( 1, 
+<option>:
+	offset: Increase the offset
+	override: Ignore the stat limitations, still must be numeric
+
+validate stat path
+validate stat may end as <current> + <value>, unless override
+basically getstat + setstat
+
+0: player/stat
+1: value (must be non-zero numeric)
+2: option ([of]fset, [ov]erride)
+
+qp: player dbref
+qw: where-is-sheet location (just to pass it along)
+qs: stat path
+qc: stat class (numeric, string, list - we only accept numeric, here)
+qv: value to shift by, validated
+qa: amount to offset by
+qr: prerequisites check, 'template' and 'other' only
+
+--------------------------------------------------------------------------------
+*/
+
+@fo me=&ufunc.shiftstat [v( d.sfp )]=u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
+
+// -----------------------------------------------------------------------------
+
+&f.shiftstat [v( d.sfp )]=
+	strcat( 
+
+// qp: player dbref
+			setq( p, pmatch( first( first( %0, / ), : ))), 
+
+// qw: where is the sheet
+			setq( w, u( f.find-sheet, %qp )), 
+
+// qx: sub-sheet name (with underscores)
+			setq( x, 
+				edit( 
+					trim( rest( first( %0, / ), : )), 
+					%b, _ 
+				)
+			), 
+			setq( x, 
+				if( 
+					cor( 
+						strmatch( %qx, ), 
+						valid( attrname, %qx ), 
+						not( strmatch( %qx, ! ))
+					),
+					%qx, 
+					#-1 Sub-Sheet Name Illegal
+				)
+			), 
+
+// Statpath: If we can grab it from the player, great, else grab it from the dd.
+// (Note: "first()" is there in case they're trying to set multiple stats)
+		setq( s, 
+			if( 
+				setr( s, u( f.statpath.workhorse, rest( %0, / ), %qp )), 
+				%qs, 
+				u( f.statpath.workhorse, rest( %0, / ))
+			)
+		), 
+		setq( c, ulocal(f.get-class, %qs )), 
+		setq( v, 
+			if( 
+				cand( isnum( %1 ), neq( %1, 0 )), 
+				trim( %1, l, + ), 
+				#-1 SHIFT MUST BE NON-ZERO NUMERIC 
+			)
+		), 
+
+// pre-requisites validation, 'template' and 'other' only
+		setq( r, 
+			case( 0, 
+				not( strmatch( %2, ov* )), 1, 
+				t( setr( r, u( f.prereq-check-template, %qw, %qi ))), %qr, 
+				t( setr( r, 
+					u( 
+						f.prereq-check-other, 
+						%qw, 
+						%qi, 
+// >> the line below is the 'instance' for that stat
+						before( rest( %qs, %( ), %) ), 
+						%qv 
+					)
+				)), 
+				%qr, 
+				1 
+			)
+		), 
+
+		switch( 0, 
+			isstaff( %@ ), #-1 Staff Only, 
+			t( %qp ), #-1 Player Not Found, 
+			not( strmatch( %qx, #-* )), %qx, 
+			t( get( %qw/_bio.template )), #-1 Sheet Template Not Found, 
+			comp( rest( %0, /), ), #-1 Stat Name May Not Be Null, 
+			t( %qs ), %qs, 
+			strmatch( %qc, numeric ), #-1 Stat Class Must Be Numeric, 
+			t( %qv ), %qv, 
+			t( %qr ), %qr, 
+			u( f.shiftstat.workhorse, %qw[if( t( %qx ), :%qx )], %qs, %qv, %2 )
+		)
+	)
+
+/*
+--------------------------------------------------------------------------------
+-- Shiftstat Workhorse ---------------------------------------------------------
+
+0: sheet location[:sub-sheet_name]
+1: statpath
+2: amount to inc/dec
+3: [of]fset, [ov]erride
+
+qp: player's sheet dbref
+qx: sub-sheet_name
+qs: built stat-path
+
+qd: current stat details
+qf: first portion of stat (permanent)
+qr: rest of stat (offset)
+qa: sum of %qf and %2, if 0 then <null> (to erase value with setstat)
+qi: statpath without instance (because of the validate system)
+qc: stat class (must be numeric)
+
+--------------------------------------------------------------------------------
+*/
+
+
+&f.shiftstat.workhorse [v( d.sfp )]=
+	strcat( 
+		setq( p, first( %0, : )), 
+		setq( x, rest( %0, : )), 
+		setq( s, if( t( %qx ), %qx!%1, %1 )), 
+
+		setq( d, u( %qp/_%qs )), 
+		setq( f, first( %qd, . )), 
+		setq( r, rest( %qd, . )), 
+		setq( a, if( setr( a, add( %qf, %2 )), %qa, )), 
+		setq( i, ulocal( f.statpath-without-instance, %1 )), 
+		setq( c, ulocal( f.get-class, %1 )), 
+
+		case( 1, 
 			not( strmatch( %qc, numeric )), 
 			#-1 STAT CLASS MUST BE NUMERIC, 
 
@@ -1113,7 +1321,7 @@ qc: stat class (must be numeric)
 
 // >> set that stat!
 			ulocal( f.setstat.workhorse, %0, %1, %qa )
-		)] 
+		)
 	)
 
 

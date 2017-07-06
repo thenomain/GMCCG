@@ -292,12 +292,12 @@ Derived stats must be set up with several things in mind:
 
 validation e.g.
 	&advantage.defense: [min(u(%0/_attribute.wits), u(%0/_attribute.dexterity))]
-	&tags.advantage.defense: derived
+	&default.advantage.defense: derived
 
 That is, the defense stat is the less of the sheet's wits and dexterity.
 
 storage e.g.
-	&_advantage.defense: [u(#xxx/advantage.defense, %!)]
+	&_advantage.defense: derived
 
 That is, "check object #xxx for this formula, and pass my dbref so it can find 
 the stats it needs". (Note: This causes no end of preferences problems due to 
@@ -307,7 +307,7 @@ object #xxx Visual solves these problems, if not in a satisfactory way.)
 Stored derived stats follow all the rules of simple stats, so an offset can be 
 applied without issue. For example, if someone boosted this character's defense 
 by 2 points:
-	&_advantage.defense: [u(#xxx/advantage.defense, %!)].2
+	&_advantage.defense: derived.2
 
 Stored derived stats may be overwritten, making them normal simple stats. e.g.
 	&_advantage.defense: 4
@@ -417,6 +417,7 @@ Due to various systems, the following values are illegal:
 Names:
 	:   - the colon can't be set as an attribute name
 	.   - the period is a delimiter for the stat name
+	!   - the bang is a delimiter for sub-sheet stats
 
 Stats:
 	`   - we're using the backtick to columnize
@@ -446,3 +447,4 @@ The use of ':' for sub-sheets is slightly different from the '.' for sub-stats,
 but should provide a visual distinction for players and a character difference 
 for code.
 
+For now: Sub-Sheets cannot handle "derived" traits.
