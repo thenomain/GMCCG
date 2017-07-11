@@ -19,7 +19,7 @@ returns: character sheet statpaths
 --------------------------------------------------------------------------------
 */
 
-&f.list-stats-tags sfp=
+&f.list-stats-tags [v( d.sfp )]=
 	filter( 
 		fil.list-stats-tags, 
 // .. lazy, so turning "_sheet.statpath" into "sheet.statpath" 
@@ -45,7 +45,7 @@ Filter based on a tags list
 --------------------------------------------------------------------------------
 */
 
-&fil.list-stats-tags sfp=
+&fil.list-stats-tags [v( d.sfp )]=
 	ulocal( 
 		f.hastag?.workhorse, 
 		ulocal( f.statpath-without-instance, %0 ), 
@@ -66,7 +66,7 @@ Probably duplicitous. Filter based on a tags list
 --------------------------------------------------------------------------------
 */
 
-&fil.list-stats-types sfp=
+&fil.list-stats-types [v( d.sfp )]=
 	t( match( %1, first( %0, . )))
 
 
@@ -83,7 +83,7 @@ Filter based on values list (value.value 2.value 3)
 --------------------------------------------------------------------------------
 */
 
-&fil.list-stats-values sfp=
+&fil.list-stats-values [v( d.sfp )]=
 	setunion( 
 		get( 
 			u( d.data-dictionary )/
@@ -156,7 +156,7 @@ Remember we pass to prerequisite.<statpath> the following:
 	0: dbref of sheet
 	1: instance of stat, if any
 	2: stat-raise (offset) if stat being checked is being raised (used in cg/xp)
-	3: (
+	3: (nothing, I think)
 
 returns: 1 if valid, #-1 <reason> if not
 
@@ -165,7 +165,7 @@ p: return for &prerequisite.<statpath>
 --------------------------------------------------------------------------------
 */
 
-&f.prereq-check-other sfp=
+&f.prereq-check-other [v( d.sfp )]=
 	localize( 
 		[setq( 
 			p, 
@@ -222,7 +222,7 @@ returns: 1 if valid, #-1 <reason> if not
 --------------------------------------------------------------------------------
 */
 
-&f.prereq-check-cgen sfp=
+&f.prereq-check-cgen [v( d.sfp )]=
 	if( 
 		cor( 
 // .. player is in chargen
@@ -275,7 +275,7 @@ t: templates used in tags.<statpath>
 --------------------------------------------------------------------------------
 */
 
-&f.prereq-check-template sfp=
+&f.prereq-check-template [v( d.sfp )]=
 	localize( 
 		[setq( b, lcstr( u( [u( d.data-dictionary )]/bio.template )))]
 		[setq( t, setinter( lcstr( u( [u( d.data-tags )]/tags.%1 )), %qb, . ))]
@@ -324,7 +324,7 @@ qo: offset
 --------------------------------------------------------------------------------
 */
 
-&f.pretty-stat-num sfp=
+&f.pretty-stat-num [v( d.sfp )]=
 	localize( switch( 
 		[setq( b, first( %0, . ))]
 		[setq( o, rest( %0, . ))]
