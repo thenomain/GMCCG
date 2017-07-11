@@ -558,7 +558,11 @@ Effective Rank.
 &prereq-text.merit.living_weapon_() [v( d.dd )]=Stamina 3, Survival 2
 &tags.merit.living_weapon_() [v( d.dt )]=werewolf.physical
 
-&merit.moon-kissed_() [v( d.dd )]=1|*
+&merit.moon-kissed_() [v( d.dd )]=1|
+	Academics.Computer.Crafts.Investigation.Medicine.Occult.Politics.Science.
+	Athletics.Brawl.Drive.Firearms.Larceny.Stealth.Survival.Weaponry.
+	Animal Ken.Empathy.Expression.Intimidation.Persuasion.Socialize.Streetwise.
+	Subterfuge
 &prerequisite.merit.moon-kissed_() [v( d.dd )]=
 	cand( 
 		u( .at_least, %0, skill.%1, 2 ), 
