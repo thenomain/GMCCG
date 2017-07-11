@@ -122,7 +122,7 @@ Werewolf Stat Checks
 &.Auspice_Skill_Check [v( d.dd )]=
 	t( setinter( 
 		%1, 
-		v( d.auspice.skills.[u( .value_full, %0, bio.auspice )] )
+		v( d.auspice.skills.[u( .value_full, %0, bio.auspice )] ), , , i
 	))
 
 &d.auspice.skills.cahalith [v( d.dd )]=
@@ -536,7 +536,7 @@ Effective Rank.
 &merit.fortified_form_() [v( d.dd )]=3.4.5|Dalu.Gauru.Urshul.Urhan
 &prerequisite.merit.fortified_form_() [v( d.dd )]=
 	u( .at_least_all, %0, attribute.stamina:3 skill.survival:2 )
-&prereq-text.merit.favored_form_() [v( d.dd )]=Stamina 3, Survival 2
+&prereq-text.merit.fortified_form_() [v( d.dd )]=Stamina 3, Survival 2
 &tags.merit.fortified_form_() [v( d.dt )]=werewolf.physical
 // +shift MIGHT respect this stat
 
