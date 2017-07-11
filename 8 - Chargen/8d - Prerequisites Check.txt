@@ -111,7 +111,7 @@ i: instance (if exists)
 s: _sheet.statpath_without_instance_()
 p: return for &prerequisite.<statpath>
 
-*/
+OLD VERSION: I need to stop writing the same function twice.
 
 &f.prerequisite.other [v( d.cg )]=
 	localize( strcat( 
@@ -128,6 +128,19 @@ p: return for &prerequisite.<statpath>
 			1 
 		)
 	))
+
+*/
+
+
+&f.prerequisite.other [v( d.cg )]=
+	localize( strcat( 
+		setq( i, before( rest( %1, %( ), %) )), 
+		setq( s, 
+			rest( ulocal( [u( d.sfp )]/f.statpath-without-instance, %1 ), _ )
+		), 
+		u( v( d.sfp )/f.prereq-check-other, %0, %qs, %qi, %2 )
+	))
+
 
 /* -- test -- 
 
