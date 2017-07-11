@@ -42,7 +42,7 @@ returns: 1 if ok, #-1 <reason> if not
 
 /* -- test --
 
-think u( v( d.cg )/f.prerequsite.cg-only, %#, merit.giant )
+think u( v( d.cg )/f.prerequisite.cg-only, %#, merit.giant )
 
 
 --------------------------------------------------------------------------------
@@ -92,7 +92,7 @@ t: templates for this stat
 
 /* -- test --
 
-think u( v( d.cg )/f.prerequsite.template, %#, _merit.medium )
+think u( v( d.cg )/f.prerequisite.template, %#, _merit.medium )
 
 
 --------------------------------------------------------------------------------
@@ -144,7 +144,7 @@ OLD VERSION: I need to stop writing the same function twice.
 
 /* -- test -- 
 
-think u( v( d.cg )/f.prerequsite.other, %#, _merit.unarmed_defense )
-think u( v( d.cg )/f.prerequsite.other, %#, _merit.barfly )
+think u( v( d.cg )/f.prerequisite.other, %#, _merit.unarmed_defense )
+think u( v( d.cg )/f.prerequisite.other, %#, _merit.barfly )
 
 */
