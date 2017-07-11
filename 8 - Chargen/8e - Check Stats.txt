@@ -67,7 +67,7 @@ t: temp validation results, used here and there
 // >> <prereq>
 		iter( 
 			cg-only template other, 
-			ulocal( f.prerequsite.%i0, %0, %1, %2 ), , . 
+			ulocal( f.prerequisite.%i0, %0, %1, %2 ), , . 
 		)
 	))
 
