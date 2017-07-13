@@ -68,6 +68,33 @@ Removes all but one instance of <delim> inside <list>, and all outside.
 
 &.crumple [v( d.sfp )]=trim( squish( %0, %1 ), b, %1 )
 
+/*
+--------------------------------------------------------------------------------
+-- Dot-Function: Pmatch --------------------------------------------------------
+
+	u( .pmatch, <target>[, <check offline?>] )
+
+A quasi-advanced form of pmatch() because it includes matching 'me'. 
+
+Set '<check offline?>' to true (or '1' or almost anything really) to check 
+offline character objects as well.
+
+
+*/
+
+&.pmatch [v( d.sfp )]=
+	localize( strcat( 
+		setq( p, 
+			if( strmatch( %0, me ), 
+				%#, 
+				objeval( %#, pmatch( %0 ))
+			)
+		), 
+		if( cor( t( %qp ), not( t( %1 ))), 
+			%qp, 
+			first( search( eplayer=strmatch( name( ## ), %0* )))
+		)
+	))
 
 
 /*

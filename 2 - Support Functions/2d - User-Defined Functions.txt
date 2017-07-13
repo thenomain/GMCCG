@@ -717,7 +717,7 @@ qr: prerequisite checks
 		strcat( 
 
 // qp: player dbref
-			setq( p, pmatch( first( first( %0, / ), : ))), 
+			setq( p, u( .pmatch, first( first( %0, / ), : ))), 
 
 // qw: where is the sheet
 			setq( w, u( f.find-sheet, %qp )), 
@@ -969,16 +969,17 @@ qu: "un-add" these list items (for type:class only)
 // error from 'set()'
 			comp( %qm, ), %qm, 
 
-// 
+// 'set x to y'
 			t( setr( v, if( t( %qv ), %qv, %2 ))), 
 			strcat( 
 				Set, %b, 
 				ulocal( f.statname.workhorse, rest( %qs, . )), 
 				if( strmatch( %3, of* ), %boffset ), 
 				if( not( strmatch( %qc, flag )), 
-					%bto '%qv'
+					%bto '%qv' 
 				), .
 			), 
+// 'unset x from y'
 			strcat( 
 				Unset, %b, 
 				ulocal( f.statname.workhorse, rest( %qs, . )), 
@@ -1080,7 +1081,7 @@ qr: prerequisites check, 'template' and 'other' only
 // -----------------------------------------------------------------------------
 
 &f.shiftstat [v( d.sfp )]=
-	[setq( p, pmatch( first( %0, / )))]
+	[setq( p, u( .pmatch, first( %0, / )))]
 	[setq( w, u( f.find-sheet, %qp ))]
 
 // Statpath: If we can grab it from the player, great, else grab it from the dd.
@@ -1188,7 +1189,7 @@ qr: prerequisites check, 'template' and 'other' only
 	strcat( 
 
 // qp: player dbref
-			setq( p, pmatch( first( first( %0, / ), : ))), 
+			setq( p, u( .pmatch, first( first( %0, / ), : ))), 
 
 // qw: where is the sheet
 			setq( w, u( f.find-sheet, %qp )), 

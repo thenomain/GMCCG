@@ -47,7 +47,7 @@ qs: setting self? (1/0)
 			setq( 1, %0 )
 		), 
 		if( strmatch( %q0, me ), setq( 0, %# )),
-		setq( p, pmatch( %q0 )), 
+		setq( p, u( .pmatch, %q0 )), 
 		setq( w, u( f.find-sheet, %qp )), 
 		setq( s, strmatch( %#, %qp )), 
 		setq( v, statvalidate( template, %q1 )), 
@@ -250,7 +250,7 @@ ql: list of stats getting wiped, sorted
 		), 
 		setq( 1, trim( rest( %0, = ))), 
 
-		setq( p, if( strmatch( %q0, me ), %#, pmatch( %q0 ))), 
+		setq( p, u( .pmatch, %q0 )), 
 		setq( s, strmatch( %qp, %# )), 
 		setq( w, u( f.find-sheet, %qp )), 
 

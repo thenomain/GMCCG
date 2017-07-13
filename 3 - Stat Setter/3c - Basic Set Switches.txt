@@ -87,7 +87,7 @@ uses: setstat() and shiftstat().
 // .. players can only /set on themselves, and only if they're 'in chargen'
 		cor( 
 			cand( 
-				strmatch( %#, setr( p, pmatch( %q0 ))), 
+				strmatch( %#, setr( p, u( .pmatch, %q0 ))), 
 				strmatch( %1, @@( null )), 
 				isapproved( %#, chargen )
 			), 

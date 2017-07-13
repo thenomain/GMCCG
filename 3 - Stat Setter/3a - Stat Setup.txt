@@ -82,6 +82,34 @@ The system needs to enforce these rules.
 
 &.msg [v( d.ss )]=ansi( h, <%0>, n, %b%1 )
 
+/*
+--------------------------------------------------------------------------------
+-- Dot-Function: Pmatch --------------------------------------------------------
+
+	u( .pmatch, <target>[, <check offline?>] )
+
+A quasi-advanced form of pmatch() because it includes matching 'me'. 
+
+Set '<check offline?>' to true (or '1' or almost anything really) to check 
+offline character objects as well.
+
+
+*/
+
+&.pmatch [v( d.ss )]=
+	localize( strcat( 
+		setq( p, 
+			if( strmatch( %0, me ), 
+				%#, 
+				objeval( %#, pmatch( %0 ))
+			)
+		), 
+		if( cor( t( %qp ), not( t( %1 ))), 
+			%qp, 
+			first( search( eplayer=strmatch( name( ## ), %0* )))
+		)
+	))
+
 
 
 /*
