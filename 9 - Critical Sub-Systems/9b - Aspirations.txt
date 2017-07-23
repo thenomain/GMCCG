@@ -4,7 +4,7 @@
 Thenomain : +jhelp bconfig3
   MYJOBS: Determines whether or not +myjobs can access the bucket. Valid
           <values> are 'yes' and 'no'.
-You say, “So :: +bucket/set <bucket>/myjobs=yes”
+You say, "So :: +bucket/set <bucket>/myjobs=yes"
 
 train +bucket/create ASP=For pitched and fulfilled aspirations. Snakes also.
 train +bucket/set ASP/myjobs=yes
