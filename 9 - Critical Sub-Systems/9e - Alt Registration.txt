@@ -18,8 +18,8 @@ alt/accept <code>:
 
 
 
-You paged Trixie with ‘Like, say 'xp/convert vera=3' and it will move 3 Player XP to my 3 Normal XP?’
-You paged Trixie with ‘Because that would be AWESOME.’
+You paged Trixie with "Like, say 'xp/convert vera=3' and it will move 3 Player XP to my 3 Normal XP?"
+You paged Trixie with "Because that would be AWESOME."
 
 
 
@@ -31,7 +31,7 @@ think iter( lnum( 6 ), pack( rand( 0, 35 )), , @@ )
 
 
 "Or I could maximize pack() and make each digit rand( 0, 63 )
-You say, “I would have to be very careful to use strmatch(), tho, as it's case-sensitive.”
+You say, "I would have to be very careful to use strmatch(), tho, as it's case-sensitive."
 
 think iter( lnum( 6 ), pack( rand( 0, 63 )), , @@ )
 
