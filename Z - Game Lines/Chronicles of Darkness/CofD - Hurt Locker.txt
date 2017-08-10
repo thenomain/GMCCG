@@ -1,0 +1,1025 @@
+/*
+
+HURT LOCKER FIGHTING STYLES: The hell that is my life
+
+To say that this isn't done is an understatement. I also don't know how much of 
+this is from the pre-release and how much is from the final. Sometimes people 
+just feed me information and I code it without question. I pass this lack of 
+judgement on to you.
+
+The merits are done, though all of the fighting merits are now Type:List, 
+instead of Type:Numeric. This will allow buying them out of order, but the costs 
+for doing so aren't finished, yet.
+
+Some of the fighting merits had to be split up into two; I don't yet have the 
+time to work out how to allow people to take two completely different 'level 1' 
+merits of the same name. ('Grappling 1: Sprawl' and 'Grappling 1: Standing 
+Throw', for instance.)
+
+
+More to eventually follow.
+
+
+
+*/
+
+/*
+-- Data Dictionary Prerequisite Shortcut Functions ------------------------
+
+-- Hurt Locker: Style Skip Max --
+
+i.e., given a 'maneuver' fighting style merit, what level could you skip to?
+
+0: sheet dbref
+1: merit statpath - cannot be instanced
+returns: max level that this merit can be skipped to
+
+t: tags to match (all start with 'tag:*' for 'style tag')
+s: sheet merits that sheet has matching these tags, one at a time
+
+Take a merit. For each 'tag:*' tag that merit has, find all other merits on the 
+sheet that match. For each one of those, find its value (number of dots or 
+overall value) and add them. From that list, pick the highest, min 1.
+
+Due to how we're shortcutting the system, instanced stats won't work.
+*/
+
+&.Hurt_Locker_Style_Skip_Max [v( d.dd )]=
+	lmax( 
+// .. for each 'tag:*' grouping ..
+		iter( 
+			graball( get( v( d.dt )/tags.%1 ), tag:*, ., . ), 
+			ladd( 
+				iter( 
+// .. grab that sheet's traits ..
+					u( v( d.sfp )/f.list-stats-tags, %0, merit, %i0 ), 
+// .. and return a number.
+					case( u( .class, %i0 ), 
+						list, 
+						words( get( %0/_%i0 ), . ), 
+						get( %0/_%i0 )
+					)
+				)
+			), 
+			.  
+		) 
+// ('1' is always the lowest)
+		1 
+	)
+
+*/
+
+
+/*
+--------------------------------------------------------------------------------
+-- MERITS: NEW -----------------------------------------------------------------
+*/
+
+&merit.air_of_menace [v( d.dd )]=2
+&prerequisite.merit.air_of_menace [v( d.dd )]=
+	u( .at_least, %0, skill.intimidation, 2 )
+&prereq-text.merit.air_of_menace [v( d.dd )]=Intimidation 2+
+&tags.merit.air_of_menace [v( d.dt )]=social
+
+&merit.body_as_weapon [v( d.dd )]=2
+&prerequisite.merit.body_as_weapon [v( d.dd )]=
+	u( .at_least_all, %0, attribute.stamina:3 skill.brawl:2 )
+&prereq-text.merit.body_as_weapon [v( d.dd )]=Stamina 3+, Brawl 2+
+&tags.merit.body_as_weapon [v( d.dt )]=physical
+
+&merit.cohesive_unit [v( d.dd )]=1.2.3
+&prerequisite.merit.cohesive_unit [v( d.dd )]=
+	u( .at_least, %0, attribute.presence, 3 )
+&prereq-text.merit.cohesive_unit [v( d.dd )]=Presence 3+
+&tags.merit.cohesive_unit [v( d.dt )]=social
+
+&merit.defender [v( d.dd )]=1.2.3
+&tags.merit.defender [v( d.dt )]=social
+
+&merit.empath [v( d.dd )]=1
+&prerequisite.merit.empath [v( d.dd )]=
+	u( .at_least, %0, skill.empathy, 2 )
+&prereq-text.merit.empath [v( d.dd )]=Empathy 2+
+&tags.merit.empath [v( d.dt )]=social
+
+&merit.object_fetishism_() [v( d.dd )]=1.2.3.4.5|*
+&notes.merit.object_fetishism_() [v( d.dt )]=
+	'Type' is the object.|
+	The skill and specialty must have a note.
+&tags.merit.object_fetishism_() [v( d.dt )]=mental
+
+&merit.peacemaker [v( d.dd )]=2.3
+&prerequisite.merit.peacemaker [v( d.dd )]=
+	u( .at_least_all, %0, attribute.wits:3 skill.empathy:3 )
+&prereq-text.merit.peacemaker [v( d.dd )]=Wits 3+, Empathy 3+
+&tags.merit.peacemaker [v( d.dt )]=social
+
+&merit.punch_drunk [v( d.dd )]=2
+&prerequisite.merit.punch_drunk [v( d.dd )]=
+	u( .at_least, %0, advantage.willpower_maximum, 6 )
+&prereq-text.merit.punch_drunk [v( d.dd )]=Willpower 6+
+&tags.merit.punch_drunk [v( d.dt )]=mental
+
+&merit.scarred_() [v( d.dd )]=1|*
+&prerequisite.merit.scarred_() [v( d.dd )]=
+	u( .at_most, 
+		%0, 
+		u( v( d.sfp )/f.list-stats-tags, %0, advantage, integrity ), 
+		5
+	)
+&prereq-text.merit.scarred_() [v( d.dd )]=Integrity trait is 5 or lower
+&notes.merit.scarred_() [v( d.dt )]=
+	'Type' is scarring event.|
+	Event and condition must be noted.
+&tags.merit.scarred_() [v( d.dt )]=mental
+
+&merit.support_network_() [v( d.dd )]=1.2.3.4.5|*
+// &prerequisite.support_network_() [v( d.dd )]=
+//		u( .one_of, %0, 
+//			??? 
+//		)
+// &prereq-text.support_network_() [v( d.dd )]=
+//	Allies, Mentor, Retainer, True Friend, person with Empath, 
+//	or another similar Merit
+&notes.support_network_() [v( d.dt )]=
+	'Type' is the name of the network.|
+	Specific merit and information must be noted.
+&tags.merit.support_network_() [v( d.dt )]=social
+
+&merit.survivalist [v( d.dd )]=1
+&prerequisite.merit.survivalist [v( d.dd )]=
+	u( .at_least_all, %0, skill.survival:3 merit.iron_stamina:3 )
+&prereq-text.merit.survivalist [v( d.dd )]=Survival 3+, Iron Stamina 3
+&tags.merit.survivalist [v( d.dt )]=physical.tag:attitude (endurance)
+
+
+/*
+--------------------------------------------------------------------------------
+-- MERITS: FIGHTING STYLES -----------------------------------------------------
+
+Enter the "Style Tag" purchasing rules here.
+
+Probably going to add it to the prereq: If your style taged merits don't add up 
+to the level you want to buy, you can't take it. This is important because you 
+can take all of these out of order.
+
+*/
+
+&merit.avoidance [v( d.dd )]=
+	1.2.3.4|
+	Insignificance.Coattails.Whack-a-Mole.Play Dead
+&prerequisite.merit.avoidance [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.manipuation:3 skill.athletics:2 skill.stealth:2 
+	)
+&prereq-text.merit.avoidance [v( d.dd )]=
+	Manipuation 3+, Athletics 2+, Stealth 2+
+&class.merit.avoidance [v( d.dd )]=list
+
+&tags.merit.avoidance [v( d.dt )]=style.fighting.tag:movement (agile)
+&notes.merit.avoidance [v( d.dt )]=Style Tags: Movement (Agile)
+
+
+
+&merit.berzerker [v( d.dd )]=
+	1.2.3|
+	The Red Mist.War Cry.Manic Brutality
+&prerequisite.merit.berzerker [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.strength:3 merit.iron_stamina:3 
+	)
+&prereq-text.merit.berzerker [v( d.dd )]=
+	Strength 3+, Iron Stamina 3
+&class.merit.berzerker [v( d.dd )]=list
+
+&tags.merit.berzerker [v( d.dt )]=style.fighting.tag:attitude (enraged)
+&notes.merit.berzerker [v( d.dt )]=Style Tags: Attitude (Enraged)
+
+
+
+&merit.bowmanship [v( d.dd )]=
+	1.2.3.4|
+	Arcing Fire.Bullseye.Out of Nowhere.Death from Above
+&prerequisite.merit.bowmanship [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.dexterity:3 skill.firearms:2 merit.trained_observer:1 
+	)
+&prereq-text.merit.bowmanship [v( d.dd )]=
+	Dexterity 3+, Firearms 2+, Trained Observer
+&class.merit.bowmanship [v( d.dd )]=list
+
+&tags.merit.bowmanship [v( d.dt )]=style.fighting.tag:archery
+&notes.merit.bowmanship [v( d.dt )]=Style Tags: Archery
+
+
+
+&merit.boxing [v( d.dd )]=
+	1.2.3.4.5|
+	Head Protection.Defensive Jab.Knockout Artist.Combination.Out for the Count
+&prerequisite.merit.boxing [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.strength:2 attribute.dexterity:2 attribute.stamina:2 
+		skill.brawl:2 skill.athletics:2 
+	)
+&prereq-text.merit.boxing [v( d.dd )]=
+	Strength 2+, Dexterity 2+, Stamina 2+, Brawl 2+, Athletics 2+
+&class.merit.boxing [v( d.dd )]=list
+
+&tags.merit.boxing [v( d.dt )]=style.fighting.tag:striking
+&notes.merit.boxing [v( d.dt )]=Style Tags: Striking
+
+
+
+&merit.chain_weapons [v( d.dd )]=
+	1.2|
+	Imposing Defense.Bring Down the House
+&prerequisite.merit.chain_weapons [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.strength:3 attribute.dexterity:3 skill.athletics:2 
+		skill.weaponry:2 
+	)
+&prereq-text.merit.chain_weapons [v( d.dd )]=
+	Strength 3+, Dexterity 3+, Athletics 2+, Weaponry 2+
+&class.merit.chain_weapons [v( d.dd )]=list
+
+&tags.merit.chain_weapons [v( d.dt )]=style.fighting.tag:flexible
+&notes.merit.chain_weapons [v( d.dt )]=Style Tags: Flexible
+
+
+
+&merit.combat_archery [v( d.dd )]=
+	1.2.3.4.5|
+	Rapid Nock.Reflex Aiming.Parthian Shot.Rain of Arrows.Trick Shot
+&prerequisite.merit.combat_archery [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.strength:3 skill.athletics:2 merit.quick_draw_(bow):1 
+	)
+&prereq-text.merit.combat_archery [v( d.dd )]=
+	Strength 3+, Athletics 2+, Quick Draw (Bow)
+&class.merit.combat_archery [v( d.dd )]=list
+
+&tags.merit.combat_archery [v( d.dt )]=style.fighting.tag:archery
+&notes.merit.combat_archery [v( d.dt )]=Style Tags: Archery
+
+
+
+&merit.falconry [v( d.dd )]=
+	1.2.3.4|
+	Predator's Vigil.Flyby.Retrieve Item.Rake the Eyes
+&prerequisite.merit.falconry [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.wits:3 skill.animal_ken:3 
+	)
+&prereq-text.merit.falconry [v( d.dd )]=
+	Wits 3+, Animal Ken 3+, 'Bonded' condition with a predatory bird of Size 2+
+&class.merit.falconry [v( d.dd )]=list
+
+&tags.merit.falconry [v( d.dt )]=style.fighting.tag:creature (claw)
+&notes.merit.falconry [v( d.dt )]=Style Tags: Creature (Claw)
+
+
+/*
+Grappling House Rule
+
+It is far, far easier to have one option per level (dots) than two, so we have 
+split the new Grappling into Grappling and Clinching. The ONLY thing this 
+affects is that you can't take Clinching 2 from Grappling 1. By the time you 
+have 2 dots in any "grappling" fighting style, you can take level 3.
+
+There are no other changes.
+
+I apologize for this limitation in the code.
+
+
+Grappling:
+1: Sprawl
+2: Small Joint Manipulation
+3: Joint Lock
+4: Lock Flow
+5: Tap or Snap
+
+Clinching:
+1: Standing Throw
+2: Takedown
+3: Ippon
+4: Dynamic Guard
+5: Positional Dominance
+*/
+
+&merit.grappling [v( d.dd )]=
+	1.2.3.4.5|
+	Sprawl.Small Joint Manipulation.Joint Lock.Lock Flow.Tap or Snap
+&prerequisite.merit.grappling [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.stamina:3 attribute.strength:2 skill.athletics:2 skill.brawl:2 
+	)
+&prereq-text.merit.grappling [v( d.dd )]=
+	Stamina 3+, Strength 2+, Athletics 2+, Brawl 2+; 
+	Some maneuvers require other maneuvers
+&class.merit.grappling [v( d.dd )]=list
+
+&tags.merit.grappling [v( d.dt )]=style.fighting.tag:grappling
+&notes.merit.grappling [v( d.dt )]=
+	Style Tags: Grappling|
+	Lock Flow (4) requires Joint Lock (3)|
+	Tap or Snap (5) requires Joint Lock (3)
+
+
+
+&merit.clinching [v( d.dd )]=
+	1.2.3.4.5|
+	Standing Throw.Takedown.Ippon.Dynamic Guard.Positional Dominance
+&prerequisite.merit.clinching [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.stamina:3 attribute.strength:2 skill.athletics:2 skill.brawl:2 
+	)
+&prereq-text.merit.clinching [v( d.dd )]=
+	Stamina 3+, Strength 2+, Athletics 2+, Brawl 2+; 
+	Some maneuvers require other maneuvers
+&class.merit.clinching [v( d.dd )]=list
+
+&tags.merit.clinching [v( d.dt )]=style.fighting.tag:grappling
+&notes.merit.clinching [v( d.dt )]=
+	Style Tags: Grappling|
+	Ippon (3) requires Takedown (2)
+
+
+
+&merit.k-9 [v( d.dd )]=
+	1.2.3.4|
+	Detection.Targeted Bite.Tactical Positioning.Takedown Bite
+&prerequisite.merit.k-9 [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.wits:3 skill.animal_ken:3 
+	)
+&prereq-text.merit.k-9 [v( d.dd )]=
+	Wits 3+, Animal Ken 3+, 'Bonded' condition with a dog of Size 3+
+&class.merit.k-9 [v( d.dd )]=list
+
+&tags.merit.k-9 [v( d.dt )]=style.fighting.tag:creature (bite).
+	tag:tactical (police)
+&notes.merit.k-9 [v( d.dt )]=Style Tags: Creature (Bite), Tactical (Police)
+
+
+
+&merit.kino_mutai [v( d.dd )]=
+	1.2.3.4|
+	Trained Bite.Ripping.Trained Gouge.Continuous Bite
+&prerequisite.merit.kino_mutai [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.dexterity:2 attribute.resolve:3 skill.brawl:2 
+	)
+&prereq-text.merit.kino_mutai [v( d.dd )]=
+	Dexterity 2+, Resolve 3+, Brawl 2+
+&class.merit.kino_mutai [v( d.dd )]=list
+
+&tags.merit.kino_mutai [v( d.dt )]=style.fighting.tag:attitude (enraged).
+	tag:tactical (street)
+&notes.merit.kino_mutai [v( d.dt )]=Style Tags: Attitude (Enraged), 
+	Tactical (Street)
+
+
+
+/*
+House Rule: Martial Arts
+
+Same issue as 'Grappling'. 
+The Core Book merit remains 'Martial Arts'.
+The Hurt Locker merit is renamed 'Muay Thai'. (picked by committee)
+*/
+
+&merit.martial_arts [v( d.dd )]=
+	1.2.3.4.5|
+	Focused Attack.Defensive Strike.Whirlwind Strike.The Hand As Weapon.
+	The Touch of Death
+&prerequisite.merit.martial_arts [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.resolve:3 attribute.dexterity:3 skill.athletics:2 
+		skill.brawl:2 
+	)
+&prereq-text.merit.martial_arts [v( d.dd )]=
+	Resolve 3+, Dexterity 3+, Athletics 2+, Brawl 2+
+&class.merit.martial_arts [v( d.dd )]=list
+
+&tags.merit.martial_arts [v( d.dt )]=style.fighting.tag:striking
+&notes.merit.martial_arts [v( d.dt )]=Style Tags: Striking
+
+
+
+&merit.muay_thai [v( d.dd )]=
+	1.2.3.4.5|
+	Leg Kick.Cutting Elbow.Trapping.Inch Force.High Momentum Strike
+&prerequisite.merit.muay_thai [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.resolve:3 attribute.dexterity:3 skill.athletics:2 
+		skill.brawl:2 
+	)
+&prereq-text.merit.muay_thai [v( d.dd )]=
+	Resolve 3+, Dexterity 3+, Athletics 2+, Brawl 2+
+&class.merit.muay_thai [v( d.dd )]=list
+
+&tags.merit.muay_thai [v( d.dt )]=style.fighting.tag:striking
+&notes.merit.muay_thai [v( d.dt )]=Style Tags: Striking
+
+
+/* 
+Now need to fix Iron Skin prerequisites for changes to Martial Arts and 
+addition of Muay Thai
+*/
+
+&prerequisite.merit.iron_skin [v( d.dd )]=
+	cand( 
+		cor(
+			u( .list_at_least, %0, merit.martial_arts, 2 ), 
+			u( .list_at_least, %0, merit.muay_thai, 2 ), 
+		), 
+		u( .at_least, %0, merit.street_fighting, 2 )
+	)
+&prereq-text.merit.iron_skin [v( d.dd )]=
+	Stamina 3+ and either Martial Arts 2+, Muay Thai 2+, or Street Fighting 2+
+
+
+
+&merit.mounted_combat [v( d.dd )]=
+	1.2.3.4|
+	Steady Saddle.Fixed Charge.Skirmishing.Rearing Beast
+&prerequisite.merit.mounted_combat [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.dexterity:3 skill.athletics:2 skill.animal_ken:2 
+	)
+&prereq-text.merit.mounted_combat [v( d.dd )]=
+	Dexterity 3+, Athletics 2+, Animal Ken 2+
+&class.merit.mounted_combat [v( d.dd )]=list
+
+&tags.merit.mounted_combat [v( d.dt )]=style.fighting.tag:archery.
+	tag:heavy melee.tag:light melee.tag:tactical (police)
+&notes.merit.mounted_combat [v( d.dt )]=Style Tags: Archery, Heavy Melee, 
+	Light Melee, Tactical (Police)
+
+
+
+&merit.powered_projectile [v( d.dd )]=
+	1.2.3.4|
+	Quick Reload.Intercept Shot.Penetration.Skewer
+&prerequisite.merit.powered_projectile [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.dexterity:3 skill.athletics:2 skill.firearms:2 
+	)
+&prereq-text.merit.powered_projectile [v( d.dd )]=
+	Dexterity 3+, Athletics 2+, Firearms 2+
+&class.merit.powered_projectile [v( d.dd )]=list
+
+&tags.merit.powered_projectile [v( d.dt )]=style.fighting.tag:pistol
+&notes.merit.powered_projectile [v( d.dt )]=Style Tags: Pistol
+
+
+
+&merit.spear_and_bayonet [v( d.dd )]=
+	1.2.3|
+	Firm Footing.Keep at Bay.Strike and Develop
+&prerequisite.merit.spear_and_bayonet [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.strength:3 attribute.dexterity:2 skill.weaponry:2 
+	)
+&prereq-text.merit.spear_and_bayonet [v( d.dd )]=
+	Strength 3+, Dexterity 2+, Weaponry 2+
+&class.merit.spear_and_bayonet [v( d.dd )]=list
+
+&tags.merit.spear_and_bayonet [v( d.dt )]=style.fighting.tag:pole weapons
+&notes.merit.spear_and_bayonet [v( d.dt )]=Style Tags: Pole Weapons
+
+
+
+&merit.staff_fighting [v( d.dd )]=
+	1.2.3.4|
+	Short Grip.Thwack Weapon.Vaulting Defense.Tornado Strike
+&prerequisite.merit.staff_fighting [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.strength:3 attribute.dexterity:3 skill.weaponry:2 
+	)
+&prereq-text.merit.staff_fighting [v( d.dd )]=
+	Strength 3+, Dexterity 3+, Weaponry 2+
+&class.merit.staff_fighting [v( d.dd )]=list
+
+&tags.merit.staff_fighting [v( d.dt )]=style.fighting.tag:pole weapons
+&notes.merit.staff_fighting [v( d.dt )]=Style Tags: Pole Weapons
+
+
+
+&merit.strength_performance [v( d.dd )]=
+	1.2.3.4|
+	Strength Tricks.Lifting.Push/Pull.Stronger Than You
+&prerequisite.merit.strength_performance [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.strength:3 attribute.stamina:2 skill.athletics:2 
+	)
+&prereq-text.merit.strength_performance [v( d.dd )]=
+	Strength 3+, Stamina 2+, Athletics 2+
+&class.merit.strength_performance [v( d.dd )]=list
+
+&tags.merit.strength_performance [v( d.dt )]=style.fighting.
+	tag:movement (strong)
+&notes.merit.strength_performance [v( d.dt )]=Style Tags: Movement (Strong)
+
+
+
+&merit.systema [v( d.dd )]=
+	1.2.3|
+	Rolling.Balance.Combat Posture
+&prerequisite.merit.systema [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.dexterity:3 attribute.wits:2 skill.athletics:3 
+	)
+&prereq-text.merit.systema [v( d.dd )]=
+	Dexterity 3+, Wits 2+, Athletics 3+
+&class.merit.systema [v( d.dd )]=list
+
+&tags.merit.systema [v( d.dt )]=style.fighting.tag:movement (agility).
+	tag:tactical (military)
+&notes.merit.systema [v( d.dt )]=Style Tags: Movement (Agility), 
+	Tactical (Military)
+
+
+
+&merit.thrown_weapons [v( d.dd )]=
+	1.2|
+	Practiced Toss.Impalement Arts
+&prerequisite.merit.thrown_weapons [v( d.dd )]=
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.dexterity:3 skill.athletics:2 
+		), 
+		t( lattr( %0/_merit.quick_draw_(*) ))
+	)
+&prereq-text.merit.thrown_weapons [v( d.dd )]=
+	Dexterity 3+, Athletics 2+, Quick Draw with a thrown weapon Specialty
+&class.merit.thrown_weapons [v( d.dd )]=list
+
+&tags.merit.thrown_weapons [v( d.dt )]=style.fighting.tag:light melee.
+	tag:movement (agile)
+&notes.merit.thrown_weapons [v( d.dt )]=Style Tags: Light Melee, 
+	Movement (Agile)
+
+
+
+&merit.two_weapon_fighting [v( d.dd )]=
+	1.2.3.4|
+	Balanced Grip.Protective Striking.Dual Swipe.Double Strike
+&prerequisite.merit.two_weapon_fighting [v( d.dd )]=
+	cand( 
+		t( lattr( %0/_merit.fighting_finesse_(*) )), 
+		u( .at_least_all, %0, 
+			attribute.wits:3 skill.weaponry:3 
+		)
+	)
+&prereq-text.merit.two_weapon_fighting [v( d.dd )]=
+	Wits 3+, Weaponry 3+, Fighting Finesse (Any)
+&class.merit.two_weapon_fighting [v( d.dd )]=list
+
+&tags.merit.two_weapon_fighting [v( d.dt )]=style.fighting.
+	tag:light melee.tag:flexible
+&notes.merit.two_weapon_fighting [v( d.dt )]=Style Tags: Light Melee, Flexible
+
+
+
+&merit.weapon_and_shield [v( d.dd )]=
+	1.2.3.4|
+	Shield Bash.Boar's Snout.Pin Weapon.Tortoise Shell
+&prerequisite.merit.weapon_and_shield [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.strength:3 attribute.stamina:3 skill.weaponry:2 
+	)
+&prereq-text.merit.weapon_and_shield [v( d.dd )]=
+	Strength 3+, Stamina 3+, Weaponry 2+
+&class.merit.weapon_and_shield [v( d.dd )]=list
+
+&tags.merit.weapon_and_shield [v( d.dt )]=style.fighting.tag:light melee
+&notes.merit.weapon_and_shield [v( d.dt )]=Style Tags: Light Melee
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- MERITS: INDIVIDUAL STYLES ---------------------------------------------------
+
+That is, one-off merits that fold into the Style merits, including adding to 
+"Style Tag" calculations.
+
+*/
+
+
+&merit.armed_restraint [v( d.dd )]=2
+&prerequisite.merit.armed_restraint [v( d.dd )]=
+	u( .list_at_least, %0, merit.staff_fighting, 3 )
+&prereq-text.merit.armed_restraint [v( d.dd )]=Staff Fighting 3+
+&tags.merit.armed_restraint [v( d.dt )]=physical
+
+&merit.boot_party [v( d.dd )]=2
+&prerequisite.merit.boot_party [v( d.dd )]=
+	u( .at_least, %0, skill.brawl, 2 )
+&prereq-text.merit.boot_party [v( d.dd )]=Brawl 2+
+&tags.merit.boot_party [v( d.dt )]=physical.tag:striking
+&notes.merit.boot_party [v( d.dt )]=Style Tags: Striking
+
+&merit.clinch_strike [v( d.dd )]=1
+&prerequisite.merit.clinch_strike [v( d.dd )]=
+	u( .at_least, %0, skill.brawl, 2 )
+&prereq-text.merit.clinch_strike [v( d.dd )]=Brawl 2+
+&tags.merit.clinch_strike [v( d.dt )]=physical.tag:grappling.
+	tag:tactical (street)
+&notes.merit.clinch_strike [v( d.dt )]=Style Tags: Grappling, Tactical (Street)
+
+&merit.covert_operative [v( d.dd )]=1
+&prerequisite.merit.covert_operative [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.wits:3 attribute.dexterity:3 skill.stealth:2 
+	)
+&prereq-text.merit.covert_operative [v( d.dd )]=Wits 3+, Dexterity 3+, 
+	Stealth 2+ 
+&tags.merit.covert_operative [v( d.dt )]=physical.tag:tactical (military)
+&notes.merit.covert_operative [v( d.dt )]=Style Tags: Tactical (Military)
+
+&merit.ground_and_pound [v( d.dd )]=3
+&prerequisite.merit.ground_and_pound [v( d.dd )]=
+	u( .at_least, %0, skill.brawl, 2 )
+&prereq-text.merit.ground_and_pound [v( d.dd )]=Brawl 2+
+&tags.merit.ground_and_pound [v( d.dt )]=physical.tag:striking.tag:grappling.
+	tag:tactical (street)
+&notes.merit.ground_and_pound [v( d.dt )]=Style Tags: Striking, Grappling, 
+	Tactical (Street)
+
+&merit.ground_fighter [v( d.dd )]=3
+&prerequisite.merit.ground_fighter [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.wits:3 attribute.dexterity:3 skill.brawl:2 
+	)
+&prereq-text.merit.ground_fighter [v( d.dd )]=Wits 3+, Dexterity 3+, 
+	Brawl 2+ 
+&tags.merit.ground_fighter [v( d.dt )]=physical.tag:grappling
+&notes.merit.ground_fighter [v( d.dt )]=Style Tags: Grappling
+
+&merit.headbutt [v( d.dd )]=1
+&prerequisite.merit.headbutt [v( d.dd )]=
+	u( .at_least, %0, skill.brawl, 2 )
+&prereq-text.merit.headbutt [v( d.dd )]=Brawl 2+ 
+&tags.merit.headbutt [v( d.dt )]=physical.tag:striking.tag:grappling
+&notes.merit.headbutt [v( d.dt )]=Style Tags: Striking, Grappling
+
+&merit.iron_chin [v( d.dd )]=2.4
+&prerequisite.merit.iron_chin [v( d.dd )]=
+	u( .at_least_all, %0, attribute.resolve:3 attribute.stamina:3 )
+&prereq-text.merit.iron_chin [v( d.dd )]=Resolve 3+, Stamina 3+
+&tags.merit.iron_chin [v( d.dt )]=physical.tag:attitude (determined).
+	tag:striking.tag:tactical (street)
+&notes.merit.iron_chin [v( d.dt )]=Style Tags: Attitude (Determined), Striking, 
+	Tactical (Street) 
+
+&merit.phalanx_fighter [v( d.dd )]=2
+&prerequisite.merit.phalanx_fighter [v( d.dd )]=
+	u( .at_least_all, %0, 
+		merit.weapon_and_shield:2 spear_and_bayonet:1 
+	)
+&prereq-text.merit.phalanx_fighter [v( d.dd )]=Brawl 2+ 
+&tags.merit.phalanx_fighter [v( d.dt )]=physical
+
+/*
+
+Transfer Maneuver
+	(Same Cost as Original Maneuver; see below)
+	Prerequisites: Intelligence ••, Wits •••. Your character must also possess 
+at least ••• dots in both the original and new Skill that the maneuver applies 
+to.
+	Style Tag: Special; see below.
+	Effect: Many styles teach unarmed methods as a prerequisite for armed 
+methods, and vice versa. This maneuver allows your character to transfer 
+maneuver from a Brawl-based Fighting Style to a Weaponry-based Style, or vice 
+versa. The maneuver must not depend on the physical presence of a weapon, in 
+that it can be applied with empty hands. The Storyteller decides which maneuvers 
+are appropriate, though this can only be used on maneuvers worth no more than 
+••• dots — after that, they’re too specific to the original fighting method. 
+Your character must know the maneuver in its original form, and you must 
+purchase it again, at the same cost in dots and Experience.
+
+*/
+
+&merit.trunk_squeeze [v( d.dd )]=2
+&prerequisite.merit.trunk_squeeze [v( d.dd )]=
+	u( .at_least, %0, skill.brawl, 2 )
+&prereq-text.merit.trunk_squeeze [v( d.dd )]=Brawl 2+ 
+&tags.merit.trunk_squeeze [v( d.dt )]=physical.tag:creature (constrictor).
+	tag:grappling
+&notes.merit.trunk_squeeze [v( d.dt )]=Style Tags: Creature (Constrictor), 
+	Grappling
+
+&merit.retain_weapon [v( d.dd )]=2
+&prerequisite.merit.retain_weapon [v( d.dd )]=
+	u( .at_least_all, %0, attribute.wits:2 skill.brawl:2 )
+&prereq-text.merit.retain_weapon [v( d.dd )]=Wits 2+, Brawl 2+ 
+&tags.merit.retain_weapon [v( d.dt )]=physical.tag:light weapon.tag:pistol.
+	tag:tactical (police).tag:tactical (military)
+&notes.merit.retain_weapon [v( d.dt )]=Style Tags: Light Weapon, Pistol, 
+	Tactical (Police, Military)
+
+&merit.roadkill [v( d.dd )]=3
+&prerequisite.merit.roadkill [v( d.dd )]=
+	u( .list_at_least, %0, merit.aggressive_driving, 2 )
+&prereq-text.merit.roadkill [v( d.dd )]=Aggressive Driving 2+ 
+&tags.merit.roadkill [v( d.dt )]=physical.tag:tactical (street)
+&notes.merit.roadkill [v( d.dt )]=Style Tags: Tactical (Street)
+
+
+/*
+--------------------------------------------------------------------------------
+-- MERITS: OTHER STYLES --------------------------------------------------------
+
+As from the book, "These are not all fighting Styles, per se. But they use the 
+same Style tag rules."
+
+*/
+
+&merit.aggressive_driving [v( d.dd )]=
+	1.2.3.4|
+	Powerslide.Bump and Run.J-turn.Swoop and Squat
+&prerequisite.merit.aggressive_driving [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.resolve:3 skill.drive:3 merit.fast_reflexes:3 
+	)
+&prereq-text.merit.aggressive_driving [v( d.dd )]=
+	Resolve 3+, Drive 3+, Fast Reflexes 3
+&class.merit.aggressive_driving [v( d.dd )]=list
+
+&tags.merit.aggressive_driving [v( d.dt )]=physical.style.tag:tactical (street).
+	tag:tactical (police)
+&notes.merit.aggressive_driving [v( d.dt )]=Style Tags: Tactical 
+	(Street, Police)
+
+
+
+&merit.drone_control [v( d.dd )]=
+	1.2.3|
+	Remote Immersion.Interface.Overclock
+&prerequisite.merit.drone_control [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.intelligence:3 skill.computer:3 skill.drive:2 
+	)
+&prereq-text.merit.drone_control [v( d.dd )]=
+	Resolve 3+, Drive 3+, Fast Reflexes 3
+&class.merit.aggressive_driving [v( d.dd )]=list
+
+&tags.merit.drone_control [v( d.dt )]=physical.style.tag:tactical (military).
+	tag:tactical (police)
+&notes.merit.drone_control [v( d.dt )]=Style Tags: Tactical (Military, Police)
+
+
+
+
+
+
+
+/*
+================================================================================
+== NOTES TO SELF AND POSSIBLY OTHERS ===========================================
+
+
+Sprawl (•)
+Takedown (••)
+Joint Lock (•••)
+Standing Throw (•)
+Small Joint Manipulation (••)
+Ippon (•••): Additional Prerequisite: Takedown Maneuver.
+Dynamic Guard (••••) 
+Lock Flow (••••): Additional Prerequisite: Joint Lock
+Tap or Snap (•••••): Additional Prerequisite: Joint Lock
+Positional Dominance (•••••)
+
+&merit.grappling xxx=Sprawl.Standing Throw.Takedown.Small Joint Manipulation.Joint Lock.Ippon.Dynamic Guard.Lock Flow.Tap or Snap.Positional Dominance|1.1.2.2.3.3.4.4.5.5
+
+HAH, NO. We split Grappling into two merits (See above)
+
+
+Grappling: Sprawl (1), Joint Lock (3), Lock Flow (4)
+
+
+// 1) You have to have the sum of that Style Tag in maneuver dots.
+// 2) Unless you’re buying in order.
+
+// Style Tags are kept in the '&tags.<statpath>'
+// 0: sheet dbref
+// 1: statpath
+// 2: level being purchased (name?)
+// 3: all style tags to match
+// return: Can you take it?
+
+// ** 1->2 is the only time where ‘count the dots’ doesn’t ALWAYS work. **
+
+// v: validation (from data dictionary)
+// n: numeric value of level being purchased - target
+// l: current stat value (list)
+
+// how do we determine that something is the next logical value in a list?
+// [18:47] <Griatch> n == v[len(l)]
+// ... Thanks, Griatch.
+
+
+&.style.tags.count [v( d.dd )]=
+//	localize( 
+	strcat( 
+		setq( n, 
+			if( isint( %2 ), %2, u( .class_translate_list, %1, %2 ))
+		), 
+		setq( v, first( get( v( d.dd )/%1 ), | )), 
+		setq( l, u( .value, %0, %1 )), 
+		cor( 
+// .. tag value is high enough
+			xxx, 
+// .. adding next (or first) logical value
+			eq( 
+				%qn, 
+				elements( %qv, inc( words( %ql, . )), . )
+			)
+		)
+	)
+//	)
+
+
+Hmmm...
+
+
+think u( v( d.dd )/.class_translate_list, merit.chain_weapons, 1 )
+think u( v( d.dd )/.value, *dis, merit.chain_weapons )
+think u( v( d.dd )/.style.tags.count, *dis, merit.chain_weapons, 2 )
+
+
+think graball( tag:thing.tag:another thing.stuff.fighting, tag:*, ., . )
+
+think [setq( l, lattr( v( d.dd )/merit.* ))][ucstr( edit( setr( 0, merit.mounted_combat ), merit., , _, %b ))] %r%([edit( setr( 1, graball( get( v( d.dt )/tags.%q0 ), tag:*, ., . )), ., %,%b, tag:, )]%) %r* [edit( lcstr( filter( v( d.sfp )/fil.list-stats-tags, %ql, , , %q1, 0 )), %b, %r*%b, _, %b, merit., )]
+
+
+OH HEY! Almost there!
+
+
+think 
+	strcat( 
+		setq( 0, merit.mounted_combat ), 
+		setq( m, graball( get( v( d.dt )/tags.%q0 ), tag:*, ., . )), 
+		setq( l, lattr( v( d.dd )/merit.* )), 
+		setq( s, filter( v( d.sfp )/fil.list-stats-tags, %ql, , , %qm )), 
+		ucstr( edit( %q0, merit., , _, %b )), %r, 
+		iter( %qm, 
+			strcat( 
+				-- [edit( %i0, tag:, )] --, %r, 
+				*%b, 
+				edit( 
+					lcstr( 
+						filter( v( d.sfp )/fil.list-stats-tags, %qs, , , %i0 )
+					), 
+					%b, %r*%b, 
+					_, %b, 
+					merit., 
+				)
+			), 
+			., %r 
+		)
+	)
+
+
+
+returns:
+
+MOUNTED COMBAT
+-- archery --
+* bowmanship
+* combat archery
+* mounted combat
+-- heavy melee --
+* mounted combat
+-- light melee --
+* two weapon fighting
+* weapon and shield
+* mounted combat
+* thrown weapons
+-- tactical (police) --
+* retain weapon
+* mounted combat
+* aggressive driving
+* drone control
+* k-9
+
+
+SO! I can then just count all the dots in each category, then lmax() those values, and that's how many dots they have access to for that one merit.
+
+Annoying, but works.
+
+
+SYSTEMA
+-- movement (agility) --
+* systema
+-- tactical (military) --
+* retain weapon
+* covert operative
+* systema
+* drone control
+
+
+
+*/
+
+
+
+// --------------------------=-=-=-==-=--=-=-=-=--=-=--==-
+// -- Back to the important code ---------=-=----=-=-=-=-=
+
+/*
+	n: name
+	r: rest of the gifts
+	t: text for first line (priming read stuff)
+	l: length of padding between 'name' and 'value'
+
+	0: <name>:<value>.<desc>:<value>.<desc>
+	1: total length
+	2: .
+*/
+
+&display.merit.list [v( d.sheet )]=
+	strcat( 
+		setq( n, first( %0, : )), 
+		setq( r, rest( %0, : )), 
+
+		setq( t, 
+			strcat( 
+				rest( first( %qr, : ), . ), 
+				if( t( setr( z, first( first( %qr, : ), . ))), 
+					strcat( 
+						%b, %(, first( first( %qr, : ), . ), %)
+					)
+				)
+			)
+		), 
+
+		setq( l, 
+			sub( %1, add( strlen( %qn ), strlen( %qt ), 2 ))
+		), 
+
+		%qn, %b, ansi( xh, repeat( %2, %ql )), %b, %qt, 
+		iter( rest( %qr, : ), 
+			%r
+			[rjust( 
+				strcat( rest( %i0, . ), %b, %(, first( %i0, . ), %) ), 
+				%1 
+			)], 
+			:, @@ 
+		)
+	)
+
+// ---
+
+&display.merit.numeric [v( d.sheet )]=%0 -- %1 -- %2 -- %r[u( display.trait-and-value, %0, %1, %2, numeric, . )]
+
+// ---
+
+&block.merits sheet: rows=
+	strcat( 
+		setq( w, 79 ), 
+		setq( t, 70 ), 
+		setq( d, u( merits.default, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Merits ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		)
+	)
+
+
+
+
+/*
+
+think ulocal( v( d.nsc )/f.cheat_getstat.with_name, %#, merit.chain_weapons, list )
+
+think u( v( d.sheet )/display.merit.list, ulocal( v( d.nsc )/f.cheat_getstat.with_name, %#, merit.chain_weapons, list ), 60, . )
+
+// so that works. let's see if we can meld it together
+
+think iter( lattr( %#/_merit.* ), %i0: [u( v( d.dd )/.class, rest( %i0, _ ))], , %r )
+
+think iter( sort( lattr( %#/_merit.* )), strcat( setr( c, u( v( d.dd )/.class, setr( r, rest( %i0, _ )))), :, ulocal( v( d.nsc )/f.cheat_getstat.with_name, %#, %qr, %qc )), , | )
+
+think iter( 
+	iter( sort( lattr( %#/_merit.* )), strcat( setr( c, u( v( d.dd )/.class, setr( r, rest( %i0, _ )))), :, ulocal( v( d.nsc )/f.cheat_getstat.with_name, %#, %qr, %qc )), , | ), 
+		udefault( display.merit.[first( %i0, : )], 
+			u( display.merit.numeric, rest( %i0, : ), 76, . ), 
+			rest( %i0, : ), 
+			76, 
+			. 
+		), 
+		|, %r 
+	)
+
+*/
