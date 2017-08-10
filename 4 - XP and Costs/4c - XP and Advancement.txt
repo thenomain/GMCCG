@@ -1381,7 +1381,6 @@ x: current 'beats' attribute
 			ulocal( .msg, xp/cost, 
 				ulocal( display.xp/cost, %qp, %qn, %qs, %qv, %qt )
 			)
-
 		)
 	)
 

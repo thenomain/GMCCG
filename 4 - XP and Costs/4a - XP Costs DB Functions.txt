@@ -2,6 +2,38 @@
 ################################################################################
 ## XP COST DATABASE ############################################################
 
+Update 18.06.2017: 
+
+The pressure for spending "flavored" XP has come to a head. Mage has Arcane XP 
+that may only be used for certain things. Hunter, Promethean, Demon, and so on.
+
+This is kept in '&d.xp_types' in 4c, and so should be called 'xp type'. If I 
+accidentally type 'flavor' please note that these are interchangible. 'Normal' 
+is the default XP type and must never be removed.
+
+--
+
+Thoughts:
+
+xp costs need 'xp type' passed to them only if it's not normal, but 'normal' may 
+also be passed. 
+
+Some traits have different costs if you use Normal XP versus another kind of XP. 
+The system knows that an XP cost of '0' means it cannot be purchased, so trying 
+to buy with an incorrect XP cost will fail.
+
+Other traits can be bought with either normal or flavored XP equally. 
+
+Or, worst of all, a mix of both.
+
+	xp/spend gnosis=4/8 normal, 12 arcane
+	xp/spend gnosis=4, 8 normal, 12 arcane
+	xp/spend gnosis=4/8 normal, 12 arcane
+	xp/spend gnosis=4, 8/12
+	xp/spend gnosis=4, 8 n/12 a
+
+--
+
 xp.<stat category>
 xp.<specific stat path>
 
