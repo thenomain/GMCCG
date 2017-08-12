@@ -77,7 +77,7 @@ Removes all but one instance of <delim> inside <list>, and all outside.
 A quasi-advanced form of pmatch() because it includes matching 'me'. 
 
 Set '<check offline?>' to true (or '1' or almost anything really) to check 
-offline character objects as well.
+offline character objects as well. (My pmatch+ and Glitch's pmatch++ code.)
 
 
 */
