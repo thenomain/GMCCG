@@ -242,13 +242,17 @@ Transmutations: Alchemicus, Benfice, etc.
 Alembic: Stone, Aqua Regia, etc.
 Distillation: Purification, Fortification, etc.
 
-'unlocked': through mastering rolls, allows entire Alembic while in that Refinement
+'unlocked': through mastering Roles, allows entire Alembic while in that 
+Refinement
 
+'calcified': after "buying" a 4th level, Alembic may be used in all  
+Refinements(?)
 
 */
 
+
 // Not that this works...
-// &tags.alchemicus.* [v( d.dt )]=Mercurius
+// &tags.alchemicus.? [v( d.dt )]=Mercurius
 
 &alchemicus.stone [v( d.dd )]=Purification.Fortification.Transformation
 &alchemicus.aqua_regia [v( d.dd )]=Decay.Degradation.Dissolution
@@ -256,7 +260,7 @@ Distillation: Purification, Fortification, etc.
 &alchemicus.elixir [v( d.dd )]=Apprentice's Brooms.Spark of Life.Flesh to Stone
 
 
-// &tags.benefice.* [v( d.dt )]=Aes
+// &tags.benefice.? [v( d.dt )]=Aes
 
 &benefice.command [v( d.dd )]=
 	Many Hands Make Light Work.Able Worker.The Community of Power
@@ -266,7 +270,7 @@ Distillation: Purification, Fortification, etc.
 &benefice.community [v( d.dd )]=Communal Font.We Are As One.What's Mine is Yours
 
 
-// &tags.contamination.* [v( d.dt )]=Cobalus
+// &tags.contamination.? [v( d.dt )]=Cobalus
 
 &contamination.indulgence [v( d.dd )]=
 	Encourage Impulse.Remove Inhibitions.Plague of Desire
@@ -275,7 +279,7 @@ Distillation: Purification, Fortification, etc.
 &contamination.suffering [v( d.dd )]=Purge.Affliction.Pain
 
 
-// &tags.corporeum.* [v( d.dt )]=Ferrum.Aes
+// &tags.corporeum.? [v( d.dt )]=Ferrum.Aes
 
 &corporeum.charites [v( d.dd )]=Athletic Grace.Uncanny Dexterity.Rarified Grace
 &corporeum.zephyrus [v( d.dd )]=Swift Feet.Serpent Strike.Perfected Reflexes
@@ -284,7 +288,7 @@ Distillation: Purification, Fortification, etc.
 	Uncanny Athleticism.Mighty Bound.Exemplary Athleticism
 
 
-// &tags.deception.* [v( d.dt )]=Aurum
+// &tags.deception.? [v( d.dt )]=Aurum
 
 &deception.anonymity [v( d.dd )]=Nameless.Traceless.Forgotten
 &deception.assimilation [v( d.dd )]=Conformity.Tongues.Hive Mind
@@ -292,7 +296,7 @@ Distillation: Purification, Fortification, etc.
 &deception.stalker [v( d.dd )]=Shadow.Lurker.Phantom
 
 
-// &tags.disquietism.* [v( d.dt )]=Plumbum
+// &tags.disquietism.? [v( d.dt )]=Plumbum
 
 &disquietism.externalize [v( d.dd )]=Safe Sojourn.Maelstrom.Assault
 &disquietism.internalize [v( d.dd )]=Temper.Soothe.Quell
@@ -300,7 +304,7 @@ Distillation: Purification, Fortification, etc.
 &disquietism.weaponize [v( d.dd )]=Tension.Vanquish.Rampage
 
 
-// &tags.electrification.* [v( d.dt )]=Stannum
+// &tags.electrification.? [v( d.dt )]=Stannum
 
 &electrification.machinus [v( d.dd )]=Jolt.Generator.Ghost in the Machine
 &electrification.arc [v( d.dd )]=Spark.Shock.Divine Lightning
@@ -309,7 +313,7 @@ Distillation: Purification, Fortification, etc.
 	Lightning Therapy.Remote Absorption.Power Sink
 
 
-// &tags.luciferus.* [v( d.dt )]=Phosphorum
+// &tags.luciferus.? [v( d.dt )]=Phosphorum
 
 &luciferus.solar_flare [v( d.dd )]=
 	Dazzling Corona.Searing Corona.Volatile Corona
@@ -320,7 +324,7 @@ Distillation: Purification, Fortification, etc.
 	Daybreak.Guidepost.Lighthouse for the Dead
 
 
-// &tags.metamorphosis.* [v( d.dt )]=Cuprum
+// &tags.metamorphosis.? [v( d.dt )]=Cuprum
 
 &metamorphosis.aptare [v( d.dd )]=
 	Blessing of Tethys.Scuttling Spider.Procrustean Shape
@@ -331,7 +335,7 @@ Distillation: Purification, Fortification, etc.
 &metamorphosis.verto [v( d.dd )]=Medusa's Visage.Everyman.Body Like Clay
 
 
-// &tags.mesmerism.* [v( d.dt )]=Aurum.Cobalus
+// &tags.mesmerism.? [v( d.dt )]=Aurum.Cobalus
 
 &mesmerism.phobos [v( d.dd )]=Rattle.Terrify.Swoon
 &mesmerism.eros [v( d.dd )]=Lure.Seduce.Inflame
@@ -339,7 +343,7 @@ Distillation: Purification, Fortification, etc.
 &mesmerism.penthos [v( d.dd )]=Undermine.Defeat.Depress
 
 
-// &tags.saturninus.* [v( d.dt )]=Plumbum
+// &tags.saturninus.? [v( d.dt )]=Plumbum
 
 &saturninus.heed_the_call [v( d.dd )]=
 	Inscribed in Flame.Controlled Burn.Sublimation by Fire
@@ -351,7 +355,7 @@ Distillation: Purification, Fortification, etc.
 	Shielding Pod.Humour Electrolysis.Pyros Branding
 
 
-// &tags.sensorium.* [v( d.dt )]=Cuprum.Argentum
+// &tags.sensorium.? [v( d.dt )]=Cuprum.Argentum
 
 &sensorium.vitreous_humour [v( d.dd )]=Fire Sight.Piercing Sight.Ephemeral Sight
 &sensorium.receptive_humour [v( d.dd )]=
@@ -362,7 +366,7 @@ Distillation: Purification, Fortification, etc.
 	Bloodhound's Nose.Discriminating Tongue.Sensitive Ears
 
 
-// &tags.spiritus.* [v( d.dt )]=Argentum
+// &tags.spiritus.? [v( d.dt )]=Argentum
 
 &spiritus.clades [v( d.dd )]=Strike the Heart.Biting Aura.Burning Strike.
 &spiritus.clupeum [v( d.dd )]=Personal Shield.Interposing Shield.Mystic Fortress
@@ -372,7 +376,7 @@ Distillation: Purification, Fortification, etc.
 &spiritus.laruae [v( d.dd )]=Plumb Azothic Memory.One of the Tribe.Pyros Decoy
 
 
-// &tags.vitality.* [v( d.dt )]=Ferrum
+// &tags.vitality.? [v( d.dt )]=Ferrum
 
 &vitality.unbowed [v( d.dd )]=
 	Resolution of Steel.Crucible of Will.Roar of the Defiant
@@ -383,7 +387,7 @@ Distillation: Purification, Fortification, etc.
 	Close Combat Defense.Shattered Chains.No Walls May Hold Me
 
 
-// &tags.vulcanus.* [v( d.dt )]=Mercurius.Phosphorum
+// &tags.vulcanus.? [v( d.dt )]=Mercurius.Phosphorum
 
 // Hey, are these 'List' types? That have to be bought in order? 
 // Then level 4 is 'Calcify', right?
