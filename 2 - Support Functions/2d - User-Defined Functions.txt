@@ -89,7 +89,7 @@ qp: Dbref of player then of player's sheet
 		t( %1 ), 
 // .. .. player error-checking
 		case( 0, 
-			t( setr( p, pmatch( %1 ))), 
+			t( setr( p, u( .pmatch, %1 ))), 
 			#-1 PLAYER NOT FOUND, 
 			t( setr( p, u( f.find-sheet, %qp ))), 
 			#-1 SHEET NOT FOUND, 
@@ -185,7 +185,7 @@ p, o, b and t are ignored if the stat is non-numeric.
 
 --
 
-0: <player>/<stat>
+0: <player>[:<subsheet>]/<stat>
 1: [p]ermanent, [o]ffset, [b]oth, [t]otal, if any
 
 qp: <player>
@@ -204,7 +204,7 @@ requires: isstaff(<dbref>)
 
 &f.getstat [v( d.sfp )]=
 	strcat( 
-		setq( p, pmatch( before( before( %0, / ), : ))), 
+		setq( p, u( .pmatch, before( before( %0, / ), : ))), 
 		setq( x, edit( trim( after( before( %0, / ), : )), %b, _ )), 
 		setq( s, rest( %0, / )), 
 
@@ -223,6 +223,8 @@ requires: isstaff(<dbref>)
 		)
 	)
 
+
+// think u( v( d.sfp )/f.getstat, me/resources )
 
 /*
 --------------------------------------------------------------------------------
@@ -1340,3 +1342,104 @@ think [shiftstat(thenomain/full name, Jack Fireheart)] -> [getstat(thenomain/ful
 think [shiftstat(thenomain/full name, 4)] -> [getstat(thenomain/full name)]
 think setstat(thenomain/full name, )
 think [shiftstat(thenomain/full name, 4)] -> [getstat(thenomain/full name)]
+
+
+/*
+================================================================================
+== getsheet(<player>[/<stat>]) =================================================
+
+Now that we have sub-sheets, we need a way to know which sub-sheets someone has. 
+Normally this will only be used for 'sheet' code, but we're exposing this for 
+any code that might need it.
+
+	getsheet( <player> ): Get the name of all the sub-sheets on <player>. 
+	                      Always returns <player>, plus any sub-sheets.
+	getsheet( <player>/<stat> ): Get the name of all sub-sheets with <stat>.
+	                             May return nothing, if no sheets do.
+
+
+f: first
+r: rest
+
+p: player dbref
+w: where is the sheet
+s: statpath (if appropriate)
+
+m: "me", target's matches for skills or sheets
+o: "others", target's sub-sheet matches for skills or sheets
+
+*/
+
+@fo me=&ufunc.getsheet [v( d.sfp )]=u\\( [num( sfp )]/f.getsheet, \\\%0 \\)
+
+&f.getsheet [v( d.sfp )]=
+	strcat( 
+		setq( f, trim( first( %0, / ))), 
+		setq( r, trim( rest( %0, / ))), 
+		setq( p, u( .pmatch, %qf )), 
+		setq( w, u( f.find-sheet, %qp )), 
+		setq( s, if( strlen( %qr ), ulocal( f.statpath.workhorse, %qr, %qp ))), 
+
+		case( 1, 
+			not( isstaff( %@ )), 
+			#-1 Staff Only, 
+
+			not( %qp ), 
+			#-1 Player Not Found, 
+
+			not( %qw ), 
+			#-1 Sheet Not Found, 
+
+			cand( strlen( %qr ), not( %qs )),
+			#-1 Error From Statpath: [rest( %qs )], 
+
+			t( strlen( %qr )), 
+			strcat( 
+				setq( m, if( words( lattr( %qw/_%qs )), name( %qp ))), 
+				setq( o, 
+					iter( lattr( %qw/_*!%qs ), 
+						titlestr( edit( trim( first( %i0, ! ), _ ), _, %b )), 
+						, | 
+					)
+				), 
+				trim( %qm|%qo, b, | )
+			), 
+
+			strcat( 
+				name( %qp ), |, 
+				iter( 
+					setunion( 
+						iter( 
+							filter( fil.sub-sheet.stat-path, lattr( %qw/*!* )), 
+							first( %i0, ! )
+						), 
+					), 
+					titlestr( edit( first( %i0, ! ), _, %b )), 
+					, | 
+				)
+			)
+		)
+	)
+
+// -- 
+
+&fil.sub-sheet.stat-path [v( d.sfp )]=regmatch( %0, [^\.]*!.* )
+
+/* 
+** tests **
+
+think u( v( d.sfp )/fil.sub-sheet.stat-path, attribute.strength )
+think u( v( d.sfp )/fil.sub-sheet.stat-path, mary!attribute.strength )
+
+think filter( v( d.sfp )/fil.sub-sheet.stat-path, lattr( %#/_*.* ))
+
+think u( v( d.sfp )/f.getsheet, %# )
+think u( v( d.sfp )/f.getsheet, %#/resources )
+
+think getsheet( me )
+think getsheet( me/resources )
+
+&_attribute.computer me=
+think getsheet( me/computer )
+
+*/
