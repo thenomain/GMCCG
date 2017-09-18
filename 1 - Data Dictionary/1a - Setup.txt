@@ -80,12 +80,6 @@ In the future, notes and page references should go here as well.
 
 Data Dictionary Prerequisite Shortcut Functions
 
-We put these on _ for two reasons. The main one is the DD is @set visual to let 
-the derived stats call on this object from any dbref. The second is to keep it 
-out of the hands of any code which might troll the Data Dictionary (such as 
-setting up templates).
-
-
 --------------------------------------------------------------------------------
 -- Summary ---------------------------------------------------------------------
 
