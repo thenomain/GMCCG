@@ -188,17 +188,17 @@ p, o, b and t are ignored if the stat is non-numeric.
 0: <player>[:<subsheet>]/<stat>
 1: [p]ermanent, [o]ffset, [b]oth, [t]otal, if any
 
-qp: <player>
-qx: <sub-sheet_name>
-qs: <stat>
-qd: dbref of sheet
+p: <player>
+x: <sub-sheet_name>
+s: <stat>
+d: dbref of sheet
 
 requires: isstaff(<dbref>)
 
---------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.getstat [v( d.sfp )]=u\\( [num( sfp )]/f.getstat, \\\%0 , \\\%1 \\)
+@fo me=&ufunc.getstat [v( d.sfp )]=
+	u\\( [num( sfp )]/f.getstat, \\\%0 , \\\%1 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -446,7 +446,8 @@ qs: stat path
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.hastag? [v( d.sfp )]=u\\( [num( sfp )]/f.hastag?, \\\%0, \\\%1, \\\%2 \\)
+@fo me=&ufunc.hastag? [v( d.sfp )]=
+	u\\( [num( sfp )]/f.hastag?, \\\%0, \\\%1, \\\%2 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -455,7 +456,11 @@ qs: stat path
 	
 	[if( 
 		t( %qs ), 
-		u( f.hastag?.workhorse, u( f.statpath-without-instance, %qs ), %1, strmatch( %2, a* )), 
+		u( f.hastag?.workhorse, 
+			u( f.statpath-without-instance, %qs ), 
+			%1, 
+			strmatch( %2, a* )
+		), 
 		0 
 	)]
 
@@ -511,7 +516,8 @@ class.<statpath>: list
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.statvalidate [v( d.sfp )]=u\\( [num( sfp )]/f.statvalidate, \\\%0, \\\%1 \\)
+@fo me=&ufunc.statvalidate [v( d.sfp )]=
+	u\\( [num( sfp )]/f.statvalidate, \\\%0, \\\%1 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -663,7 +669,8 @@ Probably not needed
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.statvalidate? [v( d.sfp )]=u\\( [num( sfp )]/f.statvalidate?, \\\%0, \\\%1 \\)
+@fo me=&ufunc.statvalidate? [v( d.sfp )]=
+	u\\( [num( sfp )]/f.statvalidate?, \\\%0, \\\%1 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -705,11 +712,12 @@ qr: prerequisite checks
 
 --
 
-<target> may be 'charobj' or 'charobj:subsheet'.
+<target> may be 'charobj' or 'charobj:sub-sheet'.
 
 */
 
-@fo me=&ufunc.setstat [v( d.sfp )]=u\\( [num( sfp )]/f.setstat, \\\%0, \\\%1, \\\%2 \\)
+@fo me=&ufunc.setstat [v( d.sfp )]=
+	u\\( [num( sfp )]/f.setstat, \\\%0, \\\%1, \\\%2 \\)
 
 // --
 
@@ -746,14 +754,20 @@ qr: prerequisite checks
 				)
 			), 
 			setq( x, 
-				if( 
-					cor( 
-						strmatch( %qx, ), 
-						valid( attrname, %qx ), 
-						not( strmatch( %qx, ! ))
-					),
-					%qx, 
-					#-1 Sub-Sheet Name Illegal
+				case( 0, 
+					not( strmatch( %qx, )), 
+					@@( self ), 
+
+					not( strmatch( %qx, #MAIN# )), 
+					@@( self ), 
+
+					valid( attrname, %qx ), 
+					#-1 Sub-Sheet Name Illegal, 
+
+					not( strmatch( %qx, *!* )), 
+					#-1 Sub-Sheet Name Cannot Have ! In It, 
+
+					%qx
 				)
 			), 
 
@@ -1078,7 +1092,8 @@ qr: prerequisites check, 'template' and 'other' only
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.shiftstat [v( d.sfp )]=u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
+@fo me=&ufunc.shiftstat [v( d.sfp )]=
+	u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -1183,7 +1198,8 @@ qr: prerequisites check, 'template' and 'other' only
 --------------------------------------------------------------------------------
 */
 
-@fo me=&ufunc.shiftstat [v( d.sfp )]=u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
+@fo me=&ufunc.shiftstat [v( d.sfp )]=
+	u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -1352,81 +1368,168 @@ Now that we have sub-sheets, we need a way to know which sub-sheets someone has.
 Normally this will only be used for 'sheet' code, but we're exposing this for 
 any code that might need it.
 
-	getsheet( <player> ): Get the name of all the sub-sheets on <player>. 
-	                      Always returns <player>, plus any sub-sheets.
-	getsheet( <player>/<stat> ): Get the name of all sub-sheets with <stat>.
-	                             May return nothing, if no sheets do.
+The keyword #MAIN# means the main sheet. That is, if the information exists on 
+the primary sheet.
 
+--
 
-f: first
-r: rest
+getsheet( <player> )
+	Get the name of all the sub-sheets on <player>. 
+	Always returns #MAIN#, plus any sub-sheets.
+
+getsheet( <player>/<stat> )
+	Get the name of all sheets with <stat>. 
+	May return nothing, if no sheets do.
+
+getsheet( <player>/<stat>, <statstuff> )
+	Get the name of all sheets with <stat> and their values
+	e.g.: <stat>:<values>|...
+	<statstuff> is the same as getstat(): permanent, offset, both, total 
+	(needed even if the stat is non-numeric)
+
+--
+
+f: first part of %0 (<player>)
+r: rest of %0 (<stat>)
 
 p: player dbref
-w: where is the sheet
+w: where is the sheet (sheet loc)
 s: statpath (if appropriate)
-
-m: "me", target's matches for skills or sheets
-o: "others", target's sub-sheet matches for skills or sheets
 
 */
 
-@fo me=&ufunc.getsheet [v( d.sfp )]=u\\( [num( sfp )]/f.getsheet, \\\%0 \\)
+@fo me=&ufunc.getsheet [v( d.sfp )]=
+	u\\( [num( sfp )]/f.getsheet, \\\%0, \\\%1  \\)
+
+// --
 
 &f.getsheet [v( d.sfp )]=
 	strcat( 
-		setq( f, trim( first( %0, / ))), 
+		setq( f, first( %0, / )), 
 		setq( r, trim( rest( %0, / ))), 
 		setq( p, u( .pmatch, %qf )), 
 		setq( w, u( f.find-sheet, %qp )), 
 		setq( s, if( strlen( %qr ), ulocal( f.statpath.workhorse, %qr, %qp ))), 
 
-		case( 1, 
-			not( isstaff( %@ )), 
+		case( 0, 
+			isstaff( %@ ), 
 			#-1 Staff Only, 
 
-			not( %qp ), 
+			t( %qp ), 
 			#-1 Player Not Found, 
 
-			not( %qw ), 
+			t( %qw ), 
 			#-1 Sheet Not Found, 
 
-			cand( strlen( %qr ), not( %qs )),
+// !r | s - if the player entered a stat, and 'statpath' returned #-1, panic
+			cor( not( strlen( %qr )), t( %qs )), 
 			#-1 Error From Statpath: [rest( %qs )], 
 
-			t( strlen( %qr )), 
-			strcat( 
-				setq( m, if( words( lattr( %qw/_%qs )), name( %qp ))), 
-				setq( o, 
-					iter( lattr( %qw/_*!%qs ), 
-						titlestr( edit( trim( first( %i0, ! ), _ ), _, %b )), 
-						, | 
-					)
-				), 
-				trim( %qm|%qo, b, | )
-			), 
+			u( f.getsheet.workhorse, %qp, %qw, %qs, %1 )
+		)
+	)
 
+/* 
+--------------------------------------------------------------------------------
+-- Getsheet Workhorse ----------------------------------------------------------
+
+0: player dbref (qp)
+1: sheet loc (qw)
+2: statpath (optional) (qs)
+3: also return stat data? (pass through getstat: perm, offset, both, total)
+
+Other '.workhorse' functions don't check stapath until now, while getsheet() 
+does it before now. I'm kind of sorry that we don't always check statpath before 
+passing it to the workhorse, because now I'm going to be checking it twice: Once 
+below and once in 'f.getstat.workhorse'. This is inefficient, but it's far too 
+late to change it now.
+
+*/
+
+&f.getsheet.workhorse [v( d.sfp )]=
+	case( 1, 
+// list every (sub-)sheet with that statpath, and the value(s)
+		cand( strlen( %2 ), strlen( %3 )), 
+		u( f.getsheet.workhorse.values, %0, %1, %2, %3 ), 
+
+// list every (sub-)sheet with that statpath
+		t( strlen( %2 )), 
+		trim( 
 			strcat( 
-				name( %qp ), |, 
+				if( words( lattr( %1/_%2 )), #MAIN# ), |, 
+				iter( sort( lattr( %1/_*!%2 )), 
+					titlestr( edit( trim( first( %i0, ! ), _ ), _, %b )), 
+					, | 
+				)
+			), 
+			b, |
+		), 
+
+// just list sub-sheets
+		trim( 
+			strcat( 
+				#MAIN#, |, 
 				iter( 
 					setunion( 
 						iter( 
-							filter( fil.sub-sheet.stat-path, lattr( %qw/*!* )), 
+							filter( fil.sub-sheet.stat-path, lattr( %1/*!* )), 
 							first( %i0, ! )
 						), 
 					), 
 					titlestr( edit( first( %i0, ! ), _, %b )), 
 					, | 
 				)
-			)
+			), 
+			b, | 
 		)
 	)
 
-// -- 
+// -----------------------------------------------------------------------------
+// 0: player dbref; 1: sheet loc; 2: statpath; 3: perm, offset, both, total
+// m: my stats; o: other sheets' stats; v: values for other sheets
+// output: <sheet name>:<value>|...
+
+&f.getsheet.workhorse.values [v( d.sfp )]=
+	trim( 
+		strcat( 
+			setq( s, rest( %2, . )), 
+			setq( m, lattr( %1/_%2 )), 
+			setq( o, sort( lattr( %1/_*!%2 ))), 
+			setq( v, 
+				iter( %qo, 
+					ulocal( f.getstat.workhorse, 
+						%0:[first( rest( %i0, _ ), ! )], 
+						%qs, %1, %3 
+					), 
+					, |
+				)
+			), 
+
+// list 'my' value for this stat, if it exists
+			if( t( %qm ), 
+				strcat( 
+					#MAIN#, :, u( f.getstat.workhorse, %0, %qs, %1, %3 )
+				)
+			), |, 
+// list 'other' sub-sheets values for this stat, if they exist
+			iter( %qo, 
+				strcat( 
+					titlestr( edit( rest( first( %i0, ! ), _ ), _, %b )), :, 
+					elements( %qv, inum(), | ) 
+				), 
+				, | 
+			)
+		), 
+		b, | 
+	)
+
+// -----------------------------------------------------------------------------
 
 &fil.sub-sheet.stat-path [v( d.sfp )]=regmatch( %0, [^\.]*!.* )
 
 /* 
-** tests **
+--------------------------------------------------------------------------------
+-- tests -----------------------------------------------------------------------
 
 think u( v( d.sfp )/fil.sub-sheet.stat-path, attribute.strength )
 think u( v( d.sfp )/fil.sub-sheet.stat-path, mary!attribute.strength )
@@ -1438,8 +1541,22 @@ think u( v( d.sfp )/f.getsheet, %#/resources )
 
 think getsheet( me )
 think getsheet( me/resources )
+think getsheet( me/resources, total )
 
 &_attribute.computer me=
 think getsheet( me/computer )
 
+think u( v( d.sfp )/f.getsheet, %#/resources )
+think u( v( d.sfp )/f.getsheet, %#/resources, t )
+
+---
+
+And now, an extra trick:
+
+think strcat( 
+		setq( v, v( d.sfp )), 
+		setq( p, %# ), 
+		setq( s, u( %qv/f.statpath, %qp/resources )), 
+		
+	)
 */
