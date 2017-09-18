@@ -218,10 +218,10 @@ Total value of a numeric trait
 -- At Least --------------------------------------------------------------------
 
 The "at" directives check that a stat is "at least" (equal to or greater than) 
-another value.  Sometimes that other value is another stat.
+another value. Sometimes that other value is another stat.
 
 Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is 
-"this" stat, aka the stat in <statpath>.  This is required to make cgen/xp 
+"this" stat, aka the stat in <statpath>. This is required to make cgen/xp 
 spends to properly see if the new value of "this stat" meets prerequisites.
 
 -- at least --
@@ -302,7 +302,7 @@ Same as "At Least", only checks that things are "at most" (equal to or less
 than) a value.
 
 Pass %2 from the &prerequisite.<statpath> when the stat we're comparing is 
-"this" stat, aka the stat in <statpath>.  This is required to make cgen/xp 
+"this" stat, aka the stat in <statpath>. This is required to make cgen/xp 
 spends to properly see if the new value of "this stat" meets prerequisites.
 
 --
@@ -404,7 +404,7 @@ This stat is between *and includes* <value 1> and <value 2>
 -- Is --------------------------------------------------------------------------
 
 Intended for list stats, "is" compares the stat's primary (first) value to 
-another or against a list.  Can be used with numeric stats as well if an exact 
+another or against a list. Can be used with numeric stats as well if an exact 
 match needs to be found, but it's discouraged.
 
 -- is --
@@ -552,7 +552,7 @@ Sheet has none of the stats from a list
 --------------------------------------------------------------------------------
 -- Min Of/Max Of ---------------------------------------------------------------
 
-Returns the lowst or highest value of a list of stats.  We have to fold our own 
+Returns the lowst or highest value of a list of stats. We have to fold our own 
 "lmin" and "lmax" for these, hurrah.
 
 	0: sheet dbref
@@ -593,7 +593,7 @@ Returns the lowst or highest value of a list of stats.  We have to fold our own
 -- List Has --------------------------------------------------------------------
 
 Takes a list stat (or, for that matter, any numeric stat) and returns 1 if the 
-item exists in it, 0 if it doesn't.  
+item exists in it, 0 if it doesn't. 
 
 List stats are stored: item.item.item
 
@@ -679,7 +679,7 @@ Else, assumes translating name->value
 -- What's My Max Trait? --------------------------------------------------------
 
 The more supers we get, the more generalized we need to make some of these 
-things.  It's important, therefore, to be able to simply ask for the "maximum 
+things. It's important, therefore, to be able to simply ask for the "maximum 
 trait" based on general power level.
 
 >>> When adding or removing spheres from a game, alter this -- for now <<< 
@@ -732,7 +732,7 @@ think u( dd/.max_trait, num( *thenomain ), attribute.intelligence )
 --------------------------------------------------------------------------------
 -- Trait Check -----------------------------------------------------------------
 
-Like Gift Check, but for power level -> attribute/skill.  We use this so often 
+Like Gift Check, but for power level -> attribute/skill. We use this so often 
 that we're making it its own thing.
 
 This is prefered to 'max trait' above and the above may be folded into this 
