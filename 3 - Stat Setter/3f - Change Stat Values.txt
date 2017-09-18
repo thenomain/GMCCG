@@ -31,7 +31,7 @@ e: error check
 
 */
 
-&f.stat/settype Stat Setter <ss>=
+&f.stat/settype [v( d.ss )]=
 	strcat( 
 		setq( s, 
 			u( 
@@ -126,7 +126,7 @@ a quick way to add <type> to <statpath>_()
 
 */
 
-&format.type.into_statpath Stat Setter <ss>=
+&format.type.into_statpath [v( d.ss )]=
 	strcat( 
 		titlestr( edit( before( rest( %0, . ), %(%) ), _, %b )), 
 		%b, %(%1%) 
@@ -264,3 +264,4 @@ m: matched location of <value> in <current values>, if any
 			)
 		)
 	)
+
