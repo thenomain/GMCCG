@@ -3400,8 +3400,8 @@ Following is sent from XP:
 	%0: dbref of sheet
 	%1: from
 	%2: to
-	%3: name of stat, sans instance
-	%4: value.list.of.statpath
+	%3: statpath, sans instance
+	%4: value.list.from.statpath
 
 	a: path
 	b: <ruling spheres>:<inferior spheres>
@@ -3415,8 +3415,8 @@ Following is sent from XP:
 		setq( b, u( v( d.cg )/d.mage_path_arcana.%qa, %0 )), 
 		setq( c, 
 			case( 1, 
-				t( match( %3, first( %qb, : ))), 5, 
-				t( match( %3, last( %qb, : ))), 2, 
+				t( match( rest( %3, . ), first( %qb, : ))), 5, 
+				t( match( rest( %3, . ), last( %qb, : ))), 2, 
 				4 
 			)
 		), 

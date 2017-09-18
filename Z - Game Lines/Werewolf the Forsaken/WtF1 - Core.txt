@@ -1705,7 +1705,7 @@ Following is sent from XP:
 	%0: dbref of sheet
 	%1: from
 	%2: to
-	%3: name of stat, sans instance
+	%3: statpath, sans instance
 	%4: value.list.of.statpath
 */
 
@@ -1713,11 +1713,12 @@ Following is sent from XP:
 	case( 1, 
 		cand( 
 			strmatch( %2, unlock ), 
-			hastag?( 
+			u( v( d.sfp )/f.hastag?.workhorse, 
 				%3, 
-					[u( .value_full, %0, bio.tribe )].
-					[u( .value_full, %0, bio.auspice )], 0 
-			) 
+				[u( .value_full, %0, bio.tribe )].
+				[u( .value_full, %0, bio.auspice )], 
+				0 
+			)
 		), 3, 
 		strmatch( %2, unlock ), 5, 
 		hastag?( %3, wolf ), 1, 
