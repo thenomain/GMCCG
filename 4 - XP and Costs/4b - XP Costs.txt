@@ -6,9 +6,8 @@ For all of these:
 	0: sheet dbref
 	1: from
 	2: to
-	3: ?? -- seems to be the full statpath
-	4: list of valid values from data dictionary (e.g., 1.3.5) (????)
-	(are we sure that %4 isn't really supposed to be %3?)
+	3: name of stat (not full statpath)
+	4: list of valid values from data dictionary (e.g., 1.2.3.4.5)
 
 The God Machine Chronicles (nWoD2) now features flat payments per dot.
 
@@ -58,11 +57,33 @@ The God Machine Chronicles (nWoD2) now features flat payments per dot.
 
 &xp.merit [v( d.xpcd )]=u( cost.standard, 1, %1, %2 )
 
+&xp.merit [v( d.xpcd )]=
+	case( u( [v( d.sfp )]/f.get-class, %3 ), 
+		list, 
+		0 because I'm testing something, 
+
+		u( cost.standard, 1, %1, %2 )
+	)
 
 
 
 
-
+/*
+&xp.gift [v( d.xpcd )]=
+	case( 1, 
+		cand( 
+			strmatch( %2, unlock ), 
+			hastag?( 
+				%3, 
+					[u( .value_full, %0, bio.tribe )].
+					[u( .value_full, %0, bio.auspice )], 0 
+			) 
+		), 3, 
+		strmatch( %2, unlock ), 5, 
+		hastag?( %3, wolf ), 1, 
+		2
+	)
+*/
 
 
 
