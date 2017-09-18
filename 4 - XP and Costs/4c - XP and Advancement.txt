@@ -1,11 +1,21 @@
 /*
+################################################################################
+
 XP Advancement System
 
 Performs and logs XP spends and gains.
 
-Warning: This is a mess coded in a crunch.
+Warning: This is a mess coded in a crunch. Some year I should clean it up.
 
--=-=-=-=-==-=---==-
+--------------------------------------------------------------------------------
+
+This should be at the explanation of this system: 
+
+To stop players from purchasing a trait on their own, but allow staff to 
+purchase them on their behalf, check "&d.restricted.types" and 
+"&d.restricted.stats". More is described under 'Restricted Stats'.
+
+################################################################################
 
 * Give Passive XP: gain
 * Be able to determine: not a spend/gain thing
@@ -14,7 +24,7 @@ Warning: This is a mess coded in a crunch.
 * Be able to unaward XP: unaward
 * Be able to unspend: unspend
 
--=-=-=-=-=-=-=-=-=-=-=-=
+################################################################################
 
 &_special.beats.<type> :: <total> -<spent>
 &_special.earned_beats.<type> :: <amt earned this week>
@@ -24,7 +34,7 @@ Illegal characters: | and `
 &d.xp_types [v( d.xpas )]=normal player arcane
 &d.log_types [v( d.xpas )]=gain spend freebie auto
 
--=-=-=-=-=-=-=-=-=-=-=
+################################################################################
 
 COMMANDS:
 	xp : how much I got? (all types)
@@ -1009,7 +1019,9 @@ Valid award:
 			u( .msg, xp/award, SQL connection is down%; award not processed )
 	}; 
 
-	think strcat( 
+//	@pemit %#=
+	think 
+	strcat( 
 		name (w/type):, setr( n, first( %1, = )), %r, 
 		type:, 
 		setr( t, if( t( setr( t, trim( rest( %qn, / )))), %qt, normal )), %r, 
@@ -1050,7 +1062,9 @@ Valid award:
 		@pemit %#=u( .msg, xp/award, I can't find the '%qt' type )
 	}; 
 
-	think strcat( 
+//	@pemit %#=
+	think 
+	strcat( 
 		experience:, setr( x, get( %qp/_special.beats.%qt )), %r, 
 //		beats earned:, setr( b, u( f.beats_earned.%qt, %qp )), %r, 
 		beats earned:, 
@@ -1085,10 +1099,13 @@ Valid award:
 
 // add to xp_log (sql)
 
-	think strcat( 
+//	@pemit %#=
+	think 
+	strcat( 
 		tranaction begin, u( f.transaction.begin ), %r, 
 		sanitized reason:, setr( s, u( f.sql.escape, %qr )), %r, 
-		add to xp_log:, sql( u( sql.insert.award, %qp, %#, %qt, %qa, %qs )), %r, 
+		add to xp_log (null is good):, 
+		sql( u( sql.insert.award, %qp, %#, %qt, %qa, %qs )), %r, 
 		tranaction end, u( f.transaction.end )
 	); 
 
@@ -1139,17 +1156,32 @@ Valid award:
 /*
 --------------------------------------------------------------------------------
 -- Restricted Stats ------------------------------------------------------------
+
+These are stats and stat categories that cannot be purchased by players via 
+'xp/spend' but can be purchased by staff on their behalf.
+
+If a stat has XP value of 'null' or '0', it cannot be purchased by anyone.
+
+* Restricted Types: Stat categories that may not be purchased by players
+* Restricted Stats: Specific traits (full statpath) that etc.
+
+This is set up in such a way that restricted types and stats may be added by any 
+new template package. e.g.:
+	&d.restricted.types.vampire [v( d.xpas )]=discipline
+
 */
 
-&d.restricted.types [v( d.xpas )]=iter( lattr( %!/d.restricted.types.*, u( %i0 )))
+&d.restricted.types [v( d.xpas )]=
+	iter( lattr( %!/d.restricted.types.*, u( %i0 )))
 &d.restricted.types.default [v( d.xpas )]=bio
 
-&d.restricted.stats [v( d.xpas )]=iter( lattr( %!/d.restricted.stats.*, u( %i0 )))
-&d.restricted.stats.default [v( d.xpas )]=advantage.integrity merit.status_(*) 
+&d.restricted.stats [v( d.xpas )]=
+	iter( lattr( %!/d.restricted.stats.*, u( %i0 )))
+&d.restricted.stats.default [v( d.xpas )]=
+	advantage.integrity merit.status_(*) 
 
 /* 
-Eldritch is also restricting all supernatural merits.
-This includes human-only merits.
+Eldritch is also restricting all template-specific merits.
 
 If you'd like to use this, run the code below:
 
@@ -1179,7 +1211,7 @@ Brings the formulas and the formula finder together.
 0: dbref of sheet (qw)
 1: stat-from (Even if it's not used) (qt)
 2: stat-to (qv)
-3: statpath (qs)
+3: statpath (qs) <-- WHY DO WE NOT PASS THIS ON TO THE XP COST CODE?!
 
 s: statpath without instance
 v: main.value.list
@@ -1196,7 +1228,7 @@ f: formula's attribute name
 		if( t( %qf ), 
 			u( 
 				v( d.xpcd )/%qf, 
-				%0, %1, %2, rest( %3, . ), %qv 
+				%0, %1, %2, %qs, %qv 
 			), 
 
 			%qf
@@ -1310,7 +1342,7 @@ x: temp statpaths for the degrading search
 
 // --
 // &xp.skill.?.?~[get( %#/_bio.template)] xpcd=1
-// think u( v( d.xpas )/f.formula_finder, %#, skill.academics.history )
+// think u( v( d.xpas )/f.formula_finder, skill.academics.history, %# )
 // &xp.skill.?.?~[get( %#/_bio.template)] xpcd=
 
 
