@@ -265,3 +265,82 @@ m: matched location of <value> in <current values>, if any
 		)
 	)
 
+
+
+/*
+================================================================================
+== /SETTAG =====================================================================
+
+A quick way to add or remove a tag from a stat.
+
+0: <stat>=[!]<value>
+
+s: statpath
+a: raw attribute
+   '<list>.<of>.<tags>'
+
+n: not? [!]
+v: value to add/remove
+m: tag's matched position (if exists)
+
+f: final attribute to set
+
+*/
+
+&f.stat/settag [v( d.ss )]=
+	strcat( 
+		setq( s, 
+			u( 
+				v( d.stat-funcs )/f.statpath-validate-name, 
+				first( %0, = )
+			)
+		), 
+		setq( a, get( v( d.data-tags )/tags.%qs )), 
+		setq( n, strmatch( setr( v, rest( %0, = )), !* )), 
+		setq( v, lcstr( right( %qv, sub( strlen( %qv ), %qn )))), 
+		setq( m, match( %qa, %qv, . )), 
+
+		setq( f, 
+			if( %qn, 
+				ldelete( %qa, %qm, . ), 
+				trim( %qa.%qv, b, . )
+			)
+		), 
+
+		case( 0, 
+			isstaff( %# ), 
+			u( .msg, stat/settag, Staff only ), 
+
+			t( %qs ), 
+			u( .msg, stat/settag, Stat not found ), 
+
+			comp( rest( %0, = ), ), 
+			u( .msg, stat/settag, 
+				At least enter something to add or remove 
+			), 
+
+			not( u( v( d.sfp )/f.statvalue-good, %qa )), 
+			u( .msg, stat/settag, Bad tag name ), 
+
+// if '!' and not match, or if not '!' and match, then it's some kind of error
+			not( xor( %qn, %qm )), 
+			if( t( %qn ),
+				u( .msg, stat/settag, Tag '%qv' doesn't exist ), 
+				u( .msg, stat/settag, Tag '%qv' already exists )
+			), 
+
+			strcat( 
+				setq( e, set( v( d.data-tags ), tags.%qs:%qf )), 
+				if( strlen( %qe ), 
+					u( .msg, stat/settag, 
+						Error setting new attribute! Please type: 
+						&%qs [v( d.data-tags )]=%qf
+					), 
+					u( .msg, stat/settag, 
+						cat( Tag '%qv', if( %qn, removed, added ))
+					)
+				)
+			)
+		)
+	)
+
