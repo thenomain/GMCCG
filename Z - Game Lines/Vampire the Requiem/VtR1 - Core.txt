@@ -880,7 +880,7 @@ but does not receive free rituals.
 &prerequisite.rite.pangs_of_proserpina [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.pangs_of_proserpina )
+		u( .at_least, %0, discipline.cruac, v( rite.pangs_of_proserpina ))
 	)
 &prereq-text.rite.pangs_of_proserpina [v( d.dd )]=
 	Circle of the Crone, 
@@ -891,7 +891,7 @@ but does not receive free rituals.
 &prerequisite.rite.rigor_mortis [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.rigor_mortis )
+		u( .at_least, %0, discipline.cruac, v( rite.rigor_mortis ))
 	)
 &prereq-text.rite.rigor_mortis [v( d.dd )]=
 	Circle of the Crone, 
@@ -902,7 +902,7 @@ but does not receive free rituals.
 &prerequisite.rite.cheval [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.cheval )
+		u( .at_least, %0, discipline.cruac, v( rite.cheval ))
 	)
 &prereq-text.rite.cheval [v( d.dd )]=
 	Circle of the Crone, 
@@ -913,7 +913,7 @@ but does not receive free rituals.
 &prerequisite.rite.the_hydra's_vitae [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.the_hydra's_vitae )
+		u( .at_least, %0, discipline.cruac, v( rite.the_hydra's_vitae ))
 	)
 &prereq-text.rite.the_hydra's_vitae [v( d.dd )]=
 	Circle of the Crone, 
@@ -924,7 +924,7 @@ but does not receive free rituals.
 &prerequisite.rite.deflection_of_wooden_doom [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.deflection_of_wooden_doom )
+		u( .at_least, %0, discipline.cruac, v( rite.deflection_of_wooden_doom ))
 	)
 &prereq-text.rite.deflection_of_wooden_doom [v( d.dd )]=
 	Circle of the Crone, 
@@ -935,7 +935,7 @@ but does not receive free rituals.
 &prerequisite.rite.shadowcall [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
+		u( .at_least, %0, discipline.cruac, v( rite.shadowcall ))
 	)
 &prereq-text.rite.shadowcall [v( d.dd )]=
 	Circle of the Crone, 
@@ -952,7 +952,7 @@ If you also have Werewolf, you may need this:
 	if( u( .is_full, %0, bio.template, vampire ), 
 		cand( 
 			u( .is_full, %0, bio.covenant, circle of the crone ), 
-			u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
+			u( .at_least, %0, discipline.cruac, v( rite.shadowcall ))
 		)
 	)
 
@@ -966,7 +966,7 @@ If you also have Werewolf, you may need this:
 &prerequisite.rite.touch_of_the_morrigan [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan )
+		u( .at_least, %0, discipline.cruac, v( rite.touch_of_the_morrigan ))
 	)
 &prereq-text.rite.touch_of_the_morrigan [v( d.dd )]=
 	Circle of the Crone, 
@@ -977,7 +977,7 @@ If you also have Werewolf, you may need this:
 &prerequisite.rite.blood_price [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.blood_price )
+		u( .at_least, %0, discipline.cruac, v( rite.blood_price ))
 	)
 &prereq-text.rite.blood_price [v( d.dd )]=
 	Circle of the Crone, 
@@ -988,7 +988,7 @@ If you also have Werewolf, you may need this:
 &prerequisite.rite.rigor_mortis [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.rigor_mortis )
+		u( .at_least, %0, discipline.cruac, v( rite.rigor_mortis ))
 	)
 &prereq-text.rite.rigor_mortis [v( d.dd )]=
 	Circle of the Crone, 
@@ -999,7 +999,7 @@ If you also have Werewolf, you may need this:
 &prerequisite.rite.blood_blight [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.blood_blight )
+		u( .at_least, %0, discipline.cruac, v( rite.blood_blight ))
 	)
 &prereq-text.rite.blood_blight [v( d.dd )]=
 	Circle of the Crone, 
@@ -1010,7 +1010,7 @@ If you also have Werewolf, you may need this:
 &prerequisite.rite.feeding_the_crone [v( d.dd )]=
 	cand( 
 		u( .is_full, %0, bio.covenant, circle of the crone ), 
-		u( .at_least, %0, discipline.cruac, v( rite.feeding_the_crone )
+		u( .at_least, %0, discipline.cruac, v( rite.feeding_the_crone ))
 	)
 &prereq-text.rite.feeding_the_crone [v( d.dd )]=
 	Circle of the Crone, 
