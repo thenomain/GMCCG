@@ -1,4 +1,5 @@
-PLEASE NOTE: This system is an earlier version of the Supernatural Agreement Storage System (SASS) and should be used with caution.
+PLEASE NOTE: This system is an earlier version of the Supernatural Agreement 
+Storage System (SASS) and should be used with caution.
 
 ================================================================================
 == OPENING NOTES ===============================================================
@@ -58,15 +59,15 @@ Uses the following user-defined functions:
 @set pd=inherit
 
 @create Pledge System <ps>
-@set ps=safe
-@set ps=inherit
+@set v( d.ps )=safe
+@set v( d.ps )=inherit
 
-@fo me=&d.pledges ps=[num(Pledges Database <pd>)]
+@fo me=&d.pledges v( d.ps )=[num(Pledges Database <pd>)]
 
 @@ CODE OBJECT @DESC PARENT - I use this to format the @desc on my code objects
 @@ You don't need it.  Can be provided.
-@parent ps=codp
-@desc ps=%0%r%b Num Pledges: [attrcnt([u(d.pledges)]/pledge.*)]%r[footer()]
+@parent v( d.ps )=codp
+@desc v( d.ps )=%0%r%b Num Pledges: [attrcnt([u(d.pledges)]/pledge.*)]%r[footer()]
 
 @@ TEST PLEDGE
 &pledge.1 pd=Theno's Test Pledge|vow|1279317084|stats go here|#33
@@ -83,9 +84,9 @@ i.e., in 1 2 5 9, the next "free" number is 3.
 
 --
 
-&f.counter.pledges ps=sort(edit(lattr(u(d.pledges)/pledge.*), PLEDGE., ))
+&f.counter.pledges v( d.ps )=sort(edit(lattr(u(d.pledges)/pledge.*), PLEDGE., ))
 
-&f.counter.free ps=
+&f.counter.free v( d.ps )=
 localize(
 	first(
 		setdiff(
@@ -99,7 +100,7 @@ localize(
 
 --
 
-&f.counter.free ps=localize(first(setdiff(lnum(1, inc(last(setr(n, u(f.counter.pledges))))), %qn)))
+&f.counter.free v( d.ps )=localize(first(setdiff(lnum(1, inc(last(setr(n, u(f.counter.pledges))))), %qn)))
 
 --
 
@@ -125,17 +126,28 @@ BUG: For some reason, "text.#" has 5 slots when created.  I probably typo'd in t
 
 --
 
-&d.elements.positions ps=name pledge. 1|type pledge. 2|date pledge. 3|stats pledge. 4|players pledge. 5|text text. 1|filter filter. 1
+&d.elements.positions v( d.ps )=
+	name pledge. 1|
+	type pledge. 2|
+	date pledge. 3|
+	stats pledge. 4|
+	players pledge. 5|
+	text text. 1|
+	filter filter. 1
 
 @@ 0: space-delim list of possible element names, out: full|element|data
 
-&f.data-elements.list ps=iter(%0, grab([u(ps/d.elements.positions)], %i0*, |), , |)
+&f.data-elements.list v( d.ps )=
+	iter( %0, 
+		grab( u( d.elements.positions ), %i0*, | ), 
+		, | 
+	)
 
 --
 
-think u(#1575/f.data-elements.list, na dat text)
+think u(v( d.ps )/f.data-elements.list, na dat text)
 
-think u(#1575/f.data-elements.list, na dad text)
+think u(v( d.ps )/f.data-elements.list, na dad text)
 
 
 --------------------------------------------------------------------------------
@@ -145,7 +157,7 @@ Main "tell me about" function
 0: pledge number, 1: element name(s) (may be space-delim list)
 out: list|of|information|requested
 
-&f.get-elements ps=[setq(e, u(f.data-elements.list, %1))][case(0, comp(%qe, ),  #-1 Element(s) Requested Unknown, t(get([u(d.pledges)]/pledge.%0)), #-1 Pledge #%0 Not Found, iter(%qe, extract(u([u(d.pledges)]/[extract(%i0, 2, 1)]%0), last(%i0), 1, |), |, |))]
+&f.get-elements v( d.ps )=[setq(e, u(f.data-elements.list, %1))][case(0, comp(%qe, ),  #-1 Element(s) Requested Unknown, t(get([u(d.pledges)]/pledge.%0)), #-1 Pledge #%0 Not Found, iter(%qe, extract(u([u(d.pledges)]/[extract(%i0, 2, 1)]%0), last(%i0), 1, |), |, |))]
 
 --
 
@@ -166,7 +178,7 @@ e: element's data entry (<name> <attribute> <position>)
 a: <attribute> for that element
 p: existing pledge's entry
 
-&f.set-element ps=localize(
+&f.set-element v( d.ps )=localize(
 	[setq(e, u(f.data-elements.list, %1))]
 	[setq(a, [extract(%qe, 2, 1)]%0)]
 	[case(0, 
@@ -186,7 +198,7 @@ p: existing pledge's entry
 
 --
 
-&f.set-element ps=localize([setq(e, u(f.data-elements.list, %1))][setq(a, [extract(%qe, 2, 1)]%0)][case(0, comp(%qe, ),  #-1 Element Requested Unknown, eq(words(%qe, |), 1), #-1 Multiple Elements Found, t(setr(p, ulocal([u(d.pledges)]/pledge.%0))), #-1 Pledge #%0 Not Found, [setq(p, replace(%qp, last(%qe), %2, |))][setq(p, set([u(d.pledges)], %qa:%qp))][if(comp(%qp, ), #-1 Error setting pledge attribute, Set: Pledge #%0's [first(%qe)] to '%2')])])
+&f.set-element v( d.ps )=localize([setq(e, u(f.data-elements.list, %1))][setq(a, [extract(%qe, 2, 1)]%0)][case(0, comp(%qe, ),  #-1 Element Requested Unknown, eq(words(%qe, |), 1), #-1 Multiple Elements Found, t(setr(p, ulocal([u(d.pledges)]/pledge.%0))), #-1 Pledge #%0 Not Found, [setq(p, replace(%qp, last(%qe), %2, |))][setq(p, set([u(d.pledges)], %qa:%qp))][if(comp(%qp, ), #-1 Error setting pledge attribute, Set: Pledge #%0's [first(%qe)] to '%2')])])
 
 --
 
@@ -204,17 +216,17 @@ We use validation for entering data and checking if a pledge is no longer valid.
 
 0: element type, 1: element data
 
-&f.validate-element ps=localize(case(1, strmatch(%1, *|*), #-1 [capstr(lcstr(%0))] may not contain pipe character, strmatch(setr(m, udefault(f.validate-element.%0, 1, %1)), #-*), %qm, 1))
+&f.validate-element v( d.ps )=localize(case(1, strmatch(%1, *|*), #-1 [capstr(lcstr(%0))] may not contain pipe character, strmatch(setr(m, udefault(f.validate-element.%0, 1, %1)), #-*), %qm, 1))
 
-&f.validate-element.name ps=case(0, lte(strlen(%0), 30), #-1 Name max length 30 characters)
+&f.validate-element.name v( d.ps )=case(0, lte(strlen(%0), 30), #-1 Name max length 30 characters)
 
-&f.validate-element.type ps=case(0, match(vow oath corporal sanction, %0), #-1 Type must be vow oath corporal or sanction)
+&f.validate-element.type v( d.ps )=case(0, match(vow oath corporal sanction, %0), #-1 Type must be vow oath corporal or sanction)
 
-&f.validate-element.date ps=case(0, comp(%0, lifetime), 1, comp(%0, generational), 1, comp(%0, ), #-1 Date is empty, isint(%0), #-1 Date must be passed as seconds, gt(%0, secs()), #-1 Date has passed)
+&f.validate-element.date v( d.ps )=case(0, comp(%0, lifetime), 1, comp(%0, generational), 1, comp(%0, ), #-1 Date is empty, isint(%0), #-1 Date must be passed as seconds, gt(%0, secs()), #-1 Date has passed)
 
-&f.validate-element.stats ps=1[@@(always valid)]
+&f.validate-element.stats v( d.ps )=1[@@(always valid)]
 
-&f.validate-element.players ps=localize(
+&f.validate-element.players v( d.ps )=localize(
 	case(0, 
 		land(
 			iter(%0, 
@@ -225,10 +237,10 @@ We use validation for entering data and checking if a pledge is no longer valid.
 	)
 )
 
-&f.validate-element.players.one ps=case(0, t(pmatch+(%0)), #-1 Player not found, comp(isapproved(%0), 0), #-1 Player not approved, comp(isapproved(%0), -1), #-1 Player is frozen, 1)
+&f.validate-element.players.one v( d.ps )=case(0, t(pmatch+(%0)), #-1 Player not found, comp(isapproved(%0), 0), #-1 Player not approved, comp(isapproved(%0), -1), #-1 Player is frozen, 1)
 
 
-&f.validate-element.text ps=case(0, t(strlen(%0)), #-1 Text may not be null)
+&f.validate-element.text v( d.ps )=case(0, t(strlen(%0)), #-1 Text may not be null)
 
 
 --------------------------------------------------------------------------------
@@ -238,13 +250,13 @@ Convert to internal storage format, happens before Validation, does not validate
 
 0: element name, 1: value
 
-&f.convert-element ps=udefault(f.convert-element.%0, %1, %1)
+&f.convert-element v( d.ps )=udefault(f.convert-element.%0, %1, %1)
 
 --
 
 precise: enter - yyyymmdd, converts to - yyyy-mm-dd HH:MM:SS
 
-&f.convert-element.date ps=
+&f.convert-element.date v( d.ps )=
 	switch(%0, 
 		now, secs(), 
 		day*, add(secs(), 86400), 
@@ -263,11 +275,11 @@ precise: enter - yyyymmdd, converts to - yyyy-mm-dd HH:MM:SS
 
 --
 
-&f.convert-element.players ps=iter(%0, case(1, isdbref(%i0), %i0, pmatch+(%i0)))
+&f.convert-element.players v( d.ps )=iter(%0, case(1, isdbref(%i0), %i0, pmatch+(%i0)))
 
 --
 
-&f.convert-element.date ps=switch(%0, now, secs(), day*, add(secs(), 86400), wee*, add(secs(), 604800), moo*, add(secs(), 2419200), sea*, add(secs(), 7689600), yea*, add(secs(), 31622400), dec*, add(secs(), 316224000), life*, lifetime, gen*, generational, convtime([mid(%0, 0, 4)]-[mid(%0, 4, 2)]-[mid(%0, 6, 2)] [extract(time(), 4, 1)]))
+&f.convert-element.date v( d.ps )=switch(%0, now, secs(), day*, add(secs(), 86400), wee*, add(secs(), 604800), moo*, add(secs(), 2419200), sea*, add(secs(), 7689600), yea*, add(secs(), 31622400), dec*, add(secs(), 316224000), life*, lifetime, gen*, generational, convtime([mid(%0, 0, 4)]-[mid(%0, 4, 2)]-[mid(%0, 6, 2)] [extract(time(), 4, 1)]))
 
 --
 
@@ -285,7 +297,7 @@ think u(ps/f.convert-element.players, burke)
 
 We need a sortby because we format <attr>.<pledgenum>, which doesn't make sort() happy.
 
-&sort.pledge ps=comp(rpad(last(%0, .), 3, 0), rpad(last(%1, .), 3, 0))
+&sort.pledge v( d.ps )=comp(rpad(last(%0, .), 3, 0), rpad(last(%1, .), 3, 0))
 
 
 --------------------------------------------------------------------------------
@@ -296,7 +308,7 @@ Make the raw data human-redable.  "show error detail?" allows you to do the tric
 where applicable
 
 0: element name, 1: data, 2: true if "show error detail?"
-&f.display.element ps=udefault(f.display.element.%0, %1, %1, %2)
+&f.display.element v( d.ps )=udefault(f.display.element.%0, %1, %1, %2)
 
 
 The format of a specific display (for easy adding of other elements) is:
@@ -308,14 +320,14 @@ The format of a specific display (for easy adding of other elements) is:
 
 0: data, 1: true if "show error detail"
 
-&f.display.element.name ps=localize([setq(t, name)][setq(v, titlestr(%0))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
+&f.display.element.name v( d.ps )=localize([setq(t, name)][setq(v, titlestr(%0))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
 
-&f.display.element.type ps=localize([setq(t, type)][setq(v, capstr(lcstr(%0)))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
+&f.display.element.type v( d.ps )=localize([setq(t, type)][setq(v, capstr(lcstr(%0)))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
 
-&f.display.element.date ps=localize([setq(t, date)][setq(v, if(isint(%0), timefmt($Y-$m-$d, %0), %0))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
+&f.display.element.date v( d.ps )=localize([setq(t, date)][setq(v, if(isint(%0), timefmt($Y-$m-$d, %0), %0))][setq(e, u(f.validate-element, %qt, %0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])])
 
 @@ ekes out which players have the error
-&f.display.element.players ps=localize(itemize(iter(%0, [setq(v, name(%i0))][setq(e, u(f.validate-element.players.one, %i0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])], , |), |))
+&f.display.element.players v( d.ps )=localize(itemize(iter(%0, [setq(v, name(%i0))][setq(e, u(f.validate-element.players.one, %i0))][if(t(%qe), %qv, [ansi(r, %qv)][if(t(%1), ansi(xh, %b%([rest(%qe)]%)))])], , |), |))
 
 
 
@@ -342,7 +354,7 @@ v: present element's validation
 d: present element's data (from %qp)
 n: element w/name, formatted for easy output
 
-&f.display.pledge.full ps=
+&f.display.pledge.full v( d.ps )=
 	[setq(e, Name Type Date Stats Players)]
 	[setq(p, ulocal(f.get-elements, %0, %qe))]
 
@@ -370,7 +382,7 @@ n: element w/name, formatted for easy output
 
 --
 
-&f.display.pledge.full ps=[setq(e, Name Type Date Stats Players)][setq(p, ulocal(f.get-elements, %0, %qe))][header(Pledge #%0)]%r[iter(%qe, [setq(d, extract(%qp, inum(), 1, |))][setq(v, ulocal(f.validate-element, %i0, %qd))][setq(d, [ansi(g, %i0:)] [ulocal(f.display.element, %i0, %qd, true)])][wrap(%qd, sub(74, add(2, strlen(%i0))), left, %b%b, , add(2, strlen(%i0)), , 74)], , %r)]%r[setq(d, ulocal(f.get-elements, %0, text))][setq(v, ulocal(f.validate-element, text, %qd))][setq(n, if(t(%qv), Text, ansi(r, Text, xh, %b%([rest(%qv)]%))))][center(%b%qn%b, 79, %xg-%xn)]%r[wrap(%qd, 74, left, %b%b)]%r[footer(+pledge %0)]
+&f.display.pledge.full v( d.ps )=[setq(e, Name Type Date Stats Players)][setq(p, ulocal(f.get-elements, %0, %qe))][header(Pledge #%0)]%r[iter(%qe, [setq(d, extract(%qp, inum(), 1, |))][setq(v, ulocal(f.validate-element, %i0, %qd))][setq(d, [ansi(g, %i0:)] [ulocal(f.display.element, %i0, %qd, true)])][wrap(%qd, sub(74, add(2, strlen(%i0))), left, %b%b, , add(2, strlen(%i0)), , 74)], , %r)]%r[setq(d, ulocal(f.get-elements, %0, text))][setq(v, ulocal(f.validate-element, text, %qd))][setq(n, if(t(%qv), Text, ansi(r, Text, xh, %b%([rest(%qv)]%))))][center(%b%qn%b, 79, %xg-%xn)]%r[wrap(%qd, 74, left, %b%b)]%r[footer(+pledge %0)]
 
 
 --
@@ -387,7 +399,7 @@ The overview (one-line) pledge.
 
  xxx) <name..................................> - type (yyyy-mm-dd): xx members
 
-&f.display.pledge.line ps=
+&f.display.pledge.line v( d.ps )=
 	[setq(e, Name Type Date Players)]
 	[setq(p, ulocal(f.get-elements, %0, %qe))]
 
@@ -420,7 +432,7 @@ The overview (one-line) pledge.
 
 --
 
-&f.display.pledge.line ps=[setq(e, Name Type Date Players)][setq(p, ulocal(f.get-elements, %0, %qe))]%b[rjust(%0, 3)]) [setq(d, elements(%qp, 1, |))][setq(v, ulocal(f.validate-element, name, %qd))][setq(d, ulocal(f.display.element, name, %qd))][ljust(if(t(%qv), %qd, ansi(r, %qd)), 39)] - [setq(d, elements(%qp, 2, |))][setq(v, ulocal(f.validate-element, type, %qd))][setq(d, strtrunc(ulocal(f.display.element, type, %qd), 4))][ljust(if(t(%qv), %qd, ansi(r, %qd)), 4)] - [setq(d, elements(%qp, 4, |))][setq(v, ulocal(f.validate-element, players, %qd))][setq(d, [words(%qd)] members)][rjust(if(t(%qv), %qd, ansi(r, %qd)), 10)] - [setq(d, elements(%qp, 3, |))][setq(v, ulocal(f.validate-element, date, %qd))][setq(d, ulocal(f.display.element, date, %qd))][if(t(%qv), %qd, ansi(r, %qd))]
+&f.display.pledge.line v( d.ps )=[setq(e, Name Type Date Players)][setq(p, ulocal(f.get-elements, %0, %qe))]%b[rjust(%0, 3)]) [setq(d, elements(%qp, 1, |))][setq(v, ulocal(f.validate-element, name, %qd))][setq(d, ulocal(f.display.element, name, %qd))][ljust(if(t(%qv), %qd, ansi(r, %qd)), 39)] - [setq(d, elements(%qp, 2, |))][setq(v, ulocal(f.validate-element, type, %qd))][setq(d, strtrunc(ulocal(f.display.element, type, %qd), 4))][ljust(if(t(%qv), %qd, ansi(r, %qd)), 4)] - [setq(d, elements(%qp, 4, |))][setq(v, ulocal(f.validate-element, players, %qd))][setq(d, [words(%qd)] members)][rjust(if(t(%qv), %qd, ansi(r, %qd)), 10)] - [setq(d, elements(%qp, 3, |))][setq(v, ulocal(f.validate-element, date, %qd))][setq(d, ulocal(f.display.element, date, %qd))][if(t(%qv), %qd, ansi(r, %qd))]
 
 --
 
@@ -435,7 +447,7 @@ Returns if %1 (dbref) can see that pledge.  To start, only staff and people on t
 0: attr of pledge
 1: dbref of person looking
 
-&fil.pledge.can-see ps=or(isstaff(%1), t(match(last(get([u(d.pledges)]/%0), |), %1)))
+&fil.pledge.can-see v( d.ps )=or(isstaff(%1), t(match(last(get([u(d.pledges)]/%0), |), %1)))
 
 --
 
@@ -449,7 +461,7 @@ think u(ps/fil.pledge.can-see, pledge.1, #302)
 
 The main driver.  +pledge and +pledges both processed here.  (I hate you, +job/+jobs.)
 
-&c.pledge ps=$+pledge*:@pemit %#=
+&c.pledge v( d.ps )=$+pledge*:@pemit %#=
 	[switch(%0, 
 		, u(c.pledge.default), 
 @@ .. 'pledges'
@@ -465,7 +477,7 @@ The main driver.  +pledge and +pledges both processed here.  (I hate you, +job/+
 --
 
 
-&c.pledge ps=$+pledge*:@pemit %#=[setq(0, %0)][switch(%0, , u(c.pledge.default), s, u(c.pledge.default), s/*, u(c.pledge.switch, /[first(after(%0, /))], rest(%0)), s%b*, u(c.pledge.specific, trim(rest(%0))), /*, u(c.pledge.switch, first(%0), rest(%0)), %b*, u(c.pledge.specific, trim(%0)), Error: I don't know what you mean.  Please see [ansi(h, +help pledge)])]
+&c.pledge v( d.ps )=$+pledge*:@pemit %#=[setq(0, %0)][switch(%0, , u(c.pledge.default), s, u(c.pledge.default), s/*, u(c.pledge.switch, /[first(after(%0, /))], rest(%0)), s%b*, u(c.pledge.specific, trim(rest(%0))), /*, u(c.pledge.switch, first(%0), rest(%0)), %b*, u(c.pledge.specific, trim(%0)), Error: I don't know what you mean.  Please see [ansi(h, +help pledge)])]
 
 
 --------------------------------------------------------------------------------
@@ -474,7 +486,7 @@ The main driver.  +pledge and +pledges both processed here.  (I hate you, +job/+
 0: /switch
 1: everything else
 
-&c.pledge.switch ps=
+&c.pledge.switch v( d.ps )=
 	udefault(
 		first(sort(lattr(%!/c.*%0*))), 
 		[alert(pledge)] No such switch., 
@@ -483,7 +495,7 @@ The main driver.  +pledge and +pledges both processed here.  (I hate you, +job/+
 
 --
 
-&c.pledge.switch ps=udefault(first(sort(lattr(%!/c.*%0*))), [alert(pledge)] No such switch., %1)
+&c.pledge.switch v( d.ps )=udefault(first(sort(lattr(%!/c.*%0*))), [alert(pledge)] No such switch., %1)
 
 
 --------------------------------------------------------------------------------
@@ -493,7 +505,7 @@ List all (visible) pledges
 
 l: list of displayed pledges
 
-&c.pledge.default ps=
+&c.pledge.default v( d.ps )=
 	[setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, lattr([u(d.pledges)]/pledge.*), , , %#)))]
 
 	[header(Pledges)]%r
@@ -507,7 +519,7 @@ l: list of displayed pledges
 
 --
 
-&c.pledge.default ps=[setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, lattr([u(d.pledges)]/pledge.*), , , %#)))][header(Pledges)]%r[if(t(words(%ql)), iter(%ql, u(f.display.pledge.line, rest(%i0, .)), , %r), %b No pledges to list.)]%r[footer(if(t(words(%ql)), [words(%ql)] pledges))]
+&c.pledge.default v( d.ps )=[setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, lattr([u(d.pledges)]/pledge.*), , , %#)))][header(Pledges)]%r[if(t(words(%ql)), iter(%ql, u(f.display.pledge.line, rest(%i0, .)), , %r), %b No pledges to list.)]%r[footer(if(t(words(%ql)), [words(%ql)] pledges))]
 
 
 --------------------------------------------------------------------------------
@@ -517,7 +529,7 @@ l: list of displayed pledges
 
 n: pledge number
 
-&c.pledge.specific ps=
+&c.pledge.specific v( d.ps )=
 	[setq(n, %0)]
 	
 	[case(0, 
@@ -535,7 +547,7 @@ n: pledge number
 
 --
 
-&c.pledge.specific ps=[setq(n, %0)][case(0, and(isint(%qn), gt(%qn, 0)), [alert(+pledge)] Pledge lookup must be a positive number., t(get([u(d.pledges)]/pledge.%qn)), [alert(+pledge)] Pledge not found., or(isstaff(%#), t(match(u(f.get-elements, %qn, players), %#))), [alert(+pledge)] You may not review someone else's pledge., u(f.display.pledge.full, %qn))]
+&c.pledge.specific v( d.ps )=[setq(n, %0)][case(0, and(isint(%qn), gt(%qn, 0)), [alert(+pledge)] Pledge lookup must be a positive number., t(get([u(d.pledges)]/pledge.%qn)), [alert(+pledge)] Pledge not found., or(isstaff(%#), t(match(u(f.get-elements, %qn, players), %#))), [alert(+pledge)] You may not review someone else's pledge., u(f.display.pledge.full, %qn))]
 
 
 ================================================================================
@@ -549,7 +561,7 @@ n: pledge number
 e: element
 v: new value
 
-&c.pledge/edit ps=
+&c.pledge/edit v( d.ps )=
 	[setq(n, first(%0, /))]
 	[setq(e, rest(first(%0, =), /))]
 	[setq(v, last(%0, =))]
@@ -565,7 +577,7 @@ v: new value
 
 --
 
-&c.pledge/edit ps=[setq(n, first(%0, /))][setq(e, rest(first(%0, =), /))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, t(%qe), [alert(pledge)] Element not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, eq(words(%qe), 1), [alert(pledge)] Enter only one element, comp(setr(e, u(f.data-elements.list, %qe)), ), [alert(pledge/edit)] Element not found, u(f.pledge/edit.workhorse, %qn, first(%qe), %qv))]
+&c.pledge/edit v( d.ps )=[setq(n, first(%0, /))][setq(e, rest(first(%0, =), /))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, t(%qe), [alert(pledge)] Element not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, eq(words(%qe), 1), [alert(pledge)] Enter only one element, comp(setr(e, u(f.data-elements.list, %qe)), ), [alert(pledge/edit)] Element not found, u(f.pledge/edit.workhorse, %qn, first(%qe), %qv))]
 
 
 --------------------------------------------------------------------------------
@@ -583,7 +595,7 @@ s: set result
 z: slush register
 
 
-&f.pledge/edit.workhorse ps=
+&f.pledge/edit.workhorse v( d.ps )=
 	[setq(p, ulocal(f.get-elements, %0, %1))]
 	[setq(c, ulocal(f.convert-element, %1, %2))]
 	[setq(v, ulocal(f.validate-element, %1, %qc))]
@@ -619,7 +631,7 @@ z: slush register
 
 --
 
-&f.pledge/edit.workhorse ps=[setq(p, ulocal(f.get-elements, %0, %1))][setq(c, ulocal(f.convert-element, %1, %2))][setq(v, ulocal(f.validate-element, %1, %qc))][setq(e, case(%1, players, if(land([iter(type date text, [t(setr(z, ulocal(f.get-elements, %0, %i0)))] [t(ulocal(f.validate-element, %i0, %qz))])]), 1, #-1 Can't edit players until type%, date%, and text are set and valid), 1))][case(0, t(%qv), [alert(pledge)] [rest(%qv)], t(%qe), [alert(pledge)] [rest(%qe)], u(f.pledge/edit.process, %0, %1, %qp, %qc))]
+&f.pledge/edit.workhorse v( d.ps )=[setq(p, ulocal(f.get-elements, %0, %1))][setq(c, ulocal(f.convert-element, %1, %2))][setq(v, ulocal(f.validate-element, %1, %qc))][setq(e, case(%1, players, if(land([iter(type date text, [t(setr(z, ulocal(f.get-elements, %0, %i0)))] [t(ulocal(f.validate-element, %i0, %qz))])]), 1, #-1 Can't edit players until type%, date%, and text are set and valid), 1))][case(0, t(%qv), [alert(pledge)] [rest(%qv)], t(%qe), [alert(pledge)] [rest(%qe)], u(f.pledge/edit.process, %0, %1, %qp, %qc))]
 
 
 --------------------------------------------------------------------------------
@@ -638,7 +650,7 @@ This should probably be in a different attribute structure than /edit, but it's 
 
 e: potential error message (was qs)
 
-&f.pledge/edit.process ps=
+&f.pledge/edit.process v( d.ps )=
 	[alert(pledge)] Changing [ucstr(%1)] 
 	from '[u(f.display.element, %1, %2)]' 
 	to '[u(f.display.element, %1, %3)]' ... 
@@ -648,7 +660,7 @@ e: potential error message (was qs)
 
 --
 
-&f.pledge/edit.process ps=[alert(pledge)] Changing [ucstr(%1)] from '[u(f.display.element, %1, %2)]' to '[u(f.display.element, %1, %3)]' ... [setq(e, ulocal(f.set-element, %0, %1, %3))][if(t(%qe), set!, error: [rest(%qe)])]
+&f.pledge/edit.process v( d.ps )=[alert(pledge)] Changing [ucstr(%1)] from '[u(f.display.element, %1, %2)]' to '[u(f.display.element, %1, %3)]' ... [setq(e, ulocal(f.set-element, %0, %1, %3))][if(t(%qe), set!, error: [rest(%qe)])]
 
 
 --------------------------------------------------------------------------------
@@ -659,7 +671,7 @@ e: potential error message (was qs)
 n: name
 c: counter - next available pledge number
 
-&c.pledge/new ps=
+&c.pledge/new v( d.ps )=
 	[setq(n, %0)]
 	[setq(c, u(f.counter.free))]
 
@@ -681,7 +693,7 @@ c: counter - next available pledge number
 
 --
 
-&c.pledge/new ps=[setq(n, %0)][setq(c, u(f.counter.free))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(setr(e, u(f.validate-element, name, %qn))), [alert(pledge)] [rest(%qe)], [set([u(d.pledges)], pledge.%qc:%qn[repeat(|,dec(words(graball(u(d.elements.positions), * pledge. *, |, |), |)))])][null(u(f.set-element, %qc, type, vow))][alert(pledge)] Set up new pledge [ansi(h, #%qc)] with name '[titlestr(%qn)]' and default type 'Vow'.)]
+&c.pledge/new v( d.ps )=[setq(n, %0)][setq(c, u(f.counter.free))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(setr(e, u(f.validate-element, name, %qn))), [alert(pledge)] [rest(%qe)], [set([u(d.pledges)], pledge.%qc:%qn[repeat(|,dec(words(graball(u(d.elements.positions), * pledge. *, |, |), |)))])][null(u(f.set-element, %qc, type, vow))][alert(pledge)] Set up new pledge [ansi(h, #%qc)] with name '[titlestr(%qn)]' and default type 'Vow'.)]
 
 
 --------------------------------------------------------------------------------
@@ -689,7 +701,7 @@ c: counter - next available pledge number
 
 	+pledge/delete <number>[=YES]
 
-&c.pledge/delete ps=
+&c.pledge/delete v( d.ps )=
 	[setq(n, before(%0, =))]
 	[setq(v, rest(%0, =))]
 	
@@ -718,7 +730,7 @@ c: counter - next available pledge number
 
 --
 
-&c.pledge/delete ps=[setq(n, before(%0, =))][setq(v, rest(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, eq(attrcnt([u(d.pledges)]/pledge.%qn), 1), [alert(pledge)] Pledge not found, not(comp(%qv, YES)), [alert(pledge)] If you are absolutely sure you want to delete this pledge%, type: +pledge/delete %qn=YES, [header(Deleting Pledge #%qn)]%r[ulocal(f.display.pledge.full, %qn)]%r[setq(p, set([u(d.pledges)], pledge.%qn:))][setq(t, set([u(d.pledges)], text.%qn:))][footer(case(1, comp(%qp, ), Error Clearing &Pledge: %qp, comp(%qt, ), Error Clearing &Text: %qt, Deleted))])]
+&c.pledge/delete v( d.ps )=[setq(n, before(%0, =))][setq(v, rest(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, eq(attrcnt([u(d.pledges)]/pledge.%qn), 1), [alert(pledge)] Pledge not found, not(comp(%qv, YES)), [alert(pledge)] If you are absolutely sure you want to delete this pledge%, type: +pledge/delete %qn=YES, [header(Deleting Pledge #%qn)]%r[ulocal(f.display.pledge.full, %qn)]%r[setq(p, set([u(d.pledges)], pledge.%qn:))][setq(t, set([u(d.pledges)], text.%qn:))][footer(case(1, comp(%qp, ), Error Clearing &Pledge: %qp, comp(%qt, ), Error Clearing &Text: %qt, Deleted))])]
 
 
 ================================================================================
@@ -743,7 +755,7 @@ p: players on pledge
 
 e: potential error validating the player entered
 
-&c.pledge/players ps=
+&c.pledge/players v( d.ps )=
 	[setq(n, first(%0, =))]
 	[setq(v, last(%0, =))]
 	[setq(b, strmatch(%qv, !*))]
@@ -777,7 +789,7 @@ e: potential error validating the player entered
 
 --
 
-&c.pledge/players ps=[setq(n, first(%0, =))][setq(v, last(%0, =))][setq(b, strmatch(%qv, !*))][if(%qb, setq(v, right(%qv, dec(strlen(%qv)))))][setq(p, ulocal(f.get-elements, %qn, players))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([ulocal(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, or(%qb, t(setr(e, ulocal(f.validate-element.players.one, setr(v, pmatch+(%qv)))))), [alert(pledge)] [rest(%qe)], [if(%qb, if(t(match(%qp, %qv)), [setq(v, setdiff(%qp, %qv))][ulocal(f.pledge/edit.process, %qn, players, %qp, %qv)], [alert(pledge)] Player not on the pledge to be removed), case(1, t(match(%qp, %qv)), [alert(pledge)] Player already on the pledge, [setq(v, setunion(%qp, %qv))][ulocal(f.pledge/edit.workhorse, %qn, players, %qv)]))])]
+&c.pledge/players v( d.ps )=[setq(n, first(%0, =))][setq(v, last(%0, =))][setq(b, strmatch(%qv, !*))][if(%qb, setq(v, right(%qv, dec(strlen(%qv)))))][setq(p, ulocal(f.get-elements, %qn, players))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([ulocal(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, or(%qb, t(setr(e, ulocal(f.validate-element.players.one, setr(v, pmatch+(%qv)))))), [alert(pledge)] [rest(%qe)], [if(%qb, if(t(match(%qp, %qv)), [setq(v, setdiff(%qp, %qv))][ulocal(f.pledge/edit.process, %qn, players, %qp, %qv)], [alert(pledge)] Player not on the pledge to be removed), case(1, t(match(%qp, %qv)), [alert(pledge)] Player already on the pledge, [setq(v, setunion(%qp, %qv))][ulocal(f.pledge/edit.workhorse, %qn, players, %qv)]))])]
 
 
 --------------------------------------------------------------------------------
@@ -790,7 +802,7 @@ n: pledge number
 v: new value
 e: potential error from validation
 
-&c.pledge/text ps=
+&c.pledge/text v( d.ps )=
 	[setq(t, text)]
 	[setq(n, first(%0, =))]
 	[setq(v, last(%0, =))]
@@ -805,7 +817,7 @@ e: potential error from validation
 
 --
 
-&c.pledge/text ps=[setq(t, text)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+&c.pledge/text v( d.ps )=[setq(t, text)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
 
 
 --------------------------------------------------------------------------------
@@ -818,7 +830,7 @@ n: pledge number
 v: new value
 e: potential error from validation
 
-&c.pledge/name ps=
+&c.pledge/name v( d.ps )=
 	[setq(t, name)]
 	[setq(n, first(%0, =))]
 	[setq(v, last(%0, =))]
@@ -833,7 +845,7 @@ e: potential error from validation
 
 --
 
-&c.pledge/name ps=[setq(t, name)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+&c.pledge/name v( d.ps )=[setq(t, name)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
 
 
 --------------------------------------------------------------------------------
@@ -846,7 +858,7 @@ n: pledge number
 v: new value
 e: potential error from validation
 
-&c.pledge/stats ps=
+&c.pledge/stats v( d.ps )=
 	[setq(t, stats)]
 	[setq(n, first(%0, =))]
 	[setq(v, last(%0, =))]
@@ -861,7 +873,7 @@ e: potential error from validation
 
 --
 
-&c.pledge/stats ps=[setq(t, stats)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+&c.pledge/stats v( d.ps )=[setq(t, stats)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
 
 
 --------------------------------------------------------------------------------
@@ -874,7 +886,7 @@ n: pledge number
 v: new value
 e: potential error from validation
 
-&c.pledge/type ps=
+&c.pledge/type v( d.ps )=
 	[setq(t, type)]
 	[setq(n, first(%0, =))]
 	[setq(v, last(%0, =))]
@@ -889,7 +901,7 @@ e: potential error from validation
 
 --
 
-&c.pledge/type ps=[setq(t, type)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+&c.pledge/type v( d.ps )=[setq(t, type)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
 
 
 --------------------------------------------------------------------------------
@@ -902,7 +914,7 @@ n: pledge number
 v: new value
 e: potential error from validation
 
-&c.pledge/date ps=
+&c.pledge/date v( d.ps )=
 	[setq(t, date)]
 	[setq(n, first(%0, =))]
 	[setq(v, last(%0, =))]
@@ -917,7 +929,7 @@ e: potential error from validation
 
 --
 
-&c.pledge/date ps=[setq(t, date)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
+&c.pledge/date v( d.ps )=[setq(t, date)][setq(n, first(%0, =))][setq(v, last(%0, =))][case(0, isstaff(%#), [alert(pledge)] Staff only, t(%qn), [alert(pledge)] Number not entered, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, [u(f.pledge/edit.workhorse, %qn, %qt, %qv)])]
 
 
 --------------------------------------------------------------------------------
@@ -925,7 +937,7 @@ e: potential error from validation
 
 Aliased to /date.
 
-&c.pledge/duration ps=[u(c.pledge/date, %0)]
+&c.pledge/duration v( d.ps )=[u(c.pledge/date, %0)]
 
 
 ================================================================================
@@ -945,7 +957,7 @@ e: element
 p: existing element's pledge data
 
 
-&c.pledge/raw ps=
+&c.pledge/raw v( d.ps )=
 	[setq(n, first(%0, /))]
 	[setq(e, rest(%0, /))]
 	[setq(p, ulocal(f.get-elements, %qn, %qe))]
@@ -963,7 +975,7 @@ p: existing element's pledge data
 
 --
 
-&c.pledge/raw ps=[setq(n, first(%0, /))][setq(e, rest(%0, /))][setq(p, ulocal(f.get-elements, %qn, %qe))][case(0, isstaff(%#), [alert(pledge)] Staff only., t(%qn), [alert(pledge)] Number not entered, t(%qe), [alert(pledge)] Element not entered, eq(words(%qe)), [alert(pledge)] One element only, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, comp(setr(e, first(u(f.data-elements.list, %qe))), ), [alert(pledge)] Element not found, [alert(pledge #%qn)] [ansi(h, titlestr(%qe))]: %qp)]
+&c.pledge/raw v( d.ps )=[setq(n, first(%0, /))][setq(e, rest(%0, /))][setq(p, ulocal(f.get-elements, %qn, %qe))][case(0, isstaff(%#), [alert(pledge)] Staff only., t(%qn), [alert(pledge)] Number not entered, t(%qe), [alert(pledge)] Element not entered, eq(words(%qe)), [alert(pledge)] One element only, attrcnt([u(d.pledges)]/pledge.%qn), [alert(pledge)] Pledge not found, comp(setr(e, first(u(f.data-elements.list, %qe))), ), [alert(pledge)] Element not found, [alert(pledge #%qn)] [ansi(h, titlestr(%qe))]: %qp)]
 
 
 --------------------------------------------------------------------------------
@@ -984,7 +996,7 @@ v: value
 f: filter
 l: list of "displayed pledges" - pledges player is allowed to see
 
-&c.pledge/filter #1575=
+&c.pledge/filter v( d.ps )=
 	[setq(m, 
 		regmatch(%0, 
 			(.*)(\[<>=\])(.*), 
@@ -1014,7 +1026,7 @@ l: list of "displayed pledges" - pledges player is allowed to see
 
 --
 
-&c.pledge/filter ps=[setq(m, regmatch(%0, (.*)(\[<>=\])(.*), m e c v))][setq(e, trim(%qe))][setq(v, trim(%qv))][setq(f, u(f.filter, %qe, %qv, %qc))][case(0, t(%qm), [alert(pledge)] Filter format: <element> <comparison> <value>, t(%qf), [alert(pledge)] [rest(%qf)], [setq(f, iter(%qf, PLEDGE.[last(%i0, .)]))][setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, %qf, , , %#)))][header(Pledges: Filtered by '%qv')]%r[if(t(words(%ql)), iter(%ql, u(f.display.pledge.line, rest(%i0, .)), , %r), %b No pledges to list.)]%r[footer(if(t(words(%ql)), [words(%ql)] pledges))])]
+&c.pledge/filter v( d.ps )=[setq(m, regmatch(%0, (.*)(\[<>=\])(.*), m e c v))][setq(e, trim(%qe))][setq(v, trim(%qv))][setq(f, u(f.filter, %qe, %qv, %qc))][case(0, t(%qm), [alert(pledge)] Filter format: <element> <comparison> <value>, t(%qf), [alert(pledge)] [rest(%qf)], [setq(f, iter(%qf, PLEDGE.[last(%i0, .)]))][setq(l, sortby(sort.pledge, filter(fil.pledge.can-see, %qf, , , %#)))][header(Pledges: Filtered by '%qv')]%r[if(t(words(%ql)), iter(%ql, u(f.display.pledge.line, rest(%i0, .)), , %r), %b No pledges to list.)]%r[footer(if(t(words(%ql)), [words(%ql)] pledges))])]
 
 
 --
@@ -1041,7 +1053,7 @@ qq: non-player dbrefs on pledge (not using filter() quite yet)
 qc: cleaned list
 qx: return message from setting
 
-&c.pledge/clean #1575=
+&c.pledge/clean v( d.ps )=
 	[setq(n, trim(%0))]
 
 	[case(0, 
@@ -1083,7 +1095,7 @@ qx: return message from setting
 
 --
 
-&c.pledge/clean ps=[setq(n, trim(%0))][case(0, isstaff(%#), [alert(pledge)] Staff only, eq(attrcnt([u(d.pledges)]/pledge.%qn), 1), [alert(pledge)] Pledge not found, [setq(p, u(f.get-elements, %qn, players))][setq(q, iter(%qp, if(hastype(%i0, PLAYER), , %i0)))][setq(c, setdiff(%qp, %qq))][header(Cleaning Pledge #%qn)]%r[if(words(%qq), %b [ansi(h, To Clean:)] %r[iter(%qq, %b %b [name(%i0)] (%i0), , %r)]%r %r[setq(x, u(f.set-element, %qn, players, %qc))]%b [ansi(h, Setting Cleaned Players:)] [if(t(%qx), [ansi(n, %[, g, OK, n, %])], [ansi(n, %[, r, error, n, %])]%r%b [rest(%qx)]%r %rCheck '+pledge %qn' to make sure nothing has changed!)], %b [ansi(h, No non-players on player list -- nothing to clean.)])]%r[footer([words(%qq)] cleaned)])]
+&c.pledge/clean v( d.ps )=[setq(n, trim(%0))][case(0, isstaff(%#), [alert(pledge)] Staff only, eq(attrcnt([u(d.pledges)]/pledge.%qn), 1), [alert(pledge)] Pledge not found, [setq(p, u(f.get-elements, %qn, players))][setq(q, iter(%qp, if(hastype(%i0, PLAYER), , %i0)))][setq(c, setdiff(%qp, %qq))][header(Cleaning Pledge #%qn)]%r[if(words(%qq), %b [ansi(h, To Clean:)] %r[iter(%qq, %b %b [name(%i0)] (%i0), , %r)]%r %r[setq(x, u(f.set-element, %qn, players, %qc))]%b [ansi(h, Setting Cleaned Players:)] [if(t(%qx), [ansi(n, %[, g, OK, n, %])], [ansi(n, %[, r, error, n, %])]%r%b [rest(%qx)]%r %rCheck '+pledge %qn' to make sure nothing has changed!)], %b [ansi(h, No non-players on player list -- nothing to clean.)])]%r[footer([words(%qq)] cleaned)])]
 
 
 ================================================================================
@@ -1119,36 +1131,36 @@ For all element filters:
 	1: element position (grabbed from f.data-elements.list)
 	2: value(s)
 
-&fil.contains ps=t(match(elements(get([u(d.pledges)]/%0), %1, |), %2))
-&fil.matches ps=t(strmatch(elements(get([u(d.pledges)]/%0), %1, |), *%2*))
-&fil.is ps=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), 0)
-&fil.is_more ps=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), 1)
-&fil.is_less ps=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), -1)
+&fil.contains v( d.ps )=t(match(elements(get([u(d.pledges)]/%0), %1, |), %2))
+&fil.matches v( d.ps )=t(strmatch(elements(get([u(d.pledges)]/%0), %1, |), *%2*))
+&fil.is v( d.ps )=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), 0)
+&fil.is_more v( d.ps )=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), 1)
+&fil.is_less v( d.ps )=eq(comp(elements(get([u(d.pledges)]/%0), %1, |), %2), -1)
 
 --
 
-think u(#1575/fil.contains, pledge.1, last(u(#1575/f.data-elements.list, players)), pmatch(thenomain))
+think u(v( d.ps )/fil.contains, pledge.1, last(u(v( d.ps )/f.data-elements.list, players)), pmatch(thenomain))
 
-think [setq(0, players)][setq(1, thenomain)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, pmatch(%q1))][sort(filter(#1575/fil.contains, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+think [setq(0, players)][setq(1, thenomain)][setq(e, u(v( d.ps )/f.data-elements.list, %q0))][setq(v, pmatch(%q1))][sort(filter(v( d.ps )/fil.contains, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
 
-think [setq(0, players)][setq(1, william)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, pmatch(%q1))][sort(filter(#1575/fil.contains, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
-
--
-
-think [setq(0, text)][setq(1, ensorc)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.matches, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
-
-think [setq(0, stats)][setq(1, persuasion)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.finds, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+think [setq(0, players)][setq(1, william)][setq(e, u(v( d.ps )/f.data-elements.list, %q0))][setq(v, pmatch(%q1))][sort(filter(v( d.ps )/fil.contains, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
 
 -
 
-think [setq(0, date)][setq(1, 1278988486)][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.is, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+think [setq(0, text)][setq(1, ensorc)][setq(e, u(v( d.ps )/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(v( d.ps )/fil.matches, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
 
-think [setq(0, date)][setq(1, secs())][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.is_less, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+think [setq(0, stats)][setq(1, persuasion)][setq(e, u(v( d.ps )/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(v( d.ps )/fil.finds, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
 
-think [setq(0, date)][setq(1, secs())][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.is_more, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+-
+
+think [setq(0, date)][setq(1, 1278988486)][setq(e, u(v( d.ps )/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(v( d.ps )/fil.is, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+think [setq(0, date)][setq(1, secs())][setq(e, u(v( d.ps )/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(v( d.ps )/fil.is_less, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+
+think [setq(0, date)][setq(1, secs())][setq(e, u(v( d.ps )/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(v( d.ps )/fil.is_more, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
 
 
-think [setq(0, date)][setq(1, add(secs(), 31622400))][setq(e, u(#1575/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(#1575/fil.is_less, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
+think [setq(0, date)][setq(1, add(secs(), 31622400))][setq(e, u(v( d.ps )/f.data-elements.list, %q0))][setq(v, %q1)][sort(filter(v( d.ps )/fil.is_less, lattr(#1175/[extract(%qe, 2, 1)]*), , , last(%qe), %qv))]
 
 
 --------------------------------------------------------------------------------
@@ -1162,7 +1174,7 @@ v: validated converted element data
 f: filter results
 output: attributes matching filter
 
-&f.filter #1575=
+&f.filter v( d.ps )=
 localize(
 	[setq(e, u(f.data-elements.list, %0))]
 	[setq(n, first(%qe))]
@@ -1181,7 +1193,7 @@ localize(
 )
 
 
-&f.filter-workhorse #1575=
+&f.filter-workhorse v( d.ps )=
 	case(0, 
 		strlen(setr(f, udefault(f.filter.%0, #-1 No filter for %0, %1, %2, %3))), 
 		#-1 No results, 
@@ -1190,28 +1202,28 @@ localize(
 
 --
 
-&f.filter ps=localize([setq(e, u(f.data-elements.list, %0))][setq(n, first(%qe))][setq(c, u(f.convert-element, %qn, %1))][setq(v, u(f.validate-element, %qn, %qc))][case(0, eq(words(%0), 1), #-1 Filter only one element, eq(words(%qe, |), 1), #-1 Element not found, t(%qe), #-1 Elements: [rest(%qe)], t(%qc), #-1 Convert: [rest(%qc)], or(strmatch(%qe, date*), t(%qv)), %qv, ulocal(f.filter-workhorse, %qn, %qe, %qc, %2))])
+&f.filter v( d.ps )=localize([setq(e, u(f.data-elements.list, %0))][setq(n, first(%qe))][setq(c, u(f.convert-element, %qn, %1))][setq(v, u(f.validate-element, %qn, %qc))][case(0, eq(words(%0), 1), #-1 Filter only one element, eq(words(%qe, |), 1), #-1 Element not found, t(%qe), #-1 Elements: [rest(%qe)], t(%qc), #-1 Convert: [rest(%qc)], or(strmatch(%qe, date*), t(%qv)), %qv, ulocal(f.filter-workhorse, %qn, %qe, %qc, %2))])
 
-&f.filter-workhorse ps=case(0, strlen(setr(f, udefault(f.filter.%0, #-1 No filter for %0, %1, %2, %3))), #-1 No results, %qf)
+&f.filter-workhorse v( d.ps )=case(0, strlen(setr(f, udefault(f.filter.%0, #-1 No filter for %0, %1, %2, %3))), #-1 No results, %qf)
 
 --
 
 For the specific filters:
 0: element data, 1: value, 2: comparison type (optional, may be ignored)
 
-&f.filter.text ps=filter(fil.matches, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
+&f.filter.text v( d.ps )=filter(fil.matches, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
 
-&f.filter.stats ps=u(f.filter.text, %0, %1, %2)
+&f.filter.stats v( d.ps )=u(f.filter.text, %0, %1, %2)
 
-&f.filter.name ps=u(f.filter.text, %0, %1, %2)
+&f.filter.name v( d.ps )=u(f.filter.text, %0, %1, %2)
 
-&f.filter.type ps=filter(fil.is, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
+&f.filter.type v( d.ps )=filter(fil.is, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
 
-&f.filter.players ps=filter(fil.contains, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
+&f.filter.players v( d.ps )=filter(fil.contains, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)
 
 For date, we care about %2. t: filter type
 
-&f.filter.date ps=
+&f.filter.date v( d.ps )=
 localize(
 	[setq(t, 
 		case(%2, 
@@ -1229,24 +1241,24 @@ localize(
 	[filter(fil.%qt, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)]
 )
 
-&f.filter.date ps=localize([setq(t, case(%2, >, is_more, <, is_less, =, is, switch(%2, gr*, is_more, mo*, is_more, le*, is_less, is)))][filter(fil.%qt, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)])
+&f.filter.date v( d.ps )=localize([setq(t, case(%2, >, is_more, <, is_less, =, is, switch(%2, gr*, is_more, mo*, is_more, le*, is_less, is)))][filter(fil.%qt, lattr([u(d.pledges)]/[extract(%0, 2, 1)]*), , , last(%0), %1)])
 
 --
 
-think u(#1575/f.filter, fds fds, ensorc)
-think u(#1575/f.filter, nam typ, ensorc)
-think u(#1575/f.filter, , ensorc)
-think u(#1575/f.filter, nam, )
+think u(v( d.ps )/f.filter, fds fds, ensorc)
+think u(v( d.ps )/f.filter, nam typ, ensorc)
+think u(v( d.ps )/f.filter, , ensorc)
+think u(v( d.ps )/f.filter, nam, )
 
 
-think u(#1575/f.filter, nam, ensorc)
-think u(#1575/f.filter, te, ensorc)
-think u(#1575/f.filter, stat, brawl)
+think u(v( d.ps )/f.filter, nam, ensorc)
+think u(v( d.ps )/f.filter, te, ensorc)
+think u(v( d.ps )/f.filter, stat, brawl)
 
-think u(#1575/f.filter, players, william)
+think u(v( d.ps )/f.filter, players, william)
 
-think u(#1575/f.filter, date, now, <)
-think u(#1575/f.filter, date, moon, <)
+think u(v( d.ps )/f.filter, date, now, <)
+think u(v( d.ps )/f.filter, date, moon, <)
 
 
 

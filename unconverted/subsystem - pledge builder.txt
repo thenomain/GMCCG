@@ -1,3 +1,9 @@
+/*
+
+A Changeling pledge building system
+
+================================================================================
+== NOTES =======================================================================
 
 Pledge data is stored in the following manner:
 
@@ -5,18 +11,22 @@ Pledge data is stored in the following manner:
 &pledge.<element type>.<element>: 
 	<valid>|<level>|<values> <list>|<of>|<descriptions>
 
-The level values must be in order of &d.levels, e.g. Lesser|Medial|Greater.  If a pledge does not come for that value, place a non-numeric ('x' or null).  The descriptions are also in the same order, without a need for anything in the unused level ('xxx', for example).
+The level values must be in order of &d.levels, e.g. Lesser|Medial|Greater. 
+If a pledge does not come for that value, place a non-numeric ('x' or null). 
+The descriptions are also in the same order, without a need for anything in the 
+unused level ('xxx', for example).
 
---
+// --
 
-A single pledge being built will be stored on the player (forever, if they want) as:
+A single pledge being built will be stored on the player (forever, if they want) 
+as:
 
 &_pledge <player>=
 	<pledge type>[:<details>]|
 	<element type>:<element>:<level name>:<value>:<details from data>|
 	...
 
---
+// --
 
 &d.attribute: What attribute to save it on (for non-master-room use)
 &d.levels: The three pledge levels (soft-coded for position matching)
@@ -25,156 +35,375 @@ A single pledge being built will be stored on the player (forever, if they want)
 
 ================================================================================
 == CREATE ======================================================================
+*/
 
 @create Pledge Builder <pb>=10
-@set pb=safe inherit
+@fo me=&d.pb me=search( name=Pledge Builder <pb> )
+@set Pledge Builder <pb>=safe inherit
+
+@fo me=@parent [v( d.pb )]=[search( name=Code Object Data Parent <codp> )]
+&prefix.pledge_elements [v( d.pb )]=pledge.
 
 
+
+/* 
+================================================================================
+== DOT FUNCTIONS ===============================================================
+
+Dot functions provide common-use or cross-platform ease of inclusion
+
+*/
+
+&.msg [v( d.pb )]=ansi( h, <%0>, n, %b%1 )
+
+&.crumple [v( d.pb )]=trim( squish( %0, %1 ), b, %1 )
+
+&.th [v( d.pb )]=
+	%0
+	[switch( %0, *11, th, *12, th, *13, th, *1, st, *2, nd, *3, rd, th )]
+
+
+
+/*
 ================================================================================
 == DATA ========================================================================
+*/
 
-&d.attribute pb=_pledge-builder
+&d.attribute [v( d.pb )]=_pledge-builder
 
---
+/* 
+--------------------------------------------------------------------------------
+-- Data: Levels and Elements ---------------------------------------------------
+*/
 
-&d.levels pb=Lesser|Medial|Greater
-&d.sort.elements pb=Task|Boon|Sanction|Duration
+&d.levels [v( d.pb )]=Lesser|Medial|Greater
+&d.sort.elements [v( d.pb )]=Task|Boon|Sanction|Duration
 
---
+// Will this work?
+// &d.elements-by-class [v( d.pb )]=
+//	iter( 
+//		lattr( v( d.pb )/pledge.%0.* ), 
+//		titlestr( last( %i0, . )), 
+//		, | 
+//	)
 
-&pledge.type pb=Vow|Oath|Corporal
-&pledge.type.vow pb=Vow
-&pledge.type.oath pb=True Name, Obscured|True Name, Unsullied|Keeper's Name|Higher Power
-&pledge.type.corporal pb=Mortal Emblem|Seeming Emblem|Courtly Emblem|Title Emblem|Nemesis Pledge
+/* 
+--------------------------------------------------------------------------------
+-- Data: Pledge Types ----------------------------------------------------------
 
---
+Will this work?
+&pledge.type [v( d.pb )]=u( d.elements-by-class, type )
 
-&pledge.task pb=Alliance|Dreaming|Endeavor|Encorclement|Fealty|Forbiddance
-&pledge.task.alliance pb=-0|-2|-3 Friendship|Moderate help|Complete aid
-&pledge.task.dreaming pb=-0|-2|x Enter dreams (with Vassalage)|Enter dreams|xxx
-&pledge.task.endeavor pb=-1|-2|-3 Repeated trivial or single eay task|Repeated easy or single normal task|Repeated hard or single monumental task
-&pledge.task.encorclement pb=x|-2|x xxx|Encorcel a mortal (+1 glamour to activate[ansi(g, *)])|xxx
-&pledge.task.fealty pb=x|x|-3 xxx|xxx|Follow rules of the Freehold (+1 willpower dot from leige[ansi(g, *)])
-&pledge.task.forbiddance pb=-1|-2|-3 Easy to not do thing|Not do something common|Not doing it changes your life
+*/
 
---
+&pledge.type [v( d.pb )]=Vow|Oath|Corporal
+&pledge.type.vow [v( d.pb )]=Vow
+&pledge.type.oath [v( d.pb )]=
+	True Name, Obscured|
+	True Name, Unsullied|
+	Keeper's Name|
+	Higher Power
+&pledge.type.corporal [v( d.pb )]=
+	Mortal Emblem|
+	Seeming Emblem|
+	Courtly Emblem|
+	Title Emblem|
+	Nemesis Pledge
 
-&pledge.boon pb=Adroitness|Blessing|Favor|Glamour|Ensorcellment|Vassalage
-&pledge.boon.adroitness pb=+1|x|x Gain a +1 to all rolls involving one chosen skill; cannot stack two adroitnesses on the same skill|xxx|xxx
-&pledge.boon.blessing pb=+1|+2|+3 +1 to existing merit, new 1- or 2-dot for mortals, or new 1-dot for supers|+2 to existing merit, new 3- or 4-dot for mortals, or new 2-dot for supers|+3 to existing merit, new 5-dot for mortals, or new 3-dot for supers
-&pledge.boon.favor pb=+1|+2|+3 a|b|c
-&pledge.boon.glamour pb=x|+2|x xxx|Transfer Glamour, 1 per day from mortal or up to Wyrd from other Lost|xxx
-&pledge.boon.ensorcellment pb=x|+2|x xxx|Allows the mortal to gain fae-sight|xxx
-&pledge.boon.vassalage pb=x|x|+3 xxx|xxx|Becomes a member of a Freehold (pledge must also have task 'fealty'[ansi(g, *)])
+/* 
+--------------------------------------------------------------------------------
+-- Data: Tasks -----------------------------------------------------------------
 
---
+Will this work?
+&pledge.task [v( d.pb )]=u( d.elements-by-class, task )
 
-&pledge.sanction pb=Banishment|Curse|Death|Flaw|Pishogue|Poisoning of Boon|Vulnerability
+*/
 
-&pledge.sanction.banishment pb=x|x|-3 xxx|xxx|Leave the Freehold's domain or be hunted down (may be enacted by leige[ansi(g, *)])
-&pledge.sanction.curse pb=-1|-2|-3 No 10-again|Only 9 or 10 are successes|Only 10 is a success
-&pledge.sanction.death pb=x|x|-3 xxx|xxx|Death within days unless the slighted party forgives
-&pledge.sanction.flaw pb=x|-2|x xxx|A Flaw chosen at the time of the pledge or by the Storyteller if left open|xxx
-&pledge.sanction.pishogue pb=-1|-2|-3 One- or two-dot contract targeting oathbreaker (+contract cost, at least 1 glamour[ansi(g, *)])|Three- or four-dot contract targeting oathbreaker (+contract cost, at least 1 glamour[ansi(g, *)])|Five-dot  contract targeting oathbreaker (+contract cost, at least 1 glamour[ansi(g, *)])
-&pledge.sanction.poisoning_of_boon pb=-1|-2|-3 Adroitness or Minor Blessing is reversed|Medial Blessing is reversed|Greater Blessing is reversed
-&pledge.sanction.vulnerability pb=x|-2|-3 xxx|Glamour (no magic defense) or Violence (no Defense)|Glamour and Violence
+&pledge.task [v( d.pb )]=
+	Alliance|
+	Dreaming|
+	Endeavor|
+	Encorclement|
+	Fealty|
+	Forbiddance
+&pledge.task.alliance [v( d.pb )]=
+	-0|-2|-3 
+	Friendship|Moderate help|Complete aid
+&pledge.task.dreaming [v( d.pb )]=
+	-0|-2|x 
+	Enter dreams (with Vassalage)|
+	Enter dreams|
+	xxx
+&pledge.task.endeavor [v( d.pb )]=
+	-1|-2|-3 
+	Repeated trivial or single easy task|
+	Repeated easy or single normal task|
+	Repeated hard or single monumental task
+&pledge.task.encorclement [v( d.pb )]=x|-2|x 
+	xxx|
+	Encorcel a mortal (+1 glamour to activate[ansi(g, *)])|
+	xxx
+&pledge.task.fealty [v( d.pb )]=
+	x|x|-3 
+	xxx|xxx|
+	Follow rules of the Freehold (+1 willpower dot from liege[ansi(g, *)])
+&pledge.task.forbiddance [v( d.pb )]=
+	-1|-2|-3 
+	Easy to not do thing|
+	Not do something common|
+	Not doing it changes your life
 
---
+/* 
+--------------------------------------------------------------------------------
+-- Data: Boons -----------------------------------------------------------------
 
-&pledge.duration pb=Day|Week|Moon|Season|Year and a Day|Decade|Lifelong|Generational
+Will this work?
+&pledge.boon [v( d.pb )]=u( d.elements-by-class, boon )
 
-&pledge.duration.day pb=+1|x|x 24 hours|xxx|xxx
-&pledge.duration.week pb=+1|x|x 7 days exactly|xxx|xxx
-&pledge.duration.moon pb=x|+2|x xxx|28 days or from phase to phase|xxx
-&pledge.duration.season pb=x|+2|x xxx|89 days or from equonox to solstice or visa-versa
-&pledge.duration.year_and_a_day pb=x|x|+3 xxx|xxx|366 days
-&pledge.duration.decade pb=x|x|+3 xxx|xxx|10 years and 10 days
-&pledge.duration.lifelong pb=x|x|+3 xxx|xxx|Until death (one member must spend one Willpower dot[ansi(g, *)])
-&pledge.duration.generational pb=x|x|+3 xxx|xxx|A number of generations equal to Wyrd of the one who spends one Willpower dot (which must be spent[ansi(g, *)])
+*/
+
+&pledge.boon [v( d.pb )]=
+	Adroitness|
+	Blessing|
+	Favor|
+	Glamour|
+	Ensorcellment|
+	Vassalage
+&pledge.boon.adroitness [v( d.pb )]=
+	+1|x|x 
+	Gain a +1 to all rolls involving one chosen skill; 
+	cannot stack two adroitnesses on the same skill|
+	xxx|
+	xxx
+&pledge.boon.blessing [v( d.pb )]=
+	+1|+2|+3 
+	+1 to existing merit, new 1- or 2-dot for mortals, or new 1-dot for 
+	supers|
+	+2 to existing merit, new 3- or 4-dot for mortals, or new 2-dot for 
+	supers|
+	+3 to existing merit, new 5-dot for mortals, or new 3-dot for supers
+&pledge.boon.favor [v( d.pb )]=
+	+1|+2|+3 
+	a|b|c
+&pledge.boon.glamour [v( d.pb )]=
+	x|+2|x 
+	xxx|
+	Transfer Glamour, 1 per day from mortal or up to Wyrd from other Lost|
+	xxx
+&pledge.boon.ensorcellment [v( d.pb )]=
+	x|+2|x 
+	xxx|Allows the mortal to gain fae-sight|
+	xxx
+&pledge.boon.vassalage [v( d.pb )]=
+	x|x|+3 
+	xxx|xxx|
+	Becomes a member of a Freehold (pledge must also have task 'fealty'
+	[ansi(g, *)])
+
+/* 
+--------------------------------------------------------------------------------
+-- Data: Sanctions -------------------------------------------------------------
+
+Will this work?
+&pledge.sanction [v( d.pb )]=u( d.elements-by-class, sanction )
+
+*/
+
+&pledge.sanction [v( d.pb )]=
+	Banishment|
+	Curse|
+	Death|
+	Flaw|
+	Pishogue|
+	Poisoning of Boon|
+	Vulnerability
+
+&pledge.sanction.banishment [v( d.pb )]=
+	x|x|-3 
+	xxx|xxx|
+	Leave the Freehold's domain or be hunted down (may be enacted by leige
+	[ansi(g, *)])
+&pledge.sanction.curse [v( d.pb )]=
+	-1|-2|-3 
+	No 10-again|
+	Only 9 or 10 are successes|
+	Only 10 is a success
+&pledge.sanction.death [v( d.pb )]=
+	x|x|-3 
+	xxx|xxx|
+	Death within days unless the slighted party forgives
+&pledge.sanction.flaw [v( d.pb )]=
+	x|-2|x 
+	xxx|
+	A Flaw chosen at the time of the pledge or by the Storyteller 
+	if left open|
+	xxx
+&pledge.sanction.pishogue [v( d.pb )]=
+	-1|-2|-3 
+	One- or two-dot contract targeting oathbreaker (+contract cost, 
+	at least 1 glamour[ansi(g, *)])|
+	Three- or four-dot contract targeting oathbreaker (+contract cost, 
+	at least 1 glamour[ansi(g, *)])|
+	Five-dot contract targeting oathbreaker (+contract cost, 
+	at least 1 glamour[ansi(g, *)])
+&pledge.sanction.poisoning_of_boon [v( d.pb )]=
+	-1|-2|-3 
+	Adroitness or Minor Blessing is reversed|
+	Medial Blessing is reversed|
+	Greater Blessing is reversed
+&pledge.sanction.vulnerability [v( d.pb )]=
+	x|-2|-3 
+	xxx|
+	Glamour (no magic defense) or Violence (no Defense)|
+	Both Glamour and Violence
+
+/* 
+--------------------------------------------------------------------------------
+-- Data: Durations -------------------------------------------------------------
+
+Will this work?
+&pledge.duration [v( d.pb )]=u( d.elements-by-class, duration )
+
+*/
+
+&pledge.duration [v( d.pb )]=
+	Day|Week|Moon|Season|Year and a Day|Decade|Lifelong|Generational
+
+&pledge.duration.day [v( d.pb )]=
+	+1|x|x 
+	24 hours|xxx|xxx
+&pledge.duration.week [v( d.pb )]=
+	+1|x|x 
+	7 days exactly|
+	xxx|xxx
+&pledge.duration.moon [v( d.pb )]=
+	x|+2|x 
+	xxx|
+	28 days or from phase to phase|
+	xxx
+&pledge.duration.season [v( d.pb )]=
+	x|+2|x 
+	xxx|
+	89 days or from equonox to solstice or visa-versa
+&pledge.duration.year_and_a_day [v( d.pb )]=
+	x|x|+3 
+	xxx|xxx|
+	366 days (+1 day for leap years)
+&pledge.duration.decade [v( d.pb )]=
+	x|x|+3 
+	xxx|xxx|10 years and 10 days
+&pledge.duration.lifelong [v( d.pb )]=
+	x|x|+3 
+	xxx|xxx|
+	Until death (one member must spend one Willpower dot[ansi(g, *)])
+&pledge.duration.generational [v( d.pb )]=
+	x|x|+3 
+	xxx|xxx|
+	A number of generations equal to Wyrd of the one who spends 
+	one Willpower dot (which must be spent[ansi(g, *)])
 
 
+
+/*
+================================================================================
+== FUNCTIONS ===================================================================
 
 --------------------------------------------------------------------------------
 -- Find the attribute of a passed pledge element -------------------------------
+*/
 
-&f.pledge.find pb=first( setunion( lattr( %!/pledge.%1*.%0* ), lattr( %!/pledge.%0* )))
+&f.pledge.find [v( d.pb )]=
+	first( setunion( lattr( %!/pledge.%1*.%0* ), lattr( %!/pledge.%0* )))
 
---
+// --
 
-think u(pb/f.pledge.find, type)
+think u( v( d.pb )/f.pledge.find, type )
 
-think u(pb/f.pledge.find, vow)
-think u(pb/f.pledge.find, v)
-think u(pb/f.pledge.find, v, type)
-think u(pb/f.pledge.find, ta)
+think u( v( d.pb )/f.pledge.find, vow )
+think u( v( d.pb )/f.pledge.find, v )
+think u( v( d.pb )/f.pledge.find, v, type )
+think u( v( d.pb )/f.pledge.find, ta )
 
 
+/*
 --------------------------------------------------------------------------------
 -- List all valid pledge categories that may be set ----------------------------
+*/
 
-&f.pledge.categories pb=setdiff( lattr( %!/pledge.* ), lattr( %!/pledge.*.* ))
+&f.pledge.categories [v( d.pb )]=
+	setdiff( lattr( %!/pledge.* ), lattr( %!/pledge.*.* ))
 
-think u(pb/f.pledge.categories)
+// -- 
+
+think u( v( d.pb )/f.pledge.categories )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Grab the entire data line of a pledge element -------------------------------
+*/
 
-&f.pledge.data pb=v( u( f.pledge.find, %0, %1 ))
+&f.pledge.data [v( d.pb )]=v( u( f.pledge.find, %0, %1 ))
 
-think u(pb/f.pledge.data, type)
-think u(pb/f.pledge.data, v)
-think u(pb/f.pledge.data, fe)
+// -- 
+
+think u( v( d.pb )/f.pledge.data, type )
+think u( v( d.pb )/f.pledge.data, v )
+think u( v( d.pb )/f.pledge.data, fe )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Check the data levels of a pledge element -----------------------------------
 
 0: element
 1: element type (duration, etc. optional)
 
---
+*/
 
-&f.pledge.data.levels pb=
-localize( 
-	[setq( a, u( f.pledge.find, %0, %1 ))]
-	[setq( c, u( %qa ))]
-	[switch( 0, 
-		t( %qa ), #-1 element '%0' not found 
-			[if( t( %1 ), in category '%1')], 
-		strmatch( %qa, pledge.*.* ), 
+&f.pledge.data.levels [v( d.pb )]=
+localize( strcat(  
+		setq( a, u( f.pledge.find, %0, %1 )), 
+		setq( c, u( %qa )), 
+		switch( 0, 
+			t( %qa ), 
+			#-1 element '%0' not found [if( t( %1 ), in category '%1' )], 
+
+			strmatch( %qa, pledge.*.* ), 
 			#-1 '[lcstr( last( %qa, . ))]' is a category, 
-		not( strmatch( %qa, pledge.type.* )), %qc, 
 
-		crumple( 
-			iter( first( %qc ), 
-				if( isnum( %i0 ), 
-					[extract( v( d.levels ), inum(), 1, | )]:
-					%i0:
-					[extract( rest( %qc ), inum(), 1, | )] 
+			not( strmatch( %qa, pledge.type.* )), 
+			%qc, 
+
+			u( .crumple, 
+				iter( first( %qc ), 
+					if( isnum( %i0 ), 
+						[extract( v( d.levels ), inum(), 1, | )]:
+						%i0:
+						[extract( rest( %qc ), inum(), 1, | )] 
+					), 
+					|, | 
 				), 
-				|, | 
-			), 
-			| 
-		)
-	)] 
-)
+				| 
+			)
+		) 
+	))
 
---
+// --
 
-think u(pb/f.pledge.data.levels, type)
-think u(pb/f.pledge.data.levels, oat)
-think u(pb/f.pledge.data.levels, fe)
-think u(pb/f.pledge.data.levels, all)
-think u(pb/f.pledge.data.levels, fdfd)
+think u( v( d.pb )/f.pledge.data.levels, type )
+think u( v( d.pb )/f.pledge.data.levels, oat )
+think u( v( d.pb )/f.pledge.data.levels, fe )
+think u( v( d.pb )/f.pledge.data.levels, all )
+think u( v( d.pb )/f.pledge.data.levels, fdfd )
 
-think u(pb/f.pledge.data.levels, all, duration)
+think u( v( d.pb )/f.pledge.data.levels, all, duration )
 
-think u(pb/f.pledge.data.levels, oath)
-think u(pb/f.pledge.data.levels, oath, type)
+think u( v( d.pb )/f.pledge.data.levels, oath )
+think u( v( d.pb )/f.pledge.data.levels, oath, type )
 
 
-
+/*
 --------------------------------------------------------------------------------
 -- Validate 'element' + 'level' ------------------------------------------------
 
@@ -188,22 +417,21 @@ m: match value from input
 returns: match <lvl name>:<value>:<description> for all close matches 
          (may be too many!)
 
---
+*/
 
-&f.pledge.level-check pb=
-localize(
-	strcat( 
+&f.pledge.level-check [v( d.pb )]=
+	localize( strcat( 
 		setq( l, u( f.pledge.data.levels, %0, %2 )), 
 		setq( t, u( f.pledge.find, %0, %2 )), 
 		setq( m, 
 			case( 1, 
-@@ .. 'type' data levels have no : in them
+// .. 'type' data levels have no : in them
 				not( match( %ql, *:* )), 
 				graball( %ql, %1*, |, | ), 
-@@ .. set to numeric (+x, -x), because x = +x, match ?%1
+// .. set to numeric (+x, -x), because x = +x, match ?%1
 				isint( %1 ), 
 				graball( %ql, *:?[abs( %1 )]:*, |, | ), 
-@@ .. set to level (lesser, medial, greater), partial match ok
+// .. set to level (lesser, medial, greater), partial match ok
 				graball( %ql, %1*:*:*, |, | )
 			)
 		), 
@@ -215,22 +443,23 @@ localize(
 				'[edit(lcstr( elements( %qt, 3, . )), _, %b )]', 
 			%qm
 		)
-	)
-)
+	))
 
---
+// --
 
-think u(pb/f.pledge.level-check, fealty, greater)
-think u(pb/f.pledge.level-check, alliance, 2)
-think u(pb/f.pledge.level-check, oath, high, type)
+think u( v( d.pb )/f.pledge.level-check, fealty, greater )
+think u( v( d.pb )/f.pledge.level-check, alliance, 2 )
+think u( v( d.pb )/f.pledge.level-check, oath, high, type )
 
-think u(pb/f.pledge.level-check, gibber)
-think u(pb/f.pledge.level-check, fealty, greater, duration)
-think u(pb/f.pledge.level-check, fealty, minor)
+think u( v( d.pb )/f.pledge.level-check, gibber )
+think u( v( d.pb )/f.pledge.level-check, fealty, greater, duration )
+think u( v( d.pb )/f.pledge.level-check, fealty, minor )
 
-think u(pb/f.pledge.level-check, oath, true name)
+think u( v( d.pb )/f.pledge.level-check, oath, true name )
 
 
+
+/*
 ================================================================================
 == FORMAT OUTPUTS ==============================================================
 
@@ -241,36 +470,41 @@ think u(pb/f.pledge.level-check, oath, true name)
 Output all element types and elements within (levels, no details)
 Requires: crumple()
 
-&f.format.pledge-options pb=
-	[header(Pledge Elements)]%r
-@@ "type" is special
-	%b [ansi(hg, Type)]: [edit(v(pledge.type), |, %,%b)]%r
-@@ other elements
-	[iter(v(d.sort.elements), 
-		%b [ansi(hg, %i0)]: %r
-		[iter(v(pledge.[edit(%i0, %b, _)]), 
-			%b %b [ansi(h, %i0)]: 
-@@ .. turn -1|-2|x --> Lesser (-1), Medial (-2)
-@@ .. (being lazy about filter)
-			[edit(crumple(
-				iter(first(v(pledge.%i1.[edit(%i0, %b, _)])), 
-					if(isnum(%i0), [extract(v(d.levels), inum(), 1, |)] %(%i0%)), 
+*/
+
+&f.format.pledge-options [v( d.pb )]=
+	[header( Pledge Elements )]%r
+// "type" is special
+	%b [ansi( hg, Type )]: [edit( v( pledge.type ), |, %,%b )]%r
+// other elements
+	[iter( v( d.sort.elements ), 
+		%b [ansi( hg, %i0 )]: %r
+		[iter( v( pledge.[edit( %i0, %b, _ )] ), 
+			%b %b [ansi( h, %i0 )]: 
+// .. turn -1|-2|x --> Lesser ( -1 ), Medial ( -2 )
+// .. ( being lazy about filter )
+			[edit( u( .crumple,  
+				iter( first( v( pledge.%i1.[edit( %i0, %b, _ )] )), 
+					if( 
+						isnum( %i0 ), 
+						[extract( v( d.levels ), inum( ), 1, | )] %(%i0%)
+					), 
 					|, |
 				), 
 				|
-			), |, %,%b)], 
+			), |, %,%b )], 
 			|, %r
 		)], 
-		|, 
-		%r
+		|, %r
 	)]%r
-	[footer()]
+	[footer( )]
 
---
+// --
 
-think u(pb/f.format.pledge-options)
+think u( v( d.pb )/f.format.pledge-options )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Format: One Element Options -------------------------------------------------
 
@@ -281,55 +515,62 @@ n: pledge type attribute name
 e: pledge element attribute contents
 l: levels for that element (i.e., 1|2 means lesser & medial)
 
-&f.format.pledge-element pb=
-	[setq(n, lattr( %!/pledge.*.%0* ))]
-	[setq(e, u( %qn ))]
-	[case(0, 
-		t( %qn ), Error: Pledge Type Unknown, 
-		eq( words( %qn ), 1 ), Error: Multiple Matches, 
-		[header( 
-			Pledge Details for 
-			[titlestr( 
-				edit( 
-					[last( %qn, . )] 
-					%([elements( %qn, 2, . )]%), 
-					_, %b 
-				)
-			)] 
-		)]%r
-		[if( strmatch( %qn, pledge.type.* ), 
-@@ .. "type" element is slightly different - no level values
-			%b [edit( %qe, |, %r %b )], 
-@@ .. all other elements: build the list of valid option's positions & show
-			[setq( l, 
-				crumple( 
-					iter( 
-						first( v( %qn )), 
-						if( isnum( %i0 ), inum()), 
-						|, | 
-					), 
-					| 
-				)
-			)]
-			[iter( %ql, 
-				%b [ansi( g, elements( v( d.levels ), %i0, | ))] 
-				%([elements( first( %qe ), %i0, | )]%):%r
-				[wrap( elements( rest( %qe ), %i0, | ), 74, , %b %b%b )], 
-				|, %r
-			)]
-		)]%r
-		[footer()]
-	)]
+*/
 
---
+&f.format.pledge-element [v( d.pb )]=
+	strcat( 
+		setq( n, lattr( %!/pledge.*.%0* )), 
+		setq( e, u( %qn )), 
+		case( 0, 
+			t( %qn ), u( .msg, pbuild, Pledge type unknown ), 
+			eq( words( %qn ), 1 ), u( .msg, pbuild, Multiple matches ), 
 
-think u(pb/f.format.pledge-element, dreaming)
-think u(pb/f.format.pledge-element, forbiddance)
-think u(pb/f.format.pledge-element, oath)
+			[header( 
+				Pledge Details for 
+				[titlestr( 
+					edit( 
+						[last( %qn, . )] 
+						%([elements( %qn, 2, . )]%), 
+						_, %b 
+					)
+				)] 
+			)]%r
+			[if( strmatch( %qn, pledge.type.* ), 
+// .. "type" element is slightly different - no level values
+				%b [edit( %qe, |, %r %b )], 
+// .. all other elements: build the list of valid option's positions & show
+				[setq( l, 
+					u( .crumple, 
+						iter( 
+							first( v( %qn )), 
+							if( isnum( %i0 ), inum()), 
+							|, | 
+						), 
+						| 
+					)
+				)]
+				[iter( %ql, 
+					%b [ansi( g, elements( v( d.levels ), %i0, | ))] 
+					%([elements( first( %qe ), %i0, | )]%):%r
+					[wrap( elements( rest( %qe ), %i0, | ), 74, , %b %b%b )], 
+					|, %r
+				)]
+			)]%r
+			[footer()]
+		)
+	)
+
+// --
+
+think u( v( d.pb )/f.format.pledge-element, dreaming)
+think u( v( d.pb )/f.format.pledge-element, forbiddance)
+think u( v( d.pb )/f.format.pledge-element, oath)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Format: Current Pledge ------------------------------------------------------
+
 
 &_pledge <player>=
 	<pledge type>:<details>[:<user-entered note>]|
@@ -349,65 +590,72 @@ c: cost for this pledge element
 n: notes from player, if any
 b: total pledge points
 
-&f.format.pledge.readable pb=
-strcat( 
-	setq( a, u( %0/[v( d.attribute )] )), 
-	setq( t, first( %qa, | )), 
-	setq( a, sortby( sortby.elements, rest( %qa, | ), |, | )), 
-	setq( b, 0 ), 
-	case( 0, 
-		t( %0 ), Error: Player Not Found, 
-		t( %qt%qa ), Error: Pledge Not Found, 
-		[header( [name( %0 )]'s Pledge Worksheet )]%r
-@@ .. pledge type
-		%b [ansi( g, TYPE: )] [titlestr( first( %qt, : ))]%, 
-		[elements( %qt, 2, : )] 
-		[if( strlen( setr( n, elements( %qt, 3, : ))), --- %qn )]%r
-@@ .. other elements
-		[iter( %qa, 
-			strcat( 
-				%b%b, 
-				ansi( g, 
-					strcat( elements( %i0, 1, : ), :%b )
-				), 
-				elements( %i0, 2, : ), 
-				%b%(, 
-				elements( %i0, 3, : ), %,%b, 
-				setr( c, elements( %i0, 4, : )), 
-				%)%r, 
+*/
 
-@@   > @emit DESC: [wrap(get(me/desc), 10, left,,,6)]
+&f.format.pledge.readable [v( d.pb )]=
+	strcat( 
+		setq( a, u( %0/[v( d.attribute )] )), 
+		setq( t, first( %qa, | )), 
+		setq( a, sortby( sortby.elements, rest( %qa, | ), |, | )), 
+		setq( b, 0 ), 
+		case( 0, 
+			t( %0 ), u( .msg, pbuild, Player not found ), 
+			t( %qt%qa ), u( .msg, pbuild, No pledge found ), 
 
-				wrap( 
-					* [elements( %i0, 5, : )], 
-					74, left, %b%b%b%b, , 2
-				), 
+			[header( [name( %0 )]'s Pledge Worksheet )]%r
+// .. pledge type
+			%b [ansi( g, TYPE: )] [titlestr( first( %qt, : ))]%, 
+			[elements( %qt, 2, : )] 
+			[if( strlen( setr( n, elements( %qt, 3, : ))), --- %qn )]%r
+// .. other elements
+			[iter( %qa, 
+				strcat( 
+					%b%b, 
+					ansi( g, 
+						strcat( elements( %i0, 1, : ), :%b )
+					), 
+					elements( %i0, 2, : ), 
+					%b%(, 
+					elements( %i0, 3, : ), %,%b, 
+					setr( c, elements( %i0, 4, : )), 
+					%)%r, 
 
-				if( 
-					setr( n, elements( %i0, 6, : )), 
-					%r[wrap( 
-						* %qn, 
+//   > @emit DESC: [wrap(get(me/desc), 10, left,,,6)]
+					wrap( 
+						* [elements( %i0, 5, : )], 
 						74, left, %b%b%b%b, , 2
-					)]
+					), 
+
+					if( 
+						setr( n, elements( %i0, 6, : )), 
+						%r[wrap( 
+							* %qn, 
+							74, left, %b%b%b%b, , 2
+						)]
+					), 
+					setq( b, add( %qb, %qc ))
 				), 
-				setq( b, add( %qb, %qc ))
-			), 
 
-			|, 
-			%r 
-		)]%r
-@@ .. total:
-		%b [ansi( g, TOTAL COST: )] %qb 
-			... [if( eq( %qb, 0 ), ansi( g, OK! ), ansi( r, not balanced ))]%r
-		[footer()]
+				|, 
+				%r 
+			)]%r
+// .. total:
+			%b [ansi( g, TOTAL COST: )] %qb 
+				... 
+				[if( eq( %qb, 0 ), 
+					ansi( g, OK! ), 
+					ansi( r, not balanced )
+				)]%r
+			[footer()]
+		)
 	)
-)
 
---
+// --
 
-think u(pb/f.format.pledge.readable, %#)
+think u( v( d.pb )/f.format.pledge.readable, %#)
 
 
+/*
 ================================================================================
 == SETTING FUNCTIONS ===========================================================
 
@@ -415,21 +663,28 @@ Functions to set and unset from the player
 
 
 --------------------------------------------------------------------------------
--- Unset: Clear ----------------------------------------------------------------
+--Unset: Clear ----------------------------------------------------------------
 
 Clear the built pledge, if any.
 
 0: player dbref
 
-&f.unset.clear pb=[null(set(%0, v( d.attribute ):))]Pledge worksheet cleared.
+*/
 
---
+&f.unset.clear [v( d.pb )]=
+	[null( set( %0, v( d.attribute ): ))]Pledge worksheet cleared.
 
-&_PLEDGE-BUILDER me=<pledge type>:<details>|<element type>:<element>:<level name>:<value>:<details from data>|...
+// --
 
-think u( pb/f.unset.clear, %# )
+&_PLEDGE-BUILDER me=
+	<pledge type>:<details>|
+	<element type>:<element>:<level name>:<value>:<details from data>|
+	...
+
+think u( v( d.pb )/f.unset.clear, %# )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Set: Type -------------------------------------------------------------------
 
@@ -441,9 +696,9 @@ Do the actual setting.
 3: sub-type/value
 4: additional player notes, optional
 
---
+*/
 
-&f.set.type pb=
+&f.set.type [v( d.pb )]=
 	strcat( 
 		set( %0, 
 			v( d.attribute ):
@@ -453,10 +708,11 @@ Do the actual setting.
 				[if( strlen( %4 ), :%4 )] 
 			)]
 		), 
-		Pledge type set to: %2 (%3)[if( strlen( %4 ), %b-- %4 )] 
+		Pledge type set to: %2 (%3) [if( strlen( %4 ), -- %4 )] 
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Set: Other ------------------------------------------------------------------
 
@@ -469,26 +725,33 @@ Do the actual setting.
 4: type type? something important
 5: additional player notes, optional
 
+*/
 
-&f.set.other pb=
+&f.set.other [v( d.pb )]=
 	if( not( hasattr( %0, v( d.attribute ))), 
-		Must start a pledge by setting its 'type', 
+		u( .msg, pledge/set, Must start a pledge by setting its <type> ), 
 
-@@ >> <ELEMENT TYPE>:<element sub-type>:<level name>:<level value>:<details>
-		[set( %0, 
-			v( d.attribute ):
-			%1|
-			%4:
-			%2:
-			%3
-			[if( strlen( %5 ), :%5 )]
-		)]
-		Added [th( words( %1, | ))] pledge element: 
-			%4: %2 ([elements( %3, 2, : )]): [elements( %3, 3, : )]
-			[if( strlen( %5 ), %b-- %5 )]
+// >> <ELEMENT TYPE>:<element sub-type>:<level name>:<level value>:<details>
+		strcat( 
+			set( %0, 
+				v( d.attribute ):
+				%1|
+				%4:
+				%2:
+				%3
+				[if( strlen( %5 ), :%5 )]
+			), 
+			Added, %b, 
+			u( .th, words( %1, | )), %b, 
+			pledge element: %4: %2 (, 
+			elements( %3, 2, : ), ):, %b, 
+			elements( %3, 3, : ), %b, 
+			if( strlen( %5 ), -- %5 )
+		)
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Set -------------------------------------------------------------------------
 
@@ -503,11 +766,11 @@ Check and set the v( d.attribute ) worksheet
 a: attribute
 t: element type/attribute (pledge.duration.year_and_a_day)
 s: element value's entry
-x: ???
+x: ??? (I can't remember)
 
---
+*/
 
-&f.set pb=
+&f.set [v( d.pb )]=
 	strcat( 
 		setq( a, get( %0/[v( d.attribute )] )), 
 		setq( t, u( f.pledge.find, %1, %2 )), 
@@ -521,7 +784,7 @@ x: ???
 			case( setr( x, elements( %qt, 2, . )), 
 				TYPE, 
 				u( f.set.type, %0, %qa, last( %qt, . ), %qs, strip( %4, : )), 
-
+// .. else
 				u( f.set.other, 
 					%0, 
 					%qa, 
@@ -534,52 +797,57 @@ x: ???
 		)
 	)
 
---
+// --
 
-think u( pb/f.set, %#, year, duration, 3 )
-think u( pb/f.set, %#, oath, type, true name%, u )
-think u( pb/f.set, %#, oath, , keep )
+think u( v( d.pb )/f.set, %#, year, duration, 3 )
+think u( v( d.pb )/f.set, %#, oath, type, true name%, u )
+think u( v( d.pb )/f.set, %#, oath, , keep )
 
-think u( pb/f.set, %#, year, duration )
-think u( pb/f.set, %#, year, duration, minor )
-think u( pb/f.set, %#, oath, , true name )
-
---
-
-@@ Typical Fealty Pledge:
-
-think u( pb/f.unset.clear, %# )
-
-think u( pb/f.set, %#, corporal, type, nemesis, Freehold Champion )
-
-think u( pb/f.set, %#, fealty, task, 3 )
-think u( pb/f.set, %#, vassal, boon, 3 )
-think u( pb/f.set, %#, banish, sanc, 3 )
-think u( pb/f.set, %#, year, durat, 3, Founded Winter 2009 )
-
-think u( pb/f.format.pledge.readable, %# )
+think u( v( d.pb )/f.set, %#, year, duration )
+think u( v( d.pb )/f.set, %#, year, duration, minor )
+think u( v( d.pb )/f.set, %#, oath, , true name )
 
 
+/*
+--------------------------------------------------------------------------------
+-- Test: Let's Build a Typical Fealty Pledge -----------------------------------
+*/
+
+think u( v( d.pb )/f.unset.clear, %# )
+
+think u( v( d.pb )/f.set, %#, corporal, type, nemesis, Freehold Champion )
+
+think u( v( d.pb )/f.set, %#, fealty, task, 3 )
+think u( v( d.pb )/f.set, %#, vassal, boon, 3 )
+think u( v( d.pb )/f.set, %#, banish, sanc, 3 )
+think u( v( d.pb )/f.set, %#, year, durat, 3, Founded Winter 2009 )
+
+think u( v( d.pb )/f.format.pledge.readable, %# )
+
+
+/*
 --------------------------------------------------------------------------------
 -- Sort By Pledge Elements -----------------------------------------------------
+*/
 
-&sortby.elements pb=
+&sortby.elements [v( d.pb )]=
 	sub( 
 		match( v( d.sort.elements ), first( %0, : ), | ), 
 		match( v( d.sort.elements ), first( %1, : ), | )
 	)
 
 
+/*
 ================================================================================
 == COMMANDS ====================================================================
 
 +pbuild
 
---
+*/
 
-&c.pbuild pb=$+pbuild*:@pemit %#=
+&c.pbuild [v( d.pb )]=$^\+?pbuild(.*):@pemit %#=
 	case( 1, 
-		strmatch( setr( 0, trim( %0 )), ), 
+		strmatch( setr( 0, trim( %1 )), ), 
 		u( c.pbuild.default, %# ), 
 
 		strmatch( %q0, /* ), 
@@ -588,9 +856,12 @@ think u( pb/f.format.pledge.readable, %# )
 		u( c.pbuild.specific, %q0 )
 	)
 
---
+@set v( d.pb )/c.pbuild=regexp
+@set v( d.pb )/c.pbuild=no_parse
 
-&c.pbuild.default pb=
+// --
+
+&c.pbuild.default [v( d.pb )]=
 	if( hasattr( %0, v( d.attribute )), 
 		u( f.format.pledge.readable, %0 ), 
 		cat( 
@@ -602,9 +873,9 @@ think u( pb/f.format.pledge.readable, %# )
 		)
 	)
 
---
+// --
 
-&c.pbuild.specific pb=
+&c.pbuild.specific [v( d.pb )]=
 	case( 0, 
 		t( setr( p, pmatch( %0 ))), No such player., 
 
@@ -614,15 +885,17 @@ think u( pb/f.format.pledge.readable, %# )
 		u( c.pbuild.default, %qp )		
 	)
 
---
+// --
 
-&c.pbuild.switch pb=udefault( c.switch%0, Switch not found, %1 )
+&c.pbuild.switch [v( d.pb )]=udefault( c.switch%0, Switch not found, %1 )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Switch: List ----------------------------------------------------------------
+*/
 
-&c.switch/list pb=
+&c.switch/list [v( d.pb )]=
 	case( %0, 
 		@@(null), 
 		u( f.format.pledge-options ), 
@@ -631,20 +904,29 @@ think u( pb/f.format.pledge.readable, %# )
 	)
 
 
+/*
 --------------------------------------------------------------------------------
 -- Switch: Clear ---------------------------------------------------------------
+*/
 
-&c.switch/clear pb=u( f.unset.clear, %# )
+&c.switch/clear [v( d.pb )]=u( f.unset.clear, %# )
 
 
+/*
 --------------------------------------------------------------------------------
 -- Switch: Add -----------------------------------------------------------------
 
 	+pbuild/add [<category>/]<element>=<value>[/<notes>]
 
---
+c: category (optional)
+e: element 
+v: value
+n: notes (optional)
 
-&c.switch/add pb=
+*/
+
+
+&c.switch/add [v( d.pb )]=
 	strcat( 
 		setq( e, trim( first( %0, = ))), 
 		if( strmatch( %qe, */* ), 
@@ -657,13 +939,15 @@ think u( pb/f.format.pledge.readable, %# )
 		u( f.set, %#, %qe, %qc, %qv, escape( strip( %qn )))
 	)
 
---
+// --
 
-&c.switch/set pb=u( c.switch/add, %0 )
+&c.switch/set [v( d.pb )]=u( c.switch/add, %0 )
 
---
 
-@@ Typical Fealty Pledge:
+/*
+================================================================================
+== Typical Fealty Pledge =======================================================
+*/
 
 +pbuild/clear
 

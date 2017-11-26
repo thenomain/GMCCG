@@ -371,7 +371,7 @@ think timefmt( $Y-$m-$d $H:$M:$S $z, secs())
 
 /* -- test --
 
-think u( v( d.xpas )/f.time.sql2unix, u( sja/f.time.unix2sql, secs() ))
+think u( v( d.xpas )/f.time.sql2unix, u( v( d.xpas )/f.time.unix2sql, secs() ))
 
 think sql( SELECT UNIX_TIMESTAMP( '[u( v( d.xpas )/f.time.unix2sql, secs() )]' ))
 think secs()
@@ -426,8 +426,8 @@ Technically an sql.* function, but easier to do this way.
 			'%2', %3, 
 			'%5', '%4'
 		)
-			
-			
+
+
 /* 
 --------------------------------------------------------------------------------
 -- SQL: Add by Auto-Award System -----------------------------------------------
@@ -519,7 +519,7 @@ Important data:
 			wfooter()
 		)
 
-@set xpas/c.xp.general=regexp
+@set v( d.xpas )/c.xp.general=regexp
 
 // -- 
 
@@ -554,7 +554,7 @@ Important data:
 			wfooter()
 		)
 
-@set xpas/c.xp.specific=regexp
+@set v( d.xpas )/c.xp.specific=regexp
 
 
 /* 
@@ -582,7 +582,7 @@ e: earned
 		%b- Spent:, %b%b, u( .trunc, fdiv( abs( %qs ), v( d.beat-to-exp )), 1 )
 	)
 
-think u( v( d.xpas )/display.xp-and-beats.one-line, *vera, normal )
+think u( v( d.xpas )/display.xp-and-beats.one-line, %!, normal )
 
 // --
 
@@ -614,7 +614,7 @@ think u( v( d.xpas )/display.xp-and-beats.one-line, *vera, normal )
 			), %r, 
 	))
 
-think u( v( d.xpas )/display.approval-deets, pmatch( vera ))
+think u( v( d.xpas )/display.approval-deets, %! )
 
 /* 
 ================================================================================
@@ -1211,8 +1211,9 @@ Brings the formulas and the formula finder together.
 0: dbref of sheet (qw)
 1: stat-from (Even if it's not used) (qt)
 2: stat-to (qv)
-3: statpath (qs) <-- WHY DO WE NOT PASS THIS ON TO THE XP COST CODE?!
+3: statpath (qs)
 
+i: instance, if applicable
 s: statpath without instance
 v: main.value.list
 f: formula's attribute name
@@ -1221,6 +1222,7 @@ f: formula's attribute name
 
 &f.cost.calculator [v( d.xpas )]=
 	localize( strcat( 
+		setq( i, crumple( before( rest( trim( %3, l, _ ), %( ), %) ))), 
 		setq( s, u( v( d.sfp )/f.statpath-without-instance, trim( %3, l, _ ))), 
 		setq( f, u( f.formula_finder, %qs, %0 )), 
 		setq( v, first( get( v( d.dd )/%qs ), | )), 
@@ -1228,7 +1230,7 @@ f: formula's attribute name
 		if( t( %qf ), 
 			u( 
 				v( d.xpcd )/%qf, 
-				%0, %1, %2, %qs, %qv 
+				%0, %1, %2, %qs, %qv, %qi 
 			), 
 
 			%qf
@@ -1256,7 +1258,7 @@ think
 	[setr( n, lnum( words( %qs, . ), 2 ))] --> 
 	[setr( n, iter( %qn, setr( t, replace( %qt, %i0, ?, . ))))] --> 
 	[setr( n, [iter( %qn, %i0~%qz )] %qn )] --> 
-	[first( filter( xpas/fil.formula_finder, %qn, , , xp ))]
+	[first( filter( v( d.xpas )/fil.formula_finder, %qn, , , xp ))]
 
 &xp.skill.?.?~[get( %#/_bio.template)] xpcd=
 
@@ -1419,7 +1421,7 @@ x: current 'beats' attribute
 // -- test --
 
 think u( v( d.xpas )/f.xp/cost, strength )
-think u( v( d.xpas )/f.xp/cost, *vera/strength=1 )
+think u( v( d.xpas )/f.xp/cost, %#/strength=1 )
 
 /*
 --------------------------------------------------------------------------------

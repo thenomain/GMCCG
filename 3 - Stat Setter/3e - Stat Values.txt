@@ -190,7 +190,7 @@ Returns: <templates>|<chargen-only>|<other prereqs>
 // .. coded/other prerequisites
 		if(
 			hasattr( u( d.data-dictionary ), prereq-text.%0 ), 
-			u( [u( d.data-dictionary )]/prereq-text.%0 )
+			u( [u( d.data-dictionary )]/prereq-text.%0, %# )
 		)
 	)
 

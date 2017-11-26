@@ -537,7 +537,7 @@ class.<statpath>: list
 
 0: stat path *without instance*
 1: value|"default"
-Output: closest valid match. if "default", default value
+Output: closest valid match. if "default", return &default.<statpath>
 
 qs: stat's value validation list (grabbed from DD)
 qc: stat's  class

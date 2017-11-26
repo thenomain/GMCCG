@@ -6,8 +6,9 @@ For all of these:
 	0: sheet dbref
 	1: from
 	2: to
-	3: name of stat (not full statpath)
+	3: full statpath without instance
 	4: list of valid values from data dictionary (e.g., 1.2.3.4.5)
+	5: instance/type, if applicable
 
 The God Machine Chronicles (nWoD2) now features flat payments per dot.
 
