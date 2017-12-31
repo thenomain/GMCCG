@@ -115,7 +115,7 @@ uses: header(), footer()
 */
 
 &display.roll-output [v( d.nr )]=
-	strcat( 
+	localize( strcat( 
 		setq( w, width( %2 )), 
 
 // .. interpret roll results from global registers
@@ -160,7 +160,7 @@ uses: header(), footer()
 			), 
 			%qw 
 		)
-	)
+	))
 
 
 /*
