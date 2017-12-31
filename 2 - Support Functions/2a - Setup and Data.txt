@@ -4,7 +4,7 @@
 */
 
 @create Stat Functions Prototype <sfp>
-@set sfp=inherit safe
+@set [v( d.sfp )]=inherit safe
 
 @fo me=&d.sfp me=[search( name=stat functions prototype <sfp> )]
 
@@ -127,22 +127,24 @@ d.type.specials:
 --------------------------------------------------------------------------------
 */
 
-&d.search-order sfp=iter( sort( lattr( %!/d.search-order-* )), v( %i0 ))
-&d.search-order-01 sfp=attribute skill merit advantage
-// &d.search-order-<##>-<gameline> sfp=<stuff>
-&d.search-order-09 sfp=bio
+&d.search-order [v( d.sfp )]=
+	iter( sort( lattr( %!/d.search-order-* )), v( %i0 ))
+&d.search-order-01 [v( d.sfp )]=attribute skill merit advantage
+// &d.search-order-<##>-<gameline> [v( d.sfp )]=<stuff>
+&d.search-order-09 [v( d.sfp )]=bio
 
-&d.type.specials sfp=special health 
+&d.type.specials [v( d.sfp )]=special health 
 
-&filter.search-types sfp=t( match( u( d.search-order ), first( %0, . )))
+&filter.search-types [v( d.sfp )]=
+	t( match( u( d.search-order ), first( %0, . )))
 
-&sortby.types sfp=
+&sortby.types [v( d.sfp )]=
 	[setq( o, u( d.search-order ))]
 	[comp( match( %qo, first( %0, . )), match( %qo, first( %1, . )))]
 
 // -----------------------------------------------------------------------------
 // -- test --
 
-think sortby( sfp/sortby.types, filter( sfp/filter.search-types, sort( lattr( dd/*.s* ))))
+think sortby( v( d.sfp )/sortby.types, filter( v( d.sfp )/filter.search-types, sort( lattr( v( d.dd )/*.s* ))))
 
-think sortby( sfp/sortby.types, filter( sfp/filter.search-types, sort( lattr( dd/*.str* ))))
+think sortby( v( d.sfp )/sortby.types, filter( v( d.sfp )/filter.search-types, sort( lattr( v( d.dd )/*.str* ))))
