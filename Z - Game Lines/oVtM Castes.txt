@@ -1,0 +1,224 @@
+&xp.discipline [v( d.xpcd )]=
+	localize( strcat( 
+		setq( c, u( .value_full, %0, bio.clan )), 
+		setq( a, u( .value_full, %0, bio.caste )), 
+
+		case( 1, 
+			u( v( d.sfp )/f.hastag?.workhorse, %3, caste ),
+			case( 1, 
+				cand( 
+					u( v( d.sfp )/f.hastag?.workhorse, %3, %qc ), 
+					strmatch( %5, %qa ), 
+				)
+				u( cost.standard, 3, %1, %2 ), 
+
+				u( cost.standard, 4, %1, %2 ), 
+			), 
+
+			u( v( d.sfp )/f.hastag?.workhorse, %3, %qc ), 
+			u( cost.standard, 3, %1, %2 ), 
+
+			u( cost.standard, 4, %1, %2 )
+		)
+	))
+
+
+
+
+&BIO.CASTE [v( d.dd )]=
+	[udefault( 
+		bio.caste.[u( .value_full, %0, bio.clan )], 
+		n/a %(see below%) 
+	)]
+
+// only people who can take castes can take this
+&PREREQUISITE.BIO.CASTE [v( d.dd )]=
+	t( u( bio.caste.[u( .value_full, %0, bio.clan )] ))
+
+// list all castes for all clans
+&PREREQ-TEXT.BIO.CASTE [v( d.dd )]=
+	The following Clans have the following Castes:%r
+	[iter( lattr( %!/bio.caste.* ), xxx, , %; )]
+
+&tags.bio.caste [v( d.dt )]=vampire
+
+
+// assamite! (doesn't work yet: #-1 value not found)
+
+&bio.caste.assamite [v( d.dt )]=Sorcerer.Vizier.Warrior
+
+
+
+
+--------------------------------| Caste [Bio] |---------------------------------
+  Values: 
+  [udefault( bio, caste, [u( , value_full, %0, bio, and clan )], n/a %(see 
+  below%) )]
+                                                                                                                                                                            
+  Templates: Vampire                                                                                                                                                        
+--------------------------------------------------------------------------------
+
+
+&bio.caste [v( d.dd )]=
+	Bratovich.Country.Coyote.Healer.Ishtarri.Scout.Sentinel.
+	Sorcerer.Telyav.Vipers.Vizier.Volgirre.Warrior.Zantosa.Zantovich
+
+&prerequisite.bio.caste [v( d.dd )]=
+	match( 
+		ulocal( .caste_list, %0 ), 
+		%2, 
+		. 
+	)
+
+&prereq-text.bio.caste [v( d.dd )]=
+	localize( strcat( 
+		setq( l, ulocal( .caste_list, %0 )), 
+		setq( n, u( .value_full, %0, bio.clan )), 
+		setq( t, u( .value_full, %0, bio.sect )), 
+
+		case( 1, 
+			t( %ql ), 
+			%qn Castes[if( t( %qt ), %b%(%qt%))]: 
+			[itemize( %ql, . )], 
+
+			The following clans have castes: 
+			[iter( 
+				setunion( iter( lattr( %!/.caste.* ), elements( %i0, 3, . )), ), 
+				titlestr( edit( %i0, _, %b )), 
+				, %,%b 
+			)] 
+		)
+	))
+
+&.caste_list [v( d.dd )]=
+	setunion( 
+		ulocal( 
+			.caste.
+			[setr( n, edit( u( .value_full, %0, bio.clan ), %b, _ ))]
+		), 
+		ulocal( 
+			.caste.
+			%qn.
+			[edit( u( .value_full, %0, bio.sect ), %b, _ )] 
+		), 
+		. 
+	)
+
+&.caste.assamite [v( d.dd )]=Sorcerer.Vizier.Warrior
+&.caste.gangrel [v( d.dd )]=Country
+&.caste.gangrel.sabbat [v( d.dd )]=Coyote
+&.caste.gargoyle [v( d.dd )]=Scout.Sentinel.Warrior
+&.caste.salubri [v( d.dd )]=Healer.Warrior
+&.caste.setite.camarilla [v( d.dd )]=Vipers
+&.caste.toreador [v( d.dd )]=Ishtarri
+&.caste.toreador.camarilla [v( d.dd )]=Volgirre
+&.caste.toreador.sabbat [v( d.dd )]=Zantosa
+&.caste.tremere.sabbat [v( d.dd )]=Telyav
+&.caste.tzimisce.sabbat [v( d.dd )]=Bratovich.Grimaldi.Obertus.Zantosa
+&.caste.ventrue.sabbat [v( d.dd )]=Crusader
+
+
+@fo me=&bio.caste [v( d.dd )]=[setunion( iter( lattr( v( d.dd )/.caste.*), get( v( d.dd )/%i0 ), , . ), , . )]
+
+
+
+/connect 138.197.91.163 1984
+
+
+=-==--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-=-=--=-=-=--=-=-=
+
+
+&bio.clan [v( d.dd )]=... (to be filled in with code below)
+
+&prerequisite.bio.clan [v( d.dd )]=
+	match( 
+		ulocal( .clan_list, %0 ), 
+		%2, 
+		. 
+	)
+
+&prereq-text.bio.clan [v( d.dd )]=
+	localize( strcat( 
+		setq( l, ulocal( .clan_list, %0 )), 
+		setq( t, u( .value_full, %0, bio.sect )), 
+
+		case( 1, 
+			t( %qt ), 
+			%qt Clans: 
+			[itemize( %ql, . )], 
+
+			Available clans depend upon sect 
+		)
+	))
+
+&.clan_list [v( d.dd )]=
+	setunion( 
+		ulocal( .clan.any ), 
+		ulocal( 
+			.clan.[edit( u( .value_full, %0, bio.sect ), %b, _ )] 
+		), 
+		. 
+	)
+
+&.clan.any [v( d.dd )]=
+	Assamite.Brujah.Daughters of Cacophony.Gangrel.Gargoyle.Lasombra.Malkavian.
+	Nosferatu.Setite.Toreador
+&.clan.sabbat [v( d.dd )]=
+	Ahrimanes.Kiasyd.Lamiae.Pander.Ravnos.Salubri.Tremere.Tzimisce.Ventrue
+&.clan.camarilla [v( d.dd )]=
+	Caitiff.Samedi
+
+
+@fo me=&bio.clan [v( d.dd )]=[setunion( iter( lattr( v( d.dd )/.clan.*), get( v( d.dd )/%i0 ), , . ), , . )]
+
+
+
+-=-=-=-=-=-=-=-=-=
+
+think lattr( v( d.sfp )/d.search-order-*-mage )
+
+
+&d.search-order-02-mage
+&d.search-order-03-mage [v( d.sfp )]=
+
+
+think grepi( v( d.dt ), *, mage )
+
+think setunion( iter( lattr( v( d.dt )/tags.praxis.* ), get( v( d.dt )/%i0 ), , . ), , . )
+
+
+think setunion( iter( lattr( v( d.dt )/tags.attainment.* ), get( v( d.dt )/%i0 ), , . ), , . )
+
+
+
+@dolist arcanum rote praxis attainment={ &xp.## [v( d.xpcd )]=; }
+
+
+@dolist [iter( arcanum rote praxis attainment )]={ 
+		@wipe [v( d.dd )]/##.*; 
+		@wipe [v( d.dd )]/prerequisite.##.*; 
+		@wipe [v( d.dd )]/prereq-text.##.*; 
+		@wipe [v( d.dt )]/tags.##.*; 
+	}
+
+&D.SEARCH-ORDER-02 [v( d.sfp )]=
+&D.SEARCH-ORDER-03 [v( d.sfp )]=
+&D.SEARCH-ORDER-04 [v( d.sfp )]=
+
+
+
+
+@dolist iter( grepi( v( d.dt ), *, mage ), rest( %i0, . ))={ 
+		@wipe [v( d.dd )]/##; 
+		@wipe [v( d.dd )]/prerequisite.##; 
+		@wipe [v( d.dd )]/prereq-text.##; 
+		@wipe [v( d.dt )]/tags.##; 
+	}
+
+think setunion( iter( get( v( d.dd )/bio.template ), grepi( v( d.dt ), *, %i0 ), . ), )
+
+
+think setinter( xxx, setunion( iter( get( v( d.dd )/bio.template ), grepi( v( d.dt ), *, %i0 ), . ), ))
+
+
+
