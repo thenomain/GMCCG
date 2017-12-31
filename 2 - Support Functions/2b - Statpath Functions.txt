@@ -233,7 +233,7 @@ qz, qa, qb: Regmatch results
 
 // return: did I get anything?
 		[if( t( %q4 ), %q4, #-1 STAT NOT FOUND )] 
-	)
+	))
 
 
 // -----------------------------------------------------------------------------
