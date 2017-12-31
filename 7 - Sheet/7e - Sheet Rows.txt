@@ -33,7 +33,7 @@ think u( v( d.nsc )/bio.default, %# )
 		divider( Bio ), %r, 
 		setq( b, 
 			iter( %qo, 
-				u( display.trait-and-value, %i0, %qt, %qw, string ), 
+				ulocal( display.trait-and-value, %i0, %qt, %qw, string ), 
 				|, | 
 			)
 		), 
@@ -455,4 +455,3 @@ think u( sheet: rows/display.sheet, %#, %#, get( %#/_bio.template ))
 
 // =--=-==--==-=-=--==-=-
 
-@tel sheet: rows=[v( d.nsc )]
