@@ -77,37 +77,27 @@ qs: Stat to check.
 1: Player dbref of target, if any
 Output: Full stat path or #-1 Whatever
 
-qp: Dbref of player then of player's sheet
+qp: Dbref of player's sheet
 
 --------------------------------------------------------------------------------
 */
 
 &f.statpath.workhorse [v( d.sfp )]=
+	strcat( 
 
-// If player, do the player dance, else do the dd-lookup dance.
-// If player but player lookup failed, also do the dd-lookup dance.
-	[if( 
-		t( %1 ), 
-// .. .. player error-checking
-		case( 0, 
-			t( setr( p, u( .pmatch, %1 ))), 
-			#-1 PLAYER NOT FOUND, 
-			t( setr( p, u( f.find-sheet, %qp ))), 
-			#-1 SHEET NOT FOUND, 
-// .. .. .. okay, do the lookup
-			setq( p, ulocal( f.statpath-lookup-sheet, %qp, %0 ))
+// set %qp to sheet dbref, if there's any to set
+		setq( p, 
+			if( strlen( %1 ), 
+				u( f.find-sheet, u( .pmatch, %1 ))
+			)
 		), 
-// .. .. plain dd-lookup
-		setq( p, ulocal( f.statpath-lookup-dd, %0 ))
-	)]
-	[if( 
-// If dbref passed, and the player lookup failed...
-		cand( t( %1 ), strmatch( %qp, #-* )), 
-// .. try the dd lookup
-		ulocal( f.statpath-lookup-dd, %0 ), 
-// .. else output whatever we have
-		%qp 
-	)]
+
+// if target passed & found, do 'sheet lookup', else do 'dd lookup'
+		if( cand( strlen( %1 ), t( %qp )), 
+			ulocal( f.statpath-lookup-sheet, %qp, %0 ), 
+			ulocal( f.statpath-lookup-dd, %0 )
+		)
+	)
 
 
 
