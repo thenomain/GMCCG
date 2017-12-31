@@ -65,7 +65,7 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 // --
 
-think u( v( d.nsc )/bio.default, %# )
+think u( v( d.nsc )/bio.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 
@@ -95,7 +95,7 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 // --
 
-think u( v( d.nsc )/attributes.mental.default, %# )
+think u( v( d.nsc )/attributes.mental.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 /*
@@ -111,7 +111,7 @@ think u( v( d.nsc )/attributes.mental.default, %# )
 
 // --
 
-think u( v( d.nsc )/attributes.physical.default, %# )
+think u( v( d.nsc )/attributes.physical.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 /*
@@ -127,7 +127,7 @@ think u( v( d.nsc )/attributes.physical.default, %# )
 
 // --
 
-think u( v( d.nsc )/attributes.social.default, %# )
+think u( v( d.nsc )/attributes.social.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 
@@ -154,14 +154,14 @@ output: <trait>:<value>[.<offset(s)>]|* <specialty>|...
 		mental physical social, 
 		strcat( 
 			# [capstr( %i0 )], |, 
-			ulocal( skills.default.%i0, %0 )
+			ulocal( skills.%i0.default, %0 )
 		), 
 		, | 
 	)
 
 // --
 
-think u( v( d.nsc )/skills.default, %# )
+think u( v( d.nsc )/skills.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 
@@ -180,7 +180,7 @@ think u( v( d.nsc )/skills.default, %# )
 
 // --
 
-think u( v( d.nsc )/skills.mental.default, %# )
+think u( v( d.nsc )/skills.mental.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 /*
@@ -197,7 +197,7 @@ think u( v( d.nsc )/skills.mental.default, %# )
 
 // --
 
-think u( v( d.nsc )/skills.physical.default, %# )
+think u( v( d.nsc )/skills.physical.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 /*
@@ -215,7 +215,7 @@ think u( v( d.nsc )/skills.physical.default, %# )
 
 // --
 
-think u( v( d.nsc )/skills.social.default, %# )
+think u( v( d.nsc )/skills.social.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 
@@ -259,7 +259,7 @@ OLD:
 
 // --
 
-think u( v( d.nsc )/merits.default, %# )
+think u( v( d.nsc )/merits.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 		
@@ -289,7 +289,7 @@ output: see 'f.cheat_getstat.willpower', and '.morality'.
 
 // --
 
-think u( v( d.nsc )/traits.default, %# )
+think u( v( d.nsc )/traits.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 
 /*
@@ -382,8 +382,7 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 // --
 
-think u( v( d.nsc )/advantages.default, %# )
-
+think u( v( d.nsc )/advantages.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
 /*
 ================================================================================
@@ -417,5 +416,5 @@ output: <health boxes>|Penalty:<value>
 
 // --
 
-think u( v( d.nsc )/health.default, %# )
+think u( v( d.nsc )/health.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
 
