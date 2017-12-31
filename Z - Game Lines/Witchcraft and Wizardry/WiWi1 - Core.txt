@@ -1,0 +1,272 @@
+/* 
+
+Witchcraft & Wizardry
+(Harry Potter America)
+
+A code re-skin for Boo & Spice
+
+http://wiwimush.wikidot.com
+(game not open at this time)
+
+
+
+================================================================================
+== NOTES =======================================================================
+
+Start with the core GMC/CoD code and apply the following changes. 
+
+By this time all the &d.<object> dbrefs should be on your person. Don't skip 
+anything.
+
+
+
+================================================================================
+== GENERAL CHANGES =============================================================
+
+
+--------------------------------------------------------------------------------
+-- General: Functions ----------------------------------------------------------
+*/
+
+// 'median()' isn't already in TinyMUX.
+// (we don't need the full function, but other games may)
+
+&.median [v( d.dd )]=
+	localize( strcat( 
+		setq( n, sort( %0, n, %1, %b )), 
+		setq( m, fdiv( words( %qn ), 2 )), 
+		case( 1, 
+			not( land( iter( %qn, isnum( %i0 )))), 
+			#-1 All inputs must be numeric,
+
+			isint( %qm ), 
+			fdiv( ladd( elements( %qn, cat( %qm, inc( %qm )))), 2 ), 
+
+			elements( %qn, ceil( %qm ))
+		)
+	))
+
+think u( v( d.dd )/.median, 1 4 3 ) --> 3
+think u( v( d.dd )/.median, 10.1.4.3, . ) --> 3.5
+think u( v( d.dd )/.median, 10.1.Bob.4.3, . ) --> #1
+
+
+/*
+--------------------------------------------------------------------------------
+-- General: Skills -------------------------------------------------------------
+
+http://wiwimush.wikidot.com/skills
+
+*/
+
+&skill.occult [v( d.dd )]=
+&prerequisite.skill.occult [v( d.dd )]=
+&prereq-text.skill.occult [v( d.dd )]=
+&tags.skill.occult [v( d.dd )]=
+
+&skill.gramayre [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&prerequisite.skill.gramayre [v( d.dd )]=
+	u( .trait_check, %0, skill.occult, %2 )
+&prereq-text.skill.gramayre [v( d.dd )]=Limited by power level stat
+&tags.skill.gramayre [v( d.dd )]=mental
+
+&skill.ride [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&prerequisite.skill.ride [v( d.dd )]=
+	u( .trait_check, %0, skill.occult, %2 )
+&prereq-text.skill.ride [v( d.dd )]=Limited by power level stat
+&tags.skill.ride [v( d.dd )]=physical
+
+
+/*
+---------------------------------------------------------------------------------- General: Sheet --------------------------------------------------------------
+
+&skills.mental.default [v( d.nsc )]=
+	iter( 
+		academics computer crafts gramayre investigation medicine politics 
+		science, 
+		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), , | 
+	)
+
+&skills.physical.default [v( d.nsc )]=
+	iter( 
+		athletics brawl drive firearms larceny ride stealth survival weaponry, 
+		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), , | 
+	)
+
+
+
+/*
+================================================================================
+== HUMAN -> BLIG ===============================================================
+
+'Blig' means 'Blissfully Ignorant', but replaces the Human tag in all locations.
+
+*/
+
+// data dictionary
+&.sphere.human [v( d.dd )]=
+&.sphere.blig [v( d.dd )]=Blig
+&bio.template [v( d.dd )]=Blig
+
+// data tags (spammy)
+@edit v( d.dt )/*=human, blig
+
+// chargen (should've been 'default', beh.)
+@edit v( d.cg )/f.pts-valid?.integrity=human, blig
+
+
+
+/*
+================================================================================
+== WITCHES & WIZARDS ===========================================================
+
+There is no gender-neutral term for this, so we're using 'Wizard'.
+
+
+--------------------------------------------------------------------------------
+-- Wizard: Bio -----------------------------------------------------------------
+
+http://wiwimush.wikidot.com/advantages#toc1
+
+*/
+
+@fo me=&bio.template [v( d.dd )]=[get( v( d.dd )/bio.template )].Wizard
+
+&bio.paradigm [v( d.dd )]=Sorcery.Arendi
+&tags.bio.paradigm [v( d.dt )]=wizard
+
+
+/*
+--------------------------------------------------------------------------------
+-- Wizard: Search Order --------------------------------------------------------
+
+Level 2 for powers 
+Level 3 for very minor items
+*/
+
+&d.search-order-02-wizard [v( d.sfp )]=art
+&d.search-order-03-wizard [v( d.sfp )]=
+
+
+/*
+--------------------------------------------------------------------------------
+-- Wizard: Aptitudes -----------------------------------------------------------
+*/
+
+&aptitude.potency [v( d.dd )]=
+	u( .median, 
+		iter( 
+			intelligence strength presence, 
+			ladd( get( %0/attribute.%0 ), . )
+		)
+	)
+&default.aptitude.potency [v( d.dd )]=derived
+&tags.aptitude.potency [v( d.dt )]=wizard
+
+&aptitude.precision [v( d.dd )]=
+	u( .median, 
+		iter( 
+			wits dexterity manipulation, 
+			ladd( get( %0/attribute.%0 ), . )
+		)
+	)
+&default.aptitude.precision [v( d.dd )]=derived
+&tags.aptitude.precision [v( d.dt )]=wizard
+
+&aptitude.protection [v( d.dd )]=
+	u( .median, 
+		iter( 
+			resolve stamina composure, 
+			ladd( get( %0/attribute.%0 ), . )
+		)
+	)
+&default.aptitude.protection [v( d.dd )]=derived
+&tags.aptitude.protection [v( d.dt )]=wizard
+
+
+/*
+--------------------------------------------------------------------------------
+-- Wizard: Advantages ----------------------------------------------------------
+
+http://wiwimush.wikidot.com/advantages
+
+*/
+
+&advantage.sortilege [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
+&default.advantage.sortilege [v( d.dd )]=1
+&tags.advantage.sortilege [v( d.dd )]=wizard
+
+// bio.paradigm is to be displayed as a sub-type of sortilege
+
+&advantage.darkness [v( d.dd )]=
+	ladd( u( .value_full, %0, advantage.darkness_maximum ), . )
+&default.advantage.darkness [v( d.dd )]=derived
+&tags.advantage.darkness [v( d.dt )]=pool.derived.wizard
+
+&advantage.darkness_maximum [v( d.dd )]=0.1.2.3.4.5.6.7.8.9.10
+&default.advantage.darkness_maximum [v( d.dd )]=0
+&tags.advantage.darkness_maximum [v( d.dt )]=pool.derived.wizard
+
+
+/*
+--------------------------------------------------------------------------------
+-- Wizard: Arts ----------------------------------------------------------------
+
+http://wiwimush.wikidot.com/advantages#toc4
+
+*/
+
+&art.charms [v( d.dd )]=1.2.3.4.5
+&prerequisite.art.charms [v( d.dd )]=
+	u( .at_most_stat, %0, art.charms, advantage.sortilege, %2 )
+&prereq-text.art.charms [v( d.dd )]=May not be higher than Sortilege
+&tags.art.charms [v( d.dt )]=wizard
+
+&art.glamers [v( d.dd )]=1.2.3.4.5
+&prerequisite.art.glamers [v( d.dd )]=
+	u( .at_most_stat, %0, art.glamers, advantage.sortilege, %2 )
+&prereq-text.art.glamers [v( d.dd )]=May not be higher than Sortilege
+&tags.art.glamers [v( d.dt )]=wizard
+
+&art.transfiguration [v( d.dd )]=1.2.3.4.5
+&prerequisite.art.transfiguration [v( d.dd )]=
+	u( .at_most_stat, %0, art.transfiguration, advantage.sortilege, %2 )
+&prereq-text.art.transfiguration [v( d.dd )]=May not be higher than Sortilege
+&tags.art.transfiguration [v( d.dt )]=wizard
+
+&art.conjuration [v( d.dd )]=1.2.3.4.5
+&prerequisite.art.conjuration [v( d.dd )]=
+	u( .at_most_stat, %0, art.conjuration, advantage.sortilege, %2 )
+&prereq-text.art.conjuration [v( d.dd )]=May not be higher than Sortilege
+&tags.art.conjuration [v( d.dt )]=wizard
+
+&art.potions [v( d.dd )]=1.2.3.4.5
+&prerequisite.art.potions [v( d.dd )]=
+	u( .at_most_stat, %0, art.potions, advantage.sortilege, %2 )
+&prereq-text.art.potions [v( d.dd )]=May not be higher than Sortilege
+&tags.art.potions [v( d.dt )]=wizard
+
+&art.runes [v( d.dd )]=1.2.3.4.5
+&prerequisite.art.runes [v( d.dd )]=
+	u( .at_most_stat, %0, art.runes, advantage.sortilege, %2 )
+&prereq-text.art.runes [v( d.dd )]=May not be higher than Sortilege
+&tags.art.runes [v( d.dt )]=wizard
+
+
+/*
+--------------------------------------------------------------------------------
+-- Wizard: Sheet ---------------------------------------------------------------
+
+http://wiwimush.wdfiles.com/local--files/start/Character%20Sheet_Witchcraft%20%26%20Wizardry_v2.pdf
+
+*/
+
+// << to-do >>
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Wizard: Chargen -------------------------------------------------------------
+*/
+
+// << to-do >>
