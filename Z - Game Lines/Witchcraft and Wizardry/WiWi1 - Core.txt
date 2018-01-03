@@ -64,11 +64,11 @@ http://wiwimush.wikidot.com/skills
 &prereq-text.skill.occult [v( d.dd )]=
 &tags.skill.occult [v( d.dd )]=
 
-&skill.gramayre [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
-&prerequisite.skill.gramayre [v( d.dd )]=
+&skill.gramarye [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
+&prerequisite.skill.gramarye [v( d.dd )]=
 	u( .trait_check, %0, skill.occult, %2 )
-&prereq-text.skill.gramayre [v( d.dd )]=Limited by power level stat
-&tags.skill.gramayre [v( d.dd )]=mental
+&prereq-text.skill.gramarye [v( d.dd )]=Limited by power level stat
+&tags.skill.gramarye [v( d.dd )]=mental
 
 &skill.ride [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
 &prerequisite.skill.ride [v( d.dd )]=
@@ -191,6 +191,8 @@ Level 3 for very minor items
 http://wiwimush.wikidot.com/advantages
 
 */
+
+@edit [v( d.dt )]/tags.advantage.integrity=$, .wizard
 
 &advantage.sortilege [v( d.dd )]=1.2.3.4.5.6.7.8.9.10
 &default.advantage.sortilege [v( d.dd )]=1
