@@ -51,6 +51,36 @@ think u( v( d.dd )/.median, 10.1.4.3, . ) --> 3.5
 think u( v( d.dd )/.median, 10.1.Bob.4.3, . ) --> #1
 
 
+
+/*
+################################################################################
+## DATA DICTIONARY #############################################################
+
+These are changes to the stat system from the generic game install. Some of 
+these items touch more than the Data Dictionary, but are stat-focused.
+
+
+--------------------------------------------------------------------------------
+-- General: Attributes ---------------------------------------------------------
+
+There is no 'power level stat' rule, but I'm leaving the code in place to 
+determine if anyone can take an Attribute or Skill above 10. Among other things, 
+there may be future plans to allow permanent Attributes or Skills above 5; 
+leaving this code in will make that easier.
+
+However, the language needs changed.
+
+*/
+
+@edit v( d.dd )/prereq-text.attribute.*=
+	Limited by power level stat, 
+	6+ may be set by staff only
+
+@edit v( d.dd )/prereq-text.skill.*=
+	Limited by power level stat, 
+	6+ may be set by staff only
+
+
 /*
 --------------------------------------------------------------------------------
 -- General: Skills -------------------------------------------------------------
@@ -66,36 +96,29 @@ http://wiwimush.wikidot.com/skills
 
 &skill.gramarye [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
 &prerequisite.skill.gramarye [v( d.dd )]=
-	u( .trait_check, %0, skill.occult, %2 )
-&prereq-text.skill.gramarye [v( d.dd )]=Limited by power level stat
+	u( .trait_check, %0, skill.gramarye, %2 )
+&prereq-text.skill.gramarye [v( d.dd )]=6+ may be set by staff only
 &tags.skill.gramarye [v( d.dd )]=mental
 
 &skill.ride [v( d.dd )]=1.2.3.4.5.6.7.8.9.10|*
 &prerequisite.skill.ride [v( d.dd )]=
-	u( .trait_check, %0, skill.occult, %2 )
-&prereq-text.skill.ride [v( d.dd )]=Limited by power level stat
+	u( .trait_check, %0, skill.ride, %2 )
+&prereq-text.skill.ride [v( d.dd )]=6+ may be set by staff only
 &tags.skill.ride [v( d.dd )]=physical
 
 
-/*
----------------------------------------------------------------------------------- General: Sheet --------------------------------------------------------------
-
-&skills.mental.default [v( d.nsc )]=
-	iter( 
-		academics computer crafts gramayre investigation medicine politics 
-		science, 
-		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), , | 
-	)
-
-&skills.physical.default [v( d.nsc )]=
-	iter( 
-		athletics brawl drive firearms larceny ride stealth survival weaponry, 
-		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), , | 
-	)
-
-
 
 /*
+--------------------------------------------------------------------------------
+-- General: Merits -------------------------------------------------------------
+
+http://wiwimush.wikidot.com/merits
+
+ON STAND-BY UNTIL "CHRONICLES OF DARKNESS" REVIEW IS COMPLETE.
+
+
+
+
 ================================================================================
 == HUMAN -> BLIG ===============================================================
 
@@ -120,7 +143,7 @@ http://wiwimush.wikidot.com/skills
 ================================================================================
 == WITCHES & WIZARDS ===========================================================
 
-There is no gender-neutral term for this, so we're using 'Wizard'.
+I'm told that 'Wizard' is gender-neutral. I didn't know!
 
 
 --------------------------------------------------------------------------------
@@ -144,7 +167,7 @@ Level 2 for powers
 Level 3 for very minor items
 */
 
-&d.search-order-02-wizard [v( d.sfp )]=art
+&d.search-order-02-wizard [v( d.sfp )]=art aptitude
 &d.search-order-03-wizard [v( d.sfp )]=
 
 
@@ -157,7 +180,7 @@ Level 3 for very minor items
 	u( .median, 
 		iter( 
 			intelligence strength presence, 
-			ladd( get( %0/attribute.%0 ), . )
+			ladd( get( %0/_attribute.%i0 ), . )
 		)
 	)
 &default.aptitude.potency [v( d.dd )]=derived
@@ -167,7 +190,7 @@ Level 3 for very minor items
 	u( .median, 
 		iter( 
 			wits dexterity manipulation, 
-			ladd( get( %0/attribute.%0 ), . )
+			ladd( get( %0/_attribute.%i0 ), . )
 		)
 	)
 &default.aptitude.precision [v( d.dd )]=derived
@@ -177,7 +200,7 @@ Level 3 for very minor items
 	u( .median, 
 		iter( 
 			resolve stamina composure, 
-			ladd( get( %0/attribute.%0 ), . )
+			ladd( get( %0/_attribute.%i0 ), . )
 		)
 	)
 &default.aptitude.protection [v( d.dd )]=derived
@@ -272,3 +295,224 @@ http://wiwimush.wdfiles.com/local--files/start/Character%20Sheet_Witchcraft%20%2
 */
 
 // << to-do >>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+################################################################################
+## CHARACTER SHEET #############################################################
+
+Changes for the showing of the sheet for Wizards.
+
+
+
+================================================================================
+== Sheet: General ==============================================================
+
+The staff wants sheets to be open, so we remove the 'staff only' check 
+from &c.sheet.
+
+*/
+
+@edit v( d.nsc )/c.sheet={ 
+		@assert cor( u( .isstaff, %# ), not( %qt ), strmatch( %qp, %# ))=
+			{ @pemit %#=Staff only. }; 
+	}, 
+
+// Default mental and physical skill lists changed.
+// (This could be done with code, tag 'mental' of type 'skill', etc.)
+
+&skills.mental.default [v( d.nsc )]=
+	iter( 
+		academics computer crafts gramayre investigation medicine politics 
+		science, 
+		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), , | 
+	)
+
+&skills.physical.default [v( d.nsc )]=
+	iter( 
+		athletics brawl drive firearms larceny ride stealth survival weaponry, 
+		u( f.cheat_getstat.skill-n-specs, %0, %i0 ), , | 
+	)
+
+
+
+/*
+================================================================================
+== Sheet: Wizard ===============================================================
+
+00000000011111111112222222222333333333344444444445555555555666666666677777777778
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+
+<-------------< Aptitudes >-------------> <-------------< Arts >-------------->
+ Potency (Power) ..................... 2  Charms ........................... 1
+ Precision (Finesse) ................. 2  Conjuration ...................... -
+ Protection (Resistance) ............. 4  Glamers .......................... 2
+                                          Potions .......................... -
+                                          Runes ............................ -
+                                          Transfiguration .................. 2
+
+                                          0000000001111111111222222222233333333
+                                          1234567890123456789012345678901234567
+
+So:
+	Aptitudes: w:41, t:39
+	Arts: w:37, t:35
+
+*/
+
+
+// -- Bio ----------------------------------------------------------------------
+
+// &bio.default.wizard [v( d.nsc )]=@@( nothing; get rid of Full Name too )
+
+
+// -- Powers -------------------------------------------------------------------
+
+&powers.aptitudes [v( d.nsc )]=
+	iter( sort( edit( lattr( v( d.dd )/aptitude.* ), APTITUDE., )), 
+		ulocal( f.cheat_getstat.with_name, %0, aptitude.%i0, numeric ), 
+		, | 
+	)
+
+&powers.arts [v( d.nsc )]=
+	iter( sort( edit( lattr( v( d.dd )/art.* ), ART., )), 
+		ulocal( f.cheat_getstat.with_name, %0, art.%i0, numeric ), 
+		, | 
+	)
+
+&block.powers.arts [v( d.sheet )]=
+  strcat( 
+		setq( w, 41 ), setq( t, 37 ), 
+		setq( 1, 
+			strcat( 
+				divider( Aptitudes, %qw ), |, 
+				iter( u( powers.aptitudes, %0 ), 
+					ulocal( display.trait-and-value, 
+						%i0, %qt, %qw, numeric, . 
+					), 
+					|, | 
+				)
+			)
+		), 
+
+		setq( w, 37 ), setq( t, 33 ), 
+		setq( 2, 
+			strcat( 
+				divider( Arts, %qw ), |, 
+				iter( u( powers.arts, %0 ), 
+					ulocal( display.trait-and-value, 
+						%i0, %qt, %qw, numeric, . 
+					), 
+					|, | 
+				)
+			)
+		), 
+
+		vcolumns( 38:%q2, 41:%q1, | ), %r 
+	)
+
+// And this is all we need to activate it for the Wizard template:
+
+&block.powers.wizard [v( d.sheet )]=u( block.powers.arts, %0, %1 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// -- Advantages ---------------------------------------------------------------
+
+&traits.morality.vampire [v( d.nsc )]=
+	ulocal( f.cheat_getstat.morality, %0, integrity, Humanity )
+
+&traits.vitae [v( d.nsc )]=
+	u( f.cheat_getstat.pool, %0, vitae )
+
+&block.traits.vitae [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+
+// .. vitae
+		setq( x, ulocal( traits.vitae, %0 )), 
+		setq( c, rest( setr( y, first( %qx, | )), : )), 
+		setq( p, last( %qx, : )), 
+
+// .. return
+		u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )
+	)
+
+
+&block.traits.vampire [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+
+// .. vitae (power pool)
+		setq( r, ulocal( block.traits.vitae, %0 )), 
+
+// .. blood potency (supernatural resistance)
+		setq( z, 
+			u( display.trait-and-value, 
+				u( traits.supernatural_resistance, %0 ), 
+				inc( strlen( Blood Potency )), %qw, numeric 
+			)
+		), 
+
+// .. display
+		vcolumns( 
+			%qw:%qr, 
+			%qw:%qz, 
+			|, %b 
+		), %r, 
+	)
+
+
+&block.traits.ghoul [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+		vcolumns( 
+			%qw:[u( block.traits.vitae, %0 )], 
+			|, %b 
+		), %r, 
+	)
+
+
+
