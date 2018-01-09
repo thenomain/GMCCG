@@ -3086,7 +3086,7 @@ order
 
 */
 
-&check.bio.mage [v( d.cg )]=Virtue Vice Path Prder
+&check.bio.mage [v( d.cg )]=Virtue Vice Path Order
 
 
 /*
