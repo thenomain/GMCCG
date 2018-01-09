@@ -68,7 +68,7 @@ q3: value
 
 qm: regmatch-stat (fills q0-q1, above)
 qp: player
-qx: player:sub-sheet (if any)
+qx: player[:sub-sheet] (if any)
 qn: result from validate-name
 qs: result from shift-/setstat
 
@@ -89,7 +89,7 @@ uses: setstat() and shiftstat().
 		setq( x, 
 			if( isstaff( %# ), 
 				%qp:[rest( %q0, : )], 
-				%#:%q0 
+				%#:[rest( %q0, : )] 
 			)
 		), 
 		case( 0, 
