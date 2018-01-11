@@ -153,9 +153,9 @@ qr: results of f.statpath
 think iter( iter( edit( a_b.c_d, _, %b ), capstr( ## ), ., .), capstr( ## ))
 
 think statname( str )
-think statname( cont.rep )
-think statname( thenomain/cont.rep )
-think statname( un( t ))
+think statname( cont (dod).rep )
+think statname( thenomain/cont (dod).rep )
+think statname( un( v ))
 think statname( blah )
 
 
