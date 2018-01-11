@@ -146,7 +146,7 @@ qz: sub-trait/specialty
 */
 
 &f.stat-input-breakdown-registers [v( d.sfp )]=
-	[setq( z, squish( edit( %0, %(, %b%( )))]
+	[setq( z, squish( edit( %0, %(, %b%(, %(%b, %(, %b%), %) )))]
 	[setq( x, trim( before( before( %qz, . ), %( )))]
 	[setq( y, before( rest( before( %qz, . ), %( ), %) ))]
 	[setq( z, rest( %qz, . ))]
