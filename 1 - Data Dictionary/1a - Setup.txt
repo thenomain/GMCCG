@@ -32,7 +32,7 @@ Use these functions for good, not evil.
 
 @fo me=&d.dd me=search( name=Data Dictionary <dd> )
 
-@parent Data Dictionary <dd>=codp
+@fo me=@parent Data Dictionary <dd>=[v( d.codp )]
 &prefix.functions Data Dictionary <dd>=.
 &prefix.attributes Data Dictionary <dd>=attribute.
 &prefix.skills Data Dictionary <dd>=skill.

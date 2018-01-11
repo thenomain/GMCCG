@@ -5,6 +5,10 @@
 Tags for the Core CoD stats.
 (Later, use this for page number and note references)
 
+We have notes!
+
+	&notes.<statpath> [v( d.dt )]=<note 1>|<note 2>|..<note n>
+
 */
 
 
