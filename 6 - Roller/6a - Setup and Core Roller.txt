@@ -7,11 +7,10 @@ ROLLER 3.0
 */
 
 @create nWoD Roller <nr>
+@fo me=&d.nr me=[num( nWoD Roller <nr> )]
 @set nWoD Roller <nr>=safe inherit
 
-@fo me=&d.nr me=[num( nWoD Roller <nr> )]
-
-@parent nWoD Roller <nr>=codp
+@fo me=@parent nWoD Roller <nr>=[v( d.codp )]
 
 
 

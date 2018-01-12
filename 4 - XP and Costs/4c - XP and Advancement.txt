@@ -87,7 +87,7 @@ COMMANDS:
 @fo me=&d.xpcd [v( d.xpas )]=[search( name=XP Cost Database <xpcd> )]
 @fo me=&d.cg [v( d.xpas )]=[search( name=GMC Chargen <cg> )]
 
-@parent [v( d.xpas )]=codp
+@fo me=@parent [v( d.xpas )]=[v( d.codp )]
 &prefix.sql [v( d.xpas )]=sql.
 &prefix.validations [v( d.xpas )]=validate.
 
@@ -1420,7 +1420,7 @@ x: current 'beats' attribute
 
 // -- test --
 
-think u( v( d.xpas )/f.xp/cost, strength )
+train :: [u( v( d.xpas )/f.xp/cost, *thenomain/strength )]
 think u( v( d.xpas )/f.xp/cost, %#/strength=1 )
 
 /*
