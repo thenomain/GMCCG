@@ -80,7 +80,7 @@ ROLLER 3.0
 
 // --
 
-&.crumple [v( d.nr )]=trim( squish( %0, %1 ), %1, b )
+&.crumple [v( d.nr )]=trim( squish( %0, %1 ), b, %1 )
 
 
 
