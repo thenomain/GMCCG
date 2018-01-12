@@ -26,9 +26,10 @@ outputs: Something legible (i.e., "Error Error Error")
 
 &display.roll-items [v( d.nr )]=
 	iter( 
-		trim( trim( %0, l, ` ), l, + ), 
-		%i0, 
-		` 
+		trim( trim( %0, b, ` ), b, + ), 
+		edit( trim( %i0, b ), +, %b+%b, -, %b-%b ), 
+		`, 
+		@@ 
 	)
 
 
