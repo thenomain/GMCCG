@@ -160,7 +160,7 @@ uses: header(), footer()
 			), 
 			%qw 
 		)
-	))
+	))...
 
 
 /*
@@ -241,7 +241,8 @@ Give it that '(<dice rolled)' look.
 
 &display.roll-to-public [v( d.nr )]=
 	iter( %1, 
-		pemit( %i0, u( display.roll-output, %0, public, %i0  ))
+		pemit( %i0, u( display.roll-output, %0, public, %i0  )), 
+		, @@ 
 	)
 
 

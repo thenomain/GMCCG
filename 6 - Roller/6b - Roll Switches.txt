@@ -45,7 +45,7 @@ Passive Switches (used in other parts of the roller):
 	/tr[ained] - ignore untrained modifiers
 	/now[ound] - ignore wound penalties
 	/rote - roll as a rote (failures re-rolled once)
-	/blind - roller do not see the results
+	/blind - roller does not see the results
 
 According to the printed literature that I could find, 'rote' is processed 
 before all n-again rolls, including weakness. This means weakness + rote could 
