@@ -84,14 +84,17 @@ output:
 			#, u( display.subheader, %2, trim( rest( %0, # ))), 
 
 // .. display them normal thangs
-			strcat( 
-				ljust( cat( first( %0, : ), ), %1, %qs ), 
-				if( 
-					not( strmatch( %qs, ansi( xh, %b ))), 
-					%qs, : 
+			if( strlen( trim( %0 )), 
+				strcat( 
+					ljust( cat( first( %0, : ), ), %1, %qs ), 
+					if( 
+						not( strmatch( %qs, ansi( xh, %b ))), 
+						%qs, : 
+					), 
+					%b, 
+					udefault( display.value.%3, %qv, %qv, %5 )
 				), 
-				%b, 
-				udefault( display.value.%3, %qv, %qv, %5 )
+				@@( do nothing, show nothing )
 			)
 		)
 	)
