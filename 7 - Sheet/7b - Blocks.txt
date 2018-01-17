@@ -54,7 +54,8 @@ output: <trait>:<value>[.<offset(s)>]|...
 &bio.default [v( d.nsc )]=
 	iter( 
 		udefault( %!/bio.default.%1, 
-			full_name birthdate concept template virtue vice  
+			full_name birthdate concept template virtue vice, 
+			%0 
 		), 
 		if( t( %i0 ), 
 			ulocal( f.cheat_getstat.with_name, %0, bio.%i0, string ), 
@@ -66,7 +67,6 @@ output: <trait>:<value>[.<offset(s)>]|...
 // --
 
 think u( v( d.nsc )/bio.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
-think u( v( d.nsc )/bio.default, *lief, vampire )
 
 
 
