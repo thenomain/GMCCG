@@ -60,7 +60,7 @@ does not have the ability to handle nesting.
 // --
 
 // Code Parent formatting
-@parent [v( d.nsc )]=codp
+@fo me=@parent [v( d.nsc )]=[v( d.codp )]
 &prefix.dot-functions [v( d.nsc )]=.
 &prefix.block_bio [v( d.nsc )]=bio.
 &prefix.block_attribute [v( d.nsc )]=attributes.
