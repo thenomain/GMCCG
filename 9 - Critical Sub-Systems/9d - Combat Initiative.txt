@@ -176,7 +176,7 @@ be shifted back by .01.
 
 @create Initiative Tracker <it>=10
 @set Initiative Tracker <it>=inherit safe
-@fo me=&d.init me=[search( name= Initiative Tracker <it> )]
+@fo me=&d.init me=[search( name=Initiative Tracker <it> )]
 
 @parent Initiative Tracker <it>=codp
 
