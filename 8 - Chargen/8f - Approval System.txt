@@ -929,5 +929,3 @@ think u( [v( d.jrs )]/d.content.cg/submit )
 
 &d.cgsubmit.prefix [v( d.jrs )]=CGEN
 
-
-*/
