@@ -1787,7 +1787,17 @@ Character should have no Scales
 	birthdate concept clan coterie template virtue vice 
 
 &bio.default.vampire [v( d.nsc )]=
-	embrace_date concept clan covenant template mask dirge coterie
+	localize( 
+		[setq( c, 0 )] 
+		embrace_date concept clan 
+		[if( hasattr( %0, _bio.bloodline ), bloodline [setq( c, inc( %qc ))] )] 
+		covenant 
+		[if( hasattr( %0, _bio.mystery_coil ), 
+			mystery_coil [setq( c, inc( %qc ))] 
+		)] 
+		template mask dirge coterie 
+		[repeat( #-1%b, %qc )]
+	)
 
 // -- Powers -------------------------------------------------------------------
 
