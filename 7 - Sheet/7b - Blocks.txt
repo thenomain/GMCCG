@@ -53,7 +53,7 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 &bio.default [v( d.nsc )]=
 	iter( 
-		default( %!/bio.default.%1, 
+		udefault( %!/bio.default.%1, 
 			full_name birthdate concept template virtue vice  
 		), 
 		if( t( %i0 ), 
@@ -66,6 +66,7 @@ output: <trait>:<value>[.<offset(s)>]|...
 // --
 
 think u( v( d.nsc )/bio.default, u( v( d.sfp )/F.FIND-SHEET, %# ))
+think u( v( d.nsc )/bio.default, *lief, vampire )
 
 
 
