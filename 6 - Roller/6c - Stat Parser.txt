@@ -306,7 +306,7 @@ Don't roll this, sheesh.
 
 Determine whether the skill is trained or untrained and process those, with spec
 
-This setup will allow 'untrained with specialty';  it's up to the rest of the 
+This setup will allow 'untrained with specialty'; it's up to the rest of the 
 system to prevent this if necessary "untrained" does not remove from extened 
 roll total specs always add to extended roll total
 
@@ -325,7 +325,7 @@ q7: specs' value(s)
 */
 
 &f.stat-check.skill [v( d.nr )]=
-  if( strmatch( %3, skill.* ), 
+	if( strmatch( %3, skill.* ), 
 		strcat( 
 			setq( 4, elements( %3, 1 2, . )), 
 			setq( 5, u( .value_full, %0, %q4 )), 
@@ -383,7 +383,7 @@ q2: 'nostat' if it's intended to be discarded (e.g., specialty doesn't exist)
 */
 
 &f.stat-check.skill.untrained [v( d.nr )]=
-	if( not( %2 ), 
+	if( cand( not( %2 ), not( u( f.hasswitch?, trained ))), 
 		strcat( 
 			setq( 6, 
 				case( 1, 
@@ -391,7 +391,7 @@ q2: 'nostat' if it's intended to be discarded (e.g., specialty doesn't exist)
 					-1, 
 					u( .hastag?, %1, mental ), 
 					-3, 
-					-99
+					-99 
 				)
 			), 
 
@@ -511,5 +511,8 @@ At the moment we don't have 'f.hasswitch?' in, so we can't check '/nowound' or
 think [u( v( d.nr )/f.stat-check.stats, pmatch(me), strength + beauty + willpower + stealth + occult )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
 
 think [u( v( d.nr )/f.stat-check.stats, pmatch(me), full name + str + beauty + will + stealth + occ.bla )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
+
+
+think [u( v( d.nr )/f.stat-check.stats, pmatch(me), full name + str + beauty + will + stealth + cra.psych )]Output: %qo -- Dice: %qd -- Extended Rolls: %qn
 
 */
