@@ -459,12 +459,19 @@ Stat's "first" text item matches one from a list
 	0: sheet dbref
 	1: stat.path
 	2: one.of.list
+	3: value being set (ignore sheet value if passed)
 	e.g.:
 		u( .is_one_of, %0, bio.template, changeling.human )
+		u( .is_one_of, 
+			%0, 
+			bio.bloodline, 
+			v( d.bloodlines.[u( .value, %0, bio.clan )] ), 
+			%2 
+		)
 */
 
 &.Is_One_Of [v( d.dd )]=
-	t( match(%2, first( u( %0/_%1 ), . ), . ))
+	t( match( %2, if( t( %3 ), %3, u( .value, %0, %1 )), . ))
 
 /* -- is none of --
 
@@ -472,12 +479,13 @@ Stat's "first" text value matches none from a list
 	0: sheet dbref
 	1: stat.path
 	2: one.of.list
+	3: value being set (ignore sheet value if passed)
 	e.g.:
 		u( .is_none_of, %0, bio.kith, %1.Kithless )
 */
 
 &.Is_None_Of [v( d.dd )]=
-	not( u( .is_one_of, %0, %1, %2 ))
+	not( u( .is_one_of, %0, %1, %2, %3 ))
 
 
 /* 
