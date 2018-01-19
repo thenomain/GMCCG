@@ -230,7 +230,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &merit.good_time_management [v( d.dd )]=1
 &prerequisite.merit.good_time_management [v( d.dd )]=
 	u( .at_least_one, %0, skill.science:2 skill.academics:2 )
-&prereq-text.good_time_management [v( d.dd )]=Science 2+ or Academics 2+
+&prereq-text.merit.good_time_management [v( d.dd )]=Science 2+ or Academics 2+
 
 &merit.holistic_awareness [v( d.dd )]=1
 
