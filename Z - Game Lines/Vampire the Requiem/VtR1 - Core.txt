@@ -488,7 +488,7 @@ Level 3 for very minor items
 // can gain only if they have a Regnant.
 &merit.empowered_to_speak [v( d.dd )]=1
 &prereq-text.merit.empowered_to_speak [v( d.dd )]=Must be Thrall.
-&tags.merit.empowered_to_speak [v( d.dt )]=ghoul.human.stigmatic.wolf-blooded
+&tags.merit.empowered_to_speak [v( d.dt )]=ghoul.human
 
 &merit.vitae_hound [v( d.dd )]=1
 &tags.merit.vitae_hound [v( d.dt )]=ghoul
