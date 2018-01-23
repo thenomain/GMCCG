@@ -807,7 +807,7 @@ qr: prerequisite checks
 							%qi, 
 							before( rest( %qs, %( ), %) ), 
 // .. (stat being changed by...)
-// .. (don't mess with if %qv is non-numeric)
+// .. (don't mess with %qv unless stat-class is numeric)
 							if( u( f.isclass?, %qs, numeric ), 
 								sub( %qv, first( u( %qw/_%qs ), . )), 
 								%qv
