@@ -21,7 +21,23 @@ More to eventually follow.
 
 
 
+================================================================================
+== NOTES =======================================================================
+
+If you have an older version of the core code, or if you have problems with 
+setting the Fighting Styles (stat class: list), you will need to re-apply 
+`2d - User-Defined Functions`, specifically &f.setstat..
+
+
+
+
+================================================================================
+== SETUP =======================================================================
 */
+
+@fo me=&d.dt [v( d.dd )]=search( name=Data Tags <d:t> )
+
+
 
 /*
 -- Data Dictionary Prerequisite Shortcut Functions ------------------------
@@ -42,32 +58,53 @@ sheet that match. For each one of those, find its value (number of dots or
 overall value) and add them. From that list, pick the highest, min 1.
 
 Due to how we're shortcutting the system, instanced stats won't work.
+
+0: sheet dbref
+1: stat.path
+
 */
 
 &.Hurt_Locker_Style_Skip_Max [v( d.dd )]=
-	lmax( 
+	localize( 
+		lmax( 
 // .. for each 'tag:*' grouping ..
-		iter( 
-			graball( get( v( d.dt )/tags.%1 ), tag:*, ., . ), 
-			ladd( 
-				iter( 
-// .. grab that sheet's traits ..
-					u( v( d.sfp )/f.list-stats-tags, %0, merit, %i0 ), 
-// .. and return a number.
-					case( u( .class, %i0 ), 
-						list, 
-						words( get( %0/_%i0 ), . ), 
-						get( %0/_%i0 )
+			[iter( 
+				graball( get( v( d.dt )/tags.%1 ), tag:*, ., . ), 
+				ladd( 
+					iter( 
+// .. .. grab that sheet's traits and return a number.
+						u( v( d.sfp )/f.list-stats-tags, %0, merit, %i0 ), 
+						setr( x, 
+							case( u( .class, %i0 ), 
+								list, 
+								ladd( get( %0/_%i0 ), . ), 
+								u( .value, %0, %i0 )
+							)
+						)
 					)
-				)
-			), 
-			.  
-		) 
-// ('1' is always the lowest)
-		1 
+				), 
+				.  
+			)] 
+// .. next (lowest) value is always allowed
+			[lmin( 
+				setdiff( 
+					first( v( %1 ), | ), 
+					%qx, 
+					. 
+				), 
+				. 
+			)] 
+// .. ('1' is always the lowest)
+			1 
+		)
 	)
 
-*/
+
+&.Hurt_Locker_Style_Check [v( d.dd )]=
+	lte( %2, u( .hurt_locker_style_skip_max, %0, %1 ))
+
+// think u( v( d.dd )/.hurt_locker_style_skip_max, %#, merit.avoidance )
+
 
 
 /*
@@ -169,11 +206,15 @@ can take all of these out of order.
 	1.2.3.4|
 	Insignificance.Coattails.Whack-a-Mole.Play Dead
 &prerequisite.merit.avoidance [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.manipuation:3 skill.athletics:2 skill.stealth:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.manipulation:3 skill.athletics:2 skill.stealth:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.avoidance, %2 )
 	)
 &prereq-text.merit.avoidance [v( d.dd )]=
-	Manipuation 3+, Athletics 2+, Stealth 2+
+	Manipulation 3+, Athletics 2+, Stealth 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.avoidance [v( d.dd )]=list
 
 &tags.merit.avoidance [v( d.dt )]=style.fighting.tag:movement (agile)
@@ -185,11 +226,15 @@ can take all of these out of order.
 	1.2.3|
 	The Red Mist.War Cry.Manic Brutality
 &prerequisite.merit.berzerker [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.strength:3 merit.iron_stamina:3 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.strength:3 merit.iron_stamina:3 
+		), 
+		u( .hurt_locker_style_check, %0, merit.berzerker, %2 )
 	)
 &prereq-text.merit.berzerker [v( d.dd )]=
-	Strength 3+, Iron Stamina 3
+	Strength 3+, Iron Stamina 3; 
+	Must follow Fighting Style Tags rules
 &class.merit.berzerker [v( d.dd )]=list
 
 &tags.merit.berzerker [v( d.dt )]=style.fighting.tag:attitude (enraged)
@@ -201,11 +246,15 @@ can take all of these out of order.
 	1.2.3.4|
 	Arcing Fire.Bullseye.Out of Nowhere.Death from Above
 &prerequisite.merit.bowmanship [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.dexterity:3 skill.firearms:2 merit.trained_observer:1 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.dexterity:3 skill.firearms:2 merit.trained_observer:1 
+		), 
+		u( .hurt_locker_style_check, %0, merit.bowmanship, %2 )
 	)
 &prereq-text.merit.bowmanship [v( d.dd )]=
-	Dexterity 3+, Firearms 2+, Trained Observer
+	Dexterity 3+, Firearms 2+, Trained Observer; 
+	Must follow Fighting Style Tags rules
 &class.merit.bowmanship [v( d.dd )]=list
 
 &tags.merit.bowmanship [v( d.dt )]=style.fighting.tag:archery
@@ -217,12 +266,16 @@ can take all of these out of order.
 	1.2.3.4.5|
 	Head Protection.Defensive Jab.Knockout Artist.Combination.Out for the Count
 &prerequisite.merit.boxing [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.strength:2 attribute.dexterity:2 attribute.stamina:2 
-		skill.brawl:2 skill.athletics:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.strength:2 attribute.dexterity:2 attribute.stamina:2 
+			skill.brawl:2 skill.athletics:2 
+		),
+		u( .hurt_locker_style_check, %0, merit.boxing, %2 )
 	)
 &prereq-text.merit.boxing [v( d.dd )]=
-	Strength 2+, Dexterity 2+, Stamina 2+, Brawl 2+, Athletics 2+
+	Strength 2+, Dexterity 2+, Stamina 2+, Brawl 2+, Athletics 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.boxing [v( d.dd )]=list
 
 &tags.merit.boxing [v( d.dt )]=style.fighting.tag:striking
@@ -234,12 +287,17 @@ can take all of these out of order.
 	1.2|
 	Imposing Defense.Bring Down the House
 &prerequisite.merit.chain_weapons [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.strength:3 attribute.dexterity:3 skill.athletics:2 
-		skill.weaponry:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.strength:3 attribute.dexterity:3 skill.athletics:2 
+			skill.weaponry:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.chain_weapons, %2 )
 	)
+
 &prereq-text.merit.chain_weapons [v( d.dd )]=
-	Strength 3+, Dexterity 3+, Athletics 2+, Weaponry 2+
+	Strength 3+, Dexterity 3+, Athletics 2+, Weaponry 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.chain_weapons [v( d.dd )]=list
 
 &tags.merit.chain_weapons [v( d.dt )]=style.fighting.tag:flexible
@@ -251,11 +309,15 @@ can take all of these out of order.
 	1.2.3.4.5|
 	Rapid Nock.Reflex Aiming.Parthian Shot.Rain of Arrows.Trick Shot
 &prerequisite.merit.combat_archery [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.strength:3 skill.athletics:2 merit.quick_draw_(bow):1 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.strength:3 skill.athletics:2 merit.quick_draw_(bow):1 
+		), 
+		u( .hurt_locker_style_check, %0, merit.combat_archery, %2 )
 	)
 &prereq-text.merit.combat_archery [v( d.dd )]=
-	Strength 3+, Athletics 2+, Quick Draw (Bow)
+	Strength 3+, Athletics 2+, Quick Draw (Bow); 
+	Must follow Fighting Style Tags rules
 &class.merit.combat_archery [v( d.dd )]=list
 
 &tags.merit.combat_archery [v( d.dt )]=style.fighting.tag:archery
@@ -267,11 +329,15 @@ can take all of these out of order.
 	1.2.3.4|
 	Predator's Vigil.Flyby.Retrieve Item.Rake the Eyes
 &prerequisite.merit.falconry [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.wits:3 skill.animal_ken:3 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.wits:3 skill.animal_ken:3 
+		), 
+		u( .hurt_locker_style_check, %0, merit.falconry, %2 )
 	)
 &prereq-text.merit.falconry [v( d.dd )]=
-	Wits 3+, Animal Ken 3+, 'Bonded' condition with a predatory bird of Size 2+
+	Wits 3+, Animal Ken 3+, 'Bonded' condition with a predatory bird of Size 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.falconry [v( d.dd )]=list
 
 &tags.merit.falconry [v( d.dt )]=style.fighting.tag:creature (claw)
@@ -310,12 +376,17 @@ Clinching:
 	1.2.3.4.5|
 	Sprawl.Small Joint Manipulation.Joint Lock.Lock Flow.Tap or Snap
 &prerequisite.merit.grappling [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.stamina:3 attribute.strength:2 skill.athletics:2 skill.brawl:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.stamina:3 attribute.strength:2 skill.athletics:2 
+			skill.brawl:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.grappling, %2 )
 	)
 &prereq-text.merit.grappling [v( d.dd )]=
 	Stamina 3+, Strength 2+, Athletics 2+, Brawl 2+; 
-	Some maneuvers require other maneuvers
+	Some maneuvers require other maneuvers; 
+	Must follow Fighting Style Tags rules
 &class.merit.grappling [v( d.dd )]=list
 
 &tags.merit.grappling [v( d.dt )]=style.fighting.tag:grappling
@@ -330,12 +401,17 @@ Clinching:
 	1.2.3.4.5|
 	Standing Throw.Takedown.Ippon.Dynamic Guard.Positional Dominance
 &prerequisite.merit.clinching [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.stamina:3 attribute.strength:2 skill.athletics:2 skill.brawl:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.stamina:3 attribute.strength:2 skill.athletics:2 
+			skill.brawl:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.clinching, %2 )
 	)
 &prereq-text.merit.clinching [v( d.dd )]=
 	Stamina 3+, Strength 2+, Athletics 2+, Brawl 2+; 
-	Some maneuvers require other maneuvers
+	Some maneuvers require other maneuvers; 
+	Must follow Fighting Style Tags rules
 &class.merit.clinching [v( d.dd )]=list
 
 &tags.merit.clinching [v( d.dt )]=style.fighting.tag:grappling
@@ -349,11 +425,15 @@ Clinching:
 	1.2.3.4|
 	Detection.Targeted Bite.Tactical Positioning.Takedown Bite
 &prerequisite.merit.k-9 [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.wits:3 skill.animal_ken:3 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.wits:3 skill.animal_ken:3 
+		), 
+		u( .hurt_locker_style_check, %0, merit.k-9, %2 )
 	)
 &prereq-text.merit.k-9 [v( d.dd )]=
-	Wits 3+, Animal Ken 3+, 'Bonded' condition with a dog of Size 3+
+	Wits 3+, Animal Ken 3+, 'Bonded' condition with a dog of Size 3+; 
+	Must follow Fighting Style Tags rules
 &class.merit.k-9 [v( d.dd )]=list
 
 &tags.merit.k-9 [v( d.dt )]=style.fighting.tag:creature (bite).
@@ -366,11 +446,15 @@ Clinching:
 	1.2.3.4|
 	Trained Bite.Ripping.Trained Gouge.Continuous Bite
 &prerequisite.merit.kino_mutai [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.dexterity:2 attribute.resolve:3 skill.brawl:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.dexterity:2 attribute.resolve:3 skill.brawl:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.kino_mutai, %2 )
 	)
 &prereq-text.merit.kino_mutai [v( d.dd )]=
-	Dexterity 2+, Resolve 3+, Brawl 2+
+	Dexterity 2+, Resolve 3+, Brawl 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.kino_mutai [v( d.dd )]=list
 
 &tags.merit.kino_mutai [v( d.dt )]=style.fighting.tag:attitude (enraged).
@@ -393,12 +477,16 @@ The Hurt Locker merit is renamed 'Muay Thai'. (picked by committee)
 	Focused Attack.Defensive Strike.Whirlwind Strike.The Hand As Weapon.
 	The Touch of Death
 &prerequisite.merit.martial_arts [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.resolve:3 attribute.dexterity:3 skill.athletics:2 
-		skill.brawl:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.resolve:3 attribute.dexterity:3 skill.athletics:2 
+			skill.brawl:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.martial_arts, %2 )
 	)
 &prereq-text.merit.martial_arts [v( d.dd )]=
-	Resolve 3+, Dexterity 3+, Athletics 2+, Brawl 2+
+	Resolve 3+, Dexterity 3+, Athletics 2+, Brawl 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.martial_arts [v( d.dd )]=list
 
 &tags.merit.martial_arts [v( d.dt )]=style.fighting.tag:striking
@@ -410,12 +498,16 @@ The Hurt Locker merit is renamed 'Muay Thai'. (picked by committee)
 	1.2.3.4.5|
 	Leg Kick.Cutting Elbow.Trapping.Inch Force.High Momentum Strike
 &prerequisite.merit.muay_thai [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.resolve:3 attribute.dexterity:3 skill.athletics:2 
-		skill.brawl:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.resolve:3 attribute.dexterity:3 skill.athletics:2 
+			skill.brawl:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.muay_thai, %2 )
 	)
 &prereq-text.merit.muay_thai [v( d.dd )]=
-	Resolve 3+, Dexterity 3+, Athletics 2+, Brawl 2+
+	Resolve 3+, Dexterity 3+, Athletics 2+, Brawl 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.muay_thai [v( d.dd )]=list
 
 &tags.merit.muay_thai [v( d.dt )]=style.fighting.tag:striking
@@ -433,7 +525,7 @@ addition of Muay Thai
 			u( .list_at_least, %0, merit.martial_arts, 2 ), 
 			u( .list_at_least, %0, merit.muay_thai, 2 ), 
 		), 
-		u( .at_least, %0, merit.street_fighting, 2 )
+		u( .at_least, %0, merit.iron_skin, 2 )
 	)
 &prereq-text.merit.iron_skin [v( d.dd )]=
 	Stamina 3+ and either Martial Arts 2+, Muay Thai 2+, or Street Fighting 2+
@@ -444,11 +536,15 @@ addition of Muay Thai
 	1.2.3.4|
 	Steady Saddle.Fixed Charge.Skirmishing.Rearing Beast
 &prerequisite.merit.mounted_combat [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.dexterity:3 skill.athletics:2 skill.animal_ken:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.dexterity:3 skill.athletics:2 skill.animal_ken:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.mounted_combat, %2 )
 	)
 &prereq-text.merit.mounted_combat [v( d.dd )]=
-	Dexterity 3+, Athletics 2+, Animal Ken 2+
+	Dexterity 3+, Athletics 2+, Animal Ken 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.mounted_combat [v( d.dd )]=list
 
 &tags.merit.mounted_combat [v( d.dt )]=style.fighting.tag:archery.
@@ -462,11 +558,15 @@ addition of Muay Thai
 	1.2.3.4|
 	Quick Reload.Intercept Shot.Penetration.Skewer
 &prerequisite.merit.powered_projectile [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.dexterity:3 skill.athletics:2 skill.firearms:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.dexterity:3 skill.athletics:2 skill.firearms:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.powered_projectile, %2 )
 	)
 &prereq-text.merit.powered_projectile [v( d.dd )]=
-	Dexterity 3+, Athletics 2+, Firearms 2+
+	Dexterity 3+, Athletics 2+, Firearms 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.powered_projectile [v( d.dd )]=list
 
 &tags.merit.powered_projectile [v( d.dt )]=style.fighting.tag:pistol
@@ -478,11 +578,15 @@ addition of Muay Thai
 	1.2.3|
 	Firm Footing.Keep at Bay.Strike and Develop
 &prerequisite.merit.spear_and_bayonet [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.strength:3 attribute.dexterity:2 skill.weaponry:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.strength:3 attribute.dexterity:2 skill.weaponry:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.spear_and_bayonet, %2 )
 	)
 &prereq-text.merit.spear_and_bayonet [v( d.dd )]=
-	Strength 3+, Dexterity 2+, Weaponry 2+
+	Strength 3+, Dexterity 2+, Weaponry 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.spear_and_bayonet [v( d.dd )]=list
 
 &tags.merit.spear_and_bayonet [v( d.dt )]=style.fighting.tag:pole weapons
@@ -494,11 +598,15 @@ addition of Muay Thai
 	1.2.3.4|
 	Short Grip.Thwack Weapon.Vaulting Defense.Tornado Strike
 &prerequisite.merit.staff_fighting [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.strength:3 attribute.dexterity:3 skill.weaponry:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.strength:3 attribute.dexterity:3 skill.weaponry:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.staff_fighting, %2 )
 	)
 &prereq-text.merit.staff_fighting [v( d.dd )]=
-	Strength 3+, Dexterity 3+, Weaponry 2+
+	Strength 3+, Dexterity 3+, Weaponry 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.staff_fighting [v( d.dd )]=list
 
 &tags.merit.staff_fighting [v( d.dt )]=style.fighting.tag:pole weapons
@@ -510,11 +618,15 @@ addition of Muay Thai
 	1.2.3.4|
 	Strength Tricks.Lifting.Push/Pull.Stronger Than You
 &prerequisite.merit.strength_performance [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.strength:3 attribute.stamina:2 skill.athletics:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.strength:3 attribute.stamina:2 skill.athletics:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.strength_performance, %2 )
 	)
 &prereq-text.merit.strength_performance [v( d.dd )]=
-	Strength 3+, Stamina 2+, Athletics 2+
+	Strength 3+, Stamina 2+, Athletics 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.strength_performance [v( d.dd )]=list
 
 &tags.merit.strength_performance [v( d.dt )]=style.fighting.
@@ -527,11 +639,15 @@ addition of Muay Thai
 	1.2.3|
 	Rolling.Balance.Combat Posture
 &prerequisite.merit.systema [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.dexterity:3 attribute.wits:2 skill.athletics:3 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.dexterity:3 attribute.wits:2 skill.athletics:3 
+		), 
+		u( .hurt_locker_style_check, %0, merit.systema, %2 )
 	)
 &prereq-text.merit.systema [v( d.dd )]=
-	Dexterity 3+, Wits 2+, Athletics 3+
+	Dexterity 3+, Wits 2+, Athletics 3+; 
+	Must follow Fighting Style Tags rules
 &class.merit.systema [v( d.dd )]=list
 
 &tags.merit.systema [v( d.dt )]=style.fighting.tag:movement (agility).
@@ -549,10 +665,12 @@ addition of Muay Thai
 		u( .at_least_all, %0, 
 			attribute.dexterity:3 skill.athletics:2 
 		), 
-		t( lattr( %0/_merit.quick_draw_(*) ))
+		t( lattr( %0/_merit.quick_draw_(*) )), 
+		u( .hurt_locker_style_check, %0, merit.thrown_weapons, %2 )
 	)
 &prereq-text.merit.thrown_weapons [v( d.dd )]=
-	Dexterity 3+, Athletics 2+, Quick Draw with a thrown weapon Specialty
+	Dexterity 3+, Athletics 2+, Quick Draw with a thrown weapon Specialty; 
+	Must follow Fighting Style Tags rules
 &class.merit.thrown_weapons [v( d.dd )]=list
 
 &tags.merit.thrown_weapons [v( d.dt )]=style.fighting.tag:light melee.
@@ -567,13 +685,15 @@ addition of Muay Thai
 	Balanced Grip.Protective Striking.Dual Swipe.Double Strike
 &prerequisite.merit.two_weapon_fighting [v( d.dd )]=
 	cand( 
-		t( lattr( %0/_merit.fighting_finesse_(*) )), 
 		u( .at_least_all, %0, 
 			attribute.wits:3 skill.weaponry:3 
-		)
+		), 
+		t( lattr( %0/_merit.fighting_finesse_(*) )), 
+		u( .hurt_locker_style_check, %0, merit.two_weapon_fighting, %2 )
 	)
 &prereq-text.merit.two_weapon_fighting [v( d.dd )]=
-	Wits 3+, Weaponry 3+, Fighting Finesse (Any)
+	Wits 3+, Weaponry 3+, Fighting Finesse (Any); 
+	Must follow Fighting Style Tags rules
 &class.merit.two_weapon_fighting [v( d.dd )]=list
 
 &tags.merit.two_weapon_fighting [v( d.dt )]=style.fighting.
@@ -586,11 +706,15 @@ addition of Muay Thai
 	1.2.3.4|
 	Shield Bash.Boar's Snout.Pin Weapon.Tortoise Shell
 &prerequisite.merit.weapon_and_shield [v( d.dd )]=
-	u( .at_least_all, %0, 
-		attribute.strength:3 attribute.stamina:3 skill.weaponry:2 
+	cand( 
+		u( .at_least_all, %0, 
+			attribute.strength:3 attribute.stamina:3 skill.weaponry:2 
+		), 
+		u( .hurt_locker_style_check, %0, merit.weapon_and_shield, %2 )
 	)
 &prereq-text.merit.weapon_and_shield [v( d.dd )]=
-	Strength 3+, Stamina 3+, Weaponry 2+
+	Strength 3+, Stamina 3+, Weaponry 2+; 
+	Must follow Fighting Style Tags rules
 &class.merit.weapon_and_shield [v( d.dd )]=list
 
 &tags.merit.weapon_and_shield [v( d.dt )]=style.fighting.tag:light melee
