@@ -306,7 +306,7 @@ Level 3 for very minor items
 &prereq-text.merit.pack_alpha [v( d.dd )]=Must be Gangrel
 
 &merit.unnatural_affinity_() [v( d.dd )]=1|*
-&tags.merit.unnatural_affinity_ [v( d.dt )]=vampire
+&tags.merit.unnatural_affinity_() [v( d.dt )]=vampire
 
 &merit.swarm_form [v( d.dd )]=2
 &tags.merit.swarm_form [v( d.dt )]=vampire
@@ -1820,7 +1820,6 @@ Character should have no Scales
 	strcat( 
 		setq( w, 79 ), setq( t, 70 ), 
 		setq( d, u( powers.disciplines, %0 )), 
-		setq( v, u( powers.devotions, %0 )), 
 		setq( b, 
 			iter( %qd, 
 				ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
@@ -1858,7 +1857,40 @@ Character should have no Scales
 			)
 		), 
 
+		setq( v, ulocal( block.powers.disciplines.devotions, %0 )), 
+		if( strlen( %qv ), %qv ), 
+
 		@@( to be continued ), 
+	)
+
+
+// -- Disciplines: Devotions (if exist) ----------------------------------------
+
+&block.powers.disciplines.devotions [v( d.sheet )]=
+	if( strlen( setr( x, u( powers.devotions, %0 ))), 
+		strcat( 
+			setq( w, 40 ), 
+			setq( t, 38 ), 
+			setq( y, 
+				iter( %qx, 
+					u( display.trait-name-only, %i0, %qt, %qw, flag ), |, | 
+				)
+			), 
+			setq( a, words( %qx, | )), 
+			setq( b, ceil( fdiv( %qa, 2 ))), 
+
+			setq( c, lnum( 1, %qb )), 
+			setq( d, lnum( inc( %qb ), inc( %qa ))), 
+
+			divider( Devotions ), %r, 
+			vcolumns( 
+				%qw:[elements( %qy, %qc, |, | )], 
+				%qw:[elements( %qy, %qd, |, | )], 
+				|, 
+				%b 
+			), 
+			%r 
+		)
 	)
 
 
@@ -1923,22 +1955,33 @@ Character should have no Scales
 	)
 
 &block.powers.disciplines.scales [v( d.sheet )]=
-	strcat( 
-		setq( w, 79 ), setq( t, 70 ), 
-		setq( d, u( powers.disciplines.scales, %0 )), 
-		setq( b, 
-			iter( %qd, 
-				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
-				|, | 
-			)
-		), 
+	if( strlen( setr( x, u( powers.disciplines.scales, %0 ))), 
+		strcat( 
+			setq( w, 40 ), 
+			setq( t, 38 ), 
+			setq( y, 
+				iter( %qx, 
+					u( display.trait-name-only, %i0, %qt, %qw, flag ), 
+					|, | 
+				)
+			), 
+			setq( a, words( %qx, | )), 
+			setq( b, ceil( fdiv( %qa, 3 ))), 
 
-		divider( Scales ), %r, 
-		iter( %qb, 
-			%i0, 
-			|, %r 
-		), %r, 
+			setq( c, lnum( 1, %qb )), 
+			setq( d, lnum( inc( %qb ), inc( %qa ))), 
+
+			divider( Scales ), %r, 
+			vcolumns( 
+				%qw:[elements( %qy, %qc, |, | )], 
+				%qw:[elements( %qy, %qd, |, | )], 
+				|, 
+				%b 
+			), 
+			%r 
+		)
 	)
+
 
 
 // -- Advantages ---------------------------------------------------------------
