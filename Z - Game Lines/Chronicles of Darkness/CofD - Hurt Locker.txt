@@ -436,8 +436,8 @@ Clinching:
 	Must follow Fighting Style Tags rules
 &class.merit.k-9 [v( d.dd )]=list
 
-&tags.merit.k-9 [v( d.dt )]=style.fighting.tag:creature (bite).
-	tag:tactical (police)
+&tags.merit.k-9 [v( d.dt )]=style.fighting.
+	tag:creature (bite).tag:tactical (police)
 &notes.merit.k-9 [v( d.dt )]=Style Tags: Creature (Bite), Tactical (Police)
 
 
