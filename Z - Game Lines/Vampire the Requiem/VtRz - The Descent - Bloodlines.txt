@@ -1,0 +1,1218 @@
+/*
+################################################################################
+## BLOODLINES FOR VAMPIRE ######################################################
+
+For The Descent Mux
+http://thedescentmux.com/index.php/Main_Page
+
+Original document for reference:
+https://docs.google.com/document/d/1x1SJk_MEsd3bWtplsMla6w3UPNVJUnxeWzsc2G8R2Xc/
+
+
+
+
+================================================================================
+== CORE STATS ==================================================================
+*/
+
+// 'bloodline' will be filled in with each clan's bloodlines entered
+
+&bio.bloodline [v( d.dd )]=.
+
+&prerequisite.bio.bloodline [v( d.dd )]=
+	u( .is_one_of, 
+		%0, bio.bloodline, v( d.bloodline.[get( %0/_bio.clan )] ), %2 
+	)
+
+&prereq-text.bio.bloodline [v( d.dd )]=Bloodline must match clan.
+
+&tags.bio.bloodline [v( d.dt )]=vampire.ghoul
+
+&notes.bio.bloodline [v( d.dt )]=
+	iter( get( v( d.dd )/bio.clan ), 
+		ansi( 
+			h, %i0, 
+			n, :%b, 
+			n, edit( get( v( d.dd )/d.bloodline.%i0 ), ., %,%b )
+		), 
+		. , | 
+	)
+
+
+
+
+/*
+================================================================================
+== BLOODLINES: DAEVA ===========================================================
+*/
+
+&d.bloodline.daeva [v( d.dd )]=Blood Brothers.Nelapsi.Septimi
+
+@fo me=&BIO.BLOODLINE [v( d.dd )]=
+	[trim( 
+		setunion( 
+			get( v( d.dd )/bio.bloodline ), 
+			get( v( d.dd )/d.bloodline.daeva ) 
+			. 
+		), 
+		b, . 
+	)]
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Blood Brothers (Daeva) ------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.protean=$, .blood brothers
+
+
+&devotion.contort [v( d.dd )]=-
+&prerequisite.devotion.contort [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Blood Brothers ), 
+		u( .at_least, %0, 
+			discipline.protean, 2 
+		)
+	)
+&prereq-text.devotion.contort [v( d.dd )]=
+	Blood Brothers' Bloodline Devotion; 
+	Protean 2
+&tags.devotion.contort [v( d.dt )]=vampire.blood brothers
+&xp.devotion.contort [v( d.xpcd )]=1
+
+
+&devotion.merge [v( d.dd )]=-
+&prerequisite.devotion.merge [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Blood Brothers ), 
+		u( .at_least_all, %0, 
+			discipline.majesty:2 discipline.protean:2 
+		)
+	)
+&prereq-text.devotion.merge [v( d.dd )]=
+	Blood Brothers' Bloodline Devotion; 
+	Majesty 2, Protean 2
+&tags.devotion.merge [v( d.dt )]=vampire.blood brothers
+&xp.devotion.merge [v( d.xpcd )]=2
+
+
+&devotion.octopod [v( d.dd )]=-
+&prerequisite.devotion.contort [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Blood Brothers ), 
+		u( .at_least_all, %0, 
+			discipline.celerity:2 discipline.protean:2 discipline.vigor:2
+		)
+	)
+&prereq-text.devotion.contort [v( d.dd )]=
+	Blood Brothers' Bloodline Devotion; 
+	Celerity 2, Protean 2, Vigor 2
+&tags.devotion.contort [v( d.dt )]=vampire.blood brothers
+&xp.devotion.contort [v( d.xpcd )]=3
+
+
+&devotion.power_up [v( d.dd )]=-
+&prerequisite.devotion.power_up [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Blood Brothers ), 
+		u( .at_least_all, %0, 
+			discipline.celerity:2 discipline.protean:4 discipline.vigor:2
+		)
+	)
+&prereq-text.devotion.power_up [v( d.dd )]=
+	Blood Brothers' Bloodline Devotion; 
+	Celerity 2, Protean 4, Vigor 2
+&tags.devotion.power_up [v( d.dt )]=vampire.blood brothers
+&notes.devotion.power_up [v( d.dt )]=It's Over 9000
+&xp.devotion.power_up [v( d.xpcd )]=4
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Nelapsi (Daeva) -------------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.nightmare=$, .nelapsi
+
+
+&devotion.churchtower_gaze [v( d.dd )]=
+	Presence + Intimidation + Majesty vs. Composure + Blood Potency
+&prerequisite.devotion.churchtower_gaze [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Nelapsi ), 
+		u( .at_least_all, %0, 
+			discipline.majesty:2 discipline.nightmare:2 
+		)
+	)
+&prereq-text.devotion.churchtower_gaze [v( d.dd )]=
+	Nelapsi Bloodline Devotion; 
+	Majesty 2, Nightmare 2
+&tags.devotion.churchtower_gaze [v( d.dt )]=vampire.nelapsi
+&xp.devotion.churchtower_gaze [v( d.xpcd )]=2
+
+
+&devotion.the_hungry_beast [v( d.dd )]=-
+&prerequisite.devotion.the_hungry_beast [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Nelapsi ), 
+		u( .at_least_all, %0, 
+			discipline.celerity:1 discipline.nightmare:1 
+		)
+	)
+&prereq-text.devotion.the_hungry_beast [v( d.dd )]=
+	Nelapsi Bloodline Devotion; 
+	Celerity 1, Nightmare 1
+&tags.devotion.the_hungry_beast [v( d.dt )]=vampire.nelapsi
+&xp.devotion.the_hungry_beast [v( d.xpcd )]=1
+
+
+&devotion.the_heart_of_darkness [v( d.dd )]=-
+&prerequisite.devotion.the_heart_of_darkness [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Nelapsi ), 
+		u( .at_least_all, %0, 
+			discipline.nightmare:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.devotion.the_heart_of_darkness [v( d.dd )]=
+	Nelapsi Bloodline Devotion; 
+	Nightmare 2, Vigor 2
+&tags.devotion.the_heart_of_darkness [v( d.dt )]=vampire.nelapsi
+&xp.devotion.the_heart_of_darkness [v( d.xpcd )]=2
+
+
+&devotion.vitae_store [v( d.dd )]=-
+&prerequisite.devotion.vitae_store [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Nelapsi ), 
+		u( .at_least_all, %0, 
+			discipline.nightmare:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.devotion.vitae_store [v( d.dd )]=
+	Nelapsi Bloodline Devotion; 
+	Nightmare 2, Vigor 2
+&tags.devotion.vitae_store [v( d.dt )]=vampire.nelapsi
+&xp.devotion.vitae_store [v( d.xpcd )]=1
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Septimi (Daeva) -------------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.auspex=$, .septimi
+
+
+&devotion.burning_touch [v( d.dd )]=-
+&prerequisite.devotion.burning_touch [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Septimi ), 
+		u( .at_least_all, %0, 
+			discipline.celerity:3 discipline.vigor:3 
+		)
+	)
+&prereq-text.devotion.burning_touch [v( d.dd )]=
+	Septimi Bloodline Devotion; 
+	Celerity 3, Vigor 3
+&tags.devotion.burning_touch [v( d.dt )]=vampire.septimi
+&xp.devotion.burning_touch [v( d.xpcd )]=3
+
+
+&devotion.divine_vengeance [v( d.dd )]=-
+&prerequisite.devotion.divine_vengeance [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Septimi ), 
+		u( .at_least_all, %0, 
+			discipline.auspex:2 discipline.celerity:2 
+			discipline.majesty:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.devotion.divine_vengeance [v( d.dd )]=
+	Septimi Bloodline Devotion; 
+	Auspex 2, Celerity 2, Majesty 2, Vigor 2
+&tags.devotion.divine_vengeance [v( d.dt )]=vampire.septimi
+&xp.devotion.divine_vengeance [v( d.xpcd )]=4
+
+
+&devotion.exorcism [v( d.dd )]=-
+&prerequisite.devotion.exorcism [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Septimi ), 
+		u( .at_least_all, %0, 
+			discipline.auspex:2 discipline.majesty:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.devotion.exorcism [v( d.dd )]=
+	Septimi Bloodline Devotion; 
+	Auspex 2, Majesty 2, Vigor 2
+&tags.devotion.exorcism [v( d.dt )]=vampire.septimi
+&xp.devotion.exorcism [v( d.xpcd )]=3
+
+
+&devotion.the_light_of_truth [v( d.dd )]=Resolve + Investigation + Auspex
+&prerequisite.devotion.exorcism [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Septimi ), 
+		u( .at_least_all, %0, 
+			discipline.auspex:2 discipline.majesty:2 
+		)
+	)
+&prereq-text.devotion.exorcism [v( d.dd )]=
+	Septimi Bloodline Devotion; 
+	Auspex 2, Majesty 2
+&tags.devotion.exorcism [v( d.dt )]=vampire.septimi
+&xp.devotion.exorcism [v( d.xpcd )]=2
+
+
+
+
+/*
+================================================================================
+== BLOODLINES: GANGREL =========================================================
+*/
+
+&d.bloodline.gangrel [v( d.dd )]=Ahrimanes.Oberlochs.Shepherds
+
+@fo me=&BIO.BLOODLINE [v( d.dd )]=
+	[trim( 
+		setunion( 
+			get( v( d.dd )/bio.bloodline ), 
+			get( v( d.dd )/d.bloodline.gangrel ), 
+			. 
+		), 
+		b, . 
+	)]
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Ahrimanes (Gangrel) ---------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.protean=$, .ahrimanes
+
+&devotion.consume_the_spirit [v( d.dd )]=
+	Strength + Occult + Animalism vs. Power + Resistance
+&prerequisite.devotion.consume_the_spirit [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Ahrimanes ), 
+		u( .at_least_all, %0, 
+			discipline.animalism:4 discipline.resilience:2 
+		)
+	)
+&prereq-text.devotion.consume_the_spirit [v( d.dd )]=
+	Ahrimanes Bloodline Devotion; 
+	Animalism 4, Resilience 2
+&tags.devotion.consume_the_spirit [v( d.dt )]=vampire.ahrimanes
+&xp.devotion.consume_the_spirit [v( d.xpcd )]=3
+
+
+&devotion.rend_the_gauntlet [v( d.dd )]=
+	Resolve + Occult + Animalism
+&prerequisite.devotion.rend_the_gauntlet [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Ahrimanes ), 
+		u( .at_least_all, %0, 
+			discipline.auspex:4 discipline.protean:2 
+		)
+	)
+&prereq-text.devotion.rend_the_gauntlet [v( d.dd )]=
+	Ahrimanes Bloodline Devotion; 
+	Auspex 4, Protean 2
+&tags.devotion.rend_the_gauntlet [v( d.dt )]=vampire.ahrimanes
+&xp.devotion.rend_the_gauntlet [v( d.xpcd )]=3
+
+
+&devotion.spirit_summoning [v( d.dd )]=
+	Presence + Occult + Animalism (vs. Power + Resistance)
+&prerequisite.devotion.spirit_summoning [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Ahrimanes ), 
+		u( .at_least, %0, 
+			discipline.animalism, 4 
+		)
+	)
+&prereq-text.devotion.spirit_summoning [v( d.dd )]=
+	Ahrimanes Bloodline Devotion; 
+	Animalism 4
+&tags.devotion.spirit_summoning [v( d.dt )]=vampire.ahrimanes
+&xp.devotion.spirit_summoning [v( d.xpcd )]=2
+
+
+&devotion.spiritual_aid [v( d.dd )]=
+	Resolve + Occult + Animalism
+&prerequisite.devotion.spiritual_aid [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Ahrimanes ), 
+		u( .at_least_all, %0, 
+			discipline.animalism:2 discipline.auspex:2 
+		)
+	)
+&prereq-text.devotion.spiritual_aid [v( d.dd )]=
+	Ahrimanes Bloodline Devotion; 
+	Animalism 2, Auspex 2
+&tags.devotion.spiritual_aid [v( d.dt )]=vampire.ahrimanes
+&xp.devotion.spiritual_aid [v( d.xpcd )]=2
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Oberlochs (Gangrel) ---------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.dominate=$, .oberlochs
+
+&devotion.beloved_pet [v( d.dd )]=-
+&prerequisite.devotion.beloved_pet [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Oberlochs ), 
+		u( .at_least_all, %0, 
+			discipline.animalism:2 discipline.protean:2 
+		), 
+		u( .has, %0, devotion.undying_familiar )
+	)
+&prereq-text.devotion.beloved_pet [v( d.dd )]=
+	Oberlochs Bloodline Devotion; 
+	Animalism 2, Protean 2, Undying Familiar \[Devotion]
+&tags.devotion.beloved_pet [v( d.dt )]=vampire.oberlochs
+&xp.devotion.beloved_pet [v( d.xpcd )]=2
+
+
+&devotion.immutable_mind [v( d.dd )]=-
+&prerequisite.devotion.immutable_mind [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Oberlochs ), 
+		u( .at_least_all, %0, 
+			discipline.dominate:1 discipline.resilience:1 
+		)
+	)
+&prereq-text.devotion.immutable_mind [v( d.dd )]=
+	Oberlochs Bloodline Devotion; 
+	Dominate 1, Resilience 1
+&tags.devotion.immutable_mind [v( d.dt )]=vampire.oberlochs
+&xp.devotion.immutable_mind [v( d.xpcd )]=1
+
+
+&devotion.indomitable_aura [v( d.dd )]=
+	Presence + Intimidation + Dominate vs. highest Composure + Blood Potency
+&prerequisite.devotion.indomitable_aura [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Oberlochs ), 
+		u( .at_least_all, %0, 
+			discipline.dominate:3 discipline.resilience:3 
+		)
+	)
+&prereq-text.devotion.indomitable_aura [v( d.dd )]=
+	Oberlochs Bloodline Devotion; 
+	Dominate 3, Resilience 3
+&tags.devotion.indomitable_aura [v( d.dt )]=vampire.oberlochs
+&xp.devotion.indomitable_aura [v( d.xpcd )]=3
+
+
+&devotion.man_to_beast [v( d.dd )]=
+	Wits + Expression + Animalism – subject's Resolve
+&prerequisite.devotion.man_to_beast [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Oberlochs ), 
+		u( .at_least_all, %0, 
+			discipline.animalism:3 discipline.dominate:3 discipline.protean:3 
+		)
+	)
+&prereq-text.devotion.man_to_beast [v( d.dd )]=
+	Oberlochs Bloodline Devotion; 
+	Animalism 3, Dominate 3, Protean 3
+&tags.devotion.man_to_beast [v( d.dt )]=vampire.oberlochs
+&xp.devotion.man_to_beast [v( d.xpcd )]=4
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Shepherds (Gangrel) ---------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.obfuscate=$, .shepherds
+
+&devotion.circle_the_wagons [v( d.dd )]=-
+&prerequisite.devotion.circle_the_wagons [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Shepherds ), 
+		u( .at_least_all, %0, 
+			discipline.animalism:3 discipline.resilience:3 
+		)
+	)
+&prereq-text.devotion.circle_the_wagons [v( d.dd )]=
+	Shepherds Bloodline Devotion; 
+	Animalism 3, Resilience 3
+&tags.devotion.circle_the_wagons [v( d.dt )]=vampire.shepherds
+&xp.devotion.circle_the_wagons [v( d.xpcd )]=3
+
+
+&devotion.the_herd's_measure [v( d.dd )]=
+	Wits + Empathy + Animalism
+&prerequisite.devotion.the_herd's_measure [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Shepherds ), 
+		u( .at_least, %0, 
+			discipline.animalism, 2 
+		)
+	)
+&prereq-text.devotion.the_herd's_measure [v( d.dd )]=
+	Shepherds Bloodline Devotion; 
+	Animalism 2
+&tags.devotion.the_herd's_measure [v( d.dt )]=vampire.shepherds
+&xp.devotion.the_herd's_measure [v( d.xpcd )]=1
+
+
+&devotion.the_sacrificial_lamb [v( d.dd )]=
+	Stamina + Occult + Animalism – subject's Resolve
+&prerequisite.devotion.the_sacrificial_lamb [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Shepherds ), 
+		u( .at_least_all, %0, 
+			discipline.animalism:2 discipline.protean:2 discipline.resilience:2 
+		)
+	)
+&prereq-text.devotion.the_sacrificial_lamb [v( d.dd )]=
+	Shepherds Bloodline Devotion; 
+	Animalism 2, Protean 2, Resilience 2
+&tags.devotion.the_sacrificial_lamb [v( d.dt )]=vampire.shepherds
+&xp.devotion.the_sacrificial_lamb [v( d.xpcd )]=3
+
+
+&devotion.sheep's_clothing [v( d.dd )]=
+	Wits + Empathy + Obfuscate
+&prerequisite.devotion.the_sacrificial_lamb [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Shepherds ), 
+		u( .at_least_all, %0, 
+			discipline.obfuscate:2 discipline.protean:2 
+		)
+	)
+&prereq-text.devotion.the_sacrificial_lamb [v( d.dd )]=
+	Shepherds Bloodline Devotion; 
+	Obfuscate 2, Protean 2
+&tags.devotion.the_sacrificial_lamb [v( d.dt )]=vampire.shepherds
+&xp.devotion.the_sacrificial_lamb [v( d.xpcd )]=2
+
+
+
+
+/*
+================================================================================
+== BLOODLINES: MEKHET ==========================================================
+*/
+
+&d.bloodline.mekhet [v( d.dd )]=Alucinor.Khaibit.Sta-Au
+
+@fo me=&BIO.BLOODLINE [v( d.dd )]=
+	[trim( 
+		setunion( 
+			get( v( d.dd )/bio.bloodline ), 
+			get( v( d.dd )/d.bloodline.mekhet ), 
+			. 
+		), 
+		b, . 
+	)]
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Alucinor (Mekhet) -----------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.nightmare=$, .alucinor
+
+&devotion.blissful_sleep [v( d.dd )]=
+	Manipulation + Persuasion + Nightmare vs Composure + Blood Potency
+&prerequisite.devotion.blissful_sleep [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Alucinor ), 
+		u( .at_least_all, %0, 
+			discipline.auspex:2 discipline.nightmare:2 
+		)
+	)
+&prereq-text.devotion.blissful_sleep [v( d.dd )]=
+	Alucinor Bloodline Devotion; 
+	Auspex 2, Nightmare 2
+&tags.devotion.blissful_sleep [v( d.dt )]=vampire.alucinor
+&xp.devotion.blissful_sleep [v( d.xpcd )]=2
+
+
+&devotion.dream-bending [v( d.dd )]=
+	Presence + Intimidation + Nightmare
+&prerequisite.devotion.dream-bending [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Alucinor ), 
+		u( .at_least_all, %0, 
+			discipline.nightmare:2 discipline.obfuscate:2 
+		)
+	)
+&prereq-text.devotion.dream-bending [v( d.dd )]=
+	Alucinor Bloodline Devotion; 
+	Nightmare 2, Obfuscate 2
+&tags.devotion.dream-bending [v( d.dt )]=vampire.alucinor
+&xp.devotion.dream-bending [v( d.xpcd )]=2
+
+
+&devotion.imprint [v( d.dd )]=
+	Presence + Persuasion + Nightmare vs Composure + Blood Potency
+&prerequisite.devotion.imprint [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Alucinor ), 
+		u( .at_least_all, %0, 
+			discipline.auspex:4 discipline.nightmare:2 
+		)
+	)
+&prereq-text.devotion.imprint [v( d.dd )]=
+	Alucinor Bloodline Devotion; 
+	Auspex 4, Nightmare 2
+&tags.devotion.imprint [v( d.dt )]=vampire.alucinor
+&xp.devotion.imprint [v( d.xpcd )]=3
+
+
+&devotion.morpheus'_oubliette [v( d.dd )]=
+	Intelligence + Empathy + Obfuscate vs. Composure + Blood Potency
+&prerequisite.devotion.devotion.morpheus'_oubliette [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, Alucinor ), 
+		u( .at_least_all, %0, 
+			discipline.nightmare:3 discipline.obfuscate:5 
+		)
+	)
+&prereq-text.devotion.devotion.morpheus'_oubliette [v( d.dd )]=
+	Alucinor Bloodline Devotion; 
+	Nightmare 3, Obfuscate 5
+&tags.devotion.devotion.morpheus'_oubliette [v( d.dt )]=vampire.alucinor
+&xp.devotion.devotion.morpheus'_oubliette [v( d.xpcd )]=4
+
+
+ 
+/*
+--------------------------------------------------------------------------------
+-- Khaibit (Mekhet) ------------------------------------------------------------
+
+--> http://theonyxpath.com/the-shadow-and-the-asp/
+
+All Khaibit gain the first Devotion, the Udjat, upon joining the bloodline. 
+Additional Devotions have prerequisites as normal, and cost 2 Experiences each. 
+For those that have never seen Obtenebration, it can inspire deep, instinctive 
+fear. The first time a character experiences a clear manifestation of 
+Obtenebration, he must succeed at a Resolve + Composure roll or suffer the 
+Shaken Condition.
+
+*/
+
+@edit v( d.dt )/tags.discipline.nightmare=$, .khaibit
+
+&devotion.udjat [v( d.dd )]=-
+&prerequisite.devotion.udjat [v( d.dd )]=
+	u( .is, %0, bio.bloodline, khaibit )
+&prereq-text.devotion.udjat [v( d.dd )]=
+	Khaibit Bloodline Devotion
+&tags.devotion.udjat [v( d.dt )]=vampire.khaibit
+&notes.devotion.udjat [v( d.dt )]=
+	Gained for free upon joining the Khaibit|
+	The first time a character experiences a clear manifestation of 
+	Obtenebration, he must succeed at a Resolve + Composure roll or suffer the 
+	Shaken Condition
+&xp.devotion.udjat [v( d.xpcd )]=0
+
+
+&devotion.tyet [v( d.dd )]=-
+&prerequisite.devotion.tyet [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, khaibit ), 
+		u( .at_least, %0, 
+			discipline.vigor, 2 
+		)
+	)
+&prereq-text.devotion.tyet [v( d.dd )]=
+	Khaibit Bloodline Devotion; 
+	Vigor 2
+&tags.devotion.tyet [v( d.dt )]=vampire.khaibit
+&notes.devotion.tyet [v( d.dt )]=
+	The first time a character experiences a clear manifestation of 
+	Obtenebration, he must succeed at a Resolve + Composure roll or suffer the 
+	Shaken Condition
+&xp.devotion.tyet [v( d.xpcd )]=2
+
+
+&devotion.pseshkf [v( d.dd )]=-
+&prerequisite.devotion.pseshkf [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, khaibit ), 
+		u( .at_least, %0, 
+			discipline.vigor, 2 
+		)
+	)
+&prereq-text.devotion.pseshkf [v( d.dd )]=
+	Khaibit Bloodline Devotion; 
+	Vigor 2
+&tags.devotion.pseshkf [v( d.dt )]=vampire.khaibit
+&notes.devotion.pseshkf [v( d.dt )]=
+	The first time a character experiences a clear manifestation of 
+	Obtenebration, he must succeed at a Resolve + Composure roll or suffer the 
+	Shaken Condition
+&xp.devotion.pseshkf [v( d.xpcd )]=2
+
+
+&devotion.ba [v( d.dd )]=-
+&prerequisite.devotion.ba [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, khaibit ), 
+		u( .at_least, %0, 
+			discipline.obfuscate, 2 
+		)
+	)
+&prereq-text.devotion.ba [v( d.dd )]=
+	Khaibit Bloodline Devotion; 
+	Obfuscate 2
+&tags.devotion.ba [v( d.dt )]=vampire.khaibit
+&notes.devotion.ba [v( d.dt )]=
+	The first time a character experiences a clear manifestation of 
+	Obtenebration, he must succeed at a Resolve + Composure roll or suffer the 
+	Shaken Condition
+&xp.devotion.ba [v( d.xpcd )]=2
+
+
+&devotion.iteru [v( d.dd )]=-
+&prerequisite.devotion.biterua [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, khaibit ), 
+		u( .at_least, %0, 
+			discipline.celerity, 2 
+		)
+	)
+&prereq-text.devotion.iteru [v( d.dd )]=
+	Khaibit Bloodline Devotion; 
+	Celerity 2
+&tags.devotion.iteru [v( d.dt )]=vampire.khaibit
+&notes.devotion.iteru [v( d.dt )]=
+	The first time a character experiences a clear manifestation of 
+	Obtenebration, he must succeed at a Resolve + Composure roll or suffer the 
+	Shaken Condition
+&xp.devotion.iteru [v( d.xpcd )]=2
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Sta-Au (Mekhet) -------------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.protean=$, .sta-au
+
+&devotion.blink [v( d.dd )]=-
+&prerequisite.devotion.blink [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, sta-au ), 
+		u( .at_least_all, %0, 
+			discipline.celerity:3 discipline.protean:3 
+		)
+	)
+&prereq-text.devotion.blink [v( d.dd )]=
+	Sta-Au Bloodline Devotion; 
+	Celerity 3, Protean 3
+&tags.devotion.blink [v( d.dt )]=vampire.sta-au
+&xp.devotion.blink [v( d.xpcd )]=3
+
+
+&devotion.dead_traces [v( d.dd )]=-
+&prerequisite.devotion.dead_traces [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, sta-au ), 
+		u( .at_least, %0, 
+			discipline.auspex, 2 
+		)
+	)
+&prereq-text.devotion.dead_traces [v( d.dd )]=
+	Sta-Au Bloodline Devotion; 
+	Auspex 2
+&tags.devotion.dead_traces [v( d.dt )]=vampire.sta-au
+&xp.devotion.dead_traces [v( d.xpcd )]=1
+
+
+&devotion.the_familiar_dead [v( d.dd )]=-
+&prerequisite.devotion.the_familiar_dead [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, sta-au ), 
+		u( .at_least, %0, 
+			discipline.obfuscate, 4 
+		)
+	)
+&prereq-text.devotion.the_familiar_dead [v( d.dd )]=
+	Sta-Au Bloodline Devotion; 
+	Obfuscate 4
+&tags.devotion.the_familiar_dead [v( d.dt )]=vampire.sta-au
+&xp.devotion.the_familiar_dead [v( d.xpcd )]=2
+
+
+&devotion.ghost_form [v( d.dd )]=-
+&prerequisite.devotion.ghost_form [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.bloodline, sta-au ), 
+		u( .at_least_all, %0, 
+			discipline.obfuscate:3 discipline.protean:5
+		)
+	)
+&prereq-text.devotion.ghost_form [v( d.dd )]=
+	Sta-Au Bloodline Devotion; 
+	Obfuscate 4, Protean 5
+&tags.devotion.ghost_form [v( d.dt )]=vampire.sta-au
+&xp.devotion.ghost_form [v( d.xpcd )]=4
+
+
+
+
+/*
+================================================================================
+== BLOODLINES: NOSFERATU =======================================================
+*/
+
+&d.bloodline.nosferatu [v( d.dd )]=Adroanzi.Azerkatil.Galloi
+
+@fo me=&BIO.BLOODLINE [v( d.dd )]=
+	[trim( 
+		setunion( 
+			get( v( d.dd )/bio.bloodline ), 
+			get( v( d.dd )/d.bloodline.nosferatu ), 
+			. 
+		), 
+		b, . 
+	)]
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Adroanzi (Nosferatu) --------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.animalism=$, .adroanzi
+
+
+&devotion.jubokko [v( d.dd )]=- 
+&prerequisite.devotion.jubokko [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Adroanzi ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:3 discipline.nightmare:3 
+		)
+	)
+&prereq-text.jubokko [v( d.dd )]=
+	Adroanzi Bloodline Devotion; 
+	Animalism 3, Nightmare 3
+&tags.devotion.jubokko [v( d.dt )]=vampire.adroanzi
+&xp.devotion.jubokko [v( d.xpcd )]=3
+
+
+&devotion.silent_passage [v( d.dd )]=- 
+&prerequisite.devotion.silent_passage  [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Adroanzi ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:1 discipline.obfuscare:1 
+		)
+	)
+&prereq-text.silent_passage  [v( d.dd )]=
+	Adroanzi Bloodline Devotion; 
+	Animalism 1, Ofuscate 1
+&tags.devotion.silent_passage  [v( d.dt )]=vampire.adroanzi
+&xp.devotion.silent_passage [v( d.xpcd )]=1
+
+
+&devotion.synergy [v( d.dd )]=- 
+&prerequisite.devotion.synergy  [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Adroanzi ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.synergy  [v( d.dd )]=
+	Adroanzi Bloodline Devotion; 
+	Animalism 2, Vigor 2
+&tags.devotion.synergy  [v( d.dt )]=vampire.adroanzi
+&xp.devotion.synergy [v( d.xpcd )]=2
+
+
+&devotion.synergy [v( d.dd )]=- 
+&prerequisite.devotion.synergy  [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Adroanzi ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:4 discipline.vigor:4 
+		)
+	)
+&prereq-text.synergy  [v( d.dd )]=
+	Adroanzi Bloodline Devotion; 
+	Animalism 4, Vigor 4
+&tags.devotion.synergy  [v( d.dt )]=vampire.adroanzi
+&xp.devotion.synergy [v( d.xpcd )]=4
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Azerkatil (Nosferatu) -------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.celerity=$, .azerkatil
+
+
+&devotion.cauldron_of_blood [v( d.dd )]=
+	Resolve + Occult + Vigor vs. Stamina + Blood Potency
+&prerequisite.devotion.cauldron_of_blood [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Azerkatil ),    
+		u( .at_least_all, %0, 
+			discipline.celerity:3 discipline.nightmare:2 discipline.vigor:3 
+		)
+	)
+&prereq-text.cauldron_of_blood [v( d.dd )]=
+	Azerkatil Bloodline Devotion; 
+	Celerity 3, Nightmare 2, Vigor 3
+&tags.devotion.cauldron_of_blood [v( d.dt )]=vampire.azerkatil
+&xp.devotion.cauldron_of_blood [v( d.xpcd )]=4
+
+
+&devotion.dragon's_fire [v( d.dd )]=-
+&prerequisite.devotion.dragon's_fire [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Azerkatil ),    
+		u( .at_least_all, %0, 
+			discipline.celerity:2 discipline.nightmare:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.dragon's_fire [v( d.dd )]=
+	Azerkatil Bloodline Devotion; 
+	Celerity 2, Nightmare 2, Vigor 2
+&tags.devotion.dragon's_fire [v( d.dt )]=vampire.azerkatil
+&xp.devotion.dragon's_fire [v( d.xpcd )]=3
+
+
+&devotion.serene_ferocity [v( d.dd )]=- 
+&prerequisite.devotion.serene_ferocity [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Azerkatil ),    
+		u( .at_least_all, %0, 
+			discipline.celerity:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.serene_ferocity [v( d.dd )]=
+	Azerkatil Bloodline Devotion; 
+	Celerity 2, Vigor 2
+&tags.devotion.serene_ferocity [v( d.dt )]=vampire.azerkatil
+&xp.devotion.serene_ferocity [v( d.xpcd )]=2
+
+
+&devotion.will_against_the_worm [v( d.dd )]=- 
+&prerequisite.devotion.will_against_the_worm [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Azerkatil ),    
+		u( .at_least_all, %0, 
+			discipline.nightmare:1 discipline.obfuscate:1 
+		)
+	)
+&prereq-text.will_against_the_worm [v( d.dd )]=
+	Azerkatil Bloodline Devotion; 
+	Nightmare 1, Obfuscate 1
+&tags.devotion.will_against_the_worm [v( d.dt )]=vampire.azerkatil
+&xp.devotion.will_against_the_worm [v( d.xpcd )]=1
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Galloi (Nosferatu) ----------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.majesty=$, .galloi
+
+
+&devotion.blessing_of_the_magna_mater [v( d.dd )]=- 
+&prerequisite.devotion.blessing_of_the_magna_mater [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Galloi ),    
+		u( .at_least_all, %0, 
+			discipline.majesty:1 discipline.obfuscate:1 
+		)  
+	)
+&prereq-text.blessing_of_the_magna_mater [v( d.dd )]=
+	Galloi Bloodline Devotion; 
+	Majesty 1, Obfuscate 1
+&tags.devotion.blessing_of_the_magna_mater [v( d.dt )]=vampire.galloi
+&xp.devotion.blessing_of_the_magna_mater [v( d.xpcd )]=1
+
+
+&devotion.direction_of_the_magnus_pater [v( d.dd )]=- 
+&prerequisite.devotion.direction_of_the_magnus_pater [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Galloi ),    
+		u( .at_least_all, %0, 
+			discipline.majesty:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.direction_of_the_magnus_pater [v( d.dd )]=
+	Galloi Bloodline Devotion; 
+	Majesty 2, Vigor 2
+&tags.devotion.direction_of_the_magnus_pater [v( d.dt )]=vampire.galloi
+&xp.devotion.direction_of_the_magnus_pater [v( d.xpcd )]=2
+
+
+&devotion.enliven_the_flesh [v( d.dd )]=
+	Stamina + Occult + Majesty
+&prerequisite.devotion.enliven_the_flesh [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Galloi ),    
+		u( .at_least_all, %0, 
+			discipline.majesty:2 discipline.nightmare:2 discipline.obfuscate:2 
+		)
+	)
+&prereq-text.enliven_the_flesh [v( d.dd )]=
+	Galloi Bloodline Devotion; 
+	Majesty 2, Nightmare 2, Obfuscate 2
+&tags.devotion.enliven_the_flesh [v( d.dt )]=vampire.galloi
+&xp.devotion.enliven_the_flesh [v( d.xpcd )]=3
+
+
+&devotion.the_greatest_lie [v( d.dd )]=
+	Majesty + Obfuscate + Vigor
+&prerequisite.devotion.the_greatest_lie [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Galloi ),    
+		u( .at_least_all, %0, 
+			discipline.majesty:2 discipline.obfuscate:4 discipline.vigor:2 
+		)
+	)
+&prereq-text.the_greatest_lie [v( d.dd )]=
+	Galloi Bloodline Devotion; 
+	Majesty 2, Obfuscate 4, Vigor 2
+&tags.devotion.the_greatest_lie [v( d.dt )]=vampire.galloi
+&xp.devotion.the_greatest_lie [v( d.xpcd )]=4
+
+
+
+
+/*
+================================================================================
+== BLOODLINES: VENTRUE =========================================================
+*/
+
+&d.bloodline.ventrue [v( d.dd )]=Dragolescu.Icarians.Myrmex
+
+@fo me=&BIO.BLOODLINE [v( d.dd )]=
+	[trim( 
+		setunion( 
+			get( v( d.dd )/bio.bloodline ), 
+			get( v( d.dd )/d.bloodline.ventrue ), 
+			. 
+		), 
+		b, . 
+	)]
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Dragolescu (Ventrue) --------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.auspex=$, .dragolescu
+
+
+&devotion.bargain_with_the_air [v( d.dd )]=-
+&prerequisite.devotion.bargain_with_the_air [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Dragolescu ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:2 discipline.auspex:2 
+		)
+	)
+&prereq-text.bargain_with_the_air [v( d.dd )]=
+	Dragolescu Bloodline Devotion; 
+	Animalism 2, Auspex 2
+&tags.devotion.bargain_with_the_air [v( d.dt )]=vampire.dragolescu
+&xp.devotion.bargain_with_the_air [v( d.xpcd )]=2
+
+
+&devotion.manifest_the_avatar [v( d.dd )]=-
+&prerequisite.devotion.manifest_the_avatar [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Dragolescu ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:5 discipline.resilience:3 
+		)
+	)
+&prereq-text.manifest_the_avatar [v( d.dd )]=
+	Dragolescu Bloodline Devotion; 
+	Animalism 5, Resilience 3
+&tags.devotion.manifest_the_avatar [v( d.dt )]=vampire.dragolescu
+&xp.devotion.manifest_the_avatar [v( d.xpcd )]=4
+
+
+&devotion.steal_the_spirit [v( d.dd )]=
+	Intelligence + Occult _ Dominate - Resistance
+&prerequisite.devotion.steal_the_spirit [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Dragolescu ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:2 discipline.auspex:2 discipline.dominate:2 
+		)
+	)
+&prereq-text.steal_the_spirit [v( d.dd )]=
+	Dragolescu Bloodline Devotion; 
+	Animalism 2,Auspex 2, Dominate 2
+&tags.devotion.steal_the_spirit [v( d.dt )]=vampire.dragolescu
+&xp.devotion.steal_the_spirit [v( d.xpcd )]=3
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Icarians (Ventrue) ----------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.vigor=$, .icarians
+
+
+&devotion.fear_denies_faith [v( d.dd )]=-
+&prerequisite.devotion.fear_denies_faith [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Icarians ), 
+		cand( 
+			u( .has, %0, disicpline.animalism ), 
+			u( .has_one_of, %0, discipline.​resilience discipline.​vigor )
+		)
+	)
+&prereq-text.devotion.fear_denies_faith [v( d.dd )]=
+	Icarians Bloodline Devotion; 
+	Animalism 1, and one of Resilience 1 or Vigor 1
+&tags.devotion.fear_denies_faith [v( d.dt )]=vampire.icarians
+&xp.devotion.fear_denies_faith [v( d.xpcd )]=1
+
+
+&devotion.pain_cleanses_the_body [v( d.dd )]=
+	Stamina + Athletics + Vigor
+&prerequisite.devotion.pain_cleanses_the_body [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Icarians ),    
+		u( .at_least_all, %0, 
+			discipline.resilience:3 discipline.vigor:3 
+		)
+	)
+&prereq-text.devotion.pain_cleanses_the_body [v( d.dd )]=
+	Icarians Bloodline Devotion; 
+	Resilience 3, Vigor 3
+&tags.devotion.pain_cleanses_the_body [v( d.dt )]=vampire.icarians
+&xp.devotion.pain_cleanses_the_body [v( d.xpcd )]=3
+
+
+&devotion.purge_the_unclean [v( d.dd )]=-
+&prerequisite.devotion.purge_the_unclean [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Icarians ),    
+		u( .at_least_all, %0, 
+			discipline.dominate:2 discipline.vigor:2 
+		)
+	)
+&prereq-text.devotion.purge_the_unclean [v( d.dd )]=
+	Icarians Bloodline Devotion; 
+	Dominate 2, Vigor 2
+&tags.devotion.purge_the_unclean [v( d.dt )]=vampire.icarians
+&xp.devotion.purge_the_unclean [v( d.xpcd )]=2
+
+
+&devotion.work_earns_salvation [v( d.dd )]=
+	Intelligence + Empathy + Dominate - Target's Resolve
+&prerequisite.devotion.work_earns_salvation [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Icarians ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:2 discipline.dominate:2 
+		)
+	)
+&prereq-text.devotion.work_earns_salvation [v( d.dd )]=
+	Icarians Bloodline Devotion; 
+	Animalism 2, Dominate 2
+&tags.devotion.work_earns_salvation [v( d.dt )]=vampire.icarians
+&xp.devotion.work_earns_salvation [v( d.xpcd )]=2
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Myrmex (Ventrue) ------------------------------------------------------------
+*/
+
+@edit v( d.dt )/tags.discipline.majesty=$, .myrmex
+
+
+&devotion.colony_mind [v( d.dd )]=-
+&prerequisite.devotion.colony_mind [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Myrmex ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:4 discipline.dominate:4 
+		)
+	)
+&prereq-text.devotion.colony_mind [v( d.dd )]=
+	Myrmex Bloodline Devotion; 
+	Animalism 4, Dominate 4
+&tags.devotion.colony_mind [v( d.dt )]=vampire.myrmex
+&xp.devotion.colony_mind [v( d.xpcd )]=4
+
+
+&devotion.inculcation [v( d.dd )]=
+	Presence + Empathy + Majesty vs. Composure + Blood Potency
+&prerequisite.devotion.inculcation [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Myrmex ),    
+		u( .at_least_all, %0, 
+			discipline.dominate:3 discipline.majesty:3 
+		)
+	)
+&prereq-text.devotion.inculcation [v( d.dd )]=
+	Myrmex Bloodline Devotion; 
+	Dominate 3, Majesty 3 
+&tags.devotion.inculcation [v( d.dt )]=vampire.myrmex
+&xp.devotion.inculcation [v( d.xpcd )]=3
+
+
+&devotion.royal_jelly [v( d.dd )]=-
+&prerequisite.devotion.royal_jelly [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Myrmex ),    
+		u( .at_least_all, %0, 
+			discipline.dominate:1 discipline.resilience:1 
+		)
+	)
+&prereq-text.devotion.royal_jelly [v( d.dd )]=
+	Myrmex Bloodline Devotion; 
+	Dominate 1, Resilience 1
+&tags.devotion.royal_jelly [v( d.dt )]=vampire.myrmex
+&xp.devotion.royal_jelly [v( d.xpcd )]=1
+
+
+&devotion.workers'_compensation [v( d.dd )]=-
+&prerequisite.devotion.workers'_compensation [v( d.dd )]=
+	cand(
+		u( .is, %0, bio.bloodline, Myrmex ),    
+		u( .at_least_all, %0, 
+			discipline.animalism:2 discipline.dominate:1 discipline.majesty:1 
+		)
+	)
+&prereq-text.devotion.workers'_compensation [v( d.dd )]=
+	Myrmex Bloodline Devotion; 
+	Animalism 2, Dominate 1, Majesty 1
+&tags.devotion.colony_mind [v( d.dt )]=vampire.myrmex
+&xp.devotion.colony_mind [v( d.xpcd )]=2
