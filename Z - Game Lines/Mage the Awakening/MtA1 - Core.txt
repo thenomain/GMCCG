@@ -3183,6 +3183,22 @@ currently:
 	)
 
 
+
+&f.allocated.arcana [v( d.cg )]=
+	strcat( 
+		setq( a, lcstr( sort( edit( lattr( %0/_arcanum.* ), _ARCANUM., )))), 
+		setq( r, setinter( u( .mage_path_arcana, %0, ruling ), %qa )), 
+		setq( c, setinter( u( .mage_path_arcana, %0, common ), %qa )), 
+		setq( i, setinter( u( .mage_path_arcana, %0, inferior ), %qa )), 
+		#ruling, %b, 
+		iter( %qr, %i0:[get( %0/_arcanum.%i0 )]), `, 
+		#common, %b, 
+		iter( %qc, %i0:[get( %0/_arcanum.%i0 )]), `, 
+		#inferior, %b, 
+		iter( %qi, %i0:[get( %0/_arcanum.%i0 )] )
+	)
+
+
 // mages may have 6 dots in arcana
 
 &check.arcanum.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 6 ))
