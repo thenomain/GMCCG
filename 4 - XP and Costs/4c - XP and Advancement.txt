@@ -1065,7 +1065,7 @@ Valid award:
 	}; 
 
 	@assert isint( %qa )={ 
-		@pemit %#=u( .msg, xp/award, Award must be an integer )
+		@pemit %#=u( .msg, xp/award, %qa )
 	}; 
 
 	@assert strlen( %qr )={ 
