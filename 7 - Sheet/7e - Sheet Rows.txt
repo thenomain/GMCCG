@@ -1,7 +1,7 @@
 
 @create Sheet: Rows
-@set Sheet: Rows=inherit safe
-@fo me=@parent Sheet: Rows=[v( d.nsc )]
+@set [v( d.sheet )]=inherit safe
+@fo me=@parent [v( d.sheet )]=[v( d.nsc )]
 
 /* 
 -=-=-=-=-=-=
@@ -25,7 +25,7 @@ think u( v( d.nsc )/bio.default, %# )
 --=-=-=-==-
 */
 
-&block.bio Sheet: Rows=
+&block.bio [v( d.sheet )]=
 	strcat( 
 		setq( o, ulocal( bio.default, %0, %1 )), 
 		setq( w, 39 ), 
@@ -48,7 +48,7 @@ think u( v( d.nsc )/bio.default, %# )
 
 // --
 
-think u( sheet: rows/block.bio, %#, get( %#/_bio.template ))
+think u( v( d.sheet )/block.bio, %#, get( %#/_bio.template ))
 
 
 /*
@@ -181,7 +181,7 @@ display the trait name only; takes in the same inputs as above
 -==--=-=-=-=-=-==--=-=-=-=-=-=-=-=-=-=-=-==--=-=-=-=-=-=--=-=-=-=-==--=--=-=-=-=
 */
 
-&block.attributes sheet: rows=
+&block.attributes [v( d.sheet )]=
 	strcat( 
 		setq( w, 26 ), 
 		setq( t, 17 ), 
@@ -215,7 +215,7 @@ display the trait name only; takes in the same inputs as above
 
 // --
 
-think u( sheet: rows/block.attributes, %# )
+think u( v( d.sheet )/block.attributes, %# )
 
 // =--=-=-=-=-=-=-=
 
@@ -223,7 +223,7 @@ think u( sheet: rows/block.attributes, %# )
 
 // -==--=-=-=-==-=-=-
 
-&block.skills sheet: rows=
+&block.skills [v( d.sheet )]=
 	strcat( 
 		setq( w, 26 ), 
 		setq( t, 17 ), 
@@ -257,7 +257,7 @@ think u( sheet: rows/block.attributes, %# )
 
 // --
 
-think u( sheet: rows/block.skills, %# )
+think u( v( d.sheet )/block.skills, %# )
 
 
 /*
@@ -283,7 +283,7 @@ think u( v( d.nsc )/display.value.pool, 4.-2, 5.-1)
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-&block.traits sheet: rows=
+&block.traits [v( d.sheet )]=
 	strcat( 
 		setq( w, 38 ), 
 		setq( t, 10 ), 
@@ -322,17 +322,17 @@ think u( v( d.nsc )/display.value.pool, 4.-2, 5.-1)
 &_ADVANTAGE.WILLPOWER me=derived
 &_ADVANTAGE.WILLPOWER_MAXIMUM me=derived
 
-think u( sheet: rows/block.traits, %# )
+think u( v( d.sheet )/block.traits, %# )
 
 &_ADVANTAGE.WILLPOWER me=derived.-2
 &_ADVANTAGE.WILLPOWER_MAXIMUM me=derived.-1
 
-think u( sheet: rows/block.traits, %# )
+think u( v( d.sheet )/block.traits, %# )
 
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-&block.merits sheet: rows=
+&block.merits [v( d.sheet )]=
 	strcat( 
 		setq( w, 79 ), 
 		setq( t, 70 ), 
@@ -353,13 +353,13 @@ think u( sheet: rows/block.traits, %# )
 
 // --
 
-think u( sheet: rows/block.merits, %# )
+think u( v( d.sheet )/block.merits, %# )
 
 
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 
-&block.advantages sheet: rows=
+&block.advantages [v( d.sheet )]=
 	strcat( 
 		setq( w, 26 ), 
 		setq( t, 17 ), 
@@ -380,7 +380,7 @@ think u( sheet: rows/block.merits, %# )
 
 // --
 
-think u( sheet: rows/block.advantages, %# )
+think u( v( d.sheet )/block.advantages, %# )
 
 // -=-=-=-=-=-==-=--=-=-=-=-=-=
 
@@ -392,7 +392,7 @@ think u( sheet: rows/block.advantages, %# )
 
 // -==--=-=-=-=-=-=-=-=-=-=-=-=-
 
-&block.health sheet: rows=
+&block.health [v( d.sheet )]=
 	strcat( 
 		setq( w, 80 ), 
 		setq( t, 7 ), 
@@ -418,7 +418,7 @@ think u( sheet: rows/block.advantages, %# )
 
 // --
 
-think u( sheet: rows/block.health, %# )
+think u( v( d.sheet )/block.health, %# )
 
 
 /*
@@ -432,7 +432,7 @@ FINAL SHEET:
 
 */
 
-&display.sheet sheet: rows=
+&display.sheet [v( d.sheet )]=
 	strcat( 
 		header( 
 			cat( 
@@ -454,7 +454,7 @@ FINAL SHEET:
 
 // --
 
-think u( sheet: rows/display.sheet, %#, %#, get( %#/_bio.template ))
+think u( v( d.sheet )/display.sheet, %#, %#, get( %#/_bio.template ))
 
 // =--=-==--==-=-=--==-=-
 
