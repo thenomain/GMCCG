@@ -101,11 +101,10 @@ foreach (dmg-done): if (dmg-type < min-dmg) then (push 1 pt) else (wrap 1 pt)
 */
 
 @create WoD Health System <whs>
+@fo me=&d.whs me=search( name=WoD Health System <whs> )
 @set WoD Health System <whs>=inherit safe
 
-@fo me=&d.whs me=search( name=WoD Health System <whs> )
-
-@parent WoD Health System <whs>=codp
+@fo me=@parent WoD Health System <whs>=[v( d.codp )]
 
 
 /*
