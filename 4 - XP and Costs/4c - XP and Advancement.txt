@@ -66,6 +66,11 @@ COMMANDS:
 
 	xp/check [<name>] : what traits still have xp timers on them?
 
+** Anywhere that <amt> is, you can use 'exp' 'xp' or 'beats' to be explicit. **
+e.g.:
+	xp/award Bob=40 exp for Starting XP
+	xp/deduct Bob=8 beats for Shady Dealings
+
 
 
 
@@ -1022,13 +1027,26 @@ Valid award:
 //	@pemit %#=
 	think 
 	strcat( 
-		name (w/type):, setr( n, first( %1, = )), %r, 
-		type:, 
+		name (w/type):, %b, setr( n, first( %1, = )), %r, 
+		type:, %b, 
 		setr( t, if( t( setr( t, trim( rest( %qn, / )))), %qt, normal )), %r, 
-		name:, setr( n, trim( first( %qn, / ))), %r, 
-		amt (w/reason):, setr( a, rest( %1, = )), %r, 
-		reason:, setr( r, trim( rest( %qa, %bfor%b ))), %r, 
-		amt:, setr( a, trim( first( %qa, %bfor%b )))
+		name:, %b, setr( n, trim( first( %qn, / ))), %r, 
+		amt (w/reason):, %b, setr( a, rest( %1, = )), %r, 
+		reason:, %b, setr( r, trim( rest( %qa, %bfor%b ))), %r, 
+
+// converts '4 exp' -> '20', leaves 'beat' or blank as beats
+		value:, %b, setr( a, trim( first( %qa, %bfor%b ))), %r, 
+
+ 		value in beats:, %b, 
+ 		setr( a, 
+ 			switch( rest( %qa ), 
+ 				b*, first( %qa ), 
+ 				x*, mul( first( %qa ), v( d.beat-to-exp )), 
+ 				ex*, mul( first( %qa ), v( d.beat-to-exp )), 
+ 				, trim( %qa ), 
+ 				I don't know what you mean by '%qa'
+ 			)
+ 		), %r, 
 	); 
 
 	@assert hastype( setr( p, pmatch( %qn )), PLAYER )={ 
