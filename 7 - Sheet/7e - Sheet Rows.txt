@@ -57,7 +57,7 @@ think u( v( d.sheet )/block.bio, %#, get( %#/_bio.template ))
 0: <trait>:<the.value>
 1: width for <trait>
 2: width for column
-3: numeric, list, flag, string (default)
+3: stat class: numeric, list, flag, string (default)
 4: padding
 5: <permanent.pool.value>
 
@@ -75,6 +75,8 @@ output:
 	strcat( 
 		setq( v, rest( %0, : )), 
 		setq( s, ansi( xh, if( strmatch( %4, ), %b, %4 ))), 
+
+// What kind of output is this?
 		case( strtrunc( %0, 1 ), 
 
 // .. sub-trait
@@ -83,16 +85,26 @@ output:
 // .. sub-header
 			#, u( display.subheader, %2, trim( rest( %0, # ))), 
 
-// .. display them normal thangs
+// .. trait name & value
 			if( strlen( trim( %0 )), 
 				strcat( 
-					ljust( cat( first( %0, : ), ), %1, %qs ), 
+					ljust( 
+						[first( %0, : )]%b, 
+						case( %3, 
+							flag, 
+							0, 
+							list, 
+							sub( add( %1, 0 ), strlen( first( %qv, : ))), 
+							%1 
+						), 
+						%qs 
+					), 
 					if( 
 						not( strmatch( %qs, ansi( xh, %b ))), 
 						%qs, : 
 					), 
 					%b, 
-					udefault( display.value.%3, %qv, %qv, %5 )
+					udefault( display.value.%3, %qv, %qv, %5, %1, %b )
 				), 
 				@@( do nothing, show nothing )
 			)
@@ -107,6 +119,24 @@ output:
 		[u( display.check-zero, ladd( %0, . ))] 
 		([u( display.check-zero, first( %0, . ))])
 	)
+
+// --
+
+&display.value.list [v( d.nsc )]=
+	strcat( 
+		rest( first( %0, : ), . ), %b, 
+		ansi( hx, %(, hx, first( first( %0, : ), . ), hx, %) ), 
+		iter( rest( %0, : ), 
+			strcat( 
+				%r, 
+				repeat( %3, sub( add( %2, 1 ), strlen( %i0 ))), %b, 
+				rest( %i0, . ), %b, 
+				ansi( hx, %(, hx, first( %i0, . ), hx, %) ), 
+			),  
+			:, @@ 
+		)
+	)
+
 
 /*
 -=-=-=-=-=-=-=-=-=-=-=-=-=-==--==--=-==--==--==-=--==--=-=-=-=-==--==--=-=-=-=-=
@@ -339,7 +369,15 @@ think u( v( d.sheet )/block.traits, %# )
 		setq( d, u( merits.default, %0 )), 
 		setq( b, 
 			iter( %qd, 
-				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				strcat( 
+					setq( c, 
+						ulocal( 
+							v( d.sfp )/f.get-class, 
+							merit.[edit( first( %i0, : ), %b, _ )] 
+						)
+					), 
+					u( display.trait-and-value, %i0, %qt, %qw, %qc, . )
+				), 
 				|, | 
 			)
 		), 
