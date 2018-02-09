@@ -1190,11 +1190,11 @@ new template package. e.g.:
 */
 
 &d.restricted.types [v( d.xpas )]=
-	iter( lattr( %!/d.restricted.types.*, u( %i0 )))
+	iter( lattr( %!/d.restricted.types.* ), u( %i0 ))
 &d.restricted.types.default [v( d.xpas )]=bio
 
 &d.restricted.stats [v( d.xpas )]=
-	iter( lattr( %!/d.restricted.stats.*, u( %i0 )))
+	iter( lattr( %!/d.restricted.stats.* ), u( %i0 ))
 &d.restricted.stats.default [v( d.xpas )]=
 	advantage.integrity merit.status_(*) 
 
@@ -1608,9 +1608,9 @@ n: statname
 
 		case( 1, 
 
-// TEMPORARY: STAFF-ONLY
-			not( isstaff( %# )), 
-			u( .msg, xp/spend, For now%, please use 'req/xp <title>=<spend>' ), 
+// If you want to make 'xp/spend' Staff-Only
+//			not( isstaff( %# )), 
+//			u( .msg, xp/spend, Ask staff to spend your stats ), 
 
 // normal checks
 			t( setr( e, ulocal( validate.player, %qp, %qw, 1 ))), 
@@ -2247,10 +2247,10 @@ ELDRITCH HOUSE-RULE: Numeric traits of 4+ are also restricted
 		case( 1, 
 			isstaff( %# ), @@( ignore entirely ), 
 
-			t( match( u( d.restricted-types ), first( %0, . ))), 
+			lor( iter( u( d.restricted.types ), match( first( %0, . ), %i0 ))), 
 			Stats of this type must be purchased for you by a staffer, 
 
-			t( match( u( d.restricted-stats ), %0 )), 
+			lor( iter( u( d.restricted.stats ), match( %0, %i0 ))), 
 			This stat must be purchased for you by a staffer, 
 
 /* eldritch house rule; uncomment if you'd like this

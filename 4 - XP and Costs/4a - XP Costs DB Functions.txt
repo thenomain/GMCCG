@@ -94,7 +94,7 @@ We end up not doing this. Maybe we should.
 @set XP Cost Database <xpcd>=inherit safe
 @force me=&d.xpcd me=search( name=XP Cost Database <xpcd> )
 
-@parent XP Cost Database <xpcd>=codp
+@fo me=@parent XP Cost Database <xpcd>=[v( d.codp )]
 &prefix.calculations XP Cost Database <xpcd>=cost.
 &prefix.xp_costs XP Cost Database <xpcd>=xp.
 
