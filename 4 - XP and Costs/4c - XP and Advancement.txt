@@ -2111,19 +2111,28 @@ v: chargen's stat validation
 		), 
 
 		case( 0, 
-			t( %1 ), Stat not found, 
-			not( strmatch( %3, #-* )), capstr( lcstr( rest( %3 ))), 
+// .. previous check passed error instead of stat
+			t( %1 ), 
+			Stat not found, 
 
+// .. previous check passed error instead of new value
+			not( strmatch( %3, #-* )), 
+			capstr( lcstr( rest( %3 ))), 
+
+// .. value check failed, unless the value is 'null' which is always ok
 			cor( t( first( %qv, . )), strmatch( %3, )), 
 			capstr( lcstr( rest( first( %qv, . )))), 
 
+// .. chargen check failed
 			t( elements( %qv, 2, . )), 
 			Can't set the stat outside character generation, 
 
+// .. template check failed
 			t( elements( %qv, 3, . )), 
 			Stat cannot be taken by your template, 
 
-			t( elements(%qv, 4, . )), 
+// .. prerequisites check failed
+			t( elements( %qv, 4, . )), 
 			rest( elements( %qv, 4, . ))
 		)
 	))
