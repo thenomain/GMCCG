@@ -10,13 +10,15 @@ mainly the "is this sheet chargen-compatible" system
 */
 
 @create GMC Chargen <cg>
-@fo me=&d.cg me=GMC Chargen <cg>
+@fo me=&d.cg me=[search( name=GMC Chargen <cg> )]
 @set GMC Chargen <cg>=inherit safe
 
-@parent GMC Chargen <cg>=codp
+@fo me=@parent GMC Chargen <cg>=[v( d.codp )]
 &prefix.checks [v( d.cg )]=check.
 &prefix.display [v( d.cg )]=format. display.
 
+// the xp system needs information from the chargen system
+@fo me=&d.cg [v( d.xpas )]=[search( name=GMC Chargen <cg> )]
 
 
 /*
