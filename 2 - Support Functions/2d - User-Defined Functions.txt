@@ -93,8 +93,8 @@ qp: Dbref of player's sheet
 		), 
 
 // if target passed & found, do 'sheet lookup', else do 'dd lookup'
-		if( cand( strlen( %1 ), t( %qp )), 
-			ulocal( f.statpath-lookup-sheet, %qp, %0 ), 
+		if( setr( s, ulocal( f.statpath-lookup-sheet, %qp, %0 )), 
+			%qs, 
 			ulocal( f.statpath-lookup-dd, %0 )
 		)
 	)
