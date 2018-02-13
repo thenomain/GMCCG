@@ -1451,12 +1451,12 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 	localize( strcat( 
 		setq( d, edit( lattr( %0/_discipline.* ), _DISCIPLINE., DISCIPLINE. )), 
 		setq( i, u( f.list-stats-tags, %0, discipline, get( %0/_bio.clan ))), 
-//		setq( b, 
-//			u( f.list-stats-tags, %0, discipline, get( %0/_bio.bloodline ))
-//		), 
-		ladd( iter( setdiff( %qd, %qi ), first( get( %0/_%i0 ), . ))), `, 
-		ladd( iter( %qi, first( get( %0/_%i0 ), . ))), 
-//		`, ladd( iter( %qi, first( get( %0/_%i0 ), . )))
+		setq( b, 
+			u( f.list-stats-tags, %0, discipline, get( %0/_bio.bloodline ))
+		), 
+		ladd( iter( setdiff( %qd, %qi %qb ), first( get( %0/_%i0 ), . ))), `, 
+		ladd( iter( %qi, first( get( %0/_%i0 ), . ))), `, 
+		ladd( iter( %qb, first( get( %0/_%i0 ), . )))
 	))
 
 
@@ -1588,7 +1588,7 @@ ghoul: 2 disc, 2 in-clan
 	strcat( 
 		setq( 9, u( f.allocated.disciplines, %0 )),
 		setq( t, ladd( %q9, ` )), 
-		setq( i, elements( %q9, 2, ` )), 
+		setq( i, ladd( elements( %q9, 2 3, ` ), ` )), 
 		setq( o, elements( %q9, 1, ` )), 
 
 		%b, %b, 
@@ -1614,15 +1614,18 @@ ghoul: 2 disc, 2 in-clan
 		%r 
 	)
 
-&check.disciplines.vampire.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 3 ))
-&check.disciplines.vampire.in-clan [v( d.cg )]=u( display.check.ok-no, gte( %0, 2 ))
-&check.disciplines.vampire.non-clan [v( d.cg )]=u( display.check.ok-no, lte( %0, 1 ))
+&check.disciplines.vampire.total [v( d.cg )]=
+	u( display.check.ok-no, eq( %0, 3 ))
+&check.disciplines.vampire.in-clan [v( d.cg )]=
+	u( display.check.ok-no, gte( %0, 2 ))
+&check.disciplines.vampire.non-clan [v( d.cg )]=
+	u( display.check.ok-no, lte( %0, 1 ))
 
 &check.disciplines.ghoul [v( d.cg )]=
 	strcat( 
 		setq( 9, u( f.allocated.disciplines, %0 )),
 		setq( t, ladd( %q9, ` )), 
-		setq( i, elements( %q9, 2, ` )), 
+		setq( i, ladd( elements( %q9, 2 3, ` ), ` )), 
 		setq( o, elements( %q9, 1, ` )), 
 
 		%b, %b, 
@@ -1648,9 +1651,12 @@ ghoul: 2 disc, 2 in-clan
 		%r 
 	)
 
-&check.disciplines.ghoul.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 2 ))
-&check.disciplines.ghoul.in-clan [v( d.cg )]=u( display.check.ok-no, eq( %0, 2 ))
-&check.disciplines.ghoul.non-clan [v( d.cg )]=u( display.check.ok-no, eq( %0, 0 ))
+&check.disciplines.ghoul.total [v( d.cg )]=
+	u( display.check.ok-no, eq( %0, 2 ))
+&check.disciplines.ghoul.in-clan [v( d.cg )]=
+	u( display.check.ok-no, eq( %0, 2 ))
+&check.disciplines.ghoul.non-clan [v( d.cg )]=
+	u( display.check.ok-no, eq( %0, 0 ))
 
 
 /*
