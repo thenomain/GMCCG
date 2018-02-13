@@ -1820,6 +1820,7 @@ Character should have no Scales
 	strcat( 
 		setq( w, 79 ), setq( t, 70 ), 
 		setq( d, u( powers.disciplines, %0 )), 
+		setq( v, ulocal( block.powers.disciplines.devotions, %0 )), 
 		setq( b, 
 			iter( %qd, 
 				ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
@@ -1857,7 +1858,6 @@ Character should have no Scales
 			)
 		), 
 
-		setq( v, ulocal( block.powers.disciplines.devotions, %0 )), 
 		if( strlen( %qv ), %qv ), 
 
 		@@( to be continued ), 
