@@ -17,8 +17,6 @@ mainly the "is this sheet chargen-compatible" system
 &prefix.checks [v( d.cg )]=check.
 &prefix.display [v( d.cg )]=format. display.
 
-// the xp system needs information from the chargen system
-@fo me=&d.cg [v( d.xpas )]=[search( name=GMC Chargen <cg> )]
 
 
 /*
@@ -32,6 +30,7 @@ mainly the "is this sheet chargen-compatible" system
 @fo me=&d.asp [v( d.cg )]=search( name=aspirations system <asp> )
 
 @fo me=&d.cg [v( d.nsc )]=search( name=GMC Chargen <cg> )
+@fo me=&d.cg [v( d.xpas )]=search( name=GMC Chargen <cg> )
 
 
 /*
