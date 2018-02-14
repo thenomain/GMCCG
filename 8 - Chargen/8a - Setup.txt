@@ -145,6 +145,7 @@ Does not presently work for List stats
 	0: sheet dbref
 	1: category (attribute, skill, merit, etc)
 	2: tags.list (all required, if any, for 'mental', etc., '*' for 'all')
+	   (defaults to 'and', all tags must exist in search)
 
 	returns: total number of dots in that category.
 
