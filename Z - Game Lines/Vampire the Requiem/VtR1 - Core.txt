@@ -43,6 +43,7 @@ Level 3 for very minor items
 @fo me=&d.sfp [v( d.xpcd )]=search( name=Stat Functions Prototype <sfp> )
 
 
+
 /*
 ################################################################################
 ## VAMPIRE: DATA DICTIONARY ####################################################
@@ -1767,12 +1768,17 @@ Character should have no Scales
 &xp.advantage.blood_potency [v( d.xpcd )]=
 	u( cost.standard, 5, %1, %2 )
 	
-// discipline matches clan: 3xp, else 4xp
+// discipline matches clan or bloodline: 3xp, else 4xp
+
+
 &xp.discipline [v( d.xpcd )]=
 	case( 1, 
-		u( v( d.sfp )/f.hastag?.workhorse, %3, u( .value_full, %0, bio.clan )), 
+		u( v( d.sfp )/f.hastag?.workhorse, 
+			%3, 
+			[u( .value, %0, bio.clan )].
+			[u( .value, %0, bio.bloodline )]
+		), 
 		u( cost.standard, 3, %1, %2 ), 
-
 		u( cost.standard, 4, %1, %2 )
 	)
 
