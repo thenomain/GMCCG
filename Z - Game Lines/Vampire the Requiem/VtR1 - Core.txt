@@ -1834,12 +1834,14 @@ Character should have no Scales
 			)
 		), 
 
+// disciplines
 		divider( Disciplines ), %r, 
 		iter( %qb, 
 			%i0, 
 			|, %r 
 		), %r, 
 
+// .. convent-based disciplines
 		case( get( %0/_bio.covenant ), 
 			Circle of the Crone, 
 			if( hasattr( %0, _discipline.cruac ), 
@@ -1857,13 +1859,7 @@ Character should have no Scales
 			)
 		), 
 
-		if( strlen( %qv ), 
-			strcat( 
-				divider( Devotions ), %r, 
-				table( %qv, %qt, %qw, | ), %r, 
-			)
-		), 
-
+// devotions
 		if( strlen( %qv ), %qv ), 
 
 		@@( to be continued ), 
