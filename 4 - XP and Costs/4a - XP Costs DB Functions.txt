@@ -99,6 +99,7 @@ We end up not doing this. Maybe we should.
 &prefix.xp_costs XP Cost Database <xpcd>=xp.
 
 @force me=&d.dd XP Cost Database <xpcd>=[search( name=Data Dictionary <dd> )]
+@force me=&d.sfp XP Cost Database <xpcd>=[search( name=Stat Functions Prototype <sfp> )]
 
 
 
@@ -127,10 +128,12 @@ At this point the game should have lmax() and lmin() anyhow.
 */
 
 &.value [v( d.xpcd )]=u( v( d.dd )/.value, %0, %1, %2, %3 )
-&.value_full [v( d.xpcd )]=u( v( d.dd )/.value_full, %0, %1, %2, %3 )
 &.at_least [v( d.xpcd )]=u( v( d.dd )/.at_least, %0, %1, %2, %3 )
 &.is [v( d.xpcd )]=u( v( d.dd )/.is, %0, %1, %2, %3 )
 &.is_full [v( d.xpcd )]=u( v( d.dd )/.is_full, %0, %1, %2, %3 )
+
+// Value Full is not working properly! Find out why sometime.
+&.value_full [v( d.xpcd )]=u( v( d.dd )/.value_full, %0, %1, %2, %3 )
 
 
 
