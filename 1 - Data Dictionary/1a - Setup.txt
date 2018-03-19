@@ -259,6 +259,7 @@ One stat passed is no lower than values associated ("or _at_least")
 	(cannot be used for "this stat" situations)
 	e.g.:
 		u( .at_least_one, %0, skill.weaponry:2 skill.firearms:2 )
+*/
 
 &.At_Least_One [v( d.dd )]=
 	lor( iter( %1, u( .at_least, %0, first( %i0, : ), rest( %i0, : ))))
