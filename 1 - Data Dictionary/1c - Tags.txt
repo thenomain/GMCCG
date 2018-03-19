@@ -78,13 +78,13 @@ We have notes!
 
 &tags.merit.area_of_expertise_() [v( d.dt )]=mental
 &tags.merit.common_sense [v( d.dt )]=mental
-&tags.merit.danger_sense [v( d.dt )]=mental
+&tags.merit.danger_sense [v( d.dt )]=mental.fighting
 &tags.merit.direction_sense [v( d.dt )]=mental
 &tags.merit.eidetic_memory [v( d.dt )]=mental
 &tags.merit.encyclopedic_knowledge_() [v( d.dt )]=mental
 &tags.merit.eye_for_the_strange [v( d.dt )]=mental
-&tags.merit.fast_reflexes [v( d.dt )]=mental
-&tags.good_time_management [v( d.dt )]=mental
+&tags.merit.fast_reflexes [v( d.dt )]=mental.fighting
+&tags.merit.good_time_management [v( d.dt )]=mental
 &tags.merit.holistic_awareness [v( d.dt )]=mental
 &tags.merit.indomitable [v( d.dt )]=mental
 &tags.merit.interdisciplinary_specialty_() [v( d.dt )]=mental
@@ -97,8 +97,7 @@ We have notes!
 &tags.merit.patient [v( d.dt )]=mental
 &tags.merit.professional_training_() [v( d.dt )]=mental
 &tags.merit.tolerance_for_biology [v( d.dt )]=mental
-&tags.good_time_management [v( d.dt )]=mental
-&tags.merit.virtuous [v( d.dt )]=mental
+&tags.merit.virtuous_() [v( d.dt )]=mental
 &tags.merit.vice-ridden_() [v( d.dt )]=mental
 
 
@@ -126,7 +125,7 @@ We have notes!
 // -- Merits: Social -----------------------------------------------------------
 
 &tags.merit.allies_() [v( d.dt )]=social
-&tags.merit.allies_() [v( d.dt )]=social
+&tags.merit.alternate_identity_() [v( d.dt )]=social
 &tags.merit.anonymity [v( d.dt )]=social
 &tags.merit.barfly [v( d.dt )]=social
 &tags.merit.closed_book [v( d.dt )]=social
