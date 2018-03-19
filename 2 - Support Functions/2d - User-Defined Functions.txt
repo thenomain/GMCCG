@@ -462,10 +462,10 @@ qs: stat path
 -- Hastag? Workhorse -----------------------------------------------------------
 
 0: stat path
-1: tag.list (not case sensitive)
+1: tag.list (not case sensitive), !tag means 'not this tag', only good for 'and'
 2: 1 if "and", 0/null if "or"
 
-qt: tags for stat
+qt: results from 'tags.<statpath>'
 qb: boolean list of matches
 
 --------------------------------------------------------------------------------
@@ -473,7 +473,16 @@ qb: boolean list of matches
 
 &f.hastag?.workhorse [v( d.sfp )]=
 	[setq( t, lcstr( u( v( d.data-tags )/tags.%0 )))]
-	[setq( b, iter( %1, match( %qt, ##, . ), . ))]
+
+	[setq( b, 
+		iter( %1, 
+			if( strmatch( %i0, !* ), 
+				not( match( %qt, rest( %i0, ! ), . )), 
+				match( %qt, %i0, . )
+			), 
+			. 
+		)
+	)]
 
 	[if( %2, 
 // and-check
