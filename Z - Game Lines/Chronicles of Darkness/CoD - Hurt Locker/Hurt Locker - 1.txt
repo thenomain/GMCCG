@@ -1,0 +1,473 @@
+/*
+################################################################################
+## CORE: HURT LOCKER ###########################################################
+
+Unlike many other books, Hurt Locker is done in sections. I will be breaking the 
+book into one file per installation concept. For example, Fighting Styles will 
+exist in its own file, and may be installed at your own risk.
+
+Maybe. Well, let me install everything in a more or less single file and see 
+what happens.
+
+
+
+
+
+================================================================================
+== CHAPTER ONE: STORIES OF VIOLENCE ============================================
+
+
+--------------------------------------------------------------------------------
+-- Chapter One: Integrity by Attrition (pp. 20-21) -----------------------------
+
+&merit.smile_through_it [v( d.dd )]=1
+&prerequisite.merit.smile_through_it [v( d.dd )]=
+	gte( 
+		add( 
+			u( .value, %0, attribute.composure ), 
+			u( .value, %0, attribute.resolve )
+		), 
+		5 
+	)
+&prereq-text.merit.smile_through_it [v( d.dd )]=Composure + Resolve at 5+
+&notes.merit.smile_through_it [v( d.dt )]=Used with Integrity by Attrition.
+
+
+&merit.choke_it_down [v( d.dd )]=1
+&prerequisite.merit.choke_it_down [v( d.dd )]=
+	gte( 
+		add( 
+			u( .value, %0, attribute.composure ), 
+			u( .value, %0, attribute.resolve )
+		), 
+		5 
+	)
+&prereq-text.merit.choke_it_down [v( d.dd )]=Composure + Resolve at 5+
+&notes.merit.choke_it_down [v( d.dt )]=Used with Integrity by Attrition.
+
+
+--------------------------------------------------------------------------------
+-- Chapter One: Violence Groups (pp. 27-39) ------------------------------------
+
+This probably requires a whole different classification of character: The Group.
+
+&merit.organization_size [v( d.dd )]=1.2.3.4.5
+&tags.merit.organization_size [v( d.dt )]=
+&notes.merit.organization_size [v( d.dt )]=
+	Must be part of a violence group; cannot apply to individual characters.
+
+
+
+================================================================================
+== CHAPTER TWO: INSTRUMENTS OF VIOLENCE ========================================
+
+
+--------------------------------------------------------------------------------
+-- Chapter Two: New General Merits ---------------------------------------------
+
+&merit.air_of_menace [v( d.dd )]=2
+&prerequisite.merit.air_of_menace [v( d.dd )]=
+	u( .at_least, %0, skill.intimidation, 2 )
+&prereq-text.merit.air_of_menace [v( d.dd )]=Intimidation 2+
+&tags.merit.air_of_menace [v( d.dt )]=social
+
+&merit.body_as_weapon [v( d.dd )]=2
+&prerequisite.merit.body_as_weapon [v( d.dd )]=
+	u( .at_least_all, %0, attribute.stamina:3 skill.brawl:2 )
+&prereq-text.merit.body_as_weapon [v( d.dd )]=Stamina 3+, Brawl 2+
+&tags.merit.body_as_weapon [v( d.dt )]=social
+
+&merit.cohesive_unit [v( d.dd )]=2
+&prerequisite.merit.cohesive_unit [v( d.dd )]=
+	u( .at_least, %0, skill.presence, 3 )
+&prereq-text.merit.cohesive_unit [v( d.dd )]=Presence 3+
+&tags.merit.cohesive_unit [v( d.dt )]=social
+
+&merit.defender [v( d.dd )]=1.2.3
+&tags.merit.cohesive_unit [v( d.dt )]=mental
+
+&merit.empath [v( d.dd )]=2
+&prerequisite.merit.cohesive_unit [v( d.dd )]=
+	u( .at_least, %0, skill.empathy, 2 )
+&prereq-text.merit.cohesive_unit [v( d.dd )]=Empathy 2+
+&tags.merit.cohesive_unit [v( d.dt )]=social
+
+&merit.empath [v( d.dd )]=2
+&prerequisite.merit.cohesive_unit [v( d.dd )]=
+	u( .at_least, %0, skill.empathy, 2 )
+&prereq-text.merit.cohesive_unit [v( d.dd )]=Empathy 2+
+&tags.merit.cohesive_unit [v( d.dt )]=social
+
+&merit.object_fetishism_() [v( d.dd )]=1.2.3.4.5|*
+&notes.merit.cohesive_unit [v( d.dt )]=
+	'Type' is the object fetishized.|
+	Must have a Specialty related to that object.|
+	Notes taken will be decided by staff.
+
+&merit.peacemaker [v( d.dd )]=2.3
+&prerequisite.merit.peacemaker [v( d.dd )]=
+	u( .at_least_all, %0, attribute.wits:3 skill.empathy:3 )
+&prereq-text.merit.peacemaker [v( d.dd )]=Wits 3+, Empathy 2+
+&tags.merit.peacemaker [v( d.dt )]=social
+
+&merit.punch_drunk [v( d.dd )]=2
+&prerequisite.merit.punch_drunk [v( d.dd )]=
+	u( .at_least, %0, advantage.willpower_maximum, 6 )
+&prereq-text.merit.punch_drunk [v( d.dd )]=Max Willpower 6+
+&tags.merit.punch_drunk [v( d.dt )]=physical
+
+&merit.scarred [v( d.dd )]=1
+&prerequisite.merit.scarred [v( d.dd )]=
+	u( .at_most, %0, advantage.integrity, 5 )
+&prereq-text.merit.scarred [v( d.dd )]=Integrity 5 or lower
+&tags.merit.scarred [v( d.dt )]=physical
+
+&merit.support_network [v( d.dd )]=1.2.3.4.5
+
+&prerequisite.merit.support_network_(*) [v( d.dd )]=
+	cor( 
+		iter( 
+			allies mentor retainer true_friend, 
+			t( lattr( %0/_merit.%i0_(%1) ))
+		)
+	)
+&prereq-text.merit.support_network [v( d.dd )]=
+	Allies, Mentor, Retainer, True Friend, or another similar Merit
+&tags.merit.support_network [v( d.dt )]=social
+&notes.merit.support_network [v( d.dt )]=
+	'Type' is the name of the Allies, Mentor, etc. trait.
+
+&merit.survivalist [v( d.dd )]=2.3
+&prerequisite.merit.peacemaker [v( d.dd )]=
+	u( .at_least_all, %0, skill.survival:3 merit.iron_stamina:3 )
+&prereq-text.merit.peacemaker [v( d.dd )]=Survival 3+, Iron Stamina 3
+&tags.merit.peacemaker [v( d.dt )]=physical
+
+
+--------------------------------------------------------------------------------
+-- Chapter Two: Fighting Merits ------------------------------------------------
+
+These are in another file. Because sanity.
+
+
+--------------------------------------------------------------------------------
+-- Chapter Two: Lasting Trauma (pp. 56-59) -------------------------------------
+
+New Persistent Conditions.
+
+DO THESE.
+
+
+--------------------------------------------------------------------------------
+-- Chapter Two: Violent Skills -------------------------------------------------
+
+Nothing of note to code.
+
+
+
+================================================================================
+== CHAPTER THREE: THE OTHER SIDE ===============================================
+
+
+--------------------------------------------------------------------------------
+-- Chapter Three: Supernatural Merits (pp. xx-77) ------------------------------
+
+&merit.animal_possession [v( d.dd )]=2.4
+&prerequisite.merit.animal_possession [v( d.dd )]=
+	u( .at_least, %0, skill.animal_ken, 3 )
+&prereq-text.merit.animal_possession [v( d.dd )]=Animal Ken 3+
+&tags.merit.animal_possession [v( d.dt )]=human.supernatural.social
+
+&merit.apportation [v( d.dd )]=3.5
+&tags.merit.apportation [v( d.dt )]=human.supernatural.mental
+
+&merit.assertive_implement [v( d.dd )]=1.2.3.4
+&prerequisite.merit.assertive_implement [v( d.dd )]=
+	cand( 
+		u( .at_least_all, %0, attribute.manipulation:3 skill.occult:3 ), 
+		u( .at_least_one, %0, skill.weaponry:2 skill.firearms:2 )
+	)
+&prereq-text.merit.assertive_implement [v( d.dd )]=
+	Manipulation 3+, Occult 3+, and Weaponry or Firearms 2+
+&tags.merit.assertive_implement [v( d.dt )]=human.supernatural.social
+
+&merit.biomimicry [v( d.dd )]=1.2.3.4
+&prerequisite.merit.biomimicry [v( d.dd )]=
+	u( .at_least, %0, merit.biokinesis, 1 )
+&prereq-text.merit.biomimicry [v( d.dd )]=Biokinesis 1+
+&tags.merit.biomimicry [v( d.dt )]=human.supernatural.physical
+
+&merit.bless_amulet [v( d.dd )]=1.2.3
+&prerequisite.merit.bless_amulet [v( d.dd )]=
+	u( .at_least, %0, skill.occult, 3 )
+&prereq-text.merit.bless_amulet [v( d.dd )]=Occult 3+
+&tags.merit.bless_amulet [v( d.dt )]=human.supernatural.mental
+
+&merit.camera_obscura [v( d.dd )]=3
+&prerequisite.merit.camera_obscura [v( d.dd )]=
+	u( .has_one_of, %0, merit.unseen_sense_(ghost) merit.unseen_sense_(spirit) )
+&prereq-text.merit.camera_obscura [v( d.dd )]=Unseen Sense (Ghost) or (Spirit)
+&tags.merit.camera_obscura [v( d.dt )]=human.supernatural.mental
+
+&merit.consecrate_weapon [v( d.dd )]=4
+&prerequisite.merit.consecrate_weapon [v( d.dd )]=
+	u( .at_least_all, %0, attribute.resolve:3 skill.occult:4 )
+&prereq-text.merit.consecrate_weapon [v( d.dd )]=Resolve 3+, Occult 4+
+&tags.merit.consecrate_weapon [v( d.dt )]=human.supernatural.mental
+
+&merit.curse_effigy [v( d.dd )]=3
+&tags.merit.curse_effigy [v( d.dt )]=human.supernatural.mental
+
+&merit.dark_passenger [v( d.dd )]=2
+&tags.merit.dark_passenger [v( d.dt )]=human.supernatural.mental
+
+&merit.doppelganger [v( d.dd )]=3
+&prerequisite.merit.doppelganger [v( d.dd )]=
+	u( .at_least_all, %0, merit.biokinesis:1 skill.subterfuge:3 )
+&prereq-text.merit.doppelganger [v( d.dd )]=Biokinesis 1+, Subterfuge 3+
+&tags.merit.doppelganger [v( d.dt )]=human.supernatural.physical
+
+&merit.evil_eye [v( d.dd )]=2
+&tags.merit.evil_eye [v( d.dt )]=human.supernatural.mental
+
+&merit.fated_ferocity [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.fated_ferocity [v( d.dd )]=
+	u( .at_least_all, %0, 
+		attribute.stamina:2 attribute.resolve:3 merit.cursed:2 
+	)
+&prereq-text.merit.fated_ferocity [v( d.dd )]=Cursed 2+, Stamina 2+, Resolve 3+
+&tags.merit.fated_ferocity [v( d.dt )]=human.style.supernatural.physical
+
+&merit.hardened_exorcist [v( d.dd )]=1
+&tags.merit.hardened_exorcist [v( d.dt )]=human.supernatural.mental
+
+&merit.hidden_variable [v( d.dd )]=2
+&prerequisite.merit.hidden_variable [v( d.dd )]=
+	u( .has, %0, merit.unseen_sense_(god_machine) )
+&prereq-text.merit.hidden_variable [v( d.dd )]=Unseen Sense (God Machine)
+&tags.merit.hidden_variable [v( d.dt )]=human.supernatural.mental
+
+&merit.incite_ecosystem [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.incite_ecosystem [v( d.dd )]=
+	u( .at_least, %0, skill.animal_ken, 3 )
+&prereq-text.merit.incite_ecosystem [v( d.dd )]=Animal Ken 3+
+&tags.merit.incite_ecosystem [v( d.dt )]=human.supernatural.social
+
+&merit.invoke_spirit [v( d.dd )]=2
+&prerequisite.merit.invoke_spirit [v( d.dd )]=
+	u( .at_least_all, %0, attribute.resolve:3 merit.medium:3 )
+&prereq-text.merit.invoke_spirit [v( d.dd )]=Resolve 3+, Medium 3
+&tags.merit.invoke_spirit [v( d.dt )]=human.supernatural.social
+
+&merit.mind_control [v( d.dd )]=3
+&tags.merit.mind_control [v( d.dt )]=human.supernatural.mental
+
+&merit.phantasmagoria [v( d.dd )]=3
+&prerequisite.merit.phantasmagoria [v( d.dd )]=
+	u( .at_least_all, %0, merit.telepathy:5 skill.expression:2 )
+&prereq-text.merit.phantasmagoria [v( d.dd )]=Telepathy 5, Expression 2+
+&tags.merit.phantasmagoria [v( d.dt )]=human.supernatural.mental
+
+&merit.psychic_concealment [v( d.dd )]=3
+&prerequisite.merit.psychic_concealment [v( d.dd )]=
+	u( .at_least_all, %0, merit.mind_control:3 skill.stealth:3 )
+&prereq-text.merit.psychic_concealment [v( d.dd )]=Mind Control 3, Stealth 3+
+&tags.merit.psychic_concealment [v( d.dt )]=human.supernatural.mental
+
+&merit.psychic_onslaught [v( d.dd )]=5
+&prerequisite.merit.psychic_onslaught [v( d.dd )]=
+	u( .has_one_of, %0, merit.telekinesis merit.psychokinesis )
+&prereq-text.merit.psychic_onslaught [v( d.dd )]=Telekinesis or Psychokinesis
+&tags.merit.psychic_onslaught [v( d.dt )]=human.supernatural.physical
+
+&merit.psychic_poltergeist [v( d.dd )]=2
+&prerequisite.merit.psychic_poltergeist [v( d.dd )]=
+	u( .has, %0, merit.telekinesis )
+&prereq-text.merit.psychic_poltergeist [v( d.dd )]=Telekinesis 1+
+&tags.merit.psychic_poltergeist [v( d.dt )]=human.supernatural.physical
+
+&merit.psychokinetic_combat [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.psychokinetic_combat [v( d.dd )]=
+	t( lattr( %0/_merit.psychokinesis_(*) ))
+&prereq-text.merit.psychokinetic_combat [v( d.dd )]=Psychokinesis 3 or 5
+&tags.merit.psychokinetic_combat [v( d.dt )]=human.style.supernatural.physical
+
+&merit.psychokinetic_resistance [v( d.dd )]=1
+&prerequisite.merit.psychokinetic_resistance [v( d.dd )]=
+	t( lattr( %0/_merit.psychokinesis_(*) ))
+&prereq-text.merit.psychokinetic_resistance [v( d.dd )]=Psychokinesis 3 or 5
+&tags.merit.psychokinetic_resistance [v( d.dt )]=human.supernatural.physical
+
+&merit.sacrificial_offering [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.sacrificial_offering [v( d.dd )]=
+	cand( 
+		gte( 
+			lmax( 
+				iter( 
+					lattr( %0/_merit.mystery_cult_initiation_(*) ), 
+					u( .value, %0, merit.[rest( %i0, . )] )
+				)
+			), 
+			5 
+		), 
+		u( .at_least, skill.occult, 3 )
+	)
+&prereq-text.merit.sacrificial_offering [v( d.dd )]=
+	Occult 3+, Mystery Cult Initiation (Any) 5
+&tags.merit.sacrificial_offering [v( d.dt )]=human.supernatural.social
+
+&merit.sojourner [v( d.dd )]=3
+&prerequisite.merit.sojourner [v( d.dd )]=
+	u( .has, %0, merit.apportation )
+&prereq-text.merit.sojourner [v( d.dd )]=Apportation 3+
+&tags.merit.sojourner [v( d.dt )]=human.supernatural.physical
+
+&merit.tactical_telepathy [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.tactical_telepathy [v( d.dd )]=
+	u( .at_least, %0, merit.telepathy, 5 )
+&prereq-text.merit.tactical_telepathy [v( d.dd )]=Telepathy 5
+&tags.merit.tactical_telepathy [v( d.dt )]=human.style.supernatural.physical
+
+&merit.technopathy [v( d.dd )]=2.3
+&tags.merit.technopathy [v( d.dt )]=human.supernatural.mental
+
+&merit.telekinetic_evasion [v( d.dd )]=3
+&prerequisite.merit.telekinetic_evasion [v( d.dd )]=
+	u( .has, %0, merit.telekinesis )
+&prereq-text.merit.telekinetic_evasion [v( d.dd )]=Telekinesis 3 or 5
+&tags.merit.telekinetic_evasion [v( d.dt )]=human.supernatural.physical
+
+&merit.vengeful_soul [v( d.dd )]=2
+&prerequisite.merit.vengeful_soul [v( d.dd )]=
+	u( .at_least_all, %0, merit.biokinesis:1 skill.subterfuge:3 )
+&prereq-text.merit.vengeful_soul [v( d.dd )]=Biokinesis 1+, Subterfuge 3+
+&tags.merit.vengeful_soul [v( d.dt )]=human.supernatural.social
+
+
+--------------------------------------------------------------------------------
+-- Chapter Three: Supernatural Merit Templates (pp. 77-xx) ---------------------
+
+These are 'minor templates' for the human type, defined by a single merit.
+
+We are going "by the book" for this, but if you want these to be templates,
+here's a quick guide how, using the Atariya as a base, giving them one dot of 
+their key merit for free (but not supernatural resistance!):
+
+	@edit [v( d.dd )]/bio.template=$, .atariya
+	&default.merit.damn_lucky [v( d.dd )]=1
+	&prerequisite.merit.damn_lucky [v( d.dd )]=
+	&prereq-text.merit.damn_lucky [v( d.dd )]=
+	@dolist grepi( v( d.dt ), tags.*, .atariya )={ 
+		@edit [v( d.dt )]=human., ; 
+	}
+	<< tell cgen not to freak out about that free dot >>
+
+--
+
+All of them get access to the following:
+
+&merit.supernatural_resistance [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.supernatural_resistance [v( d.dd )]=
+	u( .has_one_of, %0, 
+		merit.damn_lucky 
+		merit.subliminal_conditioning 
+	)
+&prereq-text.merit.supernatural_resistance [v( d.dd )]=
+	Has a 'Supernatural Template' Merit, 
+	maybe also those with any Supernatural merit.
+&tags.merit.supernatural_resistance [v( d.dt )]=human.supernatural
+
+
+--------------------------------------------------------------------------------
+-- Supernatural Merit Template: ATARIYA (p. 78) --------------------------------
+
+&merit.damn_lucky [v( d.dd )]=1.2.3.4
+	not( 
+		setdiff( 
+			<grab all merits on sheet with 'supernatural_template' tag>, 
+			_merit.damn_lucky 
+		)
+	)
+&prereq-text.merit.damn_lucky [v( d.dd )]=No other Supernatural Template merit
+&tags.merit.damn_lucky [v( d.dd )]=human.supernatural_template.atariya
+
+&merit.mr_lucky [v( d.dd )]=1
+&prerequisite.merit.damn_lucky [v( d.dd )]=u( .has, %0, merit.damn_lucky )
+&prereq-text.merit.damn_lucky [v( d.dd )]=Atariya, Damn Lucky
+&tags.merit.damn_lucky [v( d.dd )]=human.supernatural.atariya
+
+&merit.nine_lives [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.nine_lives [v( d.dd )]=u( .has, %0, merit.damn_lucky )
+&prereq-text.merit.nine_lives [v( d.dd )]=Atariya, Damn Lucky
+&tags.merit.nine_lives [v( d.dd )]=human.supernatural.atariya
+
+&merit.count_down [v( d.dd )]=1
+&prerequisite.merit.count_down [v( d.dd )]=u( .has, %0, merit.nine_lives )
+&prereq-text.merit.count_down [v( d.dd )]=Atariya, Nine Lives
+&tags.merit.count_down [v( d.dd )]=human.supernatural.atariya
+
+&merit.see_the_flow [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.see_the_flow [v( d.dd )]=u( .has, %0, merit.damn_lucky )
+&prereq-text.merit.see_the_flow [v( d.dd )]=Atariya, Damn Lucky
+&tags.merit.see_the_flow [v( d.dd )]=human.supernatural.atariya
+
+&merit.luck_flows_up [v( d.dd )]=2
+&prerequisite.merit.luck_flows_up [v( d.dd )]=u( .has, %0, merit.damn_lucky )
+&prereq-text.merit.luck_flows_up [v( d.dd )]=Atariya, Damn Lucky
+&tags.merit.luck_flows_up [v( d.dd )]=human.supernatural.atariya
+
+&merit.easy_come_easy_go [v( d.dd )]=2
+&prerequisite.merit.easy_come_easy_go [v( d.dd )]=
+	u( .has, %0, merit.damn_lucky )
+&prereq-text.merit.easy_come_easy_go [v( d.dd )]=Atariya, Damn Lucky
+&tags.merit.easy_come_easy_go [v( d.dd )]=human.supernatural.atariya
+
+&merit.all-in [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.all-in [v( d.dd )]=
+	u( .at_least_all, %0, attribute.resolve:3 merit.damn_lucky:1 )
+&prereq-text.merit.all-in [v( d.dd )]=Atariya, Damn Lucky, Resolve 3+
+&tags.merit.all-in [v( d.dd )]=human.supernatural.atariya
+
+
+--------------------------------------------------------------------------------
+-- Supernatural Merit Template: DREAMER (p. 82) --------------------------------
+
+&merit.subliminal_conditioning [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.subliminal_conditioning [v( d.dd )]=
+	not( 
+		setdiff( 
+			<grab all merits on sheet with 'supernatural_template' tag>, 
+			_merit.subliminal_conditioning 
+		)
+	)
+&prereq-text.merit.subliminal_conditioning [v( d.dd )]=
+	No other Supernatural Template merit
+&tags.merit.subliminal_conditioning [v( d.dd )]=
+	human.supernatural_template.dreamer
+
+.
+.
+.
+.
+
+.
+
+
+.
+.
+
+
+
+.
+
+
+
+
+
+
+.
+
+
+
+
+*/

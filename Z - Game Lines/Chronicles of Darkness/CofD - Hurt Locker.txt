@@ -521,11 +521,11 @@ addition of Muay Thai
 
 &prerequisite.merit.iron_skin [v( d.dd )]=
 	cand( 
-		cor(
+		cor( 
 			u( .list_at_least, %0, merit.martial_arts, 2 ), 
-			u( .list_at_least, %0, merit.muay_thai, 2 ), 
+			u( .list_at_least, %0, merit.muay_thai, 2 )
 		), 
-		u( .at_least, %0, merit.iron_skin, 2 )
+		u( .at_least, %0, merit.street_fighting, 2 )
 	)
 &prereq-text.merit.iron_skin [v( d.dd )]=
 	Stamina 3+ and either Martial Arts 2+, Muay Thai 2+, or Street Fighting 2+
@@ -742,15 +742,15 @@ That is, one-off merits that fold into the Style merits, including adding to
 &prerequisite.merit.boot_party [v( d.dd )]=
 	u( .at_least, %0, skill.brawl, 2 )
 &prereq-text.merit.boot_party [v( d.dd )]=Brawl 2+
-&tags.merit.boot_party [v( d.dt )]=physical.tag:striking
+&tags.merit.boot_party [v( d.dt )]=physical.fighting.tag:striking
 &notes.merit.boot_party [v( d.dt )]=Style Tags: Striking
 
 &merit.clinch_strike [v( d.dd )]=1
 &prerequisite.merit.clinch_strike [v( d.dd )]=
 	u( .at_least, %0, skill.brawl, 2 )
 &prereq-text.merit.clinch_strike [v( d.dd )]=Brawl 2+
-&tags.merit.clinch_strike [v( d.dt )]=physical.tag:grappling.
-	tag:tactical (street)
+&tags.merit.clinch_strike [v( d.dt )]=
+	physical.fighting.tag:grappling.tag:tactical (street)
 &notes.merit.clinch_strike [v( d.dt )]=Style Tags: Grappling, Tactical (Street)
 
 &merit.covert_operative [v( d.dd )]=1
@@ -760,15 +760,16 @@ That is, one-off merits that fold into the Style merits, including adding to
 	)
 &prereq-text.merit.covert_operative [v( d.dd )]=Wits 3+, Dexterity 3+, 
 	Stealth 2+ 
-&tags.merit.covert_operative [v( d.dt )]=physical.tag:tactical (military)
+&tags.merit.covert_operative [v( d.dt )]=
+	physical.fighting.tag:tactical (military)
 &notes.merit.covert_operative [v( d.dt )]=Style Tags: Tactical (Military)
 
 &merit.ground_and_pound [v( d.dd )]=3
 &prerequisite.merit.ground_and_pound [v( d.dd )]=
 	u( .at_least, %0, skill.brawl, 2 )
 &prereq-text.merit.ground_and_pound [v( d.dd )]=Brawl 2+
-&tags.merit.ground_and_pound [v( d.dt )]=physical.tag:striking.tag:grappling.
-	tag:tactical (street)
+&tags.merit.ground_and_pound [v( d.dt )]=
+	physical.fighting.tag:striking.tag:grappling.tag:tactical (street)
 &notes.merit.ground_and_pound [v( d.dt )]=Style Tags: Striking, Grappling, 
 	Tactical (Street)
 
@@ -779,22 +780,23 @@ That is, one-off merits that fold into the Style merits, including adding to
 	)
 &prereq-text.merit.ground_fighter [v( d.dd )]=Wits 3+, Dexterity 3+, 
 	Brawl 2+ 
-&tags.merit.ground_fighter [v( d.dt )]=physical.tag:grappling
+&tags.merit.ground_fighter [v( d.dt )]=physical.fighting.tag:grappling
 &notes.merit.ground_fighter [v( d.dt )]=Style Tags: Grappling
 
 &merit.headbutt [v( d.dd )]=1
 &prerequisite.merit.headbutt [v( d.dd )]=
 	u( .at_least, %0, skill.brawl, 2 )
 &prereq-text.merit.headbutt [v( d.dd )]=Brawl 2+ 
-&tags.merit.headbutt [v( d.dt )]=physical.tag:striking.tag:grappling
+&tags.merit.headbutt [v( d.dt )]=physical.fighting.tag:striking.tag:grappling
 &notes.merit.headbutt [v( d.dt )]=Style Tags: Striking, Grappling
 
 &merit.iron_chin [v( d.dd )]=2.4
 &prerequisite.merit.iron_chin [v( d.dd )]=
 	u( .at_least_all, %0, attribute.resolve:3 attribute.stamina:3 )
 &prereq-text.merit.iron_chin [v( d.dd )]=Resolve 3+, Stamina 3+
-&tags.merit.iron_chin [v( d.dt )]=physical.tag:attitude (determined).
-	tag:striking.tag:tactical (street)
+&tags.merit.iron_chin [v( d.dt )]=
+	physical.fighting.tag:attitude (determined).tag:striking.
+	tag:tactical (street)
 &notes.merit.iron_chin [v( d.dt )]=Style Tags: Attitude (Determined), Striking, 
 	Tactical (Street) 
 
@@ -830,8 +832,8 @@ purchase it again, at the same cost in dots and Experience.
 &prerequisite.merit.trunk_squeeze [v( d.dd )]=
 	u( .at_least, %0, skill.brawl, 2 )
 &prereq-text.merit.trunk_squeeze [v( d.dd )]=Brawl 2+ 
-&tags.merit.trunk_squeeze [v( d.dt )]=physical.tag:creature (constrictor).
-	tag:grappling
+&tags.merit.trunk_squeeze [v( d.dt )]=
+	physical.fighting.tag:creature (constrictor).tag:grappling
 &notes.merit.trunk_squeeze [v( d.dt )]=Style Tags: Creature (Constrictor), 
 	Grappling
 
@@ -839,7 +841,8 @@ purchase it again, at the same cost in dots and Experience.
 &prerequisite.merit.retain_weapon [v( d.dd )]=
 	u( .at_least_all, %0, attribute.wits:2 skill.brawl:2 )
 &prereq-text.merit.retain_weapon [v( d.dd )]=Wits 2+, Brawl 2+ 
-&tags.merit.retain_weapon [v( d.dt )]=physical.tag:light weapon.tag:pistol.
+&tags.merit.retain_weapon [v( d.dt )]=
+	physical.fighting.tag:light weapon.tag:pistol.
 	tag:tactical (police).tag:tactical (military)
 &notes.merit.retain_weapon [v( d.dt )]=Style Tags: Light Weapon, Pistol, 
 	Tactical (Police, Military)
@@ -848,7 +851,7 @@ purchase it again, at the same cost in dots and Experience.
 &prerequisite.merit.roadkill [v( d.dd )]=
 	u( .list_at_least, %0, merit.aggressive_driving, 2 )
 &prereq-text.merit.roadkill [v( d.dd )]=Aggressive Driving 2+ 
-&tags.merit.roadkill [v( d.dt )]=physical.tag:tactical (street)
+&tags.merit.roadkill [v( d.dt )]=physical.fighting.tag:tactical (street)
 &notes.merit.roadkill [v( d.dt )]=Style Tags: Tactical (Street)
 
 
@@ -871,12 +874,10 @@ same Style tag rules."
 &prereq-text.merit.aggressive_driving [v( d.dd )]=
 	Resolve 3+, Drive 3+, Fast Reflexes 3
 &class.merit.aggressive_driving [v( d.dd )]=list
-
-&tags.merit.aggressive_driving [v( d.dt )]=physical.style.tag:tactical (street).
-	tag:tactical (police)
+&tags.merit.aggressive_driving [v( d.dt )]=
+	physical.style.tag:tactical (street).tag:tactical (police)
 &notes.merit.aggressive_driving [v( d.dt )]=Style Tags: Tactical 
 	(Street, Police)
-
 
 
 &merit.drone_control [v( d.dd )]=
@@ -889,9 +890,8 @@ same Style tag rules."
 &prereq-text.merit.drone_control [v( d.dd )]=
 	Resolve 3+, Drive 3+, Fast Reflexes 3
 &class.merit.aggressive_driving [v( d.dd )]=list
-
-&tags.merit.drone_control [v( d.dt )]=physical.style.tag:tactical (military).
-	tag:tactical (police)
+&tags.merit.drone_control [v( d.dt )]=
+	physical.style.tag:tactical (military).tag:tactical (police)
 &notes.merit.drone_control [v( d.dt )]=Style Tags: Tactical (Military, Police)
 
 
@@ -981,6 +981,19 @@ think [setq( l, lattr( v( d.dd )/merit.* ))][ucstr( edit( setr( 0, merit.mounted
 
 OH HEY! Almost there!
 
+
+think 
+	strcat( 
+		setq( 0, merit.mounted_combat ), 
+		setq( m, graball( get( v( d.dt )/tags.%q0 ), tag:*, ., . )), 
+		iter( a b c d e f g h i j k l m n o p q r s t u v w x y z, 
+			filter( v( d.sfp )/fil.list-stats-tags, 
+				lattr( v( d.dd )/merit.%i0* ), , , %qm 
+			)
+		)
+	)
+
+think lattr( v( d.dd )/merit.a* )
 
 think 
 	strcat( 
@@ -1101,24 +1114,109 @@ SYSTEMA
 
 // ---
 
-&block.merits sheet: rows=
+/*
+--------------------------------------------------------------------------------
+-- Hey, Let's separate out the Fghting Merits! ---------------------------------
+*/
+
+
+&merits.default [v( d.nsc )]=
+	localize( strcat( 
+		## Merits|, 
+		setq( m, 
+			edit( 
+				u( v( d.sfp )/f.list-stats-tags, %0, merit, !fighting ), 
+				MERIT., 
+			)
+		), 
+		setq( m, filter( fil.subtraits, %qm )), 
+		iter( %qm, 
+			case( ulocal( v( d.sfp )/f.get-class, merit.%i0 ), 
+				list, ulocal( f.cheat_getstat.with_name, %0, merit.%i0, list ), 
+				ulocal( f.cheat_getstat.trait-n-subtrait, %0, %i0, merit )
+			), 
+			, | 
+		), 
+		`, 
+		## Fighting Merits|, 
+		setq( f, 
+			edit( 
+				u( v( d.sfp )/f.list-stats-tags, %0, merit, fighting ), 
+				MERIT., 
+			)
+		), 
+		setq( f, filter( fil.subtraits, %qf )), 
+		iter( %qf, 
+			case( ulocal( v( d.sfp )/f.get-class, merit.%i0 ), 
+				list, ulocal( f.cheat_getstat.with_name, %0, merit.%i0, list ), 
+				ulocal( f.cheat_getstat.trait-n-subtrait, %0, %i0, merit )
+			), 
+			, | 
+		)
+	))
+
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-==--=-=-
+
+
+&block.merits [v( d.sheet )]=
 	strcat( 
 		setq( w, 79 ), 
 		setq( t, 70 ), 
-		setq( d, u( merits.default, %0 )), 
-		setq( b, 
-			iter( %qd, 
-				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
-				|, | 
-			)
-		), 
+		setq( m, u( merits.default, %0 )), 
+		setq( f, rest( %qm, ` )), 
+		setq( m, first( %qm, ` )), 
 
-		divider( Merits ), %r, 
-		iter( %qb, 
-			%i0, 
+// merits...
+		u( block.merits.display, %qm, %qt, %qw ), 
+
+// fighting merits...
+		if( words( rest( %qf, | ), | ), 
+			strcat( 
+				%r, 
+				u( block.merits.display, %qf, %qt, %qw ), 
+			)
+		)
+	)
+
+
+/*
+
+0: ## HEADER|trait:value|trait:value[`## HEADER|trait:value|trait:value]
+1: text width
+2: column width
+
+*/
+
+&block.merits.display [v( d.sheet )]=
+	strcat( 
+		divider( rest( first( %0, | ), ## )), %r, 
+		iter( rest( %0, | ), 
+			u( display.trait-and-value, 
+				%i0, 
+				%1, 
+				%2, 
+				u( v( d.sfp )/f.get-class, 
+					merit.[edit( first( %i0, : ), %b, _ )] 
+				), 
+				. 
+			), 
 			|, %r 
 		)
 	)
+
+
+
+
+
+
+
+
+
+
+F.LIST-STATS-TAGS: filter( fil.list-stats-tags, rest( edit( lattr( %0/_%1.* ), %b_, %b ), _ ), , , %2, not( strmatch( %3, or )))
+
+
 
 
 
@@ -1147,3 +1245,42 @@ think iter(
 	)
 
 */
+
+
+
+/* 
+################################################################################
+## CHARGEN BLA BLA BLA #########################################################
+*/
+
+
+&f.allocated.merits [v( d.cg )]=
+	strcat( 
+		setq( t, u( %0/_bio.template )), 
+		ladd( cat( 
+			ulocal( f.points.category, %0, merit, * ), 
+
+// .. subtract points in merit substats
+			iter( lattr( %0/_merit.*.* ), 
+				mul( -1, first( u( %0/%i0 ), . ))
+			), 
+
+// .. subtract points given free with template-based things
+			-[ulocal( f.allocated.merits.%qt, %0 )], 
+
+// .. Remove all 'list' type merits and add them back in a different manner
+			-[ulocal( f.points.category, %0, merit, style.fighting.tag:* )], 
+
+			iter( 
+				u( f.list-stats-tags, %0, merit, style.tag:* ), 
+				words( get( %0/_%i0 ), . )
+			)
+			
+
+		)), 
+
+		/, 
+
+		udefault( f.allocated.power-trait.%qt, 0, %0 )
+	)
+
