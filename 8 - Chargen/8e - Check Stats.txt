@@ -338,7 +338,7 @@ Does this stat pass the statcheck?
 */
 
 &f.badstat? [v( d.cg )]=
-	not( land( u( f.statcheck, %1, %0 ), . ))
+	not( land( ulocal( f.statcheck, %1, %0 ), . ))
 
 
 /*
