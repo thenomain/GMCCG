@@ -59,7 +59,61 @@ think u( v( d.dd )/.median, 10.1.Bob.4.3, . ) --> #1
 These are changes to the stat system from the generic game install. Some of 
 these items touch more than the Data Dictionary, but are stat-focused.
 
+--------------------------------------------------------------------------------
+-- General: Bio ----------------------------------------------------------------
+*/
 
+
+// ** Bio: Birthday Math **
+
+&bio.birthdate [v( d.dd )]=*
+
+&prerequisite.bio.birthdate [v( d.dd )]=
+	cand( 
+		convtime( cat( 
+			xxx, 
+			elements( %2, 1 ), 
+			elements( %2, 2 ), 
+			00:00:00, 
+			elements( %2, 3 )
+		)), 
+		not( strlen( elements( %2, 4 )))
+	)
+
+&prereq-text.bio.birthdate [v( d.dd )]=
+	Must be in format 'Mon DD YYYY'. 
+	(Month three-letter text. Day numeric. Year four-digit numeric.)
+
+
+// b: _bio.birthdate 
+// t: timestamp format for birthdate midnight :: xxx <Mon> <DD> 00:00:00 <YYYY>
+// a: age in years
+
+&bio.age [v( d.dd )]=
+	localize( strcat( 
+		setq( b, u( .value, %0, bio.birthdate )), 
+		setq( t, cat( xxx, elements( %qb, 1 ), elements( %qb, 2 ), 00:00:00, elements( %qb, 3 ))), 
+		setr( a, first( writetime( sub( secs(), convtime( %qt ))))), 
+// add <age category> here
+		/, 
+		switch( %qa, 
+			>17, Adult,
+			>13, Teen, 
+			>0, Child, 
+			Invalid 
+		)
+	))
+&default.bio.age [v( d.dd )]=derived
+&tags.bio.age [v( d.dt )]=derived
+
+&bio.grade [v( d.dd )]=6.7.8.9.10.11.12.Alumnus
+&class.bio.grade [v( d.dd )]=string
+
+
+
+
+
+/*
 --------------------------------------------------------------------------------
 -- General: Attributes ---------------------------------------------------------
 
@@ -141,10 +195,7 @@ ON STAND-BY UNTIL "CHRONICLES OF DARKNESS" REVIEW IS COMPLETE.
 
 /*
 ================================================================================
-== WITCHES & WIZARDS ===========================================================
-
-I'm told that 'Wizard' is gender-neutral. I didn't know!
-
+== WIZARDS =====================================================================
 
 --------------------------------------------------------------------------------
 -- Wizard: Bio -----------------------------------------------------------------
@@ -184,7 +235,7 @@ Level 3 for very minor items
 		)
 	)
 &default.aptitude.potency [v( d.dd )]=derived
-&tags.aptitude.potency [v( d.dt )]=wizard
+&tags.aptitude.potency [v( d.dt )]=derived.wizard
 
 &aptitude.precision [v( d.dd )]=
 	u( .median, 
@@ -194,7 +245,7 @@ Level 3 for very minor items
 		)
 	)
 &default.aptitude.precision [v( d.dd )]=derived
-&tags.aptitude.precision [v( d.dt )]=wizard
+&tags.aptitude.precision [v( d.dt )]=derived.wizard
 
 &aptitude.protection [v( d.dd )]=
 	u( .median, 
@@ -204,7 +255,7 @@ Level 3 for very minor items
 		)
 	)
 &default.aptitude.protection [v( d.dd )]=derived
-&tags.aptitude.protection [v( d.dt )]=wizard
+&tags.aptitude.protection [v( d.dt )]=derived.wizard
 
 
 /*
@@ -458,61 +509,321 @@ So:
 
 // -- Advantages ---------------------------------------------------------------
 
-&traits.morality.vampire [v( d.nsc )]=
-	ulocal( f.cheat_getstat.morality, %0, integrity, Humanity )
-
-&traits.vitae [v( d.nsc )]=
-	u( f.cheat_getstat.pool, %0, vitae )
-
-&block.traits.vitae [v( d.sheet )]=
+&block.traits.wizard [v( d.sheet )]=
 	strcat( 
-		setq( w, 38 ), 
-		setq( t, 10 ), 
-
-// .. vitae
-		setq( x, ulocal( traits.vitae, %0 )), 
-		setq( c, rest( setr( y, first( %qx, | )), : )), 
-		setq( p, last( %qx, : )), 
-
-// .. return
-		u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )
+		setq( w, 38 ), setq( t, 10 ), 
+		setq( r, @@( ... )), 
+		setq( z, 
+			u( display.trait-and-value, 
+				strcat( 
+					setq( z, u( traits.supernatural_resistance, %0 )), 
+					setq( y, 
+						strcat( 
+							first( %qz, : ), %b, 
+							%(, get( %0/_bio.paradigm ), %) 
+						)
+					), 
+					%qy, :, 
+					rest( %qz, : )
+				), 
+				inc( strlen( %qy )), 
+				%qw, 
+				numeric 
+			)
+		), 
+		vcolumns( %qw:%qr, %qw:%qz, |, %b ), %r, 
 	)
 
 
-&block.traits.vampire [v( d.sheet )]=
+/* 
+********************************************************************************
+** SOME CHARGEN NOTES **********************************************************
+
+added the concept of 'mandatory' general bio checks
+*/
+
+&check.bio [v( d.cg )]=
 	strcat( 
-		setq( w, 38 ), 
-		setq( t, 10 ), 
+// column 1
+		setq( 1, 
+			strcat( 
+				ansi( h, Gender ), :, %b, 
+				setr( g, get( %0/sex )), %b, 
+				u( display.check.ok-no, match( f m, strtrunc( %qg, 1 ))), `, 
+				ansi( h, Concept ), :, %b, 
+				if( hasattr( %0, _bio.concept ), 
+					ansi( g, exists ), 
+					ansi( r, blank )
+				), `, 
+				iter( v( check.bio.mandatory ), 
+					strcat( 
+						ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
+						setr( i, u( %1/_bio.%i0 )), %b, 
+						u( display.check.ok-no, comp( %qi, ))
+					), 
+					, ` 
+				)
+			)
+		), 
+// column 2
+		setq( 2, 
+			iter( 
+				cat( 
+					template, 
+					udefault( check.bio.%2, u( check.bio.default ), %1 )
+				), 
+				strcat( 
+					ansi( h, titlestr( edit( %i0, _, %b ))), :, %b, 
+					setr( i, u( %1/_bio.%i0 )), %b, 
+					u( display.check.ok-no, comp( %qi, ))
+				), 
+				, ` 
+			)
+		), 
+// display
+		divider( Biography Check, width( %# )), 
+		%r, 
+		vcolumns( 38:%q1, 37:%q2, `, %b, %b%b )
+	)
 
-// .. vitae (power pool)
-		setq( r, ulocal( block.traits.vitae, %0 )), 
 
-// .. blood potency (supernatural resistance)
-		setq( z, 
-			u( display.trait-and-value, 
-				u( traits.supernatural_resistance, %0 ), 
-				inc( strlen( Blood Potency )), %qw, numeric 
+&check.bio.manditory [v( d.cg )]=birthdate
+&check.bio.default [v( d.cg )]=first_name last_name
+&check.bio.wizard [v( d.cg )]=first_name last_name paradigm 
+
+&f.allocated.power-trait.wizard [v( d.cg )]=
+	mul( dec( first( get( %0/_advantage.sortilege ), . )), 5 )
+
+&check.chargen.wizard [v( d.cg )]=u( check.arts, %0, wizard )
+
+&check.arts [v( d.cg )]=
+	udefault( 
+		check.arts.[get( %0/_bio.template )], 
+		** check failed **, 
+		%0 
+	) 
+
+&check.arts.wizard [v( d.cg )]=
+	localize( strcat( 
+		%b%b, ansi( h, Arts ), :, %b, 
+		setr( a, u( f.allocated.arts, %0 )), /5, %b, 
+		u( display.check.ok-no, eq( %qa, 5 )), 
+		%r 
+	))
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Check Chargen ---------------------------------------------------------------
+
+Merits: 5/10 (5 on <name of Power Stat>)
+
+0: dbref of sheet
+1: template
+
+a: age
+c: age chart (<skill points>:<specialties>)
+
+*/
+
+&f.valid-points.skill.default [v( d.cg )]=
+	switch( %0, 
+		<11, 0/0/0:0, 
+		11, 6/4/2:1, 
+		12, 7/4/2:1, 
+		13, 7/4/3:1, 
+		14, 8/4/3:2, 
+		15, 8/5/3:2, 
+		16, 9/5/3:2, 
+		17, 10/6/4:2, 
+		11/7/4:3 
+	)
+
+&f.valid-points.skill.vampire [v( d.cg )]=11/7/4:3
+&f.valid-points.skill.giant [v( d.cg )]=11/7/4:3
+
+
+&check.chargen [v( d.cg )]=
+	strcat( 
+		setq( a, first( u( v( d.dd )/.value, %0, bio.age ), / )), 
+		setq( t, get( %0/_bio.template )), 
+		setq( c, 
+			udefault( f.valid-points.skill.%qt, 
+				u( f.valid-points.skill.default, %qa ), 
+				%qa
 			)
 		), 
 
-// .. display
-		vcolumns( 
-			%qw:%qr, 
-			%qw:%qz, 
-			|, %b 
+		divider( Chargen Levels, width( %# )), %r, 
+
+		%b%b, ansi( h, Attributes ), :%b, 
+		udefault( 
+			check.chargen.attributes.%1, 
+			u( check.chargen.attributes.default, %0 ), 
+			%0 
+		), 
+
+		ulocal( check.chargen.attributes, %0, %1 ), %r, 
+
+		%b%b, ansi( h, Skills ), :%b, 
+		udefault( 
+			check.chargen.skills.%1, 
+			u( check.chargen.skills.default, %0, first( %qc, : )), 
+			%0, 
+			first( %qc, : )
 		), %r, 
+		ulocal( check.chargen.specialties, %0, %1, rest( %qc, : )), %r, 
+
+		%b%b, ansi( h, Merits ), :%b, 
+			setq( a, u( f.allocated.merits, %0 )), 
+			ladd( %qa, / ), /10, 
+			%b, %(, rest( %qa, / ), %b, from Power Stat, %), %b, 
+			u( display.check.stats, %0, merits ), %r, 
+
+// .. template chargen checks
+		u( check.chargen.%1, %0 )
 	)
 
 
-&block.traits.ghoul [v( d.sheet )]=
+/*
+--------------------------------------------------------------------------------
+-- Check Chargen: Skills -------------------------------------------------------
+
+0: sheet dbref
+1: valid skill points for age (low/med/high)
+
+*/
+
+&check.chargen.skills.default [v( d.cg )]=
 	strcat( 
-		setq( w, 38 ), 
-		setq( t, 10 ), 
-		vcolumns( 
-			%qw:[u( block.traits.vitae, %0 )], 
-			|, %b 
-		), %r, 
+		u( f.allocated.skills, %0 ), %b, %(of %1%), %b, 
+		u( display.check.stats, %0, skills, , %1 )
 	)
 
 
+/*
+--------------------------------------------------------------------------------
+-- Display: Check Stats --------------------------------------------------------
 
+0: dbref of sheet
+1: category to check
+2: potential late additions/subtractions ('free' points being accounted for)
+3: valid points for age
+output: Ob. yes/no in full prismatic color
+
+*/
+
+&display.check.stats [v( d.cg )]=
+	u( display.check.ok-no, u( f.pts-valid?.%1, %0, %2, %3 ))
+
+
+/*
+--------------------------------------------------------------------------------
+-- Pts Valid?: Skills ----------------------------------------------------------
+
+Check for: 4/7/11 points
+0: dbref of sheet
+1: possible late additions/subtractions (for 'free point' checks)
+2: valid skill points per category (high/med/low)
+
+s: skills
+
+*/
+
+&f.pts-valid?.skills [v( d.cg )]=
+	strcat( 
+		setq( s, sort( u( f.allocated.skills, %0, %1 ), n, / )), 
+		land( 
+			iter( 
+				sort( %2, n, / ), 
+				strmatch( %i0, elements( %qs, inum(), / )), 
+				/ 
+			)
+		)
+/*
+		and(
+			eq( first( %qs, / ), 4 ), 
+			eq( elements( %qs, 2, / ), 7 ), 
+			eq( last( %qs, / ), 11 )
+		)
+*/
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Check Chargen: Specialties --------------------------------------------------
+
+0: sheet dbref
+1: template
+2: number of valid specialties for age 
+
+a: all specialties
+s: standard specialties
+r: template-specific specialties
+
+*/
+
+&check.chargen.specialties [v( d.cg )]=
+	strcat(
+		setq( a, ulocal( f.allocated.specialties, %0 )), 
+		setq( s, first( %qa, ` )), 
+		setq( r, rest( %qa, ` )), 
+
+		%b%b, ansi( h, Specialties ), :%b, 
+		iter( 
+			%qs, 
+			ulocal( u( d.sfp )/f.statname.workhorse, rest( %i0, . )), 
+			, %,%b
+		), 
+
+// check & output template specs
+		ulocal( check.specialties.%1, %qr ), 
+
+		%r%b%b, ansi( h,  Final Specialties Check ), %b, ->, %b, 
+		words( %qs ), /%2, %b, 
+		ulocal( display.check.stats, %0, specialties, %2 )
+
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Pts Valid?: Specialties -----------------------------------------------------
+
+Check for specialties in a list of yes/no: 
+<standard>`<template>`<specialty>`<sub-specialty>
+<standard> need to be 3, otherwise check based on tempalte
+
+0: dbref of sheet
+1: number of valid specialties by age
+
+s: specialties
+t: template
+
+&f.pts-valid?.specialties.<template> (if exists):
+	input: <template>`<specialty>`<sub-specialty>
+	output: 1 1 1 (a stream of 1 or 0 responses if it's valid)
+
+*/
+
+&f.pts-valid?.specialties [v( d.cg )]=
+	strcat(
+		setq( s, u( f.allocated.specialties, %0 )), 
+		setq( t, u( %0/_bio.template )), 
+		land( 
+			[eq( words( first( %qs, ` )), %1 )] 
+			[udefault( f.pts-valid?.specialties.%qt, 1, rest( %qs, ` ))] 
+		)
+	)
