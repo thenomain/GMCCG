@@ -152,7 +152,7 @@ m: normal 'max' for pool
 
 &display.value.pool [v( d.nsc )]=
 	localize( strcat( 
-		setq( c, ladd( %0, . )), 
+		setq( c, u( display.check-zero, ladd( %0, . ))), 
 		setq( o, ladd( %1, . )), 
 		setq( m, first( %1, . )), 
 		ladd( %0, . ), 
