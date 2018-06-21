@@ -827,3 +827,113 @@ t: template
 			[udefault( f.pts-valid?.specialties.%qt, 1, rest( %qs, ` ))] 
 		)
 	)
+
+
+/* 
+================================================================================== TEMPLATE: Warn People =======================================================
+
+Because people who have their template set are treated as Unapproved Characters, 
+warn people of this. They can use 'stat/wipe' to become a Player again.
+
+--
+
+stat/template <template>[ YES]
+stat/template <target>=<template>[ YES]
+
+--
+
+0: [Target=]Template[ YES]
+
+q0: target ('%#' if target is missing and 'in chargen') 
+q1: template
+q2: YES if ' YES', else null.
+
+qp: pmatch
+qw: where is the sheet location
+qv: validated template(s)
+ql: list of stats to set
+qs: setting self? (1/0)
+
+*/
+
+&f.stat/template [v( d.ss )]=
+	strcat( 
+// .. registers
+		if( strmatch( %0, *=* ), 
+			setq( 0, before( %0, = )), 
+			setq( 0, %# )
+		), 
+		if( strmatch( %0, *=* ), 
+			setq( 1, after( %0, = )), 
+			setq( 1, %0 )
+		), 
+		if( regmatch( %q1, ^(.+)( YES)$, 2 2 3 ), 
+			[setq( 1, %q2 )][setq( 2, YES )] 
+		), 
+
+		if( strmatch( %q0, me ), setq( 0, %# )),
+		setq( p, u( .pmatch, %q0 )), 
+		setq( w, u( f.find-sheet, %qp )), 
+		setq( s, strmatch( %#, %qp )), 
+		setq( v, statvalidate( template, %q1 )), 
+
+		case( 0, 
+
+// .. staff can set anything
+// .. players can only /template themselves, and only if they're 'in chargen'
+			cor( 
+				isstaff( %# ), 
+				cand( %qs, isapproved( %#, chargen ))
+			), 
+			u( .msg, stat/template, Staff only ), 
+
+// .. template already exists 
+			not( hasattr( %qw, _bio.template )), 
+
+			if( t( %qs ), 
+				u( .msg, stat/template, 
+					You already have a template. 
+					'stat/wipe' to erase your stats.
+				), 
+				u( .msg, stat/template, 
+					Player already has a template. 
+					'stat/wipe %q0' to erase their stats. 
+				)
+			), 
+
+// .. check for ' YES'
+			strmatch( %q2, YES ), 
+			if( t( %qs ), 
+				u( .msg, stat/template, 
+					If you set your template you will become a Character. 
+					If you're sure%, type: 
+					[ansi( h, stat/template %q1 YES )]
+				), 
+				u( .msg, stat/template, 
+					If you set their template they will become a Character. 
+					If you're sure%, type: 
+					[ansi( h, stat/template %q0=%q1 YES )] 
+				)
+			), 
+
+// .. template not found
+			t( %qv ), 
+			u( .msg, stat/template, 
+				Template '%q1' could not be found; check 'stat template' 
+			), 
+
+// OK! Find all stat.paths to be set with this template
+			strcat( 
+				setq( l, u( f.statpaths-for-template, %qv )), 
+
+// .. .. output what we're setting
+				u( display.statpath_defaults, %qp, %qv, %ql ), 
+
+// .. .. and set it
+				null( set( %qw, _BIO.TEMPLATE:%qv )), 
+				null( u( f.defaults.set, %qw, %ql )), 
+			)
+		)
+	)
+
+
