@@ -4,7 +4,7 @@
 */
 
 @create Stat Functions Prototype <sfp>
-@set [v( d.sfp )]=inherit safe
+@set Stat Functions Prototype <sfp>=inherit safe
 
 @fo me=&d.sfp me=[search( name=stat functions prototype <sfp> )]
 
