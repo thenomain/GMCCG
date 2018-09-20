@@ -1,7 +1,10 @@
 
 @create Sheet: Rows
-@set [v( d.sheet )]=inherit safe
-@fo me=@parent [v( d.sheet )]=[v( d.nsc )]
+@fo me=&d.sheet me=[search( name=Sheet: Rows )]
+
+
+@set Sheet: Rows=inherit safe
+@fo me=@parent Sheet: Rows=[v( d.nsc )]
 
 /* 
 -=-=-=-=-=-=
