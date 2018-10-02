@@ -136,8 +136,8 @@ Outputs: <number of short term>/<number of long-term>
 &f.allocated.aspirations [v( d.cg )]=
 	localize( strcat( 
 		setq( a, u( v( d.asp )/f.get.aspirations.status, %0, pitched )), 
-		setq( s, filter( v( d.asp )/filter.term, %qa, , , short-term )), 
-		setq( l, filter( v( d.asp )/filter.term, %qa, , , long-term )), 
+		setq( s, filter( v( d.asp )/filter.term, %qa, , , %0, short-term )), 
+		setq( l, filter( v( d.asp )/filter.term, %qa, , , %0, long-term )), 
 
 		words( %qs ), /, words( %ql )
 	))
