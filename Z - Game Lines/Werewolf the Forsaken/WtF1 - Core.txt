@@ -1721,8 +1721,8 @@ Following is sent from XP:
 			)
 		), 3, 
 		strmatch( %2, unlock ), 5, 
-		hastag?( %3, wolf ), 1, 
-		2
+		ulocal( v( d.sfp )/f.hastag?.workhorse, %3, wolf ), 1, 
+		2 
 	)
 
 
@@ -1738,7 +1738,8 @@ Following is sent from XP:
 	birthdate concept pack template virtue vice 
 
 &bio.default.werewolf [v( d.nsc )]=
-	birthdate concept pack lodge template blood bone auspice tribe
+	birthdate concept pack [if( hasattr( %0, _bio.lodge ), lodge )]  
+	template blood bone auspice tribe
 
 // -- Powers: Gifts ------------------------------------------------------------
 // 0: sheet dbref
