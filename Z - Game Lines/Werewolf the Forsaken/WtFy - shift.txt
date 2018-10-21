@@ -34,12 +34,11 @@ We'll see where this goes.
 
 @create Shifting Forms System <sfs>
 @fo me=&d.sfs me=search( name=Shifting Forms System <sfs> )
-@fo me=&d.codp me=search( name=Code Object Data Parent <codp> )
 
-@set sfs=inherit safe
+@set Shifting Forms System <sfs>=inherit safe
 
-@fo me=@parent sfs=[v( d.codp )]
-&prefix.forms sfs=form.
+@fo me=@parent Shifting Forms System <sfs>=[v( d.codp )]
+&prefix.forms Shifting Forms System <sfs>=form.
 
 
 /*
