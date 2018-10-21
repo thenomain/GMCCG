@@ -830,7 +830,8 @@ t: template
 
 
 /* 
-================================================================================== TEMPLATE: Warn People =======================================================
+================================================================================
+== TEMPLATE: Warn People =======================================================
 
 Because people who have their template set are treated as Unapproved Characters, 
 warn people of this. They can use 'stat/wipe' to become a Player again.
@@ -937,3 +938,110 @@ qs: setting self? (1/0)
 	)
 
 
+
+
+
+
+/*
+-==-=--=-=-=-=-=-=-=-
+HOW TO ADD A TEMPLATE 
+-==--=-=-=-=-=-=-=-=-
+
+In this case we're going to add 'Wizard-Born'.
+
+*/
+
+// * Make sure you have all the dbrefs set on yourself:
+@fo me=&d.dd me=[search( name=Data Dictionary <dd> )]
+@fo me=&d.dt me=[search( name=Data Tags <d:t> )]
+@fo me=&d.cg me=[search( name=GMC Chargen <cg> )]
+@fo me=&d.sheet me=[search( name=Sheet: Rows )]
+
+
+// * Add the template to the main list:
+@fo me=&bio.template [v( d.dd )]=[get( v( d.dd )/bio.template )].Wizard-Born
+
+
+// * 'Wizard-Born' is a 'Blig'-style class, 
+//   so let's find all the 'Blig' tags and add 'Wizard-Born' to them.
+@dolist 
+	iter( 
+		lattr( v( d.dt )/tags.* ), 
+		if( grab( get( v( d.dt )/%i0 ), blig, . ), %i0 )
+	)=
+	{ 
+		@set [v( d.dt )]=
+			##:
+			[replace( 
+				get( v( d.dt )/## ), 
+				match( get( v( d.dt )/## ), blig, . ), 
+				blig.wizard-born, 
+				. 
+			)]
+	}
+
+
+// Dev Note: 
+// We do it this way because `grepi( x, *, wizard )` would match 'wizard-born'.
+// And `@edit xx=wizard, wizard.blah` would also match 'wizard-born'.
+
+
+// * We don't need to do anything else. 
+//   'Blig' is the default for sheet and chargen.
+
+
+/*
+-=-=-=-=---=-=-=-=-=-=-=-==
+HOW TO ADD A MAGIC TEMPLATE
+-=--=-=-=-==-=--=-==-=--=-=
+
+But what if we were adding to the Wizard template?
+
+We need to make sure that the sheet shows them correctly, right? Right.
+
+*/
+
+// * Again make sure you have all the dbrefs set on yourself:
+@fo me=&d.dd me=[search( name=Data Dictionary <dd> )]
+@fo me=&d.dt me=[search( name=Data Tags <d:t> )]
+@fo me=&d.cg me=[search( name=GMC Chargen <cg> )]
+@fo me=&d.sheet me=[search( name=Sheet: Rows )]
+
+
+// * Add the template to the main list:
+@fo me=&bio.template [v( d.dd )]=[get( v( d.dd )/bio.template )].Magical-Being
+
+
+// * 'Magical-Being' is a 'Wizard'-style class, 
+//   so let's find all the 'Wizard' tags and add 'Magical Being' to them.
+@dolist 
+	iter( 
+		lattr( v( d.dt )/tags.* ), 
+		if( grab( get( v( d.dt )/%i0 ), wizard, . ), %i0 )
+	)=
+	{ 
+		@set [v( d.dt )]=
+			##:
+			[replace( 
+				get( v( d.dt )/## ), 
+				match( get( v( d.dt )/## ), wizard, . ), 
+				wizard.magical-being, 
+				. 
+			)]
+	}
+
+
+// * Allow 'Magical-Being' to see the 'Wizard' parts
+&block.powers.magical-being [v( d.sheet )]=u( block.powers.wizard, %0, %1 )
+&block.traits.magical-being [v( d.sheet )]=u( block.traits.wizard, %0 )
+
+
+// * Chargen checks (just copy/pasted from the same `.wizard` checks.
+&check.bio.magical-being [v( d.cg )]=first_name last_name paradigm 
+
+&f.allocated.power-trait.magical-being [v( d.cg )]=
+	mul( dec( first( get( %0/_advantage.sortilege ), . )), 5 )
+
+&check.chargen.magical-being [v( d.cg )]=u( check.arts, %0, magical-being )
+
+&check.arts.magical-being [v( d.cg )]=u( check.arts.magical-being, %0 )
