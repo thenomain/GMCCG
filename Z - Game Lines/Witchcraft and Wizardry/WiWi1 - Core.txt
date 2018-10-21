@@ -1044,4 +1044,4 @@ We need to make sure that the sheet shows them correctly, right? Right.
 
 &check.chargen.magical-being [v( d.cg )]=u( check.arts, %0, magical-being )
 
-&check.arts.magical-being [v( d.cg )]=u( check.arts.magical-being, %0 )
+&check.arts.magical-being [v( d.cg )]=u( check.arts.wizard, %0 )
