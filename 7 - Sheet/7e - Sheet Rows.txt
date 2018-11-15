@@ -28,6 +28,62 @@ think u( v( d.nsc )/bio.default, %# )
 --=-=-=-==-
 */
 
+/* 
+--------------------------------------------------------------------------------
+-- Format: Two-Column Blocks ---------------------------------------------------
+
+For the larger block areas, this will take whatever numeric (AND ONLY NUMERIC) 
+information and divide it further down into two columns. 
+
+This is good for 'power' sections for people who have to have All The Powers.
+
+0: stat:value|stat:value|...
+1: header for this section
+2: 'name-only' if name-only (no numeric value)
+
+*/
+
+&format.block.two-columns [v( d.sheet )]=
+    localize( strcat( 
+        setq( w, 39 ), 
+        setq( t, 
+        	case( %2, 
+        		name-only, 38, 
+        		34
+        	)
+        ), 
+        setq( y, 
+            iter( %0, 
+            	case( %2, 
+            		name-only, 
+            		u( display.trait-name-only, %i0, %qt, %qw, flag ), 
+
+	                ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . )
+             	), 
+                |, | 
+            )
+        ), 
+        setq( a, words( %0, | )), 
+        setq( b, ceil( fdiv( %qa, 2 ))), 
+        setq( c, lnum( 1, %qb )), 
+        setq( d, lnum( inc( %qb ), inc( %qa ))), 
+
+        divider( %1 ), %r, 
+        vcolumns( 
+        	%qw:[elements( %qy, %qc, |, | )], 
+        	%qw:[elements( %qy, %qd, |, | )], 
+        	|, %b 
+        )
+    ))
+
+
+
+
+/* 
+Some other stuff. Will be commented some day.
+*/
+
+
 &block.bio [v( d.sheet )]=
 	strcat( 
 		setq( o, ulocal( bio.default, %0, %1 )), 
@@ -485,10 +541,10 @@ FINAL SHEET:
 		u( block.attributes, %0, %2 ), %r, 
 		u( block.skills, %0, %2 ), %r, 
 		u( block.merits, %0, %2 ), %r, 
-		udefault( block.powers.[get( %0/_bio.template )], , %0, %2 ), 
-		u( block.advantages, %0, %2 ), 
+		udefault( block.powers.[edit( %2, %b, _ )], , %0, %2 ), 
+		u( block.advantages, %0, %2 ), %r, 
 		u( block.traits, %0, %2 ), %r, 
-		udefault( block.traits.[get( %0/_bio.template )], , %0, %2 ), 
+		udefault( block.traits.[edit( %2, %b, _ )], , %0, %2 ), 
 		u( block.health, %0, %2 ), %r, 
 		footer( )
 	)
