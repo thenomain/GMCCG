@@ -505,7 +505,8 @@ NOTE: Instances and Substats on sheet are stored with _ for spaces
 								%qt, %qs%qn, %qz 
 							)
 						)), 
-						setq( n, %q0 ), 
+ 						setq( n, %qn.%q0 ), 
+//						setq( n, %q0 ), 
 
 						setq( n, #-2 SUBSTAT(S) NOT FOUND )
 					)
@@ -533,7 +534,7 @@ In order to do that, we pull out how that works from the core lookup system.
 We might as well.
 
 	0: sheet dbref (validated)
-	1: [sub-sheet/]class.trait (validated)
+	1: [sub-sheet!]class.trait (validated)
 	2: list.of.substats (not validated)
 	returns: list.of.valid.substats 
 */
