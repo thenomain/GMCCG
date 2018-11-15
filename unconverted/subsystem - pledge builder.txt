@@ -79,7 +79,7 @@ Dot functions provide common-use or cross-platform ease of inclusion
 &d.levels [v( d.pb )]=Lesser|Medial|Greater
 &d.sort.elements [v( d.pb )]=Task|Boon|Sanction|Duration
 
-// Will this work?
+// Will this work? -- yes
 // &d.elements-by-class [v( d.pb )]=
 //	iter( 
 //		lattr( v( d.pb )/pledge.%0.* ), 
@@ -362,7 +362,7 @@ think u( v( d.pb )/f.pledge.data, fe )
 */
 
 &f.pledge.data.levels [v( d.pb )]=
-localize( strcat(  
+	localize( strcat(  
 		setq( a, u( f.pledge.find, %0, %1 )), 
 		setq( c, u( %qa )), 
 		switch( 0, 
@@ -457,6 +457,7 @@ think u( v( d.pb )/f.pledge.level-check, fealty, minor )
 
 think u( v( d.pb )/f.pledge.level-check, oath, true name )
 
+think u( v( d.pb )/f.pledge.level-check, year_and )
 
 
 /*
