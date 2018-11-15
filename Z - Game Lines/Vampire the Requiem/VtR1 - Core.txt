@@ -1199,7 +1199,8 @@ If you also have Werewolf, you may need this:
 
 Remember to make 'Mystery Coil' mandatory for Ordo's bio section.
 
-A Dragon can have no more dots in each non-Mystery Coil than he possesses dots in the Status (Ordo Dracul) Merit
+A Dragon can have no more dots in each non-Mystery Coil than he possesses dots 
+in the Status (Ordo Dracul) Merit
 
 */
 
@@ -1830,22 +1831,12 @@ Character should have no Scales
 
 &block.powers.disciplines [v( d.sheet )]=
 	strcat( 
-		setq( w, 79 ), setq( t, 70 ), 
-		setq( d, u( powers.disciplines, %0 )), 
+		setq( w, 79 ), 
+		setq( t, 70 ), 
 		setq( v, ulocal( block.powers.disciplines.devotions, %0 )), 
-		setq( b, 
-			iter( %qd, 
-				ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
-				|, | 
-			)
-		), 
 
 // disciplines
-		divider( Disciplines ), %r, 
-		iter( %qb, 
-			%i0, 
-			|, %r 
-		), %r, 
+		u( block.powers.disciplines.default, %0 ), %r, 
 
 // .. convent-based disciplines
 		case( get( %0/_bio.covenant ), 
@@ -1865,42 +1856,29 @@ Character should have no Scales
 			)
 		), 
 
+// .. bloodline-based disciplines
+		case( get( %0/_bio.bloodline ), 
+			@@( placeholder )
+		), 
+
 // devotions
 		if( strlen( %qv ), %qv ), 
 
 		@@( to be continued ), 
 	)
 
+// -- Disciplines: Default -----------------------------------------------------
+
+&block.powers.disciplines.default [v( d.sheet )]=
+	u( format.block.two-columns, u( powers.disciplines, %0 ), Disciplines )
 
 // -- Disciplines: Devotions (if exist) ----------------------------------------
 
 &block.powers.disciplines.devotions [v( d.sheet )]=
 	if( strlen( setr( x, u( powers.devotions, %0 ))), 
-		strcat( 
-			setq( w, 40 ), 
-			setq( t, 38 ), 
-			setq( y, 
-				iter( %qx, 
-					u( display.trait-name-only, %i0, %qt, %qw, flag ), |, | 
-				)
-			), 
-			setq( a, words( %qx, | )), 
-			setq( b, ceil( fdiv( %qa, 2 ))), 
-
-			setq( c, lnum( 1, %qb )), 
-			setq( d, lnum( inc( %qb ), inc( %qa ))), 
-
-			divider( Devotions ), %r, 
-			vcolumns( 
-				%qw:[elements( %qy, %qc, |, | )], 
-				%qw:[elements( %qy, %qd, |, | )], 
-				|, 
-				%b 
-			), 
-			%r 
-		)
+		u( format.block.two-columns, %qx, Devotions, name-only )
+		%r 
 	)
-
 
 // -- Disciplines: Rites (Cruac) -----------------------------------------------
 
@@ -1911,22 +1889,11 @@ Character should have no Scales
 	)
 
 &block.powers.disciplines.rites [v( d.sheet )]=
-	strcat( 
-		setq( w, 79 ), setq( t, 70 ), 
-		setq( d, u( powers.disciplines.rites, %0 )), 
-		setq( b, 
-			iter( %qd, 
-				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
-				|, | 
-			)
-		), 
-
-		divider( Rites ), %r, 
-		iter( %qb, 
-			%i0, 
-			|, %r 
-		), %r, 
+	if( strlen( setr( x, u( powers.disciplines.rites, %0 ))), 
+		u( format.block.two-columns, %qx, Rites %(Cruac%) )
+		%r 
 	)
+
 
 // -- Disciplines: Miracles (Theban Sorcery) -----------------------------------
 
@@ -1937,21 +1904,9 @@ Character should have no Scales
 	)
 
 &block.powers.disciplines.miracles [v( d.sheet )]=
-	strcat( 
-		setq( w, 79 ), setq( t, 70 ), 
-		setq( d, u( powers.disciplines.miracles, %0 )), 
-		setq( b, 
-			iter( %qd, 
-				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
-				|, | 
-			)
-		), 
-
-		divider( Miracles ), %r, 
-		iter( %qb, 
-			%i0, 
-			|, %r 
-		), %r, 
+	if( strlen( setr( x, u( powers.disciplines.miracles, %0 ))), 
+		u( format.block.two-columns, %qx, Miracles %(Theban Sorcery%) )
+		%r 
 	)
 
 // -- Disciplines: Scales (Coil)  ----------------------------------------------
@@ -1964,32 +1919,9 @@ Character should have no Scales
 
 &block.powers.disciplines.scales [v( d.sheet )]=
 	if( strlen( setr( x, u( powers.disciplines.scales, %0 ))), 
-		strcat( 
-			setq( w, 40 ), 
-			setq( t, 38 ), 
-			setq( y, 
-				iter( %qx, 
-					u( display.trait-name-only, %i0, %qt, %qw, flag ), 
-					|, | 
-				)
-			), 
-			setq( a, words( %qx, | )), 
-			setq( b, ceil( fdiv( %qa, 3 ))), 
-
-			setq( c, lnum( 1, %qb )), 
-			setq( d, lnum( inc( %qb ), inc( %qa ))), 
-
-			divider( Scales ), %r, 
-			vcolumns( 
-				%qw:[elements( %qy, %qc, |, | )], 
-				%qw:[elements( %qy, %qd, |, | )], 
-				|, 
-				%b 
-			), 
-			%r 
-		)
+		u( format.block.two-columns, %qx, Scales %(Coils%), name-only )
+		%r 
 	)
-
 
 
 // -- Advantages ---------------------------------------------------------------
