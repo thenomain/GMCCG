@@ -69,16 +69,23 @@ these items touch more than the Data Dictionary, but are stat-focused.
 &bio.birthdate [v( d.dd )]=*
 
 &prerequisite.bio.birthdate [v( d.dd )]=
-	cand( 
-		convtime( cat( 
-			xxx, 
-			elements( %2, 1 ), 
-			elements( %2, 2 ), 
-			00:00:00, 
-			elements( %2, 3 )
-		)), 
-		not( strlen( elements( %2, 4 )))
-	)
+	localize( strcat( 
+		case( %2, 
+			@@( null ), 
+			setq( 2, u( .value, %0, bio.birthdate )), 
+			setq( 2, %2 )
+		), 
+		cand( 
+			convtime( cat( 
+				xxx, 
+				elements( %q2, 1 ), 
+				elements( %q2, 2 ), 
+				00:00:00, 
+				elements( %q2, 3 )
+			)), 
+			not( strlen( elements( %q2, 4 )))
+		)
+	))
 
 &prereq-text.bio.birthdate [v( d.dd )]=
 	Must be in format 'Mon DD YYYY'. 
@@ -92,15 +99,27 @@ these items touch more than the Data Dictionary, but are stat-focused.
 &bio.age [v( d.dd )]=
 	localize( strcat( 
 		setq( b, u( .value, %0, bio.birthdate )), 
-		setq( t, cat( xxx, elements( %qb, 1 ), elements( %qb, 2 ), 00:00:00, elements( %qb, 3 ))), 
-		setr( a, first( writetime( sub( secs(), convtime( %qt ))))), 
+		setq( t, 
+			cat( 
+				xxx, 
+				elements( %qb, 1 ), 
+				elements( %qb, 2 ), 
+				00:00:00, 
+				elements( %qb, 3 )
+			)
+		), 
+		if( strlen( %qb ), 
+			strcat( 
+				setr( a, first( writetime( sub( secs(), convtime( %qt ))))), 
 // add <age category> here
-		/, 
-		switch( %qa, 
-			>17, Adult,
-			>13, Teen, 
-			>0, Child, 
-			Invalid 
+				/, 
+				switch( %qa, 
+					>17, Adult,
+					>13, Teen, 
+					>0, Child, 
+					Invalid 
+				)
+			)
 		)
 	))
 &default.bio.age [v( d.dd )]=derived
@@ -836,10 +855,14 @@ t: template
 Because people who have their template set are treated as Unapproved Characters, 
 warn people of this. They can use 'stat/wipe' to become a Player again.
 
+Allow upper- or lower-case (upon request)
+
 --
 
 stat/template <template>[ YES]
 stat/template <target>=<template>[ YES]
+
+(upon request, accept upper or lower case for 'yes')
 
 --
 
@@ -868,7 +891,7 @@ qs: setting self? (1/0)
 			setq( 1, after( %0, = )), 
 			setq( 1, %0 )
 		), 
-		if( regmatch( %q1, ^(.+)( YES)$, 2 2 3 ), 
+		if( regmatchi( %q1, ^(.+)( YES)$, 2 2 3 ), 
 			[setq( 1, %q2 )][setq( 2, YES )] 
 		), 
 
