@@ -1822,7 +1822,7 @@ Following is sent from XP:
 				setq( d, u( powers.gifts, %0, %i0 )), 
 				iter( %qd, 
 					ulocal( display.gift, %i0, %qw, . ), 
-					|, %r  
+					|, %r 
 				), 
 			), , %r 
 		), %r, 
@@ -1842,7 +1842,7 @@ Following is sent from XP:
 				setq( a, words( %qx, | )), 
 				setq( b, ceil( fdiv( %qa, 2 ))), 
 				setq( c, lnum( 1, %qb )), 
-				setq( d, lnum( inc( %qb ), inc( %qa ))),
+				setq( d, lnum( inc( %qb ), inc( %qa ))), 
 
 				divider( Rites ), %r, 
 
