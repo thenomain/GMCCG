@@ -3412,15 +3412,14 @@ get staff involved and have them manually alter the Experiences.
 	advantage.gnosis 
 
 &xp.advantage.gnosis [v( d.xpcd )]=u( cost.standard, 5, %1, %2 )
-&xp.rote [v( d.xpcd )]=1
 
-/*
+// &xp.rote [v( d.xpcd )]=1
+
 &xp.rote [v( d.xpcd )]=
 	case( u( v( d.dd )/.value, %0, template ), 
 		Mage, 1, 
 		Proximus, u( cost.standard, 1, %1, %2 )
 	)
-*/
 
 
 /*
