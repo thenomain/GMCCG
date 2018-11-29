@@ -1,0 +1,464 @@
+/*
+================================================================================
+== TEMPLATE: PSYCHIC VAMPIRE ===================================================
+*/
+
+// add to templates
+@fo me=&bio.template [v( d.dd )]=[get( v( d.dd )/bio.template )].Psychic Vampire
+
+// -----------------------------------------------------------------------------
+// -- DD: Tags for Psychic Vampires --------------------------------------------
+
+@edit v( d.dt )/tags.advantage.integrity=$, .psychic vampire
+
+
+
+/*
+================================================================================
+== ADVANTAGES ==================================================================
+*/
+
+&advantage.ephemera [v( d.dd )]=
+	ladd( u( .value_full, %0, advantage.ephemera_maximum ), . )
+&default.advantage.ephemera [v( d.dd )]=derived
+&tags.advantage.ephemera [v( d.dt )]=derived.psychic vampire
+
+&advantage.ephemera_maximum [v( d.dd )]=
+	u( .value_stats, %0, attribute.resolve merit.ephemeral_battery )
+
+&default.advantage.ephemera_maximum [v( d.dd )]=derived
+&tags.advantage.ephemera_maximum [v( d.dt )]=derived.psychic vampire
+
+
+
+/*
+================================================================================
+== MERITS ======================================================================
+
+The game uses "Psychic Vampirism" as a merit and not a Supernatural Resistance.
+
+I'm not sure the reason for this, but it does mean that one cannot use 
+"Psychic Vampirism" to resist supernatural effects.
+
+The rules do note that Supernatural Resistance does defend against Psychic 
+Vampirism.
+
+*/
+
+&merit.psychic_vampirism [v( d.dd )]=1.2.3.4.5
+&default.merit.psychic_vampirism [v( d.dd )]=1
+&tags.merit.psychic_vampirism [v( d.dt )]=style.supernatural.psychic vampire
+
+&merit.breath_stealer [v( d.dd )]=1.2.3
+&tags.merit.breath_stealer [v( d.dt )]=supernatural.psychic vampire
+
+&merit.burst_of_speed [v( d.dd )]=1
+&tags.merit.burst_of_speed [v( d.dt )]=supernatural.psychic vampire
+
+&merit.ephemeral_battery [v( d.dd )]=1.2.3.4.5
+&tags.merit.ephemeral_battery [v( d.dt )]=supernatural.psychic vampire
+
+&merit.euphoric_touch [v( d.dd )]=1.2.3
+&tags.merit.euphoric_touch [v( d.dt )]=supernatural.psychic vampire
+
+&merit.nocturnal_supremacy [v( d.dd )]=2
+&tags.merit.nocturnal_supremacy [v( d.dt )]=supernatural.psychic vampire
+
+&merit.psychic_infection [v( d.dd )]=1
+&tags.merit.psychic_infection [v( d.dt )]=supernatural.psychic vampire
+
+&merit.psychic_seduction [v( d.dd )]=1
+&tags.merit.psychic_seduction [v( d.dt )]=supernatural.psychic vampire
+
+&merit.psychic_transference [v( d.dd )]=2
+&tags.merit.psychic_transference [v( d.dt )]=supernatural.psychic vampire
+
+&merit.shapechanging_() [v( d.dd )]=2.3|*
+&tags.merit.shapechanging_() [v( d.dt )]=supernatural.psychic vampire
+&notes.merit.shapechanging_() [v( d.dt )]='type' is type of animal, regional
+
+&merit.soul_eater [v( d.dd )]=2
+&tags.merit.soul_eater [v( d.dt )]=supernatural.psychic vampire
+
+&merit.unearthly_beauty [v( d.dd )]=1.2
+&tags.merit.unearthly_beauty [v( d.dt )]=supernatural.psychic vampire
+
+&merit.vampiric_potency_() [v( d.dd )]=1.2.3.4.5|
+    Intelligence.Wits.Resolve.
+    Strength.Dexterity.Stamina.
+    Presence.Manipulation.Composure
+&tags.merit.vampiric_potency [v( d.dt )]=supernatural.psychic vampire
+
+
+
+/*
+================================================================================
+== CHARGEN =====================================================================
+*/
+
+&f.allocated.merits.psychic_vampire [v( d.cg )]=
+    gte( u( .value, %0, merit.psychic_vampirism ), 1 )
+
+
+&check.chargen.psychic_vampire [v( d.cg )]=
+	strcat( 
+		%b, %b, ansi( h, Psychic Vampirism ), :, %b, 
+        u( .value, %0, merit.psychic_vampirism ), %b, 
+		u( display.check.ok-no, 
+			u( f.allocated.merits.psychic_vampire, %0 )
+		), 
+		%r 
+	)
+
+
+
+/*
+================================================================================
+== SHEET =======================================================================
+*/
+
+&block.traits.psychic_vampire [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+		vcolumns( 
+			%qw:[u( block.traits.ephemera, %0 )], 
+			|, %b 
+		), %r, 
+	)
+
+&block.traits.ephemera [v( d.sheet )]=
+	strcat( 
+		setq( w, 38 ), 
+		setq( t, 10 ), 
+
+// .. ephemera
+		setq( x, ulocal( traits.ephemera, %0 )), 
+		setq( c, rest( setr( y, first( %qx, | )), : )), 
+		setq( p, last( %qx, : )), 
+
+// .. return
+		u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )
+	)
+
+&traits.ephemera [v( d.nsc )]=
+	u( f.cheat_getstat.pool, %0, ephemera )
+
+
+/*
+================================================================================
+== Spend/Regain ================================================================
+*/
+
+&regain.methods.ephemera [v( d.psrs )]=|all
+&spend.methods.ephemera [v( d.psrs )]=[@@( nothing but numeric allowed here )]
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend/Regain Ephemera Amts --------------------------------------------------
+*/
+
+&amt.spend.numeric.ephemera [v( d.psrs )]=
+    u( amt.spend.numeric.default, %0, %1, %2 )
+
+/* 
+--------------------------------------------------------------------------------
+-- Spend Vitae Trigger ---------------------------------------------------------
+*/
+
+&spend.trigger.ephemera [v( d.psrs )]=
+	think strcat( 
+		m:, %b, setr( m, u( f.match_method, %1, spend, ephemera, %2 )), %r, 
+		a:, %b, setr( a, u( amt.spend, %1, ephemera, %qm )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.ephemera_maximum )), %r, 
+	); 
+
+	@assert strlen( %qs )={ 
+		@pemit %0=u( .msg, ephemera/spend, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				must have an Ephemera pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, ephemera/spend, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, ephemera/spend, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Ephemera, %qa )))={ 
+		@pemit %0=u( .msg, ephemera/spend, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, ephemera, %qa )))={ 
+		@pemit %0=u( .msg, ephemera/spend, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, ephemera, spend, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, spend, %qe ); 
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Regain Ephemera Trigger -----------------------------------------------------
+*/
+
+&regain.trigger.ephemera [v( d.psrs )]=
+	think strcat( 
+		m:, %b, setr( m, u( f.match_method, %1, regain, ephemera, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, ephemera, %qm )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.ephemera_maximum )), %r, 
+	); 
+
+	@assert strlen( %qs )={ 
+		@pemit %0=u( .msg, ephemera/regain, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				must have a Ephemera pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, ephemera/regain, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, ephemera/regain, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, Ephemera, %qa )))={ 
+		@pemit %0=u( .msg, ephemera/regain, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, ephemera, %qa )))={ 
+		@pemit %0=u( .msg, ephemera/regain, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, ephemera, regain, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, regain, %qe ); 
+
+
+
+-==--=-=-=-=-=-=-=-=-=--=-==-=-=-=
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Gilded Cage: Sample Design --------------------------------------------------
+*/
+
+&design.master_key [v( d.dd )]=1
+&tags.design.master_key [v( d.dd )]=vampire.gilded cage
+&prerequisite.design.master_key [v( d.dp )]=
+	u( .at_least, %0, discipline.gilded_cage, 1 )
+&prereq-text.design.master_key [v( d.dp )]=
+    Must have Gilded Cage at Design value or higher.
+
+
+/*
+--------------------------------------------------------------------------------
+-- Chargen Check: Gilded Cage --------------------------------------------------
+
+For each dot in Gilded Cage, one dot of that level (or lower) in Design
+
+*/
+
+&check.chargen.vampire [v( d.cg )]=
+	strcat( 
+		u( check.disciplines, %0, vampire ), 
+		case( get( %0/_bio.covenant ), 
+			Circle of the Crone, 
+			if( hasattr( %0, _discipline.cruac ), 
+				u( check.disciplines.cruac, %0 )
+			), 
+
+			Lancea et Sanctum, 
+			if( hasattr( %0, _discipline.theban_sorcery ), 
+				u( check.disciplines.theban_sorcery, %0 )
+			), 
+
+			Ordo Dracul, 
+			if( t( lattr( %0/_scale.* )), 
+				u( check.disciplines.coils, %0 )
+			), 
+
+            Architects of the Monolith, 
+			if( t( lattr( %0/_design.* )), 
+				u( check.disciplines.gilded_cage, %0 )
+			)
+		)
+	)
+
+
+&check.disciplines.gilded_cage [v( d.cg )]=
+	strcat( 
+		setq( r, lattr( %0/_design.* )), 
+		setq( n, iter( %qr, get( %0/%i0 ))), 
+		setq( l, first( get( %0/_discipline.gilded_cage ), . )), 
+		setq( t, ladd( %qn )), 
+		setq( o, ladd( lnum( 1, %ql ))), 
+
+		%b%b, ansi( h, Designs ), :, %b, 
+		iter( %qr, 
+			strcat( 
+				titlestr( edit( rest( %i0, . ), _, %b )), 
+				%b%(, 
+				get( %0/%i0 ), 
+				%) 
+			), 
+			, %,%b 
+		), 
+		%r, 
+		%b %b%b, ansi( h, Design Count ), :, 
+		%b, words( %qr ), %b, %(of %ql%), %b, 
+		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
+		%b %b%b, ansi( h, Design Levels ), :, %b, %qt %(of %qo%), %b, 
+		u( display.check.ok-no, eq( %qt, %qo )), %r, 
+	)
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Sheet: Gilded Cage/Designs --------------------------------------------------
+*/
+
+&block.powers.disciplines [v( d.sheet )]=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+// disciplines
+		divider( Disciplines ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+
+// .. bloodline-based disciplines
+		case( get( %0/_bio.bloodline ), 
+            Tzimisce, 
+            if( hasattr( %0, _discipline.vicissitude ), 
+                ulocal( block.powers.disciplines.alterations, %0 )
+            ), 
+
+            Architects of the Monolith, 
+			if( hasattr( %0, _discipline.gilded_cage ), 
+				ulocal( block.powers.disciplines.designs, %0 )
+			)
+
+        ), 
+// .. convent-based disciplines
+		case( get( %0/_bio.covenant ), 
+			
+            Circle of the Crone, 
+			if( hasattr( %0, _discipline.cruac ), 
+				ulocal( block.powers.disciplines.rites, %0 )
+			), 
+
+			Lancea et Sanctum, 
+			if( hasattr( %0, _discipline.theban_sorcery ), 
+				ulocal( block.powers.disciplines.miracles, %0 )
+			), 
+
+			Ordo Dracul, 
+			if( t( lattr( %0/_scale.* )), 
+				ulocal( block.powers.disciplines.scales, %0 )
+			)
+		), 
+
+// devotions
+		setq( v, ulocal( block.powers.disciplines.devotions, %0 )), 
+		if( strlen( %qv ), %qv ), 
+
+		@@( to be continued ), 
+	)
+
+
+
+&powers.disciplines.designs [v( d.nsc )]=
+	iter( sort( edit( lattr( %0/_design.* ), _DESIGN., )), 
+		ulocal( f.cheat_getstat.with_name, %0, design.%i0, numeric ), 
+		, | 
+	)
+
+
+&block.powers.disciplines.designs [v( d.sheet )]=
+	strcat( 
+		setq( w, 79 ), setq( t, 70 ), 
+		setq( d, u( powers.disciplines.designs, %0 )), 
+		setq( b, 
+			iter( %qd, 
+				u( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+				|, | 
+			)
+		), 
+
+		divider( Designs ), %r, 
+		iter( %qb, 
+			%i0, 
+			|, %r 
+		), %r, 
+	)
+
+
+
+
+// =-=--=-=-=
+
+
+
+&BLOCK.POWERS.DISCIPLINES.designs [v( d.sheet )]=if( strlen( setr( x, u( powers.disciplines.designs, %0 ))), strcat( setq( w, 39 ), setq( t, 34 ), setq( y, iter( %qx, ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), |, | )), setq( a, words( %qx, | )), setq( b, ceil( fdiv( %qa, 2 ))), setq( c, lnum( 1, %qb )), setq( d, lnum( inc( %qb ), inc( %qa ))), divider( Designs %(Gilded Cage%) ), %r, vcolumns( %qw:[elements( %qy, %qc, |, | )], %qw:[elements( %qy, %qd, |, | )], |, %b ), %r, ))
+
+
+&BLOCK.POWERS.DISCIPLINES.miracles [v( d.sheet )]=if( strlen( setr( x, u( powers.disciplines.miracles, %0 ))), strcat( setq( w, 39 ), setq( t, 34 ), setq( y, iter( %qx, ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), |, | )), setq( a, words( %qx, | )), setq( b, ceil( fdiv( %qa, 2 ))), setq( c, lnum( 1, %qb )), setq( d, lnum( inc( %qb ), inc( %qa ))), divider( Miracles %(Theban Sorcery%) ), %r, vcolumns( %qw:[elements( %qy, %qc, |, | )], %qw:[elements( %qy, %qd, |, | )], |, %b ), %r, ))
+
+&BLOCK.POWERS.DISCIPLINES.alterations [v( d.sheet )]=if( strlen( setr( x, u( powers.disciplines.alterations, %0 ))), strcat( setq( w, 39 ), setq( t, 34 ), setq( y, iter( %qx, ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), |, | )), setq( a, words( %qx, | )), setq( b, ceil( fdiv( %qa, 2 ))), setq( c, lnum( 1, %qb )), setq( d, lnum( inc( %qb ), inc( %qa ))), divider( Alterations %(Vicissitude%) ), %r, vcolumns( %qw:[elements( %qy, %qc, |, | )], %qw:[elements( %qy, %qd, |, | )], |, %b ), %r, ))
+
+
+&BLOCK.POWERS.DISCIPLINES.alterations [v( d.sheet )]=if( strlen( setr( x, u( powers.disciplines.alterations, %0 ))), u( format.block.two-columns, %qx, Alterations %(Vicissitude%) )%r)
+
+
+//--
+// 0: items
+// 1: header
+
+&format.block.two-columns [v( d.sheet )]=
+    localize( strcat( 
+        setq( w, 39 ), 
+        setq( t, 34 ), 
+        setq( y, 
+            iter( %0, 
+                ulocal( display.trait-and-value, %i0, %qt, %qw, numeric, . ), 
+                |, | 
+            )
+        ), 
+        setq( a, words( %0, | )), 
+        setq( b, ceil( fdiv( %qa, 2 ))), 
+        setq( c, lnum( 1, %qb )), 
+        setq( d, lnum( inc( %qb ), inc( %qa ))), 
+
+        divider( %1 ), %r, 
+        vcolumns( %qw:[elements( %qy, %qc, |, | )], %qw:[elements( %qy, %qd, |, | )], |, %b ), 
+        %r 
+    ))
+
+think u( v( d.sheet )/format.block.two-columns, u( v( d.nsc )/powers.disciplines.alterations, *uriel ), Alterations %(Vicissitude%))
