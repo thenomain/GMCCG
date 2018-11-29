@@ -151,6 +151,8 @@ Because it's boring to enter the same information one million times.
 
 0: rote name (not statpath, for some reason)
 
+*** I am pretty sure this won't work for Proximus and may check some day ***
+
 */
 
 &.rote.prereq-text [v( d.dd )]=
@@ -183,7 +185,7 @@ The fun of Proximi taking spells as 'Blessings'.
 
 */
 
-&.rote_check [v( d.dd )]=
+// &.rote_check [v( d.dd )]=
 &.rote.prereq-check [v( d.dd )]=
 	case( u( .value_full, %0, bio.template ), 
 
@@ -3923,9 +3925,5 @@ CG/check:
 
 sheet:
 	* MUST HAVE DYNASTY!
-
-XP/Spend:
-	* XP cost for Proximi '<Rote Name> (Blessing)' = 1/level
-
 
 */
