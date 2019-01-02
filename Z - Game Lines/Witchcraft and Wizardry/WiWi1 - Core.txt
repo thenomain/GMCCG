@@ -1065,3 +1065,89 @@ We need to make sure that the sheet shows them correctly, right? Right.
 &check.chargen.magical-being [v( d.cg )]=u( check.arts, %0, magical-being )
 
 &check.arts.magical-being [v( d.cg )]=u( check.arts.wizard, %0 )
+
+
+
+/*
+################################################################################
+## ADDITIONAL SYSTEMS ##########################################################
+
+Here are some additional systems that I created for the game. They are small, but I figured I'd add them somewhere.
+
+
+================================================================================
+== FINGER: SURNAMES ============================================================
+
+	surnames: 
+		List all surnames on characters on the game. 
+		Ignores surnames on players and staff.
+	surname <name>: 
+		Lists all characters with that surname. 
+		Ignores players and staff.
+
+*/
+
+&c.surnames [v( d.fc )]=$^\+?surnames?( .*)?$:
+    think strcat( 
+        setq( 1, trim( %1 )), 
+    ); 
+
+    @pemit %#=
+        if( strlen( %q1 ), 
+            u( display.surnames.one, %q1 ), 
+            u( display.surnames.all )
+        )
+
+@set v( d.fc )/c.surnames=regex
+
+
+&display.surnames.all [v( d.fc )]=
+    strcat( 
+        setq( l, 
+            setunion( 
+                iter( 
+                    search( eplayer=
+                        cand( 
+                            hasattr( ##, _bio.template ), 
+                            hasattr( ##, _bio.last_name ), 
+                            not( isstaff( ## ))
+                        )
+                    ), 
+                    __[edit( get( %i0/_bio.last_name ), %b, _ )]
+                ), 
+            )
+        ), 
+        setq( m, add( lmax( iter( %ql, strlen( %i0 ))), 2 )), 
+
+        header( Surnames ), %r, 
+        edit( table( %ql, %qm, 78, , | ), _, %b ), %r, 
+        footer()
+    )
+
+&display.surnames.one [v( d.fc )]=
+    strcat( 
+        setq( l, 
+            search( eplayer=
+                cand( 
+                    hasattr( ##, _bio.template ), 
+                    hasattr( ##, _bio.last_name ), 
+                    not( isstaff( ## )), 
+                    strmatch( get(##/_bio.last_name ), %0 )
+                )
+            )
+        ), 
+
+        if( strlen( %ql ), 
+            strcat( 
+                setq( f, get( first( %ql )/_bio.last_name )), 
+                setq( n, iter( %ql, __[edit( name( %i0 ), %b, _ )] )), 
+                setq( m, add( lmax( iter( %qn, strlen( %i0 ))), 2 )), 
+
+                header( Surname %qf ), %r, 
+                edit( table( %qn, %qm, 78, , | ), _, %b ), %r, 
+                footer()
+            ), 
+
+            Surname not found. Check 'surnames' 
+        )
+    )
