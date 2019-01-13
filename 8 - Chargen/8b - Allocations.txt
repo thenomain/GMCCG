@@ -127,7 +127,7 @@ Humans themselves don't get additional specialties, so as a reminder:
 -- Allocated: Aspirations ------------------------------------------------------
 
 So far, everyone (but Demons) have 2 short-term and 1 long-term aspiration.
-Check for these under 'pitched'.
+Check for these under 'pitched' or 'approved' (just in case).
 
 Outputs: <number of short term>/<number of long-term>
 
@@ -135,7 +135,13 @@ Outputs: <number of short term>/<number of long-term>
 
 &f.allocated.aspirations [v( d.cg )]=
 	localize( strcat( 
-		setq( a, u( v( d.asp )/f.get.aspirations.status, %0, pitched )), 
+		setq( a, 
+			cat( 
+				u( v( d.asp )/f.get.aspirations.status, %0, pitched ), 
+				u( v( d.asp )/f.get.aspirations.status, %0, approved )
+			)
+		), 
+		
 		setq( s, filter( v( d.asp )/filter.term, %qa, , , %0, short-term )), 
 		setq( l, filter( v( d.asp )/filter.term, %qa, , , %0, long-term )), 
 
