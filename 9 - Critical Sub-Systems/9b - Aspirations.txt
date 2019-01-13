@@ -1299,7 +1299,7 @@ g: get current aspiration's contents
 				3, | 
 			), %b, 
 			ansi( xh, %([elements( %qg, 2, | )]%) ), 
-			if( t( setr( g, elements( %qg, 3, | ))), %rFulfilled: %qg )
+			if( t( setr( g, elements( %qg, 4, | ))), %rFulfilled: %qg )
 		), 
 		%4, left, %b, @@( right ), inc( %2 ), %r, %3 
 	)
