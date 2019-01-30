@@ -190,22 +190,22 @@ ON STAND-BY UNTIL "CHRONICLES OF DARKNESS" REVIEW IS COMPLETE.
 
 
 ================================================================================
-== HUMAN -> BLIG ===============================================================
+== HUMAN -> Muggle =============================================================
 
-'Blig' means 'Blissfully Ignorant', but replaces the Human tag in all locations.
 
 */
 
 // data dictionary
 &.sphere.human [v( d.dd )]=
-&.sphere.blig [v( d.dd )]=Blig
-&bio.template [v( d.dd )]=Blig
+&.sphere.muggle [v( d.dd )]=Muggle
+&bio.template [v( d.dd )]=Muggle
 
 // data tags (spammy)
-@edit v( d.dt )/*=human, blig
+@edit v( d.dt )/*=human, muggle
 
 // chargen (should've been 'default', beh.)
-@edit v( d.cg )/f.pts-valid?.integrity=human, blig
+@edit v( d.cg )/f.pts-valid?.integrity=human, muggle
+
 
 
 
@@ -982,20 +982,20 @@ In this case we're going to add 'Wizard-Born'.
 @fo me=&bio.template [v( d.dd )]=[get( v( d.dd )/bio.template )].Wizard-Born
 
 
-// * 'Wizard-Born' is a 'Blig'-style class, 
-//   so let's find all the 'Blig' tags and add 'Wizard-Born' to them.
+// * 'Wizard-Born' is a 'Muggle'-style class, 
+//   so let's find all the 'Muggle' tags and add 'Wizard-Born' to them.
 @dolist 
 	iter( 
 		lattr( v( d.dt )/tags.* ), 
-		if( grab( get( v( d.dt )/%i0 ), blig, . ), %i0 )
+		if( grab( get( v( d.dt )/%i0 ), muggle, . ), %i0 )
 	)=
 	{ 
 		@set [v( d.dt )]=
 			##:
 			[replace( 
 				get( v( d.dt )/## ), 
-				match( get( v( d.dt )/## ), blig, . ), 
-				blig.wizard-born, 
+				match( get( v( d.dt )/## ), muggle, . ), 
+				muggle.wizard-born, 
 				. 
 			)]
 	}
@@ -1007,7 +1007,7 @@ In this case we're going to add 'Wizard-Born'.
 
 
 // * We don't need to do anything else. 
-//   'Blig' is the default for sheet and chargen.
+//   'Muggle' is the default for sheet and chargen.
 
 
 /*
