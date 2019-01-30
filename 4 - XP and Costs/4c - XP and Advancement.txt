@@ -97,6 +97,8 @@ e.g.:
 &prefix.validations [v( d.xpas )]=validate.
 
 
+&pref.player_spend [v( d.xpas )]=on
+
 /*
 --------------------------------------------------------------------------------
 -- CREATE TABLE ----------------------------------------------------------------
@@ -1492,6 +1494,13 @@ f: other error check results
 
 		is %qc Experience., 
 
+// .. player spend is on? inform staff as well
+		if( cor( 
+				strmatch( u( pref.player_spend ), off )
+			), 
+			%b%(Player spending is off.%)
+		), 
+
 // .. can't afford?
 		setq( e, u( validate.spend, %qc, %qx )), 
 		setq( f, u( validate.restricted, %qs, %qv )), 
@@ -1609,8 +1618,13 @@ n: statname
 		case( 1, 
 
 // If you want to make 'xp/spend' Staff-Only
-//			not( isstaff( %# )), 
-//			u( .msg, xp/spend, Ask staff to spend your stats ), 
+			cand( 
+				strmatch( u( pref.player_spend ), off ), 
+				not( isstaff( %# ))
+			), 
+			u( .msg, xp/spend, 
+				Player spending is off. Ask staff to spend your stats. 
+			), 
 
 // normal checks
 			t( setr( e, ulocal( validate.player, %qp, %qw, 1 ))), 
@@ -1875,18 +1889,6 @@ Requires: '9e - Alt Registration.txt'.
 
 	think strcat( 
 		** initial registers **, %r, 
-		-- amt/type --, %r, 
-		type:, %b, setr( t, grab( beats|experience|xp, [rest( %1 )]*, | )), %r, 
-		amt:, %b, 
-			setr( a, 
-				case( %qt, 
-					beats, first( %1 ), 
-					experience, mul( first( %1 ), v( d.beat-to-exp )), 
-					xp, mul( first( %1 ), v( d.beat-to-exp )), 
-					0 
-				)
-			), 
-		%r, 
 		-- target --, %r, 
 		name:, %b, setr( n, trim( %2 )), %r, 
 		dbref:, %b, setr( d, if( strmatch( %qn, me ), %#, pmatch( %qn ))), %r, 
@@ -1894,6 +1896,25 @@ Requires: '9e - Alt Registration.txt'.
 		player xp:, %b, setr( x, get( %qd/_special.beats.player )), %r, 
 		-- enactor --, %r, 
 		normal xp:, %b, setr( l, get( %#/_special.beats.normal )), %r, 
+		-- amt/type --, %r, 
+		type:, %b, setr( t, grab( beats|experience|xp, [rest( %1 )]*, | )), %r, 
+		amt if 'all':, %b, 
+			setr( a, 
+				case( setr( a, first( %1 )),
+					 all, ladd( %qx ), 
+					 %qa 
+				)
+			)
+		amt in beats:, %b, 
+			setr( a, 
+				case( %qt, 
+					beats, %qa, 
+					experience, mul( %qa, v( d.beat-to-exp )), 
+					xp, mul( %qa, v( d.beat-to-exp )), 
+					0 
+				)
+			), 
+		%r, 
 	); 
 
 	@assert t( %qo )={ 
@@ -1943,6 +1964,9 @@ Requires: '9e - Alt Registration.txt'.
 			Player Experience to your Normal Experience 
 		)
 	); 
+
+
+@set v( d.xpas )/c.xp/convert=regexp
 
 
 /*
