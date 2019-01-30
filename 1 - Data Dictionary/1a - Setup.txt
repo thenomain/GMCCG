@@ -97,7 +97,8 @@ Class - Numeric, String, List, or Peppermint.
 Value - Current value of a stat,.
 	.Value			Numeric. Unadjusted value.
 	.Value_Full		Any. Untouched attribute.
-	.Value_Stats	Numeric. Summed value of a list of statpaths.
+	.Value_Stats	Numeric. Summed & current value of a list of statpaths.
+	.Value_Stats_Template	Numeric. Will add template alterations.
 
 At Least - Numeric. Statpath(s) passed are >= ("at least") value(s) passed.
 	.At_Least		This stat is at least value.
@@ -211,6 +212,30 @@ Total value of a numeric trait
 &.Value_Stats [v( d.dd )]=
 	ladd( iter( %1 , u( .value_full, %0, %i0 ), , . ), . )
 
+
+/* -- value stats template --
+
+Run 'value stats' but also check for '<stat path>.<template>'.
+(Similar to how Health does it. See '5a - Setup and Data'.)
+
+	0: sheet dbref
+	1: list.of stat.paths
+	2: calling statpath
+	e.g. perception: 
+		u( .value_stats_template, 
+			%0, 
+			attribute.wits attribute.composure, 
+			advantage.perception
+		)
+	perception.changeling:
+		if( gt( <clarity>, div( <max clarity>, 2 )), <wyrd>, 0 )
+*/
+
+&.Value_Stats_Template [v( d.dd )]=
+	add( 
+		u( .value_stats, %0, %1 ), 
+		u( %2.[u( .value_full, %0, bio.template )], %0 )
+	)
 
 
 /*

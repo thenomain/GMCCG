@@ -702,33 +702,44 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 // -- spending "a dot of willpower" is an offset applied to the maximum
 
 &advantage.willpower [v( d.dd )]=
-	ladd( u( .value_full, %0, advantage.willpower_maximum ), . )
+	u( .value_stats, %0, advantage.willpower_maximum )
 &default.advantage.willpower [v( d.dd )]=derived
 
 &advantage.willpower_maximum [v( d.dd )]=
-	u( .value_stats, %0, attribute.resolve attribute.composure )
+	u( .value_stats_template, %0, 
+		attribute.resolve attribute.composure, 
+		advantage.willpower_maximum
+	)
 &default.advantage.willpower_maximum [v( d.dd )]=derived
 
 
 // -- Other Advantages ---------------------------------------------------------
+// the '_template' means 'add in advantage.defense.<template>'. Sphere-hooks!
 
 &advantage.defense [v( d.dd )]=
 	add( 
-		ladd( u( .value_full, %0, skill.athletics ), . ), 
+		u( .value_stats_template, %0, 
+			skill.athletics, 
+			advantage.defense 
+		), 
 		min( 
-			ladd( u( .value_full, %0, attribute.wits ), . ), 
-			ladd( u( .value_full, %0, attribute.dexterity ), . )
+			u( .value_stats, %0, attribute.wits ), 
+			u( .value_stats, %0, attribute.dexterity )
 		)
 	)
 &default.advantage.defense [v( d.dd )]=derived
 
 &advantage.weaponry_defense [v( d.dd )]=
-	if( u( .has, %0, merit.defensive_combat_(weaponry) ), 
+	if( 
+		u( .has, %0, merit.defensive_combat_(weaponry) ), 
 		add( 
-			ladd( u( .value_full, %0, skill.weaponry ), . ), 
+			u( .value_stats_template, %0, 
+				skill.weaponry, 
+				advantage.weaponry_defense 
+			), 
 			min( 
-				ladd( u( .value_full, %0, attribute.wits ), . ), 
-				ladd( u( .value_full, %0, attribute.dexterity ), . )
+				u( .value_stats, %0, attribute.wits ), 
+				u( .value_stats, %0, attribute.dexterity )
 			)
 		), 
 		0 
@@ -738,10 +749,13 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &advantage.brawl_defense [v( d.dd )]=
 	if( u( .has, %0, merit.defensive_combat_(brawl) ), 
 		add( 
-			ladd( u( .value_full, %0, skill.brawl ), . ), 
+			u( .value_stats_template, %0, 
+				skill.brawl, 
+				advantage.brawl_defense 
+			), 
 			min( 
-				ladd( u( .value_full, %0, attribute.wits ), . ), 
-				ladd( u( .value_full, %0, attribute.dexterity ), . )
+				u( .value_stats, %0, attribute.wits ), 
+				u( .value_stats, %0, attribute.dexterity )
 			)
 		), 
 		0 
@@ -750,28 +764,32 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &advantage.size [v( d.dd )]=
 	add( 
-		u( .value_stats, %0, special.size ), 
+		u( .value_stats_template, %0, special.size, advantage.size ), 
 		u( .has, %0, merit.giant ), 
 		mul( u( .has, %0, merit.small_framed ), -1 )
 	)
-
 &default.advantage.size [v( d.dd )]=derived
 
 &advantage.speed [v( d.dd )]=
-	u( .value_stats, %0, 
+	u( .value_stats_template, %0, 
 		attribute.strength attribute.dexterity 
-		special.species_factor merit.fleet_of_foot 
+		special.species_factor merit.fleet_of_foot, 
+		advantage.speed 
 	)
 &default.advantage.speed [v( d.dd )]=derived
 
 &advantage.initiative [v( d.dd )]=
-	u( .value_stats, %0, 
-		attribute.dexterity attribute.composure merit.fast_reflexes 
+	u( .value_stats_template, %0, 
+		attribute.dexterity attribute.composure merit.fast_reflexes, 
+		advantage.initiative
 	)
 &default.advantage.initiative [v( d.dd )]=derived
 
 &advantage.perception [v( d.dd )]=
-	u( .value_stats, %0, attribute.wits attribute.composure )
+	u( .value_stats_template, %0, 
+		attribute.wits attribute.composure, 
+		advantage.perception 
+	)
 &default.advantage.perception [v( d.dd )]=derived
 
 // I replaced the base virtues and vices with the GMC ones rather than 
