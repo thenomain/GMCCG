@@ -515,6 +515,15 @@ Level 3 for very minor items
 // with 'prereq' set to 0 it must be set by staff using the /override switch
 
 
+// -- Human Merits -------------------------------------------------------------
+
+&merit.etiquette [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.etiquette [v( d.dd )]=
+	u( .at_least_all, %0, attribute.composure:3 skill.socialize:2 )
+&prereq-text.merit.etiquette [v( d.dd )]=Composure 3+, Socialize 2+
+&tags.merit.etiquette [v( d.dt )]=style.social
+
+
 
 /*
 ================================================================================
