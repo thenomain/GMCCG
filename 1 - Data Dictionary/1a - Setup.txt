@@ -121,6 +121,7 @@ Is - Direct comparison of stat's value.
 	.Is_Not			Numeric. Stat's value is not 'x'.
 	.Is_One_Of		Numeric. Stat's value matches one of a dot-delim list.
 	.Is_None_Of		Numeric. Opposite of "is one of", above.
+	.Is_Stat		Any. Statpath's value equals another statpath's value.
 
 Has - Checking for existance of stats.
 	.Has			Stat exists on sheet.
@@ -512,6 +513,22 @@ Stat's "first" text value matches none from a list
 
 &.Is_None_Of [v( d.dd )]=
 	not( u( .is_one_of, %0, %1, %2, %3 ))
+
+/* -- is stat --
+
+Stat's "first" text value matches another stat's
+	0: sheet dbref
+	1: stat.path (usually the one is_stat is being called from)
+	2: stat.path (target)
+	e.g.:
+		u( .is_stat, %0, attribute.wits, skill.stealth )
+*/
+
+&.Is_Stat [v( d.dd )]=
+	u( .is_one_of, %0, 
+		%1, 
+		u( .value, %0, %2 )
+	)
 
 
 /* 
