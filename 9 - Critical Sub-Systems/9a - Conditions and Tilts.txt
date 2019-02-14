@@ -87,14 +87,14 @@ I'm stealing this from Reno (with permission).
 &C.TILT [v( d.ctst )]=$^\+?tilts?(.*)$:
 	@pemit %#=[u( c.status, %1, tilt )]
 
-@set ctst/c.tilt=regexp
+@set v( d.ctst )/c.tilt=regexp
 
 // -----------------------------------------------------------------------------
 
 &C.COND [v( d.ctst )]=$^\+?conds?(.*)$:
 	@pemit %#=[u( c.status, %1, cond )]
 
-@set ctst/c.cond=regexp
+@set v( d.ctst )/c.cond=regexp
 
 // -----------------------------------------------------------------------------
 
@@ -142,9 +142,6 @@ I'm stealing this from Reno (with permission).
 &C.STATUS.SWITCHED [v( d.ctst )]=
 	[setq( m, lattr( %!/c.status/%0* ))]
 	[case( 0, 
-//		words( lattr( %!/c.status/* )), 
-//		u( .msg, %2, Command does not take switches ), 
-
 		neq( words( %qm ), 1 ), 
 		u( %qm, %1, %2 ), 
 
@@ -1379,6 +1376,24 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 // -----------------------------------------------------------------------------
 
+&COND.DEPRIVED [v( d.ctdb )]=
+	Deprived|0|
+
+	Your character suffers from an addiction. She is unable to get her fix, 
+	however, leaving her irritable, anxious, and unable to focus. Remove one 
+	from her Stamina, Resolve, and Composure dice pools. This does not influence 
+	derived traits; it only influences dice pools that use these Attributes.|
+
+	Your character is Addicted but cannot get a fix.|
+
+	Your character indulges her addiction.|
+
+	n/a|
+
+	GMC.181,B&S.302
+
+// -----------------------------------------------------------------------------
+
 &COND.DISABLED [v( d.ctdb )]=
 	Disabled|1|
 
@@ -1398,24 +1413,6 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 	slow to respond.|
 
 	GMC.181
-
-// -----------------------------------------------------------------------------
-
-&COND.DEPRIVED [v( d.ctdb )]=
-	Deprived|0|
-
-	Your character suffers from an addiction. She is unable to get her fix, 
-	however, leaving her irritable, anxious, and unable to focus. Remove one 
-	from her Stamina, Resolve, and Composure dice pools. This does not influence 
-	derived traits; it only influences dice pools that use these Attributes.|
-
-	Your character is Addicted but cannot get a fix.|
-
-	Your character indulges her addiction.|
-
-	n/a|
-
-	GMC.181,B&S.302
 
 // -----------------------------------------------------------------------------
 
@@ -1844,13 +1841,13 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 	isnt a mental illness born of brain chemistry that, at least, might be 
 	treatable. This madness is the product of supernatural tampering or 
 	witnessing something that humanity was never meant to comprehend. The 
-	Storyteller has a pool of dice equal to 10 (characters Integrity). Once per 
-	chapter, the Storyteller can apply those dice as a negative modifier to any 
-	Mental or Social roll made for the character.|
+	Storyteller has a pool of dice equal to 10 - (character's Integrity). Once 
+	per chapter, the Storyteller can apply those dice as a negative modifier to 
+	any Mental or Social roll made for the character.|
 
 	|
 
-	Regain a dot of Integrity, lose anotherdot of Integrity, or achieve an 
+	Regain a dot of Integrity, lose another dot of Integrity, or achieve an 
 	exceptional success on a breaking point.|
 
 	The character fails a roll because of this Condition.|
