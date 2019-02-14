@@ -110,8 +110,8 @@ We have notes!
 &tags.merit.double_jointed [v( d.dt )]=physical
 &tags.merit.fleet_of_foot [v( d.dt )]=physical
 &tags.merit.giant [v( d.dt )]=chargen-only.physical
+&tags.merit.greyhound [v( d.dt )]=physical
 &tags.merit.hardy [v( d.dt )]=physical
-&tags.merit.greyhound DD=physical
 &tags.merit.iron_stamina [v( d.dt )]=physical
 &tags.merit.parkour [v( d.dt )]=physical.style
 &tags.merit.quick_draw_() [v( d.dt )]=physical
@@ -145,8 +145,8 @@ We have notes!
 &tags.merit.safe_place_() [v( d.dt )]=social
 &tags.merit.small_unit_tactics [v( d.dt )]=social
 &tags.merit.spin_doctor [v( d.dt )]=social
-&tags.merit.status_() [v( d.dt )]=social
 &tags.merit.staff_() [v( d.dt )]=social
+&tags.merit.status_() [v( d.dt )]=social
 &tags.merit.striking_looks_() [v( d.dt )]=social
 &tags.merit.sympathetic [v( d.dt )]=social
 &tags.merit.table_turner [v( d.dt )]=social

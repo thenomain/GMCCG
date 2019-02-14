@@ -323,16 +323,16 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &merit.giant [v( d.dd )]=3
 
-&merit.hardy [v( d.dd )]=1.2.3
-&prerequisite.merit.hardy [v( d.dd )]=u( .at_least, %0, attribute.stamina, 3 )
-&prereq-text.merit.hardy [v( d.dd )]=Stamina 3+
-
 &merit.greyhound [v( d.dd )]=1
 &prerequisite.merit.greyhound [v( d.dd )]=
 	u( .at_least_all, %0, 
 		skill.athletics:3 attribute.wits:3 attribute.stamina:3 
 	)
 &prereq-text.merit.greyhound [v( d.dd )]=Athletics 3+, Wits 3+, and Stamina 3+
+
+&merit.hardy [v( d.dd )]=1.2.3
+&prerequisite.merit.hardy [v( d.dd )]=u( .at_least, %0, attribute.stamina, 3 )
+&prereq-text.merit.hardy [v( d.dd )]=Stamina 3+
 
 &merit.iron_stamina [v( d.dd )]=1.2.3
 &prerequisite.merit.iron_stamina [v( d.dd )]=
@@ -395,6 +395,9 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &prereq-text.merit.barfly [v( d.dd )]=Socialize 2+
 
 &merit.closed_book [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.barfly [v( d.dd )]=
+	u( .at_least_all, %0, attribute.manipulation:3 attribute.resolve:3 )
+&prereq-text.merit.barfly [v( d.dd )]=Manipulation 3+, Resolve 3+
 
 &merit.contacts_() [v( d.dd )]=1|*
 // I made this a 1-dot Merit because in GMC you can’t have more than a single 
