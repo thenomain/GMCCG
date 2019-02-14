@@ -387,7 +387,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &merit.alternate_identity_() [v( d.dd )]=1.2.3|*
 
 &merit.anonymity [v( d.dd )]=1.2.3.4.5
-&prerequisite.merit.anonymity [v( d.dd )]=not( lattr( %0/_merit.fame_(*) ))
+&prerequisite.merit.anonymity [v( d.dd )]=u( .has_not, %0, merit.fame_(*) )
 &prereq-text.merit.anonymity [v( d.dd )]=Cannot have the merit 'Fame'
 
 &merit.barfly [v( d.dd )]=2
@@ -418,7 +418,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 		u( .at_least, %0, attribute.wits, 3 ), 
 		cor( 
 			gte( words( lattr( %0/_merit.contacts_* )), 2 ), 
-			t( lattr( %0/_merit.professional_training_(*) ))
+			u( .has, %0, merit.professional_training_(*) )
 		)
 	)
 &prereq-text.merit.fixer [v( d.dd )]=
@@ -676,7 +676,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &merit.psychokinesis_() [v( d.dd )]=3.5|Fire.Cold.Electricity
 &prerequisite.merit.psychokinesis_() [v( d.dd )]=
 	cor( 
-		not( lattr( %0/_merit.psychokinesis_(*) )), 
+		u( .has_not, %0, merit.psychokinesis_(*) ), 
 		u( .has, %0, merit.psychokinesis_(%1) )
 	)
 &prereq-text.merit.psychokinesis_() [v( d.dd )]=Only one form may be taken
