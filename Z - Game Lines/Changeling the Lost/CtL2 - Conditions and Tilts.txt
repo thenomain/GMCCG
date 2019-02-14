@@ -1,0 +1,1086 @@
+/*
+################################################################################
+## CHANGELING CONDITIONS & TILTS ###############################################
+
+Goes along with 9a Conditions and Tilts
+
+As a changeling takes damage to her three rightmost Clarity boxes, she gains 
+Conditions--Persistent Conditions if the damage was severe. She gains one 
+Clarity Condition for any amount of mild damage in these boxes, or one 
+Persistent Condition for any amount of severe damage in the same. The 
+Storyteller decides which Condition the character takes, though it should be 
+germane to the situation that caused the damage.
+
+Whenever a character resolves any Clarity Condition, she heals one point of 
+Clarity damage; whenever she resolves any Persistent Clarity Condition, she 
+heals two instead.
+
+The following Conditions could result from Clarity damage:
+• Numb (Persistent)
+• Shaken
+• Sleepwalking (Persistent)
+• Spooked
+• Withdrawn
+For more information on these Conditions, see the
+Appendix starting on p. 333.
+
+
+&cond.<condition_name> [v( d.ctdb )]=
+	<name>|<1 if persistent>|
+	<descriptive text>|
+	<possible sources>|
+	<resolution>|
+	<beat>|
+	<page numbers>
+
+&tilt.<condition_name> [v( d.ctdb )]=
+	<name>|0|
+	<descriptive text & effect>|
+	<causing the tilt>|
+	<ending the tilt>|
+	<beat>|
+	<page numbers>
+
+
+@fo me=&d.ctst me=search( name=+Cond and +Tilt Status Tracker <ctst> )
+@fo me=&d.ctdb me=search( name=+Cond and +Tilt Status Tracker Database <ctdb> )
+
+
+================================================================================
+== CONDITIONS ==================================================================
+*/
+
+// -----------------------------------------------------------------------------	
+
+&COND.ARCADIAN_DREAMS [v( d.ctdb )]=
+	Arcadian Dreams|1|
+	
+	Until her promise-bound is safely out of Arcadia, the fae-touched is plagued 
+	with dreams and visions of him. She always has an awareness of him in the 
+	back of her mind. If she is in the Hedge, she has a general knowledge of 
+	what direction to travel in to reach him and gains a one-die bonus to 
+	navigate the Hedge toward him. She can feel his pain as though it were her 
+	own.|
+
+	All Fae-touched|
+
+	The Avowed reunites with her promise-bound, or he dies before that can 
+	happen, in which case she knows about it immediately. The latter constitutes 
+	a breaking point for the fae-touched character.|
+
+	The player chooses to fail any roll. These failures occur due to sudden, 
+	distracting suffering by proxy, or due to a poignant reminder of one of her 
+	visions in the current situation, which the player can come up with on the 
+	fly.|
+	
+	CtL.333
+
+// -----------------------------------------------------------------------------	
+
+&COND.BERSERK [v( d.ctdb )]=
+	Berserk|0|
+	
+	Your character has a spark of berserk rage lit within her. The fury inside 
+	demands that she lash out, and the descending red mist makes it hard to tell 
+	friend from foe. Each turn, she must succeed at a Resolve + Composure roll 
+	or attack the nearest target with whatever weapons she has to hand. Even if 
+	she succeeds, she suffers a -3 penalty on all actions other than attacking 
+	the nearest target.%r%r
+	Changelings with this Condition add one die to Clarity damage rolls.|
+	
+	Some supernatural powers.|
+	
+	The character becomes unconscious or there are no targets left to attack.|
+	
+	n/a|
+	
+	CtL.333-4
+
+
+// -----------------------------------------------------------------------------	
+
+&COND.COMATOSE [v( d.ctdb )]=
+	Comatose|0|
+	
+	Your character has reached rock bottom. She has lost any ability to 
+	distinguish reality from fantasy, and has gone into a deep dream. She 
+	believes she is awake, living her life perfectly normally, but is instead 
+	lying in a coma. She cannot roll to enter the Gate of Ivory (p. 215) or 
+	dream lucidly without help. If this Condition came about through mild 
+	Clarity damage, events in her dream may lead her to resolve another Clarity 
+	Condition even though she doesn't realize she's dreaming, allowing her to 
+	wake up. If it came about through severe Clarity damage, even this doesn't 
+	wake her. If someone can convince her that she's actually dreaming, through 
+	oneiromancy or some other method, she can claw her way back to wakefulness.|
+
+	Reaching Clarity 0|
+	
+	The character regains Clarity, or she realizes she is in a dream and 
+	awakens, regaining a point of Clarity as normal. In the case of severe 
+	damage, the only way to resolve this Condition is for the changeling to 
+	realize her dreaming state, which requires someone to come and rescue her. 
+	Any other Clarity Conditions she may have resolved during this time increase 
+	her Clarity as normal, but do not resolve this Condition.|
+
+	n/a|
+	CtL.334
+
+// -----------------------------------------------------------------------------	
+
+&COND.DEMORALIZED [v( d.ctdb )]=
+	Demoralized|0|
+
+	Your character is demoralized and hesitant in the face of the enemy. 
+	Spending a Willpower point only adds one die to her pool for attacks instead 
+	of the usual three. She also suffers a -4 penalty to her Initiative, and a 
+	-2 penalty to her Resolve and Composure whenever used to resist or contest a 
+	dice pool.%r%rIf this Condition doesn't resolve within a week, it 
+	fades.%r%rChangelings with this Condition add one die to Clarity damage 
+	rolls.|
+	
+	Dramatic failure|
+	
+	Achieve exceptional success on an attack roll, win a fight, or survive 
+	a fight unharmed.|
+	
+	none|
+	CtL.335
+
+// -----------------------------------------------------------------------------	
+
+&COND.DISORIENTED [v( d.ctdb )]=
+	Disoriented|0|
+
+	Your character cannot get her bearings and dealing with simple tasks is 
+	daunting. The character is at a -2 penalty to any Physical action. She can 
+	defend herself normally, but her disorientation prevents her from making 
+	ranged attacks at all.%r%r
+	Changelings with this Condition add one die to Clarity damage rolls.|
+
+	Some supernatural powers, blunt physical trauma|
+	
+	The character finds something to help her orient herself to her 
+	surroundings, such as a familiar landmark or a friend. If a supernatural 
+	power caused this Condition, then it resolves when the power ends.|
+	
+	n/a|
+	
+	CtL.336
+	
+// -----------------------------------------------------------------------------	
+
+&COND.DISSOCIATION [v( d.ctdb )]=
+	Dissociation|0|
+	
+	Your character questions whether she is even real. She experiences episodes 
+	where she feels like a passenger in someone else's body, unable to control 
+	her own thoughts or actions. Sometimes she goes long hours simply watching 
+	herself, wondering how much of what she sees is real, and how much is memory 
+	of her time in Arcadia. Any time the character has a chance to break with 
+	the mundane, such as using a Contract, you can opt to fail the roll to 
+	affirm that she's in the real world and resolve this Condition.|
+	
+	Mild Clarity damage in any of your three rightmost boxes, 
+	some dramatic failures|
+	
+	The player chooses to fail a roll as described above.|
+
+	n/a|
+
+	CtL.336
+
+// -----------------------------------------------------------------------------	
+
+&COND.DISTRACTED [v( d.ctdb )]=
+	Distracted|0|
+	
+	Constant confusion and distractions buffet your character from all sides. 
+	She cannot take extended actions, and suffers a –2 die penalty to all 
+	rolls involving perception, concentration, and precision.|
+	
+	Being in a highly confusing environment, mild Clarity damage in any of 
+	your three rightmost boxes|
+	
+	Leaving the environment; if inflicted by Clarity damage, regaining all 
+	Willpower.|
+	
+	n/a|
+	
+	CtL.336
+
+// -----------------------------------------------------------------------------	
+
+&COND.DREAM_ASSAILANT [v( d.ctdb )]=
+	Dream Assailant|0|
+
+	Your character has caused too many significant shifts to the dreamscape, and 
+	the eidolons are now actively hostile to you. You take a -5 to any roll to 
+	interact with them peacefully or do anything unnoticed, and all failures 
+	that involve eidolons your character isn't fighting are dramatic failures. 
+	Reduce all eidolon impressions of you to Hostile for Social maneuvering. All 
+	paradigm shifts cost two additional successes to enact, and you can't enact 
+	subtle shifts at all.%r%rIf you resolve this Condition by interacting with 
+	an important eidolon or prop, choose one of the following effects to impose 
+	on the dreamer or any effect from a milder Shift Condition, which persists 
+	after he wakes:%r
+	%b * Leave subliminal Manipulation clues as Dream Infiltrator, but roll Wits 
+	+ Empathy + Wyrd instead.%r
+	%b * Inflict the Ravaged Condition (p. 344).%r
+	%b * Inflict the Flesh Too Solid Tilt (p. 329) on the dreamer's dream form.|
+
+	Enact a paradigm shift in a dream|
+
+	Exit the dream and don't return for one week; reintegrate yourself into the 
+	dream by taking a number of meaningful actions equal to the dreamer's 
+	Resolve without making any shifts to downgrade this Condition to Dream 
+	Intruder; or succeed at a meaningful action to influence an important 
+	eidolon (or the subject's dream self) or use an important prop in a way 
+	that's directly related to the waking change you want to make. Only relevant 
+	eidolons and props count, subject to Storyteller discretion.|
+
+		n/a|
+		
+		CtL.336-7
+
+// -----------------------------------------------------------------------------	
+
+&COND.DREAM_INFILTRATOR [v( d.ctdb )]=
+	Dream Infiltrator|0|
+
+	Your character has caused a significant shift to the dreamscape, and the 
+	eidolons are now suspicious of you. You take a -2 to any roll to interact 
+	with them peacefully, or a -3 to do anything unnoticed. Reduce all eidolon 
+	impressions of you by one for Social maneuvering. All subtle shifts cost one 
+	additional success to enact.%r%rIf you resolve this Condition by interacting 
+	with an important eidolon or prop, choose one of the following effects to 
+	impose on the dreamer, which persists after he wakes:%r
+	%b * Deliver a subliminal message; he will remember the information but not 
+	where it came from.%r
+	%b * Make a Wits roll and "store" successes as dice in the subject's mind, 
+	for use as bonus dice on Manipulation-based rolls you make against him 
+	within the next chapter as you take advantage of subliminal clues you left 
+	behind.%r
+	%b * Impose or remove a Condition that changes the dreamer's attitude toward 
+	your character or another, or behavior in general: e.g. Swooned, 
+	Leveraged, Competitive, Paranoid, etc.; resolving a Condition this way 
+	grants Beats as normal.%r
+	%b * Increase or decrease the Fortification rating of the dreamer's Bastion 
+	by 1 for the rest of the story.%r
+	%b Increase or decrease the dreamer's impression of you or another character 
+	by two levels on the chart for Social maneuvering (p. 192)%r
+	%b * Open Doors equal to your character's Empathy for Social maneuvering 
+	against the dreamer toward a particular goal.%r
+	%b * Stop the dreamer from recovering Willpower during this night's rest|
+	
+	Enact a paradigm shift in a dream|
+	
+	Upgrade this Condition to another Shift Condition; exit the dream and don't 
+	return until the dreamer wakes and sleeps again; reintegrate yourself into 
+	the dream by taking a number of meaningful actions equal to the dreamer's 
+	Resolve without making any shifts; or succeed at a meaningful action to 
+	influence an important eidolon (or the subject's dream self) or use an 
+	important prop in a way that's directly related to the waking change you 
+	want to make. Only relevant eidolons and props count, subject to Storyteller 
+	discretion.|
+
+	n/a|
+	
+	CtL.337-8
+
+// -----------------------------------------------------------------------------	
+
+&COND.DREAM_INTRUDER [v( d.ctdb )]=
+	Dream Intruder|0|
+
+	Your character has caused multiple significant shifts to the dreamscape, and 
+	the eidolons are now uncomfortable with your presence. You take a -3 to any 
+	roll to interact with them peacefully, or a -4 to do anything unnoticed, and 
+	all failures that involve eidolons your character isn't fighting are 
+	dramatic failures. Reduce all eidolon impressions of you by two for Social 
+	maneuvering. All subtle shifts and paradigm shifts cost one additional 
+	success to enact.%r%rIf you resolve this Condition by interacting with an 
+	important eidolon or prop, choose one of the following effects to impose on 
+	the dreamer or any effect from Dream Infiltrator, which persists after he 
+	wakes:%r
+	%b * Deliver a subliminal suggestion; he will perform one specific action of 
+	your choice within 24 hours of waking, as long as it wouldn't cause him to 
+	suffer a breaking point.%r
+	%b * Leave subliminal Manipulation clues as Dream Infiltrator, but roll Wits 
+	+ Empathy instead.%r
+	%b * Impose or remove one Persistent Condition that changes the dreamer's 
+	mental state, behavior, or attitude toward someone or something: e.g. 
+	Obsession, Awestruck, Amnesia, Madness, etc.; resolving a Condition this way 
+	grant Beats as normal.%r
+	%b * Make a Clarity attack against a changeling subject with a dice pool 
+	equal to your character's Presence.%r
+	%b * Reduce the subject's current Willpower or Glamour points by (your 
+	Presence + Wyrd) and gain that many points yourself, up to your usual 
+	maximum.%r
+	%b * Increase or decrease one of the subject's Mental or Social Attributes 
+	or Skills by 1 for the rest of the story.|
+
+	Enact a paradigm shift in a dream|
+	
+	Upgrade this Condition to another Shift Condition; exit the dream and don't 
+	return until the dreamer wakes and sleeps again twice; reintegrate yourself 
+	into the dream by taking a number of meaningful actions equal to the 
+	dreamer's Resolve without making any shifts to downgrade this Condition to 
+	Dream Infiltrator; or succeed at a meaningful action to influence an 
+	important eidolon (or the subject's dream self) or use an important prop in 
+	a way that's directly related to the waking change you want to make. Only 
+	relevant eidolons and props count, subject to Storyteller discretion.|
+	
+	n/a|
+	
+	CtL.338
+
+// -----------------------------------------------------------------------------	
+
+&COND.FATIGUED [v( d.ctdb )]=
+	Fatigued|0|
+
+	Your character has never been so tired in all her life. Her eyelids are like 
+	millstones, her brain a cobwebbed mass of exhaustion. She's reached that 
+	point where fatigue becomes a physical thing, and all she can think to do is 
+	close her eyes and rest, just for a moment. Every six hours, you must make a 
+	reflexive Resolve + Stamina roll to remain awake. If you fail, your 
+	character passes out. Even if you succeed, you suffer a cumulative -1 
+	penalty to all dice pools (including rolls to stay awake). Long periods of 
+	strenuous activity, like cross-country hiking, fighting, or heavy labor 
+	increase the penalty to -2 or -3. Even then, a normal person can only go a 
+	number of days without sleep equal to the lower of her Resolve or Stamina, 
+	at which point she passes out. Once a Fatigued character passes out, she 
+	remains asleep for eight hours plus one additional hour for every six-hour 
+	period she stayed awake. Attempts to rouse her during this period suffer a 
+	penalty equal to the highest penalty the Fatigued character suffered before 
+	passing out.|
+	
+	 Staying awake for 24 hours, being dosed with a sedative or anesthetic, some 
+	 supernatural powers|
+
+	Sleeping, as described above, or the power ends.|
+	
+	n/a|
+	
+	CtL.338
+
+// -----------------------------------------------------------------------------	
+
+&COND.FRAGILE [v( d.ctdb )]=
+	Fragile|0|
+
+	The equipment the character is using to aid his action won't last long for 
+	some reason, whether because it's an object put together with duct tape and 
+	bubble gum, or because his relationship with the people involved sours, or 
+	because his computer ends up suffering a blue screen of death and the data 
+	is corrupted. A plan may be Fragile because of disrupted communication 
+	between the characters, or because of an unexpected hurdle, etc. The 
+	equipment ceases to exist in any usable form after a number of uses equal to 
+	its creator's dots in the Skill used to build it.|
+
+	Achieving a failure on a Build Equipment roll|
+	
+	The equipment falls apart one way or another. Plans grant one Beat to each 
+	player whose character is involved when this Condition resolves.|
+
+	n/a|
+	
+	CtL.339
+
+// -----------------------------------------------------------------------------	
+
+&COND.GLAMOUR_ADDICTED [v( d.ctdb )]=
+	Glamour Addicted|1|
+	
+	Your character is addicted to Glamour. This slowly takes over her life, and 
+	impedes functionality. She can go a number of days equal to her Resolve 
+	before needing to obtain Glamour again. She must harvest or reap a number of 
+	Glamour points equal to half her Wyrd (rounded up) during that period, or 
+	suffer one lethal damage every day until she does and gain the Deprived 
+	Condition (p. 335). This is incredibly painful as her body consumes its own 
+	magical energy to satisfy the hunger for Glamour. The mask cracks, like a 
+	fractured mirror in which each piece shows a different reflection of the fae 
+	underneath. This special type of damage cannot be prevented or healed by any 
+	means, nor can the character resolve the Deprived Condition, until the 
+	changeling has supped upon Glamour once more.%r%rAdd one die to Clarity 
+	damage rolls.|
+	
+	Harvesting Glamour every day for a week at Wyrd 6+|
+	
+	Achieve an exceptional success on a roll to harvest Glamour.|
+	
+	Your character takes damage from not being able to harvest Glamour.|
+	
+	CtL.339
+
+// -----------------------------------------------------------------------------	
+
+&COND.GOBLIN_QUEEN [v( d.ctdb )]=
+	Goblin Queen|1|
+	
+	The character has risen far beyond ordinary goblins, and they scrape and bow 
+	before her. This Condition functions as Hedge Denizen (p. 340), except as 
+	follows:%r
+	%b * The character's Mantle rejects her. She cannot invoke her current Court 
+	Contracts, nor purchase new ones.%r
+	%b * She gains the Status (Goblins) Merit at four dots. If the local Hedge 
+	holds any creatures who outrank her, she immediately knows their assumed 
+	names and titles.%r
+	%b * The character's identity has so profoundly changed that fae beings no 
+	longer add her Wyrd as bonus dice to track or find her. If she recovers her 
+	Icon while she's a Goblin Queen, she can't reintegrate it into herself.%r
+	%b * The Goblin Queen cannot leave the Hedge, except by wrapping pieces of 
+	it as a mantle around her, to travel into the mortal realm or Arcadia for up 
+	to a number of hours per day equal to her Wyrd. She still suffers the 
+	Deprived Condition in the real world.%r
+	%b * The Queen gains the Retainer Merit (p. 125) with dots equal to her 
+	Wyrd, spread across as many individual Retainers as she likes up to a 
+	maximum of five dots per Retainer. These retainers are all hobgoblins; see 
+	p. 257 for examples. The retainers are unquestioningly loyal and devoted to 
+	her.%r
+	%b * Changelings with this Condition add two dice to Clarity damage rolls 
+	instead of one.|
+
+	Upgrade of Hedge Denizen|
+	
+	The Queen finds a human child and leaves him to take her place. The child 
+	immediately gains the Goblin Queen Condition and all of her Retainers, who 
+	protect him until he comes of age to ascend the throne. The child remembers 
+	who abandoned him.%r%rThe character becomes what she once was again, whether 
+	a changeling or otherwise. She takes on her old seeming, kith, and 
+	identity--also setting the Fae back on her trail. If the character was 
+	mortal previously, her player selects three dots of supernatural Merits for 
+	her, as she is irrevocably changed. The newly abandoned queen can use the 
+	same process to become human again as well. This resolution constitutes a 
+	Clarity attack with two dice for changelings, or a breaking point for 
+	others.%r%rAlternatively, if the character works off five points of Goblin 
+	Debt, she resolves this Condition and regains the Hedge Denizen Condition 
+	instead.|
+	
+	The character collects Goblin Debt from another character, selling a 
+	Contract or making another kind of hobgoblin deal.|
+	
+	CtL.339-40
+
+// -----------------------------------------------------------------------------	
+
+&COND.HEDGE_DENIZEN [v( d.ctdb )]=
+	Hedge Denizen|1|
+
+	Having relied on Goblin Contracts too much or become too reliant on 
+	hobgoblin deals, the character becomes a goblin herself. She retains her 
+	normal changeling benefits and weaknesses, except in these cases:%r
+	%b * The changeling's mien warps, growing closer to the appearance she had 
+	during her servitude in Arcadia. She has one tell of the player's choice, by 
+	which former friends and enemies might recognize her.%r
+	%b * The Storyteller can no longer spend her Goblin Debt points. The 
+	character must work off her debt, per the resolution below.%r
+	%b * Arcadian Contracts are the birthright of all denizens of Faerie, but 
+	the Hedge is its own in-between place. The character can still buy and use 
+	Arcadian Contracts, but pays for all of them as if they were in non-favored 
+	Regalia and may not circumvent this via Pupil's Devotion.%r
+	%b * Courts are changeling affairs, and the character no longer is one. The 
+	character keeps and can use her old Court Contracts, but cannot purchase new 
+	ones. She loses all other benefits of her Court Mantle.%r
+	%b * Whenever the sun rises over the Hedge, the character can redistribute 
+	the set of GoblinContracts she knows across any Goblin Contracts she wants. 
+	If she had three Contracts as a changeling, she can pick any three every 
+	morning. Purchasing new Goblin Contracts still costs 2 Experiences each.%r
+	%b * Invoking Goblin Contracts as a Hedge Denizen does not incur Debt.%r
+	%b * The character can leave the Hedge, but suffers the Deprived Condition 
+	until she returns to the Hedge or Arcadia.%r
+	%b * If the character was mortal, or another nonchangeling unlucky enough to 
+	fall in with hobgoblins, she immediately learns three Goblin Contracts of 
+	the player's choice. If she is a Storyteller character, the Storyteller may 
+	substitute Dread Powers for any of these (p. 253). She can switch them out 
+	each dawn as above.%r
+	%b * The character can make deals, sell Contracts, and collect Debt as a 
+	hobgoblin. See p. 256 for details on goblin deals.%r
+	%b * Changelings with this Condition add one die to Clarity damage rolls.|
+	
+	(unknown possible sources?)|
+	
+	The character becomes what she was again, or she embraces her new self to 
+	become a Goblin Queen (p. 339).%r
+	%b * Returning to What Was: The character pays off at least one Goblin Debt 
+	point. She cannot simply accept a disadvantage from the Storyteller, or use 
+	tokens or other shortcuts to lose Debt points--she's a goblin now, and must 
+	pay her Debt by seeking out the goblin with whom she entered into the 
+	Contract, or any third party involved if that goblin is dead or otherwise 
+	gone, and perform a task at his request. After that, she must heal a point 
+	of Clarity damage; nonchangelings must gain or lose a dot of Integrity or an 
+	equivalent trait. She then becomes her old self again.%r
+	%b * Any Debt she hasn't worked off yet remains, as do any new Goblin 
+	Contracts she learned. If she returns to being mortal, she keeps one Goblin 
+	Contract of the player's choice, which she can invoke by taking one point of 
+	bashing damage to substitute for each point of Glamour in its cost. Using 
+	Goblin Contracts racks up Goblin Debt again.%r
+	%b * Embracing What Might Be: The changeling suffers two or more Clarity 
+	attacks, and takes Clarity damage (or loses an equivalent trait) from at 
+	least one. She must also lose one Touchstone, which she can do by simply 
+	willing herself to forget it, although losing one in the usual ways counts 
+	also. She now resolves the Hedge Denizen Condition, and takes the Goblin 
+	Queen Condition instead. Since mortals have no Touchstones, they can't 
+	become Goblin Queens.| 
+	
+	The character works off a point of Goblin Debt but can't, or chooses not to, 
+	resolve this Condition via Returning to What Was.|
+	
+	CtL.340-2
+
+// -----------------------------------------------------------------------------	
+
+&COND.HUNTED [v( d.ctdb )]=
+	Hunted|1|
+	
+	Someone who poses a serious threat to the character's safety and well-being, 
+	physically or emotionally (or both), is after her. For changelings, it's 
+	usually an agent of the True Fae, like a Huntsman or loyalist, or perhaps 
+	their fetch. Whoever it is might be intent on direct violence, or simply 
+	wish to torment her.%r%rChangelings with this Condition add one die to 
+	Clarity damage rolls.|
+	
+	(unknown possible sources)|
+	
+	The character stops her persecutors, either through direct means like 
+	violence, or indirect means like changes in lifestyle that deny them access 
+	to her or freeing a Huntsman from the True Fae's service.|
+
+	The character's persecutors find her.|
+	
+	CtL.342
+
+// -----------------------------------------------------------------------------	
+
+&COND.OATHBREAKER [v( d.ctdb )]=
+	Oathbreaker|1|
+	
+	The character has violated an oath, and receives this Condition in addition 
+	to any other effects breaking the oath carries. Changelings instinctively 
+	distrust the character. He suffers a -1 on all Social actions with other 
+	changelings, and cannot use Glamour to seal their statements. As a known 
+	liar, however, he is also immune to having his own statements sealed.%r%r
+	Changelings with this Condition add one die to Clarity damage rolls.|
+	
+	Break an oath|
+	
+	The character undertakes a sincere attempt to make restitution for his 
+	betrayal. This includes finding all other participants involved in the oath 
+	and undertaking whatever task they assign. It also includes receiving 
+	forgiveness from the Wyrd itself; this is sure to be the focus of a story, 
+	and the particulars are up to the Storyteller.|
+	
+	Once per session, the player can choose to automatically dramatically fail a 
+	Contract roll, or a Social action with a changeling, and take a Beat. Make 
+	the choice before rolling.|
+	
+	CtL.343
+
+// -----------------------------------------------------------------------------	
+
+&COND.OBLIGED [v( d.ctdb )]=
+	Obliged|1|
+	
+	Your character swore a bargain--not an oath--with a human being. The 
+	obligation on her part is probably minor, but she can't let it lapse! Not 
+	only would that disappoint the person to whom she gave her word, but it 
+	would expose her to the Huntsmen and their Gentry masters.%r%r
+	While under a bargain, the changeling is more difficult to find. Huntsmen 
+	must win a Clash of Wills to use their Hunter's Senses power (p. 266) when 
+	tracking the changeling, and fae beings no longer add the changeling's Wyrd 
+	in dice to do so when she drops her Mask. In addition, once per chapter, 
+	when the changeling is at the site of her obligation (the human's home that 
+	she must clean, for example, or in the garden she agreed to tend), she may 
+	hide without fear of discovery for the rest of the scene. This benefit 
+	applies to any pursuer touched by the Wyrd, be it Huntsman, Gentry, 
+	hobgoblin, or even another changeling.|
+	
+	Make a bargain with a human|
+	
+	Break the bargain by failing to live up to its terms, or the other party 
+	breaks her part of the agreement. Either way, you lose any protections the 
+	bargain provided.|
+	
+	Once per story, gain a Beat when you take a great risk or suffer harm while 
+	fulfilling your obligation. You can have help from other characters, but you 
+	must be directly involved--no subcontracting out.|
+	
+	CtL.343-4
+
+// -----------------------------------------------------------------------------	
+
+&COND.PARANOID [v( d.ctdb )]=
+	Paranoid|0|
+	
+	Your character has been reduced to a state of rampant paranoia. She jumps at 
+	shadows, sees threats everywhere, and finds it hard to trust. She suffers a 
+	two-die penalty to perception rolls, Social actions, and dice pools to draw 
+	upon the Allies, Contacts, Mentor, Retainer, Staff, and Status Merits.%r%r
+	Changelings with this Condition add one die to Clarity damage rolls.|
+	
+	Some supernatural powers, some dramatic failures|
+	
+	A week without any fae threat actually manifesting; a friend or ally 
+	achieving exceptional success on a Social action to convince you of their 
+	trustworthiness.|
+	
+	n/a|
+	
+	CtL.344
+
+// -----------------------------------------------------------------------------	
+
+&COND.RAVAGED [v( d.ctdb )]=
+	Ravaged|0|
+	
+	A fae creature sundered your character's dreams, leaving her with sleep but no rest, or ripped her emotions away as Glamour. She becomes a shell of her former self, and you take a two-die penalty on all rolls. Your charac- ter cannot recover Willpower through sleep.%r%r
+	Changelings with this Condition add one die to Clarity damage rolls.|
+	
+	Oneiromancy, reaping Glamour|
+	
+	Regaining full Willpower.|
+	
+	n/a|
+	
+	CtL.344
+
+// -----------------------------------------------------------------------------
+
+&COND.SHAKEN [v( d.ctdb )]=
+	Shaken|0|
+	
+	Something has severely frightened your character. Any time your character is 
+	taking an action where that fear might hinder her, you may opt to fail the 
+	roll and resolve this Condition.%r%r
+	Example Skills: Brawl, Firearms, Intimidation, Weaponry|
+	
+	Mild Clarity damage in any of your three rightmost boxes; breaking points 
+	(human characters)|
+	
+	The character gives into her fear and fails a roll as described above.|
+
+	n/a|
+
+	CtL.344
+
+// -----------------------------------------------------------------------------
+
+&COND.SLEEPWALKING [v( d.ctdb )]=
+	Sleepwalking|1|
+	
+	The lines between waking and sleeping blur to the point where your character 
+	doesn't know which he's doing. Sometimes he thinks he did something he 
+	didn't do; he remembers doing it, but maybe he was dreaming. Other times, he 
+	finds out later that he spent hours on a task he has no memory of doing. You 
+	character loses time, may not actually complete objectives he thinks he did, 
+	and generally has a harder time maintaining relationships and obligations.|
+	
+	Severe Clarity damage in any of your three rightmost boxes|
+	
+	Achieve an exceptional success on an oneiromancy roll or during an extended 
+	action.|
+	
+	Fail to complete an obligation because you thought you already did.|
+	
+	CtL.344
+
+// -----------------------------------------------------------------------------
+
+&COND.SOUL_SHOCKED [v( d.ctdb )]=
+	Soul Shocked|0|
+	
+	Your character died because of fae magic while on a sojourn in dreams, or in 
+	a reality that no longer exists, but she still remembers it and suffers a 
+	shocked sense of self. Upon gaining this Condition, roll her current 
+	Willpower points (not dots) as a dice pool. Ignore 10-again on this roll, 
+	and do not roll a chance die if she has no Willpower left. She keeps one 
+	Willpower per success, and immediately loses the remainder. While this 
+	Condition is in effect, your character does not regain Willpower from 
+	Needle, Thread, or equivalent traits. She still regains Willpower from rest, 
+	surrender, and other means.|
+	
+	Being "killed" in dream form by fae magic, escaping a Bastion crumbling due 
+	 to oneiromancy|
+	 
+	Regain full Willpower|
+	 
+	n/a|
+	 
+	CtL.345
+
+// -----------------------------------------------------------------------------
+
+&COND.STOIC [v( d.ctdb )]=
+	Stoic|0|
+
+	Your character has shut down the parts of herself that care. She won't open 
+	up to anyone and pretends she's fine when she isn't. Gain a two-die bonus to 
+	Subterfuge rolls to hide her emotions or avoid talking about a traumatic 
+	experience. She doesn't suffer the untrained penalty for any Subterfuge 
+	roll. Take a two-die penalty to Hedgespinning rolls. Until she resolves this 
+	Condition, she can't heal Clarity damage, and she can't spend Willpower on 
+	actions that would reveal her true feelings.|
+
+	(unknown possible sources)|
+	
+	Opt to fail a roll to resist Empathy or a supernatural effect that would 
+	read your character's emotions or mental state; enact a paradigm shift while 
+	Hedgespinning.|
+	
+	n/a|
+	
+	CtL.345
+
+// -----------------------------------------------------------------------------
+
+&COND.SWOONED [v( d.ctdb )]=
+	Swooned|0|
+	See 'Swooning'|
+	|||
+	CtL..345
+
+// -----------------------------------------------------------------------------
+
+&COND.VOLATILE [v( d.ctdb )]=
+	Volatile|0|
+	
+	The equipment the character is using to aid his action is ready to blow at 
+	any moment, figuratively or literally. One wrong word, one badly placed 
+	rune, and it's time to duck and cover. A plan may be Volatile because it 
+	backfires terribly, or because a Storyteller character betrays the group, 
+	etc. Any failure achieved while benefiting from the equipment is 
+	automatically a dramatic failure. The equipment may continue to exist after 
+	this Condition is resolved, but if so, reduce its equipment bonus by two 
+	dice. This can create equipment penalties if the original bonus was fewer 
+	than two dice.|
+	
+	Achieving a failure on a Build Equipment roll|
+	
+	The character suffers a dramatic failure while using the equipment. Plans 
+	grant one Beat to each player whose character is involved when this 
+	Condition resolves.|
+	
+	n/a|
+	
+	CtL.345
+
+// -----------------------------------------------------------------------------
+
+&COND.WITHDRAWN [v( d.ctdb )]=
+	Withdrawn|0|
+	
+	Your character doesn't know what to trust anymore, so has decided to 
+	withdraw into herself. She finds it hard to motivate herself to action, 
+	preferring to remain alone and safe. The character suffers a two-die penalty 
+	to all rolls that require her to interact with others in any way.|
+	
+	Mild Clarity damage in any of your three rightmost boxes|
+	
+	The character regains Willpower using her Thread.|
+	
+	n/a|
+	
+	CTL.346
+
+
+/*
+================================================================================
+== EDITED CONDITIONS ===========================================================
+
+These conditions and tilts are in Core, but add a Changeling element to them. 
+Here's a little system to add instead of re-create them.
+
+*/
+
+// - Amnesia -------------------------------------------------------------------
+// Core book, add text & reference.
+@edit 
+	[setq( d, 
+		elements( 
+			get( v( d.ctdb )/cond.amnesia ), 
+			get( v( d.ctst )/i.status.desc ), 
+			|
+		)
+	)]
+	[v( d.ctdb )]/COND.AMNESIA=
+		%qd|, 
+		%qd%r%r
+		Changelings with this condition add two dice to Clarity damage rolls.|
+@edit 
+	[setq( d, 
+		elements( 
+			get( v( d.ctdb )/cond.amnesia ), 
+			get( v( d.ctst )/i.status.ref ), 
+			|
+		)
+	)]
+	[v( d.ctdb )]/COND.AMNESIA=
+		%qd, 
+		%qd\,CtL.333
+
+
+// - Berserk -------------------------------------------------------------------
+// Core book, add text & reference.
+@edit 
+	[setq( d, 
+		elements( 
+			get( v( d.ctdb )/cond.berserk ), 
+			get( v( d.ctst )/i.status.desc ), 
+			|
+		)
+	)]
+	[v( d.ctdb )]/COND.BERSERK=
+		%qd|, 
+		%qd%r%r
+		Changelings with this condition add two dice to Clarity damage rolls.|
+@edit 
+	[setq( d, 
+		elements( 
+			get( v( d.ctdb )/cond.berkserk ), 
+			get( v( d.ctst )/i.status.ref ), 
+			|
+		)
+	)]
+	[v( d.ctdb )]/COND.BERSERK=
+		%qd, 
+		%qd\,CtL.333
+
+
+/*
+================================================================================
+== TILTS =======================================================================
+*/
+
+&TILT.FLESH_TOO_SOLID [v( d.ctdb )]=
+	Flesh Too Solid|0|
+	
+	The character becomes too immersed in dreams. Physical sensations are even 
+	more vivid than in the waking world, but dream wounds leave real scars.%r%r
+	Effect: Whenever the character would suffer Dream Health damage, she suffers 
+	equivalent physical Health damage instead.|
+	
+	Suffering a dramatic failure on oneiromantic actions and Contracts.|
+
+	The Tilt normally lasts until the end of the scene.|
+
+	|
+	
+	CtL.329
+
+// -----------------------------------------------------------------------------
+
+&TILT.INFERNO [v( d.ctdb )]=
+	Inferno|0|
+	
+	(Environmental) The area is on fire. Anything flammable is either already 
+	burning or will be soon.%r%r
+	Effect: All characters suffer a -2 to all rolls due to smoke and heat. After 
+	two turns, any character that breathes also suffers 2B per turn due to smoke 
+	inhalation. After three turns, the character also suffers 1L per turn from 
+	burns and must succeed on a Dexterity + Stamina roll each turn to avoid 
+	catching fire (see p. 190).|
+	
+	Objects or people catching fire and letting it spread can cause this Tilt, 
+	as well as supernatural powers or particularly volatile explosions.|
+	
+	Different types of fire require different methods to extinguish; in general, 
+	cutting off the fire from its fuel sources does the trick. Water, carbon 
+	dioxide, sand, and baking soda can be useful, depending on the size and type 
+	of the fire. Eventually all fires burn themselves out, but that can be cold 
+	comfort in the aftermath of a destructive blaze.|
+	
+	|
+	CtL.330
+
+
+/*
+================================================================================
+== EXISTING CONDITIONS & TILTS =================================================
+
+Edit existing conditions and/or tilts from CoD Core.
+
+The way we're doing this is:
+
+	c: condition text
+	l: list element we're working on (desc, reference, etc)
+	t: text we're adding -- ESCAPE THIS
+
+Then replace() the proper element with what it was + what we added back into 
+'c: condition text'. Repeat until all changes are made and apply that back to 
+the CTDB.
+
+*/
+
+// -----------------------------------------------------------------------------    
+
+@fo me=&COND.AMNESIA [v( d.ctdb )]=
+	[setq( c, escape( get( v( d.ctdb )/cond.amnesia )))]
+// description
+	[setq( l, get( v( d.ctst )/i.status.desc ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%r\%rChangelings with this condition add two dice to 
+		Clarity damage rolls.
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// reference
+	[setq( l, get( v( d.ctst )/i.status.ref ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, \,CtL.333 )]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// new content
+	%qc
+
+// -----------------------------------------------------------------------------    
+
+@fo me=&COND.DEPRIVED [v( d.ctdb )]=
+	[setq( c, escape( get( v( d.ctdb )/cond.deprived )))]
+// resolve
+	[setq( l, get( v( d.ctst )/i.status.res ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bOr\, if she gained this Condition by reaching Glamour 0\, gaining 
+		any Glamour. 
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// reference
+	[setq( l, get( v( d.ctst )/i.status.ref ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, \,CtL.335-6 )]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// new content
+	%qc
+
+// -----------------------------------------------------------------------------    
+
+@fo me=&COND.FUGUE [v( d.ctdb )]=
+	[setq( c, escape( get( v( d.ctdb )/cond.fugue )))]
+// possible sources
+	[setq( l, get( v( d.ctst )/i.status.source ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bSevere Clarity damage in any of your three rightmost boxes. 
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// resolution
+	[setq( l, get( v( d.ctst )/i.status.res ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bFor changelings\, increase maximum Clarity\, or achieve exceptional 
+		success on a roll to contest a fae power.
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// reference
+	[setq( l, get( v( d.ctst )/i.status.ref ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, \,CtL.339 )]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// new content
+	%qc
+
+// -----------------------------------------------------------------------------    
+
+@fo me=&COND.LOST [v( d.ctdb )]=
+	[setq( c, escape( get( v( d.ctdb )/cond.lost )))]
+// description
+	[setq( l, get( v( d.ctst )/i.status.desc ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bIn the Hedge\, it requires a successful navigation chase (p.200).  
+		\%r\%rChangelings with this Condition add one die to Clarity damage 
+		rolls.
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// reference
+	[setq( l, get( v( d.ctst )/i.status.ref ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, \,CtL.342 )]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// new content
+	%qc
+
+// -----------------------------------------------------------------------------  
+
+@fo me=&COND.MADNESS [v( d.ctdb )]=
+	[setq( c, escape( get( v( d.ctdb )/cond.madness )))]
+// description
+	[setq( l, get( v( d.ctst )/i.status.desc ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bChangelings use their current Clarity instead of Integrity. 
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// resolution
+	[setq( l, get( v( d.ctst )/i.status.res ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bFor changelings\, increase maximum Clarity\, or achieve exceptional 
+		success on a roll to contest a fae power.
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// reference
+	[setq( l, get( v( d.ctst )/i.status.ref ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, \,CtL.343 )]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// new content
+	%qc
+  
+// -----------------------------------------------------------------------------   
+
+@fo me=&COND.FUGUE [v( d.ctdb )]=
+	[setq( c, escape( get( v( d.ctdb )/cond.fugue )))]
+// possible sources
+	[setq( l, get( v( d.ctst )/i.status.source ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bSevere Clarity damage in any of your three rightmost boxes. 
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// reference
+	[setq( l, get( v( d.ctst )/i.status.ref ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, \,CtL.344 )]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// new content
+	%qc
+
+// -----------------------------------------------------------------------------   
+
+@fo me=&COND.SHAKEN [v( d.ctdb )]=
+	[setq( c, escape( get( v( d.ctdb )/cond.shaken )))]
+// possible sources
+	[setq( l, get( v( d.ctst )/i.status.source ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bFor changelings\, mild Clarity damage in any of your three rightmost 
+		boxes.
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// reference
+	[setq( l, get( v( d.ctst )/i.status.ref ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, \,CtL.344 )]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// new content
+	%qc
+
+// -----------------------------------------------------------------------------    
+
+@fo me=&COND.SPOOKED [v( d.ctdb )]=
+	[setq( c, escape( get( v( d.ctdb )/cond.spooked )))]
+// possible sources
+	[setq( l, get( v( d.ctst )/i.status.source ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, 
+		\%bFor changelings\, mild Clarity damage in any of your three rightmost 
+		boxes.
+	)]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// reference
+	[setq( l, get( v( d.ctst )/i.status.ref ))]
+	[setq( d, elements( %qc, %ql, | ))]
+	[setq( t, \,CtL.345 )]
+	[setq( c, replace( %qc, %ql, %qd%qt, | ))]
+// new content
+	%qc
