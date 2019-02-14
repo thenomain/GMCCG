@@ -538,6 +538,11 @@ Stat's "first" text value matches another stat's
 The "has" directives check to see if a stat (or a list of stats) exists (or 
 don't exist) on someone's sheet.
 
+Allows instanced stats to be passed with a wildcard, e.g.:
+	u( .has, %0, language_(*) )
+
+All 'has' functions will honor this.
+
 -- has --
 
 Sheet has a stat
@@ -548,7 +553,11 @@ Sheet has a stat
 */
 
 &.Has [v( d.dd )]=
-	t( u( .value, %0, %1 ))
+	if( member( last( %1, _ ), %(*%) ), 
+		t( lattr( %0/_%1 )), 
+		t( u( .value, %0, %1 ))
+	)
+
 
 /* -- has not --
 
@@ -909,7 +918,7 @@ Does the trait have one or zero existing instances?
 
 &.instanced_once [v( d.dd )]=
 	localize( strcat( 
-		setq( p, first( %1 ), _%(%) ), 
+		setq( p, first( %1 , _%(%) )), 
 		setq( i, before( rest( %1, _(, )), ) ), 
 		not( 
 			setdiff( 
