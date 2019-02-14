@@ -52,10 +52,11 @@ Hey, this is new.
 */
 
 &health.maximum [v( d.dd )]=
-	add( 
-		u( .value_stats, %0, attribute.stamina advantage.size ), 
-		udefault( health.maximum.[get( %0/_bio.template )], 0, %0 )
-	)
+		u( .value_stats_template, 
+			%0, 
+			attribute.stamina advantage.size, 
+			health.maximum 
+		), 
 &tags.health.maximum [v( d.dt )]=derived
 &default.health.maximum [v( d.dd )]=derived
 
