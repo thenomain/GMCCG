@@ -266,12 +266,13 @@ http://wiwimush.wikidot.com/merits
 &merit.patient [v( d.dd )]=1
 &tags.merit.patient [v( d.dt )]=mental
 
-&merit.mental_prodigy [v( d.dd )]=2
-&prerequisite.merit.mental_prodigy [v( d.dd )]=
+&merit.mental_prodigy_() [v( d.dd )]=2|
+	Academics.Computer.Crafts.Investigation.Medicine.Occult.Politics.Science
+&prerequisite.merit.mental_prodigy_() [v( d.dd )]=
 	t( grab( child teen, rest( u( .value_full, %0, bio.age ), / )))
-&prereq-text.merit.mental_prodigy [v( d.dd )]=Character is a Child or Teen
-&tags.merit.mental_prodigy [v( d.dt )]=mental
-&notes.merit.mental_prodigy [v( d.dt )]=100 Brownies
+&prereq-text.merit.mental_prodigy_() [v( d.dd )]=Character is a Child or Teen
+&tags.merit.mental_prodigy_() [v( d.dt )]=mental
+&notes.merit.mental_prodigy_() [v( d.dt )]=100 Brownies
 
 &merit.tolerance_for_biology [v( d.dd )]=1
 &prerequisite.merit.tolerance_for_biology [v( d.dd )]=
@@ -358,12 +359,13 @@ http://wiwimush.wikidot.com/merits
 &tags.merit.parkour [v( d.dt )]=physical.style
 &notes.merit.parkour [v( d.dt )]=15 Brownies
 
-&merit.physical_prodigy [v( d.dd )]=2
-&prerequisite.merit.physical_prodigy [v( d.dd )]=
+&merit.physical_prodigy_() [v( d.dd )]=2|
+	Athletics.Brawl.Drive.Firearms.Larceny.Stealth.Survival.Weaponry
+&prerequisite.merit.physical_prodigy_() [v( d.dd )]=
 	t( grab( child teen, rest( u( .value_full, %0, bio.age ), / )))
-&prereq-text.merit.physical_prodigy [v( d.dd )]=Character is a Child or Teen
-&tags.merit.physical_prodigy [v( d.dt )]=physical
-&notes.merit.physical_prodigy [v( d.dt )]=100 Brownies
+&prereq-text.merit.physical_prodigy_() [v( d.dd )]=Character is a Child or Teen
+&tags.merit.physical_prodigy_() [v( d.dt )]=physical
+&notes.merit.physical_prodigy_() [v( d.dt )]=100 Brownies
 
 &merit.quick_draw_() [v( d.dd )]=1|*
 &prerequisite.merit.quick_draw_() [v( d.dd )]=
@@ -480,12 +482,20 @@ http://wiwimush.wikidot.com/merits
 &prereq-text.merit.small_unit_tactics [v( d.dd )]=Presence 3+
 &tags.merit.small_unit_tactics [v( d.dt )]=social
 
-&merit.social_prodigy [v( d.dd )]=2
+&merit.social_prodigy [v( d.dd )]=
 &prerequisite.merit.social_prodigy [v( d.dd )]=
+&prereq-text.merit.social_prodigy [v( d.dd )]=
+&tags.merit.social_prodigy [v( d.dt )]=
+&notes.merit.social_prodigy [v( d.dt )]=
+
+&merit.social_prodigy_() [v( d.dd )]=2|
+	Animal Ken.Empathy.Expression.Intimidation.Persuasion.Socialize.Streetwise.
+	Subterfuge
+&prerequisite.merit.social_prodigy_() [v( d.dd )]=
 	t( grab( child teen, rest( u( .value_full, %0, bio.age ), / )))
-&prereq-text.merit.social_prodigy [v( d.dd )]=Character is a Child or Teen
-&tags.merit.social_prodigy [v( d.dt )]=mental
-&notes.merit.social_prodigy [v( d.dt )]=100 Brownies
+&prereq-text.merit.social_prodigy_() [v( d.dd )]=Character is a Child or Teen
+&tags.merit.social_prodigy_() [v( d.dt )]=social
+&notes.merit.social_prodigy_() [v( d.dt )]=100 Brownies
 
 &merit.spin_doctor [v( d.dd )]=1
 &prerequisite.merit.spin_doctor [v( d.dd )]=
