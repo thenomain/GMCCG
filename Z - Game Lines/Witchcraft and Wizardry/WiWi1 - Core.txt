@@ -541,6 +541,161 @@ http://wiwimush.wikidot.com/merits
 &tags.merit.untouchable [v( d.dt )]=social
 
 
+// -- Merits: Wizard -----------------------------------------------------------
+
+// -- ANIMAGUS ---------------------
+&merit.animagus [v( d.dd )]=2.3.4.5
+&prerequisite.merit.animagus [v( d.dd )]=
+	cand( 
+		u( .at_least_all, %0, attribute.resolve:3 attribute.composure:3 ),
+		case( u( .value_full, %0, bio.paradigm ), 
+			Sorcery, u( .at_least, %0, art.transfiguration, 3 ), 
+			Arendi, u( .at_least, %0, advantage.sortilege, 3 ), 
+			0
+		)
+	)
+&prereq-text.merit.animagus [v( d.dd )]=
+	Resolve 3+, Composure 3+, and Transfiguration 3+ (if Sorcery) 
+	or Sortilege 3+ (if Arendi)
+&tags.merit.animagus [v( d.dt )]=wizard.magic
+&notes.merit.animagus [v( d.dt )]=
+	300 Brownies (-100 for Arendi, +100 for exotic animal form)
+	|Lore Threshold: Gramarye **
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- ARITHMANCY -------------------
+&merit.arithmancy [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.arithmancy [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.paradigm, Sorcery ),
+		u( .at_least, %0, skill.gramayre, 3 ) 
+	)
+&prereq-text.merit.arithmancy [v( d.dd )]=Sorcery only, Gramayre 3+
+&tags.merit.arithmancy [v( d.dt )]=wizard.magic
+&notes.merit.arithmancy [v( d.dt )]=
+	100 Brownies (50 for Arendi)
+	|Lore Threshold: Gramarye **
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- BEAST SPEECH --------------------
+&merit.beast_speech [v( d.dd )]=3
+&tags.merit.beast_speech [v( d.dt )]=wizard.magic
+&notes.merit.beast_speech [v( d.dt )]=
+	100 Brownies (50 for Arendi)
+	|Lore Threshold: Gramarye ** (* for Parseltongue)
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- DIVINATION --------------------
+&merit.divination [v( d.dd )]=1.2.3.4.5
+&tags.merit.divination [v( d.dt )]=wizard.magic
+&notes.merit.beast_speech [v( d.dt )]=
+	http://wiwimush.wikidot.com/merits#toc3
+
+// -- KYBERMAGUS ---------------------
+&merit.kybermagus [v( d.dd )]=0
+&prerequisite.merit.kybermagus [v( d.dd )]=
+	cand( 
+		u( .is, %0, bio.paradigm, sorcery ), 
+// .. figure out how old someone born Midnight Jan 1st 2000 would be,
+// .. that age or younger
+
+	)
+&prereq-text.merit.kybermagus [v( d.dd )]=Sorcery Paradigm, 
+	must be born on or after January 1st of 2000
+&tags.merit.lay_on_hands [v( d.dt )]=chargen-only.wizard.magic
+&notes.merit.lay_on_hands [v( d.dt )]=
+	XX Brownies (Sexy!)
+	|Lore Threshold: Gramarye *****
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- LAY ON HANDS -------------------
+&merit.lay_on_hands [v( d.dd )]=3
+&tags.merit.lay_on_hands [v( d.dt )]=wizard.magic
+&notes.merit.lay_on_hands [v( d.dt )]=
+	300 Brownies (-100 for Arendi)
+	|Lore Threshold: Gramarye **** (* with Arendi)
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- LEGILIMENCY -------------------
+&merit.legilimency [v( d.dd )]=1.2.3.4.5
+&prerequisite.merit.legilimency [v( d.dd )]=
+	cand( 
+		u( .at_least, attribute.wits, 3 ), 
+		cor( 
+			<has spell 'Legilimency'>, 
+			cand( <in chargen>, u( .at_least, skill.empathy, 2 ))
+		) 
+	)
+&prereq-text.merit.legilimency [v( d.dd )]=
+	Wits 3+ and knows Legilimency spell (if Trained), 
+	or Wits 3+, Empathy 2+ (if Natural)
+&tags.merit.legilimency [v( d.dt )]=wizard.magic
+&notes.merit.legilimency [v( d.dt )]=
+	250 Brownies (300 Brownies for Natural Legilimens)
+	|Lore Threshold: Gramarye ***
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- LYCANTHROPY --------------------
+&merit.lycanthropy [v( d.dd )]=1
+&prerequisite.merit.lycanthropy [v( d.dd )]=0
+&prereq-text.merit.lycanthropy [v( d.dd )]=
+	Must be set by staff with 'set/override'.
+&tags.merit.lycanthropy [v( d.dt )]=wizard.magic
+&notes.merit.lycanthropy [v( d.dt )]=150 Brownies
+// maybe set xp cost to 0 and force 'xp/freebie'.
+
+// -- METAMORPHMAGUS --------------------
+&merit.metamorphmagus [v( d.dd )]=5
+&tags.merit.metamorphmagus [v( d.dt )]=wizard.chargen-only.magic
+&notes.merit.metamorphmagus [v( d.dt )]=400 Brownies 
+	|Lore Threshold: Gramarye ****
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- OCCLUMENCY --------------------
+&merit.occlumency [v( d.dd )]=3.4.5
+&prerequisite.merit.occlumency [v( d.dd )]=
+	u( .has, %0, merit.indomitable )
+&prereq-text.merit.occlumency [v( d.dd )]=Indomitable merit 
+&tags.merit.occlumency [v( d.dt )]=wizard.muggle.magic
+&notes.merit.occlumency [v( d.dt )]=
+	200 Brownies (+100 if Muggle)
+	|Lore Threshold: Gramarye ***
+	|Replaces Indomitable
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- SACRIFICIAL PROTECTION --------------------
+&merit.sacrificial_protection [v( d.dd )]=1.3
+&prerequisite.merit.sacrificial_protection [v( d.dd )]=0
+&prereq-text.merit.sacrificial_protection [v( d.dd )]=
+	Must be set by staff with 'set/override'.
+&tags.merit.sacrificial_protection [v( d.dt )]=wizard.magic
+&notes.merit.sacrificial_protection [v( d.dt )]=
+	Lore Threshold: Gramarye *****
+	|http://wiwimush.wikidot.com/merits#toc3
+// does this one cost xp? - Spice says "purchased as normal" - staff req.
+// where did I put that code again? Cannot remember.
+
+// -- UNBREAKABLE VOW --------------------
+&merit.unbreakable_vow [v( d.dd )]=1
+&prerequisite.merit.unbreakable_vow [v( d.dd )]=0
+&prereq-text.merit.unbreakable_vow [v( d.dd )]=
+	Must be set by staff with 'set/override'.
+&tags.merit.unbreakable_vow [v( d.dt )]=wizard.magic
+&notes.merit.unbreakable_vow [v( d.dt )]=
+	Lore Threshold: Gramarye: **
+	|http://wiwimush.wikidot.com/merits#toc3
+
+// -- UNUSUAL PATRONUS --------------------
+&merit.unusual_patronus [v( d.dd )]=3
+&prerequisite.merit.unusual_patronus [v( d.dd )]=
+	<has spell 'Patronus Charm'>,
+&prereq-text.merit.unusual_patronus [v( d.dd )]=Patronus Charm spell
+&tags.merit.unusual_patronus [v( d.dt )]=wizard.magic
+&notes.merit.unusual_patronus [v( d.dt )]=
+	15 Brownies
+	|http://wiwimush.wikidot.com/merits#toc3
+
+
 
 
 
