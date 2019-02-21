@@ -22,13 +22,6 @@ way here. If you want them to be a template, add them to the @fo that adds
 `u( .value_full, %0, merit.sleepwalker )` to add `.sleepwalker` to that items 
 &tags.<statpath> attribute.
 
-This may need applied:
-
-	&.between [v( d.xpcd )]=
-		cand( gte( %0, min( %1, %2 )), lte( %0, max( %1, %2 )))
-	&.between_else [v( d.xpcd )]=
-		cand( gt( %0, min( %1, %2 )), lt( %0, max( %1, %2 )))
-
 
 
 
