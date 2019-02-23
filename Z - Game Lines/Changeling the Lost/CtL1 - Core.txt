@@ -92,13 +92,8 @@ Level 3 for very minor items
 
 
 // register "sphere"'s templates (could this be folded into 'templates'?)
-&.sphere.changeling [v( d.dd )]=Changeling.Fae-Touched
+&.sphere.changeling [v( d.dd )]=Changeling Fae-Touched
 
-
-// -----------------------------------------------------------------------------
-// -- DD: Tags for Fae-Touched -------------------------------------------------
-
-@edit v( d.dt )/tags.advantage.integrity=$, .fae-touched
 
 
 /*
@@ -129,7 +124,7 @@ is a lot simpler, and has deep impact on the Chronicle.
 		ansi( xh, %(Seeming Unset%) )
 	)
 &default.bio.favored_regalia [v( d.dd )]=derived
-&tags.bio.favored_regalia [v( d.dd )]=changeling
+&tags.bio.favored_regalia [v( d.dt )]=derived.changeling
 
 &bio.court [v( d.dd )]=Spring.Summer.Autumn.Winter.Courtless
 &default.bio.court [v( d.dd )]=Courtless
@@ -226,12 +221,13 @@ currently attached, each scene she spends interacting in a meaningful way with
 one of her Touchstones heals one level of severe Clarity damage, or all levels 
 of mild Clarity damage (but doesn’t resolve any Conditions by default).
 
-
+*/
 
 
 &advantage.clarity_maximum [v( d.dd )]=
 	u( .value_stats, %0, attribute.wits attribute.composure )
 &default.advantage.clarity_maximum [v( d.dd )]=derived
+&tags.advantage.clarity_maximum [v( d.dt )]=derived
 
 &advantage.clarity [v( d.dd )]=
 	[u( .value_stats, advantage.clarity_maximum )].
@@ -240,6 +236,7 @@ of mild Clarity damage (but doesn’t resolve any Conditions by default).
 &prerequisites.advantage.clarity [v( d.dd )]=0
 &prereq-text.advantage.clarity [v( d.dd )]=
 	Use the 'clarity' command to apply damage
+&tags.advantage.clarity [v( d.dt )]=derived.pool
 
 &clarity.mild [v( d.dd )]=#
 &clarity.severe [v( d.dd )]=#
@@ -255,7 +252,7 @@ of mild Clarity damage (but doesn’t resolve any Conditions by default).
 
 
 
-
+/*
 
 max damage (because 'severe' overwrites 'mild' we can ignore it there):
 	max( 
@@ -270,6 +267,7 @@ overlap (severe):
 	* <mild> =- <mild> - min( <dmg>, <mild> )
 	* <severe> =+ <dmg> 
 
+*/
 
 
 // 0: target, 1: damage amt, 2: damage type, output: actual damage
@@ -1294,9 +1292,9 @@ gets this for free.
 * Check that all Contracts they've taken that have their Seeming have been taken
 
 specialty allocation:
-	list of contract.*.*`			(total)
-	list of contract.*.<seeming>`	(equals above)
-	DD's <contract>.<seeming>		(used to verify total)
+	list of contract.*.*`				(total)
+	list of contract.*.<seeming>`		(equals above)
+
 
 
 */
@@ -1317,13 +1315,14 @@ specialty allocation:
 		), 
 // s: contract specialties matching character seeming
 		setq( s, graball( %qa, contract.*.%qx )), 
-// m: how many contracts match your seeming?
-		setq( m, 
-			lattr( v( d.dd )/contract.*.%qx )
+// c: how many contract bonuses have a base contract?
+		setq( c, 
+
 		), 
+
 		words( %qa ), `, 
 		words( %qs ), `, 
-		words( %qm )
+		words( %qc )
 
 
 
