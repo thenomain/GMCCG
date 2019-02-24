@@ -594,16 +594,27 @@ http://wiwimush.wikidot.com/merits
 // -- KYBERMAGUS ---------------------
 &merit.kybermagus [v( d.dd )]=0
 &prerequisite.merit.kybermagus [v( d.dd )]=
-	cand( 
+	localize( cand( 
 		u( .is, %0, bio.paradigm, sorcery ), 
-// .. figure out how old someone born Midnight Jan 1st 2000 would be,
-// .. that age or younger
-
-	)
+		lte( 
+// .. seconds old someone born Jan 1st
+			sub( secs(), convtime( Sat Jan 1 00:00:00 2000 )), 
+// .. seconds old of target
+			sub( secs(), convtime( 
+				cat( 
+					xxx, 
+					elements( setr( b, u( .value, %0, bio.birthdate )), 1 ), 
+					elements( %qb, 2 ), 
+					00:00:00, 
+					elements( %qb, 3 )
+				)
+			))
+		)
+	))
 &prereq-text.merit.kybermagus [v( d.dd )]=Sorcery Paradigm, 
 	must be born on or after January 1st of 2000
-&tags.merit.lay_on_hands [v( d.dt )]=chargen-only.wizard.magic
-&notes.merit.lay_on_hands [v( d.dt )]=
+&tags.merit.kybermagus [v( d.dt )]=chargen-only.wizard.magic
+&notes.merit.kybermagus [v( d.dt )]=
 	XX Brownies (Sexy!)
 	|Lore Threshold: Gramarye *****
 	|http://wiwimush.wikidot.com/merits#toc3
