@@ -175,10 +175,10 @@ be shifted back by .01.
 */
 
 @create Initiative Tracker <it>=10
-@set Initiative Tracker <it>=inherit safe
 @fo me=&d.init me=[search( name=Initiative Tracker <it> )]
+@set Initiative Tracker <it>=inherit safe
 
-@parent Initiative Tracker <it>=codp
+@fo me=@parent Initiative Tracker <it>=[v( d.codp )]
 
 
 
@@ -386,9 +386,9 @@ a: attribute name
 
 // --
 
-think u( init/f.display.one-init-entry, _init.%#, loc(me), 1. )
-think u( init/f.display.one-init-entry, _init.evil_joe, loc(me), 2. )
-think u( init/f.display.one-init-entry, _init.also_also, loc(me), 3. )
+think u( v( d.init )/f.display.one-init-entry, _init.%#, loc(me), 1. )
+think u( v( d.init )/f.display.one-init-entry, _init.evil_joe, loc(me), 2. )
+think u( v( d.init )/f.display.one-init-entry, _init.also_also, loc(me), 3. )
 
 
 
@@ -574,11 +574,11 @@ returns: dbref if pc, name if npc, #-1 if not allowed
 
 // --
 
-think u( init/f.validate.init-subject, ms. rook, %# )
-think u( init/f.validate.init-subject, thenomain, %# )
-think u( init/f.validate.init-subject, flabbert, %# )
-think u( init/f.validate.init-subject, mr. briggs, %# )
-think u( init/f.validate.init-subject, eat:moar:chicken, %# )
+think u( v( d.init )/f.validate.init-subject, ms. rook, %# )
+think u( v( d.init )/f.validate.init-subject, thenomain, %# )
+think u( v( d.init )/f.validate.init-subject, flabbert, %# )
+think u( v( d.init )/f.validate.init-subject, mr. briggs, %# )
+think u( v( d.init )/f.validate.init-subject, eat:moar:chicken, %# )
 
 
 /*
@@ -603,7 +603,7 @@ should be removed as a precaution.
 
 // --
 
-think u( init/f.clean-dbref, %# )
+think u( v( d.init )/f.clean-dbref, %# )
 
 
 /*
@@ -643,7 +643,7 @@ Needs to be recursive, so we prime the resolver
 
 // --
 
-think u( init/f.init.add.new, %#, %L, 0407, 07.0 )
+think u( v( d.init )/f.init.add.new, %#, %L, 0407, 07.0 )
 
 
 /*
@@ -698,7 +698,7 @@ This works recursively.
 
 // --
 
-think [u( init/f.init.conflict-list, 0407, %L )] - [u( init/f.init.resolve-init-conflicts, 0407, %L, u( init/f.init.conflict-list, 0407, %L ))] - [u( init/f.init.conflict-list, 0407, %L )]
+think [u( v( d.init )/f.init.conflict-list, 0407, %L )] - [u( v( d.init )/f.init.resolve-init-conflicts, 0407, %L, u( v( d.init )/f.init.conflict-list, 0407, %L ))] - [u( v( d.init )/f.init.conflict-list, 0407, %L )]
 
 
 /*
@@ -743,7 +743,7 @@ c: conflicting inits
 
 // --
 
-think u( init/f.init.conflict-list, 0407, %L )
+think u( v( d.init )/f.init.conflict-list, 0407, %L )
 
 
 /*

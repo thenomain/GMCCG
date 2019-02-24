@@ -51,10 +51,10 @@ system.
 */
 
 @create Pool Spend Regain System <psrs>
-@set Pool Spend Regain System <psrs>=safe inherit
 @fo me=&d.psrs me=[search( name=Pool Spend Regain System <psrs> )]
+@set Pool Spend Regain System <psrs>=safe inherit
 
-@parent Pool Spend Regain System <psrs>=codp
+@fo me=@parent Pool Spend Regain System <psrs>=[v( d.codp )]
 &prefix.pool_spend_rules [v( d.psrs )]=spend.
 &prefix.pool_regain_rules [v( d.psrs )]=regain.
 &prefix.amount_calc [v( d.psrs )]=amt.
