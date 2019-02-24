@@ -20,7 +20,7 @@ Status and Mystery Cult Initiation cannot be raised for 30 days
 == SETUP =======================================================================
 */
 
-&prefix.timers xpcd=timer.
+&prefix.timers [v( d.xpcd )]=timer.
 
 
 /*
