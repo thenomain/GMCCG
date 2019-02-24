@@ -711,7 +711,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &advantage.willpower_maximum [v( d.dd )]=
 	u( .value_stats_template, %0, 
 		attribute.resolve attribute.composure, 
-		advantage.willpower_maximum
+		advantage.willpower_maximum 
 	)
 &default.advantage.willpower_maximum [v( d.dd )]=derived
 
