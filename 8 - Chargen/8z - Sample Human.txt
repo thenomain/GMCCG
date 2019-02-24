@@ -1,4 +1,4 @@
-@@ concept: firefighter who sees omens from the fires
+// concept: firefighter who sees omens from the fires
 
 @create Human Chargen Sheet <cs:gmc>
 @fo me=&_special.sheet_location me=num( Human Chargen Sheet <cs:gmc> )
