@@ -276,7 +276,7 @@ Nothing of note to code.
 
 &merit.psychic_onslaught [v( d.dd )]=5
 &prerequisite.merit.psychic_onslaught [v( d.dd )]=
-	u( .has_one_of, %0, merit.telekinesis merit.psychokinesis )
+	u( .has_one_of, %0, merit.telekinesis merit.psychokinesis_(*) )
 &prereq-text.merit.psychic_onslaught [v( d.dd )]=
 	Telekinesis or Psychokinesis (Any)
 &tags.merit.psychic_onslaught [v( d.dt )]=human.supernatural.physical
