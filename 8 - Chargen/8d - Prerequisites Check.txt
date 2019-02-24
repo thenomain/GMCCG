@@ -136,7 +136,7 @@ OLD VERSION: I need to stop writing the same function twice.
 	localize( strcat( 
 		setq( i, before( rest( %1, %( ), %) )), 
 		setq( s, 
-			rest( ulocal( [u( d.sfp )]/f.statpath-without-instance, %1 ), _ )
+			rest( ulocal( v( d.sfp )/f.statpath-without-instance, %1 ), _ )
 		), 
 		u( v( d.sfp )/f.prereq-check-other, %0, %qs, %qi, %2 )
 	))
