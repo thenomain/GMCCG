@@ -156,21 +156,21 @@ is a lot simpler, and has deep impact on the Chronicle.
 --------------------------------------------------------------------------------
 -- Touchstone ------------------------------------------------------------------
 
-Your character’s Touchstone is a person, place, or thing that reminds her of how 
+Your character's Touchstone is a person, place, or thing that reminds her of how 
 to trust, and helps her re-adjust to life after her durance. Name a Touchstone, 
-and count a number of Clarity boxes from the left equal to your character’s 
+and count a number of Clarity boxes from the left equal to your character's 
 Composure + 1. Write your Touchstone next to that box. See p. 98 for more on 
 Touchstones. If you choose to take the Touchstone Merit, you may start with 
 additional Touchstones.
 
-Write Touchstones alongside your character’s Clarity track. Count boxes from the 
-left equal to your character’s Composure + 1, and write your first Touchstone 
+Write Touchstones alongside your character's Clarity track. Count boxes from the 
+left equal to your character's Composure + 1, and write your first Touchstone 
 next to that box. For instance, if your character has Composure 3, write the 
 Touchstone next to the fourth box from the left. If you purchase more Composure 
 in play, push her Touch- stones to the right so that her first one is always 
 attached at Composure + 1.
 
-As Clarity is a fluid thing in a changeling’s life, her attachment to her 
+As Clarity is a fluid thing in a changeling's life, her attachment to her 
 Touchstones is also fluid. Consider a Touchstone attached when its associated 
 Clarity box is not filled with severe damage. If a Touchstone is attached, 
 anytime the changeling defends her attachment to it, she regains a Willpower 
@@ -200,12 +200,12 @@ I...have no idea how I'm going to do this yet.
 
 p.104:
 
-System: A changeling’s Clarity track has boxes equal to her Wits + Composure. 
-Her player can’t buy additional Clarity boxes with Experiences, but they 
+System: A changeling's Clarity track has boxes equal to her Wits + Composure. 
+Her player can't buy additional Clarity boxes with Experiences, but they 
 increase automatically as she purchases dots of Wits and Composure, and she can 
 recover Icons (p. 203) to add further boxes. There is no upper limit to the 
 number of Clarity boxes a character can have. In dreams, her Clarity contributes 
-to her dream form’s Health track (p. 216).
+to her dream form's Health track (p. 216).
 
 Clarity Damage: Mild fills left to right. Severe fills left to right, 
 overwriting mild but not severe.
@@ -219,7 +219,7 @@ A changeling can regain Clarity by spending time with her Touchstones, and by
 resolving the damage Conditions (below). Even if she has no Touchstones 
 currently attached, each scene she spends interacting in a meaningful way with 
 one of her Touchstones heals one level of severe Clarity damage, or all levels 
-of mild Clarity damage (but doesn’t resolve any Conditions by default).
+of mild Clarity damage (but doesn't resolve any Conditions by default).
 
 */
 
@@ -384,7 +384,7 @@ overlap (severe):
 ================================================================================
 == CHANGELING MERITS ===========================================================
 
-Merits tagged “Motley” can be purchased as a motley; any character that 
+Merits tagged "Motley" can be purchased as a motley; any character that 
 contributes dots to the total has access to the full, combined amount.
 
 */
@@ -427,7 +427,7 @@ contributes dots to the total has access to the full, combined amount.
 &tags.merit.court_goodwill_() [v( d.dt )]=changeling.court
 &notes.merit.court_goodwill_() [v( d.dt )]=
 	Each court in which a character has Court Goodwill comes with a single dot 
-	of Mentor, a changeling who serves as the character’s court liaison and 
+	of Mentor, a changeling who serves as the character's court liaison and 
 	helps him understand its rituals, its customs, and its very essence.
 
 &merit.defensive_dreamscaping [v( d.dd )]=2
@@ -594,7 +594,7 @@ contributes dots to the total has access to the full, combined amount.
 	May be used only with those who share your Court or Court Goodwill|
 	May not be used if Courtless
 
-// Add the Merit’s rating in dice to any rolls she makes to incite Bedlam
+// Add the Merit's rating in dice to any rolls she makes to incite Bedlam
 &merit.pandemoniacal [v( d.dd )]=1.2.3
 &prerequisite.merit.pandemoniacal [v( d.dd )]=
 	u( .at_least, %0, advantage.wyrd, 6 )
@@ -994,8 +994,8 @@ Grumble.
 
 // -- Court Contracts: Spring --------------------------------------------------
 
-&contract.cupid’s_arrow [v( d.dd )]=1
-&tags.contract.cupid’s_arrow [v( d.dt )]=changeling.spring.common
+&contract.cupid's_arrow [v( d.dd )]=1
+&tags.contract.cupid's_arrow [v( d.dt )]=changeling.spring.common
 
 &contract.dreams_of_the_earth [v( d.dd )]=1
 &tags.contract.dreams_of_the_earth [v( d.dt )]=changeling.spring.common
@@ -1229,7 +1229,7 @@ has an affinity.
 Your character begins with four Contracts chosen from among Common Regalia, 
 Common Court, and Goblin Contracts; she must meet the proper requirements to 
 take Court Contracts, see p. 150. Two of those starting Contracts must come from 
-the character’s favored Regalia. She also gains two Royal Contracts from her 
+the character's favored Regalia. She also gains two Royal Contracts from her 
 court or favored Regalia.
 
 contract allocation:
@@ -1920,10 +1920,10 @@ Theban Sorcery - blood sorcery
 
 Clan: Your ghoul has a regnant, usually the vampire who first gave her Vitae and 
 spent a point of Willpower on her. Think about who this regnant is (maybe one of 
-the other player’s characters), and decide on his clan.
+the other player's characters), and decide on his clan.
 
 Disciplines: Select two dots of Disciplines that are in-clan for your 
-character’s regnant. At least one physical Discipline dot is recommended, but 
+character's regnant. At least one physical Discipline dot is recommended, but 
 not required. (You might want to look at the ghoul Discipline rules below 
 first.)
 
