@@ -1,0 +1,377 @@
+/*
+################################################################################
+## MAGE CONDITIONS & TILTS #####################################################
+
+Goes along with 9a Conditions and Tilts
+
+&cond.<condition_name> [v( d.ctdb )]=
+	<name>|<1 if persistent>|
+	<descriptive text>|
+	<possible sources>|
+	<resolution>|
+	<beat>|
+	<page numbers>
+
+&tilt.<condition_name> [v( d.ctdb )]=
+	<name>|0|
+	<descriptive text & effect>|
+	<causing the tilt>|
+	<ending the tilt>|
+	<beat>|
+	<page numbers>
+
+
+@fo me=&d.ctst me=search( name=+Cond and +Tilt Status Tracker <ctst> )
+@fo me=&d.ctdb me=search( name=+Cond and +Tilt Status Tracker Database <ctdb> )
+
+
+================================================================================
+== CONDITIONS ==================================================================
+*/
+
+// -----------------------------------------------------------------------------
+
+&COND.ADDICTED [v( d.ctdb )]=
+	Addicted|1|
+
+	Your character is addicted to something, whether drugs, gambling or other 
+	destructive behaviors. Some addictions are more dangerous than others, but 
+	the nature of addiction is that it slowly takes over your life, impeding 
+	functionality. If you are addicted, you need to indulge your addiction 
+	regularly to keep it under control.%r%rA specific addiction should be chosen 
+	upon taking this Condition; characters can take this Condition multiple 
+	times for different addiction. Being unable to feed your addiction can 
+	result in the Deprived Condition.|
+	
+	<sources>|
+
+	Regain a dot of Integrity or Wisdom, lose another dot of Integrity or 
+	Wisdom, or achieve an exceptional success on a breaking point or Act of 
+	Hubris.|
+
+	Your character chooses to get a fix rather than fulfill an obligation.|
+
+	MtA.314
+
+// -----------------------------------------------------------------------------
+
+&COND.CHARMED [v( d.ctdb )]=
+	Charmed|0|
+
+	Your character enjoys the protection of magical good fortune. This may spare 
+	her from serious injury, ensure that she meets someone whose acquaintance 
+	will be valuable to her later, guarantee that she isn't the one who gets the 
+	short straw, or help her win an important game of chance. You may invoke 
+	this twist of fate at any time as a reflexive action. If used to avoid 
+	injury, resolving this Condition reduces the damage to 1. Otherwise, neither 
+	you nor the mage knows the exact nature this good fortune will take when it 
+	manifests--only that it will have a significant impact.|
+	
+	This is commonly the effect of a boon granted by Fate magic.|
+
+	Your character narrowly avoids some misfortune or enjoys a lucky break; the 
+	Condition is resolved as described above.|
+
+	n/a|
+
+	MtA.315
+
+// -----------------------------------------------------------------------------
+
+&COND.DEFEATED [v( d.ctdb )]=
+	Defeated|0|
+
+	Your character has been beaten in the Duel Arcane, humiliated, and made 
+	completely open and exposed to an enemy. For the duration of this Condition, 
+	the character cannot spend Willpower or use magic in any way to harm the 
+	mage she was defeated by. Further, the mage who won the Duel has Strong 
+	sympathy with the loser.|
+	
+	Defeated in the Duel Arcane|
+	
+	This Condition lingers until the character can greatly humble himself in 
+	public at great personal cost, or until the winner of the Duel takes 
+	advantage of the sympathy in a way that injures or abuses the loser. Take a 
+	Beat.|
+	
+	Take a Beat whenever your character is abused or humiliated as a result of 
+	her defeat.|
+
+	MtA.315
+
+// -----------------------------------------------------------------------------
+
+&COND.DISABLED [v( d.ctdb )]=
+	Disabled|1|
+
+	Your character has limited or no ability to walk. Her Speed trait is 
+	effectively 1. She must rely on a wheelchair or other device to travel. A 
+	manual wheelchair's Speed is equal to your character's Strength and requires 
+	use of her hands. Electric wheelchairs have a Speed of 3, but allow the free 
+	use of the character's hands. An injury can cause this Condition 
+	temporarily, in which case it is resolved when the injury heals and the 
+	character regains mobility.|
+
+	|
+
+	The character's disability is cured by mundane or supernatural means.|
+	
+	Your character's limited mobility inconveniences your character and makes 
+	her slow to respond.|
+
+	MtA.315
+
+// -----------------------------------------------------------------------------
+
+&COND.ENERVATED [v( d.ctdb )]=
+	Enervated|1|
+
+	The character is in the second stage of soul loss. Her instinctive efforts 
+	to shore up her Willpower by giving into her urges have failed, her 
+	Integrity has gone, and her Willpower is now fading. In addition to the 
+	effects of Soulless, she can no longer regain Willpower through her Virtue, 
+	only her Vice. Indulging herself brings diminishing returns--whenever she 
+	does so, her permanent Willpower drops by one dot before she regains 
+	Willpower points to the new maximum.%r%r
+	Mages lose a dot of Gnosis every time their Willpower drops, to a minimum of 
+	0.|
+
+	|
+
+	This Condition is only removed if the character regains her soul.|
+
+	You lose a dot of Willpower|
+
+	MtA.315-6
+
+// -----------------------------------------------------------------------------
+
+&COND.HUMBLED [v( d.ctdb )]=
+	Humbled|0|
+
+	You have been reminded of the power of humanity, and your arrogance and 
+	pride crumble away. Any symbol or person that triggered this feeling in you 
+	creates a feeling of admiration that you are highly protective of. You 
+	cannot bring yourself to harm the source of your humbling, and treat it or 
+	him as a source of great wisdom and solace.|
+
+	Extreme sacrifice on your behalf. Certain Sleepwalker Merits.|
+
+	The character sacrifices of himself in dramatic fashion in the name of the 
+	person or symbol that humbled him in the first place.|
+
+	Any time the character might act with hubris or arrogance, if the player 
+	chooses to take a dramatic failure on that roll rather attempt it, take a 
+	Beat.|
+
+	MtA.316
+
+// -----------------------------------------------------------------------------
+
+&COND.MEGALOMANIACAL [v( d.ctdb )]=
+	Megalomaniacal|0|
+
+	Your character is consumed by her own aptitude. She sees greatness in her 
+	every action, and that sense of greatness breeds righteousness. She cannot 
+	see her behavior as hubris, and she refuses to acknowledge any failings. 
+	After all, she's mastered the forces of the universe, right?%r%r
+
+	Your character automatically fails any actions using the Empathy Skill. As 
+	well, she gains an additional "Selfish" Vice and a "Dominate Others" 
+	Obsession that replaces one of her current Obsessions so long as she 
+	maintains this Condition.|
+
+	|
+
+	Hurt someone important to you in such a way that it risks further Wisdom 
+	loss.|
+
+	n/a|
+
+	MtA.317
+
+// -----------------------------------------------------------------------------
+
+&COND.MYSTERY_COMMANDS [v( d.ctdb )]=
+	Mystery Commands|1|
+
+	Your character hears the voice of the Exarchs, sees their words scrawled in 
+	her mind, and otherwise receives commands from deep within her Oneiros. Her 
+	Exarch's will becomes an additional Obsession, with all according benefits.
+
+	The Storyteller will occasionally give commands as part of this Merit. 
+	Additionally, your character can take actions in the name of her Exarch and 
+	reverse-engineer messages out of the context. Most any action that aligns 
+	with her Exarch's basic whims should apply to this Condition.|
+
+	|
+
+	Your character cuts off ties to her Exarch. Traitors are not tolerated, and 
+	other characters with this Condition will be sent to punish her, or kill her 
+	if she will not return to the Throne's service.|
+
+	(Arcane) Your character faces meaningful setback, danger, or sacrifice on 
+	account of the commands.|
+
+	MtA.317
+
+// -----------------------------------------------------------------------------
+
+&COND.RAMPANT [v( d.ctdb )]=
+	Rampant|0|
+
+	Your character is reckless and forceful with her magic. She will not 
+	hesitate to use it to solve any minor problem. If your character has a 
+	reasonable magical solution to a problem, to use a mundane solution requires 
+	a point of Willpower. This Willpower does not add to the dice roll. As well, 
+	she gains a "Wield Magic Indiscriminately" Obsession that replaces one of 
+	her current Obsessions so long as she maintains this Condition.|
+
+	<sources>|
+
+	Suffer a Paradox.|
+
+	n/a|
+
+	MtA.317
+
+// -----------------------------------------------------------------------------
+
+&COND.STRAINED [v( d.ctdb )]=
+	Strained|0|
+
+	Your character has narrowly avoided Integrity loss due to witnessing magic. 
+	Take -1 to resist the next time you suffer a breaking point and must roll. 
+	If you have the Strained Merit, you may opt to not roll, and the Condition 
+	will build: each consecutive time you avoid rolling a breaking point 
+	contributes an additional -1 to your next breaking point roll, to a maximum 
+	of -5. After -5, you can no longer push the horror away, your character 
+	snaps, and you automatically roll for the breaking point at -5.|
+
+	Narrowly avoided Integrity loss due to witnessing magic|
+
+	The character suffers Integrity loss. Take an additional Beat atop that of 
+	the breaking point.|
+
+	n/a|
+
+	MtA.318
+
+// -----------------------------------------------------------------------------
+
+&COND.SOULLESS [v( d.ctdb )]=
+	Soulless|1|
+
+	he character is in the first stage of soul loss. Without a soul, she is more 
+	susceptible to possession--any dice pools to resist being taken over or 
+	possessed by another entity are at a -2 die penalty. The effects on Wisdom 
+	and Willpower, though, are more severe. For as long as she has this 
+	Condition, she does not regain Willpower through surrender or rest, and her 
+	use of Virtue and Vice is reversed. She may regain one Willpower point per 
+	scene by fulfilling her Virtue without having to risk herself, and regains 
+	full Willpower once per chapter by fulfilling her Vice in a way that poses a 
+	threat to herself.%r%r
+
+	Regaining Willpower through Vice, though, is now a breaking point against 
+	Integrity with a -5 penalty unless the character has reached Integrity 1, or 
+	an Act of Hubris (roll 1 die) unless she has reached Wisdom 1 for mages.|
+
+	|
+
+	Resolution: Regain a soul.|
+
+	Beat: You lose Wisdom or Integrity because you indulged your Vice.|
+
+	MtA.318
+
+// -----------------------------------------------------------------------------
+
+&COND.SOUL_SHOCKED [v( d.ctdb )]=
+	Soul Shocked|0|
+
+	Your character has been killed while on a sojourn outside her physical body, 
+	resulting in a shocked sense of self. Upon gaining this Condition, roll her 
+	current Willpower points (not dots) as a dice pool. Ignore 10-Again on this 
+	roll, and do not roll a chance die if she has no Willpower left. She keeps 
+	one Willpower point per success, and immediately loses the remainder. While 
+	this Condition is in effect, your character does not regain Willpower from 
+	Virtue, Vice, or equivalent traits. She still regains Willpower from rest, 
+	surrender, and any other means of regaining Willpower.|
+
+	Killed outside her physical body| 
+
+	Regain full Willpower|
+
+	Beat: n/a|
+
+	MtA.318
+
+// -----------------------------------------------------------------------------
+// Also in Vampire! *** Check! ***
+
+&COND.THRALL [v( d.ctdb )]=
+	Thrall|1|
+
+	The character has fully succumbed to the effects of soullessness. She may 
+	not spend Willpower points for any reason, may not use her Defense in 
+	combat, may not spend Experiences, and suffers all the effects of the Broken 
+	Condition as well. Mages can no longer cast spells. The player should only 
+	continue playing a character with this Condition if she stands a chance of 
+	regaining a soul.|
+
+	Soul loss.|
+
+	Regain a soul.|
+
+	Gain a Beat whenever the character is victimized as a result of her 
+	Condition.|
+
+	MtA.318
+
+// -----------------------------------------------------------------------------
+
+&COND.TRIUMPHANT [v( d.ctdb )]=
+
+	Triumphant|0|
+
+	Desc: The character has won a Duel Arcane and her triumph radiates through 
+	her Nimbus for any Awakened to sense. Until the Condition is resolved, the 
+	character gets an exceptional success on three successes rather than five on 
+	any Social rolls with anyone in Awakened society aware of the victory.|
+
+	Won a Duel Arcane|
+
+	The first time you fail a Social roll with a member of Awakened society, 
+	take a Beat, and the Condition ends.|
+
+	Gain a Beat any time you throw your success in someone's face, even if it 
+	risks making him angry or esentful.|
+
+	MtA.318
+
+
+/*
+================================================================================
+== TILTS =======================================================================
+*/
+
+&TILT.POOR_LIGHT [v( d.ctdb )]=
+	Poor Light|0|
+
+	(Environmental) Dim illumination, strobes, or flickering lights make it 
+	difficult to track movement and see clearly.%r%r
+
+	Effect: Affected characters suffer a -2 penalty to visual-based Perception 
+	rolls, including ranged combat, rising to -3 at medium range and -4 at long 
+	range.|
+
+	This Tilt applies to scenes of "natural" darkness with dim ambient light, 
+	such as the outdoors at night away from urban light pollution, and to 
+	disconcerting environments like a nightclub with its effects system on.|
+
+	Bring, find, or create a light source.|
+
+	|
+	
+	MtA.323
+
