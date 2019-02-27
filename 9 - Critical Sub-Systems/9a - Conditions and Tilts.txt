@@ -1213,7 +1213,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 	Tremendous psychological trauma, the Nightmare Discipline, some Ghoul 
 	Merits.|
 
-	Regain a dot of Integrity, lose anotherdot of Integrity, or achieve an 
+	Regain a dot of Integrity, lose another dot of Integrity, or achieve an 
 	exceptional success on a breaking point.|
 
 	You back down from a confrontation or fail a roll due to this Condition.|
@@ -1624,8 +1624,8 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 
 	Psychological trauma, encountering a breaking point, some Ghoul Merits.|
 
-	Regain a dot of Integrity, lose anotherdot of Integrity, or achieve an 
-	exceptional success on a breaking point.|
+	Regain a dot of Integrity, lose another dot of Integrity, or achieve an 
+	exceptional success on a breaking point. (Or racial equivalent of these.)|
 
 	You enter a fugue state as described above.|
 
@@ -1848,7 +1848,7 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 	|
 
 	Regain a dot of Integrity, lose another dot of Integrity, or achieve an 
-	exceptional success on a breaking point.|
+	exceptional success on a breaking point. (Or racial equivalent of these.)|
 
 	The character fails a roll because of this Condition.|
 
