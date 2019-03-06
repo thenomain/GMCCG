@@ -369,13 +369,21 @@ output: <trait>:<value>[.<offset(s)>]|...
 
 --------------------------------------------------------------------------------
 -- Advantages.Default ----------------------------------------------------------
+
+The default/main "advantages" block. All stats listed are of the statpath:
+	&advantage.<stat>
+
+Other templates may be added in as:
+	&advantages.<template> [v( d.nsc )]=<list of stats>
+
 */
 
 &advantages.default [v( d.nsc )]=
 	iter( 
 		defense 
 		weaponry_defense brawl_defense 
-		speed initiative perception size, 
+		speed initiative perception size 
+		[udefault( advantages.[get( %0/_bio.template )], @@( null ))], 
 
 		ulocal( f.cheat_getstat.with_name, %0, advantage.%i0, numeric ), 
 		, | 
