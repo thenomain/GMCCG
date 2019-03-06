@@ -480,10 +480,11 @@ think u( v( d.sheet )/block.merits, %# )
 think u( v( d.sheet )/block.advantages, %# )
 
 // -=-=-=-=-=-==-=--=-=-=-=-=-=
+// Filter out only '0' and '' (null). Let all others pass.
 
 &filter.out-zeros [v( d.nsc )]=
 	cand( 
-		neq( rest( %0, : ), 0 ), 
+		not( strmatch( rest( %0, : ), 0 )), 
 		not( strmatch( rest( %0, : ), ))
 	)
 
