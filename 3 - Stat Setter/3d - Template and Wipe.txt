@@ -133,13 +133,15 @@ Set defaults on a sheet for a list of statpaths.
 
 output: may be a list of spaces or some setting errors
 
+"&default.<statpath>" may include minimal code, passing %0 (sheet loc)
+
 */
 
 &f.defaults.set [v( d.ss )]=
 	iter( %1, 
 		set( %0, 
 			_%i0:
-			[get( [u( d.data-dictionary )]/default.%i0 )] 
+			[u( [u( d.data-dictionary )]/default.%i0, %0 )] 
 		)
 	)
 
