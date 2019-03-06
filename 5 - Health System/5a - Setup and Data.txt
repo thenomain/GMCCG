@@ -56,7 +56,7 @@ Hey, this is new.
 			%0, 
 			attribute.stamina advantage.size, 
 			health.maximum 
-		), 
+		)
 &tags.health.maximum [v( d.dt )]=derived
 &default.health.maximum [v( d.dd )]=derived
 
