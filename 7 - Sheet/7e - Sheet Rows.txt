@@ -68,7 +68,9 @@ This is good for 'power' sections for people who have to have All The Powers.
         setq( c, lnum( 1, %qb )), 
         setq( d, lnum( inc( %qb ), inc( %qa ))), 
 
-        divider( %1 ), %r, 
+		if( strlen( %1 ), 
+	        divider( %1 )%r, 
+		), 
         vcolumns( 
         	%qw:[elements( %qy, %qc, |, | )], 
         	%qw:[elements( %qy, %qd, |, | )], 
