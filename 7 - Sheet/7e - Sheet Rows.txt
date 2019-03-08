@@ -545,7 +545,7 @@ FINAL SHEET:
 		u( block.skills, %0, %2 ), %r, 
 		u( block.merits, %0, %2 ), %r, 
 		udefault( block.powers.[edit( %2, %b, _ )], , %0, %2 ), 
-		u( block.advantages, %0, %2 ), %r, 
+		u( block.advantages, %0, %2 ), 
 		u( block.traits, %0, %2 ), %r, 
 		udefault( block.traits.[edit( %2, %b, _ )], , %0, %2 ), 
 		u( block.health, %0, %2 ), %r, 
