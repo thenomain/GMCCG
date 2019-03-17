@@ -1799,12 +1799,17 @@ Character should have no Scales
 
 /*
 
-stat/set Summon the Loyal Servant=1
+stat/set Seeming=Ogre
+stat/set Kith=Bright One
+stat/set Court=Winter
+
+
+stat/set Spinning Wheel=1
+stat/set Spinning Wheel.Ogre=1
+stat/set Tumult=1
 stat/set Cloak of Night=1
-stat/set Skinmask.Darkling=1
-stat/set Skinmask.Fairest=1
-stat/set Walls Have Ears=1
-stat/set Walls Have Ears.Darkling=1
+stat/set Cloak of Night.Ogre=1
+stat/set Cloak of Night.Darkling=1
 stat/set The Dragon Knows=1
 stat/set Blessing of Forgetfulness=1
 
@@ -1916,7 +1921,8 @@ think u( v( d.nsc )/powers.contracts, %# )
 // display.subheader
 		iter( %qc, 
 			strcat( 
-				u( display.subheader, 78, first( %i0, : )), %r, 
+				ansi( xh, strcat( --, first( %i0, : ), -- )), %r, 
+//				u( display.subheader, 78, first( %i0, : )), %r, 
 				u( format.block.two-columns, 
 					edit( rest( %i0, : ), ., | ), 
 					@@( nothing ), 
