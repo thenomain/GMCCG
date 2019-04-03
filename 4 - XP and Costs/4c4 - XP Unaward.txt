@@ -24,7 +24,7 @@ r: reason, as entered
 l: sql log of 'entry_num = %qe'
 o: target objid
 d: target dbref
-s: beats awarded
+s: beats awarded (to be removed)
 q0: entry_num matching existing 'unaward' (if any)
 
 a: action
@@ -47,7 +47,9 @@ q5: attempt at set( %qd, _special.beats.%qt:<new value> )
 
 	@assert sql( select 1 )={ 
 		@pemit %#=
-			u( .msg, xp/unaward, SQL connection is down%; unaward not processed )
+			u( .msg, xp/unaward, 
+				SQL connection is down%; unaward not processed 
+			)
 	}; 
 
 	think strcat( 
@@ -141,7 +143,7 @@ q5: attempt at set( %qd, _special.beats.%qt:<new value> )
 					), 
 				)
 			), %b, 
-			if( strmatch( %qd, %# ), you, from [name( %qd )] ), %b, 
+			if( strmatch( %qd, %# ), from you, from [name( %qd )] ), %b, 
 			for reason ', %qr, ', 
 		%r, 
 		footer( %qe, width())
@@ -180,12 +182,30 @@ q5: attempt at set( %qd, _special.beats.%qt:<new value> )
 		), %r, 
 	); 
 
-	@if strmatch( %q5, #-* )={ 
+	@break strmatch( %q5, #-* )={ 
 		@pemit %#=u( .msg, xp/unaward, 
 			I tried to '&_special.beats.%qt %qd=
 			[cat( sub( first( %qb ), %qs ), rest( %qb ))]' %([name( %qd )]%) 
 			but an error ocurred. Please set this properly or this character 
 			will not have the unaward recorded. 
+		) 
+	}; 
+
+// reverse "xp spent this week" if you're using it.
+	think strcat( 
+		set beats_earned:, setr( 6, 
+			set( %qd, 
+				_special.beats_earned.%qt:
+					[sub( get( %qd/_special.beats_earned.%qt ), %qs )] 
+			)
+		), 
+	)
+	@break strmatch( %q5, #-* )={ 
+		@pemit %#=u( .msg, xp/unaward, 
+			I tried to '&_special.beats_earned.%qt %qd=
+			[sub( get( %qd/_special.beats_earned.%qt ), %qs )]' 
+			%([name( %qd )]%) but an error ocurred. Please set this properly or 
+			this character will not have their spent beats counter correct. 
 		) 
 	}; 
 
