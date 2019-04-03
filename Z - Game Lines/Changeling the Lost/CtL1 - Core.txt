@@ -152,51 +152,16 @@ is a lot simpler, and has deep impact on the Chronicle.
 &tags.bio.promise [v( d.dd )]=fae-touched
 
 
-/*
---------------------------------------------------------------------------------
--- Touchstone ------------------------------------------------------------------
 
-Your character's Touchstone is a person, place, or thing that reminds her of how 
-to trust, and helps her re-adjust to life after her durance. Name a Touchstone, 
-and count a number of Clarity boxes from the left equal to your character's 
-Composure + 1. Write your Touchstone next to that box. See p. 98 for more on 
-Touchstones. If you choose to take the Touchstone Merit, you may start with 
-additional Touchstones.
 
-Write Touchstones alongside your character's Clarity track. Count boxes from the 
-left equal to your character's Composure + 1, and write your first Touchstone 
-next to that box. For instance, if your character has Composure 3, write the 
-Touchstone next to the fourth box from the left. If you purchase more Composure 
-in play, push her Touch- stones to the right so that her first one is always 
-attached at Composure + 1.
 
-As Clarity is a fluid thing in a changeling's life, her attachment to her 
-Touchstones is also fluid. Consider a Touchstone attached when its associated 
-Clarity box is not filled with severe damage. If a Touchstone is attached, 
-anytime the changeling defends her attachment to it, she regains a Willpower 
-point. If this defense causes her serious harm, she regains all her spent 
-Willpower points.
 
-Your character can gain additional Touchstones by tak- ing the Touchstone Merit 
-(p. 120). Write the new Touchstone in beside the next available box to the right 
-of the rightmost box that already has an associated Touchstone. A changeling 
-character cannot have more Touchstones than she has Clarity boxes to the right 
-of the first box with an associated Touchstone. If her maximum Clarity increases 
-in play by purchasing more Wits or recovering an Icon, it opens a spot for a new 
-Touchstone through the Merit.
 
-I...have no idea how I'm going to do this yet.
-
-*/
 
 
 /*
 ================================================================================
-== CHANGELING ADVANTAGES =======================================================
-
-
---------------------------------------------------------------------------------
--- Advantage: Clarity ----------------------------------------------------------
+== CLARITY SYSTEM ==============================================================
 
 p.104:
 
@@ -220,6 +185,98 @@ resolving the damage Conditions (below). Even if she has no Touchstones
 currently attached, each scene she spends interacting in a meaningful way with 
 one of her Touchstones heals one level of severe Clarity damage, or all levels 
 of mild Clarity damage (but doesn't resolve any Conditions by default).
+
+--
+
+So Clarity = Wits + Composure + Icons
+
+Clarity 4:
+[ ][ ][ ][ ]
+
+--------------------------------------------------------------------------------
+-- Touchstone ------------------------------------------------------------------
+
+Your character's Touchstone is a person, place, or thing that reminds her of how 
+to trust, and helps her re-adjust to life after her durance. Name a Touchstone, 
+and count a number of Clarity boxes from the left equal to your character's 
+Composure + 1. Write your Touchstone next to that box. See p. 98 for more on 
+Touchstones. If you choose to take the Touchstone Merit, you may start with 
+additional Touchstones.
+
+Write Touchstones alongside your character's Clarity track. Count boxes from the 
+left equal to your character's Composure + 1, and write your first Touchstone 
+next to that box. For instance, if your character has Composure 3, write the 
+Touchstone next to the fourth box from the left. If you purchase more Composure 
+in play, push her Touchstones to the right so that her first one is always 
+attached at Composure + 1.
+
+As Clarity is a fluid thing in a changeling's life, her attachment to her 
+Touchstones is also fluid. Consider a Touchstone attached when its associated 
+Clarity box is not filled with severe damage. If a Touchstone is attached, 
+anytime the changeling defends her attachment to it, she regains a Willpower 
+point. If this defense causes her serious harm, she regains all her spent 
+Willpower points.
+
+Your character can gain additional Touchstones by taking the Touchstone Merit 
+(p. 120). Write the new Touchstone in beside the next available box to the right 
+of the rightmost box that already has an associated Touchstone. A changeling 
+character cannot have more Touchstones than she has Clarity boxes to the right 
+of the first box with an associated Touchstone. If her maximum Clarity increases 
+in play by purchasing more Wits or recovering an Icon, it opens a spot for a new 
+Touchstone through the Merit.
+
+I...have no idea how I'm going to do this yet.
+
+
+-- takeaways --
+
+* Max Clarity = Wits + Compsure + Icons
+  Write Touchstones alongside your character's Clarity track at Composure + 1
+  Clarity Track: [1] [2] [3] [4], Composure 2, Wits 2
+                          ^-- Free Touchstone
+
+* If you purchase more Composure in play, push her Touchstones to the right so 
+  that her first one is always attached at Composure + 1.
+  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
+                              ^-- Free Touchstone
+
+* Your character can gain additional Touchstones by taking the Touchstone Merit 
+  (p. 120). Write the new Touchstone in beside the next available box to the 
+  right of the rightmost box that already has an associated Touchstone.
+  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
+                              ^   ^ -- Touchstone spaces
+
+* You cannot have more Touchstones than free spaces
+  Therefore, the number of Touchstones you can have is equal to Wits + Icons
+
+  Clarity Track: [1] [2] [3] [4] [5] [6], Composure 3, Wits 2, Icons 1
+                              ^   ^   ^ -- Touchstone spaces
+
+  Clarity Track: [1] [2] [3] [4] [5] [6] [7], Composure 5, Wits 2
+                                      ^   ^ -- Touchstone spaces
+
+* Just to make sure: Total Touchstones = Max Clarity - Composure
+  So if something else increases the Clarity Track, it's already accounted for.
+
+
+-- conclusions --
+
+Max Clarity = Wits + Compsure + Icons
+Max Touchstones = Max Clarity - Composure
+First Touchstone's Position = Clarity + 1 
+
+We will need stats for Touchstones and Icons
+
+* Touchstone: <first>|<second>|<third> ???
+* &_advantage.clarity.1 = <first touchstone> ??? -- can't prerequisite.
+
+* Icon (<name>)=<description>
+
+&advantage.icon_() [v( d.dd )]=*
+&tags.advantage.icon_() [v( d.dt )]=changeling
+&notes.advantage.icon_() [v( d.dp )]=May only be set by staff, never purchased.
+&xp.advantage.icon_() [v( d.xpcd )]=0
+
 
 */
 
@@ -1795,14 +1852,14 @@ Character should have no Scales
 	)
 
 
-// think u( v( d.nsc )/powers.contracts.seeming_bonus, %#, Crown:Summon the Loyal Servant|Shield:Skinmask.Walls Have Ears|Winter:The Dragon Knows|Goblin:Blessing of Forgetfulness )
-
-/*
+/* 
+	think u( v( d.nsc )/powers.contracts.seeming_bonus, %#, Crown:Summon the 
+	Loyal Servant|Shield:Skinmask.Walls Have Ears|Winter:The Dragon 
+	Knows|Goblin:Blessing of Forgetfulness )
 
 stat/set Seeming=Ogre
 stat/set Kith=Bright One
 stat/set Court=Winter
-
 
 stat/set Spinning Wheel=1
 stat/set Spinning Wheel.Ogre=1
@@ -1813,20 +1870,15 @@ stat/set Cloak of Night.Darkling=1
 stat/set The Dragon Knows=1
 stat/set Blessing of Forgetfulness=1
 
-*/
+
+================================== Contracts ==================================
+................ Crown ................ ........... Winter (mantle) ...........
+Spinning Wheel (Ogre)                   The Dragon Knows                       
+Tumult                                  ............... Goblin ................
+.......... Shield (favored) ........... Blessing of Forgetfulness              
+Cloak of Night (Ogre, Darkling)                                                
 
 
-/*
-
-===== CONTRACTS =====
------ Crown -----
-<list of contracts (seeming bonus)>
------ Jewels (favored) -----
-<list of contracts>
------ Summer -----
-<list of contracts>
------ Goblin -----
-<list of contracts>
 
 f: favored regalia
 c: court
@@ -1838,12 +1890,10 @@ x: above, prettified
 
 &block.powers.changeling [v( d.sheet )]=u( block.powers.contracts, %0, %1 )
 
-
 &filter.powers.contracts [v( d.nsc )]=t( strlen( after( %0, : )))
 
 &powers.contracts [v( d.nsc )]=
-//	localize( 
-	strcat( 
+	localize( strcat( 
 		setq( f, u( v( d.dd )/.value, %0, bio.favored_regalia )), 
 		setq( c, u( v( d.dd )/.value, %0, bio.court )), 
 
@@ -1890,24 +1940,14 @@ x: above, prettified
 
 // output final list
 		%qx
-	)
-//	)
+	))
 
 
-think u( v( d.nsc )/powers.contracts, %# )
-
-
-
-
+// think u( v( d.nsc )/powers.contracts, %# )
 
 
 &block.powers.changeling [v( d.sheet )]=
 	u( block.powers.contracts, %0, %1 )
-
-
-
-
-
 
 
 &block.powers.contracts [v( d.sheet )]=
@@ -1918,18 +1958,15 @@ think u( v( d.nsc )/powers.contracts, %# )
 
 		divider( Contracts ), %r, 
 
-// display.subheader
-		iter( %qc, 
-			strcat( 
-				ansi( xh, strcat( --, first( %i0, : ), -- )), %r, 
-//				u( display.subheader, 78, first( %i0, : )), %r, 
-				u( format.block.two-columns, 
-					edit( rest( %i0, : ), ., | ), 
-					@@( nothing ), 
-					name-only 
+		ulocal( format.block.two-even-columns, 
+			iter( 
+				u( powers.contracts, %0 ), 
+				strcat( 
+					u( display.subheader, 39, first( %i0, : )), %r, 
+					edit( rest( %i0, : ), ., %r )
 				), 
-			), 
-			|, %r 
+				|, | 
+			)
 		), %r, 
 
 		@@( to be continued ), 
@@ -1960,6 +1997,7 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 
 
 
+/* 
 // -- Advantages ---------------------------------------------------------------
 /* morality -> clarity, has its own complex system 
 
@@ -1984,6 +2022,14 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 // .. return
 		u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )
 	)
+
+
+
+&traits.morality.changeling [v( d.nsc )]=????
+
+
+
+
 
 
 &block.traits.changeling [v( d.sheet )]=
@@ -2033,6 +2079,13 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 			|, %b 
 		), %r, 
 	)
+
+
+
+
+
+
+
 
 
 
