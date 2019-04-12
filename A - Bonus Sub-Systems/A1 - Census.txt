@@ -60,7 +60,7 @@ Our old stand-by.
 
 // --
 
-@set cs/c.census=regexp
+@set v( d.cs )/c.census=regexp
 
 /*
 --------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ end - seeming breakdown */
 end - seeming breakdown */
 
 // else: error
-			u( .msg, census, I couldn't process the stat you wanted)
+			u( .msg, census, I couldn't process the stat you wanted )
 		)
 	)
 
