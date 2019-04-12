@@ -78,6 +78,102 @@ This is good for 'power' sections for people who have to have All The Powers.
         )
     ))
 
+/*
+--------------------------------------------------------------------------------
+-- Function: Two Even Columns - done by recursion ------------------------------
+
+Make two equal(ish)-height vertical columns from grouped elements
+
+input: 
+	0: <title>%r<item>%r<item>|...
+
+output: the pretty columns
+
+(while it's a conceit that the first item will always be a 'title', this system 
+doesn't care)
+
+	w: words in each group. (e.g., 3 2 1 4 1)
+	t: target total = the column value to aim for
+	o: %qw for column (e.g. 3 2 1)
+	1: column 1 output
+	2: column 2 output
+*/
+
+&format.block.two-even-columns [v( d.sheet )]=
+	localize( strcat( 
+		setq( w, iter( %0, words( %i0, %r ), | )), 
+		setq( t, ceil( fdiv( ladd( %qw ), 2 ))), 
+		setq( o, 
+			ulocal( f.recursion.grouped-columns, 
+				first( %qw ), rest( %qw ), %qt 
+			)
+		), 
+		setq( 1, edit( extract( %0, 1, words( %qo ), | ), |, %r )), 
+		setq( 2, 
+			edit( extract( %0, inc( words( %qo )), words( %0, | ), | ), |, %r )
+		), 
+
+		vcolumns( 
+			39:%q1, 
+			39:%q2, 
+			%r 
+		)
+	))
+
+/* 
+recursion loop
+
+0: column 1 items (e.g., 3 2)
+1: rest of the items (e.g., 1 4 1)
+2: target length of column 1
+
+output: eventually output column 1 items (e.g., 3 2 1 )
+*/
+
+&f.recursion.grouped-columns [v( d.sheet )]=
+	case( 1, 
+// end: landed on the number
+		eq( ladd( %0 ), %2 ), 
+		%0, 
+
+// end: went one number too far
+		gt( ladd( %0 ), %2 ), 
+		extract( %0, 1, dec( words( %0 ))), 
+
+// else: keep looking
+		ulocal( f.recursion.grouped-columns, 
+			cat( %0, first( %1 )), 
+			rest( %1 ), 
+			%2 
+		)
+	)
+
+/* -- test -- 
+
+think u( v( d.sheet )/format.block.two-even-columns, 
+		.................. a ..................%rb|
+		.................. c ..................%rd%re%rf|
+		.................. g ..................%rh%ri|
+		.................. j ..................%rk%rl%rm%rn|
+		.................. o ..................%rp|
+		.................. q ..................|
+		.................. r ..................%rs%rt
+	)
+
+
+think u( v( d.sheet )/format.block.two-even-columns, 
+		iter( 
+			u( v( d.nsc )/powers.contracts, %# ), 
+			strcat( 
+				u( v( d.nsc )/display.subheader, 39, first( %i0, : )), %r, 
+				edit( rest( %i0, : ), ., %r )
+			), 
+			|, | 
+		)
+	)
+
+*/
+
 
 
 
