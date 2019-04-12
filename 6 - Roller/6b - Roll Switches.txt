@@ -63,7 +63,7 @@ It is what it is.
 -- Switch Aliases --------------------------------------------------------------
 
 Remember to process switch matches before this. 
-'/nowounds' should match before '/now' and before '/no'.
+'/nowound' should match before '/now' and before '/no'.
 Wildcards are valid.
 
 	<full switch>:<alias>:<alias>:<alias> <full switch 2>:...
@@ -71,7 +71,7 @@ Wildcards are valid.
 */
 
 &d.switch.passives [v( d.nr )]=
-	nowounds 
+	nowound 
 	trained 
 	weakness 
 	rote 
