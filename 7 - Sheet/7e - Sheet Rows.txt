@@ -480,7 +480,7 @@ think u( v( d.nsc )/display.value.pool, 4.-2, 5.-1)
 		setq( c, rest( setr( y, first( %qx, | )), : )), 
 		setq( p, last( %qx, : )), 
 
-// .. integrity
+// .. integrity -- not always a scale. rah.
 		setq( z, 
 			iter( 
 				udefault( 
@@ -488,7 +488,11 @@ think u( v( d.nsc )/display.value.pool, 4.-2, 5.-1)
 					u( traits.morality.default, %0 ), 
 					%0 
 				), 
-				u( display.trait-and-value, %i0, %qt, %qw, string ), 
+				udefault( 
+					display.integrity.[get( %0/_bio.template )], 
+					u( display.trait-and-value, %i0, %qt, %qw, string ), 
+					%i0, %qt, %qw 
+				), 
 				|, | 
 			)
 		), 
@@ -576,6 +580,7 @@ think u( v( d.sheet )/block.merits, %# )
 // --
 
 think u( v( d.sheet )/block.advantages, %# )
+
 
 // -=-=-=-=-=-==-=--=-=-=-=-=-=
 // Filter out only '0' and '' (null). Let all others pass.
