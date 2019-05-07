@@ -1,0 +1,412 @@
+/* The Touchstone System
+
+For Touchstones.
+
+Touchstones may be attached to another trait and must be kept in order.
+This is far easier to do on a standalone system that ties into `sheet`, 
+similar to heal/hurt.
+
+Games using Touchstones:
+* Vampire: Starting Touchstone at 6, add to 7-10
+* Werewolf: Two starting Touchstones. Touchstones are not attached.
+  (tags: spirit, physical)
+* Changeling: Touchstones are complexly attached integrity trait levels.
+* Geist: Starting Touchstone at Synergy 1. One each added at 3 & 6.
+
+
+Order: YES, keep Touchstones in a very particular order!
+Value: Less important, but could be anything as defined by the game
+API: Chargen, Sheet, and Prereq needs to be able to pull from this
+     (but not set to it)
+
+
+--------------------------------------------------------------------------------
+-- Storage ---------------------------------------------------------------------
+
+Storage on sheet.
+	&_touchstone.<ID>: <name>|<is active?>|<tags.for.game.line>|<description>
+
+ID: A primary key, handled internally.
+
+
+--------------------------------------------------------------------------------
+-- Command Structure -----------------------------------------------------------
+
+If doesn't exist, <target> is set to enactor. May be 'me'.
+
+touchstone [<target>]
+	List <target>'s Touchstones
+
+touchstone/new [<target>/]<name> = <description>
+	[alias: /create]
+	Create new Touchstone for <target> with <name> and <description>.
+	Check that 'name' is not an exact match.
+
+touchstone/name [<target>/]<name|number> = <new name>
+	Update <name> on <target>'s Touchstone.
+
+touchstone/tag [<target>/]<name|number> = <simple tag>
+	Add a tag to the list.
+
+touchstone/tag [<target>/]<name|number> = !<simple tag>
+touchstone/untag [<target>/]<name|number> = <simple tag>
+	Remove a tag to the list.
+
+touchstone/description [<target>/]<name|number> = <desc>
+	Set all notes on <target>'s Touchstone.
+
+touchstone/delete [<target>/]<number>
+	[alias: /unset]
+	Remove <target>'s Touchstone <number> (not by name)
+
+touchstone/wipe <target>[=YES]
+	Delete all Touchstones from <target>. <target> not optional.
+
+touchstone/access [<target>/]<name|number>
+	Flip access to a Touchstone. If deactivated, regain access and visa-versa.
+	[too much work?]
+
+
+--------------------------------------------------------------------------------
+-- Actions: "API"-like functions -----------------------------------------------
+
+These are presented like user-defined functions for clarity, that's all.
+
+"Get" actions:
+	list( <target> ): sorted list of <num>s from &_touchstone.<num>.
+	get( <target>, <num> ): <name>|<active?>|<tag.list>|<desc>
+	find( <target>, <name>* ): find <num> or #-1 too many matches
+	has( <target>, <name>* ): same as 'find' but returns 1 or 0 or #-1
+	active?( <target>, <num> ): Returns 1 or 0 if Touchstone is active
+
+"Set" actions:
+	new( <target>, <name>, <description> )
+	tag( <target>, <number>, [!]<tag> )
+	delete( <target>, <number> )
+	wipe( <target>[, YES] )
+	active( <target>, <num> ): Flips the 'is active' switch manually.
+
+
+================================================================================
+== SETUP =======================================================================
+
+*/
+
+@create Touchstone System <ts>
+@fo me=&d.touch me=[search( name=Touchstone System <ts> )]
+@set Touchstone System <ts>=inherit safe
+
+@fo me=@parent Touchstone System <ts>=[v( d.codp )]
+&prefix.actions [v( d.touch )]=action.
+
+
+
+/*
+================================================================================
+== FUNCTIONS ===================================================================
+
+Most commonly used local functions.
+
+*/
+
+@fo me=&d.sfp [v( d.touch )]=search( name=Stat Functions Prototype <sfp> )
+
+&f.sheetloc [v( d.touch )]=u( v( d.sfp )/f.find-sheet, %0 )
+&f.haspipe [v( d.touch )]=strmatch( %0, *|* )
+&f.hasdot [v( d.touch )]=strmatch( %0, *.* )
+
+// touchstone value stuff
+&f.value.all [v( d.touch )]=
+	sort( 
+		edit( 
+			lattr( %0/_touchstone.* ), 
+			_TOUCHSTONE., 
+		)
+	)
+
+&f.value.next [v( d.touch )]=inc( last( u( f.value.all, %0 )))
+
+
+
+/*
+================================================================================
+== ACTIONS =====================================================================
+
+These are the 'workhorse' of this system. Input is assumed to be validated 
+before these are called.
+
+	<target>: Get sheet location in each action, but validate target outside.
+
+
+--------------------------------------------------------------------------------
+-- Action: New (Set) -----------------------------------------------------------
+
+Create a new attribute on the target's sheet.
+	u( action.new, <target>, <name>, <description> )
+
+*/
+
+&action.new [v( d.touch )]=
+	switch( u( action.has, %0, %1 ), 
+		1, #-1 Touchstone Exists With That Name, 
+		#-1*, #-1 Multiple Touchstone Exist With That Name, 
+		strcat( 
+			setq( l, u( f.sheetloc, %0 )), 
+			setq( n, u( f.value.next, %0 )), 
+			setq( v, %1|1||%2 ), 
+			setq( s, set( %ql, _touchstone.%qn:%qv )), 
+			if( 
+				strmatch( %qv, get( %ql/_touchstone.%qn )), 
+				Set., 
+				#-1 Not Set.
+			)
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Action: Delete (Set) --------------------------------------------------------
+
+Delete one touchstone from target.
+>> should I bother reducing other touchstones to sequential order? <<
+
+	u( action.delete, <target>, <num> )
+
+*/
+
+&action.delete [v( d.touch )]=
+	strcat( 
+		setq( l, u( f.sheetloc, %0 )), 
+		null( set( %ql, _touchstone.%1: )), 
+		if( 
+			strmatch( @@( null ), get( %0/_touchstone.%1 )), 
+			Unset., 
+			#-1 Not Unset.
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Action: Wipe (Set) ----------------------------------------------------------
+
+Remove every touchstone from target.
+
+	u( action.wipe, <target>, YES )
+
+*/
+
+&action.wipe [v( d.touch )]=
+	if( not( member( %1, YES )), 
+		#-1 Please include YES if you really want wipe all Touchstones., 
+		strcat( 
+			setq( l, u( f.sheetloc, %0 )), 
+			null( 
+				iter( 
+					lattr( %ql/_touchstone.* ), 
+					set( %ql, %i0: )
+				)
+			), 
+			Wiped. 
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Action: Tag (Set) -----------------------------------------------------------
+
+Add or remove a tag.
+
+	u( action.tag, <target>, <number>, [!]<tag> )
+
+l: sheetloc
+a: attribute
+e: existing tags
+f: 'not' flag?
+t: tag to add/remove
+
+*/
+
+&action.tag [v( d.touch )]=
+	strcat( 
+		setq( l, u( f.sheetloc, %0 )), 
+		setq( a, get( %0/_touchstone.%1 )), 
+		setq( e, elements( %qa, 2, | )), 
+		setq( f, strmatch( %2, !* )), 
+		setq( t, rest( %2, ! )), 
+		setq( e, 
+			if( %qf, 
+				delete( %qe, %qt, . ), 
+				sort( %qe.%qt, a, . )
+			)
+		), 
+		setq( a, replace( %qa, 3, %qe, | )), 
+		null( set( %ql, _touchstone.%1:%qa )), 
+		if( 
+			strmatch( %qa, get( %ql/_touchstone.%1 )), 
+			Set., 
+			#-1 Not Set.
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Action: List (Get) ----------------------------------------------------------
+
+Sorted list of Touchstone <ID>
+
+	u( action.list, <target> )
+
+*/
+
+&action.list [v( d.touch )]=
+	strcat( 
+		setq( l, u( f.sheetloc, %0 )), 
+		setq( n, 
+			sort( edit( 
+				lattr( %ql/_touchstone.* ), 
+				_TOUCHSTONE., 
+			))
+		)
+	)
+
+/* 
+--------------------------------------------------------------------------------
+-- Action: Active? (Get) -------------------------------------------------------
+
+Is this particular Touchstone active? Can the character access it? 
+
+*/
+
+&action.active? [v( d.touch )]=
+	strcat( 
+		setq( l, u( f.sheetloc, %0 )), 
+		setq( v, default( %ql/_touchstone.%1, #-1 Touchstone Not Found )), 
+		setq( a, elements( %qv, 2, | )), 
+		if( t( %qv ), 
+			cand( 
+				%qa, 
+				udefault( f.active?.[get( %ql/_bio.template )], 1, %ql, %1 ) 
+			), 
+			%qv 
+		)
+	)
+
+&f.active?.human [v( d.touch )]=1
+
+// -- vampire: first at humanity 6, each one below that
+// (WORKS!)
+
+&f.active-list.vampire [v( d.touch )]=
+	strcat( 
+		setq( h, <current humanity> ),       // current humanity
+		setq( l, u( action.list, %0 )),      // list of Touchstone IDs
+		setq( f,                             // first touchstone..
+			case( get( %q0/_bio.clan ),  
+				Ventrue, 7,                  // ..'7' for Ventrue
+				6                            // ..'6' for all others
+			)
+		), 
+		setq( i,                             // number of inactive touchstones 
+			min( max( sub( %qf, %qh ), 0 ), words( %ql ))
+		), 
+
+		extract( %ql, inc( %qi ), words( %ql ))  // active Touchstone IDs
+	)
+
+&f.active?.vampire [v( d.touch )=
+	t( match( u( f.active-list.vampire, %0 ), %1 ))
+
+
+// -- werewolf: if they have it, it can be active 
+&f.active?.werewolf [v( d.touch )=1
+
+// -- changeling: <sob>
+&f.active?.changeling [v( d.touch )=xxx
+
+// -- geist: 1 at Plasm 1, 2 at Plasm 3, 3 at Plasm 6
+&f.active?.geist [v( d.touch )=xxx
+
+
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Action: Get (Get) -----------------------------------------------------------
+
+	u( action.get, <target>, <num> )
+
+returns: <name>|<active?>|<tag.list>|<desc>
+
+*/
+
+&action.get [v( d.touch )]=
+	strcat( 
+		setq( l, u( f.sheetloc, %0 )), 
+		setq( v, default( %ql/_touchstone.%1, #-1 Touchstone Not Found )), 
+		if( t( %qv ), 
+			strcat( 
+				first( %qv, | ), |, 
+				u( action.active?, %0, %1 ), |, 
+				elements( %qv, 3 4, | )
+			), 
+			%qv 
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Action: Find (Get) ----------------------------------------------------------
+
+	u( action.find, <target>, <touchstone name>[*] )
+
+returns: ID, #-1 No Match, or #-1 Too Many Matches
+
+m: matching attributes (with and without name-completion) - done wrong?
+w: number of attributes matched by %qm
+
+*/
+
+&action.find [v( d.touch )]=
+  strcat( 
+		setq( l, u( f.sheetloc, %0 )), 
+		setq( m, 
+			filter( filter.name, lattr( %ql/_touchstone.* ), , , %ql, %1 )
+		), 
+		setq( w, words( %qm )), 
+		case( 1, 
+			gt( %qw, 1 ), #-1 Too Many Matches, 
+			lt( %qw, 1 ), #-1 No Match, 
+			rest( %qm, . )
+		)
+	)
+
+// --
+
+&filter.name [v( d.touch )]=match( first( get( %1/%0 ), | ), %2 )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Action: Has (Get) -----------------------------------------------------------
+
+	u( action.has, <target>, <touchstone name>[*] )
+
+returns: 1, 0, or #-1 Too Many Matches
+
+m: matching attributes (with and without name-completion)
+
+*/
+
+&action.has [v( d.touch )]=
+	case( setr( m, u( action.find, %0, %1 )), 
+		#-1 Too Many Matches, %qm, 
+		words( %qm )
+	)
+
+
