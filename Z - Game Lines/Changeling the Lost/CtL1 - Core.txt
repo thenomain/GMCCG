@@ -270,19 +270,25 @@ We will need stats for Touchstones and Icons
 * Touchstone: <first>|<second>|<third> ???
 * &_advantage.clarity.1 = <first touchstone> ??? -- can't prerequisite.
 
-* Icon (<name>)=<description>
-
-&advantage.icon_() [v( d.dd )]=*
-&tags.advantage.icon_() [v( d.dt )]=changeling
-&notes.advantage.icon_() [v( d.dp )]=May only be set by staff, never purchased.
-&xp.advantage.icon_() [v( d.xpcd )]=0
-
+* Icon (<name>)=1
 
 */
 
 
+&advantage.icon_() [v( d.dd )]=1|*
+&tags.advantage.icon_() [v( d.dt )]=changeling
+&notes.advantage.icon_() [v( d.dt )]=
+	May only be set by staff, never purchased.|
+	Put details in notes.
+&xp.advantage.icon_() [v( d.xpcd )]=0
+
+
+
 &advantage.clarity_maximum [v( d.dd )]=
-	u( .value_stats, %0, attribute.wits attribute.composure )
+	add( 
+		u( .value_stats, %0, attribute.wits attribute.composure ), 
+		words( lattr( %0/_advantage.icon_(*) ))
+	)
 &default.advantage.clarity_maximum [v( d.dd )]=derived
 &tags.advantage.clarity_maximum [v( d.dt )]=derived.changeling
 
@@ -1935,8 +1941,8 @@ x: above, prettified
 		setq( x, filter( filter.powers.contracts, %qx, |, | )), 
 
 // x: add (favored) and (court) to contract headers
-		setq( x, edit( %qx, %qf:, %qf %(favored%): )), 
-		setq( x, edit( %qx, %qc:, %qc %(mantle%): )), 
+		setq( x, edit( %qx, %qf:, %qf [ansi( xh, %(favored%))]: )), 
+		setq( x, edit( %qx, %qc:, %qc [ansi( xh, %(mantle%))]: )), 
 
 // output final list
 		%qx
@@ -2025,7 +2031,46 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 
 
 
-&traits.morality.changeling [v( d.nsc )]=????
+&traits.morality.changeling [v( d.nsc )]=@@( clarity section before health )
+
+
+// will pull from clarity system when done:
+&clarity.default [v( d.nsc )]=
+	strcat( 
+		ansi( xh, 
+			repeat( 
+				%[ %], 
+				ulocal( f.cheat_getstat.numeric, %0, advantage.clarity_maximum )
+			)
+		), 
+		|, touchstones & icons blah blah 
+	)
+
+
+&block.clarity [v( d.sheet )]=
+	strcat( 
+		setq( w, 80 ), 
+		setq( t, 7 ), 
+		setq( c, first( setr( h, u( clarity.default, %0 )), | )), 
+		setq( p, rest( %qh, | )), 
+		if( neq( last( %qp, : ), 0 ), 
+			setq( p, 
+				strcat( 
+					%b%(, 
+					u( display.trait-and-value, %qp, %qt, %qw, numeric ), 
+					%) 
+				)
+			), 
+			setq( p, )
+		), 
+
+		divider( Clarity ), %r, 
+		vcolumns( 
+			%qw:%b %qc%qp, 
+			|
+		)
+	)
+
 
 
 
@@ -2047,13 +2092,15 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 				inc( strlen( Wyrd )), %qw, numeric 
 			)
 		), 
-
 // .. display
 		vcolumns( 
 			%qw:%qr, 
 			%qw:%qz, 
 			|, %b 
 		), %r, 
+
+// .. clarity (morality health system )
+		u( block.clarity, %0 ), %r, 
 	)
 
 
