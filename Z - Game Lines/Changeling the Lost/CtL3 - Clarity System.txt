@@ -1,0 +1,321 @@
+/*
+================================================================================
+== CLARITY SYSTEM ==============================================================
+
+p.104:
+
+System: A changeling's Clarity track has boxes equal to her Wits + Composure. 
+Her player can't buy additional Clarity boxes with Experiences, but they 
+increase automatically as she purchases dots of Wits and Composure, and she can 
+recover Icons (p. 203) to add further boxes. There is no upper limit to the 
+number of Clarity boxes a character can have. In dreams, her Clarity contributes 
+to her dream form's Health track (p. 216).
+
+Clarity Damage: Mild fills left to right. Severe fills left to right, 
+overwriting mild but not severe.
+
+As a changeling takes damage to her three rightmost Clarity boxes, she gains 
+Conditions — Persistent Conditions if the damage was severe
+
+--
+
+A changeling can regain Clarity by spending time with her Touchstones, and by 
+resolving the damage Conditions (below). Even if she has no Touchstones 
+currently attached, each scene she spends interacting in a meaningful way with 
+one of her Touchstones heals one level of severe Clarity damage, or all levels 
+of mild Clarity damage (but doesn't resolve any Conditions by default).
+
+--
+
+So Clarity = Wits + Composure + Icons
+
+
+--------------------------------------------------------------------------------
+-- Touchstones -----------------------------------------------------------------
+
+Your character's Touchstone is a person, place, or thing that reminds her of how 
+to trust, and helps her re-adjust to life after her durance. Name a Touchstone, 
+and count a number of Clarity boxes from the left equal to your character's 
+Composure + 1. Write your Touchstone next to that box. See p. 98 for more on 
+Touchstones. If you choose to take the Touchstone Merit, you may start with 
+additional Touchstones.
+
+Write Touchstones alongside your character's Clarity track. Count boxes from the 
+left equal to your character's Composure + 1, and write your first Touchstone 
+next to that box. For instance, if your character has Composure 3, write the 
+Touchstone next to the fourth box from the left. If you purchase more Composure 
+in play, push her Touchstones to the right so that her first one is always 
+attached at Composure + 1.
+
+As Clarity is a fluid thing in a changeling's life, her attachment to her 
+Touchstones is also fluid. Consider a Touchstone attached when its associated 
+Clarity box is not filled with severe damage. If a Touchstone is attached, 
+anytime the changeling defends her attachment to it, she regains a Willpower 
+point. If this defense causes her serious harm, she regains all her spent 
+Willpower points.
+
+Your character can gain additional Touchstones by taking the Touchstone Merit 
+(p. 120). Write the new Touchstone in beside the next available box to the right 
+of the rightmost box that already has an associated Touchstone. A changeling 
+character cannot have more Touchstones than she has Clarity boxes to the right 
+of the first box with an associated Touchstone. If her maximum Clarity increases 
+in play by purchasing more Wits or recovering an Icon, it opens a spot for a new 
+Touchstone through the Merit.
+
+I...have no idea how I'm going to do this yet.
+
+
+-- takeaways --
+
+* Max Clarity = Wits + Compsure + Icons
+  Write Touchstones alongside your character's Clarity track at Composure + 1
+  Clarity Track: [1] [2] [3] [4], Composure 2, Wits 2
+                          ^-- Free Touchstone
+
+* If you purchase more Composure in play, push her Touchstones to the right so 
+  that her first one is always attached at Composure + 1.
+  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
+                              ^-- Free Touchstone
+
+* Your character can gain additional Touchstones by taking the Touchstone Merit 
+  (p. 120). Write the new Touchstone in beside the next available box to the 
+  right of the rightmost box that already has an associated Touchstone.
+  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
+                              ^   ^ -- Touchstone spaces
+
+* You cannot have more Touchstones than free spaces
+  Therefore, the number of Touchstones you can have is equal to Wits + Icons
+
+  Clarity Track: [1] [2] [3] [4] [5] [6], Composure 3, Wits 2, Icons 1
+                              ^   ^   ^ -- Touchstone spaces
+
+  Clarity Track: [1] [2] [3] [4] [5] [6] [7], Composure 5, Wits 2
+                                      ^   ^ -- Touchstone spaces
+
+* Just to make sure: Total Touchstones = Max Clarity - Composure
+  So if something else increases the Clarity Track, it's already accounted for.
+
+
+--------------------------------------------------------------------------------
+-- Filled Track ----------------------------------------------------------------
+
+If a changeling takes any more mild Clarity damage after her track fills with  
+damage of any kind, she falls unconscious, lost in her own dreams. She takes the 
+Comatose Condition (p. 334) and can’t take any more Clarity damage until she 
+heals at least one point. 
+
+If she takes severe damage after her track is filled with damage instead, she 
+not only takes the Comatose Condition, but risks death. The Comatose Condition 
+becomes Persistent and she can only resolve it with the help of her friends, as 
+noted in the Condition’s text.
+
+
+--------------------------------------------------------------------------------
+-- Conclusions -----------------------------------------------------------------
+
+Max Clarity = Wits + Compsure + Icons
+Max Touchstones = Max Clarity - Composure
+First Touchstone's Position = Clarity + 1 
+
+We will need stats for Touchstones and Icons
+
+* Touchstone: <first>|<second>|<third> ???
+* &_advantage.clarity.1 = <first touchstone> ??? -- can't prerequisite.
+
+* Icon (<name>)=1
+
+
+--------------------------------------------------------------------------------
+-- Challenges ------------------------------------------------------------------
+
+There is no easy way to implement Touchstones at this time. I will keep thinking 
+about this.
+
+
+--------------------------------------------------------------------------------
+-- Clarity: Output Styles ------------------------------------------------------
+
+Composure 2, Wits 2, one Touchstone:
+  [ ] [ ] [1] [ ]  (1 Attached Touchstone)
+
+Composure 2, Wits 2, two Touchstones:
+  [ ] [ ] [1] [2]  (2 Attached Touchstones)
+
++2 Minor Damage:
+  [/] [/] [1] [2]  (2 Attached Touchstones)
+
++1 Major Damage:
+  [X] [/] [1] [2]  (2 Attached Touchstones)
+
+Plus notification of gaining a condition.
+
++1 Minor Damage:
+  [X] [/] [/] [2]  (1 Attached Touchstone)
+
+Plus notification of gaining a condition.
+
++1 Major Damage:
+  [X] [X] [/] [2]  (1 Attached Touchstone)
+
+Plus notification of gaining a persistent condition.
+
+
+--------------------------------------------------------------------------------
+-- Clarity: Another Option -----------------------------------------------------
+
+Composure 2, Wits 2, one Touchstone:
+  [ ] [ ] [ ] [ ]  (1 Attached Touchstone)
+           ^
+
+Composure 2, Wits 2, two Touchstones:
+  [ ] [ ] [ ] [ ]  (2 Attached Touchstones)
+           ^   ^
+
++2 Minor Damage:
+  [/] [/] [ ] [ ]  (2 Attached Touchstones)
+           ^   ^
+
++1 Major Damage:
+  [X] [/] [ ] [ ]  (2 Attached Touchstones)
+           ^   ^
+Plus notification of gaining a condition.
+
++1 Minor Damage:
+  [X] [/] [/] [ ]  (1 Attached Touchstone)
+           ^   ^
+Plus notification of gaining a condition.
+
++1 Major Damage:
+  [X] [X] [/] [ ]  (1 Attached Touchstone)
+           ^   ^
+Plus notification of gaining a persistent condition.
+
+
+================================================================================
+== HELP NOTES ==================================================================
+
+clarity/hurt [<name>/]<amt>[=<type>]
+clarity/heal [<name>/]<amt>[=<type>]
+
+amt: positive integer value or 'all'
+type: mild, severe
+
+
+================================================================================
+== BASICS: CLARITY STATS =======================================================
+
+Add these to the Data Dictionary...
+
+*/
+
+&advantage.icon_() [v( d.dd )]=1|*
+&tags.advantage.icon_() [v( d.dt )]=changeling
+&notes.advantage.icon_() [v( d.dt )]=
+	May only be set by staff, never purchased.|
+	Put details in notes.
+&xp.advantage.icon_() [v( d.xpcd )]=0
+
+
+
+&advantage.clarity_maximum [v( d.dd )]=
+	add( 
+		u( .value_stats, %0, attribute.wits attribute.composure ), 
+		words( lattr( %0/_advantage.icon_(*) ))
+	)
+&default.advantage.clarity_maximum [v( d.dd )]=derived
+&tags.advantage.clarity_maximum [v( d.dt )]=derived.changeling
+
+&advantage.clarity [v( d.dd )]=
+	[u( .value_stats, %0, advantage.clarity_maximum )].
+	-[u( .value, %0, clarity.damage )]
+&default.advantage.clarity [v( d.dd )]=derived
+&prerequisites.advantage.clarity [v( d.dd )]=0
+&prereq-text.advantage.clarity [v( d.dd )]=
+	Use the 'clarity' command to apply damage
+&tags.advantage.clarity [v( d.dt )]=derived.pool
+
+&clarity.mild [v( d.dd )]=#
+&clarity.severe [v( d.dd )]=#
+
+&default.clarity.mild [v( d.dd )]=0
+&default.clarity.severe [v( d.dd )]=0
+
+&clarity.damage [v( d.dd )]=
+	ladd( iter( mild severe, u( .value, %0, clarity.%i0 )))
+&default.clarity.damage [v( d.dd )]=derived
+
+
+/*
+================================================================================
+== STEALING COPIOUSLY FROM THE HEALTH SYSTEM ===================================
+
+Except there is no 'push' or 'wrap', only fill or overlay. Problems arise if 
+damage is taken *after* the track is full.
+
+--------------------------------------------------------------------------------
+-- Setup -----------------------------------------------------------------------
+*/
+
+@create Changeling Clarity System <ccs>
+@fo me=&d.ccs me=search( name=Changeling Clarity System <ccs> )
+@set Changeling Clarity System <ccs>=inherit safe
+
+@fo me=@parent Changeling Clarity System <ccs>=[v( d.codp )]
+
+// -- data --
+
+&d.damage-types [v( d.ccs )]=mild severe
+&d.symbol.touchstone [v( d.ccs )]=^
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Display: Clarity Bar --------------------------------------------------------
+
+This is the main output.
+
+0: <mild> <severe>
+1: max clarity
+2: <list of positions for touchstones, far left = 1>
+
+Example: u( display.clarity-bar, 2 1, 7, 5 6 )
+Output: [X][/][/][ ][^][^][ ]
+
+w: what are we displaying?
+d: total levels of damage
+
+*/
+
+&display.clarity-bar [v( d.ccs )]=
+	strcat( 
+		setq( w, inc( words( %0 ))), 
+		setq( d, ladd( %0 )), 
+// .. X / inversely related to <mild> <severe>
+		iter( 
+			X /, 
+			iter( 
+// .. .. count the wound levels represented by which outer loop we're on
+// .. .. (here's where we invert, too)
+				lnum( elements( %0, sub( %qw, inum( 0 )))), 
+// .. .. output the symbol on the outer loop we're on
+				ansi( xh, %[, nh, %i1, xh, %] ), 
+				, @@ 
+			), 
+			, @@ 
+		), 
+
+// .. undamaged (max - damage)
+		iter( 
+			lnum( sub( %1, %qd )), 
+// .. .. insert touchstones against %2 list
+			if( setinter( %2, add( inum(), %qd )), 
+				ansi( xh, %[[v( d.symbol.touchstone )]%] ), 
+				ansi( xh, %[%b%] )
+			),
+			, @@ 
+		)
+	)
+
+// test
+think u( v( d.ccs )/display.clarity-bar, 2 1, 7, 5 6 )
+think u( v( d.ccs )/display.clarity-bar, 1 1, 4, 2 )
