@@ -296,7 +296,7 @@ The fun of Proximi taking spells as 'Blessings'.
 		u( .at_least, %0, skill.%1, 3 )
 	)
 &prereq-text.merit.adamant_hand_() [v( d.dd )]=
-	Belongs to the Adamantine Hand; 
+	Belongs to the Adamantine Arrow; 
 	Athletics, Brawl, or Weaponry (as taken) 3+
 &tags.merit.adamant_hand_() [v( d.dt )]=mage.supernatural
 
@@ -420,7 +420,7 @@ The fun of Proximi taking spells as 'Blessings'.
 	Belongs to Free Council, Order of Study must be reasonable
 &tags.merit.techne_() [v( d.dt )]=mage
 
-&merit.shadow_name_() [v( d.dd )]=1.2.3
+&merit.shadow_name_() [v( d.dd )]=1.2.3|*
 &prerequisite.merit.shadow_name_() [v( d.dd )]=
 	not( 
 		setdiff( 
