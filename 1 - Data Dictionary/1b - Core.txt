@@ -507,7 +507,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 
 &merit.untouchable [v( d.dd )]=1
 &prerequisite.merit.untouchable [v( d.dd )]=
-	u( .at_least_all, %0, skill.manipulation:3 skill.subterfuge:2 )
+	u( .at_least_all, %0, attribute.manipulation:3 skill.subterfuge:2 )
 &prereq-text.merit.untouchable [v( d.dd )]=Manipulation 3+ and Subterfuge 2+
 
 
