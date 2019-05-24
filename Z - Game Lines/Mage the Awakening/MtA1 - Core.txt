@@ -292,7 +292,7 @@ The fun of Proximi taking spells as 'Blessings'.
 &merit.adamant_hand_() [v( d.dd )]=2|Athletics.Brawl.Weaponry
 &prerequisite.merit.adamant_hand_() [v( d.dd )]=
 	cand( 
-		u( .is, %0, bio.order, Adamantine Hand ), 
+		u( .is, %0, bio.order, Adamantine Arrow ), 
 		u( .at_least, %0, skill.%1, 3 )
 	)
 &prereq-text.merit.adamant_hand_() [v( d.dd )]=
