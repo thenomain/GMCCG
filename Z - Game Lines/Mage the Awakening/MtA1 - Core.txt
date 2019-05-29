@@ -253,13 +253,13 @@ The fun of Proximi taking spells as 'Blessings'.
 &tags.advantage.mana [v( d.dt )]=derived.mage.proximus
 
 &advantage.mana_maximum [v( d.dd )]=
-	case( u( .value_full, %0, bio_template ), 
-		mage, 
+	case( u( .value_full, %0, bio.template ), 
+		Mage, 
 		elements( 
 			10 11 12 13 14 15 20 25 30 75, 
 				u( .value, %0, advantage.gnosis )
 		), 
-		proximus, 
+		Proximus, 
 		5, 
 		0 
 	)
