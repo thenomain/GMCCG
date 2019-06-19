@@ -1086,7 +1086,6 @@ Valid award:
 	think 
 	strcat( 
 		experience:, setr( x, get( %qp/_special.beats.%qt )), %r, 
-//		beats earned:, setr( b, u( f.beats_earned.%qt, %qp )), %r, 
 		beats earned:, 
 			setr( b, 
 				udefault( f.beats_earned.%qt, 
