@@ -110,6 +110,7 @@ Most commonly used local functions.
 */
 
 @fo me=&d.sfp [v( d.touch )]=search( name=Stat Functions Prototype <sfp> )
+@fo me=&d.dd [v( d.touch )]=search( name=Data Dictionary <dd> )
 
 &f.sheetloc [v( d.touch )]=u( v( d.sfp )/f.find-sheet, %0 )
 &f.haspipe [v( d.touch )]=strmatch( %0, *|* )
@@ -273,36 +274,43 @@ Sorted list of Touchstone <ID>
 		)
 	)
 
+
 /* 
 --------------------------------------------------------------------------------
 -- Action: Active? (Get) -------------------------------------------------------
 
 Is this particular Touchstone active? Can the character access it? 
 
+s: sheet location 
+v: value of touchstone being sought
+a: 'active' switch on that touchstone
+t: active touchstones for that template by game rules, 
+   (else %1, which will always match and return '1')
+
 */
 
 &action.active? [v( d.touch )]=
 	strcat( 
-		setq( l, u( f.sheetloc, %0 )), 
+		setq( s, u( f.sheetloc, %0 )), 
 		setq( v, default( %ql/_touchstone.%1, #-1 Touchstone Not Found )), 
 		setq( a, elements( %qv, 2, | )), 
-		if( t( %qv ), 
+		setq( t, 
+			udefault( f.active-list.[get( %qs/_bio.template )], %1, %qs )
+		), 
+		if( not( %qv ), 
+			%qv, 
 			cand( 
-				%qa, 
-				udefault( f.active?.[get( %ql/_bio.template )], 1, %ql, %1 ) 
-			), 
-			%qv 
+				%qa,                     // 'active' switch from Touchstone attr
+				t( match( %qt, %1 ))     // 'active' from Template game rules
+			)
 		)
 	)
 
-&f.active?.human [v( d.touch )]=1
-
 // -- vampire: first at humanity 6, each one below that
 // (WORKS!)
-
 &f.active-list.vampire [v( d.touch )]=
-	strcat( 
-		setq( h, <current humanity> ),       // current humanity
+	localize( strcat( 
+		setq( h, u( v( d.dd )/.value, %0, bio.humanity )),  // current humanity
 		setq( l, u( action.list, %0 )),      // list of Touchstone IDs
 		setq( f,                             // first touchstone..
 			case( get( %q0/_bio.clan ),  
@@ -313,22 +321,30 @@ Is this particular Touchstone active? Can the character access it?
 		setq( i,                             // number of inactive touchstones 
 			min( max( sub( %qf, %qh ), 0 ), words( %ql ))
 		), 
-
 		extract( %ql, inc( %qi ), words( %ql ))  // active Touchstone IDs
-	)
+	))
 
-&f.active?.vampire [v( d.touch )=
-	t( match( u( f.active-list.vampire, %0 ), %1 ))
-
-
-// -- werewolf: if they have it, it can be active 
-&f.active?.werewolf [v( d.touch )=1
-
-// -- changeling: <sob>
+// -- changeling: 1st active at Wits, each one past that, cut off those after
 &f.active?.changeling [v( d.touch )=xxx
 
-// -- geist: 1 at Plasm 1, 2 at Plasm 3, 3 at Plasm 6
-&f.active?.geist [v( d.touch )=xxx
+// -- geist: 1 at Synergy 1, 2 at Synergy 3, 3 at Synergy 6
+// -- synergy cam be lost
+// -- cut off any after the 3rd
+&f.active-list.geist [v( d.touch )]=
+	localize( strcat( 
+		setq( l, u( action.list, %0 )), 
+		setq( s, u( v( d.dd )/.value, %0, bio.synergy, )), 
+		setq( n, 
+			switch( %qs, 
+				>5, 3, 
+				>2, 2, 
+				>0, 1, 
+				0 
+			)
+		), 
+		extract( %ql, 1, %qn )
+	))
+
 
 
 
