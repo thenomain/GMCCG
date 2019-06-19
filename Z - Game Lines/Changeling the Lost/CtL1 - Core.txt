@@ -267,8 +267,7 @@ First Touchstone's Position = Clarity + 1
 
 We will need stats for Touchstones and Icons
 
-* Touchstone: <first>|<second>|<third> ???
-* &_advantage.clarity.1 = <first touchstone> ??? -- can't prerequisite.
+* Touchstone = 1.2.3.4.5 <-- extra touchstones, rest of the data goes in notes
 
 * Icon (<name>)=1
 
@@ -282,93 +281,9 @@ We will need stats for Touchstones and Icons
 	Put details in notes.
 &xp.advantage.icon_() [v( d.xpcd )]=0
 
-
-
-&advantage.clarity_maximum [v( d.dd )]=
-	add( 
-		u( .value_stats, %0, attribute.wits attribute.composure ), 
-		words( lattr( %0/_advantage.icon_(*) ))
-	)
-&default.advantage.clarity_maximum [v( d.dd )]=derived
-&tags.advantage.clarity_maximum [v( d.dt )]=derived.changeling
-
-&advantage.clarity [v( d.dd )]=
-	[u( .value_stats, %0, advantage.clarity_maximum )].
-	-[u( .value, %0, clarity.damage )]
-&default.advantage.clarity [v( d.dd )]=derived
-&prerequisites.advantage.clarity [v( d.dd )]=0
-&prereq-text.advantage.clarity [v( d.dd )]=
-	Use the 'clarity' command to apply damage
-&tags.advantage.clarity [v( d.dt )]=derived.pool
-
-&clarity.mild [v( d.dd )]=#
-&clarity.severe [v( d.dd )]=#
-
-&default.clarity.mild [v( d.dd )]=0
-&default.clarity.severe [v( d.dd )]=0
-
-&clarity.damage [v( d.dd )]=
-	ladd( iter( mild severe, u( .value, %0, clarity.%i0 )))
-&default.clarity.damage [v( d.dd )]=derived
-
-
-
-
-
 /*
 
-max damage (because 'severe' overwrites 'mild' we can ignore it there):
-	max( 
-		<amt>, 
-		<max> - add( <severe>, if( type=='mild' then <mild> else 0 ))
-	)
-
-add (mild):
-	* <mild> =+ <dmg>
-
-overlap (severe):
-	* <mild> =- <mild> - min( <dmg>, <mild> )
-	* <severe> =+ <dmg> 
-
-*/
-
-
-// 0: target, 1: damage amt, 2: damage type, output: actual damage
-&f.clarity.actual_damage [u( <clarity system> )]=
-	max( 
-		%1, 
-		sub( 
-			u( .value, %0, advantage.clarity_maximum ), 
-			add( 
-				u( .value, %0, clarity.severe ), 
-				if( strmatch( %2, severe ), u( .value, %0, clarity.minor ))
-			)
-		)
-	)
-
-// 0: target, 1: raw damage amt, m: mild damage, d: new damage
-// return: mild damage
-&f.clarity.damage.mild [u( <clarity system> )]=
-	localize( strcat( 
-		setq( m, u( .value, %0, clarity.mild )), 
-		setq( d, u( f.clarity.actual_damage, %0, %1, mild )), 
-		add( %m,, %qd )
-	))
-
-// 0: target, 1: raw damage amt, m: mild damage, d: new damage
-// return: mild damage|severe damage
-&f.clarity.damage.severe [u( <clarity system> )]=
-	localize( strcat( 
-		setq( m, u( .value, %0, clarity.mild )), 
-		setq( s, u( .value, %0, clarity.severe )), 
-		setq( d, u( f.clarity.actual_damage, %0, %1, severe )), 
-		min( sub( %qm, min( %qd, %qm )), 0 ), |, 
-		add( %qs, %qd )
-	))
-
-
-
-
+*** Clarity moved to Clarity System, CtL3 ***
 
 */
 
