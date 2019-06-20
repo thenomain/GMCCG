@@ -606,9 +606,9 @@ contributes dots to the total has access to the full, combined amount.
 	with points in this merit gains benefits from all points totaled, max 5.
 
 &merit.touchstone [v( d.dd )]=1.2.3.4.5
-&tags.merit.touchstone [v( d.dt )]=changeling
-&notes.merit.touchstone [v( d.dt )]=For each dot in this merit, add it to 
-	the Touchstone list
+&tags.merit.touchstone [v( d.dt )]=vampire.changeling
+&notes.merit.touchstone [v( d.dt )]=For each dot in this merit, add a +note 
+	as to its position and content.
 
 &merit.warded_dreams [v( d.dd )]=1.2.3
 &prerequisite.merit.warded_dreams [v( d.dd )]=
@@ -1958,16 +1958,20 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 				ulocal( f.cheat_getstat.numeric, %0, advantage.clarity_maximum )
 			)
 		), 
-		|, touchstones & icons blah blah 
+		|, penalty:0 
 	)
 
 
+// clarity block: this is a mess, a very mess, suck this mess
 &block.clarity [v( d.sheet )]=
 	strcat( 
+// .. c: clarity display default (??), p: other notes, x: temp
 		setq( w, 80 ), 
 		setq( t, 7 ), 
-		setq( c, first( setr( h, u( clarity.default, %0 )), | )), 
-		setq( p, rest( %qh, | )), 
+
+		setq( c, first( setr( x, u( clarity.default, %0 )), | )), 
+		setq( p, rest( %qx, | )), 
+
 		if( neq( last( %qp, : ), 0 ), 
 			setq( p, 
 				strcat( 
@@ -1979,17 +1983,44 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 			setq( p, )
 		), 
 
+// .. touchstones: f: free touchstone level, n: number of extra touchstones
+		setq( f, 
+			setr( b, inc( 
+				ladd( 
+					ulocal( f.cheat_getstat.numeric, %0, attribute.composure ), 
+					. 
+				)
+			))
+		), 
+		setq( n, 
+			min( 
+				ladd( 
+					ulocal( f.cheat_getstat.numeric, %0, merit.touchstone ), 
+					.  
+				), 
+				add( 
+					ladd( 
+						ulocal( f.cheat_getstat.numeric, %0, attribute.wits ), 
+						. 
+					), 
+					words( get( %0/_advantage.icon_(*) ))
+				)
+			)
+		), 
+		setq( d, 
+			ansi( hx, strcat( 
+				repeat( %b %b, %qb ), 
+				^%b, 
+				repeat( %b^%b, %qn )
+			))
+		), 
 		divider( Clarity ), %r, 
 		vcolumns( 
-			%qw:%b %qc%qp, 
-			|
+			%qw:%b %qc%qp|
+			%qd, 
+			| 
 		)
 	)
-
-
-
-
-
 
 
 &block.traits.changeling [v( d.sheet )]=
