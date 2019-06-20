@@ -1225,9 +1225,6 @@ Total points in rites (should be 2)
 ================================================================================
 == CHARGEN: BIO ================================================================
 
-incarnation
-agenda
-
 --------------------------------------------------------------------------------
 -- Bio Check: Wolf-Blooded -----------------------------------------------------
 
@@ -1588,7 +1585,6 @@ think u( v( d.cg )/check.gifts, %# )
 
 // -- check gifts: wolf -- 
 // 0: target sheet -- 1: %qg
-// NEEDS ADDED (?): If Auspice Renown = 2+, additional gifts are Wolf Gifts.
 
 &check.gifts.wolf [v( d.cg )]=
 	strcat( 
