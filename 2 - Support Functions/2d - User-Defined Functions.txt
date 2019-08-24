@@ -11,13 +11,13 @@ Allows the other systems to get up to speed quickly.
 
 I'm leaving this commented out, but if you allow objects to use @function, use 
 this. Else, remember to have your function-creation object read here.
-
+*/
 @startup [v( d.sfp )]=
 	@dolist lattr( %!/ufunc.* )=
 		@function/preserve [rest( ##, . )]=%!/##; 
 	@dolist lattr( %!/ufunc/privileged.* )=
 		@function/preserve/privileged [rest( ##, . )]=%!/##
-
+/*
 
 
 ================================================================================
@@ -190,7 +190,10 @@ requires: isstaff(<dbref>)
 */
 
 @fo me=&ufunc/privileged.getstat [v( d.sfp )]=
-	u\\( [num( sfp )]/f.getstat, \\\%0 , \\\%1 \\)
+	u\\( 
+		[search( name=Stat Functions Prototype <sfp> )]/f.getstat, 
+		\\\%0 , \\\%1 
+	\\)
 
 // -----------------------------------------------------------------------------
 
@@ -1377,10 +1380,18 @@ late to change it now.
 		)
 	)
 
-// -----------------------------------------------------------------------------
-// 0: player dbref; 1: sheet loc; 2: statpath; 3: perm, offset, both, total
-// m: my stats; o: other sheets' stats; v: values for other sheets
-// output: <sheet name>:<value>|...
+/* 
+-----------------------------------------------------------------------------
+Getsheet Workhorse Values
+0: player dbref
+1: sheet loc
+2: statpath
+3: perm, offset, both, total
+m: my stats; o: other sheets' stats; v: values for other sheets
+
+output: <sheet name>:<value>|...
+-----------------------------------------------------------------------------
+*/
 
 &f.getsheet.workhorse.values [v( d.sfp )]=
 	trim( 
