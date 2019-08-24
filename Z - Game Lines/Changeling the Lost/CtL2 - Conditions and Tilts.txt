@@ -33,7 +33,7 @@ Appendix starting on p. 333.
 	<beat>|
 	<page numbers>
 
-&tilt.<condition_name> [v( d.ctdb )]=
+&tilt.<tilt_name> [v( d.ctdb )]=
 	<name>|0|
 	<descriptive text & effect>|
 	<causing the tilt>|
