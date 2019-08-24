@@ -2,139 +2,68 @@
 ################################################################################
 ## CLARITY SYSTEM ##############################################################
 
-p.104:
+HOLY SMOKES THIS IS NOT A SIMPLE SYSTEM!
 
-System: A changeling's Clarity track has boxes equal to her Wits + Composure. 
-Her player can't buy additional Clarity boxes with Experiences, but they 
-increase automatically as she purchases dots of Wits and Composure, and she can 
-recover Icons (p. 203) to add further boxes. There is no upper limit to the 
-number of Clarity boxes a character can have. In dreams, her Clarity contributes 
-to her dream form's Health track (p. 216).
-
-Clarity Damage: Mild fills left to right. Severe fills left to right, 
-overwriting mild but not severe.
-
-As a changeling takes damage to her three rightmost Clarity boxes, she gains 
-Conditions — Persistent Conditions if the damage was severe
-
---
-
-A changeling can regain Clarity by spending time with her Touchstones, and by 
-resolving the damage Conditions (below). Even if she has no Touchstones 
-currently attached, each scene she spends interacting in a meaningful way with 
-one of her Touchstones heals one level of severe Clarity damage, or all levels 
-of mild Clarity damage (but doesn't resolve any Conditions by default).
-
---
-
-So Clarity = Wits + Composure + Icons
+What follows is my working summary of the system, as pulled from the various 
+places in the rulebook and discussion on the Onyx Path forums.
 
 
---------------------------------------------------------------------------------
--- Touchstones -----------------------------------------------------------------
+================================================================================
+== CLARITY SYSTEM ==============================================================
 
-Your character's Touchstone is a person, place, or thing that reminds her of how 
-to trust, and helps her re-adjust to life after her durance. Name a Touchstone, 
-and count a number of Clarity boxes from the left equal to your character's 
-Composure + 1. Write your Touchstone next to that box. See p. 98 for more on 
-Touchstones. If you choose to take the Touchstone Merit, you may start with 
-additional Touchstones.
-
-Write Touchstones alongside your character's Clarity track. Count boxes from the 
-left equal to your character's Composure + 1, and write your first Touchstone 
-next to that box. For instance, if your character has Composure 3, write the 
-Touchstone next to the fourth box from the left. If you purchase more Composure 
-in play, push her Touchstones to the right so that her first one is always 
-attached at Composure + 1.
-
-As Clarity is a fluid thing in a changeling's life, her attachment to her 
-Touchstones is also fluid. Consider a Touchstone attached when its associated 
-Clarity box is not filled with severe damage. If a Touchstone is attached, 
-anytime the changeling defends her attachment to it, she regains a Willpower 
-point. If this defense causes her serious harm, she regains all her spent 
-Willpower points.
-
-Your character can gain additional Touchstones by taking the Touchstone Merit 
-(p. 120). Write the new Touchstone in beside the next available box to the right 
-of the rightmost box that already has an associated Touchstone. A changeling 
-character cannot have more Touchstones than she has Clarity boxes to the right 
-of the first box with an associated Touchstone. If her maximum Clarity increases 
-in play by purchasing more Wits or recovering an Icon, it opens a spot for a new 
-Touchstone through the Merit.
-
-I...have no idea how I'm going to do this yet.
+The word 'damage' here refers to Clarity damage unless specified otherwise.
 
 
--- takeaways --
+DETERMINE CLARITY TRACK:
+- Wits + Composure + Icons (p.203)
+- One free Touchstone (p.98)
+  Touchstones start at Composure + 1, even if stats change
+  Max Touchstones = Max Clarity - Composure
+  Attached = Represented on track and does not have severe damage
 
-* Max Clarity = Wits + Compsure + Icons
-  Write Touchstones alongside your character's Clarity track at Composure + 1
-  Clarity Track: [1] [2] [3] [4], Composure 2, Wits 2
-                          ^-- Free Touchstone
+DETERMINE CLARITY BREAK:
+- Look up amount of dice from Breaking Points chart (p.106) 
+  Or use Seeming Curse, using half Wyrd, rounded up
+- Add and remove dice based on Changeling's personal attachment (pp.104-5)
+- If successes are rolled, apply damage (below)
 
-* If you purchase more Composure in play, push her Touchstones to the right so 
-  that her first one is always attached at Composure + 1.
-  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
-                              ^-- Free Touchstone
+APPLYING DAMAGE:
+- Roll Wyrd and apply that much damage
+  If the Clarity Break roll was Exceptional, apply damage as severe, else mild
+- Modify damage roll by attached Touchstones (p.98)
+  0:  +2 Dice
+  1:  -1 Die
+  2+: -2 Dice
+- Severe damage overwrites mild damage
+- Damage to the last three boxes creates Clarity conditions (p.107)
+  One normal condition max for *any amount* of mild damage per attack
+  One persistent condition max for *any amount* of severe damage per attack
+- Damage that fills the Clarity track causes the Comatose condition instead
+  Normal if mild damage, Persistent if severe damage
+- Comatose Changelings cannot take damage
 
-* Your character can gain additional Touchstones by taking the Touchstone Merit 
-  (p. 120). Write the new Touchstone in beside the next available box to the 
-  right of the rightmost box that already has an associated Touchstone.
-  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
-                              ^   ^ -- Touchstone spaces
+HEALING DAMAGE:
+- Spend time with a Touchstone (attached or otherwise)
+  Heal 1 severe or all mild damage
+  Do not resolve any conditions
+- Resolve a Clarity condition
+  Normal condition: Heal 1 point of any damage
+  Persistent condition: Heal 2 points of any damage(s)
+- Healing any damage is enough to resolve normal Comatose
 
-* You cannot have more Touchstones than free spaces
-  Therefore, the number of Touchstones you can have is equal to Wits + Icons
-
-  Clarity Track: [1] [2] [3] [4] [5] [6], Composure 3, Wits 2, Icons 1
-                              ^   ^   ^ -- Touchstone spaces
-
-  Clarity Track: [1] [2] [3] [4] [5] [6] [7], Composure 5, Wits 2
-                                      ^   ^ -- Touchstone spaces
-
-* Just to make sure: Total Touchstones = Max Clarity - Composure
-  So if something else increases the Clarity Track, it's already accounted for.
-
-
---------------------------------------------------------------------------------
--- Filled Track ----------------------------------------------------------------
-
-If a changeling takes any more mild Clarity damage after her track fills with  
-damage of any kind, she falls unconscious, lost in her own dreams. She takes the 
-Comatose Condition (p. 334) and can’t take any more Clarity damage until she 
-heals at least one point. 
-
-If she takes severe damage after her track is filled with damage instead, she 
-not only takes the Comatose Condition, but risks death. The Comatose Condition 
-becomes Persistent and she can only resolve it with the help of her friends, as 
-noted in the Condition’s text.
-
-
---------------------------------------------------------------------------------
--- Conclusions -----------------------------------------------------------------
-
-Max Clarity = Wits + Compsure + Icons
-Max Touchstones = Max Clarity - Composure
-First Touchstone's Position = Clarity + 1 
-
-We will need stats for Touchstones and Icons
-
-* Touchstone: <first>|<second>|<third> ???
-* &_advantage.clarity.1 = <first touchstone> ??? -- can't prerequisite.
-
-* Icon (<name>)=1
-
-
---------------------------------------------------------------------------------
--- Challenges ------------------------------------------------------------------
-
-There is no easy way to implement Touchstones at this time. I will keep thinking 
-about this.
-
-For Changeling (and Vampire), the free one is calculated at its proper location.
-Additional Touchstones are counted in:
-	&merit.touchstone: 1.2.3.4.5
-
+CLARITY CONDITIONS:
+• Broken (Persistent)
+• Comatose (Sometimes Persistent, Sometimes Not)
+• Confused
+• Delusional (Persistent)
+• Dissociation
+• Distracted
+• Fugue (Persistent)
+• Numb (Persistent)
+• Shaken
+• Sleepwalking (Persistent)
+• Spooked
+• Withdrawn
 
 
 ================================================================================
@@ -155,13 +84,7 @@ Add these to the Data Dictionary.
 '&advantage.clarity' is because this may be rolled (et al.) and therefore needs 
 to be exposed to the core roller via type 'advantage'.
 
-I could add '&clarity.*' to the valid stat system, but it wouldn't work as well.
-
-&_clarity.comatose : flag if Changeling has passed out from Clarity damage
-
 */
-
-// -- 'clarity' sometimes needs rolled -- expose it
 
 &advantage.clarity [v( d.dd )]=
 	[u( .value_stats, %0, clarity.maximum )].
@@ -172,7 +95,7 @@ I could add '&clarity.*' to the valid stat system, but it wouldn't work as well.
 	Use the 'clarity' command to apply damage
 
 
-// -- all the rest of the system is 'hidden' from the roller
+// the rest of the system is hidden from the roller, like health
 
 &clarity.maximum [v( d.dd )]=
 	add( 
@@ -204,40 +127,90 @@ I could add '&clarity.*' to the valid stat system, but it wouldn't work as well.
 &tags.clarity.penalty [v( d.dt )]=derived
 &default.clarity.penalty [v( d.dd )]=derived
 
-// .. feels lazy
-&clarity.comatose [v( d.dd )]=1
+/*
+--------------------------------------------------------------------------------
+-- Other Added Traits ----------------------------------------------------------
+*/
+
+// ICON (): Bits of a Changeling's soul
+&advantage.icon_() [v( d.dd )]=*|*
+&prerequisite.advantage.icon_() [v( d.dd )]=0
+&prereq-text.advantage.icon_() [v( d.dd )]=
+	May only be set by staff with 'stat/override'
+&tags.advantage.icon_() [v( d.dt )]=changeling
 
 
+// TOUCHSTONE (): What keeps a Changeling grounded
+// (Warning: Vampire also uses Touchstones this way.)
+&merit.touchstone_() [v( d.dd )]=1|*
+&prerequisite.merit.touchstone_() [v( d.dd )]=
+	lte( 
+		add( 
+			words( lattr( %0/_merit.touchstone_(*) )), 
+// .. "include this instance" - because cg/check also runs this code
+			t( strlen( %2 ))
+		), 
+// .. Max Touchstones = Max Clarity - Composure
+		sub( 
+			u( .value_stat, %0, clarity.maximum ), 
+			u( .value_stat, %0, attribute.composure )
+		)
+	)
+&prereq-text.merit.touchstone_() [v( d.dd )]=
+	May not have more Touchstones than Clairty track allows
+&tags.merit.touchstone_() [v( d.dt )]=changeling
 
 /*
-================================================================================
-== STEALING COPIOUSLY FROM THE HEALTH SYSTEM ===================================
+################################################################################
+## CLARITY HEALTH SYSTEM #######################################################
+
+Stealing copiously from the core Health system.
 
 Except there is no 'push' or 'wrap', only fill or overlay. Problems arise if 
 damage is taken *after* the track is full.
 
---------------------------------------------------------------------------------
--- Setup -----------------------------------------------------------------------
+
+================================================================================
+== Setup =======================================================================
 */
 
 @create Changeling Clarity System <ccs>
 @fo me=&d.ccs me=search( name=Changeling Clarity System <ccs> )
 @set Changeling Clarity System <ccs>=inherit safe
 
+@fo me=
+	&d.dd Changeling Clarity System <ccs>=[search( name=Data Dictionary <dd> )]
+
 @fo me=@parent Changeling Clarity System <ccs>=[v( d.codp )]
 
-// -- data --
+/* 
+--------------------------------------------------------------------------------
+-- Setup: Data -----------------------------------------------------------------
+*/
 
 &d.damage-types [v( d.ccs )]=mild severe
 &d.symbol.touchstone [v( d.ccs )]=^
 
-// -- dot functions --
+/* 
+--------------------------------------------------------------------------------
+-- Setup: Dot Functions --------------------------------------------------------
+*/
 
 @fo me=&d.dd [v( d.ccs )]=[search( name=Data Dictionary <dd> )]
 
 &.value [v( d.ccs )]=ulocal( v( d.dd )/.value, %0, %1 )
 
-&.is_comatose [v( d.css )]=hasattr( %0, _clarity.comatose )
+// damage track is full or Changeling has the 'comatose' condition
+&.is_comatose [v( d.ccs )]=
+	cor( 
+		lte( 
+			u( v( d.dd )/.value_stats, %0, advantage.clarity ), 
+			0 
+		), 
+		t( lattr( %0/_cond.comatose.*  ))
+	)
+
+
 
 /* 
 ################################################################################
@@ -264,12 +237,12 @@ Composure 2, Wits 2, two Touchstones:
 Plus notification of gaining a condition.
 
 +1 Minor Damage:
-  [X] [/] [/] [ ]  (1 Attached Touchstone)
+  [X] [/] [/] [ ]  (2 Attached Touchstones)
            ^   ^
 Plus notification of gaining a condition.
 
-+1 Major Damage:
-  [X] [X] [/] [ ]  (1 Attached Touchstone)
++2 Major Damage:
+  [X] [X] [X] [ ]  (1 Attached Touchstone)
            ^   ^
 Plus notification of gaining a persistent condition.
 
@@ -437,11 +410,14 @@ think -- TEST: F.CLARITY.ACTUAL_DAMAGE --
 @set/quiet me=_clarity.maximum:7
 @set/quiet me=_clarity.mild:3
 @set/quiet me=_clarity.severe:2
-think [u( v( d.ccs )/f.clarity.actual_damage, %#, 2, mild )] --> 4
+think [u( v( d.ccs )/f.clarity.actual_damage, %#, 2, mild )] --> 5
 think [u( v( d.ccs )/f.clarity.actual_damage, %#, 2, severe )] --> 4
 
 think [u( v( d.ccs )/f.clarity.actual_damage, %#, 8, mild )] --> 5
 think [u( v( d.ccs )/f.clarity.actual_damage, %#, 8, severe )] --> 7
+
+think [u( v( d.ccs )/f.clarity.actual_damage, %#, 99, mild )] --> 5
+think [u( v( d.ccs )/f.clarity.actual_damage, %#, 99, severe )] --> 7
 
 
 
@@ -449,69 +425,55 @@ think [u( v( d.ccs )/f.clarity.actual_damage, %#, 8, severe )] --> 7
 ================================================================================
 == Function: Calculate 'Mild' Damage ===========================================
 
-	u( f.clarity.damage.mild, <target dbref>, <dmg amt> )
+	u( f.clarity.hurt.mild, <target dbref>, <dmg amt> )
 
-returns: <new mild damage> <old severe damage>
+returns: <current mild> <current severe>|<new mild> <current severe>
 
 If a changeling takes any more mild Clarity damage after her track fills with  
 damage of any kind, she falls unconscious, lost in her own dreams. She takes the 
 Comatose Condition (p. 334) and can’t take any more Clarity damage until she 
 heals at least one point.
 
-m: existing mild damage
-c: clarity maximum
-d: mild damage to add ("actual")
+m: current mild damage
+s: current severe damage
+d: new mild damage ("actual")
 
 */
 
-&f.clarity.damage.mild [v( d.ccs )]=
+&f.clarity.hurt.mild [v( d.ccs )]=
 	localize( strcat( 
 		setq( m, u( .value, %0, clarity.mild )), 
-		setq( c, u( .value, %0, clarity.maximum )), 
-		setq( w, u( .value, %0, clarity.damage )), 
+		setq( s, u( .value, %0, clarity.severe )), 
 		setq( d, u( f.clarity.actual_damage, %0, %1, mild )), 
 
 		case( 1, 
 			u( .is_comatose, %0 ), 
-			#-1 Changeling is comatose%; cannot take extra damage, 
+			#-1 Changeling is comatose%; cannot take damage, 
 
-			cat( 
+			strcat( 
+// .. current damage
+				%qm %qs, |, 
 // .. new damage
-				%qd, ulocal( .value, %0, clarity.severe ), 
-// .. extra messages
-				case( 1, 
-					eq( %qc, %qw ), 
-					Changeling becomes Comatose 
-					(must be set manually)
-					[null( set( %0, _clarity.comatose:1 ))], 
-					xxx, 
-					Changeling gains Condition (must be set manually)
-				)
+				%qd %qs
 			)
 		)
 	)) 
 
-
 // -- test --
-think -- TEST: F.CLARITY.DAMAGE.MILD --
+think ansi( y, -- TEST: F.CLARITY.HURT.MILD -- )
 @set/quiet me=_clarity.maximum:7
 @set/quiet me=_clarity.mild:3
 @set/quiet me=_clarity.severe:2
-think [u( v( d.ccs )/f.clarity.damage.mild, %#, 1 )] --> 4 2 
-think [u( v( d.ccs )/f.clarity.damage.mild, %#, 2 )] --> 5 2
-think [u( v( d.ccs )/f.clarity.damage.mild, %#, 8 )] --> 5 2 
-@set/quiet me=_clarity.mild:4
-@set/quiet me=_clarity.severe:3
-think [u( v( d.ccs )/f.clarity.damage.mild, %#, 1 )] --> 4 3 gains coma
-think [u( v( d.ccs )/f.clarity.damage.mild, %#, 1 )] --> #-1 coma
-@set/quiet me=_clarity.comatose:
+think [u( v( d.ccs )/f.clarity.hurt.mild, %#, 1 )] --> 3 2|4 2 
+think [u( v( d.ccs )/f.clarity.hurt.mild, %#, 2 )] --> 3 2|5 2
+think [u( v( d.ccs )/f.clarity.hurt.mild, %#, 8 )] --> 3 2|5 2 
 
 
 /*
 ================================================================================
 == Function: Calculate 'Severe' Damage =========================================
 
-	u( f.clarity.damage.severe, <target dbref>, <dmg amt> )
+	u( f.clarity.hurt.severe, <target dbref>, <dmg amt> )
 
 returns: <new mild damage> <new severe damage>
 
@@ -522,44 +484,32 @@ noted in the Condition’s text.
 
 m: existing mild damage
 s: existing severe damage
+
 d: new severe damage ("actual")
+n: new mild damage
 
 */
 
-&f.clarity.damage.severe [v( d.ccs )]=
+&f.clarity.hurt.severe [v( d.ccs )]=
 	localize( strcat( 
 		setq( m, u( .value, %0, clarity.mild )), 
 		setq( s, u( .value, %0, clarity.severe )), 
 		setq( d, u( f.clarity.actual_damage, %0, %1, severe )), 
+		setq( n, sub( %qm, min( %1, %qm ))), 
 
-// changeling cannot take more damage if is comatose from mild damage
-		case( 1, 
-			u( .is_comatose, %0 ), 
-			#-1 Changeling is comatose%; cannot take extra damage, 
-
-			cat( 
-				sub( %qm, min( %1, %qm )), 
-				%qd, 
-				case( 1, 
-					xxx, 
-					Changeling becomes Comatose with Persistence 
-					(must be set manually)
-					[null( set( %0, _clarity.comatose:1 ))], 
-					xxx, 
-					Changeling gains Persistent Condition (must be set manually)
-				)
-			)
-		) 
+		%qm %qs|%qn %qd
 	))
 
 // -- test --
-think -- TEST: F.CLARITY.DAMAGE.SEVERE --
+think ansi( y, -- TEST: F.CLARITY.HURT.SEVERE -- )
 @set/quiet me=_clarity.maximum:7
 @set/quiet me=_clarity.mild:3
 @set/quiet me=_clarity.severe:2
-think [u( v( d.ccs )/f.clarity.damage.severe, %#, 1 )] --> 2 3
-think [u( v( d.ccs )/f.clarity.damage.severe, %#, 2 )] --> 1 4
-think [u( v( d.ccs )/f.clarity.damage.severe, %#, 8 )] --> 0 7
+think [u( v( d.ccs )/f.clarity.hurt.severe, %#, 1 )] --> 3 2|2 3
+think [u( v( d.ccs )/f.clarity.hurt.severe, %#, 2 )] --> 3 2|1 4
+think [u( v( d.ccs )/f.clarity.hurt.severe, %#, 8 )] --> 3 2|0 7
+
+
 
 /*
 ================================================================================
@@ -567,45 +517,83 @@ think [u( v( d.ccs )/f.clarity.damage.severe, %#, 8 )] --> 0 7
 
 This is the one to call for damage.
 
-	u( f.clarity.actual_damage, <target dbref>, <dmg amt>, <dmg type> )
+	u( f.clarity.hurt, <target dbref>, <dmg type>, <dmg amt> )
 
-returns: <new mild damage>|<new severe damage>
+returns: <new mild damage> <new severe damage>
 
 t: damage type
 
 */
 
-&f.clarity.damage [v( d.ccs )]=
+&f.clarity.hurt [v( d.ccs )]=
 	localize( 
 		case( 0, 
-			cand( isint( %1 ), gte( %1, 0 )), 
+			cand( isint( %2 ), gte( %1, 0 )), 
 			#-1 Damage with positive integer only, 
 
-			strlen( setr( t, grab( mild severe, %2 ))), 
+			strlen( setr( t, grab( mild severe, %1 ))), 
 			#-1 No such Clarity damage type, 
 
+// (this is not 100% true of severe damage; refine later)
+			not( u( .is_comatose, %0 )), 
+			#-1 Changeling is comatose%; cannot take damage, 
+
 // .. ok
-			u( f.clarity.damage.%qt, %0, %1 )
+			u( f.clarity.hurt.%qt, %0, %2 )
 		)
 	)
 
 // -- test --
-think -- TEST: F.CLARITY.DAMAGE --
+think -- TEST: F.CLARITY.HURT --
 @set/quiet me=_clarity.maximum:7
 @set/quiet me=_clarity.mild:3
 @set/quiet me=_clarity.severe:2
-think [u( v( d.ccs )/f.clarity.damage, %#, x, mild )] --> #-1 integer
-think [u( v( d.ccs )/f.clarity.damage, %#, 2, ??? )] --> #-1 type
-think [u( v( d.ccs )/f.clarity.damage, %#, 2, mild )] --> 5 2
-think [u( v( d.ccs )/f.clarity.damage, %#, 2, severe )] --> 1 4
+think [u( v( d.ccs )/f.clarity.hurt, %#, mild, x )] --> #-1 integer
+think [u( v( d.ccs )/f.clarity.hurt, %#, ???, 2 )] --> #-1 type
+think [u( v( d.ccs )/f.clarity.hurt, %#, mild, 2 )] --> #-1 comatose
 
+think [u( v( d.ccs )/f.clarity.hurt, %#, mild, 2 )] --> 3 2|5 2
+think [u( v( d.ccs )/f.clarity.hurt, %#, severe, 2 )] --> 3 2|1 4
+
+think [u( v( d.ccs )/f.clarity.hurt, %#, mild, 99 )] --> 3 2|5 2
+think [u( v( d.ccs )/f.clarity.hurt, %#, severe, 99 )] --> 3 2|7 0
+
+
+
+/*
+================================================================================
+== Function: "Hurt All" ========================================================
+
+	u( f.clarity.hurt.all, <target dbref>, <dmg type> )
+
+Fill available Clarity with <type> damage.
+
+This is here to make calling 'f.clarity.heal.all' easier from the workhorse.
+
+*/
+
+&f.clarity.hurt.all [v( d.ccs )]=
+	case( %1, 
+		all, u( f.clarity.hurt, %0, severe, 9999 ), 
+		mild, u( f.clarity.hurt, %0, mild, 9999 ), 
+		severe, u( f.clarity.hurt, %0, severe, 9999 ), 
+		#-1 Unknown Damage Type  
+	)
+
+think ansi( y, -- TEST: F.CLARITY.HURT.ALL -- )
+@set/quiet me=_clarity.maximum:7
+@set/quiet me=_clarity.mild:1
+@set/quiet me=_clarity.severe:2
+think [u( v( d.ccs )/f.clarity.hurt.all, %#, all )] --> 1 2|0 7
+think [u( v( d.ccs )/f.clarity.hurt.all, %#, mild )] --> 1 2|5 2
+think [u( v( d.ccs )/f.clarity.hurt.all, %#, severe )] --> 1 2|0 7 
 
 
 /*
 ================================================================================
 == Function: Calculate Healing =================================================
 
-	u( f.clarity.heal, <target dbref>, <heal amt>, <heal type> )
+	u( f.clarity.heal, <target dbref>, <heal type>, <heal amt> )
 
 Very simplistic: Take the number and subtract the amount healed for that type.
 (It's a function in case complexity is added to the system.)
@@ -623,10 +611,10 @@ d: new damage of <heal type> (%qt)
 &f.clarity.heal [v( d.ccs )]=
 	localize( 
 		case( 0, 
-			strlen( setr( t, grab( mild severe, %2 ))), 
+			strlen( setr( t, grab( mild severe, %1 ))), 
 			#-1 No such Clarity damage type, 
 
-			cand( isint( %1 ), gte( %1, 0 )), 
+			cand( isint( %2 ), gte( %2, 0 )), 
 			#-1 Heal with positive integer only, 
 
 // output all new damages
@@ -639,63 +627,212 @@ d: new damage of <heal type> (%qt)
 						severe, %qs
 					)
 				), 
-				setq( d, max( 0, sub( %qd, %1 ))), 
+				setq( d, max( 0, sub( %qd, %2 ))), 
+				%qm %qs|, 
 				case( %qt, 
 					mild, %qd %qs, 
 					severe, %qm %qd, 
 					#-1 Panic in &f.clarity.heal
-				), %b, 
-
-// .. extra messages (any healing may recover comatose condition)
-				case( 1, 
-					u( .is_comatose, %0 ), 
-					Changeling may recover from Comatose  
-					(see: +cond comatose)
-					[null( set( %0, _clarity.comatose: ))]
 				)
 			)
 		)
 	)
 
 // -- test --
-think -- TEST: F.CLARITY.HEAL --
+think ansi( y, -- TEST: F.CLARITY.HEAL -- )
 @set/quiet me=_clarity.maximum:7
 @set/quiet me=_clarity.mild:3
 @set/quiet me=_clarity.severe:2
-think [u( v( d.ccs )/f.clarity.heal, %#, 1, mild )] --> 2 2
-think [u( v( d.ccs )/f.clarity.heal, %#, 1, severe )] --> 3 1 
-@set/quiet me=_clarity.mild:4
-@set/quiet me=_clarity.severe:3
-think [u( v( d.ccs )/f.clarity.damage, %#, 1, mild )] --> 4 3 gains coma
-think [u( v( d.ccs )/f.clarity.heal, %#, 1, mild )] --> 3 3 loses coma
+think [u( v( d.ccs )/f.clarity.heal, %#, mild, 1 )] --> 3 2|2 2
+think [u( v( d.ccs )/f.clarity.heal, %#, severe, 1 )] --> 3 2|3 1 
+
+think [u( v( d.ccs )/f.clarity.heal, %#, mild, 99 )] --> 3 2|0 2
+think [u( v( d.ccs )/f.clarity.heal, %#, severe, 99 )] --> 3 2|3 0 
 
 
 /*
 --------------------------------------------------------------------------------
 -- Heal All --------------------------------------------------------------------
 
-If amt is 'all', don't bother with the fancy calculations.
+	u( f.clarity.heal.all, <target dbref>, <heal type> )
+
+Heal all of a certain type, including 'all'.
+
+Don't bother with the fancy calculations.
 
 */
 
 &f.clarity.heal.all [v( d.ccs )]=
-	cat( 
-		0 0, 
-// .. extra messages (any healing may recover comatose condition)
-				case( 1, 
-					u( .is_comatose, %0 ), 
-					Changeling may recover from Comatose  
-					(see: +cond comatose)
-					[null( set( %0, _clarity.comatose: ))]
-				)
+	strcat( 
+		setq( m, u( .value, %0, clarity.mild )), 
+		setq( s, u( .value, %0, clarity.severe )), 
+		%qm %qs|, 
+		case( %1, 
+			all, 0 0, 
+			minor, 0 %qs, 
+			severe, %qm 0, 
+			#-1 Unknown Heal Type  
+		)
 	)
 
 // -- test --
-think -- TEST: F.CLARITY.HEAL.ALL --
+think ansi( y, -- TEST: F.CLARITY.HEAL.ALL -- )
 @set/quiet me=_clarity.mild:4
 @set/quiet me=_clarity.severe:3
-think [u( v( d.ccs )/f.clarity.damage, %#, 1, mild )] --> 4 3 gains coma
-think [u( v( d.ccs )/f.clarity.heal.all, %# )] --> 0 0 loses coma
+think [u( v( d.ccs )/f.clarity.heal.all, %#, minor )] --> 4 3|0 3
+think [u( v( d.ccs )/f.clarity.heal.all, %#, severe )] --> 4 3|4 0
+think [u( v( d.ccs )/f.clarity.heal.all, %#, all )] --> 4 3|0 0
+
+
+/* 
+================================================================================
+== TEST HEALTH CHANGE ==========================================================
+
+TEST CHANGE: Check for things that may be resolved between <old damage> and <new damage>
+
+	u( f.test-change, <target dbref>, <old dmg>, <new dmg> )
+
+Damage is reported as: <mild dmg> <severe dmg>
+
+--------------------------------------------------------------------------------
+-- Test Change -----------------------------------------------------------------
+
+full damage but takes damage: becomes comatose
+
+o: original damage total
+a: after damage total
+
+n: '1' if %qo == %qa
+
+*/
+
+&f.test-change [v( d.ccs )]=
+	case( 1, 
+// no change + is_comatose
+		cand( 
+			setr( n, eq( setr( o, ladd( %1 )), setr( a, ladd( %2 )))), 
+			u( .is_comatose, %0 )
+		), 
+		@@( no change to the damage types so do nothing ), 
+
+// no change + at max damage: becomes comatose or pass to 'hurt'?
+		cand( 
+			%qn, 
+			eq( u( .value, %0, clarity.maximum ), %qa )
+		), 
+		???, 
+
+// hurt
+		cor( 
+			gt( %qa, %qo ), 
+			gt( elements( %2, 2 ), elements( %1, 2 ))    // severe damage
+		), 
+		ulocal( f.test-change.hurt, %0, %1, %2 ), 
+
+// heal
+		1t( ladd( %2 ), ladd( %1 )), 
+		ulocal( f.test-chage.heal, %0, %1, %2 ), 
+
+// panic
+		|#-1 CANNOT TEST CHANGE 
+	)
+
+// --
+
+/*
+--------------------------------------------------------------------------------
+-- Test Change: Hurt -----------------------------------------------------------
+
+	u( f.test-change.hurt, <target>, <old dmg>, <new dmg>, <dmg type> )
+
+* Why do we need <dmg type>? Why don't we calculate it instead?
+
+Because it's possible, however unlikely, for the following:
+	<old dmg>: 0 4
+	<new dmg>: 0 4
+
+As mild damage doesn't overwrite severe damage, we can't tell if the damage 
+gained was mild or severe.
+
+--
+
+o: original damage total
+a: after damage total
+
+m: max clarity
+p: display text ' persistent' if damage is severe
+
+f: '1' if damage track was already full
+
+
+*/
+
+&f.test-change.hurt [v( d.ccs )]=
+// test mutually exclusive situations first
+	case( 1, 
+		u( .is_comatose, %0 ), 
+		@@( ignore all other events ), 
+
+// these conditions may all be true
+
+		localize( strcat( 
+			setq( o, ladd( %1 )), 
+			setq( a, ladd( %2 )), 
+
+			setq( m, u( .value, %0, clarity.maximum )), 
+			setq( p, if( strmatch( %3, severe ), PERSISTENT%b )), 
+
+ 			setq( f, cand( 
+ 				eq( %qo, %qm ), 
+ 				eq( %qa, %qm )
+ 			)), 
+
+// .. damage in last three boxes? (exclude 'full' for mild)
+			if( 
+				cand( 
+					gte( ladd( %qa 3 ), %qm ), 
+					not( 
+						cand( strmatch( %3, mild ), %qf )
+					)
+				), 
+
+				|%qpCONDITION (notify)
+			), 
+
+// .. damage track already full?
+			if( %qf, 
+				|%qpCOMATOSE CONDITION (notify)
+			), 
+
+// .. something else?
+
+		))
+	) 
+
+// -- quick test --
+
+think u( v( d.ccs )/f.test-change.hurt, %#, 0 3, 4 3, mild )
+think u( v( d.ccs )/f.test-change.hurt, %#, 4 3, 4 3, mild )
+
+think u( v( d.ccs )/f.test-change.hurt, %#, 4 3, 4 3, mild )
+think u( v( d.ccs )/f.test-change.hurt, %#, 4 3, 4 3, severe )
+
+// -- 
+
+&f.test-change.heal [v( d.ccs )]=
+	localize( strcat( 
+		setq( m, u( .value, %0, clarity.maximum )), 
+
+// .. last box healed: flag that comatose can be removed (???)
+		if( u( .is_comatose, %0 ), 
+			|REMOVE COMATOSE OPTION (reminder)
+		), 
+
+// .. to be continued
+
+	))
+
+
 
 
 
@@ -731,23 +868,205 @@ This is a much simpler system than traditional WoD damage. "all" still fills or
 removes all damage of that damage type.
 
 Healing type 'all' bypasses other checks and resets all damage to 0.
+	clarity/heal severe=1
+	clarity/heal mild=all
+	clarity/heal all
+
+	clarity/hurt theno/severe=1
+	clarity/heal theno/all
+
 
 0: [<name>/]<amt>=<type>
 1: 'true' (1) if heal, 'false' (0) if hurt
 
-t: target (if passed, else %# )
+x: input target (if passed, else %#)
+y: input type
+z: input amt (if passed, else 1)
+
+d: target dbref
+h: "heal" or "hurt"
 a: amt
-y: type
+t: type
+
+o: original damage (<mild> <severe>)
+n: new damage (<mild> <severe>)
 
 */
 
 
 &f.healhurt-workhorse [v( d.ccs )]=
 	strcat( 
-		setq( 0, regmatchi( %0, v( d.regexp.healhurt ), 0 t t a y )), 
-		if( not( strlen( %qt )), setq( t, %# )), 
+		setq( 0, regmatchi( %0, v( d.regexp.healhurt ), 0 x x y z z )), 
+		setq( h, case( %1, 1, heal, 0, hurt, ??? )), 
 
+		setq( d, case( %qx, me, %#, @@( null ), %#, pmatch( %qx ))), 
+		setq( t, grab( |all|mild|severe, %qy*, | )), 
+		setq( a, case( %qz, all, 99, @@( null ), 1, %qz )), 
+
+		case( 0, 
+
+// .. core validity checks
+			%q0, 
+			u( .msg, clarity/%qh, Command format is: 
+				\[<target>/\]<type>\[=<amt>\] ), 
 		
+			isapproved( %qd ), 
+			u( .msg, clarity/%qh, Target must be approved ), 
+
+			cand( isint( %qa ), gt( %qa, 0 )), 
+			u( .msg, clarity/%qh, Amount must be positive integer ), 
+	
+			strlen( %qt ), 
+			u( .msg, clarity/%qh, I don't know that type of damage ), 
+
+// .. oblique checks (none currently)
+
+// .. calculate end condition
+			u( f.clarity.%qh[if( strmatch( %qz, all ), .all )], 
+				%qd, %qa, %qt 
+			)
+		)
 	)
 
-&d.regexp.healhurt [v( d.ccs )]=(.+/)?(.+)=(.+)
+&d.regexp.healhurt [v( d.ccs )]=((.+)/)?(.+?)(=(.+))?
+
+&va me=((.+)/)?(.+?)(=(.+))?
+think regmatchi( x/y=z, %va, 0 x x y z z ) ==> %q0%r- x: %qx%r- y: %qy%r- z: %qz
+think regmatchi( y=z, %va, 0 x x y z z ) ==> %q0%r- x: %qx%r- y: %qy%r- z: %qz
+think regmatchi( y, %va, 0 x x y z z ) ==> %q0%r- x: %qx%r- y: %qy%r- z: %qz
+
+
+
+/*
+================================================================================
+== DETAILED NOTES ==============================================================
+
+p.104:
+
+System: A changeling's Clarity track has boxes equal to her Wits + Composure. 
+Her player can't buy additional Clarity boxes with Experiences, but they 
+increase automatically as she purchases dots of Wits and Composure, and she can 
+recover Icons (p. 203) to add further boxes. There is no upper limit to the 
+number of Clarity boxes a character can have. In dreams, her Clarity contributes 
+to her dream form's Health track (p. 216).
+
+Clarity Damage: Mild fills left to right. Severe fills left to right, 
+overwriting mild but not severe.
+
+As a changeling takes damage to her three rightmost Clarity boxes, she gains 
+Conditions — Persistent Conditions if the damage was severe
+
+--
+
+A changeling can regain Clarity by spending time with her Touchstones, and by 
+resolving the damage Conditions (below). Even if she has no Touchstones 
+currently attached, each scene she spends interacting in a meaningful way with 
+one of her Touchstones heals one level of severe Clarity damage, or all levels 
+of mild Clarity damage (but doesn't resolve any Conditions by default).
+
+--
+
+So Clarity = Wits + Composure + Icons
+
+
+--------------------------------------------------------------------------------
+-- Touchstones -----------------------------------------------------------------
+
+Your character's Touchstone is a person, place, or thing that reminds her of how 
+to trust, and helps her re-adjust to life after her durance. Name a Touchstone, 
+and count a number of Clarity boxes from the left equal to your character's 
+Composure + 1. Write your Touchstone next to that box. See p. 98 for more on 
+Touchstones. If you choose to take the Touchstone Merit, you may start with 
+additional Touchstones.
+
+Write Touchstones alongside your character's Clarity track. Count boxes from the 
+left equal to your character's Composure + 1, and write your first Touchstone 
+next to that box. For instance, if your character has Composure 3, write the 
+Touchstone next to the fourth box from the left. If you purchase more Composure 
+in play, push her Touchstones to the right so that her first one is always 
+attached at Composure + 1.
+
+As Clarity is a fluid thing in a changeling's life, her attachment to her 
+Touchstones is also fluid. Consider a Touchstone attached when its associated 
+Clarity box is not filled with severe damage. If a Touchstone is attached, 
+anytime the changeling defends her attachment to it, she regains a Willpower 
+point. If this defense causes her serious harm, she regains all her spent 
+Willpower points.
+
+Your character can gain additional Touchstones by taking the Touchstone Merit 
+(p. 120). Write the new Touchstone in beside the next available box to the right 
+of the rightmost box that already has an associated Touchstone. A changeling 
+character cannot have more Touchstones than she has Clarity boxes to the right 
+of the first box with an associated Touchstone. If her maximum Clarity increases 
+in play by purchasing more Wits or recovering an Icon, it opens a spot for a new 
+Touchstone through the Merit.
+
+I...have no idea how I'm going to do this yet.
+
+
+-- takeaways --
+
+* Max Clarity = Wits + Compsure + Icons
+  Write Touchstones alongside your character's Clarity track at Composure + 1
+  Clarity Track: [1] [2] [3] [4], Composure 2, Wits 2
+                          ^-- Free Touchstone
+
+* If you purchase more Composure in play, push her Touchstones to the right so 
+  that her first one is always attached at Composure + 1.
+  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
+                              ^-- Free Touchstone
+
+* Your character can gain additional Touchstones by taking the Touchstone Merit 
+  (p. 120). Write the new Touchstone in beside the next available box to the 
+  right of the rightmost box that already has an associated Touchstone.
+  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
+                              ^   ^ -- Touchstone spaces
+
+* You cannot have more Touchstones than free spaces
+  Therefore, the number of Touchstones you can have is equal to Wits + Icons
+
+  Clarity Track: [1] [2] [3] [4] [5] [6], Composure 3, Wits 2, Icons 1
+                              ^   ^   ^ -- Touchstone spaces
+
+  Clarity Track: [1] [2] [3] [4] [5] [6] [7], Composure 5, Wits 2
+                                      ^   ^ -- Touchstone spaces
+
+* Just to make sure: Total Touchstones = Max Clarity - Composure
+  So if something else increases the Clarity Track, it's already accounted for.
+
+
+--------------------------------------------------------------------------------
+-- Filled Track ----------------------------------------------------------------
+
+If a Changeling fills their last box on their Clarity track, they fall 
+unconscious and take the Comatose condition (p.344). If the damage was Severe, 
+the condition is Persistent, and can’t take any more Clarity damage until she 
+heals at least one point. 
+
+
+--------------------------------------------------------------------------------
+-- Conclusions -----------------------------------------------------------------
+
+Max Clarity = Wits + Compsure + Icons
+Max Touchstones = Max Clarity - Composure
+First Touchstone's Position = Clarity + 1 
+
+We will need stats for Touchstones and Icons
+
+* Touchstone: <first>|<second>|<third> ???
+* &_advantage.clarity.1 = <first touchstone> ??? -- can't prerequisite.
+
+* Icon (<name>)=1
+
+
+--------------------------------------------------------------------------------
+-- Challenges ------------------------------------------------------------------
+
+There is no easy way to implement Touchstones at this time. I will keep thinking 
+about this.
+
+For Changeling (and Vampire), the free one is calculated at its proper location.
+Additional Touchstones are counted in:
+	&merit.touchstone: 1.2.3.4.5
+
+*/
