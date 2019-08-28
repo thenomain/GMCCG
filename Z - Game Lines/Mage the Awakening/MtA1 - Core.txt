@@ -425,7 +425,7 @@ The fun of Proximi taking spells as 'Blessings'.
 	not( 
 		setdiff( 
 			lattr( %0/_merit.shadow_name_(*) ), 
-			_merit.shadow_name_(%1) 
+			ucstr( _merit.shadow_name_(%1) )
 		)
 	) 
 &prereq-text.merit.shadow_name_() [v( d.dd )]=May have only one Shadow Name
