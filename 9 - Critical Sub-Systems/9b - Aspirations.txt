@@ -1,24 +1,20 @@
 /*
+ASPIRATIONS:
 
-+bucket/create <bucket>=<description>
-Thenomain : +jhelp bconfig3
-  MYJOBS: Determines whether or not +myjobs can access the bucket. Valid
-          <values> are 'yes' and 'no'.
-You say, "So :: +bucket/set <bucket>/myjobs=yes"
+First, create a Jobs bucket for Aspirations and set it so that people can see 
+the comments in the job they submitted:
 
-train +bucket/create ASP=For pitched and fulfilled aspirations. Snakes also.
-train +bucket/set ASP/myjobs=yes
+	+bucket/create ASP=For pitched and fulfilled aspirations. Snakes also.
+	+bucket/set ASP/myjobs=yes
 
-Requires: 
+If the second part gives you a Permission Denied:
 
-&TRIG.CREATE.JOB #xx=@trigger %va/TRIG_CREATE=%0, %1, %2, %3, %r%4, , %5, 2
+	@find ASP
+	&public <dbref>=1
 
+--
 
-*/
-
-
-/*
-
+HOW IT WORKS:
 
 1) Player pitches an Aspiration
 2) Staff completes the job
@@ -78,6 +74,9 @@ aspiration/pitched [<player>]
 Aspirations Log System <asp>
 -=-=-=-=-=-=-=-=-==--=-==-=-
 */
+
++bucket/create ASP=For pitched and fulfilled aspirations. Snakes also.
++bucket/set ASP/myjobs=yes
 
 @create Aspirations System <asp>
 @set Aspirations System <asp>=safe inherit
@@ -141,7 +140,7 @@ Aspirations Log System <asp>
 2: filter item 
 
 e.g. 
-	think filter( asp/filter.term, lattr( %#/_aspiration.* ), , , %#, st )
+	think filter( v( d.asp )/filter.term, lattr( %#/_aspiration.* ), , , %#, st )
 
 */
 
@@ -222,7 +221,7 @@ f: fulfilled keyword (for filter)
 
 // -- test --
 
-// think u( asp/f.filter.all, %#, term:short-term|status:approved )
+// think u( v( d.asp )/f.filter.all, %#, term:short-term|status:approved )
 
 
 /*
@@ -640,11 +639,11 @@ A player has pitched a new aspiration
 
 /* -- tests --
 
-think u( asp/f.aspiration/pitch.action, , aspiration! )
-think u( asp/f.aspiration/pitch.action, st, aspiration! )
-think u( asp/f.aspiration/pitch.action, short ,  )
-think u( asp/f.aspiration/pitch.action, short ,  finish this stuff! )
-think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [ansi( hc, EVER )]. )
+think u( v( d.asp )/f.aspiration/pitch.action, , aspiration! )
+think u( v( d.asp )/f.aspiration/pitch.action, st, aspiration! )
+think u( v( d.asp )/f.aspiration/pitch.action, short ,  )
+think u( v( d.asp )/f.aspiration/pitch.action, short ,  finish this stuff! )
+think u( v( d.asp )/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [ansi( hc, EVER )]. )
 
 */
 
@@ -700,7 +699,7 @@ think u( asp/f.aspiration/pitch.action, l ,  make the most kick-ass wod game [an
 
 /* -- tests
 
-think u( asp/display.pitch.contents, pmatch( thenomain ), 15, long-term, get this thing done )
+think u( v( d.asp )/display.pitch.contents, pmatch( thenomain ), 15, long-term, get this thing done )
 
 */
 
@@ -764,9 +763,9 @@ A player has pitched a new aspiration
 
 /* -- tests --
 
-think u( asp/f.aspiration/fulfill.request, 0, because I can )
-think u( asp/f.aspiration/fulfill.request, , one more failing test )
-think u( asp/f.aspiration/fulfill.request, 1, this one will succeed! )
+think u( v( d.asp )/f.aspiration/fulfill.request, 0, because I can )
+think u( v( d.asp )/f.aspiration/fulfill.request, , one more failing test )
+think u( v( d.asp )/f.aspiration/fulfill.request, 1, this one will succeed! )
 
 
 // -----------------------------------------------------------------------------
@@ -819,7 +818,7 @@ think u( asp/f.aspiration/fulfill.request, 1, this one will succeed! )
 
 /* -- test --
 
-think u( asp/display.fulfill.contents, pmatch( thenomain ), 15, get this thing done, because I'm done )
+think u( v( d.asp )/display.fulfill.contents, pmatch( thenomain ), 15, get this thing done, because I'm done )
 
 
 --------------------------------------------------------------------------------
