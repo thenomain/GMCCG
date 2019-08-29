@@ -12,6 +12,10 @@ If the second part gives you a Permission Denied:
 	@find ASP
 	&public <dbref>=1
 
+You will also have to lock the bucket so only staff can see everything:
+	&ACCESS <dbref>=[u(%va/FN_STAFFALL,%#)]
+	@lock/speech <dbref>=ACCESS/1
+
 --
 
 HOW IT WORKS:
