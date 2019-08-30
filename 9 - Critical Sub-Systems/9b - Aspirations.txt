@@ -88,7 +88,8 @@ Aspirations Log System <asp>
 
 @parent Aspirations System <asp>=codp
 
-
+// report myself to the chargen system
+@fo me=&d.asp [v( d.cg )]=search( name=Aspirations System <asp> )
 
 
 // -----------------------------------------------------------------------------
