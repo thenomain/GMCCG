@@ -1698,7 +1698,7 @@ n: statname
 						has been set, 
 						case( u( v( d.sfp )/f.get-class, %qs ), 
 							list, , 
-							%bto '%qv', 
+							%bto '%qv' 
 						), %b, 
 						for %qc Experience.
 					)
