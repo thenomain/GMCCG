@@ -3353,6 +3353,8 @@ currently:
 
 Straight from Fallen World. (Tweaked how 'allocated' works.)
 
+(p.86) Every dot of Gnosis comes with a free Praxis.
+
 */
 
 &check.rotes_&_praxis [v( d.cg )]=
@@ -3367,6 +3369,7 @@ Straight from Fallen World. (Tweaked how 'allocated' works.)
 		setq( a, u( f.allocated.rotes_&_praxes, %0 )), 
 		setq( r, elements( %qa, 1, ` )), 
 		setq( p, elements( %qa, 2, ` )), 
+		setq( n, u( v( d.dd )/.value, %0, advantage.gnosis )), 
 		%b, %b, ansi( h, Total Rotes ), :, %b, 
 		if( eq( %qr, 0 ), ansi( xh, <none> ), %qr ), %b, %(of 3%), %b, 
 		u( check.rotes.mage.total, %qr ), %r, 
@@ -3384,7 +3387,9 @@ Straight from Fallen World. (Tweaked how 'allocated' works.)
 	))
 
 &check.rotes.mage.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 3 ))
-&check.praxes.mage.total [v( d.cg )]=u( display.check.ok-no, eq( %0, 1 ))
+
+&check.praxes.mage.total [v( d.cg )]=
+	u( display.check.ok-no, eq( %0, if( strlen( %1 ), %1, 1 )))
 
 
 
