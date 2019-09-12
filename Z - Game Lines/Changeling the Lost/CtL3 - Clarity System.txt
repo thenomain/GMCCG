@@ -926,6 +926,7 @@ p: 'persistent ' text if it was
 		)
 	))
 
+// -- test --
 think ansi( y, -- TEST: F.TEST-CHANGE.HURT -- )
 @set/quiet me=_clarity.maximum:5
 @set/quiet me=_clarity.mild:0
@@ -951,44 +952,71 @@ think u( v( d.ccs )/f.test-change.hurt, %#, 0 0, 1 0 ) --> (already comatose)
 --------------------------------------------------------------------------------
 -- Test Change: Heal -----------------------------------------------------------
 
-&f.test-change.heal [v( d.ccs )]=
+	u( f.test-change.heal, <target>, <old dmg>, <new dmg> )
 
 
+We don't use <old dmg> or <new dmg> here, but I'm paranoid.
 
+c: comatose registered
+p: persistent comatose registered
 
+Nothing can help 'persistent comatose', but we treat `cond.` data with suspicion
 
+	* If someone has multiple `_cond.comtaose.<timestamp>`, 
+	  then we wipe all of them.
+	* If someone has both `_cond.comatose` and `_cond.persistent_comatose`, 
+	  then we let persistent comatose take priority.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// -- 
+*/
 
 &f.test-change.heal [v( d.ccs )]=
-	localize( strcat( 
-		setq( m, u( .value, %0, clarity.maximum )), 
+	strcat( 
+		setq( c, lattr( %0/_cond.comatose.* )), 
+		setq( p, lattr( %0/_cond.persistent_comatose.* )), 
 
-// .. last box healed: flag that comatose can be removed (???)
-		if( u( .is_comatose, %0 ), 
-			|REMOVE COMATOSE OPTION (reminder)
-		), 
+		case( 1, 
+			strmatch( %1, %2 ), 
+			@@( nothing changed so ignore it ), 
 
-// .. to be continued
+			cand( t( %qc ), not( t( %qp ))), 
+			|Resolve Comatose Condition, 
 
-	))
+			@@( nothing else happened )
+		)
+	)
+
+// -- test --
+think ansi( y, -- TEST: F.TEST-CHANGE.HEAL -- )
+@set/quiet me=_clarity.maximum:5
+@set/quiet me=_clarity.mild:3
+@set/quiet me=_clarity.severe:2
+@set/quiet me=_cond.comatose.xxx:
+@set/quiet me=_cond.persistent_comatose.xxx:
+
+think u( v( d.ccs )/f.test-change.heal, %#, 3 2, 2 2 ) --> (no change)
+
+@set/quiet me=_cond.comatose.xxx:yyy
+think u( v( d.ccs )/f.test-change.heal, %#, 3 2, 2 2 ) --> resolve comatose
+
+@set/quiet me=_cond.comatose.xxx:yyy
+@set/quiet me=_cond.persistent_comatose.xxx:yyy
+think u( v( d.ccs )/f.test-change.heal, %#, 3 2, 2 2 ) --> (persistent comatose)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
