@@ -150,18 +150,16 @@ Because it's boring to enter the same information one million times.
 
 &.rote.prereq-text [v( d.dd )]=
 	strcat( 
-		capstr( 
-			setinter( 
-				get( v( d.dt )/tags.rote.%0_() ), 
-				death.fate.forces.life.matter.mind.prime.space.spirit.time, 
-				. 
-			)
-		), %b, Arcanum, %b, 
-		setr( 9, first( v( rote.%0_() ), | )), 
-		if( lt( %q9, 5 ), + ), 
+// .. pull required arcana from the 'prerequisite' attribute
+		edit( 
+			trim( trim( last( v( prerequisite.rote.%0_() ), %, ), b, %) )), 
+			%b, %b&%b, 
+			:, %b 
+		), 
+
 		%, or Proximus taking a Blessing 
 	)
-
+	
 
 /*
 ================================================================================
@@ -185,7 +183,9 @@ The fun of Proximi taking spells as 'Blessings'.
 // Mage: has proper arcana; can't take as blessing, silly
 		Mage, 
 		cand( 
-			u( .at_least, %0, arcanum.[first( %3 )], rest( %3 )), 
+			u( .at_least_all, %0, 
+				iter( %3, arcanum.%i0 )
+			), 
 			not( strmatch( %1, blessing ))
 		), 
 
@@ -639,7 +639,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ectoplasmic_shaping_() [v( d.dd )]=
 	1|Crafts.Occult.Larceny.Praxis.Blessing
 &prerequisite.rote.ectoplasmic_shaping_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ectoplasmic_shaping, Death 1 )
+	u( .rote.prereq-check, %0, %1, ectoplasmic_shaping, Death:1 )
 &prereq-text.rote.ectoplasmic_shaping_() [v( d.dd )]=
 	u( .rote.prereq-text, ectoplasmic_shaping )
 &tags.rote.ectoplasmic_shaping_() [v( d.dt )]=mage.proximus.death
@@ -647,7 +647,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.deepen_shadows_() [v( d.dd )]=
 	1|Occult.Intimidation.Expression.Praxis.Blessing
 &prerequisite.rote.deepen_shadows_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, deepen_shadows, Death 1 )
+	u( .rote.prereq-check, %0, %1, deepen_shadows, Death:1 )
 &prereq-text.rote.deepen_shadows_() [v( d.dd )]=
 	u( .rote.prereq-text, deepen_shadows )
 &tags.rote.deepen_shadows_() [v( d.dt )]=mage.proximus.death
@@ -655,7 +655,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.forensic_gaze_() [v( d.dd )]=
 	1|Medicine.Investigation.Expression.Praxis.Blessing
 &prerequisite.rote.forensic_gaze_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, forensic_gaze, Death 1 )
+	u( .rote.prereq-check, %0, %1, forensic_gaze, Death:1 )
 &prereq-text.rote.forensic_gaze_() [v( d.dd )]=
 	u( .rote.prereq-text, forensic_gaze )
 &tags.rote.forensic_gaze_() [v( d.dt )]=mage.proximus.death
@@ -663,7 +663,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shadow_sculpting_() [v( d.dd )]=
 	1|Crafts.Science.Expression.Praxis.Blessing
 &prerequisite.rote.shadow_sculpting_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shadow_sculpting, Death 1 )
+	u( .rote.prereq-check, %0, %1, shadow_sculpting, Death:1 )
 &prereq-text.rote.shadow_sculpting_() [v( d.dd )]=
 	u( .rote.prereq-text, shadow_sculpting )
 &tags.rote.shadow_sculpting_() [v( d.dt )]=mage.proximus.death
@@ -671,7 +671,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.soul_marks_() [v( d.dd )]=
 	1|Medicine.Occult.Empathy.Praxis.Blessing
 &prerequisite.rote.soul_marks_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, soul_marks, Death 1 )
+	u( .rote.prereq-check, %0, %1, soul_marks, Death:1 )
 &prereq-text.rote.soul_marks_() [v( d.dd )]=
 	u( .rote.prereq-text, soul_marks )
 &tags.rote.soul_marks_() [v( d.dt )]=mage.proximus.death
@@ -679,7 +679,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.speak_with_the_dead_() [v( d.dd )]=
 	1|Socialize.Expression.Investigation.Praxis.Blessing
 &prerequisite.rote.speak_with_the_dead_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, speak_with_the_dead, Death 1 )
+	u( .rote.prereq-check, %0, %1, speak_with_the_dead, Death:1 )
 &prereq-text.rote.speak_with_the_dead_() [v( d.dd )]=
 	u( .rote.prereq-text, speak_with_the_dead )
 &tags.rote.speak_with_the_dead_() [v( d.dt )]=mage.proximus.death
@@ -687,7 +687,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.corpse_mask_() [v( d.dd )]=
 	2|Subterfuge.Crafts.Medicine.Praxis.Blessing
 &prerequisite.rote.corpse_mask_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, corpse_mask, Death 2 )
+	u( .rote.prereq-check, %0, %1, corpse_mask, Death:2 )
 &prereq-text.rote.corpse_mask_() [v( d.dd )]=
 	u( .rote.prereq-text, corpse_mask )
 &tags.rote.corpse_mask_() [v( d.dt )]=mage.proximus.death
@@ -695,7 +695,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.decay_() [v( d.dd )]=
 	2|Subterfuge.Science.Occult.Praxis.Blessing
 &prerequisite.rote.decay_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, decay, Death 2 )
+	u( .rote.prereq-check, %0, %1, decay, Death:2 )
 &prereq-text.rote.decay_() [v( d.dd )]=
 	u( .rote.prereq-text, decay )
 &tags.rote.decay_() [v( d.dt )]=mage.proximus.death
@@ -703,7 +703,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ectoplasm_() [v( d.dd )]=
 	2|Occult.Expression.Academics.Praxis.Blessing
 &prerequisite.rote.ectoplasm_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ectoplasm, Death 2 )
+	u( .rote.prereq-check, %0, %1, ectoplasm, Death:2 )
 &prereq-text.rote.ectoplasm_() [v( d.dd )]=
 	u( .rote.prereq-text, ectoplasm )
 &tags.rote.ectoplasm_() [v( d.dt )]=mage.proximus.death
@@ -711,7 +711,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ghost_shield_() [v( d.dd )]=
 	2|Streetwise.Subterfuge.Survival.Praxis.Blessing
 &prerequisite.rote.ghost_shield_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ghost_shield, Death 2 )
+	u( .rote.prereq-check, %0, %1, ghost_shield, Death:2 )
 &prereq-text.rote.ghost_shield_() [v( d.dd )]=
 	u( .rote.prereq-text, ghost_shield )
 &tags.rote.ghost_shield_() [v( d.dt )]=mage.proximus.death
@@ -719,7 +719,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shape_emphera_() [v( d.dd )]=
 	2|Crafts.Expression.Science.Praxis.Blessing
 &prerequisite.rote.shape_emphera_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shape_emphera, Death 2 )
+	u( .rote.prereq-check, %0, %1, shape_emphera, Death:2 )
 &prereq-text.rote.shape_emphera_() [v( d.dd )]=
 	u( .rote.prereq-text, shape_emphera )
 &tags.rote.shape_emphera_() [v( d.dt )]=mage.proximus.death
@@ -727,7 +727,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.soul_armor_() [v( d.dd )]=
 	2|Academics.Occult.Survival.Praxis.Blessing
 &prerequisite.rote.soul_armor_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, soul_armor, Death 2 )
+	u( .rote.prereq-check, %0, %1, soul_armor, Death:2 )
 &prereq-text.rote.soul_armor_() [v( d.dd )]=
 	u( .rote.prereq-text, soul_armor )
 &tags.rote.soul_armor_() [v( d.dt )]=mage.proximus.death
@@ -735,7 +735,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.soul_jar_() [v( d.dd )]=
 	2|Crafts.Occult.persuasion.Praxis.Blessing
 &prerequisite.rote.soul_jar_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, soul_jar, Death 2 )
+	u( .rote.prereq-check, %0, %1, soul_jar, Death:2 )
 &prereq-text.rote.soul_jar_() [v( d.dd )]=
 	u( .rote.prereq-text, soul_jar )
 &tags.rote.soul_jar_() [v( d.dt )]=mage.proximus.death
@@ -743,7 +743,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.suppress_aura_() [v( d.dd )]=
 	2|Subterfuge.Intimidation.Medicine.Praxis.Blessing
 &prerequisite.rote.suppress_aura_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, suppress_aura, Death 2 )
+	u( .rote.prereq-check, %0, %1, suppress_aura, Death:2 )
 &prereq-text.rote.suppress_aura_() [v( d.dd )]=
 	u( .rote.prereq-text, suppress_aura )
 &tags.rote.suppress_aura_() [v( d.dt )]=mage.proximus.death
@@ -751,7 +751,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.suppress_life_() [v( d.dd )]=
 	2|Subterfuge.Medicine.Academics.Praxis.Blessing
 &prerequisite.rote.suppress_life_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, suppress_life, Death 2 )
+	u( .rote.prereq-check, %0, %1, suppress_life, Death:2 )
 &prereq-text.rote.suppress_life_() [v( d.dd )]=
 	u( .rote.prereq-text, suppress_life )
 &tags.rote.suppress_life_() [v( d.dt )]=mage.proximus.death
@@ -759,7 +759,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.touch_of_the_grave_() [v( d.dd )]=
 	2|Survival.Crafts.persuasion.Praxis.Blessing
 &prerequisite.rote.touch_of_the_grave_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, touch_of_the_grave, Death 2 )
+	u( .rote.prereq-check, %0, %1, touch_of_the_grave, Death:2 )
 &prereq-text.rote.touch_of_the_grave_() [v( d.dd )]=
 	u( .rote.prereq-text, touch_of_the_grave )
 &tags.rote.touch_of_the_grave_() [v( d.dt )]=mage.proximus.death
@@ -767,7 +767,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.without_a_trace_() [v( d.dd )]=
 	2|Science.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.without_a_trace_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, without_a_trace, Death 2 )
+	u( .rote.prereq-check, %0, %1, without_a_trace, Death:2 )
 &prereq-text.rote.without_a_trace_() [v( d.dd )]=
 	u( .rote.prereq-text, without_a_trace )
 &tags.rote.without_a_trace_() [v( d.dt )]=mage.proximus.death
@@ -775,7 +775,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.cold_snap_() [v( d.dd )]=
 	3|Survival.Intimidation.Science.Praxis.Blessing
 &prerequisite.rote.cold_snap_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, cold_snap, Death 3 )
+	u( .rote.prereq-check, %0, %1, cold_snap, Death:3 )
 &prereq-text.rote.cold_snap_() [v( d.dd )]=
 	u( .rote.prereq-text, cold_snap )
 &tags.rote.cold_snap_() [v( d.dt )]=mage.proximus.death
@@ -783,7 +783,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.damage_ghost_() [v( d.dd )]=
 	3|Occult.Intimidation.Brawl.Praxis.Blessing
 &prerequisite.rote.damage_ghost_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, damage_ghost, Death 3 )
+	u( .rote.prereq-check, %0, %1, damage_ghost, Death:3 )
 &prereq-text.rote.damage_ghost_() [v( d.dd )]=
 	u( .rote.prereq-text, damage_ghost )
 &tags.rote.damage_ghost_() [v( d.dt )]=mage.proximus.death
@@ -791,7 +791,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.devouring_the_slain_() [v( d.dd )]=
 	3|Intimidation.Medicine.persuasion.Praxis.Blessing
 &prerequisite.rote.devouring_the_slain_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, devouring_the_slain, Death 3 )
+	u( .rote.prereq-check, %0, %1, devouring_the_slain, Death:3 )
 &prereq-text.rote.devouring_the_slain_() [v( d.dd )]=
 	u( .rote.prereq-text, devouring_the_slain )
 &tags.rote.devouring_the_slain_() [v( d.dt )]=mage.proximus.death
@@ -799,7 +799,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ghost_gate_() [v( d.dd )]=
 	3|Occult.Academics.Expression.Praxis.Blessing
 &prerequisite.rote.ghost_gate_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ghost_gate, Death 3 )
+	u( .rote.prereq-check, %0, %1, ghost_gate, Death:3 )
 &prereq-text.rote.ghost_gate_() [v( d.dd )]=
 	u( .rote.prereq-text, ghost_gate )
 &tags.rote.ghost_gate_() [v( d.dt )]=mage.proximus.death
@@ -807,7 +807,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ghost_summons_() [v( d.dd )]=
 	3|persuasion.Socialize.Occult.Praxis.Blessing
 &prerequisite.rote.ghost_summons_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ghost_summons, Death 3 )
+	u( .rote.prereq-check, %0, %1, ghost_summons, Death:3 )
 &prereq-text.rote.ghost_summons_() [v( d.dd )]=
 	u( .rote.prereq-text, ghost_summons )
 &tags.rote.ghost_summons_() [v( d.dt )]=mage.proximus.death
@@ -815,7 +815,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.quicken_corpse_() [v( d.dd )]=
 	3|Medicine.Crafts.persuasion.Praxis.Blessing
 &prerequisite.rote.quicken_corpse_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, quicken_corpse, Death 3 )
+	u( .rote.prereq-check, %0, %1, quicken_corpse, Death:3 )
 &prereq-text.rote.quicken_corpse_() [v( d.dd )]=
 	u( .rote.prereq-text, quicken_corpse )
 &tags.rote.quicken_corpse_() [v( d.dt )]=mage.proximus.death
@@ -823,7 +823,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.quicken_ghost_() [v( d.dd )]=
 	3|persuasion.Socialize.Medicine.Praxis.Blessing
 &prerequisite.rote.quicken_ghost_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, quicken_ghost, Death 3 )
+	u( .rote.prereq-check, %0, %1, quicken_ghost, Death:3 )
 &prereq-text.rote.quicken_ghost_() [v( d.dd )]=
 	u( .rote.prereq-text, quicken_ghost )
 &tags.rote.quicken_ghost_() [v( d.dt )]=mage.proximus.death
@@ -831,7 +831,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.rotting_flesh_() [v( d.dd )]=
 	3|Intimidation.Occult.Empathy.Praxis.Blessing
 &prerequisite.rote.rotting_flesh_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, rotting_flesh, Death 3 )
+	u( .rote.prereq-check, %0, %1, rotting_flesh, Death:3 )
 &prereq-text.rote.rotting_flesh_() [v( d.dd )]=
 	u( .rote.prereq-text, rotting_flesh )
 &tags.rote.rotting_flesh_() [v( d.dt )]=mage.proximus.death
@@ -839,7 +839,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.sever_soul_() [v( d.dd )]=
 	3|Intimidation.Athletics.Expression.Praxis.Blessing
 &prerequisite.rote.sever_soul_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, sever_soul, Death 3 )
+	u( .rote.prereq-check, %0, %1, sever_soul, Death:3 )
 &prereq-text.rote.sever_soul_() [v( d.dd )]=
 	u( .rote.prereq-text, sever_soul )
 &tags.rote.sever_soul_() [v( d.dt )]=mage.proximus.death
@@ -847,7 +847,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shadow_crafting_() [v( d.dd )]=
 	3|Academics.Intimidation.Occult.Praxis.Blessing
 &prerequisite.rote.shadow_crafting_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shadow_crafting, Death 3 )
+	u( .rote.prereq-check, %0, %1, shadow_crafting, Death:3 )
 &prereq-text.rote.shadow_crafting_() [v( d.dd )]=
 	u( .rote.prereq-text, shadow_crafting )
 &tags.rote.shadow_crafting_() [v( d.dt )]=mage.proximus.death
@@ -855,7 +855,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.enervation_() [v( d.dd )]=
 	4|Occult.Intimidation.Subterfuge.Praxis.Blessing
 &prerequisite.rote.enervation_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, enervation, Death 4 )
+	u( .rote.prereq-check, %0, %1, enervation, Death:4 )
 &prereq-text.rote.enervation_() [v( d.dd )]=
 	u( .rote.prereq-text, enervation )
 &tags.rote.enervation_() [v( d.dt )]=mage.proximus.death
@@ -863,7 +863,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.exorcism_() [v( d.dd )]=
 	4|Brawl.Expression.Occult.Praxis.Blessing
 &prerequisite.rote.exorcism_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, exorcism, Death 4 )
+	u( .rote.prereq-check, %0, %1, exorcism, Death:4 )
 &prereq-text.rote.exorcism_() [v( d.dd )]=
 	u( .rote.prereq-text, exorcism )
 &tags.rote.exorcism_() [v( d.dt )]=mage.proximus.death
@@ -871,7 +871,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.revenant_() [v( d.dd )]=
 	4|Crafts.Brawl.Intimidation.Praxis.Blessing
 &prerequisite.rote.revenant_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, revenant, Death 4 )
+	u( .rote.prereq-check, %0, %1, revenant, Death:4 )
 &prereq-text.rote.revenant_() [v( d.dd )]=
 	u( .rote.prereq-text, revenant )
 &tags.rote.revenant_() [v( d.dt )]=mage.proximus.death
@@ -879,7 +879,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shadow_flesh_() [v( d.dd )]=
 	4|Occult.Medicine.Subterfuge.Praxis.Blessing
 &prerequisite.rote.shadow_flesh_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shadow_flesh, Death 4 )
+	u( .rote.prereq-check, %0, %1, shadow_flesh, Death:4 )
 &prereq-text.rote.shadow_flesh_() [v( d.dd )]=
 	u( .rote.prereq-text, shadow_flesh )
 &tags.rote.shadow_flesh_() [v( d.dt )]=mage.proximus.death
@@ -887,7 +887,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.withering_() [v( d.dd )]=
 	4|Intimidation.Medicine.Science.Praxis.Blessing
 &prerequisite.rote.withering_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, withering, Death 4 )
+	u( .rote.prereq-check, %0, %1, withering, Death:4 )
 &prereq-text.rote.withering_() [v( d.dd )]=
 	u( .rote.prereq-text, withering )
 &tags.rote.withering_() [v( d.dt )]=mage.proximus.death
@@ -895,7 +895,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.create_anchor_() [v( d.dd )]=
 	5|Crafts.Occult.persuasion.Praxis.Blessing
 &prerequisite.rote.create_anchor_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, create_anchor, Death 5 )
+	u( .rote.prereq-check, %0, %1, create_anchor, Death:5 )
 &prereq-text.rote.create_anchor_() [v( d.dd )]=
 	u( .rote.prereq-text, create_anchor )
 &tags.rote.create_anchor_() [v( d.dt )]=mage.proximus.death
@@ -903,7 +903,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.create_ghost_() [v( d.dd )]=
 	5|Occult.Expression.Academics.Praxis.Blessing
 &prerequisite.rote.create_ghost_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, create_ghost, Death 5 )
+	u( .rote.prereq-check, %0, %1, create_ghost, Death:5 )
 &prereq-text.rote.create_ghost_() [v( d.dd )]=
 	u( .rote.prereq-text, create_ghost )
 &tags.rote.create_ghost_() [v( d.dt )]=mage.proximus.death
@@ -911,7 +911,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.deny_the_reaper_() [v( d.dd )]=
 	5|Medicine.Occult.Subterfuge.Praxis.Blessing
 &prerequisite.rote.deny_the_reaper_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, deny_the_reaper, Death 5 )
+	u( .rote.prereq-check, %0, %1, deny_the_reaper, Death:5 )
 &prereq-text.rote.deny_the_reaper_() [v( d.dd )]=
 	u( .rote.prereq-text, deny_the_reaper )
 &tags.rote.deny_the_reaper_() [v( d.dt )]=mage.proximus.death
@@ -919,7 +919,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.empty_presence_() [v( d.dd )]=
 	5|Subterfuge.persuasion.Stealth.Praxis.Blessing
 &prerequisite.rote.empty_presence_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, empty_presence, Death 5 )
+	u( .rote.prereq-check, %0, %1, empty_presence, Death:5 )
 &prereq-text.rote.empty_presence_() [v( d.dd )]=
 	u( .rote.prereq-text, empty_presence )
 &tags.rote.empty_presence_() [v( d.dt )]=mage.proximus.death
@@ -927,7 +927,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.open_avernian_gate_() [v( d.dd )]=
 	5|Occult.Crafts.persuasion.Praxis.Blessing
 &prerequisite.rote.open_avernian_gate_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, open_avernian_gate, Death 5 )
+	u( .rote.prereq-check, %0, %1, open_avernian_gate, Death:5 )
 &prereq-text.rote.open_avernian_gate_() [v( d.dd )]=
 	u( .rote.prereq-text, open_avernian_gate )
 &tags.rote.open_avernian_gate_() [v( d.dt )]=mage.proximus.death
@@ -935,7 +935,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.sever_the_awakened_soul_() [v( d.dd )]=
 	5|Crafts.Intimidation.Medicine.Praxis.Blessing
 &prerequisite.rote.sever_the_awakened_soul_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, sever_the_awakened_soul, Death 5 )
+	u( .rote.prereq-check, %0, %1, sever_the_awakened_soul, Death:5 )
 &prereq-text.rote.sever_the_awakened_soul_() [v( d.dd )]=
 	u( .rote.prereq-text, sever_the_awakened_soul )
 &tags.rote.sever_the_awakened_soul_() [v( d.dt )]=mage.proximus.death
@@ -946,7 +946,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.interconnections_() [v( d.dd )]=
 	1|Empathy.Investigation.Medicine.Praxis.Blessing
 &prerequisite.rote.interconnections_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, interconnections, fate 1 )
+	u( .rote.prereq-check, %0, %1, interconnections, Fate:1 )
 &prereq-text.rote.interconnections_() [v( d.dd )]=
 	u( .rote.prereq-text, interconnections )
 &tags.rote.interconnections_() [v( d.dt )]=mage.proximus.fate
@@ -954,7 +954,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.oaths_fulfilled_() [v( d.dd )]=
 	1|Occult.Politics.Investigation.Praxis.Blessing
 &prerequisite.rote.oaths_fulfilled_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, oaths_fulfilled, fate 1 )
+	u( .rote.prereq-check, %0, %1, oaths_fulfilled, Fate:1 )
 &prereq-text.rote.oaths_fulfilled_() [v( d.dd )]=
 	u( .rote.prereq-text, oaths_fulfilled )
 &tags.rote.oaths_fulfilled_() [v( d.dt )]=mage.proximus.fate
@@ -962,7 +962,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.quantum_flux_() [v( d.dd )]=
 	1|Crafts.Firearms.Occult.Praxis.Blessing
 &prerequisite.rote.quantum_flux_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, quantum_flux, fate 1 )
+	u( .rote.prereq-check, %0, %1, quantum_flux, Fate:1 )
 &prereq-text.rote.quantum_flux_() [v( d.dd )]=
 	u( .rote.prereq-text, quantum_flux )
 &tags.rote.quantum_flux_() [v( d.dt )]=mage.proximus.fate
@@ -970,7 +970,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.reading_the_outmost_eddies_() [v( d.dd )]=
 	1|Computers.persuasion.Subterfuge.Praxis.Blessing
 &prerequisite.rote.reading_the_outmost_eddies_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, reading_the_outmost_eddies, fate 1 )
+	u( .rote.prereq-check, %0, %1, reading_the_outmost_eddies, Fate:1 )
 &prereq-text.rote.reading_the_outmost_eddies_() [v( d.dd )]=
 	u( .rote.prereq-text, reading_the_outmost_eddies )
 &tags.rote.reading_the_outmost_eddies_() [v( d.dt )]=mage.proximus.fate
@@ -978,7 +978,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.serendipity_() [v( d.dd )]=
 	1|Academics.Crafts.Survival.Praxis.Blessing
 &prerequisite.rote.serendipity_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, serendipity, fate 1 )
+	u( .rote.prereq-check, %0, %1, serendipity, Fate:1 )
 &prereq-text.rote.serendipity_() [v( d.dd )]=
 	u( .rote.prereq-text, serendipity )
 &tags.rote.serendipity_() [v( d.dt )]=mage.proximus.fate
@@ -986,7 +986,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.exceptional_luck_() [v( d.dd )]=
 	2|Intimidation.Occult.Socialize.Praxis.Blessing
 &prerequisite.rote.exceptional_luck_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, exceptional_luck, fate 2 )
+	u( .rote.prereq-check, %0, %1, exceptional_luck, Fate:2 )
 &prereq-text.rote.exceptional_luck_() [v( d.dd )]=
 	u( .rote.prereq-text, exceptional_luck )
 &tags.rote.exceptional_luck_() [v( d.dt )]=mage.proximus.fate
@@ -994,7 +994,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.fabricate_fortune_() [v( d.dd )]=
 	2|Larceny.Occult.Subterfuge.Praxis.Blessing
 &prerequisite.rote.fabricate_fortune_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, fabricate_fortune, fate 2 )
+	u( .rote.prereq-check, %0, %1, fabricate_fortune, Fate:2 )
 &prereq-text.rote.fabricate_fortune_() [v( d.dd )]=
 	u( .rote.prereq-text, fabricate_fortune )
 &tags.rote.fabricate_fortune_() [v( d.dt )]=mage.proximus.fate
@@ -1002,7 +1002,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.fools_rush_in_() [v( d.dd )]=
 	2|Athletics.Socialize.Streetwise.Praxis.Blessing
 &prerequisite.rote.fools_rush_in_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, fools_rush_in, fate 2 )
+	u( .rote.prereq-check, %0, %1, fools_rush_in, Fate:2 )
 &prereq-text.rote.fools_rush_in_() [v( d.dd )]=
 	u( .rote.prereq-text, fools_rush_in )
 &tags.rote.fools_rush_in_() [v( d.dt )]=mage.proximus.fate
@@ -1010,7 +1010,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.lucky_number_() [v( d.dd )]=
 	2|Investigation.Larceny.Science.Praxis.Blessing
 &prerequisite.rote.lucky_number_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, lucky_number, fate 2 )
+	u( .rote.prereq-check, %0, %1, lucky_number, Fate:2 )
 &prereq-text.rote.lucky_number_() [v( d.dd )]=
 	u( .rote.prereq-text, lucky_number )
 &tags.rote.lucky_number_() [v( d.dt )]=mage.proximus.fate
@@ -1018,7 +1018,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shifting_the_odds_() [v( d.dd )]=
 	2|Investigation.Politics.Subterfuge.Praxis.Blessing
 &prerequisite.rote.shifting_the_odds_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shifting_the_odds, fate 2 )
+	u( .rote.prereq-check, %0, %1, shifting_the_odds, Fate:2 )
 &prereq-text.rote.shifting_the_odds_() [v( d.dd )]=
 	u( .rote.prereq-text, shifting_the_odds )
 &tags.rote.shifting_the_odds_() [v( d.dt )]=mage.proximus.fate
@@ -1026,7 +1026,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.warding_gesture_() [v( d.dd )]=
 	2|Brawl.Occult.Subterfuge.Praxis.Blessing
 &prerequisite.rote.warding_gesture_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, warding_gesture, fate 2 )
+	u( .rote.prereq-check, %0, %1, warding_gesture, Fate:2 )
 &prereq-text.rote.warding_gesture_() [v( d.dd )]=
 	u( .rote.prereq-text, warding_gesture )
 &tags.rote.warding_gesture_() [v( d.dt )]=mage.proximus.fate
@@ -1034,7 +1034,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.grave_misfortune_() [v( d.dd )]=
 	3|Intimidation.Occult.Weaponry.Praxis.Blessing
 &prerequisite.rote.grave_misfortune_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, grave_misfortune, fate 3 )
+	u( .rote.prereq-check, %0, %1, grave_misfortune, Fate:3 )
 &prereq-text.rote.grave_misfortune_() [v( d.dd )]=
 	u( .rote.prereq-text, grave_misfortune )
 &tags.rote.grave_misfortune_() [v( d.dt )]=mage.proximus.fate
@@ -1042,7 +1042,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.monkey's_paw_() [v( d.dd )]=
 	3|Drive.Crafts.Science.Praxis.Blessing
 &prerequisite.rote.monkey's_paw_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, monkey's_paw, fate 3 )
+	u( .rote.prereq-check, %0, %1, monkey's_paw, Fate:3 )
 &prereq-text.rote.monkey's_paw_() [v( d.dd )]=
 	u( .rote.prereq-text, monkey's_paw )
 &tags.rote.monkey's_paw_() [v( d.dt )]=mage.proximus.fate
@@ -1050,7 +1050,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shared_fate_() [v( d.dd )]=
 	3|Medicine.persuasion.Politics.Praxis.Blessing
 &prerequisite.rote.shared_fate_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shared_fate, fate 3 )
+	u( .rote.prereq-check, %0, %1, shared_fate, Fate:3 )
 &prereq-text.rote.shared_fate_() [v( d.dd )]=
 	u( .rote.prereq-text, shared_fate )
 &tags.rote.shared_fate_() [v( d.dt )]=mage.proximus.fate
@@ -1058,7 +1058,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.superlative_luck_() [v( d.dd )]=
 	3|Athletics.Crafts.Occult.Praxis.Blessing
 &prerequisite.rote.superlative_luck_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, superlative_luck, fate 3 )
+	u( .rote.prereq-check, %0, %1, superlative_luck, Fate:3 )
 &prereq-text.rote.superlative_luck_() [v( d.dd )]=
 	u( .rote.prereq-text, superlative_luck )
 &tags.rote.superlative_luck_() [v( d.dt )]=mage.proximus.fate
@@ -1066,7 +1066,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.sworn_oaths_() [v( d.dd )]=
 	3|Expression.Occult.Politics.Praxis.Blessing
 &prerequisite.rote.sworn_oaths_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, sworn_oaths, fate 3 )
+	u( .rote.prereq-check, %0, %1, sworn_oaths, Fate:3 )
 &prereq-text.rote.sworn_oaths_() [v( d.dd )]=
 	u( .rote.prereq-text, sworn_oaths )
 &tags.rote.sworn_oaths_() [v( d.dt )]=mage.proximus.fate
@@ -1074,7 +1074,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.atonement_() [v( d.dd )]=
 	4|Academics.Empathy.Survival.Praxis.Blessing
 &prerequisite.rote.atonement_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, atonement, fate 4 )
+	u( .rote.prereq-check, %0, %1, atonement, Fate:4 )
 &prereq-text.rote.atonement_() [v( d.dd )]=
 	u( .rote.prereq-text, atonement )
 &tags.rote.atonement_() [v( d.dt )]=mage.proximus.fate
@@ -1082,7 +1082,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.chaos_mastery_() [v( d.dd )]=
 	4|Empathy.Occult.Science.Praxis.Blessing
 &prerequisite.rote.chaos_mastery_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, chaos_mastery, fate 4 )
+	u( .rote.prereq-check, %0, %1, chaos_mastery, Fate:4 )
 &prereq-text.rote.chaos_mastery_() [v( d.dd )]=
 	u( .rote.prereq-text, chaos_mastery )
 &tags.rote.chaos_mastery_() [v( d.dt )]=mage.proximus.fate
@@ -1090,7 +1090,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.divine_intervention_() [v( d.dd )]=
 	4|Intimidation.Occult.Subterfuge.Praxis.Blessing
 &prerequisite.rote.divine_intervention_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, divine_intervention, fate 4 )
+	u( .rote.prereq-check, %0, %1, divine_intervention, Fate:4 )
 &prereq-text.rote.divine_intervention_() [v( d.dd )]=
 	u( .rote.prereq-text, divine_intervention )
 &tags.rote.divine_intervention_() [v( d.dt )]=mage.proximus.fate
@@ -1098,7 +1098,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.strings_of_fate_() [v( d.dd )]=
 	4|Academics.persuasion.Stealth.Praxis.Blessing
 &prerequisite.rote.strings_of_fate_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, strings_of_fate, fate 4 )
+	u( .rote.prereq-check, %0, %1, strings_of_fate, Fate:4 )
 &prereq-text.rote.strings_of_fate_() [v( d.dd )]=
 	u( .rote.prereq-text, strings_of_fate )
 &tags.rote.strings_of_fate_() [v( d.dt )]=mage.proximus.fate
@@ -1106,7 +1106,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.sever_oaths_() [v( d.dd )]=
 	4|Occult.Subterfuge.Weaponry.Praxis.Blessing
 &prerequisite.rote.sever_oaths_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, sever_oaths, fate 4 )
+	u( .rote.prereq-check, %0, %1, sever_oaths, Fate:4 )
 &prereq-text.rote.sever_oaths_() [v( d.dd )]=
 	u( .rote.prereq-text, sever_oaths )
 &tags.rote.sever_oaths_() [v( d.dt )]=mage.proximus.fate
@@ -1114,7 +1114,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.forge_destiny_() [v( d.dd )]=
 	5|Intimidation.Occult.persuasion.Praxis.Blessing
 &prerequisite.rote.forge_destiny_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, forge_destiny, fate 5 )
+	u( .rote.prereq-check, %0, %1, forge_destiny, Fate:5 )
 &prereq-text.rote.forge_destiny_() [v( d.dd )]=
 	u( .rote.prereq-text, forge_destiny )
 &tags.rote.forge_destiny_() [v( d.dt )]=mage.proximus.fate
@@ -1122,7 +1122,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.pariah_() [v( d.dd )]=
 	5|Investigation.Medicine.Politics.Praxis.Blessing
 &prerequisite.rote.pariah_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, pariah, fate 5 )
+	u( .rote.prereq-check, %0, %1, pariah, Fate:5 )
 &prereq-text.rote.pariah_() [v( d.dd )]=
 	u( .rote.prereq-text, pariah )
 &tags.rote.pariah_() [v( d.dt )]=mage.proximus.fate
@@ -1130,7 +1130,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.miracle_() [v( d.dd )]=
 	5|Academics.persuasion.Subterfuge.Praxis.Blessing
 &prerequisite.rote.miracle_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, miracle, fate 5 )
+	u( .rote.prereq-check, %0, %1, miracle, Fate:5 )
 &prereq-text.rote.miracle_() [v( d.dd )]=
 	u( .rote.prereq-text, miracle )
 &tags.rote.miracle_() [v( d.dt )]=mage.proximus.fate
@@ -1138,7 +1138,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.swarm_of_locusts_() [v( d.dd )]=
 	5|Intimidation.Occult.Science.Praxis.Blessing
 &prerequisite.rote.swarm_of_locusts_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, swarm_of_locusts, fate 5 )
+	u( .rote.prereq-check, %0, %1, swarm_of_locusts, Fate:5 )
 &prereq-text.rote.swarm_of_locusts_() [v( d.dd )]=
 	u( .rote.prereq-text, swarm_of_locusts )
 &tags.rote.swarm_of_locusts_() [v( d.dt )]=mage.proximus.fate
@@ -1149,7 +1149,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.influence_electricity_() [v( d.dd )]=
 	1|Computers.Crafts.Science.Praxis.Blessing
 &prerequisite.rote.influence_electricity_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, influence_electricity, forces 1 )
+	u( .rote.prereq-check, %0, %1, influence_electricity, Forces:1 )
 &prereq-text.rote.influence_electricity_() [v( d.dd )]=
 	u( .rote.prereq-text, influence_electricity )
 &tags.rote.influence_electricity_() [v( d.dt )]=mage.proximus.forces
@@ -1157,7 +1157,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.influence_fire_() [v( d.dd )]=
 	1|Crafts.Science.Survival.Praxis.Blessing
 &prerequisite.rote.influence_fire_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, influence_fire, forces 1 )
+	u( .rote.prereq-check, %0, %1, influence_fire, Forces:1 )
 &prereq-text.rote.influence_fire_() [v( d.dd )]=
 	u( .rote.prereq-text, influence_fire )
 &tags.rote.influence_fire_() [v( d.dt )]=mage.proximus.forces
@@ -1165,7 +1165,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.kinetic_efficiency_() [v( d.dd )]=
 	1|Athletics.Science.Survival.Praxis.Blessing
 &prerequisite.rote.kinetic_efficiency_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, kinetic_efficiency, forces 1 )
+	u( .rote.prereq-check, %0, %1, kinetic_efficiency, Forces:1 )
 &prereq-text.rote.kinetic_efficiency_() [v( d.dd )]=
 	u( .rote.prereq-text, kinetic_efficiency )
 &tags.rote.kinetic_efficiency_() [v( d.dt )]=mage.proximus.forces
@@ -1173,7 +1173,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.influence_heat_() [v( d.dd )]=
 	1|Occult.Science.Survival.Praxis.Blessing
 &prerequisite.rote.influence_heat_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, influence_heat, forces 1 )
+	u( .rote.prereq-check, %0, %1, influence_heat, Forces:1 )
 &prereq-text.rote.influence_heat_() [v( d.dd )]=
 	u( .rote.prereq-text, influence_heat )
 &tags.rote.influence_heat_() [v( d.dt )]=mage.proximus.forces
@@ -1181,7 +1181,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.nightvision_() [v( d.dd )]=
 	1|Investigation.Science.Stealth.Praxis.Blessing
 &prerequisite.rote.nightvision_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, nightvision, forces 1 )
+	u( .rote.prereq-check, %0, %1, nightvision, Forces:1 )
 &prereq-text.rote.nightvision_() [v( d.dd )]=
 	u( .rote.prereq-text, nightvision )
 &tags.rote.nightvision_() [v( d.dt )]=mage.proximus.forces
@@ -1189,7 +1189,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.receiver_() [v( d.dd )]=
 	1|Empathy.Investigation.Science.Praxis.Blessing
 &prerequisite.rote.receiver_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, receiver, forces 1 )
+	u( .rote.prereq-check, %0, %1, receiver, Forces:1 )
 &prereq-text.rote.receiver_() [v( d.dd )]=
 	u( .rote.prereq-text, receiver )
 &tags.rote.receiver_() [v( d.dt )]=mage.proximus.forces
@@ -1197,7 +1197,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.tune_in_() [v( d.dd )]=
 	1|Computers.Empathy.Science.Praxis.Blessing
 &prerequisite.rote.tune_in_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, tune_in, forces 1 )
+	u( .rote.prereq-check, %0, %1, tune_in, Forces:1 )
 &prereq-text.rote.tune_in_() [v( d.dd )]=
 	u( .rote.prereq-text, tune_in )
 &tags.rote.tune_in_() [v( d.dt )]=mage.proximus.forces
@@ -1205,7 +1205,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.control_electricity_() [v( d.dd )]=
 	2|Crafts.Computers.Science.Praxis.Blessing
 &prerequisite.rote.control_electricity_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, control_electricity, forces 2 )
+	u( .rote.prereq-check, %0, %1, control_electricity, Forces:2 )
 &prereq-text.rote.control_electricity_() [v( d.dd )]=
 	u( .rote.prereq-text, control_electricity )
 &tags.rote.control_electricity_() [v( d.dt )]=mage.proximus.forces
@@ -1213,7 +1213,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.control_fire_() [v( d.dd )]=
 	2|Crafts.Science.Survival.Praxis.Blessing
 &prerequisite.rote.control_fire_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, control_fire, forces 2 )
+	u( .rote.prereq-check, %0, %1, control_fire, Forces:2 )
 &prereq-text.rote.control_fire_() [v( d.dd )]=
 	u( .rote.prereq-text, control_fire )
 &tags.rote.control_fire_() [v( d.dt )]=mage.proximus.forces
@@ -1221,7 +1221,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.control_gravity_() [v( d.dd )]=
 	2|Athletics.Occult.Science.Praxis.Blessing
 &prerequisite.rote.control_gravity_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, control_gravity, forces 2 )
+	u( .rote.prereq-check, %0, %1, control_gravity, Forces:2 )
 &prereq-text.rote.control_gravity_() [v( d.dd )]=
 	u( .rote.prereq-text, control_gravity )
 &tags.rote.control_gravity_() [v( d.dt )]=mage.proximus.forces
@@ -1229,7 +1229,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.control_heat_() [v( d.dd )]=
 	2|Athletics.Science.Survival.Praxis.Blessing
 &prerequisite.rote.control_heat_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, control_heat, forces 2 )
+	u( .rote.prereq-check, %0, %1, control_heat, Forces:2 )
 &prereq-text.rote.control_heat_() [v( d.dd )]=
 	u( .rote.prereq-text, control_heat )
 &tags.rote.control_heat_() [v( d.dt )]=mage.proximus.forces
@@ -1237,7 +1237,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.control_light_() [v( d.dd )]=
 	2|Crafts.Investigation.Science.Praxis.Blessing
 &prerequisite.rote.control_light_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, control_light, forces 2 )
+	u( .rote.prereq-check, %0, %1, control_light, Forces:2 )
 &prereq-text.rote.control_light_() [v( d.dd )]=
 	u( .rote.prereq-text, control_light )
 &tags.rote.control_light_() [v( d.dt )]=mage.proximus.forces
@@ -1245,7 +1245,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.control_sound_() [v( d.dd )]=
 	2|Expression.Stealth.Science.Praxis.Blessing
 &prerequisite.rote.control_sound_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, control_sound, forces 2 )
+	u( .rote.prereq-check, %0, %1, control_sound, Forces:2 )
 &prereq-text.rote.control_sound_() [v( d.dd )]=
 	u( .rote.prereq-text, control_sound )
 &tags.rote.control_sound_() [v( d.dt )]=mage.proximus.forces
@@ -1253,7 +1253,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.control_weather_() [v( d.dd )]=
 	2|Academics.Science.Survival.Praxis.Blessing
 &prerequisite.rote.control_weather_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, control_weather, forces 2 )
+	u( .rote.prereq-check, %0, %1, control_weather, Forces:2 )
 &prereq-text.rote.control_weather_() [v( d.dd )]=
 	u( .rote.prereq-text, control_weather )
 &tags.rote.control_weather_() [v( d.dt )]=mage.proximus.forces
@@ -1261,7 +1261,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.environmental_shield_() [v( d.dd )]=
 	2|Occult.Science.Survival.Praxis.Blessing
 &prerequisite.rote.environmental_shield_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, environmental_shield, forces 2 )
+	u( .rote.prereq-check, %0, %1, environmental_shield, Forces:2 )
 &prereq-text.rote.environmental_shield_() [v( d.dd )]=
 	u( .rote.prereq-text, environmental_shield )
 &tags.rote.environmental_shield_() [v( d.dt )]=mage.proximus.forces
@@ -1269,7 +1269,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.invisibility_() [v( d.dd )]=
 	2|Larceny.Science.Stealth.Praxis.Blessing
 &prerequisite.rote.invisibility_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, invisibility, forces 2 )
+	u( .rote.prereq-check, %0, %1, invisibility, Forces:2 )
 &prereq-text.rote.invisibility_() [v( d.dd )]=
 	u( .rote.prereq-text, invisibility )
 &tags.rote.invisibility_() [v( d.dt )]=mage.proximus.forces
@@ -1277,7 +1277,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.kinetic_blow_() [v( d.dd )]=
 	2|Athletics.Brawl.Science.Praxis.Blessing
 &prerequisite.rote.kinetic_blow_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, kinetic_blow, forces 2 )
+	u( .rote.prereq-check, %0, %1, kinetic_blow, Forces:2 )
 &prereq-text.rote.kinetic_blow_() [v( d.dd )]=
 	u( .rote.prereq-text, kinetic_blow )
 &tags.rote.kinetic_blow_() [v( d.dt )]=mage.proximus.forces
@@ -1285,7 +1285,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.zoom_in_() [v( d.dd )]=
 	2|Investigation.Science.Survival.Praxis.Blessing
 &prerequisite.rote.zoom_in_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, zoom_in, forces 2 )
+	u( .rote.prereq-check, %0, %1, zoom_in, Forces:2 )
 &prereq-text.rote.zoom_in_() [v( d.dd )]=
 	u( .rote.prereq-text, zoom_in )
 &tags.rote.zoom_in_() [v( d.dt )]=mage.proximus.forces
@@ -1293,7 +1293,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.call_lightning_() [v( d.dd )]=
 	3|Athletics.Firearms.Science.Praxis.Blessing
 &prerequisite.rote.call_lightning_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, call_lightning, forces 3 )
+	u( .rote.prereq-check, %0, %1, call_lightning, Forces:3 )
 &prereq-text.rote.call_lightning_() [v( d.dd )]=
 	u( .rote.prereq-text, call_lightning )
 &tags.rote.call_lightning_() [v( d.dt )]=mage.proximus.forces
@@ -1301,7 +1301,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.gravitic_supremacy_() [v( d.dd )]=
 	3|Athletics.Science.Survival.Praxis.Blessing
 &prerequisite.rote.gravitic_supremacy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, gravitic_supremacy, forces 3 )
+	u( .rote.prereq-check, %0, %1, gravitic_supremacy, Forces:3 )
 &prereq-text.rote.gravitic_supremacy_() [v( d.dd )]=
 	u( .rote.prereq-text, gravitic_supremacy )
 &tags.rote.gravitic_supremacy_() [v( d.dt )]=mage.proximus.forces
@@ -1309,7 +1309,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.telekinesis_() [v( d.dd )]=
 	3|Athletics.Brawl.Science.Praxis.Blessing
 &prerequisite.rote.telekinesis_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, telekinesis, forces 3 )
+	u( .rote.prereq-check, %0, %1, telekinesis, Forces:3 )
 &prereq-text.rote.telekinesis_() [v( d.dd )]=
 	u( .rote.prereq-text, telekinesis )
 &tags.rote.telekinesis_() [v( d.dt )]=mage.proximus.forces
@@ -1317,7 +1317,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.telekinetic_strike_() [v( d.dd )]=
 	3|Athletics.Firearms.Science.Praxis.Blessing
 &prerequisite.rote.telekinetic_strike_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, telekinetic_strike, forces 3 )
+	u( .rote.prereq-check, %0, %1, telekinetic_strike, Forces:3 )
 &prereq-text.rote.telekinetic_strike_() [v( d.dd )]=
 	u( .rote.prereq-text, telekinetic_strike )
 &tags.rote.telekinetic_strike_() [v( d.dt )]=mage.proximus.forces
@@ -1325,7 +1325,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.turn_momentum_() [v( d.dd )]=
 	3|Athletics.Firearms.Science.Praxis.Blessing
 &prerequisite.rote.turn_momentum_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, turn_momentum, forces 3 )
+	u( .rote.prereq-check, %0, %1, turn_momentum, Forces:3 )
 &prereq-text.rote.turn_momentum_() [v( d.dd )]=
 	u( .rote.prereq-text, turn_momentum )
 &tags.rote.turn_momentum_() [v( d.dt )]=mage.proximus.forces
@@ -1333,7 +1333,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.velocity_control_() [v( d.dd )]=
 	3|Athletics.Drive.Science.Praxis.Blessing
 &prerequisite.rote.velocity_control_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, velocity_control, forces 3 )
+	u( .rote.prereq-check, %0, %1, velocity_control, Forces:3 )
 &prereq-text.rote.velocity_control_() [v( d.dd )]=
 	u( .rote.prereq-text, velocity_control )
 &tags.rote.velocity_control_() [v( d.dt )]=mage.proximus.forces
@@ -1341,7 +1341,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.electromagnetic_pulse_() [v( d.dd )]=
 	4|Crafts.Computers.Science.Praxis.Blessing
 &prerequisite.rote.electromagnetic_pulse_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, electromagnetic_pulse, forces 4 )
+	u( .rote.prereq-check, %0, %1, electromagnetic_pulse, Forces:4 )
 &prereq-text.rote.electromagnetic_pulse_() [v( d.dd )]=
 	u( .rote.prereq-text, electromagnetic_pulse )
 &tags.rote.electromagnetic_pulse_() [v( d.dt )]=mage.proximus.forces
@@ -1349,7 +1349,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.levitation_() [v( d.dd )]=
 	4|Athletics.Science.Survival.Praxis.Blessing
 &prerequisite.rote.levitation_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, levitation, forces 4 )
+	u( .rote.prereq-check, %0, %1, levitation, Forces:4 )
 &prereq-text.rote.levitation_() [v( d.dd )]=
 	u( .rote.prereq-text, levitation )
 &tags.rote.levitation_() [v( d.dt )]=mage.proximus.forces
@@ -1357,7 +1357,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.rend_friction_() [v( d.dd )]=
 	4|Crafts.Drive.Science.Praxis.Blessing
 &prerequisite.rote.rend_friction_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, rend_friction, forces 4 )
+	u( .rote.prereq-check, %0, %1, rend_friction, Forces:4 )
 &prereq-text.rote.rend_friction_() [v( d.dd )]=
 	u( .rote.prereq-text, rend_friction )
 &tags.rote.rend_friction_() [v( d.dt )]=mage.proximus.forces
@@ -1365,7 +1365,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.thunderbolt_() [v( d.dd )]=
 	4|Athletics.Firearms.Science.Praxis.Blessing
 &prerequisite.rote.thunderbolt_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, thunderbolt, forces 4 )
+	u( .rote.prereq-check, %0, %1, thunderbolt, Forces:4 )
 &prereq-text.rote.thunderbolt_() [v( d.dd )]=
 	u( .rote.prereq-text, thunderbolt )
 &tags.rote.thunderbolt_() [v( d.dt )]=mage.proximus.forces
@@ -1373,7 +1373,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.transform_energy_() [v( d.dd )]=
 	4|Crafts.Occult.Science.Praxis.Blessing
 &prerequisite.rote.transform_energy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, transform_energy, forces 4 )
+	u( .rote.prereq-check, %0, %1, transform_energy, Forces:4 )
 &prereq-text.rote.transform_energy_() [v( d.dd )]=
 	u( .rote.prereq-text, transform_energy )
 &tags.rote.transform_energy_() [v( d.dt )]=mage.proximus.forces
@@ -1381,7 +1381,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.adverse_weather_() [v( d.dd )]=
 	5|Crafts.Occult.Science.Praxis.Blessing
 &prerequisite.rote.adverse_weather_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, adverse_weather, forces 5 )
+	u( .rote.prereq-check, %0, %1, adverse_weather, Forces:5 )
 &prereq-text.rote.adverse_weather_() [v( d.dd )]=
 	u( .rote.prereq-text, adverse_weather )
 &tags.rote.adverse_weather_() [v( d.dt )]=mage.proximus.forces
@@ -1389,7 +1389,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.create_energy_() [v( d.dd )]=
 	5|Crafts.Occult.Science.Praxis.Blessing
 &prerequisite.rote.create_energy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, create_energy, forces 5 )
+	u( .rote.prereq-check, %0, %1, create_energy, Forces:5 )
 &prereq-text.rote.create_energy_() [v( d.dd )]=
 	u( .rote.prereq-text, create_energy )
 &tags.rote.create_energy_() [v( d.dt )]=mage.proximus.forces
@@ -1397,7 +1397,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.eradicate_energy_() [v( d.dd )]=
 	5|Intimidation.Science.Survival.Praxis.Blessing
 &prerequisite.rote.eradicate_energy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, eradicate_energy, forces 5 )
+	u( .rote.prereq-check, %0, %1, eradicate_energy, Forces:5 )
 &prereq-text.rote.eradicate_energy_() [v( d.dd )]=
 	u( .rote.prereq-text, eradicate_energy )
 &tags.rote.eradicate_energy_() [v( d.dt )]=mage.proximus.forces
@@ -1405,7 +1405,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.earthquake_() [v( d.dd )]=
 	5|Crafts.Science.Survival.Praxis.Blessing
 &prerequisite.rote.earthquake_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, earthquake, forces 5 )
+	u( .rote.prereq-check, %0, %1, earthquake, Forces:5 )
 &prereq-text.rote.earthquake_() [v( d.dd )]=
 	u( .rote.prereq-text, earthquake )
 &tags.rote.earthquake_() [v( d.dt )]=mage.proximus.forces
@@ -1415,7 +1415,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.analyze_life_() [v( d.dd )]=
 	1|Animal Ken.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.analyze_life_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, analyze_life, life 1 )
+	u( .rote.prereq-check, %0, %1, analyze_life, Life:1 )
 &prereq-text.rote.analyze_life_() [v( d.dd )]=
 	u( .rote.prereq-text, analyze_life )
 &tags.rote.analyze_life_() [v( d.dt )]=mage.proximus.life
@@ -1423,7 +1423,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.cleanse_the_body_() [v( d.dd )]=
 	1|Athletics.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.cleanse_the_body_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, cleanse_the_body, life 1 )
+	u( .rote.prereq-check, %0, %1, cleanse_the_body, Life:1 )
 &prereq-text.rote.cleanse_the_body_() [v( d.dd )]=
 	u( .rote.prereq-text, cleanse_the_body )
 &tags.rote.cleanse_the_body_() [v( d.dt )]=mage.proximus.life
@@ -1431,7 +1431,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.speak_with_beasts_() [v( d.dd )]=
 	1|Animal Ken.Empathy.Survival.Praxis.Blessing
 &prerequisite.rote.speak_with_beasts_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, speak_with_beasts, life 1 )
+	u( .rote.prereq-check, %0, %1, speak_with_beasts, Life:1 )
 &prereq-text.rote.speak_with_beasts_() [v( d.dd )]=
 	u( .rote.prereq-text, speak_with_beasts )
 &tags.rote.speak_with_beasts_() [v( d.dt )]=mage.proximus.life
@@ -1439,7 +1439,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.web_of_life_() [v( d.dd )]=
 	1|Investigation.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.web_of_life_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, web_of_life, life 1 )
+	u( .rote.prereq-check, %0, %1, web_of_life, Life:1 )
 &prereq-text.rote.web_of_life_() [v( d.dd )]=
 	u( .rote.prereq-text, web_of_life )
 &tags.rote.web_of_life_() [v( d.dt )]=mage.proximus.life
@@ -1447,7 +1447,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.body_control_() [v( d.dd )]=
 	2|Athletics.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.body_control_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, body_control, life 2 )
+	u( .rote.prereq-check, %0, %1, body_control, Life:2 )
 &prereq-text.rote.body_control_() [v( d.dd )]=
 	u( .rote.prereq-text, body_control )
 &tags.rote.body_control_() [v( d.dt )]=mage.proximus.life
@@ -1455,7 +1455,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.control_instincts_() [v( d.dd )]=
 	2|Animal Ken.Intimidation.persuasion.Praxis.Blessing
 &prerequisite.rote.control_instincts_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, control_instincts, life 2 )
+	u( .rote.prereq-check, %0, %1, control_instincts, Life:2 )
 &prereq-text.rote.control_instincts_() [v( d.dd )]=
 	u( .rote.prereq-text, control_instincts )
 &tags.rote.control_instincts_() [v( d.dt )]=mage.proximus.life
@@ -1463,7 +1463,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.heightened_senses_() [v( d.dd )]=
 	2|Empathy.Investigation.Survival.Praxis.Blessing
 &prerequisite.rote.heightened_senses_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, heightened_senses, life 2 )
+	u( .rote.prereq-check, %0, %1, heightened_senses, Life:2 )
 &prereq-text.rote.heightened_senses_() [v( d.dd )]=
 	u( .rote.prereq-text, heightened_senses )
 &tags.rote.heightened_senses_() [v( d.dt )]=mage.proximus.life
@@ -1471,7 +1471,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.lure_and_repel_() [v( d.dd )]=
 	2|Animal Ken.persuasion.Survival.Praxis.Blessing
 &prerequisite.rote.lure_and_repel_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, lure_and_repel, life 2 )
+	u( .rote.prereq-check, %0, %1, lure_and_repel, Life:2 )
 &prereq-text.rote.lure_and_repel_() [v( d.dd )]=
 	u( .rote.prereq-text, lure_and_repel )
 &tags.rote.lure_and_repel_() [v( d.dt )]=mage.proximus.life
@@ -1479,7 +1479,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.mutable_mask_() [v( d.dd )]=
 	2|Medicine.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.mutable_mask_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, mutable_mask, life 2 )
+	u( .rote.prereq-check, %0, %1, mutable_mask, Life:2 )
 &prereq-text.rote.mutable_mask_() [v( d.dd )]=
 	u( .rote.prereq-text, mutable_mask )
 &tags.rote.mutable_mask_() [v( d.dt )]=mage.proximus.life
@@ -1487,7 +1487,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.purge_illness_() [v( d.dd )]=
 	2|Athletics.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.purge_illness_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, purge_illness, life 2 )
+	u( .rote.prereq-check, %0, %1, purge_illness, Life:2 )
 &prereq-text.rote.purge_illness_() [v( d.dd )]=
 	u( .rote.prereq-text, purge_illness )
 &tags.rote.purge_illness_() [v( d.dt )]=mage.proximus.life
@@ -1495,7 +1495,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.bruise_flesh_() [v( d.dd )]=
 	3|Brawl.Intimidation.Medicine.Praxis.Blessing
 &prerequisite.rote.bruise_flesh_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, bruise_flesh, life 3 )
+	u( .rote.prereq-check, %0, %1, bruise_flesh, Life:3 )
 &prereq-text.rote.bruise_flesh_() [v( d.dd )]=
 	u( .rote.prereq-text, bruise_flesh )
 &tags.rote.bruise_flesh_() [v( d.dt )]=mage.proximus.life
@@ -1503,7 +1503,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.degrading_the_form_() [v( d.dd )]=
 	3|Brawl.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.degrading_the_form_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, degrading_the_form, life 3 )
+	u( .rote.prereq-check, %0, %1, degrading_the_form, Life:3 )
 &prereq-text.rote.degrading_the_form_() [v( d.dd )]=
 	u( .rote.prereq-text, degrading_the_form )
 &tags.rote.degrading_the_form_() [v( d.dt )]=mage.proximus.life
@@ -1511,7 +1511,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.honing_the_form_() [v( d.dd )]=
 	3|Athletics.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.honing_the_form_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, honing_the_form, life 3 )
+	u( .rote.prereq-check, %0, %1, honing_the_form, Life:3 )
 &prereq-text.rote.honing_the_form_() [v( d.dd )]=
 	u( .rote.prereq-text, honing_the_form )
 &tags.rote.honing_the_form_() [v( d.dt )]=mage.proximus.life
@@ -1519,7 +1519,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.knit_() [v( d.dd )]=
 	3|Empathy.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.knit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, knit, life 3 )
+	u( .rote.prereq-check, %0, %1, knit, Life:3 )
 &prereq-text.rote.knit_() [v( d.dd )]=
 	u( .rote.prereq-text, knit )
 &tags.rote.knit_() [v( d.dt )]=mage.proximus.life
@@ -1527,7 +1527,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.many_faces_() [v( d.dd )]=
 	3|Medicine.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.many_faces_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, many_faces, life 3 )
+	u( .rote.prereq-check, %0, %1, many_faces, Life:3 )
 &prereq-text.rote.many_faces_() [v( d.dd )]=
 	u( .rote.prereq-text, many_faces )
 &tags.rote.many_faces_() [v( d.dt )]=mage.proximus.life
@@ -1535,7 +1535,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.transform_life_() [v( d.dd )]=
 	3|Animal Ken.Science.Survival.Praxis.Blessing
 &prerequisite.rote.transform_life_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, transform_life, life 3 )
+	u( .rote.prereq-check, %0, %1, transform_life, Life:3 )
 &prereq-text.rote.transform_life_() [v( d.dd )]=
 	u( .rote.prereq-text, transform_life )
 &tags.rote.transform_life_() [v( d.dt )]=mage.proximus.life
@@ -1543,7 +1543,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.accelerate_growth_() [v( d.dd )]=
 	4|Animal Ken.Medicine.Science.Praxis.Blessing
 &prerequisite.rote.accelerate_growth_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, accelerate_growth, life 4 )
+	u( .rote.prereq-check, %0, %1, accelerate_growth, Life:4 )
 &prereq-text.rote.accelerate_growth_() [v( d.dd )]=
 	u( .rote.prereq-text, accelerate_growth )
 &tags.rote.accelerate_growth_() [v( d.dt )]=mage.proximus.life
@@ -1551,7 +1551,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.animal_minion_() [v( d.dd )]=
 	4|Animal Ken.Science.Survival.Praxis.Blessing
 &prerequisite.rote.animal_minion_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, animal_minion, life 4 )
+	u( .rote.prereq-check, %0, %1, animal_minion, Life:4 )
 &prereq-text.rote.animal_minion_() [v( d.dd )]=
 	u( .rote.prereq-text, animal_minion )
 &tags.rote.animal_minion_() [v( d.dt )]=mage.proximus.life
@@ -1559,7 +1559,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.life-force_assault_() [v( d.dd )]=
 	4|Brawl.Intimidation.Medicine.Praxis.Blessing
 &prerequisite.rote.life-force_assault_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, life-force_assault, life 4 )
+	u( .rote.prereq-check, %0, %1, life-force_assault, Life:4 )
 &prereq-text.rote.life-force_assault_() [v( d.dd )]=
 	u( .rote.prereq-text, life-force_assault )
 &tags.rote.life-force_assault_() [v( d.dt )]=mage.proximus.life
@@ -1567,7 +1567,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.mend_() [v( d.dd )]=
 	4|Empathy.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.mend_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, mend, life 4 )
+	u( .rote.prereq-check, %0, %1, mend, Life:4 )
 &prereq-text.rote.mend_() [v( d.dd )]=
 	u( .rote.prereq-text, mend )
 &tags.rote.mend_() [v( d.dt )]=mage.proximus.life
@@ -1575,7 +1575,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.regeneration_() [v( d.dd )]=
 	4|Athletics.Medicine.Survival.Praxis.Blessing
 &prerequisite.rote.regeneration_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, regeneration, life 4 )
+	u( .rote.prereq-check, %0, %1, regeneration, Life:4 )
 &prereq-text.rote.regeneration_() [v( d.dd )]=
 	u( .rote.prereq-text, regeneration )
 &tags.rote.regeneration_() [v( d.dt )]=mage.proximus.life
@@ -1583,7 +1583,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shapechanging_() [v( d.dd )]=
 	4|Animal Ken.Athletics.Science.Praxis.Blessing
 &prerequisite.rote.shapechanging_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shapechanging, life 4 )
+	u( .rote.prereq-check, %0, %1, shapechanging, Life:4 )
 &prereq-text.rote.shapechanging_() [v( d.dd )]=
 	u( .rote.prereq-text, shapechanging )
 &tags.rote.shapechanging_() [v( d.dt )]=mage.proximus.life
@@ -1591,7 +1591,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.create_life_() [v( d.dd )]=
 	5|Medicine.Science.Survival.Praxis.Blessing
 &prerequisite.rote.create_life_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, create_life, life 5 )
+	u( .rote.prereq-check, %0, %1, create_life, Life:5 )
 &prereq-text.rote.create_life_() [v( d.dd )]=
 	u( .rote.prereq-text, create_life )
 &tags.rote.create_life_() [v( d.dt )]=mage.proximus.life
@@ -1599,7 +1599,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.contagion_() [v( d.dd )]=
 	5|Medicine.Occult.Science.Praxis.Blessing
 &prerequisite.rote.contagion_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, contagion, life 5 )
+	u( .rote.prereq-check, %0, %1, contagion, Life:5 )
 &prereq-text.rote.contagion_() [v( d.dd )]=
 	u( .rote.prereq-text, contagion )
 &tags.rote.contagion_() [v( d.dt )]=mage.proximus.life
@@ -1607,7 +1607,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.salt_the_earth_() [v( d.dd )]=
 	5|Medicine.Science.Survival.Praxis.Blessing
 &prerequisite.rote.salt_the_earth_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, salt_the_earth, life 5 )
+	u( .rote.prereq-check, %0, %1, salt_the_earth, Life:5 )
 &prereq-text.rote.salt_the_earth_() [v( d.dd )]=
 	u( .rote.prereq-text, salt_the_earth )
 &tags.rote.salt_the_earth_() [v( d.dt )]=mage.proximus.life
@@ -1617,7 +1617,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.Craftsman's_eye_() [v( d.dd )]=
 	1|Crafts.Investigation.Science.Praxis.Blessing
 &prerequisite.rote.Craftsman's_eye_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, Craftsman's_eye, matter 1 )
+	u( .rote.prereq-check, %0, %1, Craftsman's_eye, Matter:1 )
 &prereq-text.rote.Craftsman's_eye_() [v( d.dd )]=
 	u( .rote.prereq-text, Craftsman's_eye )
 &tags.rote.Craftsman's_eye_() [v( d.dt )]=mage.proximus.matter
@@ -1625,7 +1625,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.detect_substance_() [v( d.dd )]=
 	1|Crafts.Investigation.Science.Praxis.Blessing
 &prerequisite.rote.detect_substance_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, detect_substance, matter 1 )
+	u( .rote.prereq-check, %0, %1, detect_substance, Matter:1 )
 &prereq-text.rote.detect_substance_() [v( d.dd )]=
 	u( .rote.prereq-text, detect_substance )
 &tags.rote.detect_substance_() [v( d.dt )]=mage.proximus.matter
@@ -1633,7 +1633,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.discern_composition_() [v( d.dd )]=
 	1|Crafts.Investigation.Science.Praxis.Blessing
 &prerequisite.rote.discern_composition_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, discern_composition, matter 1 )
+	u( .rote.prereq-check, %0, %1, discern_composition, Matter:1 )
 &prereq-text.rote.discern_composition_() [v( d.dd )]=
 	u( .rote.prereq-text, discern_composition )
 &tags.rote.discern_composition_() [v( d.dt )]=mage.proximus.matter
@@ -1641,7 +1641,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.lodestone_() [v( d.dd )]=
 	1|Crafts.Larceny.Science.Praxis.Blessing
 &prerequisite.rote.lodestone_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, lodestone, matter 1 )
+	u( .rote.prereq-check, %0, %1, lodestone, Matter:1 )
 &prereq-text.rote.lodestone_() [v( d.dd )]=
 	u( .rote.prereq-text, lodestone )
 &tags.rote.lodestone_() [v( d.dt )]=mage.proximus.matter
@@ -1649,7 +1649,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.remote_control_() [v( d.dd )]=
 	1|Crafts.Drive.Intimidation.Praxis.Blessing
 &prerequisite.rote.remote_control_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, remote_control, matter 1 )
+	u( .rote.prereq-check, %0, %1, remote_control, Matter:1 )
 &prereq-text.rote.remote_control_() [v( d.dd )]=
 	u( .rote.prereq-text, remote_control )
 &tags.rote.remote_control_() [v( d.dt )]=mage.proximus.matter
@@ -1657,7 +1657,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.alchemist's_touch_() [v( d.dd )]=
 	2|Crafts.Survival.persuasion.Praxis.Blessing
 &prerequisite.rote.alchemist's_touch_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, alchemist's_touch, matter 2 )
+	u( .rote.prereq-check, %0, %1, alchemist's_touch, Matter:2 )
 &prereq-text.rote.alchemist's_touch_() [v( d.dd )]=
 	u( .rote.prereq-text, alchemist's_touch )
 &tags.rote.alchemist's_touch_() [v( d.dt )]=mage.proximus.matter
@@ -1665,7 +1665,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.find_the_balance_() [v( d.dd )]=
 	2|Crafts.persuasion.Science.Praxis.Blessing
 &prerequisite.rote.find_the_balance_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, find_the_balance, matter 2 )
+	u( .rote.prereq-check, %0, %1, find_the_balance, Matter:2 )
 &prereq-text.rote.find_the_balance_() [v( d.dd )]=
 	u( .rote.prereq-text, find_the_balance )
 &tags.rote.find_the_balance_() [v( d.dt )]=mage.proximus.matter
@@ -1673,7 +1673,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.hidden_hoard_() [v( d.dd )]=
 	2|Larceny.Occult.Subterfuge.Praxis.Blessing
 &prerequisite.rote.hidden_hoard_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, hidden_hoard, matter 2 )
+	u( .rote.prereq-check, %0, %1, hidden_hoard, Matter:2 )
 &prereq-text.rote.hidden_hoard_() [v( d.dd )]=
 	u( .rote.prereq-text, hidden_hoard )
 &tags.rote.hidden_hoard_() [v( d.dt )]=mage.proximus.matter
@@ -1681,7 +1681,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.machine_invisibility_() [v( d.dd )]=
 	2|Larceny.Science.Stealth.Praxis.Blessing
 &prerequisite.rote.machine_invisibility_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, machine_invisibility, matter 2 )
+	u( .rote.prereq-check, %0, %1, machine_invisibility, Matter:2 )
 &prereq-text.rote.machine_invisibility_() [v( d.dd )]=
 	u( .rote.prereq-text, machine_invisibility )
 &tags.rote.machine_invisibility_() [v( d.dt )]=mage.proximus.matter
@@ -1689,7 +1689,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shaping_() [v( d.dd )]=
 	2|Crafts.Expression.persuasion.Praxis.Blessing
 &prerequisite.rote.shaping_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shaping, matter 2 )
+	u( .rote.prereq-check, %0, %1, shaping, Matter:2 )
 &prereq-text.rote.shaping_() [v( d.dd )]=
 	u( .rote.prereq-text, shaping )
 &tags.rote.shaping_() [v( d.dt )]=mage.proximus.matter
@@ -1697,7 +1697,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.alter_conductivity_() [v( d.dd )]=
 	3|Athletics.Crafts.Science.Praxis.Blessing
 &prerequisite.rote.alter_conductivity_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, alter_conductivity, matter 3 )
+	u( .rote.prereq-check, %0, %1, alter_conductivity, Matter:3 )
 &prereq-text.rote.alter_conductivity_() [v( d.dd )]=
 	u( .rote.prereq-text, alter_conductivity )
 &tags.rote.alter_conductivity_() [v( d.dt )]=mage.proximus.matter
@@ -1705,7 +1705,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.alter_integrity_() [v( d.dd )]=
 	3|Crafts.Medicine.Subterfuge.Praxis.Blessing
 &prerequisite.rote.alter_integrity_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, alter_integrity, matter 3 )
+	u( .rote.prereq-check, %0, %1, alter_integrity, Matter:3 )
 &prereq-text.rote.alter_integrity_() [v( d.dd )]=
 	u( .rote.prereq-text, alter_integrity )
 &tags.rote.alter_integrity_() [v( d.dt )]=mage.proximus.matter
@@ -1713,7 +1713,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.crucible_() [v( d.dd )]=
 	3|Crafts.Occult.Science.Praxis.Blessing
 &prerequisite.rote.crucible_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, crucible, matter 3 )
+	u( .rote.prereq-check, %0, %1, crucible, Matter:3 )
 &prereq-text.rote.crucible_() [v( d.dd )]=
 	u( .rote.prereq-text, crucible )
 &tags.rote.crucible_() [v( d.dt )]=mage.proximus.matter
@@ -1721,7 +1721,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.nigredo_and_albedo_() [v( d.dd )]=
 	3|Crafts.Brawl.Medicine.Praxis.Blessing
 &prerequisite.rote.nigredo_and_albedo_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, nigredo_and_albedo, matter 3 )
+	u( .rote.prereq-check, %0, %1, nigredo_and_albedo, Matter:3 )
 &prereq-text.rote.nigredo_and_albedo_() [v( d.dd )]=
 	u( .rote.prereq-text, nigredo_and_albedo )
 &tags.rote.nigredo_and_albedo_() [v( d.dt )]=mage.proximus.matter
@@ -1729,7 +1729,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shrink_and_grow_() [v( d.dd )]=
 	3|Crafts.Expression.Science.Praxis.Blessing
 &prerequisite.rote.shrink_and_grow_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shrink_and_grow, matter 3 )
+	u( .rote.prereq-check, %0, %1, shrink_and_grow, Matter:3 )
 &prereq-text.rote.shrink_and_grow_() [v( d.dd )]=
 	u( .rote.prereq-text, shrink_and_grow )
 &tags.rote.shrink_and_grow_() [v( d.dt )]=mage.proximus.matter
@@ -1737,7 +1737,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.state_change_() [v( d.dd )]=
 	3|Crafts.persuasion.Science.Praxis.Blessing
 &prerequisite.rote.state_change_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, state_change, matter 3 )
+	u( .rote.prereq-check, %0, %1, state_change, Matter:3 )
 &prereq-text.rote.state_change_() [v( d.dd )]=
 	u( .rote.prereq-text, state_change )
 &tags.rote.state_change_() [v( d.dt )]=mage.proximus.matter
@@ -1745,7 +1745,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.windstrike_() [v( d.dd )]=
 	3|Athletics.Brawl.Crafts.Praxis.Blessing
 &prerequisite.rote.windstrike_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, windstrike, matter 3 )
+	u( .rote.prereq-check, %0, %1, windstrike, Matter:3 )
 &prereq-text.rote.windstrike_() [v( d.dd )]=
 	u( .rote.prereq-text, windstrike )
 &tags.rote.windstrike_() [v( d.dt )]=mage.proximus.matter
@@ -1753,7 +1753,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.wonderful_machine_() [v( d.dd )]=
 	3|Crafts.Politics.Science.Praxis.Blessing
 &prerequisite.rote.wonderful_machine_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, wonderful_machine, matter 3 )
+	u( .rote.prereq-check, %0, %1, wonderful_machine, Matter:3 )
 &prereq-text.rote.wonderful_machine_() [v( d.dd )]=
 	u( .rote.prereq-text, wonderful_machine )
 &tags.rote.wonderful_machine_() [v( d.dt )]=mage.proximus.matter
@@ -1761,7 +1761,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ghostwall_() [v( d.dd )]=
 	4|Athletics.Occult.Stealth.Praxis.Blessing
 &prerequisite.rote.ghostwall_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ghostwall, matter 4 )
+	u( .rote.prereq-check, %0, %1, ghostwall, Matter:4 )
 &prereq-text.rote.ghostwall_() [v( d.dd )]=
 	u( .rote.prereq-text, ghostwall )
 &tags.rote.ghostwall_() [v( d.dt )]=mage.proximus.matter
@@ -1769,7 +1769,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.golem_() [v( d.dd )]=
 	4|Crafts.Expression.Occult.Praxis.Blessing
 &prerequisite.rote.golem_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, golem, matter 4 )
+	u( .rote.prereq-check, %0, %1, golem, Matter:4 )
 &prereq-text.rote.golem_() [v( d.dd )]=
 	u( .rote.prereq-text, golem )
 &tags.rote.golem_() [v( d.dt )]=mage.proximus.matter
@@ -1777,7 +1777,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.piercing_earth_() [v( d.dd )]=
 	4|Athletics.Brawl.Crafts.Praxis.Blessing
 &prerequisite.rote.piercing_earth_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, piercing_earth, matter 4 )
+	u( .rote.prereq-check, %0, %1, piercing_earth, Matter:4 )
 &prereq-text.rote.piercing_earth_() [v( d.dd )]=
 	u( .rote.prereq-text, piercing_earth )
 &tags.rote.piercing_earth_() [v( d.dt )]=mage.proximus.matter
@@ -1785,7 +1785,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.transubstantiation_() [v( d.dd )]=
 	4|Crafts.Empathy.Science.Praxis.Blessing
 &prerequisite.rote.transubstantiation_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, transubstantiation, matter 4 )
+	u( .rote.prereq-check, %0, %1, transubstantiation, Matter:4 )
 &prereq-text.rote.transubstantiation_() [v( d.dd )]=
 	u( .rote.prereq-text, transubstantiation )
 &tags.rote.transubstantiation_() [v( d.dt )]=mage.proximus.matter
@@ -1793,7 +1793,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.annihilate_matter_() [v( d.dd )]=
 	5|Athletics.Intimidation.Science.Praxis.Blessing
 &prerequisite.rote.annihilate_matter_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, annihilate_matter, matter 5 )
+	u( .rote.prereq-check, %0, %1, annihilate_matter, Matter:5 )
 &prereq-text.rote.annihilate_matter_() [v( d.dd )]=
 	u( .rote.prereq-text, annihilate_matter )
 &tags.rote.annihilate_matter_() [v( d.dt )]=mage.proximus.matter
@@ -1801,7 +1801,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ex_nihilo_() [v( d.dd )]=
 	5|Crafts.Expression.Science.Praxis.Blessing
 &prerequisite.rote.ex_nihilo_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ex_nihilo, matter 5 )
+	u( .rote.prereq-check, %0, %1, ex_nihilo, Matter:5 )
 &prereq-text.rote.ex_nihilo_() [v( d.dd )]=
 	u( .rote.prereq-text, ex_nihilo )
 &tags.rote.ex_nihilo_() [v( d.dt )]=mage.proximus.matter
@@ -1809,7 +1809,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.self-reparing_machine_() [v( d.dd )]=
 	5|Crafts.Medicine.Occult.Praxis.Blessing
 &prerequisite.rote.self-reparing_machine_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, self-reparing_machine, matter 5 )
+	u( .rote.prereq-check, %0, %1, self-reparing_machine, Matter:5 )
 &prereq-text.rote.self-reparing_machine_() [v( d.dd )]=
 	u( .rote.prereq-text, self-reparing_machine )
 &tags.rote.self-reparing_machine_() [v( d.dt )]=mage.proximus.matter
@@ -1819,7 +1819,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.know_nature_() [v( d.dd )]=
 	1|Empathy.Science.Subterfuge.Praxis.Blessing
 &prerequisite.rote.know_nature_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, know_nature, mind 1 )
+	u( .rote.prereq-check, %0, %1, know_nature, Mind:1 )
 &prereq-text.rote.know_nature_() [v( d.dd )]=
 	u( .rote.prereq-text, know_nature )
 &tags.rote.know_nature_() [v( d.dt )]=mage.proximus.mind
@@ -1827,7 +1827,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.mental_scan_() [v( d.dd )]=
 	1|Empathy.Investigation.Occult.Praxis.Blessing
 &prerequisite.rote.mental_scan_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, mental_scan, mind 1 )
+	u( .rote.prereq-check, %0, %1, mental_scan, Mind:1 )
 &prereq-text.rote.mental_scan_() [v( d.dd )]=
 	u( .rote.prereq-text, mental_scan )
 &tags.rote.mental_scan_() [v( d.dt )]=mage.proximus.mind
@@ -1835,7 +1835,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.perfect_recall_() [v( d.dd )]=
 	1|Academics.Expression.Investigation.Praxis.Blessing
 &prerequisite.rote.perfect_recall_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, perfect_recall, mind 1 )
+	u( .rote.prereq-check, %0, %1, perfect_recall, Mind:1 )
 &prereq-text.rote.perfect_recall_() [v( d.dd )]=
 	u( .rote.prereq-text, perfect_recall )
 &tags.rote.perfect_recall_() [v( d.dt )]=mage.proximus.mind
@@ -1843,7 +1843,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.alter_mental_pattern_() [v( d.dd )]=
 	2|Science.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.alter_mental_pattern_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, alter_mental_pattern, mind 2 )
+	u( .rote.prereq-check, %0, %1, alter_mental_pattern, Mind:2 )
 &prereq-text.rote.alter_mental_pattern_() [v( d.dd )]=
 	u( .rote.prereq-text, alter_mental_pattern )
 &tags.rote.alter_mental_pattern_() [v( d.dt )]=mage.proximus.mind
@@ -1851,7 +1851,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.dream_reaching_() [v( d.dd )]=
 	2|Empathy.Medicine.persuasion.Praxis.Blessing
 &prerequisite.rote.dream_reaching_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, dream_reaching, mind 2 )
+	u( .rote.prereq-check, %0, %1, dream_reaching, Mind:2 )
 &prereq-text.rote.dream_reaching_() [v( d.dd )]=
 	u( .rote.prereq-text, dream_reaching )
 &tags.rote.dream_reaching_() [v( d.dt )]=mage.proximus.mind
@@ -1859,7 +1859,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.emotional_urging_() [v( d.dd )]=
 	2|Empathy.Intimidation.Subterfuge.Praxis.Blessing
 &prerequisite.rote.emotional_urging_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, emotional_urging, mind 2 )
+	u( .rote.prereq-check, %0, %1, emotional_urging, Mind:2 )
 &prereq-text.rote.emotional_urging_() [v( d.dd )]=
 	u( .rote.prereq-text, emotional_urging )
 &tags.rote.emotional_urging_() [v( d.dt )]=mage.proximus.mind
@@ -1867,7 +1867,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.first_impressions_() [v( d.dd )]=
 	2|Crafts.Socialize.Subterfuge.Praxis.Blessing
 &prerequisite.rote.first_impressions_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, first_impressions, mind 2 )
+	u( .rote.prereq-check, %0, %1, first_impressions, Mind:2 )
 &prereq-text.rote.first_impressions_() [v( d.dd )]=
 	u( .rote.prereq-text, first_impressions )
 &tags.rote.first_impressions_() [v( d.dt )]=mage.proximus.mind
@@ -1875,7 +1875,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.incognito_presence_() [v( d.dd )]=
 	2|Empathy.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.incognito_presence_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, incognito_presence, mind 2 )
+	u( .rote.prereq-check, %0, %1, incognito_presence, Mind:2 )
 &prereq-text.rote.incognito_presence_() [v( d.dd )]=
 	u( .rote.prereq-text, incognito_presence )
 &tags.rote.incognito_presence_() [v( d.dt )]=mage.proximus.mind
@@ -1883,7 +1883,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.memory_hole_() [v( d.dd )]=
 	2|Academics.Medicine.Subterfuge.Praxis.Blessing
 &prerequisite.rote.memory_hole_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, memory_hole, mind 2 )
+	u( .rote.prereq-check, %0, %1, memory_hole, Mind:2 )
 &prereq-text.rote.memory_hole_() [v( d.dd )]=
 	u( .rote.prereq-text, memory_hole )
 &tags.rote.memory_hole_() [v( d.dt )]=mage.proximus.mind
@@ -1891,7 +1891,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.mental_shield_() [v( d.dd )]=
 	2|Academics.Intimidation.Survival.Praxis.Blessing
 &prerequisite.rote.mental_shield_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, mental_shield, mind 2 )
+	u( .rote.prereq-check, %0, %1, mental_shield, Mind:2 )
 &prereq-text.rote.mental_shield_() [v( d.dd )]=
 	u( .rote.prereq-text, mental_shield )
 &tags.rote.mental_shield_() [v( d.dt )]=mage.proximus.mind
@@ -1899,7 +1899,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.psychic_domination_() [v( d.dd )]=
 	2|Expression.Intimidation.Subterfuge.Praxis.Blessing
 &prerequisite.rote.psychic_domination_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, psychic_domination, mind 2 )
+	u( .rote.prereq-check, %0, %1, psychic_domination, Mind:2 )
 &prereq-text.rote.psychic_domination_() [v( d.dd )]=
 	u( .rote.prereq-text, psychic_domination )
 &tags.rote.psychic_domination_() [v( d.dt )]=mage.proximus.mind
@@ -1907,7 +1907,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.telepathy_() [v( d.dd )]=
 	2|Crafts.Empathy.Socialize.Praxis.Blessing
 &prerequisite.rote.telepathy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, telepathy, mind 2 )
+	u( .rote.prereq-check, %0, %1, telepathy, Mind:2 )
 &prereq-text.rote.telepathy_() [v( d.dd )]=
 	u( .rote.prereq-text, telepathy )
 &tags.rote.telepathy_() [v( d.dt )]=mage.proximus.mind
@@ -1915,7 +1915,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.augment_mind_() [v( d.dd )]=
 	3|Academics.Expression.Survival.Praxis.Blessing
 &prerequisite.rote.augment_mind_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, augment_mind, mind 3 )
+	u( .rote.prereq-check, %0, %1, augment_mind, Mind:3 )
 &prereq-text.rote.augment_mind_() [v( d.dd )]=
 	u( .rote.prereq-text, augment_mind )
 &tags.rote.augment_mind_() [v( d.dt )]=mage.proximus.mind
@@ -1923,7 +1923,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.clear_thoughts_() [v( d.dd )]=
 	3|Empathy.Intimidation.persuasion.Praxis.Blessing
 &prerequisite.rote.clear_thoughts_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, clear_thoughts, mind 3 )
+	u( .rote.prereq-check, %0, %1, clear_thoughts, Mind:3 )
 &prereq-text.rote.clear_thoughts_() [v( d.dd )]=
 	u( .rote.prereq-text, clear_thoughts )
 &tags.rote.clear_thoughts_() [v( d.dt )]=mage.proximus.mind
@@ -1931,7 +1931,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.enhance_skill_() [v( d.dd )]=
 	3|Academics.Expression.Survival.Praxis.Blessing
 &prerequisite.rote.enhance_skill_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, enhance_skill, mind 3 )
+	u( .rote.prereq-check, %0, %1, enhance_skill, Mind:3 )
 &prereq-text.rote.enhance_skill_() [v( d.dd )]=
 	u( .rote.prereq-text, enhance_skill )
 &tags.rote.enhance_skill_() [v( d.dt )]=mage.proximus.mind
@@ -1939,7 +1939,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.goetic_summons_() [v( d.dd )]=
 	3|persuasion.Socialize.Occult.Praxis.Blessing
 &prerequisite.rote.goetic_summons_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, goetic_summons, mind 3 )
+	u( .rote.prereq-check, %0, %1, goetic_summons, Mind:3 )
 &prereq-text.rote.goetic_summons_() [v( d.dd )]=
 	u( .rote.prereq-text, goetic_summons )
 &tags.rote.goetic_summons_() [v( d.dt )]=mage.proximus.mind
@@ -1947,7 +1947,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.imposter_() [v( d.dd )]=
 	3|persuasion.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.imposter_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, imposter, mind 3 )
+	u( .rote.prereq-check, %0, %1, imposter, Mind:3 )
 &prereq-text.rote.imposter_() [v( d.dd )]=
 	u( .rote.prereq-text, imposter )
 &tags.rote.imposter_() [v( d.dt )]=mage.proximus.mind
@@ -1955,7 +1955,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.psychic_assault_() [v( d.dd )]=
 	3|Academics.Intimidation.Medicine.Praxis.Blessing
 &prerequisite.rote.psychic_assault_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, psychic_assault, mind 3 )
+	u( .rote.prereq-check, %0, %1, psychic_assault, Mind:3 )
 &prereq-text.rote.psychic_assault_() [v( d.dd )]=
 	u( .rote.prereq-text, psychic_assault )
 &tags.rote.psychic_assault_() [v( d.dt )]=mage.proximus.mind
@@ -1963,7 +1963,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.sleep_of_the_just_() [v( d.dd )]=
 	3|Academics.Athletics.Occult.Praxis.Blessing
 &prerequisite.rote.sleep_of_the_just_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, sleep_of_the_just, mind 3 )
+	u( .rote.prereq-check, %0, %1, sleep_of_the_just, Mind:3 )
 &prereq-text.rote.sleep_of_the_just_() [v( d.dd )]=
 	u( .rote.prereq-text, sleep_of_the_just )
 &tags.rote.sleep_of_the_just_() [v( d.dt )]=mage.proximus.mind
@@ -1971,7 +1971,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.read_the_depths_() [v( d.dd )]=
 	3|Empathy.Investigation.Medicine.Praxis.Blessing
 &prerequisite.rote.read_the_depths_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, read_the_depths, mind 3 )
+	u( .rote.prereq-check, %0, %1, read_the_depths, Mind:3 )
 &prereq-text.rote.read_the_depths_() [v( d.dd )]=
 	u( .rote.prereq-text, read_the_depths )
 &tags.rote.read_the_depths_() [v( d.dt )]=mage.proximus.mind
@@ -1979,7 +1979,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.universal_language_() [v( d.dd )]=
 	3|Academics.Investigation.persuasion.Praxis.Blessing
 &prerequisite.rote.universal_language_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, universal_language, mind 3 )
+	u( .rote.prereq-check, %0, %1, universal_language, Mind:3 )
 &prereq-text.rote.universal_language_() [v( d.dd )]=
 	u( .rote.prereq-text, universal_language )
 &tags.rote.universal_language_() [v( d.dt )]=mage.proximus.mind
@@ -1987,7 +1987,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.befuddle_() [v( d.dd )]=
 	4|Intimidation.persuasion.Science.Praxis.Blessing
 &prerequisite.rote.befuddle_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, befuddle, mind 4 )
+	u( .rote.prereq-check, %0, %1, befuddle, Mind:4 )
 &prereq-text.rote.befuddle_() [v( d.dd )]=
 	u( .rote.prereq-text, befuddle )
 &tags.rote.befuddle_() [v( d.dt )]=mage.proximus.mind
@@ -1995,7 +1995,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.gain_skill_() [v( d.dd )]=
 	4|Crafts.Expression.Science.Praxis.Blessing
 &prerequisite.rote.gain_skill_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, gain_skill, mind 4 )
+	u( .rote.prereq-check, %0, %1, gain_skill, Mind:4 )
 &prereq-text.rote.gain_skill_() [v( d.dd )]=
 	u( .rote.prereq-text, gain_skill )
 &tags.rote.gain_skill_() [v( d.dt )]=mage.proximus.mind
@@ -2003,7 +2003,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.hallucination_() [v( d.dd )]=
 	4|Academics.persuasion.Subterfuge.Praxis.Blessing
 &prerequisite.rote.hallucination_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, hallucination, mind 4 )
+	u( .rote.prereq-check, %0, %1, hallucination, Mind:4 )
 &prereq-text.rote.hallucination_() [v( d.dd )]=
 	u( .rote.prereq-text, hallucination )
 &tags.rote.hallucination_() [v( d.dt )]=mage.proximus.mind
@@ -2011,7 +2011,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.mind_flay_() [v( d.dd )]=
 	4|Expression.Intimidation.Science.Praxis.Blessing
 &prerequisite.rote.mind_flay_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, mind_flay, mind 4 )
+	u( .rote.prereq-check, %0, %1, mind_flay, Mind:4 )
 &prereq-text.rote.mind_flay_() [v( d.dd )]=
 	u( .rote.prereq-text, mind_flay )
 &tags.rote.mind_flay_() [v( d.dt )]=mage.proximus.mind
@@ -2019,7 +2019,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.psychic_projection_() [v( d.dd )]=
 	4|Academics.Occult.Socialize.Praxis.Blessing
 &prerequisite.rote.psychic_projection_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, psychic_projection, mind 4 )
+	u( .rote.prereq-check, %0, %1, psychic_projection, Mind:4 )
 &prereq-text.rote.psychic_projection_() [v( d.dd )]=
 	u( .rote.prereq-text, psychic_projection )
 &tags.rote.psychic_projection_() [v( d.dt )]=mage.proximus.mind
@@ -2027,7 +2027,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.psychic_reprogramming_() [v( d.dd )]=
 	4|Intimidation.Medicine.persuasion.Praxis.Blessing
 &prerequisite.rote.psychic_reprogramming_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, psychic_reprogramming, mind 4 )
+	u( .rote.prereq-check, %0, %1, psychic_reprogramming, Mind:4 )
 &prereq-text.rote.psychic_reprogramming_() [v( d.dd )]=
 	u( .rote.prereq-text, psychic_reprogramming )
 &tags.rote.psychic_reprogramming_() [v( d.dt )]=mage.proximus.mind
@@ -2035,7 +2035,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.terrorize_() [v( d.dd )]=
 	4|Expression.Intimidation.Medicine.Praxis.Blessing
 &prerequisite.rote.terrorize_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, terrorize, mind 4 )
+	u( .rote.prereq-check, %0, %1, terrorize, Mind:4 )
 &prereq-text.rote.terrorize_() [v( d.dd )]=
 	u( .rote.prereq-text, terrorize )
 &tags.rote.terrorize_() [v( d.dt )]=mage.proximus.mind
@@ -2043,7 +2043,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.amorality_() [v( d.dd )]=
 	5|Crafts.Empathy.Expression.Praxis.Blessing
 &prerequisite.rote.amorality_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, amorality, mind 5 )
+	u( .rote.prereq-check, %0, %1, amorality, Mind:5 )
 &prereq-text.rote.amorality_() [v( d.dd )]=
 	u( .rote.prereq-text, amorality )
 &tags.rote.amorality_() [v( d.dt )]=mage.proximus.mind
@@ -2051,7 +2051,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.no_exit_() [v( d.dd )]=
 	5|Expression.persuasion.Science.Praxis.Blessing
 &prerequisite.rote.no_exit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, no_exit, mind 5 )
+	u( .rote.prereq-check, %0, %1, no_exit, Mind:5 )
 &prereq-text.rote.no_exit_() [v( d.dd )]=
 	u( .rote.prereq-text, no_exit )
 &tags.rote.no_exit_() [v( d.dt )]=mage.proximus.mind
@@ -2059,7 +2059,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.mind_wipe_() [v( d.dd )]=
 	5|Academics.Intimidation.Occult.Praxis.Blessing
 &prerequisite.rote.mind_wipe_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, mind_wipe, mind 5 )
+	u( .rote.prereq-check, %0, %1, mind_wipe, Mind:5 )
 &prereq-text.rote.mind_wipe_() [v( d.dd )]=
 	u( .rote.prereq-text, mind_wipe )
 &tags.rote.mind_wipe_() [v( d.dt )]=mage.proximus.mind
@@ -2067,7 +2067,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.possession_() [v( d.dd )]=
 	5|Medicine.persuasion.Subterfuge.Praxis.Blessing
 &prerequisite.rote.possession_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, possession, mind 5 )
+	u( .rote.prereq-check, %0, %1, possession, Mind:5 )
 &prereq-text.rote.possession_() [v( d.dd )]=
 	u( .rote.prereq-text, possession )
 &tags.rote.possession_() [v( d.dt )]=mage.proximus.mind
@@ -2075,7 +2075,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.psychic_genesis_() [v( d.dd )]=
 	5|Academics.Expression.Science.Praxis.Blessing
 &prerequisite.rote.psychic_genesis_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, psychic_genesis, mind 5 )
+	u( .rote.prereq-check, %0, %1, psychic_genesis, Mind:5 )
 &prereq-text.rote.psychic_genesis_() [v( d.dd )]=
 	u( .rote.prereq-text, psychic_genesis )
 &tags.rote.psychic_genesis_() [v( d.dt )]=mage.proximus.mind
@@ -2083,7 +2083,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.social_networking_() [v( d.dd )]=
 	5|persuasion.Politics.Socialize.Praxis.Blessing
 &prerequisite.rote.social_networking_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, social_networking, mind 5 )
+	u( .rote.prereq-check, %0, %1, social_networking, Mind:5 )
 &prereq-text.rote.social_networking_() [v( d.dd )]=
 	u( .rote.prereq-text, social_networking )
 &tags.rote.social_networking_() [v( d.dt )]=mage.proximus.mind
@@ -2093,7 +2093,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.dispel_magic_() [v( d.dd )]=
 	1|Athletics.Intimidation.Occult.Praxis.Blessing
 &prerequisite.rote.dispel_magic_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, dispel_magic, prime 1 )
+	u( .rote.prereq-check, %0, %1, dispel_magic, Prime:1 )
 &prereq-text.rote.dispel_magic_() [v( d.dd )]=
 	u( .rote.prereq-text, dispel_magic )
 &tags.rote.dispel_magic_() [v( d.dt )]=mage.proximus.prime
@@ -2101,7 +2101,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.pierce_deception_() [v( d.dd )]=
 	1|Investigation.Medicine.Occult.Praxis.Blessing
 &prerequisite.rote.pierce_deception_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, pierce_deception, prime 1 )
+	u( .rote.prereq-check, %0, %1, pierce_deception, Prime:1 )
 &prereq-text.rote.pierce_deception_() [v( d.dd )]=
 	u( .rote.prereq-text, pierce_deception )
 &tags.rote.pierce_deception_() [v( d.dt )]=mage.proximus.prime
@@ -2109,7 +2109,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.supernal_vision_() [v( d.dd )]=
 	1|Empathy.Occult.Survival.Praxis.Blessing
 &prerequisite.rote.supernal_vision_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, supernal_vision, prime 1 )
+	u( .rote.prereq-check, %0, %1, supernal_vision, Prime:1 )
 &prereq-text.rote.supernal_vision_() [v( d.dd )]=
 	u( .rote.prereq-text, supernal_vision )
 &tags.rote.supernal_vision_() [v( d.dt )]=mage.proximus.prime
@@ -2117,7 +2117,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.sacred_geometry_() [v( d.dd )]=
 	1|Academics.Occult.Survival.Praxis.Blessing
 &prerequisite.rote.sacred_geometry_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, sacred_geometry, prime 1 )
+	u( .rote.prereq-check, %0, %1, sacred_geometry, Prime:1 )
 &prereq-text.rote.sacred_geometry_() [v( d.dd )]=
 	u( .rote.prereq-text, sacred_geometry )
 &tags.rote.sacred_geometry_() [v( d.dt )]=mage.proximus.prime
@@ -2125,7 +2125,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.scribe_grimoire_() [v( d.dd )]=
 	1|Crafts.Expression.Occult.Praxis.Blessing
 &prerequisite.rote.scribe_grimoire_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, scribe_grimoire, prime 1 )
+	u( .rote.prereq-check, %0, %1, scribe_grimoire, Prime:1 )
 &prereq-text.rote.scribe_grimoire_() [v( d.dd )]=
 	u( .rote.prereq-text, scribe_grimoire )
 &tags.rote.scribe_grimoire_() [v( d.dt )]=mage.proximus.prime
@@ -2133,7 +2133,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.word_of_command_() [v( d.dd )]=
 	1|Crafts.Occult.persuasion.Praxis.Blessing
 &prerequisite.rote.word_of_command_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, word_of_command, prime 1 )
+	u( .rote.prereq-check, %0, %1, word_of_command, Prime:1 )
 &prereq-text.rote.word_of_command_() [v( d.dd )]=
 	u( .rote.prereq-text, word_of_command )
 &tags.rote.word_of_command_() [v( d.dt )]=mage.proximus.prime
@@ -2141,7 +2141,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.cloak_nimbus_() [v( d.dd )]=
 	2|Politics.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.cloak_nimbus_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, cloak_nimbus, prime 2 )
+	u( .rote.prereq-check, %0, %1, cloak_nimbus, Prime:2 )
 &prereq-text.rote.cloak_nimbus_() [v( d.dd )]=
 	u( .rote.prereq-text, cloak_nimbus )
 &tags.rote.cloak_nimbus_() [v( d.dt )]=mage.proximus.prime
@@ -2149,7 +2149,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.invisible_runes_() [v( d.dd )]=
 	2|Expression.Intimidation.persuasion.Praxis.Blessing
 &prerequisite.rote.invisible_runes_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, invisible_runes, prime 2 )
+	u( .rote.prereq-check, %0, %1, invisible_runes, Prime:2 )
 &prereq-text.rote.invisible_runes_() [v( d.dd )]=
 	u( .rote.prereq-text, invisible_runes )
 &tags.rote.invisible_runes_() [v( d.dt )]=mage.proximus.prime
@@ -2157,7 +2157,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.supernal_veil_() [v( d.dd )]=
 	2|Occult.Subterfuge.Survival.Praxis.Blessing
 &prerequisite.rote.supernal_veil_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, supernal_veil, prime 2 )
+	u( .rote.prereq-check, %0, %1, supernal_veil, Prime:2 )
 &prereq-text.rote.supernal_veil_() [v( d.dd )]=
 	u( .rote.prereq-text, supernal_veil )
 &tags.rote.supernal_veil_() [v( d.dt )]=mage.proximus.prime
@@ -2165,7 +2165,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.wards_and_signs_() [v( d.dd )]=
 	2|Intimidation.Occult.Survival.Praxis.Blessing
 &prerequisite.rote.wards_and_signs_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, wards_and_signs, prime 2 )
+	u( .rote.prereq-check, %0, %1, wards_and_signs, Prime:2 )
 &prereq-text.rote.wards_and_signs_() [v( d.dd )]=
 	u( .rote.prereq-text, wards_and_signs )
 &tags.rote.wards_and_signs_() [v( d.dt )]=mage.proximus.prime
@@ -2173,7 +2173,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.words_of_truth_() [v( d.dd )]=
 	2|Expression.Intimidation.persuasion.Praxis.Blessing
 &prerequisite.rote.words_of_truth_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, words_of_truth, prime 2 )
+	u( .rote.prereq-check, %0, %1, words_of_truth, Prime:2 )
 &prereq-text.rote.words_of_truth_() [v( d.dd )]=
 	u( .rote.prereq-text, words_of_truth )
 &tags.rote.words_of_truth_() [v( d.dt )]=mage.proximus.prime
@@ -2181,7 +2181,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.aetheric_winds_() [v( d.dd )]=
 	3|Athletics.Expression.Occult.Praxis.Blessing
 &prerequisite.rote.aetheric_winds_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, aetheric_winds, prime 3 )
+	u( .rote.prereq-check, %0, %1, aetheric_winds, Prime:3 )
 &prereq-text.rote.aetheric_winds_() [v( d.dd )]=
 	u( .rote.prereq-text, aetheric_winds )
 &tags.rote.aetheric_winds_() [v( d.dt )]=mage.proximus.prime
@@ -2189,7 +2189,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.channel_mana_() [v( d.dd )]=
 	3|Occult.Politics.Socialize.Praxis.Blessing
 &prerequisite.rote.channel_mana_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, channel_mana, prime 3 )
+	u( .rote.prereq-check, %0, %1, channel_mana, Prime:3 )
 &prereq-text.rote.channel_mana_() [v( d.dd )]=
 	u( .rote.prereq-text, channel_mana )
 &tags.rote.channel_mana_() [v( d.dt )]=mage.proximus.prime
@@ -2197,7 +2197,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.cleanse_pattern_() [v( d.dd )]=
 	3|Investigation.Occult.Stealth.Praxis.Blessing
 &prerequisite.rote.cleanse_pattern_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, cleanse_pattern, prime 3 )
+	u( .rote.prereq-check, %0, %1, cleanse_pattern, Prime:3 )
 &prereq-text.rote.cleanse_pattern_() [v( d.dd )]=
 	u( .rote.prereq-text, cleanse_pattern )
 &tags.rote.cleanse_pattern_() [v( d.dt )]=mage.proximus.prime
@@ -2205,7 +2205,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.display_of_power_() [v( d.dd )]=
 	3|Brawl.Occult.Socialize.Praxis.Blessing
 &prerequisite.rote.display_of_power_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, display_of_power, prime 3 )
+	u( .rote.prereq-check, %0, %1, display_of_power, Prime:3 )
 &prereq-text.rote.display_of_power_() [v( d.dd )]=
 	u( .rote.prereq-text, display_of_power )
 &tags.rote.display_of_power_() [v( d.dt )]=mage.proximus.prime
@@ -2213,7 +2213,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ephemeral_enhancement_() [v( d.dd )]=
 	3|Crafts.Occult.Weaponry.Praxis.Blessing
 &prerequisite.rote.ephemeral_enhancement_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ephemeral_enhancement, prime 3 )
+	u( .rote.prereq-check, %0, %1, ephemeral_enhancement, Prime:3 )
 &prereq-text.rote.ephemeral_enhancement_() [v( d.dd )]=
 	u( .rote.prereq-text, ephemeral_enhancement )
 &tags.rote.ephemeral_enhancement_() [v( d.dt )]=mage.proximus.prime
@@ -2221,7 +2221,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.geomancy_() [v( d.dd )]=
 	3|Academics.Expression.Occult.Praxis.Blessing
 &prerequisite.rote.geomancy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, geomancy, prime 3 )
+	u( .rote.prereq-check, %0, %1, geomancy, Prime:3 )
 &prereq-text.rote.geomancy_() [v( d.dd )]=
 	u( .rote.prereq-text, geomancy )
 &tags.rote.geomancy_() [v( d.dt )]=mage.proximus.prime
@@ -2229,7 +2229,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.platonic_form_() [v( d.dd )]=
 	3|Academics.Crafts.Expression.Praxis.Blessing
 &prerequisite.rote.platonic_form_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, platonic_form, prime 3 )
+	u( .rote.prereq-check, %0, %1, platonic_form, Prime:3 )
 &prereq-text.rote.platonic_form_() [v( d.dd )]=
 	u( .rote.prereq-text, platonic_form )
 &tags.rote.platonic_form_() [v( d.dt )]=mage.proximus.prime
@@ -2237,7 +2237,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.stealing_fire_() [v( d.dd )]=
 	3|Expression.Larceny.persuasion.Praxis.Blessing
 &prerequisite.rote.stealing_fire_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, stealing_fire, prime 3 )
+	u( .rote.prereq-check, %0, %1, stealing_fire, Prime:3 )
 &prereq-text.rote.stealing_fire_() [v( d.dd )]=
 	u( .rote.prereq-text, stealing_fire )
 &tags.rote.stealing_fire_() [v( d.dt )]=mage.proximus.prime
@@ -2245,7 +2245,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.apocalypse_() [v( d.dd )]=
 	4|Occult.persuasion.Socialize.Praxis.Blessing
 &prerequisite.rote.apocalypse_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, apocalypse, prime 4 )
+	u( .rote.prereq-check, %0, %1, apocalypse, Prime:4 )
 &prereq-text.rote.apocalypse_() [v( d.dd )]=
 	u( .rote.prereq-text, apocalypse )
 &tags.rote.apocalypse_() [v( d.dt )]=mage.proximus.prime
@@ -2253,7 +2253,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.celestial_fire_() [v( d.dd )]=
 	4|Athletics.Expression.Occult.Praxis.Blessing
 &prerequisite.rote.celestial_fire_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, celestial_fire, prime 4 )
+	u( .rote.prereq-check, %0, %1, celestial_fire, Prime:4 )
 &prereq-text.rote.celestial_fire_() [v( d.dd )]=
 	u( .rote.prereq-text, celestial_fire )
 &tags.rote.celestial_fire_() [v( d.dt )]=mage.proximus.prime
@@ -2261,7 +2261,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.destroy_tass_() [v( d.dd )]=
 	4|Brawl.Intimidation.Occult.Praxis.Blessing
 &prerequisite.rote.destroy_tass_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, destroy_tass, prime 4 )
+	u( .rote.prereq-check, %0, %1, destroy_tass, Prime:4 )
 &prereq-text.rote.destroy_tass_() [v( d.dd )]=
 	u( .rote.prereq-text, destroy_tass )
 &tags.rote.destroy_tass_() [v( d.dt )]=mage.proximus.prime
@@ -2269,7 +2269,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.hallow_dance_() [v( d.dd )]=
 	4|Expression.Occult.Survival.Praxis.Blessing
 &prerequisite.rote.hallow_dance_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, hallow_dance, prime 4 )
+	u( .rote.prereq-check, %0, %1, hallow_dance, Prime:4 )
 &prereq-text.rote.hallow_dance_() [v( d.dd )]=
 	u( .rote.prereq-text, hallow_dance )
 &tags.rote.hallow_dance_() [v( d.dt )]=mage.proximus.prime
@@ -2277,7 +2277,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.supernal_dispellation_() [v( d.dd )]=
 	4|Athletics.Intimidation.Occult.Praxis.Blessing
 &prerequisite.rote.supernal_dispellation_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, supernal_dispellation, prime 4 )
+	u( .rote.prereq-check, %0, %1, supernal_dispellation, Prime:4 )
 &prereq-text.rote.supernal_dispellation_() [v( d.dd )]=
 	u( .rote.prereq-text, supernal_dispellation )
 &tags.rote.supernal_dispellation_() [v( d.dt )]=mage.proximus.prime
@@ -2285,7 +2285,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.blasphemy_() [v( d.dd )]=
 	5|Athletics.Occult.Survival.Praxis.Blessing
 &prerequisite.rote.blasphemy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, blasphemy, prime 5 )
+	u( .rote.prereq-check, %0, %1, blasphemy, Prime:5 )
 &prereq-text.rote.blasphemy_() [v( d.dd )]=
 	u( .rote.prereq-text, blasphemy )
 &tags.rote.blasphemy_() [v( d.dt )]=mage.proximus.prime
@@ -2293,7 +2293,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.create_truth_() [v( d.dd )]=
 	5|Expression.Occult.persuasion.Praxis.Blessing
 &prerequisite.rote.create_truth_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, create_truth, prime 5 )
+	u( .rote.prereq-check, %0, %1, create_truth, Prime:5 )
 &prereq-text.rote.create_truth_() [v( d.dd )]=
 	u( .rote.prereq-text, create_truth )
 &tags.rote.create_truth_() [v( d.dt )]=mage.proximus.prime
@@ -2301,7 +2301,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.eidolon_() [v( d.dd )]=
 	5|Academics.Crafts.Occult.Praxis.Blessing
 &prerequisite.rote.eidolon_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, eidolon, prime 5 )
+	u( .rote.prereq-check, %0, %1, eidolon, Prime:5 )
 &prereq-text.rote.eidolon_() [v( d.dd )]=
 	u( .rote.prereq-text, eidolon )
 &tags.rote.eidolon_() [v( d.dt )]=mage.proximus.prime
@@ -2309,7 +2309,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.forge_purpose_() [v( d.dd )]=
 	5|Empathy.Expression.Medicine.Praxis.Blessing
 &prerequisite.rote.forge_purpose_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, forge_purpose, prime 5 )
+	u( .rote.prereq-check, %0, %1, forge_purpose, Prime:5 )
 &prereq-text.rote.forge_purpose_() [v( d.dd )]=
 	u( .rote.prereq-text, forge_purpose )
 &tags.rote.forge_purpose_() [v( d.dt )]=mage.proximus.prime
@@ -2317,7 +2317,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.word_of_unmaking_() [v( d.dd )]=
 	5|Intimidation.Occult.Weaponry.Praxis.Blessing
 &prerequisite.rote.word_of_unmaking_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, word_of_unmaking, prime 5 )
+	u( .rote.prereq-check, %0, %1, word_of_unmaking, Prime:5 )
 &prereq-text.rote.word_of_unmaking_() [v( d.dd )]=
 	u( .rote.prereq-text, word_of_unmaking )
 &tags.rote.word_of_unmaking_() [v( d.dt )]=mage.proximus.prime
@@ -2327,7 +2327,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.correspondence_() [v( d.dd )]=
 	1|Academics.Empathy.Medicine.Praxis.Blessing
 &prerequisite.rote.correspondence_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, correspondence, space 1 )
+	u( .rote.prereq-check, %0, %1, correspondence, Space:1 )
 &prereq-text.rote.correspondence_() [v( d.dd )]=
 	u( .rote.prereq-text, correspondence )
 &tags.rote.correspondence_() [v( d.dt )]=mage.proximus.space
@@ -2335,7 +2335,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ground-eater_() [v( d.dd )]=
 	1|Athletics.Science.Survival.Praxis.Blessing
 &prerequisite.rote.ground-eater_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ground-eater, space 1 )
+	u( .rote.prereq-check, %0, %1, ground-eater, Space:1 )
 &prereq-text.rote.ground-eater_() [v( d.dd )]=
 	u( .rote.prereq-text, ground-eater )
 &tags.rote.ground-eater_() [v( d.dt )]=mage.proximus.space
@@ -2343,7 +2343,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.isolation_() [v( d.dd )]=
 	1|Academics.Intimidation.Subterfuge.Praxis.Blessing
 &prerequisite.rote.isolation_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, isolation, space 1 )
+	u( .rote.prereq-check, %0, %1, isolation, Space:1 )
 &prereq-text.rote.isolation_() [v( d.dd )]=
 	u( .rote.prereq-text, isolation )
 &tags.rote.isolation_() [v( d.dt )]=mage.proximus.space
@@ -2351,7 +2351,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.locate_object_() [v( d.dd )]=
 	1|Empathy.Occult.Science.Praxis.Blessing
 &prerequisite.rote.locate_object_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, locate_object, space 1 )
+	u( .rote.prereq-check, %0, %1, locate_object, Space:1 )
 &prereq-text.rote.locate_object_() [v( d.dd )]=
 	u( .rote.prereq-text, locate_object )
 &tags.rote.locate_object_() [v( d.dt )]=mage.proximus.space
@@ -2359,7 +2359,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.the_outward_and_inward_eye_() [v( d.dd )]=
 	1|Firearms.Investigation.Occult.Praxis.Blessing
 &prerequisite.rote.the_outward_and_inward_eye_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, the_outward_and_inward_eye, space 1 )
+	u( .rote.prereq-check, %0, %1, the_outward_and_inward_eye, Space:1 )
 &prereq-text.rote.the_outward_and_inward_eye_() [v( d.dd )]=
 	u( .rote.prereq-text, the_outward_and_inward_eye )
 &tags.rote.the_outward_and_inward_eye_() [v( d.dt )]=mage.proximus.space
@@ -2367,7 +2367,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.borrow_threads_() [v( d.dd )]=
 	2|Larceny.Occult.Subterfuge.Praxis.Blessing
 &prerequisite.rote.borrow_threads_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, borrow_threads, space 2 )
+	u( .rote.prereq-check, %0, %1, borrow_threads, Space:2 )
 &prereq-text.rote.borrow_threads_() [v( d.dd )]=
 	u( .rote.prereq-text, borrow_threads )
 &tags.rote.borrow_threads_() [v( d.dt )]=mage.proximus.space
@@ -2375,7 +2375,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.break_boundary_() [v( d.dd )]=
 	2|Athletics.Larceny.persuasion.Praxis.Blessing
 &prerequisite.rote.break_boundary_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, break_boundary, space 2 )
+	u( .rote.prereq-check, %0, %1, break_boundary, Space:2 )
 &prereq-text.rote.break_boundary_() [v( d.dd )]=
 	u( .rote.prereq-text, break_boundary )
 &tags.rote.break_boundary_() [v( d.dt )]=mage.proximus.space
@@ -2383,7 +2383,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.lying_maps_() [v( d.dd )]=
 	2|Academics.Politics.Survival.Praxis.Blessing
 &prerequisite.rote.lying_maps_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, lying_maps, space 2 )
+	u( .rote.prereq-check, %0, %1, lying_maps, Space:2 )
 &prereq-text.rote.lying_maps_() [v( d.dd )]=
 	u( .rote.prereq-text, lying_maps )
 &tags.rote.lying_maps_() [v( d.dt )]=mage.proximus.space
@@ -2391,7 +2391,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.scrying_() [v( d.dd )]=
 	2|Computers.Occult.Subterfuge.Praxis.Blessing
 &prerequisite.rote.scrying_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, scrying, space 2 )
+	u( .rote.prereq-check, %0, %1, scrying, Space:2 )
 &prereq-text.rote.scrying_() [v( d.dd )]=
 	u( .rote.prereq-text, scrying )
 &tags.rote.scrying_() [v( d.dt )]=mage.proximus.space
@@ -2399,7 +2399,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.secret_door_() [v( d.dd )]=
 	2|Occult.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.secret_door_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, secret_door, space 2 )
+	u( .rote.prereq-check, %0, %1, secret_door, Space:2 )
 &prereq-text.rote.secret_door_() [v( d.dd )]=
 	u( .rote.prereq-text, secret_door )
 &tags.rote.secret_door_() [v( d.dt )]=mage.proximus.space
@@ -2407,7 +2407,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.veil_sympathy_() [v( d.dd )]=
 	2|Politics.Subterfuge.Survival.Praxis.Blessing
 &prerequisite.rote.veil_sympathy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, veil_sympathy, space 2 )
+	u( .rote.prereq-check, %0, %1, veil_sympathy, Space:2 )
 &prereq-text.rote.veil_sympathy_() [v( d.dd )]=
 	u( .rote.prereq-text, veil_sympathy )
 &tags.rote.veil_sympathy_() [v( d.dt )]=mage.proximus.space
@@ -2415,7 +2415,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ban_() [v( d.dd )]=
 	3|Intimidation.Science.Stealth.Praxis.Blessing
 &prerequisite.rote.ban_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ban, space 3 )
+	u( .rote.prereq-check, %0, %1, ban, Space:3 )
 &prereq-text.rote.ban_() [v( d.dd )]=
 	u( .rote.prereq-text, ban )
 &tags.rote.ban_() [v( d.dt )]=mage.proximus.space
@@ -2423,7 +2423,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.co-location_() [v( d.dd )]=
 	3|Athletics.Firearms.Science.Praxis.Blessing
 &prerequisite.rote.co-location_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, co-location, space 3 )
+	u( .rote.prereq-check, %0, %1, co-location, Space:3 )
 &prereq-text.rote.co-location_() [v( d.dd )]=
 	u( .rote.prereq-text, co-location )
 &tags.rote.co-location_() [v( d.dt )]=mage.proximus.space
@@ -2431,7 +2431,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.perfect_sympathy_() [v( d.dd )]=
 	3|Academics.Empathy.Larceny.Praxis.Blessing
 &prerequisite.rote.perfect_sympathy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, perfect_sympathy, space 3 )
+	u( .rote.prereq-check, %0, %1, perfect_sympathy, Space:3 )
 &prereq-text.rote.perfect_sympathy_() [v( d.dd )]=
 	u( .rote.prereq-text, perfect_sympathy )
 &tags.rote.perfect_sympathy_() [v( d.dt )]=mage.proximus.space
@@ -2439,7 +2439,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.warp_() [v( d.dd )]=
 	3|Athletics.Brawl.Medicine.Praxis.Blessing
 &prerequisite.rote.warp_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, warp, space 3 )
+	u( .rote.prereq-check, %0, %1, warp, Space:3 )
 &prereq-text.rote.warp_() [v( d.dd )]=
 	u( .rote.prereq-text, warp )
 &tags.rote.warp_() [v( d.dt )]=mage.proximus.space
@@ -2447,7 +2447,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.web-weaver_() [v( d.dd )]=
 	3|Crafts.Empathy.persuasion.Praxis.Blessing
 &prerequisite.rote.web-weaver_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, web-weaver, space 3 )
+	u( .rote.prereq-check, %0, %1, web-weaver, Space:3 )
 &prereq-text.rote.web-weaver_() [v( d.dd )]=
 	u( .rote.prereq-text, web-weaver )
 &tags.rote.web-weaver_() [v( d.dt )]=mage.proximus.space
@@ -2455,7 +2455,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.alter_direction_() [v( d.dd )]=
 	4|Academics.Firearms.persuasion.Praxis.Blessing
 &prerequisite.rote.alter_direction_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, alter_direction, space 4 )
+	u( .rote.prereq-check, %0, %1, alter_direction, Space:4 )
 &prereq-text.rote.alter_direction_() [v( d.dd )]=
 	u( .rote.prereq-text, alter_direction )
 &tags.rote.alter_direction_() [v( d.dt )]=mage.proximus.space
@@ -2463,7 +2463,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.collapse_() [v( d.dd )]=
 	4|Academics.Firearms.Intimidation.Praxis.Blessing
 &prerequisite.rote.collapse_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, collapse, space 4 )
+	u( .rote.prereq-check, %0, %1, collapse, Space:4 )
 &prereq-text.rote.collapse_() [v( d.dd )]=
 	u( .rote.prereq-text, collapse )
 &tags.rote.collapse_() [v( d.dt )]=mage.proximus.space
@@ -2471,7 +2471,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.cut_threads_() [v( d.dd )]=
 	4|persuasion.Politics.Weaponry.Praxis.Blessing
 &prerequisite.rote.cut_threads_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, cut_threads, space 4 )
+	u( .rote.prereq-check, %0, %1, cut_threads, Space:4 )
 &prereq-text.rote.cut_threads_() [v( d.dd )]=
 	u( .rote.prereq-text, cut_threads )
 &tags.rote.cut_threads_() [v( d.dt )]=mage.proximus.space
@@ -2479,7 +2479,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.secret_room_() [v( d.dd )]=
 	4|Expression.Science.Survival.Praxis.Blessing
 &prerequisite.rote.secret_room_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, secret_room, space 4 )
+	u( .rote.prereq-check, %0, %1, secret_room, Space:4 )
 &prereq-text.rote.secret_room_() [v( d.dd )]=
 	u( .rote.prereq-text, secret_room )
 &tags.rote.secret_room_() [v( d.dt )]=mage.proximus.space
@@ -2487,7 +2487,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.teleportation_() [v( d.dd )]=
 	4|Larceny.persuasion.Science.Praxis.Blessing
 &prerequisite.rote.teleportation_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, teleportation, space 4 )
+	u( .rote.prereq-check, %0, %1, teleportation, Space:4 )
 &prereq-text.rote.teleportation_() [v( d.dd )]=
 	u( .rote.prereq-text, teleportation )
 &tags.rote.teleportation_() [v( d.dt )]=mage.proximus.space
@@ -2495,7 +2495,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.create_sympathy_() [v( d.dd )]=
 	5|Empathy.persuasion.Politics.Praxis.Blessing
 &prerequisite.rote.create_sympathy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, create_sympathy, space 5 )
+	u( .rote.prereq-check, %0, %1, create_sympathy, Space:5 )
 &prereq-text.rote.create_sympathy_() [v( d.dd )]=
 	u( .rote.prereq-text, create_sympathy )
 &tags.rote.create_sympathy_() [v( d.dt )]=mage.proximus.space
@@ -2503,7 +2503,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.forge_no_chains_() [v( d.dd )]=
 	5|Occult.Subterfuge.Survival.Praxis.Blessing
 &prerequisite.rote.forge_no_chains_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, forge_no_chains, space 5 )
+	u( .rote.prereq-check, %0, %1, forge_no_chains, Space:5 )
 &prereq-text.rote.forge_no_chains_() [v( d.dd )]=
 	u( .rote.prereq-text, forge_no_chains )
 &tags.rote.forge_no_chains_() [v( d.dt )]=mage.proximus.space
@@ -2511,7 +2511,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.pocket_dimension_() [v( d.dd )]=
 	5|Crafts.Expression.Survival.Praxis.Blessing
 &prerequisite.rote.pocket_dimension_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, pocket_dimension, space 5 )
+	u( .rote.prereq-check, %0, %1, pocket_dimension, Space:5 )
 &prereq-text.rote.pocket_dimension_() [v( d.dd )]=
 	u( .rote.prereq-text, pocket_dimension )
 &tags.rote.pocket_dimension_() [v( d.dt )]=mage.proximus.space
@@ -2519,7 +2519,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.quarantine_() [v( d.dd )]=
 	5|Academics.Larceny.Socialize.Praxis.Blessing
 &prerequisite.rote.quarantine_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, quarantine, space 5 )
+	u( .rote.prereq-check, %0, %1, quarantine, Space:5 )
 &prereq-text.rote.quarantine_() [v( d.dd )]=
 	u( .rote.prereq-text, quarantine )
 &tags.rote.quarantine_() [v( d.dt )]=mage.proximus.space
@@ -2529,7 +2529,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.coaxing_the_spirit_() [v( d.dd )]=
 	1|Occult.Survival.Socialize.Praxis.Blessing
 &prerequisite.rote.coaxing_the_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, coaxing_the_spirit, spirit 1 )
+	u( .rote.prereq-check, %0, %1, coaxing_the_spirit, Spirit:1 )
 &prereq-text.rote.coaxing_the_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, coaxing_the_spirit )
 &tags.rote.coaxing_the_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2537,7 +2537,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.exorcist's_eye_() [v( d.dd )]=
 	1|Occult.Survival.Socialize.Praxis.Blessing
 &prerequisite.rote.exorcist's_eye_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, exorcist's_eye, spirit 1 )
+	u( .rote.prereq-check, %0, %1, exorcist's_eye, Spirit:1 )
 &prereq-text.rote.exorcist's_eye_() [v( d.dd )]=
 	u( .rote.prereq-text, exorcist's_eye )
 &tags.rote.exorcist's_eye_() [v( d.dt )]=mage.proximus.spirit
@@ -2545,7 +2545,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.gremlins_() [v( d.dd )]=
 	1|Larceny.Politics.Subterfuge.Praxis.Blessing
 &prerequisite.rote.gremlins_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, gremlins, spirit 1 )
+	u( .rote.prereq-check, %0, %1, gremlins, Spirit:1 )
 &prereq-text.rote.gremlins_() [v( d.dd )]=
 	u( .rote.prereq-text, gremlins )
 &tags.rote.gremlins_() [v( d.dt )]=mage.proximus.spirit
@@ -2553,7 +2553,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.invoke_bane_() [v( d.dd )]=
 	1|Brawl.Intimidation.Occult.Praxis.Blessing
 &prerequisite.rote.invoke_bane_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, invoke_bane, spirit 1 )
+	u( .rote.prereq-check, %0, %1, invoke_bane, Spirit:1 )
 &prereq-text.rote.invoke_bane_() [v( d.dd )]=
 	u( .rote.prereq-text, invoke_bane )
 &tags.rote.invoke_bane_() [v( d.dt )]=mage.proximus.spirit
@@ -2561,7 +2561,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.know_spirit_() [v( d.dd )]=
 	1|Academics.Brawl.Socialize.Praxis.Blessing
 &prerequisite.rote.know_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, know_spirit, spirit 1 )
+	u( .rote.prereq-check, %0, %1, know_spirit, Spirit:1 )
 &prereq-text.rote.know_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, know_spirit )
 &tags.rote.know_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2569,7 +2569,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.cap_the_well_() [v( d.dd )]=
 	2|Politics.Survival.persuasion.Praxis.Blessing
 &prerequisite.rote.cap_the_well_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, cap_the_well, spirit 2 )
+	u( .rote.prereq-check, %0, %1, cap_the_well, Spirit:2 )
 &prereq-text.rote.cap_the_well_() [v( d.dd )]=
 	u( .rote.prereq-text, cap_the_well )
 &tags.rote.cap_the_well_() [v( d.dt )]=mage.proximus.spirit
@@ -2577,7 +2577,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.channel_essence_() [v( d.dd )]=
 	2|Occult.persuasion.Survival.Praxis.Blessing
 &prerequisite.rote.channel_essence_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, channel_essence, spirit 2 )
+	u( .rote.prereq-check, %0, %1, channel_essence, Spirit:2 )
 &prereq-text.rote.channel_essence_() [v( d.dd )]=
 	u( .rote.prereq-text, channel_essence )
 &tags.rote.channel_essence_() [v( d.dt )]=mage.proximus.spirit
@@ -2585,7 +2585,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.command_spirit_() [v( d.dd )]=
 	2|Medicine.Athletics.persuasion.Praxis.Blessing
 &prerequisite.rote.command_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, command_spirit, spirit 2 )
+	u( .rote.prereq-check, %0, %1, command_spirit, Spirit:2 )
 &prereq-text.rote.command_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, command_spirit )
 &tags.rote.command_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2593,7 +2593,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ephemeral_shield_() [v( d.dd )]=
 	2|Animal Ken.Medicine.Stealth.Praxis.Blessing
 &prerequisite.rote.ephemeral_shield_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ephemeral_shield, spirit 2 )
+	u( .rote.prereq-check, %0, %1, ephemeral_shield, Spirit:2 )
 &prereq-text.rote.ephemeral_shield_() [v( d.dd )]=
 	u( .rote.prereq-text, ephemeral_shield )
 &tags.rote.ephemeral_shield_() [v( d.dt )]=mage.proximus.spirit
@@ -2601,7 +2601,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.gossamer_touch_() [v( d.dd )]=
 	2|Brawl.Crafts.Intimidation.Praxis.Blessing
 &prerequisite.rote.gossamer_touch_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, gossamer_touch, spirit 2 )
+	u( .rote.prereq-check, %0, %1, gossamer_touch, Spirit:2 )
 &prereq-text.rote.gossamer_touch_() [v( d.dd )]=
 	u( .rote.prereq-text, gossamer_touch )
 &tags.rote.gossamer_touch_() [v( d.dt )]=mage.proximus.spirit
@@ -2609,7 +2609,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.opener_of_the_way_() [v( d.dd )]=
 	2|Athletics.Computers.Socialize.Praxis.Blessing
 &prerequisite.rote.opener_of_the_way_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, opener_of_the_way, spirit 2 )
+	u( .rote.prereq-check, %0, %1, opener_of_the_way, Spirit:2 )
 &prereq-text.rote.opener_of_the_way_() [v( d.dd )]=
 	u( .rote.prereq-text, opener_of_the_way )
 &tags.rote.opener_of_the_way_() [v( d.dt )]=mage.proximus.spirit
@@ -2617,7 +2617,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shadow_walk_() [v( d.dd )]=
 	2|Occult.Stealth.Streetwise.Praxis.Blessing
 &prerequisite.rote.shadow_walk_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shadow_walk, spirit 2 )
+	u( .rote.prereq-check, %0, %1, shadow_walk, Spirit:2 )
 &prereq-text.rote.shadow_walk_() [v( d.dd )]=
 	u( .rote.prereq-text, shadow_walk )
 &tags.rote.shadow_walk_() [v( d.dt )]=mage.proximus.spirit
@@ -2625,7 +2625,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.slumber_() [v( d.dd )]=
 	2|Expression.Occult.Weaponry.Praxis.Blessing
 &prerequisite.rote.slumber_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, slumber, spirit 2 )
+	u( .rote.prereq-check, %0, %1, slumber, Spirit:2 )
 &prereq-text.rote.slumber_() [v( d.dd )]=
 	u( .rote.prereq-text, slumber )
 &tags.rote.slumber_() [v( d.dt )]=mage.proximus.spirit
@@ -2633,7 +2633,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.bolster_spirit_() [v( d.dd )]=
 	3|Medicine.Occult.Expression.Praxis.Blessing
 &prerequisite.rote.bolster_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, bolster_spirit, spirit 3 )
+	u( .rote.prereq-check, %0, %1, bolster_spirit, Spirit:3 )
 &prereq-text.rote.bolster_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, bolster_spirit )
 &tags.rote.bolster_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2641,7 +2641,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.erode_resonance_() [v( d.dd )]=
 	3|Crafts.Brawl.Intimidation.Praxis.Blessing
 &prerequisite.rote.erode_resonance_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, erode_resonance, spirit 3 )
+	u( .rote.prereq-check, %0, %1, erode_resonance, Spirit:3 )
 &prereq-text.rote.erode_resonance_() [v( d.dd )]=
 	u( .rote.prereq-text, erode_resonance )
 &tags.rote.erode_resonance_() [v( d.dt )]=mage.proximus.spirit
@@ -2649,7 +2649,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.howl_from_beyond_() [v( d.dd )]=
 	3|Expression.Firearms.Medicine.Praxis.Blessing
 &prerequisite.rote.howl_from_beyond_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, howl_from_beyond, spirit 3 )
+	u( .rote.prereq-check, %0, %1, howl_from_beyond, Spirit:3 )
 &prereq-text.rote.howl_from_beyond_() [v( d.dd )]=
 	u( .rote.prereq-text, howl_from_beyond )
 &tags.rote.howl_from_beyond_() [v( d.dt )]=mage.proximus.spirit
@@ -2657,7 +2657,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.place_of_power_() [v( d.dd )]=
 	3|Academics.Expression.Survival.Praxis.Blessing
 &prerequisite.rote.place_of_power_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, place_of_power, spirit 3 )
+	u( .rote.prereq-check, %0, %1, place_of_power, Spirit:3 )
 &prereq-text.rote.place_of_power_() [v( d.dd )]=
 	u( .rote.prereq-text, place_of_power )
 &tags.rote.place_of_power_() [v( d.dt )]=mage.proximus.spirit
@@ -2665,7 +2665,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.reaching_() [v( d.dd )]=
 	3|Athletics.Medicine.Socialize.Praxis.Blessing
 &prerequisite.rote.reaching_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, reaching, spirit 3 )
+	u( .rote.prereq-check, %0, %1, reaching, Spirit:3 )
 &prereq-text.rote.reaching_() [v( d.dd )]=
 	u( .rote.prereq-text, reaching )
 &tags.rote.reaching_() [v( d.dt )]=mage.proximus.spirit
@@ -2673,7 +2673,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.rouse_spirit_() [v( d.dd )]=
 	3|Athletics.Expression.Investigation.Praxis.Blessing
 &prerequisite.rote.rouse_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, rouse_spirit, spirit 3 )
+	u( .rote.prereq-check, %0, %1, rouse_spirit, Spirit:3 )
 &prereq-text.rote.rouse_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, rouse_spirit )
 &tags.rote.rouse_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2681,7 +2681,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.spirit_summons_() [v( d.dd )]=
 	3|persuasion.Socialize.Occult.Praxis.Blessing
 &prerequisite.rote.spirit_summons_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, spirit_summons, spirit 3 )
+	u( .rote.prereq-check, %0, %1, spirit_summons, Spirit:3 )
 &prereq-text.rote.spirit_summons_() [v( d.dd )]=
 	u( .rote.prereq-text, spirit_summons )
 &tags.rote.spirit_summons_() [v( d.dt )]=mage.proximus.spirit
@@ -2689,7 +2689,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.banishment_() [v( d.dd )]=
 	4|Brawl.Expression.Occult.Praxis.Blessing
 &prerequisite.rote.banishment_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, banishment, spirit 4 )
+	u( .rote.prereq-check, %0, %1, banishment, Spirit:4 )
 &prereq-text.rote.banishment_() [v( d.dd )]=
 	u( .rote.prereq-text, banishment )
 &tags.rote.banishment_() [v( d.dt )]=mage.proximus.spirit
@@ -2697,7 +2697,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.bind_spirit_() [v( d.dd )]=
 	4|Crafts.Brawl.Intimidation.Praxis.Blessing
 &prerequisite.rote.bind_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, bind_spirit, spirit 4 )
+	u( .rote.prereq-check, %0, %1, bind_spirit, Spirit:4 )
 &prereq-text.rote.bind_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, bind_spirit )
 &tags.rote.bind_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2705,7 +2705,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.craft_fetish_() [v( d.dd )]=
 	4|Crafts.Occult.persuasion.Praxis.Blessing
 &prerequisite.rote.craft_fetish_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, craft_fetish, spirit 4 )
+	u( .rote.prereq-check, %0, %1, craft_fetish, Spirit:4 )
 &prereq-text.rote.craft_fetish_() [v( d.dd )]=
 	u( .rote.prereq-text, craft_fetish )
 &tags.rote.craft_fetish_() [v( d.dt )]=mage.proximus.spirit
@@ -2713,7 +2713,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shadow_scream_() [v( d.dd )]=
 	4|Expression.Firearms.Medicine.Praxis.Blessing
 &prerequisite.rote.shadow_scream_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shadow_scream, spirit 4 )
+	u( .rote.prereq-check, %0, %1, shadow_scream, Spirit:4 )
 &prereq-text.rote.shadow_scream_() [v( d.dd )]=
 	u( .rote.prereq-text, shadow_scream )
 &tags.rote.shadow_scream_() [v( d.dt )]=mage.proximus.spirit
@@ -2721,7 +2721,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shape_spirit_() [v( d.dd )]=
 	4|Crafts.Medicine.persuasion.Praxis.Blessing
 &prerequisite.rote.shape_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shape_spirit, spirit 4 )
+	u( .rote.prereq-check, %0, %1, shape_spirit, Spirit:4 )
 &prereq-text.rote.shape_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, shape_spirit )
 &tags.rote.shape_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2729,7 +2729,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.twilit_body_() [v( d.dd )]=
 	4|Occult.Subterfuge.Survival.Praxis.Blessing
 &prerequisite.rote.twilit_body_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, twilit_body, spirit 4 )
+	u( .rote.prereq-check, %0, %1, twilit_body, Spirit:4 )
 &prereq-text.rote.twilit_body_() [v( d.dd )]=
 	u( .rote.prereq-text, twilit_body )
 &tags.rote.twilit_body_() [v( d.dt )]=mage.proximus.spirit
@@ -2737,7 +2737,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.annihilate_spirit_() [v( d.dd )]=
 	5|Intimidation.Science.Weaponry.Praxis.Blessing
 &prerequisite.rote.annihilate_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, annihilate_spirit, spirit 5 )
+	u( .rote.prereq-check, %0, %1, annihilate_spirit, Spirit:5 )
 &prereq-text.rote.annihilate_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, annihilate_spirit )
 &tags.rote.annihilate_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2745,7 +2745,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.birth_spirit_() [v( d.dd )]=
 	5|Crafts.Medicine.Expression.Praxis.Blessing
 &prerequisite.rote.birth_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, birth_spirit, spirit 5 )
+	u( .rote.prereq-check, %0, %1, birth_spirit, Spirit:5 )
 &prereq-text.rote.birth_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, birth_spirit )
 &tags.rote.birth_spirit_() [v( d.dt )]=mage.proximus.spirit
@@ -2753,7 +2753,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.create_locus_() [v( d.dd )]=
 	5|Crafts.Empathy.Survival.Praxis.Blessing
 &prerequisite.rote.create_locus_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, create_locus, spirit 5 )
+	u( .rote.prereq-check, %0, %1, create_locus, Spirit:5 )
 &prereq-text.rote.create_locus_() [v( d.dd )]=
 	u( .rote.prereq-text, create_locus )
 &tags.rote.create_locus_() [v( d.dt )]=mage.proximus.spirit
@@ -2761,7 +2761,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.essence_fountain_() [v( d.dd )]=
 	5|Empathy.Expression.Occult.Praxis.Blessing
 &prerequisite.rote.essence_fountain_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, essence_fountain, spirit 5 )
+	u( .rote.prereq-check, %0, %1, essence_fountain, Spirit:5 )
 &prereq-text.rote.essence_fountain_() [v( d.dd )]=
 	u( .rote.prereq-text, essence_fountain )
 &tags.rote.essence_fountain_() [v( d.dt )]=mage.proximus.spirit
@@ -2769,7 +2769,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.spirit_manse_() [v( d.dd )]=
 	5|Crafts.Expression.Survival.Praxis.Blessing
 &prerequisite.rote.spirit_manse_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, spirit_manse, spirit 5 )
+	u( .rote.prereq-check, %0, %1, spirit_manse, Spirit:5 )
 &prereq-text.rote.spirit_manse_() [v( d.dd )]=
 	u( .rote.prereq-text, spirit_manse )
 &tags.rote.spirit_manse_() [v( d.dt )]=mage.proximus.spirit
@@ -2777,7 +2777,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.world_walker_() [v( d.dd )]=
 	4|Athletics.persuasion.Survival.Praxis.Blessing
 &prerequisite.rote.world_walker_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, world_walker, spirit 4 )
+	u( .rote.prereq-check, %0, %1, world_walker, Spirit:4 )
 &prereq-text.rote.world_walker_() [v( d.dd )]=
 	u( .rote.prereq-text, world_walker )
 &tags.rote.world_walker_() [v( d.dt )]=mage.proximus.spirit
@@ -2787,7 +2787,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.divination_() [v( d.dd )]=
 	1|Academics.Empathy.Investigation.Praxis.Blessing
 &prerequisite.rote.divination_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, divination, time 1 )
+	u( .rote.prereq-check, %0, %1, divination, Time:1 )
 &prereq-text.rote.divination_() [v( d.dd )]=
 	u( .rote.prereq-text, divination )
 &tags.rote.divination_() [v( d.dt )]=mage.proximus.time
@@ -2795,7 +2795,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.momentary_flux_() [v( d.dd )]=
 	1|Investigation.Streetwise.Survival.Praxis.Blessing
 &prerequisite.rote.momentary_flux_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, momentary_flux, time 1 )
+	u( .rote.prereq-check, %0, %1, momentary_flux, Time:1 )
 &prereq-text.rote.momentary_flux_() [v( d.dd )]=
 	u( .rote.prereq-text, momentary_flux )
 &tags.rote.momentary_flux_() [v( d.dt )]=mage.proximus.time
@@ -2803,7 +2803,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.perfect_timing_() [v( d.dd )]=
 	1|Empathy.Socialize.Streetwise.Praxis.Blessing
 &prerequisite.rote.perfect_timing_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, perfect_timing, time 1 )
+	u( .rote.prereq-check, %0, %1, perfect_timing, Time:1 )
 &prereq-text.rote.perfect_timing_() [v( d.dd )]=
 	u( .rote.prereq-text, perfect_timing )
 &tags.rote.perfect_timing_() [v( d.dt )]=mage.proximus.time
@@ -2811,7 +2811,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.postcognition_() [v( d.dd )]=
 	1|Academics.Empathy.Investigation.Praxis.Blessing
 &prerequisite.rote.postcognition_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, postcognition, time 1 )
+	u( .rote.prereq-check, %0, %1, postcognition, Time:1 )
 &prereq-text.rote.postcognition_() [v( d.dd )]=
 	u( .rote.prereq-text, postcognition )
 &tags.rote.postcognition_() [v( d.dt )]=mage.proximus.time
@@ -2819,7 +2819,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.choose_the_thread_() [v( d.dd )]=
 	2|Occult.Science.Subterfuge.Praxis.Blessing
 &prerequisite.rote.choose_the_thread_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, choose_the_thread, time 2 )
+	u( .rote.prereq-check, %0, %1, choose_the_thread, Time:2 )
 &prereq-text.rote.choose_the_thread_() [v( d.dd )]=
 	u( .rote.prereq-text, choose_the_thread )
 &tags.rote.choose_the_thread_() [v( d.dt )]=mage.proximus.time
@@ -2827,7 +2827,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.constant_presence_() [v( d.dd )]=
 	2|Occult.persuasion.Survival.Praxis.Blessing
 &prerequisite.rote.constant_presence_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, constant_presence, time 2 )
+	u( .rote.prereq-check, %0, %1, constant_presence, Time:2 )
 &prereq-text.rote.constant_presence_() [v( d.dd )]=
 	u( .rote.prereq-text, constant_presence )
 &tags.rote.constant_presence_() [v( d.dt )]=mage.proximus.time
@@ -2835,7 +2835,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.hung_spell_() [v( d.dd )]=
 	2|Crafts.Occult.Expression.Praxis.Blessing
 &prerequisite.rote.hung_spell_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, hung_spell, time 2 )
+	u( .rote.prereq-check, %0, %1, hung_spell, Time:2 )
 &prereq-text.rote.hung_spell_() [v( d.dd )]=
 	u( .rote.prereq-text, hung_spell )
 &tags.rote.hung_spell_() [v( d.dt )]=mage.proximus.time
@@ -2843,7 +2843,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shield_of_chronos_() [v( d.dd )]=
 	2|Academics.Stealth.Subterfuge.Praxis.Blessing
 &prerequisite.rote.shield_of_chronos_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shield_of_chronos, time 2 )
+	u( .rote.prereq-check, %0, %1, shield_of_chronos, Time:2 )
 &prereq-text.rote.shield_of_chronos_() [v( d.dd )]=
 	u( .rote.prereq-text, shield_of_chronos )
 &tags.rote.shield_of_chronos_() [v( d.dt )]=mage.proximus.time
@@ -2851,7 +2851,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.tipping_the_hourglass_() [v( d.dd )]=
 	2|Athletics.Crafts.Investigation.Praxis.Blessing
 &prerequisite.rote.tipping_the_hourglass_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, tipping_the_hourglass, time 2 )
+	u( .rote.prereq-check, %0, %1, tipping_the_hourglass, Time:2 )
 &prereq-text.rote.tipping_the_hourglass_() [v( d.dd )]=
 	u( .rote.prereq-text, tipping_the_hourglass )
 &tags.rote.tipping_the_hourglass_() [v( d.dt )]=mage.proximus.time
@@ -2859,7 +2859,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.veil_of_moments_() [v( d.dd )]=
 	2|Medicine.Investigation.Subterfuge.Praxis.Blessing
 &prerequisite.rote.veil_of_moments_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, veil_of_moments, time 2 )
+	u( .rote.prereq-check, %0, %1, veil_of_moments, Time:2 )
 &prereq-text.rote.veil_of_moments_() [v( d.dd )]=
 	u( .rote.prereq-text, veil_of_moments )
 &tags.rote.veil_of_moments_() [v( d.dt )]=mage.proximus.time
@@ -2867,7 +2867,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.acceleration_() [v( d.dd )]=
 	3|Athletics.Drive.Stealth.Praxis.Blessing
 &prerequisite.rote.acceleration_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, acceleration, time 3 )
+	u( .rote.prereq-check, %0, %1, acceleration, Time:3 )
 &prereq-text.rote.acceleration_() [v( d.dd )]=
 	u( .rote.prereq-text, acceleration )
 &tags.rote.acceleration_() [v( d.dt )]=mage.proximus.time
@@ -2875,7 +2875,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.chronos'_curse_() [v( d.dd )]=
 	3|Academics.Occult.Intimidation.Praxis.Blessing
 &prerequisite.rote.chronos'_curse_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, chronos'_curse, time 3 )
+	u( .rote.prereq-check, %0, %1, chronos'_curse, Time:3 )
 &prereq-text.rote.chronos'_curse_() [v( d.dd )]=
 	u( .rote.prereq-text, chronos'_curse )
 &tags.rote.chronos'_curse_() [v( d.dt )]=mage.proximus.time
@@ -2883,7 +2883,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.shifting_sands_() [v( d.dd )]=
 	3|Academics.Occult.Survival.Praxis.Blessing
 &prerequisite.rote.shifting_sands_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, shifting_sands, time 3 )
+	u( .rote.prereq-check, %0, %1, shifting_sands, Time:3 )
 &prereq-text.rote.shifting_sands_() [v( d.dd )]=
 	u( .rote.prereq-text, shifting_sands )
 &tags.rote.shifting_sands_() [v( d.dt )]=mage.proximus.time
@@ -2891,7 +2891,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.temporal_summoning_() [v( d.dd )]=
 	3|Athletics.Investigation.persuasion.Praxis.Blessing
 &prerequisite.rote.temporal_summoning_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, temporal_summoning, time 3 )
+	u( .rote.prereq-check, %0, %1, temporal_summoning, Time:3 )
 &prereq-text.rote.temporal_summoning_() [v( d.dd )]=
 	u( .rote.prereq-text, temporal_summoning )
 &tags.rote.temporal_summoning_() [v( d.dt )]=mage.proximus.time
@@ -2899,7 +2899,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.weight_of_years_() [v( d.dd )]=
 	3|Crafts.Intimidation.Medicine.Praxis.Blessing
 &prerequisite.rote.weight_of_years_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, weight_of_years, time 3 )
+	u( .rote.prereq-check, %0, %1, weight_of_years, Time:3 )
 &prereq-text.rote.weight_of_years_() [v( d.dd )]=
 	u( .rote.prereq-text, weight_of_years )
 &tags.rote.weight_of_years_() [v( d.dt )]=mage.proximus.time
@@ -2907,7 +2907,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.present_as_past_() [v( d.dd )]=
 	4|Empathy.Investigation.Streetwise.Praxis.Blessing
 &prerequisite.rote.present_as_past_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, present_as_past, time 4 )
+	u( .rote.prereq-check, %0, %1, present_as_past, Time:4 )
 &prereq-text.rote.present_as_past_() [v( d.dd )]=
 	u( .rote.prereq-text, present_as_past )
 &tags.rote.present_as_past_() [v( d.dt )]=mage.proximus.time
@@ -2915,7 +2915,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.rend_lifespan_() [v( d.dd )]=
 	4|Athletics.Medicine.Intimidation.Praxis.Blessing
 &prerequisite.rote.rend_lifespan_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, rend_lifespan, time 4 )
+	u( .rote.prereq-check, %0, %1, rend_lifespan, Time:4 )
 &prereq-text.rote.rend_lifespan_() [v( d.dd )]=
 	u( .rote.prereq-text, rend_lifespan )
 &tags.rote.rend_lifespan_() [v( d.dt )]=mage.proximus.time
@@ -2923,7 +2923,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.rewrite_history_() [v( d.dd )]=
 	4|Expression.Investigation.persuasion.Praxis.Blessing
 &prerequisite.rote.rewrite_history_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, rewrite_history, time 4 )
+	u( .rote.prereq-check, %0, %1, rewrite_history, Time:4 )
 &prereq-text.rote.rewrite_history_() [v( d.dd )]=
 	u( .rote.prereq-text, rewrite_history )
 &tags.rote.rewrite_history_() [v( d.dt )]=mage.proximus.time
@@ -2931,7 +2931,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.temporal_stutter_() [v( d.dd )]=
 	4|Intimidation.Science.Survival.Praxis.Blessing
 &prerequisite.rote.temporal_stutter_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, temporal_stutter, time 4 )
+	u( .rote.prereq-check, %0, %1, temporal_stutter, Time:4 )
 &prereq-text.rote.temporal_stutter_() [v( d.dd )]=
 	u( .rote.prereq-text, temporal_stutter )
 &tags.rote.temporal_stutter_() [v( d.dt )]=mage.proximus.time
@@ -2939,7 +2939,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.blink_of_an_eye_() [v( d.dd )]=
 	5|Academics.Crafts.Occult.Praxis.Blessing
 &prerequisite.rote.blink_of_an_eye_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, blink_of_an_eye, time 5 )
+	u( .rote.prereq-check, %0, %1, blink_of_an_eye, Time:5 )
 &prereq-text.rote.blink_of_an_eye_() [v( d.dd )]=
 	u( .rote.prereq-text, blink_of_an_eye )
 &tags.rote.blink_of_an_eye_() [v( d.dt )]=mage.proximus.time
@@ -2947,7 +2947,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.corridors_of_time_() [v( d.dd )]=
 	5|Academics.Investigation.persuasion.Praxis.Blessing
 &prerequisite.rote.corridors_of_time_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, corridors_of_time, time 5 )
+	u( .rote.prereq-check, %0, %1, corridors_of_time, Time:5 )
 &prereq-text.rote.corridors_of_time_() [v( d.dd )]=
 	u( .rote.prereq-text, corridors_of_time )
 &tags.rote.corridors_of_time_() [v( d.dt )]=mage.proximus.time
@@ -2955,7 +2955,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.temporal_pocket_() [v( d.dd )]=
 	5|Occult.Science.Stealth.Praxis.Blessing
 &prerequisite.rote.temporal_pocket_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, temporal_pocket, time 5 )
+	u( .rote.prereq-check, %0, %1, temporal_pocket, Time:5 )
 &prereq-text.rote.temporal_pocket_() [v( d.dd )]=
 	u( .rote.prereq-text, temporal_pocket )
 &tags.rote.temporal_pocket_() [v( d.dt )]=mage.proximus.time
@@ -2963,7 +2963,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.prophecy_() [v( d.dd )]=
 	4|Academics.Expression.Investigation.Praxis.Blessing
 &prerequisite.rote.prophecy_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, prophecy, time 4 )
+	u( .rote.prereq-check, %0, %1, prophecy, Time:4 )
 &prereq-text.rote.prophecy_() [v( d.dd )]=
 	u( .rote.prereq-text, prophecy )
 &tags.rote.prophecy_() [v( d.dt )]=mage.proximus.time
@@ -2973,7 +2973,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.as_above_so_below_() [v( d.dd )]=
 	2|Academics.Occult.Politics.Praxis.Blessing
 &prerequisite.rote.as_above_so_below_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, as_above_so_below, prime 2 )
+	u( .rote.prereq-check, %0, %1, as_above_so_below, Prime:2 )
 &prereq-text.rote.as_above_so_below_() [v( d.dd )]=
 	u( .rote.prereq-text, as_above_so_below )
 &tags.rote.as_above_so_below_() [v( d.dt )]=mage.proximus.prime
@@ -2981,7 +2981,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.one_mind_two_thoughts_() [v( d.dd )]=
 	1|Academics.Expression.Science.Praxis.Blessing
 &prerequisite.rote.one_mind_two_thoughts_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, one_mind_two_thoughts, mind 1 )
+	u( .rote.prereq-check, %0, %1, one_mind_two_thoughts, Mind:1 )
 &prereq-text.rote.one_mind_two_thoughts_() [v( d.dd )]=
 	u( .rote.prereq-text, one_mind_two_thoughts )
 &tags.rote.one_mind_two_thoughts_() [v( d.dt )]=mage.proximus.mind
@@ -2989,7 +2989,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.aegis_() [v( d.dd )]=
 	3|Athletics.Crafts.Science.Praxis.Blessing
 &prerequisite.rote.aegis_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, aegis, matter 3 )
+	u( .rote.prereq-check, %0, %1, aegis, Matter:3 )
 &prereq-text.rote.aegis_() [v( d.dd )]=
 	u( .rote.prereq-text, aegis )
 &tags.rote.aegis_() [v( d.dt )]=mage.proximus.matter
@@ -2997,7 +2997,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.green_light_red_light_() [v( d.dd )]=
 	1|Computers.Larceny.Subterfuge.Praxis.Blessing
 &prerequisite.rote.green_light_red_light_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, green_light_red_light, time 1 )
+	u( .rote.prereq-check, %0, %1, green_light_red_light, Time:1 )
 &prereq-text.rote.green_light_red_light_() [v( d.dd )]=
 	u( .rote.prereq-text, green_light_red_light )
 &tags.rote.green_light_red_light_() [v( d.dt )]=mage.proximus.time
@@ -3005,7 +3005,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.ward_space_() [v( d.dd )]=
 	2|Athletics.Subterfuge.Weaponry.Praxis.Blessing
 &prerequisite.rote.ward_space_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, ward_space, space 2 )
+	u( .rote.prereq-check, %0, %1, ward_space, Space:2 )
 &prereq-text.rote.ward_space_() [v( d.dd )]=
 	u( .rote.prereq-text, ward_space )
 &tags.rote.ward_space_() [v( d.dt )]=mage.proximus.space
@@ -3013,7 +3013,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.transmission_() [v( d.dd )]=
 	2|Crafts.Expression.Science.Praxis.Blessing
 &prerequisite.rote.transmission_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, transmission, forces 2 )
+	u( .rote.prereq-check, %0, %1, transmission, Forces:2 )
 &prereq-text.rote.transmission_() [v( d.dd )]=
 	u( .rote.prereq-text, transmission )
 &tags.rote.transmission_() [v( d.dt )]=mage.proximus.forces
@@ -3021,7 +3021,7 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &rote.familiar_spirit_() [v( d.dd )]=
 	4|Athletics.Expression.Intimidation.Praxis.Blessing
 &prerequisite.rote.familiar_spirit_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, familiar_spirit, spirit 4 )
+	u( .rote.prereq-check, %0, %1, familiar_spirit, Spirit:4 )
 &prereq-text.rote.familiar_spirit_() [v( d.dd )]=
 	u( .rote.prereq-text, familiar_spirit )
 &tags.rote.familiar_spirit_() [v( d.dt )]=mage.proximus.spirit
