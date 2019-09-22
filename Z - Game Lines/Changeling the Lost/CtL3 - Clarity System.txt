@@ -189,8 +189,11 @@ Exceptions happen on filling the last square.
 @fo me=&d.ccs me=search( name=Changeling Clarity System <ccs> )
 @set Changeling Clarity System <ccs>=inherit safe
 
-@fo me=
-	&d.dd Changeling Clarity System <ccs>=[search( name=Data Dictionary <dd> )]
+@fo me=&d.dd Changeling Clarity System <ccs>=
+	[search( name=Data Dictionary <dd> )]
+
+@fo me=&d.sfp Changeling Clarity System <ccs>=
+		[search( name=Stat Function Prototype <sfp> )]
 
 @fo me=@parent Changeling Clarity System <ccs>=[v( d.codp )]
 
@@ -213,6 +216,9 @@ FAQ: "What is a dot function?"
      Sometimes it's about what feels right.
 
 */
+
+// u( .msg, <header>, <message> )
+&.msg [v( d.ccs )]=ansi( h, <%0>, n, %b%1 )
 
 // u( .plural, <num>, thing, things )
 &.plural [v( d.ccs )]=cat( %0, if( eq( %0, 1 ), %1, %2 ))
@@ -554,7 +560,7 @@ d: new mild damage ("actual")
 
 		case( 1, 
 			u( .is_comatose, %0 ), 
-			#-1 Changeling is comatose%; cannot take damage, 
+			#-1 Target is comatose%; cannot take damage, 
 
 // .. current damage|new damage
 			strcat( %qm %qs, |, %qd %qs )
@@ -605,7 +611,7 @@ n: new mild damage
 
 		case( 1, 
 			u( .is_comatose, %0 ), 
-			#-1 Changeling is comatose%; cannot take damage, 
+			#-1 Target is comatose%; cannot take damage, 
 
 // .. current damage|new damage
 			strcat( %qm %qs, |, %qn %qd )
@@ -651,7 +657,7 @@ t: damage type
 			#-1 Type is Mild%, Severe%, or All, 
 
 			not( u( .is_comatose, %0 )), 
-			#-1 Changeling is comatose%; cannot take damage, 
+			#-1 Target is comatose%; cannot take damage, 
 			
 			not( cor( strmatch( %2, all ), strmatch( %qt, all ))), 
 			u( f.clarity.hurt.all, %0, %qt ), 
@@ -1002,6 +1008,16 @@ think u( v( d.ccs )/f.test-change.heal, %#, 3 2, 2 2 ) --> resolve comatose
 @set/quiet me=_cond.persistent_comatose.xxx:yyy
 think u( v( d.ccs )/f.test-change.heal, %#, 3 2, 2 2 ) --> (persistent comatose)
 
+@@ this one we want to clean up
+@set/quiet me=_cond.comatose.xxx:
+@set/quiet me=_cond.persistent_comatose.xxx:
+
+
+
+
+
+
+
 
 
 
@@ -1026,25 +1042,27 @@ think u( v( d.ccs )/f.test-change.heal, %#, 3 2, 2 2 ) --> (persistent comatose)
 ################################################################################
 ## COMMANDS ####################################################################
 
-clarity/hurt [<name>/]<amt>=<type>
-clarity/heal [<name>/]<amt>=<type>
+clarity/hurt [<name>/]<type>[=<amt>]
+clarity/heal [<name>/]<type>[=<amt>]
 
 amt: positive integer value or 'all'
-type: mild, severe, or 'all' (healing only)
+type: mild, severe, or 'all'
 
 ================================================================================
 == Commands: Heal & Hurt =======================================================
 */
 
-&c.clarity/hurt [v( d.ccs )]=$^\+?clairty/hurt(.*)$:
-	@pemit %#=u( f.healhurt-workhorse, trim( %1 ), 0 )
+&c.clarity/hurt [v( d.ccs )]=$^\+?clarity\/hurt(.*)$:
+	@pemit %#=u( f.healhurt-workhorse, %#, trim( %1 ), 0 )
 
-&c.clarity/heal [v( d.ccs )]=$^\+?clairty/heal(.*)$:
-	@pemit %#=u( f.healhurt-workhorse, trim( %1 ), 1 )
+&c.clarity/heal [v( d.ccs )]=$^\+?clarity\/heal(.*)$:
+	@pemit %#=u( f.healhurt-workhorse, %#, trim( %1 ), 1 )
 
 @set v( d.ccs )/c.clarity/hurt=regex
-@set v( d.ccs )/c.clarity/heal=regex
+@set v( d.ccs )/c.clarity/hurt=no_parse
 
+@set v( d.ccs )/c.clarity/heal=regex
+@set v( d.ccs )/c.clarity/heal=no_parse
 
 /*
 --------------------------------------------------------------------------------
@@ -1062,65 +1080,185 @@ Healing type 'all' bypasses other checks and resets all damage to 0.
 	clarity/heal theno/all
 
 
-0: [<name>/]<type>[=<amt>]
-1: 'true' (1) if heal, 'false' (0) if hurt
+0: enactor dbref (usually %#)
+1: [<name>/]<type>[=<amt>]
+2: 'true' (1) if heal, 'false' (0) if hurt
 
-x: input target (if passed, else %#)
-y: input type
-z: input amt (if passed, else 1)
+x: passed target (optional)
+y: passed type
+z: passed amt (optional)
 
-d: target dbref
-h: "heal" or "hurt"
-a: amt
-t: type
+d: target dbref (default %0)
+s: target sheet
 
-o: original damage (<mild> <severe>)
-n: new damage (<mild> <severe>)
+h: 'heal' or 'hurt' - which command did this come from?
+a: amt (default '1')
+t: type (mild, severe, or all)
+
+c: clarity dmg (<old dmg>|<new dmg>)
+d: test-change (|<message>|<message>) - test-change is for notices
 
 */
 
-
 &f.healhurt-workhorse [v( d.ccs )]=
 	strcat( 
-		setq( 0, regmatchi( %0, v( d.regexp.healhurt ), 0 x x y z z )), 
-		setq( h, case( %1, 1, heal, 0, hurt, ??? )), 
+ 		setq( 0, regmatchi( %1, v( d.regex.healhurt ), 0 x x y z z )), 
 
-		setq( d, case( %qx, me, %#, @@( null ), %#, pmatch( %qx ))), 
+		setq( d, case( %qx, me, %0, @@( null ), %0, pmatch( %qx ))), 
+		setq( s, u( v( d.sfp )/f.find-sheet, %qp )), 
+
+		setq( h, case( %2, 1, heal, 0, hurt, ??? )), 
 		setq( t, grab( |all|mild|severe, %qy*, | )), 
-		setq( a, case( %qz, all, 99, @@( null ), 1, %qz )), 
+		setq( a, case( %qz, @@( null ), 1, %qz )), 
 
 		case( 0, 
 
 // .. core validity checks
 			%q0, 
 			u( .msg, clarity/%qh, Command format is: 
-				\[<target>/\]<type>\[=<amt>\] ), 
-		
-			isapproved( %qd ), 
-			u( .msg, clarity/%qh, Target must be approved ), 
+				\[<target>/\]<type>\[=<amt>\] 
+			), 
+			
+			isdbref( %qd ), 
+			u( .msg, clarity/%qh, Target not found ), 
 
-			cand( isint( %qa ), gt( %qa, 0 )), 
-			u( .msg, clarity/%qh, Amount must be positive integer ), 
+			cor( isstaff( %# ), strmatch( %#, %qd )), 
+			u( .msg, clarity/%qh, Only staff can target others ), 
+
+			cand(
+				isapproved( %qd ), 
+				strmatch( u( .value, %qd, bio.template ), changeling ), 
+				hasattr( %qd, _clarity.maximum )
+			), 
+			u( .msg, clarity/%qh, Target must be approved changeling ), 
+
+			cor( 
+				cand( isint( %qa ), gt( %qa, 0 )), 
+				strmatch( %qa, all )
+			), 
+			u( .msg, clarity/%qh, Amount must be positive integer or 'all' ), 
 	
 			strlen( %qt ), 
 			u( .msg, clarity/%qh, I don't know that type of damage ), 
 
 // .. oblique checks (none currently)
 
-// .. calculate end condition
-			u( f.clarity.%qh[if( strmatch( %qz, all ), .all )], 
-				%qd, %qa, %qt 
+// .. calculate end condition and apply/report
+			strcat( 
+				setq( c, u( f.clarity.%qh, %qd, %qt, %qa )), 
+				setq( d, u( f.test-change.%qh, 
+					%0, 
+					first( %qc, | ), 
+					rest( %qc, | )
+				)), 
+
+// .. check for errors from the rest of the system
+// .. (%qd is unlikely to have errors, but just in case that changes)
+				switch( #-1*, 
+					%qc, u( .msg, clarity/%qh, rest( %qc )), 
+					%qd, u( .msg, clarity/%qh, rest( %qd )), 
+					
+				)
+
+
 			)
 		)
 	)
 
-&d.regexp.healhurt [v( d.ccs )]=((.+)/)?(.+?)(=(.+))?
 
-@va me=((.+)/)?(.+?)(=(.+))?
+/*
+--------------------------------------------------------------------------------
+-- Apply Damage and Triggers ---------------------------------------------------
 
-think regmatchi( x/y=z, %va, 0 x x y z z ) ==> %q0%r- x: %qx%r- y: %qy%r- z: %qz
-think regmatchi( y=z, %va, 0 x x y z z ) ==> %q0%r- x: %qx%r- y: %qy%r- z: %qz
-think regmatchi( y, %va, 0 x x y z z ) ==> %q0%r- x: %qx%r- y: %qy%r- z: %qz
+This was wrapped into "workhorse" for physical damage; I'm splitting it off 
+here.
+
+All input is assumed verified.
+
+	u( f.healhurt-apply, <enactor>, <target>, <health>, <other> )
+
+Returns: #-1 if panic, otherwise nothing
+
+0: enactor dbref
+1: target dbref
+2: 'heal' or 'hurt'
+3: <old health>|<new health>
+4: |<extra triggers & messages>
+
+*/
+
+&f.healhurt-apply [v( d.ccs )]=
+	localize( strcat( 
+		setq( m, first( rest( %3, | ))), 
+		setq( s, rest( rest( %3, | ))), 
+		setq( c, graball( %4, *comatose*, | )), 
+		case( 0, 
+			not( strlen( set( %1, _clarity.mild:%qm ))), 
+			#-1 Clarity Mild not set! Stopping!, 
+
+			not( strlen( set( %1, _clarity.severe:%qs ))), 
+			#-1 Clarity Severe not set! Stopping after Mild set!, 
+
+// .. apply 'comatose' if necessary, otherwise just report
+			case( 1, 
+				t( grab( %qc, Gain Persistent Comatose, | )), 
+				u( f.healhurt-apply.condition, 
+					%1, persistent_comatose, 
+					Set by Clarity System for damage taken.
+				), 
+
+				t( grab( %qc, Gain Comatose, | )), 
+				u( f.healhurt-apply.condition, 
+					%1, comatose, 
+					Set by Clarity System for damage taken.
+				), 
+
+				@@( everything was okay and nothing happened )
+			)
+
+		)
+	))
+
+
+/*
+--------------------------------------------------------------------------------
+-- regex: healhurt input breakdown ---------------------------------------------
+
+expecting: 
+	[<target>/]<type>[=<amt>]
+
+regex registers
+	0: entire match
+	1: <target>/
+	2: <target>
+	3: <type>
+	4: =<amt>
+	5: <amt>
+
+*/
+
+&d.regex.healhurt [v( d.ccs )]=^(([^/]+)/)?([^=]+)(=(.+))?$
+
+
+/*
+--------------------------------------------------------------------------------
+-- Healhurt Apply Comatose -----------------------------------------------------
+
+From &C.PLAYER.STATUS.ADD [v( d.ctst )], which does too much checking for this 
+to succeed.
+
+	0: player dbref
+	1: condition
+	2: 'set by' note.
+
+*/
+
+&f.healhurt-apply.condition [v( d.ccs )]=set( %0, _COND.%1.[secs( )]:%1|%2 )
+
+
+
+
+
 
 
 
