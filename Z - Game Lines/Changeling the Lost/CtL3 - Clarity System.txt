@@ -921,11 +921,11 @@ p: 'persistent ' text if it was
 			case( 1, 
 // .. track is full: comatose condition
 				gte( %qn, %qm ), 
-				|Gain %qpComatose Condition, 
+				|gains a %qpComatose Condition, 
 
 // .. last three filled: clarity condition
 				lte( sub( %qm, %qn ), 3 ), 
-				|Gain %qpClarity Condition, 
+				|gains a %qpClarity Condition, 
 
 				@@( neither )
 			)
@@ -985,7 +985,7 @@ Nothing can help 'persistent comatose', but we treat `cond.` data with suspicion
 			@@( nothing changed so ignore it ), 
 
 			cand( t( %qc ), not( t( %qp ))), 
-			|Resolve Comatose Condition, 
+			|resolves a Comatose Condition, 
 
 			@@( nothing else happened )
 		)
@@ -1096,7 +1096,8 @@ a: amt (default '1')
 t: type (mild, severe, or all)
 
 c: clarity dmg (<old dmg>|<new dmg>)
-d: test-change (|<message>|<message>) - test-change is for notices
+r: test-change (|<message>|<message>) - test-change is for notices
+e: potential errors from `f.healhurt-apply`
 
 */
 
@@ -1146,7 +1147,7 @@ d: test-change (|<message>|<message>) - test-change is for notices
 // .. calculate end condition and apply/report
 			strcat( 
 				setq( c, u( f.clarity.%qh, %qd, %qt, %qa )), 
-				setq( d, u( f.test-change.%qh, 
+				setq( r, u( f.test-change.%qh, 
 					%0, 
 					first( %qc, | ), 
 					rest( %qc, | )
@@ -1156,11 +1157,17 @@ d: test-change (|<message>|<message>) - test-change is for notices
 // .. (%qd is unlikely to have errors, but just in case that changes)
 				switch( #-1*, 
 					%qc, u( .msg, clarity/%qh, rest( %qc )), 
-					%qd, u( .msg, clarity/%qh, rest( %qd )), 
-					
+					%qr, u( .msg, clarity/%qr, rest( %qd )), 
+
+// .. does new stat setting, but may error out
+					setr( e, 
+						u( f.healhurt-apply, %0, %qd, %qs, %qh, %qc, %qr )
+					), 
+					u( .msg, clarity/%qh, rest( %qe )), 
+
+// .. .. everything was good: report the change
+					u( f.healhurt-report, xxx, xxx, xxx )
 				)
-
-
 			)
 		)
 	)
@@ -1180,34 +1187,35 @@ All input is assumed verified.
 Returns: #-1 if panic, otherwise nothing
 
 0: enactor dbref
-1: target dbref
-2: 'heal' or 'hurt'
-3: <old health>|<new health>
-4: |<extra triggers & messages>
+1: target dbref (for conditions)
+2: target sheet (for stats)
+3: 'heal' or 'hurt'
+4: <old health>|<new health>
+5: |<extra triggers & messages>
 
 */
 
 &f.healhurt-apply [v( d.ccs )]=
 	localize( strcat( 
-		setq( m, first( rest( %3, | ))), 
-		setq( s, rest( rest( %3, | ))), 
-		setq( c, graball( %4, *comatose*, | )), 
+		setq( m, first( rest( %4, | ))), 
+		setq( s, rest( rest( %4, | ))), 
+		setq( c, graball( %5, *comatose*, | )), 
 		case( 0, 
-			not( strlen( set( %1, _clarity.mild:%qm ))), 
+			not( strlen( set( %2, _clarity.mild:%qm ))), 
 			#-1 Clarity Mild not set! Stopping!, 
 
-			not( strlen( set( %1, _clarity.severe:%qs ))), 
+			not( strlen( set( %2, _clarity.severe:%qs ))), 
 			#-1 Clarity Severe not set! Stopping after Mild set!, 
 
 // .. apply 'comatose' if necessary, otherwise just report
 			case( 1, 
-				t( grab( %qc, Gain Persistent Comatose, | )), 
+				t( grab( %qc, gains a Persistent Comatose Condition, | )), 
 				u( f.healhurt-apply.condition, 
 					%1, persistent_comatose, 
 					Set by Clarity System for damage taken.
 				), 
 
-				t( grab( %qc, Gain Comatose, | )), 
+				t( grab( %qc, gains a Comatose Condition, | )), 
 				u( f.healhurt-apply.condition, 
 					%1, comatose, 
 					Set by Clarity System for damage taken.
@@ -1256,9 +1264,82 @@ to succeed.
 &f.healhurt-apply.condition [v( d.ccs )]=set( %0, _COND.%1.[secs( )]:%1|%2 )
 
 
+/*
+--------------------------------------------------------------------------------
+-- Healhurt Report Successful Action -------------------------------------------
+
+Report action and final clarity bar to enactor and target.
+Report action to everyone in target's room.
+
+0: enactor
+1: target dbref
+2: amt, 
+3: 'damage'/'healing'
+4: |check|messages
+
+*/
+
+&f.healhurt-report [v( d.ccs )]=
+	strcat( 
+		iter( %0 %1, 
+			pemit( %i0, u( display.healhurt.full, %1, %i0, %2, %3, %4 ))
+		), 
+
+		iter( 
+			setdiff( lcon( %1 ), %0 %1  ), 
+			pemit( %i0, 
+				u( .msg, clarity, 
+					u( display.healhurt.action, %1, %i0, %2, %3, %4 )
+				)
+			)
+		)
+	)
 
 
+/* 
+-- Display: Healhurt Action ---
 
+The message everyone sees on a successful clarity heal/hurt.
+
+0: target
+1: person we're pemitting to
+2: amt
+3: 'damage'/'healing'
+4: other notes (e.g., gains a clarity condition)
+
+You/they take/s xx clarity damage/healing and xxx.
+
+*/
+
+&display.healhurt.action [v( d.ccs )]=
+	localize( strcat( 
+		if( setr( y, strmatch( %0, %1 )), You, name( %0 )), %b, 
+		take, if( %qy, , s ), %b, 
+		%2 Clarity %3, 
+		if( strlen( %4 ), 
+			strcat( 
+				%b, and, %b, 
+				iter( trim( %4, b, | ), 
+					%i0, 
+					|, %,%b 
+				)
+			)
+		), . 
+	))
+
+&display.healhurt.full [v( d.ccs )]=
+	strcat( 
+		header( 
+			strcat( 
+				case( %3, damage, Losing, healing, Gaining, ???ing ), %b, 
+				%3 Clarity 
+			)
+		), %r, 
+		u( display.healhurt.action, %0, %1, %2, %3, %4 ), %r,
+		Clarity is now:, %r,  
+		u( display.clarity-bar, %0 ), %r, 
+		footer()
+	)
 
 
 
