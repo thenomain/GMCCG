@@ -499,6 +499,7 @@ qb: boolean list of matches
 // -- Hastag? Tests ------------------------------------------------------------
 
 think u( v( d.sfp )/f.hastag?.workhorse, advantage.speed, derived )
+think u( v( d.sfp )/f.hastag?.workhorse, advantage.speed, !human )
 
 think hastag?( speed, derived )
 think hastag?( speed, derived.pool )
