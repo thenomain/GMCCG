@@ -791,7 +791,8 @@ qr: prerequisite checks
 					), 
 // .. normal - validate completely, if null then null, if default then default
 					case( %1, 
-						default, get( u( d.data-dictionary )/default.%qi ), 
+						default, 
+						ulocal( u( d.data-dictionary )/default.%qi, %qw ), 
 						@@( null ), , 
 						ulocal( f.statvalidate.workhorse, %qi, %1 )
 					)
