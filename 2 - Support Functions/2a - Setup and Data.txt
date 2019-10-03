@@ -6,7 +6,7 @@
 @create Stat Functions Prototype <sfp>
 @set Stat Functions Prototype <sfp>=inherit safe
 
-@fo me=&d.sfp me=[search( name=stat functions prototype <sfp> )]
+@fo me=&d.sfp me=[search( name=Stat Functions Prototype <sfp> )]
 
 @fo me=@parent Stat Functions Prototype <sfp>=search( name=Code Object Data Parent <codp> )
 
