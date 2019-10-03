@@ -86,6 +86,7 @@ Make two equal(ish)-height vertical columns from grouped elements
 
 input: 
 	0: <title>%r<item>%r<item>|...
+	1: middle separator [optional]
 
 output: the pretty columns
 
@@ -97,6 +98,8 @@ doesn't care)
 	o: %qw for column (e.g. 3 2 1)
 	1: column 1 output
 	2: column 2 output
+
+	f: fdiv width: 39 - (divider width/2)
 */
 
 &format.block.two-even-columns [v( d.sheet )]=
@@ -113,11 +116,20 @@ doesn't care)
 			edit( extract( %0, inc( words( %qo )), words( %0, | ), | ), |, %r )
 		), 
 
-		vcolumns( 
-			39:%q1, 
-			39:%q2, 
-			%r 
+		if( strlen( %1 ), 
+			vcolumns( 
+				[ceil( setr( f, sub( 39, fdiv( strlen( %1 ), 2 ))))]:
+				%q1, 
+				[floor( %qf )]:%q2, 
+				%r, %1 
+			), 
+			vcolumns( 
+				39:%q1, 
+				39:%q2, 
+				%r 
+			)
 		)
+
 	))
 
 /* 
@@ -501,6 +513,8 @@ think u( v( d.nsc )/display.value.pool, 4.-2, 5.-1)
 		divider( Traits ), %r, 
 		vcolumns( 
 			%qw:[u( display.trait-and-value, %qy, %qt, %qw, pool, %b, %qp )], 
+
+//			if( rest( %qz, : ), %qw:%qz, %qw: ), 
 			%qw:%qz, 
 
 			|, 
