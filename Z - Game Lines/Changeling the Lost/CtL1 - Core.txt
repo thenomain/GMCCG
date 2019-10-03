@@ -153,147 +153,18 @@ is a lot simpler, and has deep impact on the Chronicle.
 
 
 
-
-
-
-
-
-
 /*
 ================================================================================
 == CLARITY SYSTEM ==============================================================
 
-p.104:
-
-System: A changeling's Clarity track has boxes equal to her Wits + Composure. 
-Her player can't buy additional Clarity boxes with Experiences, but they 
-increase automatically as she purchases dots of Wits and Composure, and she can 
-recover Icons (p. 203) to add further boxes. There is no upper limit to the 
-number of Clarity boxes a character can have. In dreams, her Clarity contributes 
-to her dream form's Health track (p. 216).
-
-Clarity Damage: Mild fills left to right. Severe fills left to right, 
-overwriting mild but not severe.
-
-As a changeling takes damage to her three rightmost Clarity boxes, she gains 
-Conditions — Persistent Conditions if the damage was severe
-
---
-
-A changeling can regain Clarity by spending time with her Touchstones, and by 
-resolving the damage Conditions (below). Even if she has no Touchstones 
-currently attached, each scene she spends interacting in a meaningful way with 
-one of her Touchstones heals one level of severe Clarity damage, or all levels 
-of mild Clarity damage (but doesn't resolve any Conditions by default).
-
---
-
-So Clarity = Wits + Composure + Icons
-
-Clarity 4:
-[ ][ ][ ][ ]
-
---------------------------------------------------------------------------------
--- Touchstone ------------------------------------------------------------------
-
-Your character's Touchstone is a person, place, or thing that reminds her of how 
-to trust, and helps her re-adjust to life after her durance. Name a Touchstone, 
-and count a number of Clarity boxes from the left equal to your character's 
-Composure + 1. Write your Touchstone next to that box. See p. 98 for more on 
-Touchstones. If you choose to take the Touchstone Merit, you may start with 
-additional Touchstones.
-
-Write Touchstones alongside your character's Clarity track. Count boxes from the 
-left equal to your character's Composure + 1, and write your first Touchstone 
-next to that box. For instance, if your character has Composure 3, write the 
-Touchstone next to the fourth box from the left. If you purchase more Composure 
-in play, push her Touchstones to the right so that her first one is always 
-attached at Composure + 1.
-
-As Clarity is a fluid thing in a changeling's life, her attachment to her 
-Touchstones is also fluid. Consider a Touchstone attached when its associated 
-Clarity box is not filled with severe damage. If a Touchstone is attached, 
-anytime the changeling defends her attachment to it, she regains a Willpower 
-point. If this defense causes her serious harm, she regains all her spent 
-Willpower points.
-
-Your character can gain additional Touchstones by taking the Touchstone Merit 
-(p. 120). Write the new Touchstone in beside the next available box to the right 
-of the rightmost box that already has an associated Touchstone. A changeling 
-character cannot have more Touchstones than she has Clarity boxes to the right 
-of the first box with an associated Touchstone. If her maximum Clarity increases 
-in play by purchasing more Wits or recovering an Icon, it opens a spot for a new 
-Touchstone through the Merit.
-
-I...have no idea how I'm going to do this yet.
-
-
--- takeaways --
-
-* Max Clarity = Wits + Compsure + Icons
-  Write Touchstones alongside your character's Clarity track at Composure + 1
-  Clarity Track: [1] [2] [3] [4], Composure 2, Wits 2
-                          ^-- Free Touchstone
-
-* If you purchase more Composure in play, push her Touchstones to the right so 
-  that her first one is always attached at Composure + 1.
-  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
-                              ^-- Free Touchstone
-
-* Your character can gain additional Touchstones by taking the Touchstone Merit 
-  (p. 120). Write the new Touchstone in beside the next available box to the 
-  right of the rightmost box that already has an associated Touchstone.
-  Clarity Track: [1] [2] [3] [4] [5], Composure 3, Wits 2
-                              ^   ^ -- Touchstone spaces
-
-* You cannot have more Touchstones than free spaces
-  Therefore, the number of Touchstones you can have is equal to Wits + Icons
-
-  Clarity Track: [1] [2] [3] [4] [5] [6], Composure 3, Wits 2, Icons 1
-                              ^   ^   ^ -- Touchstone spaces
-
-  Clarity Track: [1] [2] [3] [4] [5] [6] [7], Composure 5, Wits 2
-                                      ^   ^ -- Touchstone spaces
-
-* Just to make sure: Total Touchstones = Max Clarity - Composure
-  So if something else increases the Clarity Track, it's already accounted for.
-
-
--- conclusions --
-
-Max Clarity = Wits + Compsure + Icons
-Max Touchstones = Max Clarity - Composure
-First Touchstone's Position = Clarity + 1 
-
-We will need stats for Touchstones and Icons
-
-* Touchstone = 1.2.3.4.5 <-- extra touchstones, rest of the data goes in notes
-
-* Icon (<name>)=1
+Clarity moved to `CtL3 - Clarity System`
 
 */
-
-
-&advantage.icon_() [v( d.dd )]=1|*
-&tags.advantage.icon_() [v( d.dt )]=changeling
-&notes.advantage.icon_() [v( d.dt )]=
-	May only be set by staff, never purchased.|
-	Put details in notes.
-&xp.advantage.icon_() [v( d.xpcd )]=0
-
-/*
-
-*** Clarity moved to Clarity System, CtL3 ***
-
-*/
-
-
-// add 'kenning' to main advantages block.
-&advantages.changeling [v( d.nsc )]=kenning
 
 
 
 &advantage.wyrd [v( d.dd )]=0.1.2.3.4.5.6.7.8.9.10
+// ... well, this doesn't work
 &default.advantage.wyrd [v( d.dd )]=
 	[if( u( .is, %0, bio.template, changeling ), 1, 0 )]
 &tags.advantage.wyrd [v( d.dt )]=power.changeling.fae-touched
@@ -316,6 +187,21 @@ We will need stats for Touchstones and Icons
 	)
 &default.advantage.glamour_maximum [v( d.dd )]=derived
 &tags.advantage.glamour_maximum [v( d.dt )]=derived.changeling.fae-touched
+
+
+&advantage.goblin_debt [v( d.dd )]=#
+&default.advantage.goblin_debt [v( d.dd )]=0
+&tags.advantage.goblin_debt [v( d.dt )]=pool.changeling
+&notes.advantage.goblin_debt [v( d.dt )]=
+	Gain one point after successfully using a Goblin Contract (see '+help 
+	pools')
+	|Staff and STs can use these points when interesting
+	|At 10+, you're a Hobgoblin
+
+// .. there's no need for this except for the spend/regain system
+&advantage.goblin_debt_maximum [v( d.dd )]=99
+&default.advantage.goblin_debt_maximum [v( d.dd )]=99
+&tags.advantage.goblin_debt_maximum [v( d.dt )]=pool.changeling
 
 
 &advantage.frailties [v( d.dd )]=[@@( no idea how to do this )]
@@ -344,7 +230,7 @@ We will need stats for Touchstones and Icons
 	add( 
 // .. +2 if max clarity, unless acute senses, then +wyrd.
 		if( u( .has, %0, merit.acute_senses ), 
-			u( .value_stat, %0, advantage.wyrd ), 
+			u( .value_stats, %0, advantage.wyrd ), 
 			mul( 2, 
 				u( .is_stat, %0, 
 					advantage.clarity, 
@@ -355,10 +241,9 @@ We will need stats for Touchstones and Icons
 // .. -1 if clarity 4 or 3, -2 if clarity 2 or 1.
 		min( 
 			0, 
-			sub( ceil( fdiv( u( .value_stat, %0, advantage.clarity ), 2 )), 3 )
+			sub( ceil( fdiv( u( .value_stats, %0, advantage.clarity ), 2 )), 3 )
 		)
 	)
-
 
 
 
@@ -554,7 +439,7 @@ contributes dots to the total has access to the full, combined amount.
 &tags.merit.hollow [v( d.dt )]=changeling.location.motley
 &notes.merit.hollow [v( d.dt )]=
 	Anyone sharing a Changeling Motley with points in this merit gains benefits 
-	from all points totaled, max 5.
+	from all points totaled%, max 5.
 
 &merit.mantle [v( d.dd )]=1.2.3.4.5
 &tags.merit.mantle [v( d.dt )]=changeling.court
@@ -598,12 +483,12 @@ contributes dots to the total has access to the full, combined amount.
 &merit.stable_trod [v( d.dd )]=1.2.3.4.5
 &tags.merit.stable_trod [v( d.dt )]=changeling.motley
 &notes.merit.stable_trod [v( d.dt )]=Anyone sharing a Changeling Motley 
-	with points in this merit gains benefits from all points totaled, max 5.
+	with points in this merit gains benefits from all points totaled%, max 5.
 
 &merit.token [v( d.dd )]=#
 &tags.merit.token [v( d.dt )]=changeling.motley
 &notes.merit.token [v( d.dt )]=Anyone sharing a Changeling Motley 
-	with points in this merit gains benefits from all points totaled, max 5.
+	with points in this merit gains benefits from all points totaled%, max 5.
 
 &merit.touchstone [v( d.dd )]=1.2.3.4.5
 &tags.merit.touchstone [v( d.dt )]=vampire.changeling
@@ -622,7 +507,7 @@ contributes dots to the total has access to the full, combined amount.
 &prereq-text.merit.workshop [v( d.dd )]=Hollow 1+
 &tags.merit.workshop [v( d.dt )]=changeling.motley
 &notes.merit.workshop [v( d.dt )]=Anyone sharing a Changeling Motley 
-	with points in this merit gains benefits from all points totaled, max 5.
+	with points in this merit gains benefits from all points totaled%, max 5.
 
 
 // -- Fae-Touched Merits -------------------------------------------------------
@@ -671,7 +556,7 @@ contributes dots to the total has access to the full, combined amount.
 &tags.merit.promise_to_provide [v( d.dt )]=fae-touched
 
 &merit.promise_to_serve [v( d.dd )]=1.2.3
-&tags.merit.xxx [v( d.dt )]=fae-touched
+&tags.merit.promise_to_serve [v( d.dt )]=fae-touched
 
 &merit.punish_the_oathbreaker [v( d.dd )]=2
 &prerequisite.merit.punish_the_oathbreaker [v( d.dt )]=
@@ -692,7 +577,7 @@ contributes dots to the total has access to the full, combined amount.
 	[trim( 
 		strcat( get( v( d.dt )/notes.merit.allies_() ), 
 			|Anyone sharing a Changeling Motley with points in this merit 
-			gains benefits from all points totaled, max 5. 
+			gains benefits from all points totaled%, max 5. 
 		), 
 		b, | 
 	)]
@@ -703,7 +588,7 @@ contributes dots to the total has access to the full, combined amount.
 	[trim( 
 		strcat( get( v( d.dt )/notes.merit.contacts_() ), 
 			|Anyone sharing a Changeling Motley with points in this merit 
-			gains benefits from all points totaled, max 5. 
+			gains benefits from all points totaled%, max 5. 
 		), 
 		b, | 
 	)]
@@ -729,7 +614,7 @@ contributes dots to the total has access to the full, combined amount.
 	[trim( 
 		strcat( get( v( d.dt )/notes.merit.resources ), 
 			|Anyone sharing a Changeling Motley with points in this merit 
-			gains benefits from all points totaled, max 5. 
+			gains benefits from all points totaled%, max 5. 
 		), 
 		b, | 
 	)]
@@ -740,7 +625,7 @@ contributes dots to the total has access to the full, combined amount.
 	[trim( 
 		strcat( get( v( d.dt )/notes.merit.safe_place_() ), 
 			|Anyone sharing a Changeling Motley with points in this merit 
-			gains benefits from all points totaled, max 5. 
+			gains benefits from all points totaled%, max 5. 
 		), 
 		b, | 
 	)]
@@ -751,7 +636,7 @@ contributes dots to the total has access to the full, combined amount.
 	[trim( 
 		strcat( get( v( d.dt )/notes.merit.staff_() ), 
 			|Anyone sharing a Changeling Motley with points in this merit 
-			gains benefits from all points totaled, max 5. 
+			gains benefits from all points totaled%, max 5. 
 		), 
 		b, | 
 	)]
@@ -762,7 +647,7 @@ contributes dots to the total has access to the full, combined amount.
 	[trim( 
 		strcat( get( v( d.dt )/notes.merit.status_() ), 
 			|Anyone sharing a Changeling Motley with points in this merit 
-			gains benefits from all points totaled, max 5. 
+			gains benefits from all points totaled%, max 5. 
 		), 
 		b, | 
 	)]
@@ -852,11 +737,11 @@ Grumble.
 	changeling.jewels.fairest.wizened.common
 
 &contract.changing_fortunes [v( d.dd )]=1|Ogre.Wizened
-&tags.changing_fortunes [v( d.dt )]=
+&tags.contract.changing_fortunes [v( d.dt )]=
 	changeling.jewels.ogre.wizened.common
 
 &contract.light-shy [v( d.dd )]=1|Darkling.wizened
-&tags.light-shy [v( d.dt )]=
+&tags.contract.light-shy [v( d.dt )]=
 	changeling.jewels.darkling.wizened.common
 
 &contract.murkblur [v( d.dd )]=1|Elemental.Wizened
@@ -1166,33 +1051,66 @@ Grumble.
 
 &contract.blessing_of_forgetfulness [v( d.dd )]=1
 &tags.contract.blessing_of_forgetfulness [v( d.dt )]=changeling.goblin
+&notes.contract.blessing_of_forgetfulness [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.glib_tongue [v( d.dd )]=1
 &tags.contract.glib_tongue [v( d.dt )]=changeling.goblin
+&notes.contract.glib_tongue [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.goblin's_eye [v( d.dd )]=1
 &tags.contract.goblin's_eye [v( d.dt )]=changeling.goblin
+&notes.contract.goblin's_eye [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.goblin's_luck [v( d.dd )]=1
 &tags.contract.goblin's_luck [v( d.dt )]=changeling.goblin
+&notes.contract.goblin's_luck [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.huntsman's_clarion [v( d.dd )]=1
 &tags.contract.huntsman's_clarion [v( d.dt )]=changeling.goblin
+&notes.contract.huntsman's_clarion [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.lost_visage [v( d.dd )]=1
 &tags.contract.lost_visage [v( d.dt )]=changeling.goblin
+&notes.contract.lost_visage [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.mantle_mask [v( d.dd )]=1
 &tags.contract.mantle_mask [v( d.dt )]=changeling.goblin
+&notes.contract.mantle_mask [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.sight_of_truth_and_lies [v( d.dd )]=1
 &tags.contract.sight_of_truth_and_lies [v( d.dt )]=changeling.goblin
+&notes.contract.sight_of_truth_and_lies [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.uncanny [v( d.dd )]=1
 &tags.contract.uncanny [v( d.dt )]=changeling.goblin
+&notes.contract.uncanny [v( d.dt )]=
+	Remember to add Goblin Debt when used
 
 &contract.wayward_guide [v( d.dd )]=1
 &tags.contract.wayward_guide [v( d.dt )]=changeling.goblin
+&notes.contract.wayward_guide [v( d.dt )]=
+	Remember to add Goblin Debt when used
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1719,13 +1637,14 @@ Character should have no Scales
 /*
 ################################################################################
 ## CHANGELING: SHEET ###########################################################
-*/
 
-// -- Bio ----------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Sheet: Bio ------------------------------------------------------------------
+*/
 
 &bio.default.fae-touched [v( d.nsc )]=
 	birthdate concept [if( hasattr( %0, _bio.motley ), motley )] 
-	template virtue vice 
+	template virtue vice
 
 &bio.default.changeling [v( d.nsc )]=
 	birthdate concept needle thread template 
@@ -1734,15 +1653,18 @@ Character should have no Scales
 
 
 /*
--- Powers ----------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Sheet: Powers ---------------------------------------------------------------
 
+0: target dbref
+1: formatted category:list.of.formatted.contracts|...
 
+y: random bleh
+z: ditto
+
+output: adds seeming bonuses to any contract that needs it
 
 */
-
-// 0: target dbref, 1: formatted category:list.of.formatted.contracts|...
-// y: random bleh, z: ditto
-// output: adds seeming bonuses to any contract that needs it
 
 &powers.contracts.seeming_bonus [v( d.nsc )]=
 	iter( %1, 
@@ -1759,7 +1681,6 @@ Character should have no Scales
 							_, %b 
 						)
 					), 
-
 // final formatting
 					if( gt( strlen( %qz ), 0 ), 
 						%i0 %([iter( %qz, titlestr( %i0 ), ., %,%b )]%), 
@@ -1773,32 +1694,34 @@ Character should have no Scales
 	)
 
 
-/* 
-	think u( v( d.nsc )/powers.contracts.seeming_bonus, %#, Crown:Summon the 
-	Loyal Servant|Shield:Skinmask.Walls Have Ears|Winter:The Dragon 
-	Knows|Goblin:Blessing of Forgetfulness )
-
-stat/set Seeming=Ogre
-stat/set Kith=Bright One
-stat/set Court=Winter
-
-stat/set Spinning Wheel=1
-stat/set Spinning Wheel.Ogre=1
-stat/set Tumult=1
-stat/set Cloak of Night=1
-stat/set Cloak of Night.Ogre=1
-stat/set Cloak of Night.Darkling=1
-stat/set The Dragon Knows=1
-stat/set Blessing of Forgetfulness=1
+/* Vague Test: 
+think u( v( d.nsc )/powers.contracts.seeming_bonus, 
+		%#, 
+		Crown:Summon the Loyal Servant|
+		Shield:Skinmask.Walls Have Ears|
+		Winter:The Dragon Knows|
+		Goblin:Blessing of Forgetfulness 
+	)
+*/
 
 
+/*
 ================================== Contracts ==================================
-................ Crown ................ ........... Winter (mantle) ...........
-Spinning Wheel (Ogre)                   The Dragon Knows                       
-Tumult                                  ............... Goblin ................
-.......... Shield (favored) ........... Blessing of Forgetfulness              
-Cloak of Night (Ogre, Darkling)                                                
+............... Crown ...............  |  .......... Winter (mantle) ..........
+Spinning Wheel (Ogre)                  |  The Dragon Knows                       
+Tumult                                 |  .............. Goblin ...............
+......... Shield (favored) ..........  |  Blessing of Forgetfulness              
+Cloak of Night (Ogre, Darkling)        |                                        
 
+or
+
++----+ Contracts +-------------------------------------------------------------+
+            Crown (favored)          |              Spring (mantle)            
+The Royal Court (Fairest)            |  Cupid's Arrow                          
+                Jewels               |  Waking the Inner Fae                   
+Blessing of Perfection (Fairest)     |                  Goblin                 
+                Shield               |  Goblin's Luck                          
+Trapdoor Spider's Trick              |                                         
 
 
 f: favored regalia
@@ -1821,6 +1744,7 @@ x: above, prettified
 		setq( a, lattr( %0/_contract.* )), 
 
 // t: get all contracts per category: <category>:<list.of.contracts>|
+// .. categores: <general contracts>.<courts from DD>.Goblin
 		setq( t, iter( 
 			Crown.Jewels.Mirror.Shield.Steed.Sword.
 			[get( v( d.dd )/bio.court )].
@@ -1863,8 +1787,8 @@ x: above, prettified
 		%qx
 	))
 
-
-// think u( v( d.nsc )/powers.contracts, %# )
+// test:
+think u( v( d.nsc )/powers.contracts, %# )
 
 
 &block.powers.changeling [v( d.sheet )]=
@@ -1873,8 +1797,8 @@ x: above, prettified
 
 &block.powers.contracts [v( d.sheet )]=
 	strcat( 
-		setq( w, 79 ), 
-		setq( t, 70 ), 
+//		setq( w, 79 ), 
+//		setq( t, 70 ), 
 		setq( c, u( powers.contracts, %0 )),
 
 		divider( Contracts ), %r, 
@@ -1883,49 +1807,45 @@ x: above, prettified
 			iter( 
 				u( powers.contracts, %0 ), 
 				strcat( 
-					u( display.subheader, 39, first( %i0, : )), %r, 
+					u( display.subheader.underline, 38, first( %i0, : )), %r, 
 					edit( rest( %i0, : ), ., %r )
 				), 
 				|, | 
-			)
+			), 
+			ansi( xh, |%b )
 		), %r, 
 
 		@@( to be continued ), 
 	)
 
-
-
 think u( v( d.sheet )/block.powers.contracts, %# )
 
 
+// ... 'subheader' ideas
 
+&display.subheader.dash [v( d.nsc )]=
+	strcat( 
+		ansi( xh, %b%b+ ), 
+		center( %b%1%b, sub( %0, 6 ), ansi( xh, - )), 
+		ansi( xh, +%b%b )
+	)
 
+&display.subheader.underline [v( d.nsc )]=center( ansi( u, %1 ), %0 )
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+&display.subheader.dot [v( d.nsc )]=center( %b%1%b, %0, ansi( xh, . ))
 
 
 
 /* 
-// -- Advantages ---------------------------------------------------------------
-/* morality -> clarity, has its own complex system 
-
-&traits.morality.vampire [v( d.nsc )]=
-	ulocal( f.cheat_getstat.morality, %0, integrity, Humanity )
-
+--------------------------------------------------------------------------------
+-- Sheet: Advantages -----------------------------------------------------------
 */
+
+// .. add 'kenning' to main advantages block.
+&advantages.changeling [v( d.nsc )]=kenning
+
+// fakes out the system into not showing 'integrity' in Advantages section
+&traits.morality.changeling [v( d.nsc )]=@@( null )
 
 &traits.glamour [v( d.nsc )]=
 	u( f.cheat_getstat.pool, %0, glamour )
@@ -1945,82 +1865,13 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 	)
 
 
-
-&traits.morality.changeling [v( d.nsc )]=@@( clarity section before health )
-
-
-// will pull from clarity system when done:
-&clarity.default [v( d.nsc )]=
-	strcat( 
-		ansi( xh, 
-			repeat( 
-				%[ %], 
-				ulocal( f.cheat_getstat.numeric, %0, advantage.clarity_maximum )
-			)
-		), 
-		|, penalty:0 
-	)
-
-
-// clarity block: this is a mess, a very mess, suck this mess
+// clarity block: Pulls from 'CtL3 - Clarity System'
 &block.clarity [v( d.sheet )]=
 	strcat( 
-// .. c: clarity display default (??), p: other notes, x: temp
-		setq( w, 80 ), 
-		setq( t, 7 ), 
-
-		setq( c, first( setr( x, u( clarity.default, %0 )), | )), 
-		setq( p, rest( %qx, | )), 
-
-		if( neq( last( %qp, : ), 0 ), 
-			setq( p, 
-				strcat( 
-					%b%(, 
-					u( display.trait-and-value, %qp, %qt, %qw, numeric ), 
-					%) 
-				)
-			), 
-			setq( p, )
-		), 
-
-// .. touchstones: f: free touchstone level, n: number of extra touchstones
-		setq( f, 
-			setr( b, inc( 
-				ladd( 
-					ulocal( f.cheat_getstat.numeric, %0, attribute.composure ), 
-					. 
-				)
-			))
-		), 
-		setq( n, 
-			min( 
-				ladd( 
-					ulocal( f.cheat_getstat.numeric, %0, merit.touchstone ), 
-					.  
-				), 
-				add( 
-					ladd( 
-						ulocal( f.cheat_getstat.numeric, %0, attribute.wits ), 
-						. 
-					), 
-					words( get( %0/_advantage.icon_(*) ))
-				)
-			)
-		), 
-		setq( d, 
-			ansi( hx, strcat( 
-				repeat( %b %b, %qb ), 
-				^%b, 
-				repeat( %b^%b, %qn )
-			))
-		), 
 		divider( Clarity ), %r, 
-		vcolumns( 
-			%qw:%b %qc%qp|
-			%qd, 
-			| 
-		)
+		u( v( d.ccs )/display.clarity-bar, %0 )
 	)
+	
 
 
 &block.traits.changeling [v( d.sheet )]=
@@ -2045,7 +1896,7 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 			|, %b 
 		), %r, 
 
-// .. clarity (morality health system )
+// .. clarity (morality health system)
 		u( block.clarity, %0 ), %r, 
 	)
 
@@ -2075,137 +1926,46 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-################################################################################
-## VAMPIRE: NOTES TO SELF ######################################################
-
-An in-clan Discipline dot costs three Experiences. Any other Discipline or blood 
-sorcery costs four. As well, Disciplines sometimes require teachers
-
-
-Primary Coil is 3 XP, secondary Coils are 4.
-
-
-Choose a Mask and a Dirge for your character. Whereas a mortal character has a 
-Virtue and a Vice, Kindred characters have Masks and Dirges.
-
-Mask & Dirge Archetypes: 
-	Authoritarian.Child.Competitor.Conformist.Conspirator.Courtesan.
-	Cult Leader.Deviant.Follower.Guru.Idealist.Jester.Jester.Junkie.Martyr.
-	Masochist.Monster.Nomad.Nurturer.Perfectionist.Penitent.Questioner.Rebel.
-	Scholar.Social Chameleon.Survivor.Visionary
-
-touchstone
-
-devotions
-
-* Favored Attributes:
-Daeva: Dexterity or Manipulation
-Gangrel: Composure or Stamina
-Mekhet: Intelligence or Wits
-Nosferatu: Composure or Strength
-Ventrue: Presence or Resolve
-
-if ( group total = group total + 1 )
-	if ( group section = group section + 1 )
-		if( attribute - 1 sets everything right )
-			ok!
-
-
-
-* Favored Disciplines: 
-
-Daeva Disciplines: *Celerity, *Majesty, *Vigor
-Gangrel Disciplines: *Animalism, *Protean, *Resilience 
-Mekhet Disciplines: *Auspex, *Celerity, *Obfuscate 
-Nosferatu Disciplines: *Nightmare, *Obfuscate, *Vigor 
-Ventrue Disciplines: *Animalism, *Dominate, *Resilience
-
-Blood Potency: p.90
-Humanity:p.106
-
-Coils of the Dragon - Coils, three types
-Crúac - blood sorcery 
-Theban Sorcery - blood sorcery
-
-
--- Ghoul Cgen Notes ------------------------------------------------------------
-
-Clan: Your ghoul has a regnant, usually the vampire who first gave her Vitae and 
-spent a point of Willpower on her. Think about who this regnant is (maybe one of 
-the other player's characters), and decide on his clan.
-
-Disciplines: Select two dots of Disciplines that are in-clan for your 
-character's regnant. At least one physical Discipline dot is recommended, but 
-not required. (You might want to look at the ghoul Discipline rules below 
-first.)
-
-Blood Potency: Your character gains the Blood Potency trait at 0, allowing him 
-to store and spend Vitae. This trait cannot be increased with Experiences or 
-time.
-
-*/
-
-
-
-
 /*
 ================================================================================
-== SPEND/REGAIN ESSENCE ========================================================
+== SPEND/REGAIN GLAMOUR ========================================================
 
 expands: 9c - Spend and Regain
+(identical to 99% of the rest of these)
 
-	spend vitae=<amt/method> for <reason>
+	spend glamour=<amt/method> for <reason>
 
-spend limit per Blood Potency: 
+spend limit per Wyrd: 
 	1 2 3 4 5 6 7 8 10 15
 
-regain methods:
-	suckin' da blood
+regain methods (not coded):
+	<dice pool> (once per target per scene)
+	reap
+	dreams
+
+0 Glamour = Cannot gain benefits from eating/drinking + Deprived Condition
 
 
 --------------------------------------------------------------------------------
--- Spend/Regain Methods --------------------------------------------------------
+-- Glamour: Spend/Regain Methods -----------------------------------------------
 */
 
-&regain.methods.vitae [v( d.psrs )]=|all
-&spend.methods.vitae [v( d.psrs )]=[@@( nothing but numeric allowed here )]
+&regain.methods.glamour [v( d.psrs )]=|all
+&spend.methods.glamour [v( d.psrs )]=[@@( nothing but numeric allowed here )]
 
 
 /* 
 --------------------------------------------------------------------------------
--- Spend/Regain Vitae Amts -----------------------------------------------------
+-- Glamour: Spend/Regain Amts --------------------------------------------------
 */
 
-&amt.spend.numeric.vitae [v( d.psrs )]=
+&amt.spend.numeric.glamour [v( d.psrs )]=
 	if( t( u( amt.spend.numeric.default, %0, %1, %2 )), 
 		if( 
 			lte( %2, 
 				elements( 
-					1 1 2 3 4 5 6 7 8 10 15, 
-					inc( getstat( %0/Blood Potency ))
+					1 2 3 4 5 6 7 8 10 15, 
+					getstat( %0/Wyrd )
 				)
 			), 
 			mul( %2, -1 ), 
@@ -2217,90 +1977,230 @@ regain methods:
 
 /* 
 --------------------------------------------------------------------------------
--- Spend Vitae Trigger ---------------------------------------------------------
+-- Glamour: Spend Trigger ------------------------------------------------------
 */
 
-&spend.trigger.vitae [v( d.psrs )]=
+&spend.trigger.glamour [v( d.psrs )]=
 	think strcat( 
-//	@pemit %0=strcat( 
-//		DEBUGGING:, %r, 
-		m:, %b, setr( m, u( f.match_method, %1, spend, vitae, %2 )), %r, 
-		a:, %b, setr( a, u( amt.spend, %1, vitae, %qm )), %r, 
-		s:, %b, setr( s, hasattr( %1, _advantage.Vitae_Maximum )), %r, 
+		m:, %b, setr( m, u( f.match_method, %1, spend, glamour, %2 )), %r, 
+		a:, %b, setr( a, u( amt.spend, %1, glamour, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, _advantage.wyrd )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.glamour_maximum )), %r, 
 	); 
 
-	@assert strlen( %qs )={ 
-		@pemit %0=u( .msg, vitae/spend, 
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, glamour/spend, 
 			cat( 
 				if( strmatch( %0, %1 ), You, name( %1 )), 
-				must have a Vitae pool 
+				must have both Wyrd and a Glamour pool 
 			)
 		) 
 	}; 
 
 	@assert strlen( %qm )={ 
-		@pemit %0=u( .msg, vitae/spend, I could not find the method '%2' ) 
+		@pemit %0=u( .msg, glamour/spend, I could not find the method '%2' ) 
 	}; 
 
 	@assert t( %qa )={ 
-		@pemit %0=u( .msg, vitae/spend, rest( %qa )) 
+		@pemit %0=u( .msg, glamour/spend, rest( %qa )) 
 	}; 
 
-	@assert t( setr( e, u( f.pool.canchange, %1, Vitae, %qa )))={ 
-		@pemit %0=u( .msg, vitae/spend, rest( %qe )) 
+	@assert t( setr( e, u( f.pool.canchange, %1, glamour, %qa )))={ 
+		@pemit %0=u( .msg, glamour/spend, rest( %qe )) 
 	}; 
 
-	@assert t( setr( e, u( f.pool.changestat, %1, vitae, %qa )))={ 
-		@pemit %0=u( .msg, vitae/spend, rest( %qe )) 
+	@assert t( setr( e, u( f.pool.changestat, %1, glamour, %qa )))={ 
+		@pemit %0=u( .msg, glamour/spend, rest( %qe )) 
 	}; 
 
 	think e: 
-//	@pemit %0=e: 
 		[setr( e, 
-			u( display.number, %0, %1, vitae, spend, %qa, %qm, %4 )
+			u( display.number, %0, %1, glamour, spend, %qa, %qm, %4 )
 		)]; 
 	@eval u( f.announcement, %0, %1, spend, %qe ); 
 
 
 /* 
 --------------------------------------------------------------------------------
--- Regain Vitae Trigger --------------------------------------------------------
+-- Glamour: Regain Trigger -----------------------------------------------------
 */
 
-&regain.trigger.vitae [v( d.psrs )]=
+&regain.trigger.glamour [v( d.psrs )]=
 	think strcat( 
-		m:, %b, setr( m, u( f.match_method, %1, regain, vitae, %2 )), %r, 
-		a:, %b, setr( a, u( amt.regain, %1, vitae, %qm )), %r, 
-		s:, %b, setr( s, hasattr( %1, _advantage.Vitae_Maximum )), %r, 
+		m:, %b, setr( m, u( f.match_method, %1, regain, glamour, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, glamour, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, _advantage.wyrd )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.glamour_maximum )), %r, 
 	); 
 
-	@assert strlen( %qs )={ 
-		@pemit %0=u( .msg, vitae/regain, 
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, glamour/regain, 
 			cat( 
 				if( strmatch( %0, %1 ), You, name( %1 )), 
-				must have a Vitae pool 
+				must have both Wyrd and a Glamour pool 
 			)
 		) 
 	}; 
 
 	@assert strlen( %qm )={ 
-		@pemit %0=u( .msg, vitae/regain, I could not find the method '%2' ) 
+		@pemit %0=u( .msg, glamour/regain, I could not find the method '%2' ) 
 	}; 
 
 	@assert t( %qa )={ 
-		@pemit %0=u( .msg, vitae/regain, rest( %qa )) 
+		@pemit %0=u( .msg, glamour/regain, rest( %qa )) 
 	}; 
 
-	@assert t( setr( e, u( f.pool.canchange, %1, Vitae, %qa )))={ 
-		@pemit %0=u( .msg, vitae/regain, rest( %qe )) 
+	@assert t( setr( e, u( f.pool.canchange, %1, glamour, %qa )))={ 
+		@pemit %0=u( .msg, glamour/regain, rest( %qe )) 
 	}; 
 
-	@assert t( setr( e, u( f.pool.changestat, %1, vitae, %qa )))={ 
-		@pemit %0=u( .msg, vitae/regain, rest( %qe )) 
+	@assert t( setr( e, u( f.pool.changestat, %1, glamour, %qa )))={ 
+		@pemit %0=u( .msg, glamour/regain, rest( %qe )) 
 	}; 
 
 	think e: 
 		[setr( e, 
-			u( display.number, %0, %1, vitae, regain, %qa, %qm, %4 )
+			u( display.number, %0, %1, glamour, regain, %qa, %qm, %4 )
 		)]; 
 	@eval u( f.announcement, %0, %1, regain, %qe ); 
+
+
+
+/*
+================================================================================
+== SPEND/REGAIN GOBLIN DEBT ====================================================
+
+expands: 9c - Spend and Regain
+
+Now we're doing something different. There is no (known?) upper limit to Goblin 
+Debt, so there is no 'maximum' trait.
+
+Goblin Debt is gained upon a successful use of a Goblin Contract.
+We leave it up to the player to set this, mostly because we have no better way 
+to maintain the system right now.
+
+Goblin Debt can be spent by the ST when interesting.
+
+	1+ Points : Reduce any dice pool, 1 die per point spent.
+	4 Point   : Inflict non-persistent Condition 
+	8 Points  : Inflict persistent Condition
+
+It's suggested that these Conditions have some relation to the Goblin Contract 
+being used or the goblin that gave the character the Contract.
+
+The spending should at least make some sense.
+
+At 10 points, the character becomes a Hobgoblin. Read up. It's fun.
+
+
+--------------------------------------------------------------------------------
+-- Goblin Debt: Spend/Regain Methods -------------------------------------------
+
+Would be nice for 'spend' to include 'condition' and 'persistent condition'.
+
+*/
+
+&regain.methods.goblin_debt [v( d.psrs )]=|all
+&spend.methods.goblin_debt [v( d.psrs )]=
+	[@@( nothing but numeric allowed here )]
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Goblin Debt: Spend/Regain Amts ----------------------------------------------
+
+Not needed.
+Will trigger 'amt.spend.numeric.default' and 'amt.gain.numeric.default'
+
+
+--------------------------------------------------------------------------------
+-- Goblin Debt: Spend Trigger --------------------------------------------------
+*/
+
+&spend.trigger.goblin_debt [v( d.psrs )]=
+	think strcat( 
+		m:, %b, setr( m, u( f.match_method, %1, spend, goblin_debt, %2 )), %r, 
+		a:, %b, setr( a, u( amt.spend, %1, goblin_debt, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, _advantage.wyrd )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.goblin_debt_maximum )), %r, 
+	); 
+
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, goblin debt/spend, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				must have both Wyrd and a Goblin Debt pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, goblin debt/spend, I could not find the method '%2' ) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, goblin debt/spend, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, goblin_debt, %qa )))={ 
+		@pemit %0=u( .msg, goblin debt/spend, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, goblin_debt, %qa )))={ 
+		@pemit %0=u( .msg, goblin debt/spend, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, glamour, spend, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, spend, %qe ); 
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Goblin Debt: Regain Trigger -------------------------------------------------
+*/
+
+&regain.trigger.goblin_debt [v( d.psrs )]=
+	think strcat( 
+		m:, %b, setr( m, u( f.match_method, %1, regain, goblin_debt, %2 )), %r, 
+		a:, %b, setr( a, u( amt.regain, %1, goblin_debt, %qm )), %r, 
+		u:, %b, setr( u, hasattr( %1, _advantage.wyrd )), %r, 
+		s:, %b, setr( s, hasattr( %1, _advantage.goblin_debt_maximum )), %r, 
+	); 
+
+	@assert cand( %qu, %qs )={ 
+		@pemit %0=u( .msg, goblin debt/regain, 
+			cat( 
+				if( strmatch( %0, %1 ), You, name( %1 )), 
+				must have both Wyrd and a Goblin Debt pool 
+			)
+		) 
+	}; 
+
+	@assert strlen( %qm )={ 
+		@pemit %0=u( .msg, 
+			goblin debt/regain, 
+			I could not find the method '%2' 
+		) 
+	}; 
+
+	@assert t( %qa )={ 
+		@pemit %0=u( .msg, goblin debt/regain, rest( %qa )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.canchange, %1, goblin_debt, %qa )))={ 
+		@pemit %0=u( .msg, goblin debt/regain, rest( %qe )) 
+	}; 
+
+	@assert t( setr( e, u( f.pool.changestat, %1, goblin_debt, %qa )))={ 
+		@pemit %0=u( .msg, goblin debt/regain, rest( %qe )) 
+	}; 
+
+	think e: 
+		[setr( e, 
+			u( display.number, %0, %1, glamour, regain, %qa, %qm, %4 )
+		)]; 
+	@eval u( f.announcement, %0, %1, regain, %qe ); 
+

@@ -189,13 +189,19 @@ Exceptions happen on filling the last square.
 @fo me=&d.ccs me=search( name=Changeling Clarity System <ccs> )
 @set Changeling Clarity System <ccs>=inherit safe
 
+// systems we'll have to access
+
 @fo me=&d.dd Changeling Clarity System <ccs>=
 	[search( name=Data Dictionary <dd> )]
-
 @fo me=&d.sfp Changeling Clarity System <ccs>=
-		[search( name=Stat Function Prototype <sfp> )]
+	[search( name=Stat Functions Prototype <sfp> )]
 
 @fo me=@parent Changeling Clarity System <ccs>=[v( d.codp )]
+
+// tell the sheet system where to find this info
+
+@fo me=&d.ccs [v( d.nsc )]=[search( name=Changeling Clarity System <ccs> )]
+
 
 /* 
 --------------------------------------------------------------------------------
@@ -310,7 +316,7 @@ the final readable output.
 See 'Format: Clarity Bar' for what we're passing. It's not far.
 Full testing also follows.
 
-0: Player to display
+0: Sheet to display
 
 */
 
@@ -711,6 +717,7 @@ This is here to make calling 'f.clarity.heal.all' easier from the workhorse.
 		#-1 Unknown Damage Type  
 	)
 
+// -- test --
 think ansi( y, -- TEST: F.CLARITY.HURT.ALL -- )
 @set/quiet me=_clarity.maximum:7
 @set/quiet me=_clarity.mild:1
@@ -752,6 +759,16 @@ d: new damage of <heal type> (%qt)
 &f.clarity.heal [v( d.ccs )]=
 	localize( 
 		case( 0, 
+			add( 
+				setr( m, u( .value, %0, clarity.mild )), 
+				setr( s, u( .value, %0, clarity.severe ))
+			),
+			strcat( 
+				#-1 Target is already healthy, 
+				if( u( .is_comatose, %0 ), %bbut is still comatose )
+			), 
+			
+
 			strlen( setr( t, setinter( mild severe all, lcstr( %1 )))), 
 			#-1 Type is Mild%, Severe%, or All, 
 
@@ -763,8 +780,6 @@ d: new damage of <heal type> (%qt)
 
 // output all new damages
 			strcat( 
-				setq( m, u( .value, %0, clarity.mild )), 
-				setq( s, u( .value, %0, clarity.severe )), 
 				setq( d, 
 					case( %qt, 
 						mild, %qm, 
@@ -887,7 +902,7 @@ n: new damage total (for legibility)
 --------------------------------------------------------------------------------
 -- Test Change: Hurt -----------------------------------------------------------
 
-	u( f.test-change.hurt, <target>, <old dmg>, <new dmg> )
+	u( f.test-change.hurt, <target dbref>, <old dmg>, <new dmg> )
 
 m: max clarity
 o: original damage total (needed if we report touchstone loss)
@@ -921,11 +936,11 @@ p: 'persistent ' text if it was
 			case( 1, 
 // .. track is full: comatose condition
 				gte( %qn, %qm ), 
-				|gains a %qpComatose Condition, 
+				|Gains %qpComatose Condition, 
 
 // .. last three filled: clarity condition
 				lte( sub( %qm, %qn ), 3 ), 
-				|gains a %qpClarity Condition, 
+				|should set a %qpClarity Condition, 
 
 				@@( neither )
 			)
@@ -958,7 +973,7 @@ think u( v( d.ccs )/f.test-change.hurt, %#, 0 0, 1 0 ) --> (already comatose)
 --------------------------------------------------------------------------------
 -- Test Change: Heal -----------------------------------------------------------
 
-	u( f.test-change.heal, <target>, <old dmg>, <new dmg> )
+	u( f.test-change.heal, <target dbref>, <old dmg>, <new dmg> )
 
 
 We don't use <old dmg> or <new dmg> here, but I'm paranoid.
@@ -985,7 +1000,7 @@ Nothing can help 'persistent comatose', but we treat `cond.` data with suspicion
 			@@( nothing changed so ignore it ), 
 
 			cand( t( %qc ), not( t( %qp ))), 
-			|resolves a Comatose Condition, 
+			|can resolve a normal Comatose Condition, 
 
 			@@( nothing else happened )
 		)
@@ -1011,29 +1026,6 @@ think u( v( d.ccs )/f.test-change.heal, %#, 3 2, 2 2 ) --> (persistent comatose)
 @@ this one we want to clean up
 @set/quiet me=_cond.comatose.xxx:
 @set/quiet me=_cond.persistent_comatose.xxx:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1106,7 +1098,7 @@ e: potential errors from `f.healhurt-apply`
  		setq( 0, regmatchi( %1, v( d.regex.healhurt ), 0 x x y z z )), 
 
 		setq( d, case( %qx, me, %0, @@( null ), %0, pmatch( %qx ))), 
-		setq( s, u( v( d.sfp )/f.find-sheet, %qp )), 
+		setq( s, u( v( d.sfp )/f.find-sheet, %qd )), 
 
 		setq( h, case( %2, 1, heal, 0, hurt, ??? )), 
 		setq( t, grab( |all|mild|severe, %qy*, | )), 
@@ -1117,7 +1109,7 @@ e: potential errors from `f.healhurt-apply`
 // .. core validity checks
 			%q0, 
 			u( .msg, clarity/%qh, Command format is: 
-				\[<target>/\]<type>\[=<amt>\] 
+				\\[<target>/\\]<type>\\[=<amt>\\] 
 			), 
 			
 			isdbref( %qd ), 
@@ -1126,7 +1118,7 @@ e: potential errors from `f.healhurt-apply`
 			cor( isstaff( %# ), strmatch( %#, %qd )), 
 			u( .msg, clarity/%qh, Only staff can target others ), 
 
-			cand(
+			cand( 
 				isapproved( %qd ), 
 				strmatch( u( .value, %qd, bio.template ), changeling ), 
 				hasattr( %qd, _clarity.maximum )
@@ -1144,29 +1136,41 @@ e: potential errors from `f.healhurt-apply`
 
 // .. oblique checks (none currently)
 
-// .. calculate end condition and apply/report
+// .. calculate end condition
 			strcat( 
-				setq( c, u( f.clarity.%qh, %qd, %qt, %qa )), 
-				setq( r, u( f.test-change.%qh, 
-					%0, 
+				setq( c, ulocal( f.clarity.%qh, %qd, %qt, %qa )), 
+				setq( r, ulocal( f.test-change.%qh, 
+					%qd, 
 					first( %qc, | ), 
 					rest( %qc, | )
 				)), 
 
 // .. check for errors from the rest of the system
 // .. (%qd is unlikely to have errors, but just in case that changes)
-				switch( #-1*, 
-					%qc, u( .msg, clarity/%qh, rest( %qc )), 
-					%qr, u( .msg, clarity/%qr, rest( %qd )), 
+				case( 1, 
+					strmatch( %qc, #-1* ), 
+					u( .msg, clarity/%qh, rest( %qc )), 
 
-// .. does new stat setting, but may error out
-					setr( e, 
-						u( f.healhurt-apply, %0, %qd, %qs, %qh, %qc, %qr )
+					strmatch( %qr, #-1* ), 
+					u( .msg, clarity/%qr, rest( %qd )), 
+
+// .. does new stat setting, rare case of errors
+					strmatch( 
+						setr( e, 
+							u( f.healhurt-apply, %0, %qd, %qs, %qh, %qc, %qr )
+						), 
+						#-1* 
 					), 
 					u( .msg, clarity/%qh, rest( %qe )), 
 
 // .. .. everything was good: report the change
-					u( f.healhurt-report, xxx, xxx, xxx )
+					u( f.healhurt-report, 
+						%0, 
+						%qd, 
+						%qa, 
+						if( %2, healing, damage ), 
+						%qr
+					)
 				)
 			)
 		)
@@ -1182,16 +1186,18 @@ here.
 
 All input is assumed verified.
 
-	u( f.healhurt-apply, <enactor>, <target>, <health>, <other> )
-
-Returns: #-1 if panic, otherwise nothing
-
 0: enactor dbref
 1: target dbref (for conditions)
 2: target sheet (for stats)
 3: 'heal' or 'hurt'
 4: <old health>|<new health>
 5: |<extra triggers & messages>
+
+Returns: #-1 if panic, otherwise nothing
+
+m: new mild damage
+s: new severe damage
+c: 'comatose' notes
 
 */
 
@@ -1209,21 +1215,20 @@ Returns: #-1 if panic, otherwise nothing
 
 // .. apply 'comatose' if necessary, otherwise just report
 			case( 1, 
-				t( grab( %qc, gains a Persistent Comatose Condition, | )), 
+				t( grab( %qc, Gains Persistent Comatose Condition, | )), 
 				u( f.healhurt-apply.condition, 
 					%1, persistent_comatose, 
 					Set by Clarity System for damage taken.
 				), 
 
-				t( grab( %qc, gains a Comatose Condition, | )), 
+				t( grab( %qc, Gains Comatose Condition, | )), 
 				u( f.healhurt-apply.condition, 
 					%1, comatose, 
 					Set by Clarity System for damage taken.
 				), 
 
-				@@( everything was okay and nothing happened )
+				@@( nothing else needed looked into )
 			)
-
 		)
 	))
 
@@ -1261,7 +1266,11 @@ to succeed.
 
 */
 
-&f.healhurt-apply.condition [v( d.ccs )]=set( %0, _COND.%1.[secs( )]:%1|%2 )
+&f.healhurt-apply.condition [v( d.ccs )]=
+	set( %0, 
+		_COND.%1.[secs( )]:
+		cond.%1|%2 
+	)
 
 
 /*
@@ -1280,20 +1289,27 @@ Report action to everyone in target's room.
 */
 
 &f.healhurt-report [v( d.ccs )]=
-	strcat( 
-		iter( %0 %1, 
-			pemit( %i0, u( display.healhurt.full, %1, %i0, %2, %3, %4 ))
+	localize( strcat( 
+		setq( d, 
+			if( not( strmatch( %0, %1 )), 
+				Dealt by [name( %0 )] %(%0%) 
+			)
+		), 
+		iter( setunion( %0 %1, ), 
+			pemit( %i0, 
+				u( display.healhurt.full, %1, %i0, %2, %3, %4, %qd )
+			)
 		), 
 
 		iter( 
-			setdiff( lcon( %1 ), %0 %1  ), 
+			setdiff( lcon( loc( %1 )), %0 %1  ), 
 			pemit( %i0, 
 				u( .msg, clarity, 
-					u( display.healhurt.action, %1, %i0, %2, %3, %4 )
+					u( display.healhurt.action, %1, %i0, %2, %3, %4, %qd )
 				)
 			)
 		)
-	)
+	))
 
 
 /* 
@@ -1306,6 +1322,7 @@ The message everyone sees on a successful clarity heal/hurt.
 2: amt
 3: 'damage'/'healing'
 4: other notes (e.g., gains a clarity condition)
+5: 'dealt by' foo
 
 You/they take/s xx clarity damage/healing and xxx.
 
@@ -1324,7 +1341,8 @@ You/they take/s xx clarity damage/healing and xxx.
 					|, %,%b 
 				)
 			)
-		), . 
+		), ., 
+		if( strlen( %5 ), %b%(%5%))
 	))
 
 &display.healhurt.full [v( d.ccs )]=
@@ -1332,13 +1350,13 @@ You/they take/s xx clarity damage/healing and xxx.
 		header( 
 			strcat( 
 				case( %3, damage, Losing, healing, Gaining, ???ing ), %b, 
-				%3 Clarity 
+				%2 Clarity 
 			)
 		), %r, 
 		u( display.healhurt.action, %0, %1, %2, %3, %4 ), %r,
 		Clarity is now:, %r,  
 		u( display.clarity-bar, %0 ), %r, 
-		footer()
+		footer( %5 )
 	)
 
 
