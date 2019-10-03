@@ -17,7 +17,7 @@ of Willpower to fuel a power. This should always be managed by staff using
 
 Commands:
 	spend[/<switches>] <stat>[=<input>][ for <reason>]
-	regain[/<switches>] <stat>[=<input>] [for <reason>]
+	regain[/<switches>] <stat>[=<input>][ for <reason>]
 
 	<input>: Depending on the 'pool.<stat>.xxx' code, might be one of ...
 		<amt>: A straight value ('2').
