@@ -382,7 +382,7 @@ Other templates may be added in as:
 	iter( 
 		defense 
 		weaponry_defense brawl_defense 
-		speed initiative perception size 
+		speed initiative size perception 
 		[udefault( advantages.[get( %0/_bio.template )], @@( null ))], 
 
 		ulocal( f.cheat_getstat.with_name, %0, advantage.%i0, numeric ), 
