@@ -500,6 +500,7 @@ qb: boolean list of matches
 
 think u( v( d.sfp )/f.hastag?.workhorse, advantage.speed, derived )
 think u( v( d.sfp )/f.hastag?.workhorse, advantage.speed, !human )
+think u( v( d.sfp )/f.hastag?.workhorse, advantage.speed, derived.!human )
 
 think hastag?( speed, derived )
 think hastag?( speed, derived.pool )
