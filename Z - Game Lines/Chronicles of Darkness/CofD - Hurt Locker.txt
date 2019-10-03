@@ -1125,7 +1125,7 @@ SYSTEMA
 		## Merits|, 
 		setq( m, 
 			edit( 
-				u( v( d.sfp )/f.list-stats-tags, %0, merit, !fighting ), 
+				ulocal( v( d.sfp )/f.list-stats-tags, %0, merit, !fighting ), 
 				MERIT., 
 			)
 		), 
@@ -1163,7 +1163,7 @@ SYSTEMA
 	strcat( 
 		setq( w, 79 ), 
 		setq( t, 70 ), 
-		setq( m, u( merits.default, %0 )), 
+		setq( m, ulocal( merits.default, %0 )), 
 		setq( f, rest( %qm, ` )), 
 		setq( m, first( %qm, ` )), 
 
@@ -1174,7 +1174,7 @@ SYSTEMA
 		if( words( rest( %qf, | ), | ), 
 			strcat( 
 				%r, 
-				u( block.merits.display, %qf, %qt, %qw ), 
+				ulocal( block.merits.display, %qf, %qt, %qw ), 
 			)
 		)
 	)
@@ -1192,11 +1192,11 @@ SYSTEMA
 	strcat( 
 		divider( rest( first( %0, | ), ## )), %r, 
 		iter( rest( %0, | ), 
-			u( display.trait-and-value, 
+			ulocal( display.trait-and-value, 
 				%i0, 
 				%1, 
 				%2, 
-				u( v( d.sfp )/f.get-class, 
+				ulocal( v( d.sfp )/f.get-class, 
 					merit.[edit( first( %i0, : ), %b, _ )] 
 				), 
 				. 
@@ -1214,7 +1214,6 @@ SYSTEMA
 
 
 
-F.LIST-STATS-TAGS: filter( fil.list-stats-tags, rest( edit( lattr( %0/_%1.* ), %b_, %b ), _ ), , , %2, not( strmatch( %3, or )))
 
 
 
@@ -1222,6 +1221,8 @@ F.LIST-STATS-TAGS: filter( fil.list-stats-tags, rest( edit( lattr( %0/_%1.* ), %
 
 
 /*
+
+F.LIST-STATS-TAGS: filter( fil.list-stats-tags, rest( edit( lattr( %0/_%1.* ), %b_, %b ), _ ), , , %2, not( strmatch( %3, or )))
 
 think ulocal( v( d.nsc )/f.cheat_getstat.with_name, %#, merit.chain_weapons, list )
 
