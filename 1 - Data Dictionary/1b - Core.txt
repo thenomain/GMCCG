@@ -516,7 +516,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &merit.armed_defense [v( d.dd )]=1.2.3.4.5
 &prerequisite.merit.armed_defense [v( d.dd )]=
 	cand( 
-		u( .has, %0, defensive_combat_(weaponry) ), 
+		u( .has, %0, merit.defensive_combat_(weaponry) ), 
 		u( .at_least_all, %0, attribute.dexterity:3 skill.weaponry:2 )
 	)
 &prereq-text.merit.armed_defense [v( d.dd )]=
