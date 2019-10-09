@@ -62,26 +62,6 @@ mainly the "is this sheet chargen-compatible" system
 
 &.msg [v( d.cg )]=ansi( h, <%0>, n, %b%1 )
 
-/*
---------------------------------------------------------------------------------
--- Function: Sub-Item Not In List ----------------------------------------------
-
-	filter( fil.subitem-not-in-list, <substats>, , , <main stats> )
-
-Check to see if a substat is not represented by a main stat.
-
-	<substats>   : a.1 a.2 c.1 e.1 g.1
-	<main stats> : a b c d
-	<returns>    : e.1 g.1
-
-*/
-
-&fil.subitem-not-in-list [v( d.cg )]=not( match( %1, elements( %0, 1, . ) ))
-
-// -- test --
-think 
-	[filter( v( d.cg )/fil.subitem-not-in-list, a.1 a.2 c.1 e.1, , , a b c d )] 
-	--> e.1
 
 
 /*
