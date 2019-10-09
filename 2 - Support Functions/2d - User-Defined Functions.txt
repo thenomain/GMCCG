@@ -345,7 +345,7 @@ s: statpath without instance
 		setq( s, first( %1, ! )), 
 		setq( x, rest( %!, ! )), 
 	 	setq( i, crumple( before( rest( %qs, %( ), %) ))), 
-		setq( s, u( f.statpath-without-instance, trim( %qs, b, _ ))), 
+		setq( s, ulocal( f.statpath-without-instance, trim( %qs, b, _ ))), 
 // .. again, sub-sheets cannot look up 'derived' traits
 		if( 
 			strmatch( get( %0/%1 ), derived ), 
