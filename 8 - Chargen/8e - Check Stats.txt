@@ -262,7 +262,7 @@ t: temp whatsit
 			)), 
 			if( strmatch( %1, _skill.* ), 
 				#-1 Specialties cannot be set if skill is zero or non-numeric, 
-				#-1 Substat cannot be set if main stat is non-numeric 
+				#-1 Substat cannot be set if main stat is zero or non-numeric 
 			), 
 
 			cand( 
@@ -271,7 +271,7 @@ t: temp whatsit
 			), 
 			#-1 Specialty substats must have a value of 1, 
 
-			1
+			1 
 		)
 	)
 
