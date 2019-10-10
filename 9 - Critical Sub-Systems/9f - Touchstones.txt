@@ -1,5 +1,13 @@
 /* The Touchstone System
 
+
+
+********************************************************************************
+********* DO NOT INSTALL THIS SYSTEM, IT IS NOT READY AND MAY NEVER BE *********
+********************************************************************************
+
+
+
 For Touchstones.
 
 Touchstones may be attached to another trait and must be kept in order.
