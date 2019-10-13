@@ -564,6 +564,7 @@ Merits: 5/10 (5 on <name of Power Stat>)
 
 0: dbref of sheet
 1: template
+2: dbref of character
 
 */
 
@@ -601,7 +602,7 @@ Merits: 5/10 (5 on <name of Power Stat>)
 			u( display.check.stats, %0, merits ), %r, 
 
 // .. template chargen checks
-		u( check.chargen.%1, %0 )
+		u( check.chargen.%1, %0, %2 )
 	)
 
 
@@ -835,7 +836,7 @@ Otherwise identical.
 // .. chargen-level check normally happens only pre-approval
 			strcat( 
 				ulocal( check.bio, %qp, %qs, %qt ), %r, 
-				ulocal( check.chargen, %qs, %qt ), 
+				ulocal( check.chargen, %qs, %qt, %qp ), 
 			), 
 // .. valid stats check
 			ulocal( check.badstats, %qs ), %r, 
