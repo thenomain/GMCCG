@@ -442,8 +442,8 @@ Appendix starting on p. 333.
 	The character has risen far beyond ordinary goblins, and they scrape and bow 
 	before her. This Condition functions as Hedge Denizen (p. 340), except as 
 	follows:\%r
-	\%b * The character's Mantle rejects her. She cannot invoke her current Court 
-	Contracts, nor purchase new ones.\%r
+	\%b * The character's Mantle rejects her. She cannot invoke her current 
+	Court Contracts, nor purchase new ones.\%r
 	\%b * She gains the Status (Goblins) Merit at four dots. If the local Hedge 
 	holds any creatures who outrank her, she immediately knows their assumed 
 	names and titles.\%r
@@ -482,6 +482,27 @@ Appendix starting on p. 333.
 	Contract or making another kind of hobgoblin deal.|
 	
 	CtL.339-40
+
+// -----------------------------------------------------------------------------	
+
+@fo me=&COND.HEDGE_ADDICTION [v( d.ctdb )]=
+	Hedge Addiction|1|
+	
+	The Hedge draws the fae-touched character. If she is presented with an 
+	opportunity to enter the Hedge%, her player must succeed on a Resolve + 
+	Composure roll to resist the temptation. The roll suffers a cumulative -1 
+	penalty for each previous time the character has entered the Hedge during 
+	this story%, to a maximum of -1|
+
+	Being fae-touched|
+
+	The character refrains from entering the Hedge for a full story. However%, 
+	he regains this Condition if he ever does enter the Hedge in the future.|
+
+	The Avowed enters the Hedge%, either because he failed to resist the pull%, 
+	or because he went willingly.|
+
+	CtL.340
 
 // -----------------------------------------------------------------------------	
 
