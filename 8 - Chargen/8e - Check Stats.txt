@@ -62,7 +62,7 @@ t: temp validation results, used here and there
 				ulocal( f.statcheck.normal, %1, %qs, %qv, %2 )
 			)
 		), 
-		if( t( %qt ), 1, %qt ), ., 
+		if( strlen( %qt ), 1, %qt ), ., 
 
 // >> <prereq>
 		iter( 
@@ -159,7 +159,7 @@ v: value to check (if %3, then do a dance for num/non-num)
 
 // >> if instance was valid, check stat value
 		if( 
-			t( %qt ), 
+			strlen( %qt ), 
 // .. if statpath is ok, validate the value
 			ulocal( [u( d.sfp )]/f.statvalidate.workhorse, %1, %qv ), 
 // .. if statpath is not ok, pass its error
