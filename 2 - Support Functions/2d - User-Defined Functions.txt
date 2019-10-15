@@ -992,7 +992,7 @@ qu: "un-add" these list items (for type:class only)
 			comp( %qm, ), %qm, 
 
 // 'set x to y'
-			strlen( setr( v, if( strlen( %qv ), %qv, %2 ))), 
+			t( strlen( setr( v, if( strlen( %qv ), %qv, %2 )))), 
 			strcat( 
 				Set, %b, 
 				ulocal( f.statname.workhorse, rest( %qs, . )), 
