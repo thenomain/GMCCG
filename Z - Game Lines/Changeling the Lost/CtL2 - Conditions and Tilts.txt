@@ -489,17 +489,17 @@ Appendix starting on p. 333.
 	Hedge Addiction|1|
 	
 	The Hedge draws the fae-touched character. If she is presented with an 
-	opportunity to enter the Hedge%, her player must succeed on a Resolve + 
+	opportunity to enter the Hedge, her player must succeed on a Resolve + 
 	Composure roll to resist the temptation. The roll suffers a cumulative -1 
 	penalty for each previous time the character has entered the Hedge during 
-	this story%, to a maximum of -1|
+	this story, to a maximum of -1|
 
 	Being fae-touched|
 
-	The character refrains from entering the Hedge for a full story. However%, 
+	The character refrains from entering the Hedge for a full story. However, 
 	he regains this Condition if he ever does enter the Hedge in the future.|
 
-	The Avowed enters the Hedge%, either because he failed to resist the pull%, 
+	The Avowed enters the Hedge, either because he failed to resist the pull, 
 	or because he went willingly.|
 
 	CtL.340
