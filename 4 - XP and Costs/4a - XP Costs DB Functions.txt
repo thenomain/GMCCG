@@ -98,8 +98,9 @@ We end up not doing this. Maybe we should.
 &prefix.calculations XP Cost Database <xpcd>=cost.
 &prefix.xp_costs XP Cost Database <xpcd>=xp.
 
-@force me=&d.dd XP Cost Database <xpcd>=[search( name=Data Dictionary <dd> )]
-@force me=&d.sfp XP Cost Database <xpcd>=[search( name=Stat Functions Prototype <sfp> )]
+@fo me=&d.dd XP Cost Database <xpcd>=[search( name=Data Dictionary <dd> )]
+@fo me=&d.dt XP Cost Database <xpcd>=[search( name=Data Tags <dt> )]
+@fo me=&d.sfp XP Cost Database <xpcd>=[search( name=Stat Functions Prototype <sfp> )]
 
 
 
