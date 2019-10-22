@@ -97,7 +97,7 @@ Check to see if a substat is not represented by a main stat.
 
 */
 
-&fil.subitem-not-in-list [v( d.cg )]=not( match( %1, elements( %0, 1, . ) ))
+&fil.subitem-not-in-list [v( d.cg )]=not( match( %1, elements( %0, 1, . )))
 
 // -- test --
 think 
