@@ -676,8 +676,6 @@ think u( v( d.cg )/check.chargen.specialties, pmatch( Hemi ), Human ) --> %qa --
 
 Another example
 
-Prettifies the output for the Werewolf specialties.
-
 0: <changeling>`<seeming>`<kith(s)>
 
 */
