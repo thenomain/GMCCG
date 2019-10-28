@@ -137,9 +137,10 @@ d.type.specials:
 &filter.search-types [v( d.sfp )]=
 	t( match( u( d.search-order ), first( %0, . )))
 
+// this is a numerical sort: uses 'sub()' instead of 'comp()'
 &sortby.types [v( d.sfp )]=
 	[setq( o, u( d.search-order ))]
-	[comp( match( %qo, first( %0, . )), match( %qo, first( %1, . )))]
+	[sub( match( %qo, first( %0, . )), match( %qo, first( %1, . )))]
 
 // -----------------------------------------------------------------------------
 // -- test --
