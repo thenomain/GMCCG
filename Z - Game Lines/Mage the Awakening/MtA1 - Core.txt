@@ -343,7 +343,7 @@ The fun of Proximi taking spells as 'Blessings'.
 &merit.grimoire_() [v( d.dd )]=1.2.3.4.5|*
 &tags.merit.grimoire_() [v( d.dt )]=mage.supernatural
 
-&merit.hallow_() [v( d.dd )]=1.2.3.4.5
+&merit.hallow_() [v( d.dd )]=1.2.3.4.5|*
 &tags.merit.hallow_() [v( d.dt )]=mage.location
 
 &merit.imbued_item_() [v( d.dd )]=#|*
