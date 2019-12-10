@@ -65,7 +65,7 @@ used by xp code for 'player experience'.
 == DOT FUNCTIONS ===============================================================
 */
 
-&.objid ars=
+&.objid [v( d.ars )]=
 	localize( 
 		if( 
 			t( setr( l, locate( %#, %0, * ))), 
@@ -74,7 +74,7 @@ used by xp code for 'player experience'.
 		)
 	)
 
-&.msg ars=ansi( h, <%0>, n, %b%1 )
+&.msg [v( d.ars )]=ansi( h, <%0>, n, %b%1 )
 
 
 
@@ -86,7 +86,7 @@ used by xp code for 'player experience'.
 -- Command: Mistress -----------------------------------------------------------
 */
 
-&c.alt ars=$(?s)^\+?alts?(/[^\s]+)*( .*)?$:
+&c.alt [v( d.ars )]=$(?s)^\+?alts?(/[^\s]+)*( .*)?$:
 	@assert isapproved( %# )={ 
 		@pemit %#=u( .msg, alt, You must be approved ); 
 	}; 
@@ -117,7 +117,7 @@ used by xp code for 'player experience'.
 		), 
 	); 
 
-@set ars/c.alt=regexp
+@set v( d.ars )/c.alt=regexp
 
 
 /*
@@ -170,7 +170,7 @@ Verify the target, generate a unique code, store it on the enactor,
 
 */
 
-&c.alt/register ars=
+&c.alt/register [v( d.ars )]=
 	strcat( 
 		setq( p, pmatch( %0 )), 
 		setq( o, u( .objid, %qp )), 
@@ -198,7 +198,7 @@ Verify the target, generate a unique code, store it on the enactor,
 
 // ---
 
-&c.alt/request ars=u( c.alt/register, %0 )
+&c.alt/request [v( d.ars )]=u( c.alt/register, %0 )
 
 
 /*
@@ -246,7 +246,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 
 // -=-=-=-=-=-=
 
-&f.has-alt ars=
+&f.has-alt [v( d.ars )]=
 	cor( 
 		t( match( get( %0/_alt.list ), %1 )), 
 		strmatch( %0, first( %1, : ))
@@ -254,7 +254,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 
 // --=-==-=-=-=-
 
-&f.generate-code ars=
+&f.generate-code [v( d.ars )]=
 	if( 
 		search( 
 			eplayer=
@@ -269,7 +269,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 
 // -=-=-==--=-=
 
-&tr.mail.register ars=
+&tr.mail.register [v( d.ars )]=
 	@mail/quick %1/Alt Request: [name( %0 )]=
 		[name( %0 )] has sent an alt request, 
 		suggesting that you and they are played by the same player.%r%r
@@ -286,7 +286,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 // and merge them all together. include both input dbrefs
 // returns: all alts' objids
 
-&f.merge-alt-lists ars=
+&f.merge-alt-lists [v( d.ars )]=
 	localize( strcat( 
 		setq( a, 
 			setunion( 
@@ -305,7 +305,7 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 // 0: list of objids
 // returns: objects that still exist
 
-&fil.alts.current ars=strmatch( %0, u( .objid, first( %0, : )))
+&fil.alts.current [v( d.ars )]=strmatch( %0, u( .objid, first( %0, : )))
 
 &fil.alts.approval_type [v( d.ars )]=strmatch( rest( %0, : ), %1 )
 
@@ -366,6 +366,14 @@ Find the code, add objid of enactor to target, add objid of target to enactor
 == USER-DEFINED FUNCTIONS ======================================================
 
 Remember to register these with whatever global function system you have.
+
+--------------------------------------------------------------------------------
+-- Sample @startup -------------------------------------------------------------
+
+@startup [v( d.ars )]=
+	@dolist lattr( %!/ufunc.* )=@function/preserve [rest( ##, . )]=%!/##; 
+	@dolist lattr( %!/ufunc/privileged.* )=
+		@function/preserve/privileged [rest( ##, . )]=%!/##
 
 --------------------------------------------------------------------------------
 -- alts() ----------------------------------------------------------------------
