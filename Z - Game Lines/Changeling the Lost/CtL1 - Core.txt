@@ -94,6 +94,18 @@ Level 3 for very minor items
 // register "sphere"'s templates (could this be folded into 'templates'?)
 &.sphere.changeling [v( d.dd )]=Changeling Fae-Touched
 
+// changeling's calculated favored regalia, based on seeming
+&.changeling.seeming_regalia [v( d.dd )]=
+	case( ulocal( .value, %0, bio.seeming ), 
+		Beast, Steed, 
+		Darkling, Mirror, 
+		Elemental, Sword, 
+		Fairest, Crown, 
+		Ogre, Shield, 
+		Wizened, Jewels, 
+		None 
+	)
+
 
 
 /*
@@ -110,21 +122,25 @@ is a lot simpler, and has deep impact on the Chronicle.
 
 &bio.kith [v( d.dd )]=
 	Artist.Bright One.Chatelaine.Gristlegrinder.Helldiver.Hunterheart.
-	Leechfinger.Mirrorskin.Nightsinger.Notary.Playmate.Snowskin.
+	Leechfinger.Mirrorskin.Nightsinger.Notary.Playmate.Snowskin
 &tags.bio.kith [v( d.dt )]=changeling
 
+
+// Changelings get two Favored Regalia: One from Seeming and one from choice
+// Fae-Touched only get one.
+// Here is a good example of why a stat needs to check its own value.
+
 &bio.favored_regalia [v( d.dd )]=
-	case( u( .value, %0, bio.seeming ), 
-		Beast, Steed, 
-		Darkling, Mirror, 
-		Elemental, Sword, 
-		Fairest, Crown, 
-		Ogre, Shield, 
-		Wizened, Jewels, 
-		ansi( xh, %(Seeming Unset%) )
+	Steed.Mirror.Sword.Crown.Shield.Jewels
+&prereq-text.bio.favored_regalia [v( d.dd )]=
+	Cannot be same as your Seeming's Favored Regalia
+&prerequisite.bio.favored_regalia [v( d.dd )]=
+	u( .is_not, %0, 
+		bio.favored_regalia, 
+		u( .changeling.seeming_regalia, %0 ), 
+		%2 
 	)
-&default.bio.favored_regalia [v( d.dd )]=derived
-&tags.bio.favored_regalia [v( d.dt )]=derived.changeling
+&tags.bio.favored_regalia [v( d.dt )]=changeling.fae-touched
 
 &bio.court [v( d.dd )]=Spring.Summer.Autumn.Winter.Courtless
 &default.bio.court [v( d.dd )]=Courtless
@@ -441,7 +457,12 @@ contributes dots to the total has access to the full, combined amount.
 	Anyone sharing a Changeling Motley with points in this merit gains benefits 
 	from all points totaled%, max 5.
 
+// courtless can't pick up mantle, but most people will be picking courts
+// .. remove '&default.merit.mantle' if you don't like this behavior.
 &merit.mantle [v( d.dd )]=1.2.3.4.5
+&default.merit.mantle [v( d.dd )]=1
+&prereq-text.merit.mantle [v( d.dd )]=May not be taken by Courtless changelings.
+&prerequisite.merit.mantle [v( d.dd )]=u( .is_not, %0, bio.court, courtless )
 &tags.merit.mantle [v( d.dt )]=changeling.court
 
 &merit.manymask [v( d.dd )]=3
