@@ -692,18 +692,6 @@ xp/spend tumult
 xp/spend tumult.beast
 xp/spend tumult.fairest
 
-
-OR MAYBE: 
-
-&type.contract.? [v( d.dd )]=list
-
-&contract.hostile_takeover [v( d.dd )]=1.2.3|Common.Beast.Fairest
-&prerequisite.contract.hostile_takeover [v( d.dd )]=xxx
-&prereq-text.contract.hostile_takeover [v( d.dd )]=Must set 'Common' first.
-&tags.contract.hostile_takeover [v( d.dt )]=changeling.crown.common
-
-Grumble.
-
 */
 
 &type.contract.? [v( d.dd )]=flag
@@ -1555,36 +1543,33 @@ After subtracting 'Mantle' from the merit total, report it for clarity
 Your choice of seeming determines a Contract Regalia with which your character 
 has an affinity.
 
-Your character begins with four Contracts chosen from among Common Regalia, 
-Common Court, and Goblin Contracts; she must meet the proper requirements to 
-take Court Contracts, see p. 150. Two of those starting Contracts must come from 
-the character's favored Regalia. She also gains two Royal Contracts from her 
-court or favored Regalia.
+p.94 (cgen summary ctd.):
+	Choose a second favored Regalia. Each character starts with four Contracts 
+	from Common Regalia, Common Court, or Goblin Contracts, at least two of 
+	which must be in favored Regalia. Also choose two Royal Contracts from court 
+	or favored Regalia.
 
 contract allocation:
-	all contracts`					(total --> 6)
-	favored regalia && common`		(2 to 4)
-	common || goblin only`			(4 - above, min 0)
-	royal && (court || favored)		(always 2)
+	all contracts`					(6)
+	common favored`					(2 to 4)
+	common court || goblin`			(4 - above)
+	royal (court || favored)		(2)
 
 */
 
 &f.allocated.contracts [v( d.cg )]=
 	localize( strcat( 
 // favored regalia & court
-		setq( x, u( .value, %0, bio.favored_regalia )), 
-		setq( y, u( .value, %0, bio.court )), 
-// a: all contracts on sheet -- except specialties
-		setq( a, 
-			edit( 
-				setdiff( lattr( %0/_contract.* ), lattr( %0/_contract.*.* )), 
-				_CONTRACT., 
-				CONTRACT. 
-			)
-		), 
-// f: all matching favored 'common' && favored regalia
+		setq( x, u( v( d.dd )/.value, %0, bio.favored_regalia )), 
+		setq( z, u( v( d.dd )/.changeling.seeming_regalia, %0 )), 
+		setq( y, u( v( d.dd )/.value, %0, bio.court )), 
+// f: all matching favored 'common' && favored regalias
 		setq( f, 
-			u( f.list-stats-tags, %0, contract, common.%qx, and )
+			setunion( 
+				u( f.list-stats-tags, %0, contract, common.%qx, and ), 
+				u( f.list-stats-tags, %0, contract, common.%qz, and )
+			)
+			
 		), 
 // c: all matching 'common' || 'goblin', except those above
 		setq( c, 
@@ -1597,15 +1582,79 @@ contract allocation:
 		setq( r, 
 			setinter(
 				u( f.list-stats-tags, %0, contract, royal ), 
-				u( f.list-stats-tags, %0, contract, %qx.%qy, or ), 
+				u( f.list-stats-tags, %0, contract, %qx.%qy.%qz, or ), 
 			)
 		), 
 
-		words( %qa ), `, 
-		words( %qf ), `, 
-		words( %qc ), `, 
-		words( %qr )
+		%qf, `, 
+		%qc, `, 
+		%qr 
 	))
+
+// -- test --
+think u( v( d.cg )/f.allocated.contracts, ulocal( v( d.sfp )/f.find-sheet, %# ))
+
+
+/*
+--------------------------------------------------------------------------------
+-- Check Contracts (main) ------------------------------------------------------
+
+Chargen Check for the main contract list.
+Seeming Bonuses are done separately.
+
+0: sheet loc
+
+t: total contracts (6)
+f: common favored (2 to 4)
+c: common court or goblin (4 - above)
+r: royal court or royal favored (2)
+
+w: words, # of whatever we're checking
+x: words for 'common favored', checked against common court/goblin.
+
+*/
+
+&check.contracts.full [v( d.cg )]=
+	strcat( 
+		setq( 9, u( f.allocated.contracts, %0 )), 
+		null( regmatchi( %q9, ^(.*)`(.*)`(.*)`(.*)$, 0 t f c r )), 
+
+// total: 6
+		%b%b, 
+		setq( w, words( %qt )), 
+		ansi( h, Total Contracts ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of 6%), %b, 
+		u( display.check.ok-no, eq( %qw, 6 )), %r, 
+		
+// common favored: 2 to 4
+		%b%b%b%b, 
+		setq( w, words( %qf )), 
+		ansi( h, Common Favored ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of 2 to 4%), %b, 
+		u( display.check.ok-no, cand( gte( %qw, 2 ), lte( %qw, 4 ))), %r, 
+
+// common court + goblin: 4 - common favored, above
+		%b%b%b%b, 
+		setq( x, %qw ), 
+		setq( w, words( %qc )), 
+		ansi( h, Common Court + Goblin Contracts ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of [sub( 4, %qx )]%), %b, 
+		u( display.check.ok-no, eq( %qw, sub( 4, %qx ))), %r, 
+
+// royal court + royal favored: 2
+		%b%b%b%b, 
+		setq( w, words( %qr )), 
+		ansi( h, Royal Court + Royal Favored ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of 2%), %b, 
+		u( display.check.ok-no, eq( %qw, 2 )), %r, 
+	)
+
+// -- test --
+think u( v( d.cg )/check.contracts.full, v( _special.sheet_location ))
 
 
 /*
@@ -1614,76 +1663,183 @@ contract allocation:
 
 At chargen, people should take their seeming's bonus for any contracts that have 
 them. e.g., Riddle-Kith has a Darkling and Elemental specialty. An Elemental 
-gets this for free.
+gets theirs for free.
 
-* Check that all their Contract bonuses match their Seeming
-* Check that all Contract bonuses have a base Contract
-* Check that all Contracts they've taken that have their Seeming have been taken
+In chargen, this would be set by:
+	stat/set Riddle-Kith.Elemental = 1
 
-specialty allocation:
-	list of contract.*.*`				(total)
-	list of contract.*.<seeming>`		(equals above)
+There is no explicit limit to the number of bonuses, though it will not be 
+higher than the number of contracts which are handled in `&check.contracts.full`
 
+* All bonuses must match Seeming
+* All bonuses must not be orphaned (with no Contract)
 
+bonus allocations:
+	list of contract.*.*`                        (total)     %qa
+	list of contracts with their seeming`        (above)     %qt
+	list of bonuses without contracts`           (zero)      %qo
+	list of contracts that woulda had bonuses    (zero)      %qw
 
 */
 
-&f.allocated.contracts.seeming [v( d.cg )]=
-// seeming & base contracts
-		setq( x, get( %0/_bio.seeming )), 
-		setq( y, 
+&f.allocated.contracts.bonuses [v( d.cg )]=
+	localize( strcat( 
+// x: seeming
+		setq( x, u( v( d.dd )/.value, %0, bio.seeming )), 
+
+// c: all contracts that share their seeming bonus in tags ('<contract>')
+// .. this goes here because 'f.hastag?.workhorse' eats %qb, so we do it first.
+		setq( c, 
 			edit( 
-				setdiff( get( %0/_contract.* ), get( %0/_contract.*.* )), 
-				_CONTRACT., 
-				CONTRACT. 
+				filter( v( d.sfp )/f.hastag?.workhorse, 
+					lattr( v( d.dd )/contract.* ), 
+					@@( idelim ), @@( odelim ), 
+					%qx 
+				), 
+				CONTRACT., 
 			)
 		), 
-// a: all contract specialties
+
+// b: all seeming bonuses ('<contract>.<seeming>')
+		setq( b, 
+			edit( 
+				lattr( %0/_contract.*.* ), 
+				_CONTRACT., 
+			)
+		), 
+// a: all contracts ('<contract>')
 		setq( a, 
-			edit( lattr( %0/_contract.*.* ), _CONTRACT., CONTRACT. )
+			setdiff( 
+				edit( 
+					lattr( %0/_contract.* ), 
+					_CONTRACT., 
+				), 
+				%qb 
+			)
 		), 
-// s: contract specialties matching character seeming
-		setq( s, graball( %qa, contract.*.%qx )), 
-// c: how many contract bonuses have a base contract?
-		setq( c, 
+// s: seeming bonuses taken that match character seeming
+		setq( s, graball( %qb, *.%qx )), 
 
+// o: orphaned `contract.bonus` (from %qb) without a base contract (in %qa)
+		setq( o, 
+			filter( fil.subitem-not-in-list, %qb, , , %qa )
 		), 
 
-		words( %qa ), `, 
-		words( %qs ), `, 
-		words( %qc )
+// w: all contracts they woulda taken with their bonus but didn't ('<contract>')
+		setq( w, 
+			setdiff( 
+				setinter( %qc, %qa ), 
+				edit( %qs, .[ucstr( %qx )], )
+			)
+		), 
+
+		%qb, `, 
+		%qs, `, 
+		%qo, `, 
+		%qw 
+	))
+
+
+// -- test --
+think u( v( d.cg )/f.allocated.contracts.bonuses, v( _special.sheet_location ))
+think iter( 
+		u( v( d.cg )/f.allocated.contracts.bonuses, 
+			v( _special.sheet_location )
+		), 
+		words( %i0 ), 
+		`, ` 
+	)
+
+// stat/set FAE_CUNNING.ELEMENTAL=
+// stat/set FAE_CUNNING.ELEMENTAL = 1
+// stat/set FAE_CUNNING = 
+// stat/set FAE_CUNNING = 1 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ********************** VAMPIRE TEMPLATE LA LA LA ****************************
 /*
-================================================================================
-== CHARGEN: BIO ================================================================
-
 --------------------------------------------------------------------------------
--- Bio Check -------------------------------------------------------------------
+-- Check Contract Bonuses ------------------------------------------------------
+
+Make sure all the contract bonuses from seeming are correct.
+
+0: sheet loc
+
+a: all contracts with bonuses
+t: total contracts matching character seeming
+o: orphaned bonuses (bonuses with no main contract)
+c: contracts that coulda had bonuses but didn't
+
+x: seeming
+
+n: number of all contracts with bonuses (%qa)
 
 */
 
-&check.bio.ghoul [v( d.cg )]=virtue vice clan
-&check.bio.vampire [v( d.cg )]=embrace_date mask dirge clan 
-	[if( u( v( d.dd )/.is_full, %0, bio.covenant, Ordo Dracul ), mystery_coil )]
+&check.contracts.bonuses [v( d.cg )]=
+	strcat( 
+		setq( 9, u( f.allocated.contracts.bonuses, %0 )), 
+		null( regmatchi( %q9, ^(.*)`(.*)`(.*)`(.*)$, 0 a t o c )), 
+		setq( x, u( v( d.dd )/.value, %0, bio.seeming )), 
+
+// total (no limit)
+		%b%b, 
+		setq( w, words( %qa )), 
+		ansi( h, Total Contract Bonuses ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %r, 
+
+// total contracts with bonuses that match seeming
+		%b%b%b%b, 
+		setq( n, %qw ), 
+		setq( w, words( %qt )), 
+		ansi( h, Total Matching Seeming ), %b%(%qx%):%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of %qn%), %b, 
+		u( display.check.ok-no, eq( %qw, %qn )), %r, 
+
+// orphaned seeming bonuses
+		%b%b%b%b, 
+		setq( w, words( %qo )), 
+		ansi( h, Orphaned Bonuses ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of 0%), %b, 
+		u( display.check.ok-no, eq( %qw, 0 )), %r, 
+		if( neq( %qw, 0 ), 
+			iter( %qo, 
+				ansi( 
+					n, %b%b%b%b, 
+					xh, -%b, 
+					xh, 
+						edit( 
+							titlestr( edit( %i0, _, %b, ., %b-%b )), 
+							%b-%b, . 
+						), 
+					n, %r 
+				), , @@
+			)
+		), 
+
+// contracts they coulda taken their seeming bonus
+		%b%b%b%b, 
+		setq( w, words( %qc )), 
+		ansi( h, Contracts Needing Bonus ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of 0%), %b, 
+		u( display.check.ok-no, eq( %qw, 0 )), %r, 
+		if( neq( %qw, 0 ), 
+			iter( %qc, 
+				ansi( 
+					n, %b%b%b%b, 
+					xh, - stat/set%b, 
+					xh, lcstr( edit( %i0, _, %b )), 
+					xh, ., 
+					xh, lcstr( %qx ), 
+					xh, %b= 1, 
+					n, %r 
+				), , @@ 
+			)
+		)
+	)
 
 
 
@@ -1691,280 +1847,16 @@ specialty allocation:
 ================================================================================
 == CHARGEN CHECK ===============================================================
 
-
 --------------------------------------------------------------------------------
--- Favored Attribute -----------------------------------------------------------
-
-currently: 
-	stat/set <attribute>.favored=1
-
-(I hope to get this changed.)
-
-1. check that attributes with 'favored' subtype are allowed
-2. check that there's only one
-3. check what happens if we -1 that from the system
+-- Chargen Check: Changeling ---------------------------------------------------
 
 */
 
-&check.chargen.attributes.vampire [v( d.cg )]=
+&check.chargen.changeling [v( d.cg )]=
 	strcat( 
-		setq( f, v( d.vampire.favored_attributes.[get( %0/_bio.clan )] )), 
-		setq( a, 
-			lcstr( 
-				iter( lattr( %0/_attribute.*.favored ), elements( %i0, 2, . ))
-			)
-		), 
-		setq( i, setinter( %qa, %qf )), 
-		setq( c, ulocal( f.pts-valid?.attributes, %0, attribute.%qi:-1 )), 
-
-		ulocal( f.allocated.attributes, %0 ), %b, %(of 5/4/3 + favored%), %b, 
-		ulocal( display.check.stats, %0, attributes, attribute.%qa:-1 ), %r, 
-
-		%b %b%b, ansi( h, Favored Attribute ), :, %b, 
-		titlestr( itemize( %qa )), %b, 
-		%[, 
-		case( 1, 
-			eq( words( %qa ), 0 ), ansi( r, none set ), 
-			gt( words( %qa ), 1 ), ansi( r, too many set ), 
-			neq( words( %qi ), 1 ), ansi( r, not allowed for your clan ), 
-			not( %qc ), ansi( r, bonus point not spent ), 
-			ansi( g, OK )
-		), 
-		%]
-	)
-
-&d.vampire.favored_attributes.daeva [v( d.cg )]=dexterity manipulation
-&d.vampire.favored_attributes.gangrel [v( d.cg )]=composure stamina
-&d.vampire.favored_attributes.mekhet [v( d.cg )]=intelligence wits
-&d.vampire.favored_attributes.nosferatu [v( d.cg )]=composure strength
-&d.vampire.favored_attributes.ventrue [v( d.cg )]=presence resolve
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Vampire ------------------------------------------------------
-
-*/
-
-&check.chargen.vampire [v( d.cg )]=
-	strcat( 
-		u( check.disciplines, %0, vampire ), 
-		case( get( %0/_bio.covenant ), 
-			Circle of the Crone, 
-			if( hasattr( %0, _discipline.cruac ), 
-				u( check.disciplines.cruac, %0 )
-			), 
-
-			Lancea et Sanctum, 
-			if( hasattr( %0, _discipline.theban_sorcery ), 
-				u( check.disciplines.theban_sorcery, %0 )
-			), 
-
-			Ordo Dracul, 
-			if( t( lattr( %0/_scale.* )), 
-				u( check.disciplines.coils, %0 )
-			)
-		)
-	)
-
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Ghoul --------------------------------------------------------
-
-*/
-
-&check.chargen.ghoul [v( d.cg )]=
-	u( check.disciplines, %0, ghoul )
-
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Disciplines --------------------------------------------------
-
-vampire: 3 disc, 2 in-clan
-ghoul: 2 disc, 2 in-clan
-
-0: sheet dbref
-1: template 
-
-*/
-
-&check.disciplines [v( d.cg )]=
-	udefault( check.disciplines.[get( %0/_bio.template )], 
-		** check failed **, 
-		%0 
-	) 
-
-&check.disciplines.vampire [v( d.cg )]=
-	strcat( 
-		setq( 9, u( f.allocated.disciplines, %0 )),
-		setq( t, ladd( %q9, ` )), 
-		setq( i, ladd( elements( %q9, 2 3, ` ), ` )), 
-		setq( o, elements( %q9, 1, ` )), 
-
-		%b, %b, 
-		ansi( h, Total Disciplines ), :, %b, 
-		if( eq( %qt, 0 ), ansi( xh, <none> ), %qt ), %b, 
-		%(of 3%), %b, 
-		u( check.disciplines.vampire.total, %qt ), 
-		%r, 
-
-		%b, %b, %b, %b, 
-		ansi( h, In-Clan ), :, %b, 
-		if( eq( %qi, 0 ), ansi( xh, <none> ), %qi ), %b, 
-		%(at least 2%), %b, 
-		u( check.disciplines.vampire.in-clan, %qi ), 
-		%r, 
-
-		%b, %b, %b, %b, 
-		ansi( h, Non-Clan ), :, %b, 
-		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
-		%(at most 1%), %b, 
-		u( check.disciplines.vampire.non-clan, %qo ), 
-
-		%r 
-	)
-
-&check.disciplines.vampire.total [v( d.cg )]=
-	u( display.check.ok-no, eq( %0, 3 ))
-&check.disciplines.vampire.in-clan [v( d.cg )]=
-	u( display.check.ok-no, gte( %0, 2 ))
-&check.disciplines.vampire.non-clan [v( d.cg )]=
-	u( display.check.ok-no, lte( %0, 1 ))
-
-&check.disciplines.ghoul [v( d.cg )]=
-	strcat( 
-		setq( 9, u( f.allocated.disciplines, %0 )),
-		setq( t, ladd( %q9, ` )), 
-		setq( i, ladd( elements( %q9, 2 3, ` ), ` )), 
-		setq( o, elements( %q9, 1, ` )), 
-
-		%b, %b, 
-		ansi( h, Total Disciplines ), :, %b, 
-		if( eq( %qt, 0 ), ansi( xh, <none> ), %qt ), %b, 
-		%(of 2%), %b, 
-		u( check.disciplines.ghoul.total, %qt ), 
-		%r, 
-
-		%b, %b, %b, %b, 
-		ansi( h, In-Clan ), :, %b, 
-		if( eq( %qi, 0 ), ansi( xh, <none> ), %qi ), %b, 
-		%(of 2%), %b, 
-		u( check.disciplines.ghoul.in-clan, %qi ), 
-		%r, 
-
-		%b, %b, %b, %b, 
-		ansi( h, Non-Clan ), :, %b, 
-		if( eq( %qo, 0 ), ansi( xh, <none> ), %qo ), %b, 
-		%(of none%), %b, 
-		u( check.disciplines.ghoul.non-clan, %qo ), 
-
-		%r 
-	)
-
-&check.disciplines.ghoul.total [v( d.cg )]=
-	u( display.check.ok-no, eq( %0, 2 ))
-&check.disciplines.ghoul.in-clan [v( d.cg )]=
-	u( display.check.ok-no, eq( %0, 2 ))
-&check.disciplines.ghoul.non-clan [v( d.cg )]=
-	u( display.check.ok-no, eq( %0, 0 ))
-
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Cruac --------------------------------------------------------
-
-For each dot in Cruac, one dot of that level (or lower) in Rite
-
-*/
-
-&check.disciplines.cruac [v( d.cg )]=
-	strcat( 
-		setq( r, lattr( %0/_rite.* )), 
-		setq( n, iter( %qr, get( %0/%i0 ))), 
-		setq( l, first( get( %0/_discipline.cruac ), . )), 
-		setq( t, ladd( %qn )), 
-		setq( o, ladd( lnum( 1, %ql ))), 
-
-		%b%b, ansi( h, Rites ), :, %b, 
-		iter( %qr, 
-			strcat( 
-				titlestr( edit( rest( %i0, . ), _, %b )), 
-				%b%(, 
-				get( %0/%i0 ), 
-				%) 
-			), 
-			, %,%b 
-		), 
-		%r, 
-		%b %b%b, ansi( h, Rite Count ), :, %b, words( %qr ), %b, %(of %ql%), %b, 
-		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
-		%b %b%b, ansi( h, Rite Levels ), :, %b, %qt %(of %qo%), %b, 
-		u( display.check.ok-no, eq( %qt, %qo )), %r, 
-	)
-
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Theban Sorcery  ----------------------------------------------
-
-For each dot in Theban Sorcery, one dot of that level (or lower) in Miracle
-
-*/
-
-&check.disciplines.theban_sorcery [v( d.cg )]=
-	strcat( 
-		setq( r, lattr( %0/_miracle.* )), 
-		setq( n, iter( %qr, get( %0/%i0 ))), 
-		setq( l, first( get( %0/_discipline.theban_sorcery ), . )), 
-		setq( t, ladd( %qn )), 
-		setq( o, ladd( lnum( 1, %ql ))), 
-
-		%b%b, ansi( h, Miracles ), :, %b, 
-		iter( %qr, 
-			strcat( 
-				titlestr( edit( rest( %i0, . ), _, %b )), 
-				%b%(, 
-				get( %0/%i0 ), 
-				%) 
-			), 
-			, %,%b 
-		), 
-		%r, 
-		%b %b%b, ansi( h, Miracle Count ), :, 
-		%b, words( %qr ), %b, %(of %ql%), %b, 
-		u( display.check.ok-no, eq( words( %qr ), %ql )), %r, 
-		%b %b%b, ansi( h, Miracle Levels ), :, %b, %qt %(of %qo%), %b, 
-		u( display.check.ok-no, eq( %qt, %qo )), %r, 
-	)
-
-
-/*
---------------------------------------------------------------------------------
--- Chargen Check: Coils  -------------------------------------------------------
-
-Character should have no Scales
-
-*/
-
-&check.disciplines.coils [v( d.cg )]=
-	strcat( 
-		setq( r, lattr( %0/_scale.* )), 
-
-		%b%b, ansi( h, Scales ), :, %b, 
-		iter( %qr, 
-			strcat( 
-				titlestr( edit( rest( %i0, . ), _, %b )), 
-				%b%(, 
-				get( %0/%i0 ), 
-				%) 
-			), 
-			, %,%b 
-		), 
-		%r, 
-		%b %b%b, ansi( h, Scale Count ), :, %b, words( %qr ), %b, 
-		%[, ansi( r, no scales at chargen ), %], 
-		%r, 
+		u( check.changeling.merits.free, %0 ), 
+		u( check.contracts.full, %0 ), 
+		u( check.contracts.bonuses, %0 ), 
 	)
 
 
@@ -1972,43 +1864,234 @@ Character should have no Scales
 
 /*
 ################################################################################
-## VAMPIRE: XP COSTS ###########################################################
+## CHARGEN: FAE-TOUCHED ########################################################
+
+(p.319) 
+	* Select a Favored Regalia for the character and two Common Contracts within 
+	  it.
+	* All fae-touched characters suffer from the Madness Condition.
+	* Additionally, the character suffers from the Arcadian Dreams and Hedge 
+	  Addiction Conditions
+
+
+
+================================================================================
+== CHARGEN: BIO, FAE-TOUCHED ===================================================
 */
 
-&xp.advantage.blood_potency [v( d.xpcd )]=
-	u( cost.standard, 5, %1, %2 )
-	
-// discipline matches clan or bloodline: 3xp, else 4xp
+&check.bio.fae-touched [v( d.cg )]=virtue vice promise favored_regalia
 
 
-&xp.discipline [v( d.xpcd )]=
-	case( 1, 
-		u( v( d.sfp )/f.hastag?.workhorse, 
-			%3, 
-			[u( .value, %0, bio.clan )].
-			[u( .value, %0, bio.bloodline )]
-		), 
-		u( cost.standard, 3, %1, %2 ), 
-		u( cost.standard, 4, %1, %2 )
+/*
+================================================================================
+== CHARGEN: POWERS =============================================================
+
+p.319:
+	* Select a Favored Regalia for the character and two Common Contracts within 
+	  it.
+
+We'll use &f.allocated.contracts but process it differently:
+	all contracts`					(2)
+	common favored`					(2)
+	common court || goblin`			(0)
+	royal (court || favored)		(0)
+
+We'll also use &f.allocated.contracts.bonuses:
+	list of contract.*.*`                        (0)
+	list of contracts with their seeming`        (0)
+	list of bonuses without contracts`           (0)
+	list of contracts that woulda had bonuses    (0)
+
+--------------------------------------------------------------------------------
+-- Check Contracts, Fae-Touched ------------------------------------------------
+*/
+
+&check.contracts.fae-touched [v( d.cg )]=
+	strcat( 
+// main contracts
+		setq( 9, u( f.allocated.contracts, %0 )), 
+		null( regmatchi( %q9, ^(.*)`(.*)`(.*)`(.*)$, 0 t f c r )), 
+
+// .. total: 2
+		%b%b, 
+		setq( w, words( %qt )), 
+		ansi( h, Total Contracts ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of 2%), %b, 
+		u( display.check.ok-no, eq( %qw, 2 )), %r, 
+		
+// .. common favored: 2
+		%b%b%b%b, 
+		setq( w, words( %qf )), 
+		ansi( h, Common Favored ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of 2%), %b, 
+		u( display.check.ok-no, eq( %qw, 2 )), %r, 
+
+// contract seeming bonuses
+		setq( 9, u( f.allocated.contracts.bonuses, %0 )), 
+		null( regmatchi( %q9, ^(.*)`(.*)`(.*)`(.*)$, 0 a t o c )), 
+
+// .. total: 0
+		%b%b, 
+		setq( w, words( %qa )), 
+		ansi( h, Total Contract Bonuses ), :%b, 
+		if( eq( %qw, 0 ), ansi( xh, <none> ), %qw ), %b, 
+		%(of 0%), %b, 
+		u( display.check.ok-no, eq( %qw, 0 )), %r, 
+
 	)
 
-&d.restricted.types.vampire [v( d.xpas )]=discipline
-&d.restricted.stats.vampire [v( d.xpas )]=
-	advantage.blood_potency
+
+
+/*
+================================================================================
+== CHARGEN: CONDITIONS, FAE-TOUCHED ============================================
+
+(p.319) 
+	* Select a Favored Regalia for the character and two Common Contracts within 
+	  it.
+	* All fae-touched characters suffer from the Madness Condition.
+	* Additionally, the character suffers from the Arcadian Dreams and Hedge 
+	  Addiction Conditions
+
+--------------------------------------------------------------------------------
+-- Check Conditions, Fae-Touched -----------------------------------------------
+
+	Player attr format is _<type>.<name>.<timestamp> =db_attr | note | title
+
+	* _COND.MADNESS.*
+	* _COND.ARCADIAN_DREAMS.*
+	* _COND.HEDGE_ADDICTION.*
+
+	0: character dbref
+	
+*/
+
+&check.conditions.fae-touched [v( d.cg )]=
+	strcat( 
+		setq( m, lattr( %0/_cond.madness.* )), 
+		setq( a, lattr( %0/_cond.arcadian_dreams.* )), 
+		setq( h, lattr( %0/_cond.hedge_addiction.* )), 
+		
+		%b%b, 
+		ansi( h, Fae-Touched Conditions ), :%r, 
+
+		%b%b%b%b, ljust( ansi( h, Madness ), 15 ), %b, 
+		u( display.check.ok-no, neq( strlen( %qm ), 0 )), %r, 
+
+		%b%b%b%b, ansi( h, Arcadian Dreams ), %b, 
+		u( display.check.ok-no, neq( strlen( %qa ), 0 )), %r, 
+
+		%b%b%b%b, ansi( h, Hedge Addiction ), %b, 
+		u( display.check.ok-no, neq( strlen( %qh ), 0 )), %r, 
+	)
+
+
+/* 
+================================================================================
+== CHARGEN CHECK, FAE-TOUCHED ==================================================
+
+--------------------------------------------------------------------------------
+-- Chargen Check: Changeling ---------------------------------------------------
+
+*/
+
+&check.chargen.fae-touched [v( d.cg )]=
+	strcat( 
+		u( check.contracts.fae-touched, %0 ), 
+		u( check.conditions.fae-touched, %1 )
+	)
 
 
 
 
+/*
+################################################################################
+## CHANGELING: XP COSTS ########################################################
+
+Common (Favored Regalia): 2
+Royal (Favored Regalia): 3
+Common (Regalia || Court): 3
+Royal (Regalia || Court): 4
+Goblin: 2
+
+Non-Seeming Bonus: 1
+
+Wyrd: 5
+
+*/
+
+&xp.advantage.wyrd [v( d.xpcd )]=
+	u( cost.standard, 5, %1, %2 )
+
+// non-seeming contract bonus
+// .. bonus' name: last( %3, . )
+// .. core stat: elements( %3, 1 2, . )
+&xp.contract.? [v( d.xpcd )]=
+	case( 1, 
+		u( .is, %0, bio.seeming, elements( %3, 3, . )), 0, 
+		u( .is, %0, elements( %3, 1 2, . ), ), 0, 
+		1 
+	)
+
+// contract: depends on regalia & court
+// .. we cheat and grab tags and stats to process manually
+// .. as much as I love 'hastag?', this will save processing
+
+&xp.contract [v( d.xpcd )]=
+	localize( case( 1, 
+// .. goblin contracts
+		t( grab( 
+			setr( t, get( v( d.dt )/tags.%3 )), 
+			goblin, 
+			. 
+		)), 
+		2, 
+
+// .. court contracts
+		t( setinter( 
+			%qt, 
+			get( v( d.dd )/bio.court ), 
+			. 
+		)), 
+		case( 1, 
+			t( setinter( %qt, common, . ), 3, 
+			t( setinter( %qt, royal, . ), 4, 
+			0 
+		), 
+
+// .. else: regalia contracts
+		strcat( 
+// .. .. set base xp cost: 3 for common, 4 for royal, error for neither
+			setq( x, 
+				case( 1,  
+					setinter( %qt, common, . ), 3, 
+					setinter( %qt, royal, . ), 4, 
+					0 
+				)
+			), 
+// .. .. -1 if Favored
+			setq( f, get( %0/_bio.favored_regalia )), 
+			setq( s, u( v( d.dd )/.changeling.seeming_regalia, %0 )), 
+			setq( x, 
+				sub( 
+					%qx, 
+					t( setinter( %qt, %qf.%qs, . ))
+				)
+			), 
+
+// .. .. return xp, min 0 for error (0 == cannot buy, for xp)
+			min( 0, %qx )
+		) 
+	))
 
 
+// Make it so people can't buy their own Contracts, Bonus, or Wyrd
+&d.restricted.types.changeling [v( d.xpas )]=contract contract.?
+&d.restricted.stats.changeling [v( d.xpas )]=advantage.wyrd
 
 
-
-
-
-
-
-// ** CHANGELING SHEET **
 
 /*
 ################################################################################
@@ -2101,6 +2184,7 @@ Trapdoor Spider's Trick              |
 
 
 f: favored regalia
+r: seeming regalia
 c: court
 a: all contracts
 t: arcadian contracts, court contracts, goblin contracts, in that order
@@ -2110,12 +2194,18 @@ x: above, prettified
 
 &block.powers.changeling [v( d.sheet )]=u( block.powers.contracts, %0, %1 )
 
-&filter.powers.contracts [v( d.nsc )]=t( strlen( after( %0, : )))
+&filter.powers.contracts [v( d.nsc )]=
+	cor( 
+		t( strlen( after( %0, : ))), 
+		t( setinter( %1, before( %0, : ), . ))
+	)
 
 &powers.contracts [v( d.nsc )]=
 	localize( strcat( 
 		setq( f, u( v( d.dd )/.value, %0, bio.favored_regalia )), 
+		setq( r, u( v( d.dd )/.changeling.seeming_regalia, %0 )), 
 		setq( c, u( v( d.dd )/.value, %0, bio.court )), 
+		setq( c, if( strmatch( %qc, ), None, %qc )), 
 
 		setq( a, lattr( %0/_contract.* )), 
 
@@ -2152,19 +2242,38 @@ x: above, prettified
 // x: add seeming bonuses
 		setq( x, ulocal( powers.contracts.seeming_bonus, %0, %qu )), 
 
-// x: filter out empty categories
-		setq( x, filter( filter.powers.contracts, %qx, |, | )), 
+// y: filter out empty categories - except favored? and mantle?
+		setq( y, 
+			filter( filter.powers.contracts, 
+				%qx, |, |, 
+				setunion( %qf.%qr.%qc, , . )
+			)
+		), 
 
-// x: add (favored) and (court) to contract headers
-		setq( x, edit( %qx, %qf:, %qf [ansi( xh, %(favored%))]: )), 
-		setq( x, edit( %qx, %qc:, %qc [ansi( xh, %(mantle%))]: )), 
+// z: add (favored) to contact headers if 'favored_regalia' is set
+		setq( z, 
+			if( strlen( %qf ), 
+				edit( %qy, 
+					%qf:, %qf [ansi( xh, %(favored%))]:
+				), 
+				%qy 
+			)
+		), 
+
+// z: add (seeming) and (court) to contract headers
+		setq( z, 
+			edit( %qz, 
+				%qr:, %qr [ansi( xh, %(seeming%))]:, 
+				%qc:, %qc [ansi( xh, %(mantle%))]: 
+			)
+		), 
 
 // output final list
-		%qx
+		%qz 
 	))
 
 // test:
-think u( v( d.nsc )/powers.contracts, %# )
+think u( v( d.nsc )/powers.contracts, v( _special.sheet_location ))
 
 
 &block.powers.changeling [v( d.sheet )]=
@@ -2173,8 +2282,6 @@ think u( v( d.nsc )/powers.contracts, %# )
 
 &block.powers.contracts [v( d.sheet )]=
 	strcat( 
-//		setq( w, 79 ), 
-//		setq( t, 70 ), 
 		setq( c, u( powers.contracts, %0 )),
 
 		divider( Contracts ), %r, 
@@ -2194,7 +2301,7 @@ think u( v( d.nsc )/powers.contracts, %# )
 		@@( to be continued ), 
 	)
 
-think u( v( d.sheet )/block.powers.contracts, %# )
+think u( v( d.sheet )/block.powers.contracts, v( _special.sheet_location ))
 
 
 // ... 'subheader' ideas
@@ -2215,17 +2322,24 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 /* 
 --------------------------------------------------------------------------------
 -- Sheet: Advantages -----------------------------------------------------------
+
+Add 'kenning' and 'goblin debt'
+
 */
 
-// .. add 'kenning' to main advantages block.
-&advantages.changeling [v( d.nsc )]=kenning
+&advantages.changeling [v( d.nsc )]=kenning goblin_debt
+
 
 // fakes out the system into not showing 'integrity' in Advantages section
 &traits.morality.changeling [v( d.nsc )]=@@( null )
 
+
+// -- glamour --
 &traits.glamour [v( d.nsc )]=
 	u( f.cheat_getstat.pool, %0, glamour )
 
+
+// -- glamour block --
 &block.traits.glamour [v( d.sheet )]=
 	strcat( 
 		setq( w, 38 ), 
@@ -2241,7 +2355,7 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 	)
 
 
-// clarity block: Pulls from 'CtL3 - Clarity System'
+// -- clarity block -- (Pulls from 'CtL3 - Clarity System')
 &block.clarity [v( d.sheet )]=
 	strcat( 
 		divider( Clarity ), %r, 
@@ -2249,7 +2363,7 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 	)
 	
 
-
+// -- traits block: changeling --
 &block.traits.changeling [v( d.sheet )]=
 	strcat( 
 		setq( w, 38 ), 
@@ -2330,8 +2444,8 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 
 
 /*
-================================================================================
-== SPEND/REGAIN GLAMOUR ========================================================
+################################################################################
+## SPEND/REGAIN GLAMOUR ########################################################
 
 expands: 9c - Spend and Regain
 (identical to 99% of the rest of these)
