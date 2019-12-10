@@ -79,7 +79,8 @@ clarity/hurt [<name>/]<type>[=<amt>]
 clarity/heal [<name>/]<type>[=<amt>]
 
 
-amt: positive integer value or 'all'
+name: target character, defaults to 'me'
+amt: positive integer value or 'all', defaults to '1'
 type: mild, severe
 
 
