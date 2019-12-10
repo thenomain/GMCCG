@@ -177,12 +177,16 @@ Clarity moved to `CtL3 - Clarity System`
 
 */
 
-
-
 &advantage.wyrd [v( d.dd )]=0.1.2.3.4.5.6.7.8.9.10
-// ... well, this doesn't work
 &default.advantage.wyrd [v( d.dd )]=
 	[if( u( .is, %0, bio.template, changeling ), 1, 0 )]
+&prerequisite.advantage.wyrd [v( d.dd )]=
+	if( u( .is, %0, bio.template, fae-touched ), 
+		lte( add( u( .value, %0, advantage.wyrd ), %2 ), 0 ), 
+		gte( add( u( .value, %0, advantage.wyrd ), %2 ), 1 )
+	)
+&prereq-text.advantage.wyrd [v( d.dd )]=
+	1+ for Changelings, 0 for Fae-Touched
 &tags.advantage.wyrd [v( d.dt )]=power.changeling.fae-touched
 
 
@@ -308,7 +312,7 @@ contributes dots to the total has access to the full, combined amount.
 	u( .is_not, %0, bio.court, %1 )
 &prereq-text.merit.court_goodwill_() [v( d.dd )]=
 	Cannot have Court Goodwill in your own Court.
-&tags.merit.court_goodwill_() [v( d.dt )]=changeling.court
+&tags.merit.court_goodwill_() [v( d.dt )]=changeling.fae-touched.court
 &notes.merit.court_goodwill_() [v( d.dt )]=
 	Each court in which a character has Court Goodwill comes with a single dot 
 	of Mentor, a changeling who serves as the character's court liaison and 
@@ -534,8 +538,8 @@ contributes dots to the total has access to the full, combined amount.
 // -- Fae-Touched Merits -------------------------------------------------------
 
 &merit.dream_shaper [v( d.dd )]=2
-&prerequisite.merit.dream_shaper [v( d.dt )]=u( .has, %0, merit.lucid_dreamer )
-&prereq-text.merit.dream_shaper [v( d.dt )]=Merit: Lucid Dreamer
+&prerequisite.merit.dream_shaper [v( d.dd )]=u( .has, %0, merit.lucid_dreamer )
+&prereq-text.merit.dream_shaper [v( d.dd )]=Merit: Lucid Dreamer
 &tags.merit.dream_shaper [v( d.dt )]=fae-touched
 
 &merit.expressive [v( d.dd )]=1
@@ -544,21 +548,21 @@ contributes dots to the total has access to the full, combined amount.
 &prereq-text.merit.expressive [v( d.dd )]=Non-Changeling
 
 &merit.find_the_oathbreaker [v( d.dd )]=2
-&prerequisite.merit.find_the_oathbreaker [v( d.dt )]=
+&prerequisite.merit.find_the_oathbreaker [v( d.dd )]=
 	u( .has, %0, merit.sense_vows )
-&prereq-text.merit.find_the_oathbreaker [v( d.dt )]=Merit: Sense Vows
+&prereq-text.merit.find_the_oathbreaker [v( d.dd )]=Merit: Sense Vows
 &tags.merit.find_the_oathbreaker [v( d.dt )]=fae-touched
 
-&merit.hedge_delver [v( d.dd )]=2
-&prerequisite.merit.hedge_delver [v( d.dt )]=
+&merit.hedge_delver [v( d.dd )]=3
+&prerequisite.merit.hedge_delver [v( d.dd )]=
 	u( .at_least, %0, skill.survival, 2 )
-&prereq-text.merit.hedge_delver [v( d.dt )]=Survival 2+
+&prereq-text.merit.hedge_delver [v( d.dd )]=Survival 2+
 &tags.merit.hedge_delver [v( d.dt )]=fae-touched
 
 &merit.oathkeeper [v( d.dd )]=3
-&prerequisite.merit.oathkeeper [v( d.dt )]=
+&prerequisite.merit.oathkeeper [v( d.dd )]=
 	u( .at_least, %0, attribute.resolve, 3 )
-&prereq-text.merit.oathkeeper [v( d.dt )]=Resolve 3+
+&prereq-text.merit.oathkeeper [v( d.dd )]=Resolve 3+
 &tags.merit.oathkeeper [v( d.dt )]=fae-touched
 
 &merit.promise_of_debt [v( d.dd )]=1.2.3
@@ -580,9 +584,9 @@ contributes dots to the total has access to the full, combined amount.
 &tags.merit.promise_to_serve [v( d.dt )]=fae-touched
 
 &merit.punish_the_oathbreaker [v( d.dd )]=2
-&prerequisite.merit.punish_the_oathbreaker [v( d.dt )]=
+&prerequisite.merit.punish_the_oathbreaker [v( d.dd )]=
 	u( .has, %0, merit.find_the_oathbreaker )
-&prereq-text.merit.punish_the_oathbreaker [v( d.dt )]=
+&prereq-text.merit.punish_the_oathbreaker [v( d.dd )]=
 	Merit: Find the Oathbreaker
 &tags.merit.punish_the_oathbreaker [v( d.dt )]=fae-touched
 
@@ -710,448 +714,689 @@ Grumble.
 
 &contract.hostile_takeover [v( d.dd )]=1|Beast.Fairest
 &tags.contract.hostile_takeover [v( d.dt )]=
-	changeling.crown.beast.fairest.common
+	changeling.fae-touched.crown.beast.fairest.common
 
 &contract.mask_of_superiority [v( d.dd )]=1|Fairest.Ogre
 &tags.contract.mask_of_superiority [v( d.dt )]=
-	changeling.crown.fairest.ogre.common
+	changeling.fae-touched.crown.fairest.ogre.common
 
 &contract.paralyzing_presence [v( d.dd )]=1|Darkling.Fairest
 &tags.contract.paralyzing_presence [v( d.dt )]=
-	changeling.crown.darkling.fairest.common
+	changeling.fae-touched.crown.darkling.fairest.common
 
 &contract.summon_the_loyal_servant [v( d.dd )]=1|Elemental.Fairest
 &tags.contract.summon_the_loyal_servant [v( d.dt )]=
-	changeling.crown.elemental.fairest.common
+	changeling.fae-touched.crown.elemental.fairest.common
 
 &contract.tumult [v( d.dd )]=1|Fairest.Ogre
 &tags.contract.tumult [v( d.dt )]=
-	changeling.crown.fairest.ogre.common
+	changeling.fae-touched.crown.fairest.ogre.common
 
 // -- 
 
 &contract.discreet_summons [v( d.dd )]=1|Darkling.Fairest
 &tags.contract.discreet_summons [v( d.dt )]=
-	changeling.crown.darkling.fairest.royal
+	changeling.fae-touched.crown.darkling.fairest.royal
 
 &contract.mastermind's_gambit [v( d.dd )]=1|Elemental.Fairest
 &tags.contract.mastermind's_gambit [v( d.dt )]=
-	changeling.crown.elemental.fairest.royal
+	changeling.fae-touched.crown.elemental.fairest.royal
 
 &contract.pipes_of_the_beastcaller [v( d.dd )]=1|Beast.Fairest
 &tags.contract.pipes_of_the_beastcaller [v( d.dt )]=
-	changeling.crown.beast.fairest.royal
+	changeling.fae-touched.crown.beast.fairest.royal
 
 &contract.the_royal_court [v( d.dd )]=1|Fairest.Wizened
 &tags.contract.the_royal_court [v( d.dt )]=
-	changeling.crown.fairest.wizened.royal
+	changeling.fae-touched.crown.fairest.wizened.royal
 
 &contract.spinning_wheel [v( d.dd )]=1|Fairest.Ogre
 &tags.contract.spinning_wheel [v( d.dt )]=
-	changeling.crown.fairest.ogre.royal
+	changeling.fae-touched.crown.fairest.ogre.royal
 
 
 // -- Contracts: Jewels --------------------------------------------------------
 
 &contract.blessing_of_perfection [v( d.dd )]=1|Fairest.Wizened
 &tags.contract.blessing_of_perfection [v( d.dt )]=
-	changeling.jewels.fairest.wizened.common
+	changeling.fae-touched.jewels.fairest.wizened.common
 
 &contract.changing_fortunes [v( d.dd )]=1|Ogre.Wizened
 &tags.contract.changing_fortunes [v( d.dt )]=
-	changeling.jewels.ogre.wizened.common
+	changeling.fae-touched.jewels.ogre.wizened.common
 
 &contract.light-shy [v( d.dd )]=1|Darkling.wizened
 &tags.contract.light-shy [v( d.dt )]=
-	changeling.jewels.darkling.wizened.common
+	changeling.fae-touched.jewels.darkling.wizened.common
 
 &contract.murkblur [v( d.dd )]=1|Elemental.Wizened
 &tags.contract.murkblur [v( d.dt )]=
-	changeling.jewels.elemental.wizened.common
+	changeling.fae-touched.jewels.elemental.wizened.common
 
 &contract.trivial_reworking [v( d.dd )]=1|Darkling.Wizened
 &tags.contract.trivial_reworking [v( d.dt )]=
-	changeling.jewels.darkling.wizened.common
+	changeling.fae-touched.jewels.darkling.wizened.common
 
 // --
 
 &contract.changeling_hours [v( d.dd )]=1|Elemental.Wizened
 &tags.contract.changeling_hours [v( d.dt )]=
-	changeling.jewels.elemental.wizened.royal
+	changeling.fae-touched.jewels.elemental.wizened.royal
 
 &contract.dance_of_the_toys [v( d.dd )]=1|Beast.Wizened
 &tags.contract.dance_of_the_toys [v( d.dt )]=
-	changeling.jewels.beast.wizened.royal
+	changeling.fae-touched.jewels.beast.wizened.royal
 
 &contract.hidden_reality [v( d.dd )]=1|Fairest.Wizened
 &tags.contract.hidden_reality [v( d.dt )]=
-	changeling.jewels.fairest.wizened.royal
+	changeling.fae-touched.jewels.fairest.wizened.royal
 
 &contract.stealing_the_solid_reflection [v( d.dd )]=1|Fairest.Wizened
 &tags.contract.stealing_the_solid_reflection [v( d.dt )]=
-	changeling.jewels.fairest.wizened.royal
+	changeling.fae-touched.jewels.fairest.wizened.royal
 
 &contract.tatterdemalion's_workshop [v( d.dd )]=1|Ogre.Wizened
 &tags.contract.tatterdemalion's_workshop [v( d.dt )]=
-	changeling.jewels.ogre.wizened.royal
+	changeling.fae-touched.jewels.ogre.wizened.royal
 
 
 // -- Contracts: Mirror --------------------------------------------------------
 
 &contract.glimpse_of_a_distant_mirror [v( d.dd )]=1|Beast.Darkling
 &tags.contract.glimpse_of_a_distant_mirror [v( d.dt )]=
-	changeling.mirror.beast.darkling.common
+	changeling.fae-touched.mirror.beast.darkling.common
 
 &contract.know_the_competition [v( d.dd )]=1|Beast.Darkling
 &tags.contract.know_the_competition [v( d.dt )]=
-	changeling.mirror.beast.darkling.common
+	changeling.fae-touched.mirror.beast.darkling.common
 
 &contract.portents_and_visions [v( d.dd )]=1|Darkling.Elemental
 &tags.contract.portents_and_visions [v( d.dt )]=
-	changeling.mirror.darkling.elemental.common
+	changeling.fae-touched.mirror.darkling.elemental.common
 
 &contract.read_lucidity [v( d.dd )]=1|Beast.Darkling
 &tags.contract.read_lucidity [v( d.dt )]=
-	changeling.mirror.beast.darkling.common
+	changeling.fae-touched.mirror.beast.darkling.common
 
 &contract.walls_have_ears [v( d.dd )]=1|Darkling.Wizened
 &tags.contract.walls_have_ears [v( d.dt )]=
-	changeling.mirror.darkling.wizened.common
+	changeling.fae-touched.mirror.darkling.wizened.common
 
 // --
 
 &contract.props_and_scenery [v( d.dd )]=1|Darkling.Ogre
 &tags.contract.props_and_scenery [v( d.dt )]=
-	changeling.mirror.darkling.ogre.royal
+	changeling.fae-touched.mirror.darkling.ogre.royal
 
 &contract.reflections_of_the_past [v( d.dd )]=1|Darkling.Fairest
 &tags.contract.reflections_of_the_past [v( d.dt )]=
-	changeling.mirror.darkling.fairest.royal
+	changeling.fae-touched.mirror.darkling.fairest.royal
 
 &contract.riddle-kith [v( d.dd )]=1|Darkling.Elemental
 &tags.contract.riddle-kith [v( d.dt )]=
-	changeling.mirror.darkling.elemental.royal
+	changeling.fae-touched.mirror.darkling.elemental.royal
 
 &contract.skinmask [v( d.dd )]=1|Darkling.Fairest
 &tags.contract.skinmask [v( d.dt )]=
-	changeling.mirror.darkling.fairest.royal
+	changeling.fae-touched.mirror.darkling.fairest.royal
 
 &contract.unravel_the_tapestry [v( d.dd )]=1|Darkling.Wizened
 &tags.contract.unravel_the_tapestry [v( d.dt )]=
-	changeling.mirror.darkling.wizened.royal
+	changeling.fae-touched.mirror.darkling.wizened.royal
 
 
 // -- Contracts: Shield --------------------------------------------------------
 
 &contract.cloak_of_night [v( d.dd )]=1|Darkling.Ogre
 &tags.contract.cloak_of_night [v( d.dt )]=
-	changeling.shield.darkling.ogre.common
+	changeling.fae-touched.shield.darkling.ogre.common
 
 &contract.fae_cunning [v( d.dd )]=1|Elemental.Ogre
 &tags.contract.fae_cunning [v( d.dt )]=
-	changeling.shield.elemental.ogre.common
+	changeling.fae-touched.shield.elemental.ogre.common
 
 &contract.shared_burden [v( d.dd )]=1|Ogre.Wizened
 &tags.contract.shared_burden [v( d.dt )]=
-	changeling.shield.ogre.wizened.common
+	changeling.fae-touched.shield.ogre.wizened.common
 
 &contract.thorns_and_brambles [v( d.dd )]=1|Darkling.Ogre
 &tags.contract.thorns_and_brambles [v( d.dt )]=
-	changeling.shield.darkling.ogre.common
+	changeling.fae-touched.shield.darkling.ogre.common
 
 &contract.trapdoor_spider's_trick [v( d.dd )]=1|Ogre.Wizened
 &tags.contract.trapdoor_spider's_trick [v( d.dt )]=
-	changeling.shield.ogre.wizened.common
+	changeling.fae-touched.shield.ogre.wizened.common
 
 // --
 
 &contract.fortifying_presence [v( d.dd )]=1|Fairest.Ogre
 &tags.contract.fortifying_presence [v( d.dt )]=
-	changeling.shield.fairest.ogre.royal
+	changeling.fae-touched.shield.fairest.ogre.royal
 
 &contract.hedgewall [v( d.dd )]=1|Beast.Ogre
 &tags.contract.hedgewall [v( d.dt )]=
-	changeling.shield.beast.ogre.royal
+	changeling.fae-touched.shield.beast.ogre.royal
 
 &contract.vow_of_no_compromise [v( d.dd )]=1|Ogre.Elemental
 &tags.contract.vow_of_no_compromise [v( d.dt )]=
-	changeling.shield.ogre.elemental.royal
+	changeling.fae-touched.shield.ogre.elemental.royal
 
 &contract.whispers_of_morning [v( d.dd )]=1|Ogre.Wizened
 &tags.contract.whispers_of_morning [v( d.dt )]=
-	changeling.shield.ogre.wizened.royal
+	changeling.fae-touched.shield.ogre.wizened.royal
 
 
 // -- Contracts: Steed ---------------------------------------------------------
 
 &contract.boon_of_the_scuttling_spider [v( d.dd )]=1|Beast.Darkling
 &tags.contract.boon_of_the_scuttling_spider [v( d.dt )]=
-	changeling.steed.beast.darkling.common
+	changeling.fae-touched.steed.beast.darkling.common
 
 &contract.dreamsteps [v( d.dd )]=1|Beast.Fairest
 &tags.contract.dreamsteps [v( d.dt )]=
-	changeling.steed.beast.fairest.common
+	changeling.fae-touched.steed.beast.fairest.common
 
 &contract.nevertread [v( d.dd )]=1|Beast.Wizened
 &tags.contract.nevertread [v( d.dt )]=
-	changeling.steed.beast.wizened.common
+	changeling.fae-touched.steed.beast.wizened.common
 
 &contract.pathfinder [v( d.dd )]=1|Beast.Wizened
 &tags.contract.pathfinder [v( d.dt )]=
-	changeling.steed.beast.wizened.common
+	changeling.fae-touched.steed.beast.wizened.common
 
 &contract.seven-league_leap [v( d.dd )]=1|Beast.Ogre
 &tags.contract.seven-league_leap [v( d.dt )]=
-	changeling.steed.beast.ogre.common
+	changeling.fae-touched.steed.beast.ogre.common
 
 // --
 
 &contract.chrysalis [v( d.dd )]=1|Beast.Ogre
 &tags.contract.chrysalis [v( d.dt )]=
-	changeling.steed.beast.ogre.royal
+	changeling.fae-touched.steed.beast.ogre.royal
 
 &contract.flickering_hours [v( d.dd )]=1|Beast.Elemental
 &tags.contract.flickering_hours [v( d.dt )]=
-	changeling.steed.beast.elemental.royal
+	changeling.fae-touched.steed.beast.elemental.royal
 
 &contract.leaping_toward_nightfall [v( d.dd )]=1|Beast.Darkling
 &tags.contract.leaping_toward_nightfall [v( d.dt )]=
-	changeling.steed.beast.darkling.royal
+	changeling.fae-touched.steed.beast.darkling.royal
 
 &contract.mirror_walk [v( d.dd )]=1|Beast.Elemental
 &tags.contract.mirror_walk [v( d.dt )]=
-	changeling.steed.beast.elemental.royal
+	changeling.fae-touched.steed.beast.elemental.royal
 
 &contract.talon_and_wing [v( d.dd )]=1|Beast.Darkling
 &tags.contract.talon_and_wing [v( d.dt )]=
-	changeling.steed.beast.darkling.royal
+	changeling.fae-touched.steed.beast.darkling.royal
 
+// -- Contracts: Sword ---------------------------------------------------------
+
+&contract.elemental_weapon [v( d.dd )]=1|Darkling.Elemental
+&tags.contract.elemental_weapon [v( d.dt )]=
+	changeling.fae-touched.sword.darkling.elemental.common
+
+&contract.might_of_the_terrible_brute [v( d.dd )]=1|Beast.Elemental
+&tags.contract.might_of_the_terrible_brute [v( d.dt )]=
+	changeling.fae-touched.sword.beast.elemental.common
+
+&contract.overpowering_dread [v( d.dd )]=1|Elemental.Fairest
+&tags.contract.overpowering_dread [v( d.dt )]=
+	changeling.fae-touched.sword.elemental.fairest.common
+
+&contract.primal_glory [v( d.dd )]=1|Elemental.Ogre
+&tags.contract.primal_glory [v( d.dt )]=
+	changeling.fae-touched.sword.elemental.ogre.common
+
+&contract.touch_of_wrath [v( d.dd )]=1|Elemental.Wizened
+&tags.contract.touch_of_wrath [v( d.dt )]=
+	changeling.fae-touched.sword.elemental.wizened.common
+
+&contract.relentless_pursuit [v( d.dd )]=1|Beast.Elemental
+&tags.contract.relentless_pursuit [v( d.dt )]=
+	changeling.fae-touched.sword.beast.elemental.royal
+
+&contract.elemental_fury [v( d.dd )]=1|Elemental.Fairest
+&tags.contract.elemental_fury [v( d.dt )]=
+	changeling.fae-touched.sword.elemental.fairest.royal
+
+&contract.thief_of_reason [v( d.dd )]=1|Elemental.Fairest
+&tags.contract.thief_of_reason [v( d.dt )]=
+	changeling.fae-touched.sword.elemental.fairest.royal
+
+&contract.red_revenge [v( d.dd )]=1|Elemental.Ogre
+&tags.contract.red_revenge [v( d.dt )]=
+	changeling.fae-touched.sword.elemental.ogre.royal
+
+&contract.oathbreaker's_punishment [v( d.dd )]=1|Elemental.Wizened
+&tags.contract.oathbreaker's_punishment [v( d.dt )]=
+	changeling.fae-touched.sword.elemental.wizened.royal
+
+
+/*
+--------------------------------------------------------------------------------
+-- Court Contracts -------------------------------------------------------------
+
+p.150:
+	Learning a Common Court Contract requires at least a Mantle of 1, or Court 
+	Goodwill of 2. Likewise, learning a Royal Court Contract requires Mantle 3, 
+	or Court Goodwill 5. The seasonal courts can make two exceptions: anyone can 
+	learn any *one* Common Contract, and allies with Court Goodwill 4 can learn 
+	any *one* Royal Contract, as a way to foster allies.
+
+This requires breaking the rules for learning Court contracts into two 
+steps.
+	1a. Anyone can learn one Common out-of-Court Contract with no Goodwill.
+	 b. Else must have Mantle 1 or Goodwill 2
+	2a. Anyone can learn one Royal out-of-Court Contract with Goodwill 4.
+	 b. Else must have Mantle 3 or Goodwill 5.
+
+So we'll make a function to check against these rules.
+I'm sure it won't go wrong.
+
+0: sheet dbref
+1: contract being set
+2: that contract's court
+3: 'common' or 'royal'.
+4: value being passed (check for <null>)
+
+
+*/
+
+&.prereq.contract.court [v( d.dd )]=
+	localize( strcat( 
+		u( .prereq.contract.pre-load, %0, %1, %2, %3, %4 ), 
+		u( .prereq.contract.court.%3, %qc, %qm, %qg )
+	))
+
+
+
+/*
+--------------------------------------------------------------------------------
+-- Prereq: Court Contact Pre-Load ----------------------------------------------
+
+c: contracts matching %2.%3, or <null> if %4 is <null>
+b: bio.court
+m: court's mantle (if %qk is true)
+g: court goodwill (if %qk is false)
+
+*/
+
+&.prereq.contract.pre-load [v( d.dd )]=
+	strcat( 
+// again, hastag?.workhorse eats a lot of registers, so it goes first.
+		setq( c, 
+			if( gte( %4, 1 ), 
+				setunion( 
+					lcstr( filter( v( d.sfp )/f.hastag?.workhorse, 
+						edit( lattr( %0/_contract.* ), _CONTRACT. , CONTRACT. ), 
+						@@( idelim ), @@( odelim ), 
+						%2.%3, and  
+					)), 
+					%1 
+				), 
+				@@( always allow null to unset trait )
+			)
+		), 
+		setq( b, u( .value, %0, bio.court )), 
+		if( strmatch( %qb, %2 ), 
+			setq( m, u( .value, %0, merit.mantle )), 
+			setq( g, u( .value, %0, merit.court_goodwill_%(%2%) ))
+		), 
+	)
+
+/*
+--------------------------------------------------------------------------------
+-- Prereq: Court Contact, Common/Royal -----------------------------------------
+
+0: contracts matching %2.%3, or <null> if %4 is <null>   (%qc)
+1: court's mantle (if %qk is true)                       (%qm)
+2: court goodwill (if %qk is false)                      (%qg)
+
+*/
+
+&.prereq.contract.court.common [v( d.dd )]=
+	strcat( 
+		case( 1, 
+// .. mantle 1+ or goodwill 2+: Can take any Common Court
+			cor( gte( %1, 1 ), gte( %2, 2 )), 1, 
+// .. this is the only common court contract being taken: OK
+			lte( words( %0 ), 1 ), 1, 
+// .. else: nope
+			0 
+		)
+	)
+
+&.prereq.contract.court.royal [v( d.dd )]=
+	case( 1, 
+// .. mantle 3+ or goodwill 5: Can take any Royal Court
+		cor( gte( %1, 3 ), gte( %2, 5 )), 1, 
+// .. unsetting is always okay, 
+		lte( words( %0 ), 0 ), 1, 
+// .. goodwill 4+ and it's the only royal being taken: OK
+		cand( lte( words( %0 ), 1 ), gte( %2, 4 )), 1, 
+// .. else: nope
+		0 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Prereq-Text: Court Contracts ------------------------------------------------
+
+0: 'common' or 'royal'
+1: court
+
+*/
+
+&.prereq-text.contract.court [v( d.dd )]=
+	case( %1, 
+		common, 
+		Common Court contracts past the first require [capstr( %0 )] Court and 
+		Mantle 1+%, or Court Goodwill %([capstr( %0 )]%) 2+, 
+
+		royal, 
+		Royal Court contracts require [capstr( %0 )] Court and Mantle 3+%, or 
+		Court Goodwill %([capstr( %0 )]%) 5 %(except the first can be taken at 
+		4+%), 
+
+		For some reason I don't know if this prerequisite error message is for a 
+		common or royal contract. Someone should fix this. 
+	)
+
+
+// test:
+/*
+&_contract.baleful_sense [v( _special.sheet_location )]=
+&_contract.child_of_the_hearth [v( _special.sheet_location )]=1 
+think [u( v( d.dd )/.prereq.contract.court, 
+		v( _special.sheet_location ), 
+		contract.baleful_sense, summer, common, 1 
+	)] --> 0
+
+*/
 
 // -- Court Contracts: Spring --------------------------------------------------
 
 &contract.cupid's_arrow [v( d.dd )]=1
-&tags.contract.cupid's_arrow [v( d.dt )]=changeling.spring.common
+&prereq-text.contract.cupid's_arrow [v( d.dd )]=
+	[u( .prereq-text.contract.court, spring, common )]
+&prerequisite.contract.cupid's_arrow [v( d.dd )]=
+	[u( .prereq.contract.court, %0, contract.cupid's_arrow, spring, common )]
+&tags.contract.cupid's_arrow [v( d.dt )]=
+	changeling.fae-touched.spring.common
+
 
 &contract.dreams_of_the_earth [v( d.dd )]=1
-&tags.contract.dreams_of_the_earth [v( d.dt )]=changeling.spring.common
+&tags.contract.dreams_of_the_earth [v( d.dt )]=
+	changeling.fae-touched.spring.common
 
 &contract.gift_of_warm_breath [v( d.dd )]=1
-&tags.contract.gift_of_warm_breath [v( d.dt )]=changeling.spring.common
+&tags.contract.gift_of_warm_breath [v( d.dt )]=
+	changeling.fae-touched.spring.common
 
 &contract.spring's_kiss [v( d.dd )]=1
-&tags.contract.spring's_kiss [v( d.dt )]=changeling.spring.common
+&tags.contract.spring's_kiss [v( d.dt )]=
+	changeling.fae-touched.spring.common
 
 &contract.wyrd-faced_stranger [v( d.dd )]=1
-&tags.contract.wyrd-faced_stranger [v( d.dt )]=changeling.spring.common
+&tags.contract.wyrd-faced_stranger [v( d.dt )]=
+	changeling.fae-touched.spring.common
 
 // --
 
 &contract.blessing_of_spring [v( d.dd )]=1
-&tags.contract.blessing_of_spring [v( d.dt )]=changeling.spring.royal
+&prereq-text.contract.blessing_of_spring [v( d.dd )]=
+	u( .prereq-text.contract.court, spring, royal )
+&prerequisite.contract.blessing_of_spring [v( d.dd )]=
+	u( .prereq.contract.court, %0, contract.blessing_of_spring, spring, royal )
+&tags.contract.blessing_of_spring [v( d.dt )]=
+	changeling.fae-touched.spring.royal
 
 &contract.gift_of_warm_blood [v( d.dd )]=1
-&tags.contract.gift_of_warm_blood [v( d.dt )]=changeling.spring.royal
+&tags.contract.gift_of_warm_blood [v( d.dt )]=
+	changeling.fae-touched.spring.royal
 
 &contract.pandora's_gift [v( d.dd )]=1
-&tags.contract.pandora's_gift [v( d.dt )]=changeling.spring.royal
+&tags.contract.pandora's_gift [v( d.dt )]=
+	changeling.fae-touched.spring.royal
 
 &contract.prince_of_ivy [v( d.dd )]=1
-&tags.contract.prince_of_ivy [v( d.dt )]=changeling.spring.royal
+&tags.contract.prince_of_ivy [v( d.dt )]=
+	changeling.fae-touched.spring.royal
 
 &contract.waking_the_inner_fae [v( d.dd )]=1
-&tags.contract.waking_the_inner_fae [v( d.dt )]=changeling.spring.royal
+&prereq-text.contract.waking_the_inner_fae [v( d.dd )]=
+	u( .prereq-text.contract.court, spring, royal )
+&prerequisite.contract.waking_the_inner_fae [v( d.dd )]=
+	u( .prereq.contract.court, %0, 
+		contract.waking_the_inner_fae, spring, royal, %2 
+	)
+&tags.contract.waking_the_inner_fae [v( d.dt )]=
+	changeling.fae-touched.spring.royal
 
 
 // -- Court Contracts: Summer --------------------------------------------------
 
 &contract.baleful_sense [v( d.dd )]=1
-&tags.contract.baleful_sense [v( d.dt )]=changeling.summer.common
+&prereq-text.contract.baleful_sense [v( d.dd )]=
+	u( .prereq-text.contract.court, summer, common )
+&prerequisite.contract.baleful_sense [v( d.dd )]=
+	u( .prereq.contract.court, %0, 
+		contract.baleful_sense, summer, common, %2 
+	)
+&tags.contract.baleful_sense [v( d.dt )]=
+	changeling.fae-touched.summer.common
 
 &contract.child_of_the_hearth [v( d.dd )]=1
-&tags.contract.child_of_the_hearth [v( d.dt )]=changeling.summer.common
+&prereq-text.contract.child_of_the_hearth [v( d.dd )]=
+	u( .prereq-text.contract.court, summer, common )
+&prerequisite.contract.child_of_the_hearth [v( d.dd )]=
+	u( .prereq.contract.court, %0, 
+		contract.child_of_the_hearth, summer, common, %2 
+	)
+&tags.contract.child_of_the_hearth [v( d.dt )]=
+	changeling.fae-touched.summer.common
 
 &contract.helios'_light [v( d.dd )]=1
-&tags.contract.helios'_light [v( d.dt )]=changeling.summer.common
+&tags.contract.helios'_light [v( d.dt )]=
+	changeling.fae-touched.summer.common
 
 &contract.high_summer's_zeal [v( d.dd )]=1
-&tags.contract.high_summer's_zeal [v( d.dt )]=changeling.summer.common
+&tags.contract.high_summer's_zeal [v( d.dt )]=
+	changeling.fae-touched.summer.common
 
 &contract.vigilance_of_ares [v( d.dd )]=1
-&tags.contract.vigilance_of_ares [v( d.dt )]=changeling.summer.common
+&tags.contract.vigilance_of_ares [v( d.dt )]=
+	changeling.fae-touched.summer.common
 
 // --
 
 &contract.fiery_tongue [v( d.dd )]=1
-&tags.contract.fiery_tongue [v( d.dt )]=changeling.summer.royal
+&prereq-text.contract.fiery_tongue [v( d.dd )]=
+	u( .prereq-text.contract.court, summer, royal )
+&prerequisite.contract.fiery_tongue [v( d.dd )]=
+	u( .prereq.contract.court, %0, 
+		contract.fiery_tongue, summer, royal, %2 
+	)
+&tags.contract.fiery_tongue [v( d.dt )]=
+	changeling.fae-touched.summer.royal
 
 &contract.flames_of_summer [v( d.dd )]=1
-&tags.contract.flames_of_summer [v( d.dt )]=changeling.summer.royal
+&prereq-text.contract.flames_of_summer [v( d.dd )]=
+	u( .prereq-text.contract.court, summer, royal )
+&prerequisite.contract.flames_of_summer [v( d.dd )]=
+	u( .prereq.contract.court, %0, 
+		contract.flames_of_summer, summer, royal, %2 
+	)
+&tags.contract.flames_of_summer [v( d.dt )]=
+	changeling.fae-touched.summer.royal
 
 &contract.helios'_judgement [v( d.dd )]=1
-&tags.contract.helios'_judgement [v( d.dt )]=changeling.summer.royal
+&tags.contract.helios'_judgement [v( d.dt )]=
+	changeling.fae-touched.summer.royal
 
 &contract.solstice_revelation [v( d.dd )]=1
-&tags.contract.solstice_revelation [v( d.dt )]=changeling.summer.royal
+&tags.contract.solstice_revelation [v( d.dt )]=
+	changeling.fae-touched.summer.royal
 
 &contract.sunburnt_heart [v( d.dd )]=1
-&tags.contract.sunburnt_heart [v( d.dt )]=changeling.summer.royal
+&tags.contract.sunburnt_heart [v( d.dt )]=
+	changeling.fae-touched.summer.royal
 
 
 // -- Court Contracts: Autumn --------------------------------------------------
 
 &contract.autumn's_fury [v( d.dd )]=1
-&tags.contract.autumn's_fury [v( d.dt )]=changeling.autumn.common
+&tags.contract.autumn's_fury [v( d.dt )]=
+	changeling.fae-touched.autumn.common
 
 &contract.last_harvest [v( d.dd )]=1
-&tags.contract.last_harvest [v( d.dt )]=changeling.autumn.common
+&tags.contract.last_harvest [v( d.dt )]=
+	changeling.fae-touched.autumn.common
 
 &contract.tale_of_the_baba_yaga [v( d.dd )]=1
-&tags.contract.tale_of_the_baba_yaga [v( d.dt )]=changeling.autumn.common
+&tags.contract.tale_of_the_baba_yaga [v( d.dt )]=
+	changeling.fae-touched.autumn.common
 
 &contract.twilight's_harbinger [v( d.dd )]=1
-&tags.contract.twilight's_harbinger [v( d.dt )]=changeling.autumn.common
+&tags.contract.twilight's_harbinger [v( d.dt )]=
+	changeling.fae-touched.autumn.common
 
 &contract.witches'_intuition [v( d.dd )]=1
-&tags.contract.witches'_intuition [v( d.dt )]=changeling.autumn.common
+&tags.contract.witches'_intuition [v( d.dt )]=
+	changeling.fae-touched.autumn.common
 
 // --
 
 &contract.famine's_bulwark [v( d.dd )]=1
-&tags.contract.famine's_bulwark [v( d.dt )]=changeling.autumn.royal
+&tags.contract.famine's_bulwark [v( d.dt )]=
+	changeling.fae-touched.autumn.royal
 
 &contract.mien_of_the_baba_yaga [v( d.dd )]=1
-&tags.contract.mien_of_the_baba_yaga [v( d.dt )]=changeling.autumn.royal
+&tags.contract.mien_of_the_baba_yaga [v( d.dt )]=
+	changeling.fae-touched.autumn.royal
 
 &contract.riding_the_falling_leaves [v( d.dd )]=1
-&tags.contract.riding_the_falling_leaves [v( d.dt )]=changeling.autumn.royal
+&tags.contract.riding_the_falling_leaves [v( d.dt )]=
+	changeling.fae-touched.autumn.royal
 
 &contract.sorcerer's_rebuke [v( d.dd )]=1
-&tags.contract.sorcerer's_rebuke [v( d.dt )]=changeling.autumn.royal
+&tags.contract.sorcerer's_rebuke [v( d.dt )]=
+	changeling.fae-touched.autumn.royal
 
 &contract.tasting_the_harvest [v( d.dd )]=1
-&tags.contract.tasting_the_harvest [v( d.dt )]=changeling.autumn.royal
+&tags.contract.tasting_the_harvest [v( d.dt )]=
+	changeling.fae-touched.autumn.royal
 
 
 // -- Court Contracts: Winter --------------------------------------------------
 
 &contract.the_dragon_knows [v( d.dd )]=1
-&tags.contract.the_dragon_knows [v( d.dt )]=changeling.winter.common
+&tags.contract.the_dragon_knows [v( d.dt )]=
+	changeling.fae-touched.winter.common
 
 &contract.heart_of_ice [v( d.dd )]=1
-&tags.contract.heart_of_ice [v( d.dt )]=changeling.winter.common
+&tags.contract.heart_of_ice [v( d.dt )]=
+	changeling.fae-touched.winter.common
 
 &contract.ice_queen's_call [v( d.dd )]=1
-&tags.contract.ice_queen's_call [v( d.dt )]=changeling.winter.common
+&tags.contract.ice_queen's_call [v( d.dt )]=
+	changeling.fae-touched.winter.common
 
 &contract.slipknot_dreams [v( d.dd )]=1
-&tags.contract.slipknot_dreams [v( d.dt )]=changeling.winter.common
+&tags.contract.slipknot_dreams [v( d.dt )]=
+	changeling.fae-touched.winter.common
 
 &contract.touch_of_winter [v( d.dd )]=1
-&tags.contract.touch_of_winter [v( d.dt )]=changeling.winter.common
+&tags.contract.touch_of_winter [v( d.dt )]=
+	changeling.fae-touched.winter.common
 
 // --
 
 &contract.ermine's_winter_coat [v( d.dd )]=1
-&tags.contract.ermine's_winter_coat [v( d.dt )]=changeling.winter.royal
+&tags.contract.ermine's_winter_coat [v( d.dt )]=
+	changeling.fae-touched.winter.royal
 
 &contract.fallow_fields [v( d.dd )]=1
-&tags.contract.fallow_fields [v( d.dt )]=changeling.winter.royal
+&tags.contract.fallow_fields [v( d.dt )]=
+	changeling.fae-touched.winter.royal
 
 &contract.field_of_regret [v( d.dd )]=1
-&tags.contract.field_of_regret [v( d.dt )]=changeling.winter.royal
+&tags.contract.field_of_regret [v( d.dt )]=
+	changeling.fae-touched.winter.royal
 
 &contract.mantle_of_frost [v( d.dd )]=1
-&tags.contract.mantle_of_frost [v( d.dt )]=changeling.winter.royal
+&tags.contract.mantle_of_frost [v( d.dt )]=
+	changeling.fae-touched.winter.royal
 
 &contract.winter's_curse [v( d.dd )]=1
-&tags.contract.winter's_curse [v( d.dt )]=changeling.winter.royal
+&tags.contract.winter's_curse [v( d.dt )]=
+	changeling.fae-touched.winter.royal
 
 
 // -- Contracts: Goblin --------------------------------------------------------
 // (remember to add to Goblin Debt!)
 
 &contract.blessing_of_forgetfulness [v( d.dd )]=1
-&tags.contract.blessing_of_forgetfulness [v( d.dt )]=changeling.goblin
+&tags.contract.blessing_of_forgetfulness [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.blessing_of_forgetfulness [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.glib_tongue [v( d.dd )]=1
-&tags.contract.glib_tongue [v( d.dt )]=changeling.goblin
+&tags.contract.glib_tongue [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.glib_tongue [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.goblin's_eye [v( d.dd )]=1
-&tags.contract.goblin's_eye [v( d.dt )]=changeling.goblin
+&tags.contract.goblin's_eye [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.goblin's_eye [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.goblin's_luck [v( d.dd )]=1
-&tags.contract.goblin's_luck [v( d.dt )]=changeling.goblin
+&tags.contract.goblin's_luck [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.goblin's_luck [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.huntsman's_clarion [v( d.dd )]=1
-&tags.contract.huntsman's_clarion [v( d.dt )]=changeling.goblin
+&tags.contract.huntsman's_clarion [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.huntsman's_clarion [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.lost_visage [v( d.dd )]=1
-&tags.contract.lost_visage [v( d.dt )]=changeling.goblin
+&tags.contract.lost_visage [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.lost_visage [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.mantle_mask [v( d.dd )]=1
-&tags.contract.mantle_mask [v( d.dt )]=changeling.goblin
+&tags.contract.mantle_mask [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.mantle_mask [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.sight_of_truth_and_lies [v( d.dd )]=1
-&tags.contract.sight_of_truth_and_lies [v( d.dt )]=changeling.goblin
+&tags.contract.sight_of_truth_and_lies [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.sight_of_truth_and_lies [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.uncanny [v( d.dd )]=1
-&tags.contract.uncanny [v( d.dt )]=changeling.goblin
+&tags.contract.uncanny [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.uncanny [v( d.dt )]=
 	Remember to add Goblin Debt when used
 
 &contract.wayward_guide [v( d.dd )]=1
-&tags.contract.wayward_guide [v( d.dt )]=changeling.goblin
+&tags.contract.wayward_guide [v( d.dt )]=
+	changeling.fae-touched.goblin
 &notes.contract.wayward_guide [v( d.dt )]=
 	Remember to add Goblin Debt when used
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1160,6 +1405,19 @@ Grumble.
 ## CHANGELING CHARGEN ##########################################################
 
 
+================================================================================
+== CHARGEN: BIO ================================================================
+
+--------------------------------------------------------------------------------
+-- Bio Check -------------------------------------------------------------------
+
+*/
+
+&check.bio.changeling [v( d.cg )]=needle thread court seeming favored_regalia
+
+
+
+/*
 ================================================================================
 == CHARGEN: ATTRIBUTES =========================================================
 
@@ -1174,24 +1432,121 @@ Fairest    Power
 Ogre       Power
 Wizened    Finesse
 
+
+"Favored Attribute" has been done in Vampire, so we'll be replicating it here.
+
+
+--------------------------------------------------------------------------------
+-- Favored Attribute -----------------------------------------------------------
+
+currently: 
+	stat/set <attribute>.favored=1
+
+(I hope to get this changed.)
+
+1. check that attributes with 'favored' subtype are allowed
+2. check that there's only one
+3. check what happens if we -1 that from the system
+
 */
+
+&check.chargen.attributes.changeling [v( d.cg )]=
+	strcat( 
+		setq( f, v( d.changeling.favored_attributes.[get( %0/_bio.seeming )] )), 
+		setq( a, 
+			lcstr( 
+				iter( lattr( %0/_attribute.*.favored ), elements( %i0, 2, . ))
+			)
+		), 
+		setq( i, setinter( %qa, %qf )), 
+		setq( c, ulocal( f.pts-valid?.attributes, %0, attribute.%qi:-1 )), 
+
+		ulocal( f.allocated.attributes, %0 ), %b, %(of 5/4/3 + favored%), %b, 
+		ulocal( display.check.stats, %0, attributes, attribute.%qa:-1 ), %r, 
+
+		%b %b%b, ansi( h, Favored Attribute ), :, %b, 
+		titlestr( itemize( %qa )), %b, 
+		%[, 
+		case( 1, 
+			eq( words( %qa ), 0 ), ansi( r, none set ), 
+			gt( words( %qa ), 1 ), ansi( r, too many set ), 
+			neq( words( %qi ), 1 ), ansi( r, not allowed for your seeming ), 
+			not( %qc ), ansi( r, bonus point not spent ), 
+			ansi( g, OK )
+		), 
+		%]
+	)
+
+&d.changeling.favored_attributes.beast [v( d.cg )]=
+	composure resolve stamina
+&d.changeling.favored_attributes.darkling [v( d.cg )]=
+	dexterity manipulation wits
+&d.changeling.favored_attributes.elemental [v( d.cg )]=
+	composure resolve stamina
+&d.changeling.favored_attributes.fairest [v( d.cg )]=
+	intelligence presence strength
+&d.changeling.favored_attributes.ogre [v( d.cg )]=
+	intelligence presence strength
+&d.changeling.favored_attributes.wizened [v( d.cg )]=
+	dexterity manipulation wits
 
 
 
 /*
 ================================================================================
-== CHARGEN: ALLOCATIONS ========================================================
+== CHARGEN: MERITS =============================================================
+
+--------------------------------------------------------------------------------
+-- Allocated Merits: Mantle ----------------------------------------------------
+
+Mantle 1 is free for all but Courtless. Calculate how many points to subtract.
+
+*/
+
+&f.allocated.merits.changeling [v( d.cg )]=
+	cand( 
+		not( strmatch( get( %0/_bio.court ), Courtless )), 
+		hasattr( %0, _merit.mantle )
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Check Free Merits -----------------------------------------------------------
+
+After subtracting 'Mantle' from the merit total, report it for clarity
+
+*/
+
+&check.changeling.merits.free [v( d.cg )]=
+	strcat( 
+		setq( m, hasattr( %0, _merit.mantle )), 
+		setq( c, strmatch( get( %0/_bio.court ), Courtless )), 
+		%b%b%b%b, 
+		ansi( h, Mantle: ), %b, 
+		if( %qm, Set, Unset ), %b, %[ 
+		case( 1, 
+			cand( %qm, not( %qc )), ansi( g, OK ), 
+			cand( not( %qm ), %qc ), ansi( g, OK ), 
+			ansi( r, no )
+		), %] 
+	)
+
+
+
+/*
+================================================================================
+== CHARGEN: POWERS =============================================================
 
 --------------------------------------------------------------------------------
 -- Allocated Merits: Wyrd ------------------------------------------------------
 */
 
-&f.allocated.power-trait.changeling [v(d.cg)]=
+&f.allocated.power-trait.changeling [v( d.cg )]=
 	mul( 
 		dec( first( get( %0/_advantage.wyrd ), . )), 
 		5 
 	)
-
 
 /*
 --------------------------------------------------------------------------------
@@ -1921,6 +2276,33 @@ think u( v( d.sheet )/block.powers.contracts, %# )
 		u( block.clarity, %0 ), %r, 
 	)
 
+
+
+
+
+/*
+################################################################################
+## FAE-TOUCHED: SHEET ##########################################################
+
+--------------------------------------------------------------------------------
+-- Sheet, Advantages: Fae-Touched ----------------------------------------------
+*/
+
+&advantages.fae-touched [v( d.nsc )]=goblin_debt
+
+
+/*
+--------------------------------------------------------------------------------
+-- Sheet, Powers: Fae-Touched --------------------------------------------------
+*/
+
+&block.powers.fae-touched [v( d.sheet )]=u( block.powers.contracts, %0, %1 )
+
+
+/*
+--------------------------------------------------------------------------------
+-- Sheet, Traits: Fae-Touched --------------------------------------------------
+*/
 
 &block.traits.fae-touched [v( d.sheet )]=
 	strcat( 
