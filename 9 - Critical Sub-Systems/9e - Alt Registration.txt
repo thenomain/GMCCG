@@ -378,10 +378,10 @@ Remember to register these with whatever global function system you have.
 --------------------------------------------------------------------------------
 -- alts() ----------------------------------------------------------------------
 
-	alts( <target>[, <alt>] )
+	alts( <target>[, <alt dbref>] )
 
 Return the existing dbrefs from &_alts.list
-Or returns '1' if <alt> is in <target>'s alts-list
+Or returns '1' if <alt dbref> is in <target>'s alts-list
 
 */
 
