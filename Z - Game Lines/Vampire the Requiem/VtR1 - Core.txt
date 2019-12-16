@@ -1784,7 +1784,7 @@ Character should have no Scales
 &xp.discipline [v( d.xpcd )]=
 	case( 1, 
 		u( v( d.sfp )/f.hastag?.workhorse, 
-			%3, 
+			discipline.%3, 
 			[u( .value, %0, bio.clan )].
 			[u( .value, %0, bio.bloodline )]
 		), 
