@@ -2028,19 +2028,21 @@ Wyrd: 5
 // non-seeming contract bonus
 // .. bonus' name: last( %3, . )
 // .. core stat: elements( %3, 1 2, . )
-&xp.contract.? [v( d.xpcd )]=
+&xp.contract.?.? [v( d.xpcd )]=
 	case( 1, 
 		u( .is, %0, bio.seeming, elements( %3, 3, . )), 0, 
 		u( .is, %0, elements( %3, 1 2, . ), ), 0, 
 		1 
 	)
 
+
 // contract: depends on regalia & court
 // .. we cheat and grab tags and stats to process manually
 // .. as much as I love 'hastag?', this will save processing
 
-&xp.contract [v( d.xpcd )]=
+&xp.contract.? [v( d.xpcd )]=
 	localize( case( 1, 
+
 // .. goblin contracts
 		t( grab( 
 			setr( t, get( v( d.dt )/tags.%3 )), 
@@ -2056,33 +2058,33 @@ Wyrd: 5
 			. 
 		)), 
 		case( 1, 
-			t( setinter( %qt, common, . ), 3, 
-			t( setinter( %qt, royal, . ), 4, 
+			t( setinter( %qt, common, . )), 3, 
+			t( setinter( %qt, royal, . )), 4, 
 			0 
 		), 
 
 // .. else: regalia contracts
 		strcat( 
 // .. .. set base xp cost: 3 for common, 4 for royal, error for neither
-			setq( x, 
+			setq( b, 
 				case( 1,  
-					setinter( %qt, common, . ), 3, 
-					setinter( %qt, royal, . ), 4, 
+					t( setinter( %qt, common, . )), 3, 
+					t( setinter( %qt, royal, . )), 4, 
 					0 
 				)
 			), 
 // .. .. -1 if Favored
 			setq( f, get( %0/_bio.favored_regalia )), 
-			setq( s, u( v( d.dd )/.changeling.seeming_regalia, %0 )), 
+			setq( s, ulocal( v( d.dd )/.changeling.seeming_regalia, %0 )), 
 			setq( x, 
 				sub( 
-					%qx, 
+					%qb, 
 					t( setinter( %qt, %qf.%qs, . ))
 				)
 			), 
 
 // .. .. return xp, min 0 for error (0 == cannot buy, for xp)
-			min( 0, %qx )
+			max( 0, %qx )
 		) 
 	))
 
