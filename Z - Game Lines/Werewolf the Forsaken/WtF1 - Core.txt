@@ -487,9 +487,10 @@ Effective Rank.
 &tags.merit.creative_tactician [v( d.dt )]=werewolf.mental.purity
 
 &merit.dedicated_locus_() [v( d.dd )]=1.2.3.4.5|*
-&prerequisite.merit.haven_() [v( d.dd )]=u( .has, %0, merit.haven_(%1) )
-&prereq-text.merit.haven_() [v( d.dd )]=Safe Place (<place name>) 1
-&tags.merit.dedicated_locus_() [v( d.dt )]=werewolf.social.location
+&prerequisite.merit.dedicated_locus_() [v( d.dd )]=
+	u( .has, %0, merit.safe_place_(%1) )
+&prereq-text.merit.dedicated_locus_() [v( d.dd )]=Has Safe Place (<place name>)
+&tags.merit.dedicated_locus_() [v( d.dt )]=werewolf.location
 
 &merit.embodiment_of_the_firstborn_() [v( d.dd )]=
 	5|
