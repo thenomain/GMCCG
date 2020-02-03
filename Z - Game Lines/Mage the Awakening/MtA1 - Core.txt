@@ -2016,6 +2016,14 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 	u( .rote.prereq-text, mind_flay )
 &tags.rote.mind_flay_() [v( d.dt )]=mage.proximus.mind
 
+&rote.possession_() [v( d.dd )]=
+	4|Medicine.persuasion.Subterfuge.Praxis.Blessing
+&prerequisite.rote.possession_() [v( d.dd )]=
+	u( .rote.prereq-check, %0, %1, possession, Mind:4 )
+&prereq-text.rote.possession_() [v( d.dd )]=
+	u( .rote.prereq-text, possession )
+&tags.rote.possession_() [v( d.dt )]=mage.proximus.mind
+
 &rote.psychic_projection_() [v( d.dd )]=
 	4|Academics.Occult.Socialize.Praxis.Blessing
 &prerequisite.rote.psychic_projection_() [v( d.dd )]=
@@ -2063,14 +2071,6 @@ If it's '<rote name> (<skill>)', then it's a Rote.
 &prereq-text.rote.mind_wipe_() [v( d.dd )]=
 	u( .rote.prereq-text, mind_wipe )
 &tags.rote.mind_wipe_() [v( d.dt )]=mage.proximus.mind
-
-&rote.possession_() [v( d.dd )]=
-	5|Medicine.persuasion.Subterfuge.Praxis.Blessing
-&prerequisite.rote.possession_() [v( d.dd )]=
-	u( .rote.prereq-check, %0, %1, possession, Mind:5 )
-&prereq-text.rote.possession_() [v( d.dd )]=
-	u( .rote.prereq-text, possession )
-&tags.rote.possession_() [v( d.dt )]=mage.proximus.mind
 
 &rote.psychic_genesis_() [v( d.dd )]=
 	5|Academics.Expression.Science.Praxis.Blessing
