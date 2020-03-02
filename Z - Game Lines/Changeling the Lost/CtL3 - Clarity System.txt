@@ -164,8 +164,8 @@ to be exposed to the core roller via type 'advantage'.
 		), 
 // .. Max Touchstones = Max Clarity - Composure
 		sub( 
-			u( .value_stat, %0, clarity.maximum ), 
-			u( .value_stat, %0, attribute.composure )
+			u( .value_stats, %0, clarity.maximum ), 
+			u( .value_stats, %0, attribute.composure )
 		)
 	)
 &prereq-text.merit.touchstone_() [v( d.dd )]=
