@@ -3445,8 +3445,8 @@ Following is sent from XP:
 		setq( b, u( v( d.cg )/d.mage_path_arcana.%qa, %0 )), 
 		setq( c, 
 			case( 1, 
-				t( match( rest( %3, . ), first( %qb, : ))), 5, 
-				t( match( rest( %3, . ), last( %qb, : ))), 2, 
+				t( match( first( %qb, : ), rest( %3, . ))), 5, 
+				t( match( last( %qb, : ), rest( %3, . ))), 2, 
 				4 
 			)
 		), 
