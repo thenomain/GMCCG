@@ -405,8 +405,8 @@ Staff can deny 'pitch' and 'fulfill'.
 
 &c.aspiration/deny [v( d.asp )]=
 	strcat( 
-		setq( p, trim( first( %0, = ))), 
-		setq( n, trim( rest( %0, = ))), 
+		setq( p, trim( first( %0, / ))), 
+		setq( n, trim( rest( %0, / ))), 
 		u( f.aspiration/deny.action, %qp, %qn )
 	)
 
