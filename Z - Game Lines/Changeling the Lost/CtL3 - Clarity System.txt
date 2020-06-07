@@ -940,7 +940,7 @@ p: 'persistent ' text if it was
 				|Gains %qpComatose Condition, 
 
 // .. last three filled: clarity condition
-				lte( sub( %qm, %qn ), 3 ), 
+				lt( sub( %qm, %qn ), 3 ), 
 				|should set a %qpClarity Condition, 
 
 				@@( neither )
