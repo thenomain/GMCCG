@@ -1,0 +1,731 @@
+&COND.STEADFAST [v( d.ctdb )]=
+	Steadfast|0|
+
+	Your character is confident and resolved. When youve failed a roll, you may 
+	choose to resolve this Condition to instead treat the action as if you had 
+	rolled a single success. If the roll is a chance die, you may choose to 
+	resolve this Condition and roll a single regular die instead.|
+
+	Facing a Breaking Point|
+
+	You use this Condition as described above.|
+
+	n/a|
+
+	WtF 2E.311
+
+// -----------------------------------------------------------------------------	
+
+&COND.STUMBLED [v( d.ctdb )]=
+	Stumbled|0|
+
+	Your character has hit a complication while attempting a blood sorcery 
+	ritual. Each successive roll in the extended action is at a 3 die penalty. 
+	This Condition does not grant a Beat when resolved.|
+
+	Failure during a rite or Facet use.|
+
+	The extended action ends.|
+
+	n/a|
+
+	WtF 2E.311
+
+// -----------------------------------------------------------------------------	
+
+&COND.FIRST_TRIMESTER [v( d.ctdb )]=
+	First Trimester|1|
+
+	The first three months of the pregnancy. A person at this stage may not 
+	realize she's pregnant. She may experience nausea fatigue and flu-like 
+	symptoms. As a result of that fatigue she suffers a -1 to Initiative and any 
+	Stamina-related rolls. She can still do just as much physically she's just 
+	worn out. Most pregnant people also report extraordinarily vivid dreams. As 
+	a result of these dreams the character regains an additional point of 
+	Willpower when she can sleep for four hours or more.|
+
+	Intercourse.|
+
+	Start of the second trimester or end of the pregnancy.|
+
+	When you come to the realization that you are in fact pregnant take a Beat. 
+	This Beat can only be earned once this trimester.|
+
+	WtF 2E.???
+
+// -----------------------------------------------------------------------------	
+
+&COND.SECOND_TRIMESTER [v( d.ctdb )]=
+	Second Trimester|1|
+
+	The second trimester is freeing. A pregnant person feels energetic and 
+	creative. She gains an additional dot of Stamina for this trimester. This 
+	cannot take her above her normal maximum but does affect other static traits 
+	like Health levels. She also suffers a -2 modifier to all extended action 
+	dice pools as any given task can turn quickly to thoughts and worry over the 
+	future.|
+
+	Intercourse.|
+
+	Start of the third trimester or end of the pregnancy.|
+
+	When the character first feels the baby move or quickening take a Beat. This 
+	Beat can only be earned once this trimester.|
+
+	WtF 2E.295
+
+// -----------------------------------------------------------------------------	
+
+&COND.THIRD_TRIMESTER [v( d.ctdb )]=
+	Third Trimester|1|
+
+	Now the pregnant person turns inwards. Her thoughts take on stillness as she 
+	prepares for coming changes to her life. She gains an additional die to all 
+	Wits and Composure rolls during this trimester. Her body has experienced 
+	some of the most dramatic changes imaginable. Even her brain changes to 
+	accommodate the growth of her fetus so that she grows more forgetful and 
+	sometimes confused. She has one less dot of Dexterity and one less dot of 
+	Resolve over the course of this trimester. This does change related static 
+	traits like Willpower.|
+
+	Intercourse.|
+
+	Birth or otherwise the end of the pregnancy.|
+
+	When the character gives birth in a scene or during downtime take a Beat. 
+	This Beat can only be earned once this trimester.|
+
+	WtF 2E.295
+
+// -----------------------------------------------------------------------------	
+
+&COND.ATAVISM [v( d.ctdb )]=
+Atavism|0|
+
+	You suffer ancient ancestral memories that rouse anger and violent urges the 
+	cause of these memories must be destroyed. When facing the source of the 
+	Atavism your character must make all-out attacks each turn see p. 168  or 
+	spend Willpower points to avoid attacking. When in danger or heavy stress 
+	she lashes out violently. She must spend Willpower points to take nonviolent 
+	actions in response to threats or stressors.|
+
+	Succumbing to Lunacy.|
+
+	Your character achieves an exceptional success against the source of her 
+	rage or the source of her rage achieves an exceptional success against her. 
+	Alternatively she can suffer a breaking point for harming an innocent 
+	person.|
+
+	n/a|
+
+	WtF 2E.306
+
+// -----------------------------------------------------------------------------	
+
+&COND.AWESTRUCK [v( d.ctdb )]=
+	Awestruck|1|
+
+	Your character sees before her a glorious and terrifying figure and 
+	something in her brain kicks her to kneel and grovel. She suffers a -2 
+	penalty to attack rolls against the source of the Condition. She also 
+	suffers a -3 penalty to contested rolls against social actions from the 
+	source of the Condition and a -3 penalty to her Composure and Resolve 
+	against actions and powers that the source of the Condition uses on her.|
+
+	Compulsion from supernatural powers.|
+
+	The source of the Condition leaves your character's presence or stops 
+	inflicting Lunacy.|
+
+	Your character takes an action that serves the demands of the Condition's 
+	source.|
+
+	WtF 2E.306
+
+// -----------------------------------------------------------------------------	
+
+&COND.BAN [v( d.ctdb )]=
+	Ban|0|
+
+	Your character suffers from a powerful spiritual compulsion that demands 
+	specific behavior. It is difficult to contravene the ban and attempting to 
+	do so elicits a sense of revulsion or wrongness in the character. She 
+	suffers a -3 penalty to all dice pools that are rolled as part of an action 
+	that breaks the ban's dictated behavior. If breaking the ban's compulsion 
+	would not involve any dice pools she instead suffers a -2 penalty to all 
+	dice pools until she corrects her breach or the Condition ends. In the case 
+	of a ban imposed by a pack totem the totem immediately becomes aware that a 
+	breach has occurred and loses a single point of Essence. If it has no 
+	Essence remaining it instead suffers the Deprived Condition until it regains 
+	any Essence.|
+
+	Low Harmony violating a totem's ban or a number of Gifts and rites.|
+
+	If the ban is not persistent then the Condition is resolved when your 
+	character's adherence to the ban causes her a significant setback. Otherwise 
+	the resolution depends on the nature of the ban.|
+
+	Your character's adherence to the ban causes her a significant setback.|
+
+	WtF 2E.306
+
+// -----------------------------------------------------------------------------	
+
+&COND.BERSERK [v( d.ctdb )]=
+	Berserk|0|
+
+	Your character has had a spark of berserk rage lit within her. The fury 
+	inside demands that she lash out and the descending red mist makes it hard 
+	to tell friend from foe. Each turn she must succeed at a Resolve + Composure 
+	roll or attack the nearest target with whatever weapons she has to hand. 
+	Even if she succeeds she suffers a -3 penalty on all actions other than 
+	attacking the nearest target.|
+
+	A number of Gifts and abilities that kindle a form of the Uratha's rage in 
+	non-werewolves.|
+
+	The character becomes unconscious. There are no targets left to attack. The 
+	source of the Lunacy leaves your character's presence or stops inflicting 
+	Lunacy.|
+
+	n/a|
+
+	WtF 2E.306
+
+// -----------------------------------------------------------------------------	
+
+&COND.COWED [v( d.ctdb )]=
+	Cowed|0|
+
+	Your character has been put in her place through the violence and dominance 
+	of another. She suffers a -2 penalty on any Physical and Social rolls to 
+	oppose the character who inflicted this Condition if she does not spend 
+	Willpower.|
+
+	Having another character determine her superiority to yours some 
+	supernatural powers.|
+
+	The character successfully injures or intimidates the character who 
+	inflicted the Condition. The character regains Willpower through her Blood 
+	Archetype.|
+
+	n/a|
+
+	WtF 2E.307
+
+// -----------------------------------------------------------------------------	
+
+&COND.CUNNING [v( d.ctdb )]=
+	Cunning|0|
+
+	Your character is Cunning. She beguiles tricks sneaks and charms. This makes 
+	everyone around her suspicious of her because they know she's shifty and 
+	clever. Characters trying to detect lies or notice your character sneaking 
+	enjoy a +2 bonus to any relevant Empathy Investigation or other rolls. Your 
+	character knows this and can use this as a diversion for her true goals.|
+
+	Flaring Cunning Renown brands with Essence.|
+
+	Once at least one individual has used the +2 bonus you may choose to shed 
+	this Condition to add the character's Cunning Renown in automatic successes 
+	to any Larceny Stealth or Subterfuge action even if she rolls no successes.|
+
+	n/a|
+
+	WtF 2E.307
+
+// -----------------------------------------------------------------------------	
+
+&COND.DELUSION [v( d.ctdb )]=
+	Delusion|0|
+
+	Your character cannot make sense of the world she perceives and because of 
+	this she avoids that which would make her question. When facing the 
+	supernatural or something she suspects to be the source of this Condition 
+	she flees. If she cannot flee she shuts down. Every action she takes that is 
+	not fleeing requires a Willpower point.|
+
+	Succumbing to Lunacy.|
+
+	Your character reaffirms her sense of reality by expending Willpower and 
+	learning something new something deeply secret about the source of the 
+	Condition.|
+
+	n/a|
+
+	WtF 2E.307
+
+// -----------------------------------------------------------------------------	
+
+&COND.DEMORALIZED [v( d.ctdb )]=
+	Demoralized|0|
+
+	Your character is demoralized and hesitant in the face of the enemy. 
+	Spending a Willpower point only adds one die to her attack pool rather than 
+	the usual three. She also suffers a -4 penalty to her Initiative and a -2 
+	penalty to her Resolve and Composure whenever they are used to resist or 
+	contest a dice pool.|
+
+	Attempting something momentous and failing at the last hurdle some Gifts.|
+
+	The character achieves an exceptional success on an attack roll wins a 
+	combat or survives a combat unharmed. A week passes.|
+
+	n/a|
+
+	WtF 2E.307
+
+// -----------------------------------------------------------------------------	
+
+&COND.EASY_PREY [v( d.ctdb )]=
+	Easy Prey|0|
+
+	Through carelessness or ignorance your character leaves a clear trail for 
+	any hunter to follow. All attempts to find the character through searching 
+	or tracking gain +2 dice.|
+
+	Dramatically failing in a contested tracking action.|
+
+	A hunter locates your character and harms him -- physically mentally or 
+	socially -- raising his awareness of his carelessness.|
+
+	n/a|
+
+	WtF 2E.307
+
+// -----------------------------------------------------------------------------	
+
+&COND.ESSENCE_OVERLOAD [v( d.ctdb )]=
+	Essence Overload|0|
+
+	Your character has attempted to channel immensely powerful forces through 
+	her Essence and has lost control. Sparks and heatless flame sputter and limn 
+	her. Whenever she spends a point of Essence she must succeed at a Stamina 
+	roll or suffer one point of lethal damage. Whenever she suffers an injury 
+	from an attack she also bleeds out one point of Essence.|
+
+	Some Gifts.|
+
+	The character empties her Essence pool or earths the overloaded energies 
+	through a powerful spiritual conduit.|
+
+	n/a|
+
+	WtF 2E.307
+
+// -----------------------------------------------------------------------------	
+
+&COND.EXHAUSTED [v( d.ctdb )]=
+	Exhausted|0|
+
+	Your character has been run ragged and desperately needs a good rest. She 
+	suffers a -2 penalty to all physical actions and rolls to remain conscious.|
+
+	Sleep deprivation or persistent nightmares some Gifts.|
+
+	The character has restful sleep.|
+
+	n/a|
+
+	WtF 2E.307
+
+// -----------------------------------------------------------------------------	
+
+&COND.GLORIOUS [v( d.ctdb )]=
+	Glorious|0|
+
+	Your character is Glorious. She's faced down superior opponents committed 
+	great acts of courage and lived to tell the tale. This impresses onlookers 
+	and draws their attention. Individuals so impressed will confront your 
+	character first. Arguments and attacks against your character gain +2 dice. 
+	Your character may impress witnesses by weathering the storm and turning it 
+	around on her opponents.|
+
+	Flaring Glory Renown brands with Essence.|
+
+	Once at least one individual has used the +2 bonus you may choose to shed 
+	this Condition to add your character's Glory Renown in automatic successes 
+	to any Expression Intimidation or Persuasion action even if she rolls no 
+	successes.|
+
+	n/a|
+
+	WtF 2E.308
+
+// -----------------------------------------------------------------------------	
+
+&COND.HONORABLE [v( d.ctdb )]=
+	Honorable|0|
+
+	Your character is Honorable. She wields honesty the way some Uratha wield 
+	their claws. She fights fairly and pursues fair prey. She does not abuse the 
+	already downtrodden or take advantage of the innocent. Individuals knowing 
+	of her Honor will attempt to fool or take advantage of her. Any such rolls 
+	gain +2 dice. When your character bears that weight her humble dignity gives 
+	her an aura of grace and respect.|
+
+	Flaring Honor Renown brands with Essence.|
+
+	Once at least one individual has used the +2 bonus you may choose to shed 
+	this Condition to add your character's Honor Renown in automatic successes 
+	to any Empathy Politics or Socialize action even if she rolls no successes.|
+
+	n/a|
+
+	WtF 2E.308
+
+// -----------------------------------------------------------------------------	
+
+&COND.INVISIBLE_PREDATOR [v( d.ctdb )]=
+	Invisible Predator|0|
+
+	Your character has so successfully infiltrated her prey's domain that he is 
+	oblivious to her presence. The prey suffers -2 to all rolls to detect or 
+	prepare for the hunter's arrival while this Condition is active.|
+
+	Exceptional success in a tracking action.|
+
+	The hunter deals damage or otherwise hurts her prey either through attack 
+	social manipulation or stealing her possessions.|
+
+	n/a|
+
+	WtF 2E.308
+
+// -----------------------------------------------------------------------------	
+
+&COND.ISOLATED [v( d.ctdb )]=
+	Isolated|0|
+
+	Your character has been split from his crew drawn and called out cornered 
+	and quartered. His friends hesitate to assist him they're resigned to his 
+	fate. With this Condition your character cannot benefit from or participate 
+	in teamwork rolls see p. 162 . Additionally your character cannot take 
+	advantage of the Defense reduction for multiple attackers every enemy he 
+	faces has access to its full Defense no matter how many times it's been 
+	attacked in a turn.|
+
+	The Elodoth's Isolating hunter aspect.|
+
+	Suffer a wound penalty from lethal or aggravated wounds or suffer a lethal 
+	wound in your character's last Health box.|
+
+	n/a|
+
+	WtF 2E.308
+
+// -----------------------------------------------------------------------------	
+
+&COND.LOST_TRACKER [v( d.ctdb )]=
+	Lost Tracker|0|
+
+	Your character has lost faith in her abilities because she failed to find 
+	her prey. She suffers -2 to all tracking rolls while this Condition 
+	remains.|
+
+	Dramatic failure on a tracking action.|
+
+	The hunter succeeds in tracking her quarry despite the penalty regaining 
+	faith in her ability.|
+
+	n/a|
+
+	WtF 2E.308
+
+// -----------------------------------------------------------------------------	
+
+&COND.MOON_TAINT [v( d.ctdb )]=
+	Moon Taint|0|
+
+	Your character has been infected with the warping taint of Luna. From time 
+	to time her skin crawls or shivers in strange and unpleasant ways. She 
+	suffers from the Sick Tilt while the Condition lasts. The first time she 
+	sees the full moon after suffering Moon Taint she is aff licted by spasming 
+	agony and must achieve 5 successes on an extended Resolve + Composure roll 
+	with each roll representing 1 minute. If she succeeds then the Condition 
+	ends and the pain ceases. If she fails any of the rolls she immediately 
+	enters Dalu and gains regeneration as if she were a werewolf with Primal 
+	Urge 1. She also enters Wasu-Im. She returns to normal when the sun rises 
+	whereupon this Condition ends.|
+
+	Being bitten by a werewolf using some Gifts.|
+
+	Resisting the change. The sun rises after changing. The character poisons 
+	herself with wolfsbane.|
+
+	n/a|
+
+	WtF 2E.309
+
+// -----------------------------------------------------------------------------	
+
+&COND.MYSTIFIED [v( d.ctdb )]=
+	Mystified|0|
+
+	Your character faced an Ithaeur and now he feels the dread of the spirit 
+	wilds wherever he goes. He finds solace only in the Gauntlet. Subtract the 
+	current Gauntlet rating see p. 101 from 6. That number acts as a penalty to 
+	all your character's Mental actions. If that penalty exceeds your 
+	character's Composure dots your character does not benefit from the 10-again 
+	quality on any rolls. If used on a spirit this works in reverse. Subtract 
+	the Gauntlet modifier from all actions as the spirit becomes afraid of the 
+	human world.|
+
+	The Ithaeur's Mystic hunter aspect.|
+
+	Suffer a wound penalty from lethal or aggravated wounds or suffer a lethal 
+	wound in your character's last Health box.|
+
+	n/a|
+
+	WtF 2E.309
+
+// -----------------------------------------------------------------------------	
+
+&COND.PARANOID [v( d.ctdb )]=
+	Paranoid|0|
+
+	Your character has been reduced to a state of rampant paranoia. She jumps at 
+	shadows sees threats everywhere and finds it hard to trust. She suffers a -2 
+	penalty to Perception rolls Social actions and dice pools to draw upon the 
+	Allies Contacts Mentor Retainer Staff and Status Merits.|
+
+	Some Gifts.|
+
+	A week without any threat actually manifesting a friend or ally achieving an 
+	exceptional success on a Social action to convince you of their 
+	trustworthiness.|
+
+	n/a|
+
+	WtF 2E.309
+
+// -----------------------------------------------------------------------------	
+
+&COND.PURE [v( d.ctdb )]=
+	Pure|0|
+
+	Your character is Pure. She adheres to the Oath of the Moon in all things. 
+	She's known to put her ancestral duties above everything in her life. To 
+	some this looks a weakness to exploit. It tempts others to challenge her 
+	adherence to her Oath. Sometimes this is due to malice sometimes jealousy 
+	sometimes disbelief. Any such rolls to tempt her to disgrace gain +2 dice. 
+	When your character stands up to that temptation she carries the terrifying 
+	mantle of her ancestors.|
+
+	Flaring Purity Renown brands with Essence.|
+
+	Once at least one individual has used the +2 bonus you may choose to shed 
+	this Condition to add your character's Purity Renown in automatic successes 
+	to any Athletics Brawl or Survival action even if she rolls no successes.|
+
+	n/a|
+
+	WtF 2E.309
+
+// -----------------------------------------------------------------------------	
+
+&COND.RECEPTION [v( d.ctdb )]=
+	Reception|0|
+
+	Your character has opened to the spirit world as result of her experience 
+	with Lunacy. She cannot resist possession see p. 190  and she bleeds 
+	Essence. Every day she generates Essence equal to her Resolve score. Spirits 
+	can consume the Essence by touching her but werewolves must eat her flesh -- 
+	gaining the Essence in addition to the amount normally given by eating human 
+	meat. If she dramatically fails an action she may slip into the Hisil 
+	instead of suffering the normal dramatic failure for the action.|
+
+	Succumbing to Lunacy.|
+
+	Your character experiences grave danger as result of her experience with the 
+	Hisil.|
+
+	n/a|
+
+	WtF 2E.310
+
+// -----------------------------------------------------------------------------	
+
+&COND.RESIGNED [v( d.ctdb )]=
+	Resigned|0|
+
+	Your character faced down his hunter and the frightening beast has shown him 
+	the essence of doom. While he may still fight or flee there's a part of him 
+	inside that welcomes the release of death. Your character may not spend 
+	Willpower to add dice or resistance for any action to defend himself from a 
+	deadly threat. He can fuel Gifts or use other actions but his self-defense 
+	becomes lackluster at best.|
+
+	The Cahalith's Monstrous hunter aspect.|
+
+	Suffer a wound penalty from lethal or aggravated damage or suffer a lethal 
+	wound in your character's last Health box.|
+
+	n/a|
+
+	WtF 2E.310
+
+// -----------------------------------------------------------------------------	
+
+&COND.SHADOW_PARANOIA [v( d.ctdb )]=
+	Shadow Paranoia|0|
+
+	Your character has been afflicted with a supernatural panic she is jumpy and 
+	on edge afraid that every shadow might contain sharp teeth and sudden death. 
+	She suffers a -2 penalty to all Perception rolls. Any failure on a 
+	Perception roll becomes a dramatic failure as she thinks she sees an 
+	attacker or threat out of the corner of her eye and she will react with 
+	panic if she's carrying a firearm she will likely start firing at shadows. 
+	Thinking rationally is difficult in the face of such fear and she suffers a 
+	-2 penalty on all Intelligence- and Witsbased dice pools.|
+
+	Some Gifts.|
+
+	The character reaches a place of safety. The character achieves an 
+	exceptional success on a Perception roll.|
+
+	n/a|
+
+	WtF 2E.309
+
+// -----------------------------------------------------------------------------	
+
+&COND.SHADOWLASHED [v( d.ctdb )]=
+	Shadowlashed|0|
+
+	Your character failed to master the laws of the Shadow and now suffers for 
+	her hubris. For as long as the Condition lasts she suffers a -2 penalty on 
+	all rolls involving interaction with the Shadow and its denizens.|
+
+	Dramatic failure on a rite.|
+
+	Successfully perform a rite. Have a meaningful interaction with a spiritual 
+	Touchstone. Meditate in the Shadow.|
+
+	n/a|
+
+	WtF 2E.310
+
+// -----------------------------------------------------------------------------	
+
+&COND.SUBMISSIVE [v( d.ctdb )]=
+	Submissive|0|
+
+	Your character faced the full bore of a Rahu's essence. He's cowed and 
+	cannot bear to face the Rahu's fury. He can not directly attack insult or 
+	defy the Rahu or the Rahu's pack without first spending a Willpower point 
+	and making an extended reflexive Resolve + Composure roll. You may make one 
+	roll per turn but each roll requires an additional point of Willpower. The 
+	target number of successes is equal to the Rahu's Purity. You don't need to 
+	spend Willpower or roll if the Rahu or one of her pack has attacked your 
+	character this turn.|
+
+	The Rahu's Dominant hunter aspect.|
+
+	Suffer a wound penalty from lethal or aggravated wounds or suffer a lethal 
+	wound in your character's last Health box.|
+
+	n/a|
+
+	WtF 2E.311
+
+// -----------------------------------------------------------------------------	
+
+&COND.SYMBOLIC_FOCUS [v( d.ctdb )]=
+	Symbolic Focus|0|
+
+	Your character is filled with the symbolic power of the rite that she has 
+	invoked becoming a channel for it. She achieves an exceptional success on 
+	interactions with spirits with three successes instead of five and her 
+	effective spirit Rank is increased by one.|
+
+	Exceptional success during a rite.|
+
+	Exceptional success on an interaction with a spirit. Falling into Wasu-Im. 
+	Breaking any ban she possesses.|
+
+	n/a|
+
+	WtF 2E.311
+
+// -----------------------------------------------------------------------------	
+
+&COND.UNAWARE [v( d.ctdb )]=
+	Unaware|0|
+
+	Your character has been dazed and confused distracted and internalized. He's 
+	so withdrawn inward that he cannot notice the proverbial or literal wolf at 
+	his door. Reduce his Composure by the Irraka's Cunning -1  with a minimum of 
+	-1 -- if the Irraka has Cunning 4 it reduces Composure by -3. |
+
+	The Irraka's Blissful hunter aspect.|
+
+	Suffer a wound penalty from lethal or aggravated wounds or suffer a lethal 
+	wound in your character's last Health box.|
+
+	n/a|
+
+	WtF 2E.311
+
+// -----------------------------------------------------------------------------	
+
+&COND.UNTRACABLE [v( d.ctdb )]=
+	Untraceable|0|
+
+	Through care and attention to detail your character leaves little evidence 
+	of her passage for others to follow. All attempts to track her suffer -2 
+	dice.|
+
+	Exceptional success on a tracking action.|
+
+	This Condition hampers a number of tracking attempts against her equal to 
+	the greater of her Survival or Streetwise.|
+
+	n/a|
+
+	WtF 2E.311
+
+// -----------------------------------------------------------------------------	
+
+&COND.WISE [v( d.ctdb )]=
+	Wise|0|
+
+	Your character is Wise. She seeks the intelligent reasoned answer in all 
+	things. She looks to past successes and failures and those successes and 
+	failures of others so as to take a smarter course of action. This inspires 
+	others to challenge her wisdom and question her foundation of knowledge. Any 
+	rolls to defy or question her advice gain +2 dice. When she's proven her 
+	reason sound she's redoubled in her understanding of the world.|
+
+	Flaring Wisdom Renown brands with Essence.|
+
+	Once at least one individual has used the +2 bonus you may choose to shed 
+	this Condition to add your character's Wisdom Renown in automatic successes 
+	to any Investigation Medicine or Occult action even if she rolls no 
+	successes.|
+
+	n/a|
+
+	WtF 2E.311
+
+// -----------------------------------------------------------------------------	
+
+&COND.SISKUR-DAH [v( d.ctdb )]=
+	Siskur-Dah|1|
+
+	Your character is on the Siskur-Dah the Sacred Hunt. She gains a specific 
+	benefit depending on the ritemaster's tribe. Please check the wiki for the 
+	specific effect granted by Ritemasters of each Tribe.|
+
+	The Sacred Hunt rite or being personally blessed by a Firstborn.|
+
+	The prey is brought down a kill is not necessary or the pack breaks off the 
+	Siskur-Dah by taking any significant actions towards ends other than the 
+	hunt.|
+
+	Your character achieves an exceptional success on an action involving the 
+	prey.|
+
+	WtF 2E.310
+
