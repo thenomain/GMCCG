@@ -144,6 +144,27 @@ Appendix starting on p. 333.
 	n/a|
 	CtL.334
 
+// -----------------------------------------------------------------------------	
+
+@fo me=&COND.COWED [v( d.ctdb )]=
+
+	Cowed|0|
+
+	Your character has been put in her place through the violence and dominance 
+	of another. She suffers a -2 penalty on any Physical and Social rolls to 
+	oppose the character who inflicted this Condition if she does not spend 
+	Willpower.\%r\%r
+	Changelings with this Condition add one die to Clarity damage rolls.|
+
+	Having another character demonstrate her superiority to you, some 
+	supernatural powers.|
+
+	The character successfully injures or intimidates the character who 
+	inflicted the Condition, or the character regains Willpower through her 
+	Needle.|
+
+	n/a|
+	CtL.335
 
 // -----------------------------------------------------------------------------	
 
