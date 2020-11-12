@@ -1,0 +1,920 @@
+/*
+favor coins - a cash system
+(For Chicago)
+
+
+√ favor [<target>]
+	List your/target's favor points
+
+√ favor/give <target>=<amt> for <reason>
+	Trade <amt> favor points from you to <char> (player)
+	Create <amt> favor points for <char> (staff)
+
+	For staff, <target> must be: 
+		<character name>: create favor
+
+	For characters, <target> can be:
+		<character name>: trade favor
+		npc, staff, here, scene: delete favor
+
+√ favor/request <reason>
+	Create a job requesting to spend coins for <reason> (player)
+
+√ favor/take <target>=<amt> for <reason>
+	Remove <amt> favor points from <target> (staff)
+
+√ favor/log [<char>]
+	Does what it says on the tin.
+
+x favor/economy
+  	How many favor coins are currently in the active character economy?
+
+give and take are logged.
+
+
+*** For Chicago's setting reasons, using 'coin' instead of 'favor' ***
+
+on character:
+	&_favor: <amt>
+	&_favor.log.<utc timestamp>: 
+		<amt, positive for 'gained/earned', negative for 'spent/lost'>|
+		<objid for other party>|
+		gained, spent, earned, lost|
+		<reason>
+
+<reason> prefaced:
+	GAINED: Character gained favor from another character
+	SPENT: Character spent favor to another character
+
+	EARNED: Staff used favor/give (coin is newly created)
+	LOST: Staff used favor/spend (coin is completely destroyed)
+	
+
+
+================================================================================
+== SETUP =======================================================================
+*/
+
+@create Favor Coins <fc>
+@fo me=&d.fc me=[search( name=Favor Coins <fc> )]
+@fo me=@parent Favor Coins <fc>=[v( d.codp )]
+@flags Favor Coins <fc>=inherit safe
+
+
+
+/* 
+================================================================================
+== DOT FUNCTIONS ===============================================================
+*/
+
+&.msg [v( d.fc )]=ansi( h, <%0>, n, %b%1 )
+&.plural [v( d.fc )]=if( eq( %0, 1 ), %1, %2 )
+
+&.objid [v( d.fc )]=objid( %0 )
+&.objname [v( d.fc )]=
+	localize( if( 
+		strmatch( %0, u( .objid, setr( d, first( %0, + )))), 
+		name( %qd ), 
+		#-1 Objid and Current Dbref Mismatch
+	))
+
+
+
+/*
+================================================================================
+== DATA ========================================================================
+*/
+
+// these are synonyms for players to use to delete favor
+&d.targets.staff [v( d.fc )]=npc staff here scene
+
+
+
+/*
+================================================================================
+== COMMAND: COIN(S) ============================================================
+
+1: switch
+2: arguments
+
+s: switch entered
+k: switches on object
+m: switch matched between %qs and %qk
+
+For staff and approved characters only.
+
+*/
+
+&c.favor [v( d.fc )]=$^\+?coins?(/[^ ]+)?(.*)?$:
+	think strcat( 
+		switch entered:, %b, setr( s, trim( rest( %1, / ))), %r, 
+
+		switches known:, %b, 
+		setr( k, 
+			sort( 
+				iter( lattr( %!/c.favor* ), rest( %i0, / ), , | ), 
+				a, |, | 
+			)
+		), %r, 
+
+		switch matched:, %b, setr( m, grab( |%qk, %qs*, | )), %r, 
+
+		content:, %b, setr( c, trim( %2 )), %r, 
+	); 
+
+// .. error checks
+	@assert cor( isstaff( %# ), isapproved( %# ))={ 
+		@pemit %#=
+		u( .msg, coin, Staff and approved characters only. )
+	}; 
+
+	@assert cor( not( %qs ), t( %qm ))={ 
+		@pemit %#=
+		u( .msg, coin, I don't know the switch '%qs'. 
+			I know: [itemize( lcstr( trim( %qk, b, | )), | )]
+		)
+	}; 
+
+// split out to proper system
+
+	@pemit %#=case( 1, 
+
+// .. has a switch
+		cand( t( %qs ), t( %qm )), 
+		ulocal( c.favor/%qm, %#, %qc ), 
+
+// .. no switch but has arguments
+		t( %qc ), 
+		u( c.favor-specific, %#, %qc ), 
+
+// .. no switch or arguments
+		u( c.favor-general, %# )
+	); 
+
+
+@set v( d.fc )/c.favor=regexp
+@set v( d.fc )/c.favor=no_parse
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Command: General ------------------------------------------------------------
+
+Display coins for %0.
+
+0: enactor dbref
+1: target dbref, if exists (optional, must be verified)
+
+t: target (%1 if exists, else %0)
+n: number of coins
+
+*/
+
+&c.favor-general [v( d.fc )]=
+	u( .msg, coin, 
+		cat( 
+			if( 
+				strmatch( setr( t, if( strlen( %1 ), %1, %0 )), %0 ), 
+				You have, 
+				[name( %qt )] has 
+			), 
+			case( setr( n, get( %qt/_favor )), 
+				0, zero, 
+				, zero, 
+				%qn 
+			), 
+			u( .plural, %qn, coin, coins )
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Command: Specific -----------------------------------------------------------
+
+	coin <character>
+
+Validate and return the 'general' command.
+
+p: target (pmatch)
+
+
+*/
+
+&c.favor-specific [v( d.fc )]=
+	case( 0, 
+		isstaff( %0 ), 
+		u( .msg, coin, Staff only ), 
+
+		t( setr( p, pmatch( %1 ))), 
+		u( .msg, coin, Target not found ), 
+
+		u( c.favor-general, %0, %qp )
+	)
+
+
+
+/*
+================================================================================
+== SWITCHES ====================================================================
+
+It just occurred to me that 'general' and 'specific' are also a kind of 
+no-switch. 
+
+Deep thoughts.
+
+There are two key switches: "give" and "spend".
+They are used in two key ways: 
+	By characters to trade, and by staff to create/destroy favor.
+
+(They might be invisibly held by NPCs, but the system doesn't know that.)
+
+
+
+================================================================================
+== SWITCH: GIVE ================================================================
+
+	favor/give <amt> to <target> for <reason>
+
+If <target> is not a player, check synonyms for 'log and delete'. (player only)
+
+0: regmatch results
+t: target
+a: amount
+r: reason
+
+p: target pmatch
+n: npc? (does target match &d.targets.staff?)
+	
+*/
+
+&c.favor/give [v( d.fc )]=
+	strcat( 
+		setq( 0, regmatch( %1, v( d.regmatch.give ), 0 t a r )), 
+		setq( p, pmatch( %qt )), 
+		setq( n, t( match( v( d.targets.staff ), %qt ))), 
+
+		case( 0, 
+			t( %q0 ), 
+			u( .msg, coin/give, 
+				Format is: coin/give <target>=<amt> for <reason> 
+			), 
+
+// find target:
+// .. target  is an approved player
+// .. enactor is an approved player and target is on 'staff' alias
+			cor( 
+				cand( isapproved( %qp ), not( isstaff( %qp ))), 
+				cand( %qn, not( isstaff( %# )))
+			), 
+			u( .msg, coin/give, 
+				Target must be approved character 
+				[if( not( isstaff( %# )), 
+					or 'npc'%, 'staff'%, 'here'%, etc. 
+				)]
+			), 
+
+			not( strmatch( %0, %qp )), 
+			u( .msg, coin/give, 
+				Okay%, you give coins to yourself. You're rich! 
+			), 
+
+			cand( isint( %qa ), gt( %qa, 0 )), 
+			u( .msg, coin/give, Amount must be positive integer ), 
+
+			not( isstaff( %0 )), 
+			u( f.favor/give.staff, %0, %qp, %qa, %qr ), 
+
+			not( %qp ), 
+			u( f.favor/give.character, %0, %qp, %qa, %qr ), 
+			
+			not( %qn ), 
+			u( f.favor/give.npc, %0, %qt, %qa, %qr ), 
+			
+			u( .msg, coin/give, I don't know what I'm supposed to give to )
+		)
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Favor/Give: Regmatch Formatter ----------------------------------------------
+
+output:
+	1: amount
+	2: target
+	3: reason
+
+*/
+
+&d.regmatch.give [v( d.fc )]=^(.+?)=(.+?) for (.+)$
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Favor/Give: Staff Side ------------------------------------------------------
+
+	Add to target's attribute
+	Inform target
+	Log on target character ('earned')
+
+0: enactor dbref
+1: target dbref
+2: amount
+3: reason
+
+t: target's favor 
+a: target's new (added) favor
+
+l: enactor's log add
+
+*/
+
+&f.favor/give.staff [v( d.fc )]=
+	strcat( 
+		setq( t, get( %1/_favor )), 
+		setq( a, add( %qt, %2 )), 
+		null( u( f.favor.add, %1, %2 )), 
+
+		case( 0, 
+// .. favor didn't set
+			match( %qa, get( %1/_favor )), 
+			u( .msg, favor/give, Attribute '_favor' set failed. Aborting. ), 
+
+// .. favor set but log did not
+			not( strlen( 
+				setr( l, u( f.log.add, %1, %0, %2, earned, %3 ))
+			)), 
+			u( .msg, favor/give, 
+				Favor set but log failed. Please verify and type: 
+				&_favor.log.[secs( , utc )] %1=
+				[u( format.log-entry, %0, %2, earned, %3 )]
+			), 
+
+// .. success - notify self and target
+			u( f.command-notify, %0, %1, %2, %3, give, give, gives you )
+		)
+	)
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Favor/Give: Character Side --------------------------------------------------
+
+If given to an active dbref:
+	Subtract from enactor's attribute
+	Add to target's attribute
+	Inform both characters
+	Log on both characters ('gained' & 'spent')
+
+We're going to do something bad here and assume that all sets and messages get 
+through to whom they need to. No checking. Too complex. Sorry.
+
+0: enactor dbref
+1: target dbref
+2: amount
+3: reason
+
+e: enactor's favor
+s: enactor's new (subtracted) favor
+t: target's favor 
+a: target's new (added) favor
+
+*/
+
+&f.favor/give.character [v( d.fc )]=
+	strcat( 
+		setq( e, get( %0/_favor )), 
+		setq( s, sub( %qe, %2 )), 
+
+		setq( t, get( %1/_favor )), 
+		setq( a, add( %qt, %2 )), 
+
+		case( 0, 
+
+			gte( %qs, 0 ), 
+			u( .msg, coin/give, 
+				You don't have %2 coins to give%; you have %qe coins 
+			), 
+
+			strcat( 
+				null( u( f.favor.add, %0, -%2 )),     // I cheat.
+				null( u( f.log.add, %0, %1, -%2, spent, %3 )), 
+
+				null( u( f.favor.add, %1, %2 )), 
+				null( u( f.log.add, %1, %0, %2, gained, %3 )), 
+
+				u( f.command-notify, %0, %1, %2, %3, give, give, gives you )
+			)
+		)
+	)
+
+
+
+/* 
+--------------------------------------------------------------------------------
+-- Favor/Give: Given to NPC ----------------------------------------------------
+
+Is given to one of the aliases in '&d.targets.staff', the character is giving 
+the money to an NPC, assumed to be in the room:
+	Subtract from enactor's attribute
+	Inform entire room
+	Log on enactor ('lost')
+
+0: enactor dbref
+1: target alias
+2: amount
+3: reason
+
+e: enactor's favor
+s: enactor's new (subtracted) favor
+
+*/
+
+&f.favor/give.npc [v( d.fc )]=
+	strcat( 
+		setq( e, get( %0/_favor )), 
+		setq( s, sub( %qe, %2 )), 
+
+		case( 0, 
+
+			gte( %qs, 0 ), 
+			u( .msg, coin/give, 
+				You don't have %2 [u( .plural, %2, coin, coins )] to give%; 
+				you have %qe [u( .plural, %qe, coin, coins )] 
+			), 
+
+			strcat( 
+				null( u( f.favor.add, %0, -%2 )),     // I cheat.
+				null( u( f.log.add, %0, %1, -%2, lost, %3 )), 
+
+				u( f.command-notify, %0, %1, %2, %3, give, give, gives )
+			)
+		)
+	)
+
+
+
+/*
+================================================================================
+== SWITCH: LOG =================================================================
+
+	favor/log [<character>]
+
+t: target (%1) if exists, but always enactor (%0) if !staff
+p: pmatch( %qt ) - may be redundant
+l: log dbrefs
+
+*/
+
+&c.favor/log [v( d.fc )]=
+	strcat( 
+		setq( t, 
+			if( 
+				cand( strlen( %1 ), isstaff( %0 )), 
+				%1, 
+				%0 
+			)
+		), 
+		setq( p, pmatch( %qt )), 
+		setq( l, lattr( %qp/_favor.log.* )), 
+
+		case( 0, 
+			t( %qp ), 
+			u( .msg, coin/log, Cannot find target ), 
+
+			words( %ql ), 
+			u( .msg, coin/log, 
+				cat( 
+					if( strmatch( %0, %qp ), 
+						You have, 
+						[name( %qp )] has 
+					), 
+					no coin log 
+				)
+			), 
+
+			u( display.log, %0, %qp, %ql )
+		)
+	)
+
+
+
+/*
+================================================================================
+== SWITCH: TAKE ================================================================
+
+	favor/take <character>=<amt> for <reason>
+
+For staff to remove favor coins. 
+Same as a character giving to an NPC, but without room notification.
+
+90% of this comes from `&c.favor/give` and `&f.favor/give.npc`.
+
+
+0: regmatch results
+t: target
+a: amount
+r: reason
+
+p: target pmatch
+s: target's new (subtracted) favor
+
+*/
+
+&c.favor/take [v( d.fc )]=
+	strcat( 
+		setq( 0, regmatch( %1, v( d.regmatch.give ), 0 t a r )), 
+		setq( p, pmatch( %qt )), 
+
+		setq( f, get( %qp/_favor )), 
+		setq( s, add( %qf, -%qa )), 
+
+		case( 0, 
+			isstaff( %0 ), 
+			u( .msg, coin/take, Staff only ), 
+
+			t( %q0 ), 
+			u( .msg, coin/take, 
+				Format is: coin/take <target>=<amt> for <reason> 
+			), 
+
+			cand( isapproved( %qp ), not( isstaff( %qp ))), 
+			u( .msg, coin/take, 
+				Target must be approved character 
+			), 
+
+			gte( %qs, 0 ), 
+			u( .msg, coin/take, 
+				[name( %qp )] doesn't have %qa [u( .plural, %qt, coin, coins )] 
+				to take%; they have %qf [u( .plural, %qf, coin, coins )] 
+			), 
+
+// .. okay, continue
+			strcat( 
+				null( u( f.favor.add, %qp, -%qa )),     // I cheat.
+				null( u( f.log.add, %qp, %0, -%qa, take, %qr )), 
+				u( f.command-notify, %0, %qp, %qa, %qr, take, take from, takes )
+			)
+		)
+	)
+
+
+
+/*
+================================================================================
+== SWITCH: REQUEST =============================================================
+
+	favor/request <request>
+
+Throw a request at staff.
+
+Requires Jobs Request System <jrs>:
+https://github.com/thenomain/Mu--Support-Systems/blob/master/Jobs%20Request%20System.txt
+
+*/
+
+@fo me=&d.jrs me=search( name=Jobs Request System <jrs> )
+
+think @@( waiting for command to go through queue )
+
+think if( not( isdbref( v( d.jrs ))), 
+		ansi( 
+			hr, HEY! HEY!, 
+			n, %bJobs Request System not found%; 
+			you're about to several 'Huh?' messages 
+			and the system will refuse to work 
+		)
+	)
+
+@fo me=&d.jrs [v( d.fc )]=[v( d.jrs )]
+
+&c.favor/request [v( d.fc )]=
+	case( 0, 
+		isdbref( v( d.jrs )), 
+		u( .msg, coin/request, 
+			I don't know where to find the Jobs Request System 
+		), 
+
+		cand( isapproved( %0 ), not( isstaff( %0 ))), 
+		u( .msg, coin/request, Approved characters only ), 
+
+		trigger( v( d.jrs )/trig.command.request, 
+			/coins Request from [name( %0 )]=[objeval( %0, s( %1 ))], 
+			%0 
+		)
+	)
+
+// Meanwhile, on the Jobs Request System...
+
+&d.coins.bucket [v( d.jrs )]=REQ
+&d.coins.jgroup [v( d.jrs )]=+allstaff
+&d.coins.prefix [v( d.jrs )]=COINS
+&d.coins.msg [v( d.jrs )]=u( display.generic_msg, %0, coins )
+
+
+/*
+================================================================================
+== SWITCH: ECONOMY =============================================================
+
+How many coins are in the current "active player" economy.
+Because why not.
+
+*/
+
+&c.favor/economy [v( d.fc )]=
+	strcat( 
+		setq( l, 
+			search( eplayer=
+				cand( 
+					isapproved( ## ), 
+					not( isstaff( ## )), 
+					hasattr( ##, _favor )
+				)
+			)
+		), 
+		setq( a, ladd( iter( %ql, get( %i0/_favor )))), 
+		
+		u( .msg, coin/economy, 
+			There are currently [if( gt( %qa, 0 ), %qa, no )] 
+			favor [u( .plural, %qa, coin, coins )] 
+			in the active character economy 
+		)
+	)
+
+
+/*
+================================================================================
+== GENERAL FUNCTIONS ===========================================================
+
+--------------------------------------------------------------------------------
+-- Function: Add to Log --------------------------------------------------------
+
+0: target
+1: enactor
+2: amt
+3: type
+4: reason
+
+*/
+
+&f.log.add [v( d.fc )]=
+	set( %0, 
+		_favor.log.[secs( , utc )]:[u( format.log-entry, %1, %2, %3, %4 )] 
+	)
+
+/*
+--------------------------------------------------------------------------------
+-- Function: Add to Favor Attribute --------------------------------------------
+
+0: target
+1: amt to add
+
+*/
+
+&f.favor.add [v( d.fc )]=
+	set( %0, 
+		_favor:[add( %1, get( %0/_favor ))] 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Function: Command Notify ----------------------------------------------------
+
+Notify self and target of what happened.
+If target is not connected, @mail.
+If target is 'npc', @remit.
+
+0: enactor dbref
+1: target dbref or 'npc' alias
+2: amount
+3: reason
+4: switch this is from
+5: '(you) give'/'(you) take'
+6: 'gives to (you)'/'takes from (you)'
+
+f: from message (to enactor)
+t: to message (to target)
+r: to room message (to everyone)
+
+*/
+
+&f.command-notify [v( d.fc )]=
+	strcat( 
+		setq( p, u( .plural, %2, coin, coins )), 
+		setq( f, You %5 [name( %1 )] %2 favor %qp for reason: %3 ), 
+		setq( t, [name( %0 )] %6 %2 favor %qp for reason: %3 ), 
+		setq( r, [name( %0 )] %6 an NPC %2 favor %qp for reason: %3 ), 
+
+		case( 1, 
+
+// .. target is dbref: notify target via pm or @mail.
+			isdbref( %1 ), 
+			strcat( 
+				u( .msg, coin/%4, %qf ), 
+				if( hasflag( %1, connect ), 
+					pemit( %1, u( .msg, coin/%4, %qt )), 
+					trigger( %!/trig.quickmail, 
+						%1, 
+						Favor [capstr( %qp )] [capstr( %4 )], 
+						%qt 
+					)
+				)
+			), 
+
+// .. target matches alias list: notify entire room
+			t( match( v( d.targets.staff ), %1 )), 
+			remit( loc( %0 ), u( .msg, coin/%4, %qr )), 
+
+// .. else: panic at the disco
+			u( .msg, coin/%4, I don't know how to notify anyone about this )
+		)
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Trigger: Quickmail ----------------------------------------------------------
+
+0: to
+1: subject
+2: message 
+
+*/
+
+&trig.quickmail [v( d.fc )]=@mail/quick %0/%1=%2
+
+
+
+/*
+================================================================================
+== GENERAL DISPLAY & FORMATTERS ================================================
+
+
+--------------------------------------------------------------------------------
+-- Format: Create Log Entry ----------------------------------------------------
+
+Does little more than keep everything consistent. 
+Returns log entry format (see notes at the top)
+
+	u( format.log-entry, <enactor dbref>|npc , <amt>, <type>, <reason> )
+
+*/
+
+&format.log-entry [v( d.fc )]=
+	strcat( 
+		%1, |,
+		if( isdbref( %0 ), objid( %0 ), lcstr( %0 )), |, 
+		ucstr( %2 ), |, 
+		%3 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Display: Favor Log ----------------------------------------------------------
+
+	u( display.log, <enactor>, <target>, <log attrs> )
+
+Since we check for attributes in `&c.favor/log`.
+
+Newest last.
+
+
+Format:
+
+00000000011111111112222222222333333333344444444445555555555666666666677777777778
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+
++--------------------------+ Coin Log for Goodbody +---------------------------+
+ Amt  To/From         Reason                                           Date
++------------------------------------------------------------------------------+
+ -20  No              Lkekjrew kewkjwekjrwe kjrkjwe rk                 12/30/19
+  -4  NPC             Lkejr 3kjjk kjk3 fkj9rej dlalk qj3cne,           xx/xx/xx
+  12  Joseph          3lkj2 k 4lk32j k2l3j l                           xx/xx/xx
+   1  Thenomain       K23ljl32                                         xx/xx/xx
++------------------------------------------------------------- newest last ----+
+
+Date is hilite-black so it doesn't trap the eye with all that dead space.
+
+*/
+
+&display.log [v( d.fc )]=
+	list( header [sort( %2, n )] footer, 
+		case( %i0, 
+			header, 
+			strcat( 
+				header( Coin Log for [name( %1 )] ), %r, 
+				%b, Amt, %b%b, 
+				To/From, space( 9 ), 
+				Reason, space( 43 ), 
+				Date, %r, 
+				divider()
+			), 
+
+			footer, 
+			header( Current Favor Coins: [get( %1/_favor )] ), 
+
+			ulocal( format.log.one-line, get( %1/%i0 ), last( %i0, . ))
+		)
+	)
+
+/*
+--------------------------------------------------------------------------------
+-- Format: One Log Line --------------------------------------------------------
+
+0: full entry from target
+1: entry timestamp (from dbref)
+
+*/
+
+&format.log.one-line [v( d.fc )]=
+	strcat( 
+// .. amt
+		rjust( elements( %0, 1, | ), 4 ), %b%b, 
+// .. name
+		ljust( 
+			if( strmatch( setr( o, elements( %0, 2, | )), #*+* ), 
+				if( setr( p, u( .objname, %qo )), 
+					%qp, 
+					an Unknown PC 
+				), 
+				an NPC 
+			), 
+			15 
+		), %b, 
+// .. reason
+		ljust( extract( %0, 4, 999, | ), 47 ), %b%b, 
+// .. datestamp
+		ansi( xh, timefmt( $m/$d/$y, %1 ))
+	)
+
+
+/*
+================================================================================
+== HELP FILE ===================================================================
+
+(This is a space-delimited, 80-column adjusted help file. Format for your system 
+of choice.)
+
+
+================================= Favor Coins ==================================
+
+This system allows characters to accumulate, trade and spend "Favor Coins" as a 
+currency. This is a simplistic give-and-take system.
+
+------------------------------- Player Commands --------------------------------
+* coins
+    How many coins do I have?
+
+* coin/give <target>=<amt> for <reason>
+    Give <amt> coins to <target> character for <reason>.
+    Coins are neither created nor destroyed, but traded.
+    Target is informed via message or @mail.
+    
+    <target> must be an approved character.
+
+* coin/give NPC=<amt> for <reason>
+    Give away <amt> coins to an NPC in the current scene.
+    This removes the coins entirely from the economy.
+    Everyone in the room is informed of this.
+
+* coin/request <explanation>
+    Create a request job so you can spend some coins with staff.
+    Staff will then take them from you if it's all kosher.
+
+* coin/log
+    Check every single transaction I've ever had, most recent last.
+    This may be long.
+
+* coin/economy
+    How many favor coins are in active on the game right now?
+
+-------------------------------- Staff Commands --------------------------------
+* coins <target>
+    How many coins does <target> have?
+
+* coin/give <target>=<amt> for <reason>
+    Gives <amt> coins to <target> character for <reason>.
+    Coins are created out of thin air and added to the economy.
+    Target is informed via message or @mail.
+
+* coin/take <target>=<amt> for <reason>
+    Take <amt> coins from <target>.
+    This removes the coins entirely from the economy.
+    and is usually used due to a Coins request job.
+    Target is informed via message or @mail.
+
+* coin/log <target>
+    Check every single transaction target has ever had, most recent last.
+    This may be long.
+
+* coin/economy
+    How many favor coins are in active on the game right now?
+
+
+
+
+
+*/
