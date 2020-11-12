@@ -820,7 +820,7 @@ Shaken Condition.
 	cand(
 		u( .is, %0, bio.bloodline, Adroanzi ),    
 		u( .at_least_all, %0, 
-			discipline.animalism:1 discipline.obfuscare:1 
+			discipline.animalism:1 discipline.obfuscate:1 
 		)
 	)
 &prereq-text.silent_passage  [v( d.dd )]=
