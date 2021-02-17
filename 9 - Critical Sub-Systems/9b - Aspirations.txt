@@ -66,7 +66,7 @@ aspiration/pitch <term>=<aspiration>
 aspiration/approve <player>/<number>[=<reason>]
 aspiration/deny <player>/<number>
 aspiration/fulfill <player>/<number>=<fulfill text>
-aspirations/drop <number>=<reason>
+aspiration/drop <number>=<reason>
 
 
 aspiration/list <player>[=<number>]
@@ -86,7 +86,7 @@ Aspirations Log System <asp>
 @set Aspirations System <asp>=safe inherit
 @fo me=&d.asp me=[search( name=Aspirations System <asp> )]
 
-@parent Aspirations System <asp>=codp
+@fo me=@parent Aspirations System <asp>=[v( d.codp )]
 
 // report myself to the chargen system
 @fo me=&d.asp [v( d.cg )]=search( name=Aspirations System <asp> )
@@ -399,7 +399,7 @@ Staff can approve 'pitched' -> 'approved'
 
 Staff can deny 'pitch' and 'fulfill'.
 
-	asp/deny <player>=<number>
+	asp/deny <player>/<number>
 
 */
 
