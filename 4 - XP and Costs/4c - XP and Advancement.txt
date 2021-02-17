@@ -1437,11 +1437,6 @@ x: current 'beats' attribute
 		)
 	)
 
-// -- test --
-
-train :: [u( v( d.xpas )/f.xp/cost, *thenomain/strength )]
-think u( v( d.xpas )/f.xp/cost, %#/strength=1 )
-
 /*
 --------------------------------------------------------------------------------
 -- Display: XP/Cost ------------------------------------------------------------
@@ -2614,3 +2609,12 @@ think sql(
 		), 
 		%r, | 
 	)
+
+
+
+
+// -- test --
+
+train :: [u( v( d.xpas )/f.xp/cost, *thenomain/strength )]
+think u( v( d.xpas )/f.xp/cost, %#/strength=1 )
+
