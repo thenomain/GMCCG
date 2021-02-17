@@ -2135,7 +2135,29 @@ regain methods:
 
 
 
+/*
+--------------------------------------------------------------------------------
+-- Raw Help File for Spend/Regain ----------------------------------------------
 
+ESSENCE (SPEND)
+    <num>: Only a numeric value is allowed here.
+
+ESSENCE (REGAIN)
+    <num>, <roll>, or 'all': No additional systems, tho there could be.
+
+
+--------------------------------------------------------------------------------
+-- Softcode Help File for Spend/Regain -----------------------------------------
+*/
+
+@edit #xxx/help~ic_systems~spend_and_regain=$,{ 
+ %r %r
+[ansi( h, ESSENCE \(SPEND\) )]%r
+%b %b <num>: Only a numeric value is allowed here. %r
+ %r
+[ansi( h, ESSENCE \(REGAIN\) )]%r
+%b %b <num>, <roll>, or 'all': No additional systems, tho there could be.
+}
 
 
 

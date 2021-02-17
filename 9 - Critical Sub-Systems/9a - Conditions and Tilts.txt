@@ -182,7 +182,7 @@ I'm stealing this from Reno (with permission).
 // -----------------------------------------------------------------------------
 
 &CMT.C.STATUS.PLAYER-STATUS [v( d.ctst )]=
-	Called for format of <name>/#, tests that <name exists and # is an integer
+	Called for format of <name>/#, tests that <name> exists and # is an integer
 
 &C.STATUS.PLAYER-STATUS [v( d.ctst )]=
 	case( 0, 
@@ -498,7 +498,7 @@ I'm stealing this from Reno (with permission).
 			u( .msg, %2, %qz #%1 not found for %qn ), 
 			
 			strcat( 
-// logging his hellishly broken
+// logging is hellishly broken
 /*				if( 
 					strmatch( %2, cond ), 
 					u( f.logtext,  
@@ -1097,6 +1097,175 @@ WARNING: Couldn't get this to work, so I'm turning it off for now.
 		[timefmt( $R $b $d $Y, %qs )], 
 		::, %r 
 	)
+
+/*
+================================================================================
+== HELP FILES ==================================================================
+
+
+--------------------------------------------------------------------------------
+-- Raw Help File ---------------------------------------------------------------
+
+Conditions are tags that affect play for the long-term, from a scene or longer. 
+You can gain beats from resolving them or letting them happen, as a reward for 
+playing out something difficult.
+
+Tilts are scene-specific tags that do the same thing, but almost never award 
+beats. They are effects in a scene or combat.
+
+conds: Current conditions.
+tilts: Current tilts.
+
+In all cases, 'cond' and 'tilt' run the same code, so wherever you see 'cond' 
+you can substitute it for 'tilt'. In all cases, <name> is the name of the 
+condition or tilt.
+
+cond
+    List your current conditions/tilts, with number and title.
+cond <num>
+    List details about one of your conditions/tilts.
+cond/show <num>=<list,of,targets>
+    Show details about one of your conditions/tilts to other people.
+
+cond <name>
+    Details on condition/tilt <name>.
+cond/list
+    List all conditions/tilts.
+cond *<text>*
+    Search all conditions/tilts with <text> in it.
+
+cond/add <name>[=<note>]
+    Add condition/tilt of <name> to yourself, with optional <note>.
+cond/rem <num>
+    Remove condition/tilt with a current item number of <num>.
+
+cond/note <num>=<note>
+    Replace the note on item <num> with <note>, or add one.
+cond/title <num>=<title>
+    Replace the title of item <num> to <title>, or remove it with null.
+    e.g.: cond/title 1=Legs of Steadfastness
+
+
+--------------------------------------------------------------------------------
+-- Raw Shelp File --------------------------------------------------------------
+
+The first section is a reiteration of 'help conditions & tilts', but as a 
+reminder how to interact with characters.
+
+As a reminder, 'cond' and 'tilt' are synonymous; use them interchangeably.
+
+cond <char>
+cond <char>/<num>
+cond/show <char>/<num>=<list,of,targets>
+cond/add <char>/<name>[=<note>]
+cond/rem <char>/<num>
+
+cond/create <name>=<description>
+    Add condition/tilt to the system of <name> with <description>.
+cond/delete <name>
+    Remove condition/tilt entirely from the system.
+
+cond/desc <name>=<description>
+    Add or change <description> on condition/tilt <name>.
+cond/pers <name>
+    Toggle whether or not condition/tilt <name> is "persistent".
+cond/source <name>=<source text>
+    Add or change <source text> on condition/tilt <name>.
+cond/res <name>=<resolve condition>
+    Add or change how condition/tilt <name> can be resolved.
+cond/beat <name>=<beat condition>
+    Add or change the condition where the player would gain a beat with this 
+    condition/tilt.
+cond/ref <name>=<reference>
+    Book.Page reference for this condition/tilt.
+
+
+--------------------------------------------------------------------------------
+-- Softcode Help File ----------------------------------------------------------
+
+
+&help~stat_topics~conditions_&_tilts #xxxx=Conditions & Tilts
+
+~
+
+Conditions are tags that affect play for the long-term, from a scene or longer. You can gain beats from resolving them or letting them happen, as a reward for playing out something difficult. %r
+ %r
+Tilts are scene-specific tags that do the same thing, but almost never award beats. They are effects in a scene or combat. %r
+ %r
+conds: Current conditions. %r
+tilts: Current tilts. %r
+ %r
+In all cases, 'cond' and 'tilt' run the same code, so wherever you see 'cond' you can substitute it for 'tilt'. In all cases, <name> is the name of the condition or tilt. %r
+ %r
+The next page shows the command list for players. 
+
+~
+
+[ansi( h, cond )] %r
+%b %b List your current conditions/tilts, with number and title. %r
+[ansi( h, cond <num> )] %r
+%b %b List details about one of your conditions/tilts. %r
+[ansi( h, cond/show <num>=<list\,of\,targets> )] %r
+%b %b Show details about one of your conditions/tilts to other people. %r
+ %r
+[ansi( h, cond <name> )] %r
+%b %b Details on condition/tilt <name>. %r
+[ansi( h, cond/list )] %r
+%b %b List all conditions/tilts. %r
+[ansi( h, cond *<text>* )] %r
+%b %b Search all conditions/tilts with <text> in it. %r
+ %r
+[ansi( h, cond/add <name>\[=<note>\] )] %r
+%b %b Add condition/tilt of <name> to yourself, with optional <note>. %r
+[ansi( h, cond/rem <num> )] %r
+%b %b Remove condition/tilt with a current item number of <num>. %r
+ %r
+[ansi( h, cond/note <num>=<note> )] %r
+%b %b Replace the note on item <num> with <note>, or add one. %r
+[ansi( h, cond/title <num>=<title> )] %r
+%b %b Replace the title of item <num> to <title>, or remove it with null. %r
+%b %b e.g.: cond/title 1=Legs of Steadfastness
+
+
+/*
+--------------------------------------------------------------------------------
+-- Softcode Staff Help File ----------------------------------------------------
+*/
+
+&shelp~stat_commands~conditions_&_tilts #xxxx=Conditions & Tilts
+
+~
+
+The first section is a reiteration of 'help conditions & tilts', but as a reminder how to interact with characters. %r
+ %r
+As a reminder, 'cond' and 'tilt' are synonymous; use them interchangeably. %r
+ %r
+[ansi( h, cond <char> )] %r
+[ansi( h, cond <char>/<num> )] %r
+[ansi( h, cond/show <char>/<num>=<list\,of\,targets> )] %r
+[ansi( h, cond/add <char>/<name>\[=<note>\] )] %r
+[ansi( h, cond/rem <char>/<num> )] %r
+ %r
+MANAGING CONDITIONS & TILTS %r
+ %r
+[ansi( h, cond/create <name>=<description> )] %r
+%b %b Add condition/tilt to the system of <name> with <description>. %r
+[ansi( h, cond/delete <name> )] %r
+%b %b Remove condition/tilt entirely from the system. %r
+ %r
+[ansi( h, cond/desc <name>\[=<description>\] )] %r
+%b %b Add or change <description> on condition/tilt <name>. %r
+[ansi( h, cond/pers <name> )] %r
+%b %b Toggle whether or not condition/tilt <name> is "persistent". %r
+[ansi( h, cond/source <name>=<source text> )] %r
+%b %b Add or change <source text> on condition/tilt <name>. %r
+[ansi( h, cond/res <name>=<resolve condition> )] %r
+%b %b Add or change how condition/tilt <name> can be resolved. %r
+[ansi( h, cond/beat <name>=<beat condition> )] %r
+%b %b Add or change the condition where the player would gain a beat with this  %r
+%b %b condition/tilt. %r
+[ansi( h, cond/ref <name>=<reference> )] %r
+%b %b 'book.page' reference for this condition/tilt.
 
 
 

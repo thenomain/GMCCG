@@ -1351,3 +1351,139 @@ g: get current aspiration's contents
 		u( .wfooter )
 	)
 
+
+
+
+/*
+================================================================================
+== HELP FILE ===================================================================
+
+--------------------------------------------------------------------------------
+-- Raw Help --------------------------------------------------------------------
+
+As usual, the player and staff are expected to know what Aspirations are in 
+Chronicles of Darkness. They are to communicate what's important to the 
+character and motivate the player into action.
+
+asp
+asp/pitch
+asp/approve
+asp/fulfill
+%b %bList your entire/pitched/approved/fulfilled aspirations.
+
+asp <number>
+%b %bList details on aspiration <number>.
+
+asp/pitch <term length>=<aspiration>
+%b %bAsk to work on an aspiration.
+%b %b<term length>: long-term, short-term
+
+asp/drop <number>=<reason>
+%b %bDrop working on or asking for an aspiration.
+
+asp/fulfill <number>=<reason>
+%b %bRequest to fulfill an approved aspiration.
+
+The order of how aspirations work is:
+  (player) asp/pitch <asp len> = <asp>
+   (staff) asp/approve <char>/<asp num>
+  (player) asp/fulfill <asp num> = <reason>
+   (staff) asp/fulfill <char>/<asp num>
+
+Players can /drop an aspiration in any state to say "nevermind" and to free up 
+one aspiration slot for another.
+
+--------------------------------------------------------------------------------
+-- Raw Staff Help --------------------------------------------------------------
+
+asp/list <character>
+asp/pitch <character>
+asp/approve <character>
+asp/fulfill <character>
+%b %bList <character>'s current/pitched/approved/fulfilled aspirations.
+
+asp/list <character>=<number>
+%b %bList details on <character>'s aspiration <number>
+
+asp/approve <character>/<number>
+%b %bUse on a pitched aspiration. Approve it.
+
+asp/deny <character>/<number>
+%b %bUse on a pitched aspiration. Deny it.
+
+asp/fulfill <character>/<number>=<reason>
+%b %bTurn an approved aspiration into a fulfilled one.
+
+There's no way in this system award beats from the ongoing long-term 
+aspirations. Use 'xp/award'.
+
+See Also: help aspirations
+
+
+--------------------------------------------------------------------------------
+-- Softcode Help ---------------------------------------------------------------
+*/
+
+&help~stat_topics~Aspirations #xxxx=Aspirations, Not Snakes
+
+~
+
+As usual, the player and staff are expected to know what Aspirations are in Chronicles of Darkness. They are to communicate what's important to the character and motivate the player into action. %r
+ %r
+[ansi( h, asp )] %r
+[ansi( h, asp/pitch )] %r
+[ansi( h, asp/approve )] %r
+[ansi( h, asp/fulfill )] %r
+%b %b List your entire/pitched/approved/fulfilled aspirations. %r
+ %r
+[ansi( h, asp <number> )] %r
+%b %b List details on aspiration <number>. %r
+ %r
+[ansi( h, asp/pitch <term length>=<aspiration> )] %r
+%b %b Ask to work on an aspiration. %r
+%b %b <term length>: long-term, short-term %r
+ %r
+[ansi( h, asp/drop <number>=<reason> )] %r
+%b %b Drop working on or asking for an aspiration. %r
+ %r
+[ansi( h, asp/fulfill <number>=<reason> )] %r
+%b %b Request to fulfill an approved aspiration. %r
+ %r
+The order of how aspirations work is: %r
+%b [ansi( xh, \(player\) )] asp/pitch <len> = <asp> %r
+%b %b[ansi( xh, \(staff\) )] asp/approve <char>/<asp num> %r
+%b [ansi( xh, \(player\) )] asp/fulfill <asp num> = <reason> %r
+%b %b[ansi( xh, \(staff\) )] asp/fulfill <char>/<asp num> %r
+ %r
+Players can /drop an aspiration in any state to say "nevermind" and to free up one aspiration slot for another.
+
+/*
+--------------------------------------------------------------------------------
+-- Softcode Staff Help ---------------------------------------------------------
+*/
+
+&shelp~stat_commands~Aspirations #xxxx=Asps for Staffs
+
+~
+
+[ansi( h, asp/list <character> )] %r
+[ansi( h, asp/pitch <character> )] %r
+[ansi( h, asp/approve <character> )] %r
+[ansi( h, asp/fulfill <character> )] %r
+%b %bList <character>'s current/pitched/approved/fulfilled aspirations. %r
+ %r
+[ansi( h, asp/list <character>=<number> )] %r
+%b %bList details on <character>'s aspiration <number> %r
+ %r
+[ansi( h, asp/approve <character>/<number> )] %r
+%b %bUse on a pitched aspiration. Approve it. %r
+ %r
+[ansi( h, asp/deny <character>/<number> )] %r
+%b %bUse on a pitched aspiration. Deny it. %r
+ %r
+[ansi( h, asp/fulfill <character>/<number>=<reason> )] %r
+%b %bTurn an approved aspiration into a fulfilled one. %r
+ %r
+There's no way in this system award beats from the ongoing long-term aspirations. Use 'xp/award'. %r
+ %r
+[ansi( h, See Also )]: +help aspirations
