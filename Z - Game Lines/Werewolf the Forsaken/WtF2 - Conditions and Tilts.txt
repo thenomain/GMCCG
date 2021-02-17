@@ -100,7 +100,7 @@
 // -----------------------------------------------------------------------------	
 
 &COND.ATAVISM [v( d.ctdb )]=
-Atavism|0|
+	Atavism|0|
 
 	You suffer ancient ancestral memories that rouse anger and violent urges the 
 	cause of these memories must be destroyed. When facing the source of the 
