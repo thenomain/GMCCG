@@ -90,7 +90,7 @@ flag_access marker3 wizard
 
 I'm leaving this commented out, but if you allow objects to use @function, use 
 this. Else, remember to have your function-creation object read here.
-
+*/
 @startup [v( d.cg )]=
 	@dolist lattr( %!/ufunc.* )=
 		@function/preserve [rest( ##, . )]=%!/##; 
@@ -98,7 +98,7 @@ this. Else, remember to have your function-creation object read here.
 		@function/preserve/privileged [rest( ##, . )]=%!/##
 
 
-
+/*
 ================================================================================
 ===== USER FUNCTION: ISAPPROVED ================================================
 
