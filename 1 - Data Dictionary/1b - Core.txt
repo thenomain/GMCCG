@@ -365,7 +365,7 @@ This is mainly meant for `cg/check` but may be needed outside of chargen.
 &merit.seizing_the_edge [v( d.dd )]=2
 &prerequisite.merit.seizing_the_edge [v( d.dd )]=
 	u( .at_least_all, %0, attribute.wits:3 attribute.composure:3 )
-&prereq-text.merit.seizing_the_edge [v( d.dd )]=Wits 2+ and Composure 3+
+&prereq-text.merit.seizing_the_edge [v( d.dd )]=Wits 3+ and Composure 3+
 
 &merit.sleight_of_hand [v( d.dd )]=2
 &prerequisite.merit.sleight_of_hand [v( d.dd )]=
