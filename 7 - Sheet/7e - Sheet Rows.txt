@@ -535,9 +535,19 @@ think u( v( d.sheet )/block.traits, %# )
 think u( v( d.sheet )/block.traits, %# )
 
 
-// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// this is a hack job, but it works
 
 &block.merits [v( d.sheet )]=
+	udefault( 
+		block.merits.[edit( get( %0/_bio.template ), %b, _ )], 
+		u( block.merits.default, %0 ), 
+		%0 
+	)
+
+// -=-=-=-=-=-=-=-=-=-=---=-=-=-=
+
+&block.merits.default [v( d.sheet )]=
 	strcat( 
 		setq( w, 79 ), 
 		setq( t, 70 ), 
@@ -558,15 +568,12 @@ think u( v( d.sheet )/block.traits, %# )
 		), 
 
 		divider( Merits ), %r, 
-		iter( %qb, 
-			%i0, 
-			|, %r 
-		)
+		edit( %qb, |, %r )
 	)
 
 // --
 
-think u( v( d.sheet )/block.merits, %# )
+
 
 
 
