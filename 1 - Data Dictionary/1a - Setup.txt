@@ -318,7 +318,7 @@ This stat is no lower than another stat
 				%qa 
 			), 
 			%3 
-		)] 
+		)]
 	)
 
 /*
