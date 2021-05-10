@@ -535,3 +535,80 @@ Identical to 'amt.regain...'
 // spend all
 &amt.spend.all.default [v( d.psrs )]=
 	mul( getstat( %0/%1 ), -1 )
+
+
+/*
+================================================================================
+== HELP FILES ==================================================================
+
+--------------------------------------------------------------------------------
+-- Raw Help --------------------------------------------------------------------
+
+You can spend pool stats such as Willpower or Vitae, and because you can spend 
+them we give you a way to regain them. 
+
+spend[/<switches>] <stat>[=<amt>][ for <reason>]
+regain[/<switches>] <stat>[=<input>][ for <reason>]
+    <stat>: The pool stat you're spending/regaining, such as Willpower.
+    <reason>: An optional reason outputted for all to see.
+    <amt>: Amount is '1' unless you put something in here. It can also be:
+        <num>: A straight number.
+        <roll>: A random number from a die roll, such as 'dex+composure'.
+        <system>: Such as 'rest' for Willpower or 'moon' for Essence.
+
+Staff can spend/regain for someone by using '<character>/<stat>'.
+
+The following systems are used for the following stats.
+
+WILLPOWER (SPEND)
+    1: Spend 1 willpower. 'roll/willpower' does this for you.
+    all: Spend all willpower.
+
+WILLPOWER (REGAIN)
+	rest: Regain 1
+	vice: Regain 1, usually
+	virtue: Regain all
+	<num>: Regain <num> (must include 'for <reason>')
+    all: Regain all (must include 'for <reason>')
+
+
+--------------------------------------------------------------------------------
+-- Softcode Help ---------------------------------------------------------------
+*/
+
+&help~ic_systems~spend_and_regain #xxx=Spending and Regaining Pool Stats
+
+~ 
+
+You can spend pool stats such as Willpower or Vitae, and because you can spend 
+them we give you a way to regain them. %r
+ %r
+[ansi( h, spend\[/<switches>\] <stat>\[=<amt>\]\[ for <reason>\] )] %r
+[ansi( h, regain\[/<switches>\] <stat>\[=<input>\]\[ for <reason>\] )] %r
+%b %b <stat>: The pool stat you're spending/regaining, such as Willpower. %r
+%b %b <reason>: An optional reason outputted for all to see. %r
+%b %b <amt>: Amount is '1' unless you put something in here. It can also be: %r
+%b %b %b %b <num>: A straight number. %r
+%b %b %b %b <roll>: A random number from a die roll, such as 'dex+composure'. %r
+%b %b %b %b <system>: Such as 'rest' for Willpower or 'moon' for Essence. %r
+ %r
+Staff can spend/regain for someone by using '<character>/<stat>'. %r
+ %r
+The next pages will focus on the stats and their spend/regain rules.
+
+~
+
+The following systems are used for the following stats. %r
+ %r
+[ansi( h, WILLPOWER \(SPEND\) )] %r
+%b %b 1: Spend 1 willpower. 'roll/willpower' does this for you. %r
+%b %b all: Spend all willpower. %r
+ %r
+[ansi( h, WILLPOWER \(REGAIN\) )]%r
+%b %brest: Regain 1 %r
+%b %bvice: Regain 1, usually %r
+%b %bvirtue: Regain all %r
+%b %b<num>: Regain <num> (must include 'for <reason>') %r
+%b %ball: Regain all (must include 'for <reason>') %r
+ %r
+[ansi( h, See Also )]: +help roll
