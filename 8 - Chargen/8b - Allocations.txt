@@ -176,7 +176,7 @@ main merit, option add-ons, or other.
 
 &f.allocated.merits [v( d.cg )]=
 	strcat( 
-		setq( t, u( %0/_bio.template )), 
+		setq( t, edit( u( %0/_bio.template ), %b, _ )), 
 		ladd( cat( 
 			ulocal( f.points.category, %0, merit, * ), 
 
