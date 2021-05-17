@@ -200,7 +200,7 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 		@pemit %#=u( .msg, xp/unspend, 
 			I tried to '&_special.beats.%qt %qd=
 			[cat( first( %qb ), add( rest( %qb ), %qs ))]' %([name( %qd )]%) 
-			but an error ocurred. Please set this properly or this character 
+			but an error occurred. Please set this properly or this character 
 			will not have the refund as recorded. 
 		) 
 	}; 
