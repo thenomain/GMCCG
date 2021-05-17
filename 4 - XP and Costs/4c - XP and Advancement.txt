@@ -1062,10 +1062,6 @@ Valid award:
 		)
 	}; 
 
-	@assert hastype( setr( p, pmatch( %qn )), PLAYER )={ 
-		@pemit %#=u( .msg, xp/award, Could not find '%qn' )
-	}; 
-
 	@assert isint( %qa )={ 
 		@pemit %#=u( .msg, xp/award, %qa )
 	}; 
