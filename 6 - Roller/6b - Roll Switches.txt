@@ -194,7 +194,7 @@ A chance roll takes precident.
 &f.roll/weakness [v( d.nr )]=
 	strcat( 
 		setq( a, 11 ), 
-		if( not( strmatch( %qs, chance ), 
+		if( not( strmatch( %qs, chance )), 
 			setq( s, Weakness )
 		)
 	)
