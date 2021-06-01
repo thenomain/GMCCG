@@ -186,7 +186,7 @@ q5: attempt at set( %qd, _special.beats.%qt:<new value> )
 		@pemit %#=u( .msg, xp/unaward, 
 			I tried to '&_special.beats.%qt %qd=
 			[cat( sub( first( %qb ), %qs ), rest( %qb ))]' %([name( %qd )]%) 
-			but an error ocurred. Please set this properly or this character 
+			but an error occurred. Please set this properly or this character 
 			will not have the unaward recorded. 
 		) 
 	}; 
@@ -199,12 +199,12 @@ q5: attempt at set( %qd, _special.beats.%qt:<new value> )
 					[sub( get( %qd/_special.beats_earned.%qt ), %qs )] 
 			)
 		), 
-	)
+	); 
 	@break strmatch( %q5, #-* )={ 
 		@pemit %#=u( .msg, xp/unaward, 
 			I tried to '&_special.beats_earned.%qt %qd=
 			[sub( get( %qd/_special.beats_earned.%qt ), %qs )]' 
-			%([name( %qd )]%) but an error ocurred. Please set this properly or 
+			%([name( %qd )]%) but an error occurred. Please set this properly or 
 			this character will not have their spent beats counter correct. 
 		) 
 	}; 
