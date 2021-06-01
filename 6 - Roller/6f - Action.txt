@@ -100,7 +100,7 @@ r: rest of %qe, drop =target
 
 // .. error check and go
 		case( 0, 
-			t( %qe ), u( Action, Action has no content%, so use roll ), 
+			t( %qe ), u( .msg, Action, Action has no content%, so use roll ), 
 // .. 'roll' uses %qe to report errors, so we need to clear it
 			[setq( e, )][trigger( tr.action, %0, %qr, %qs )]
 		)
