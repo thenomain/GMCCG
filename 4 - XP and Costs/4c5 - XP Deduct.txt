@@ -152,7 +152,7 @@ that's why.
 				)
 			), 
 			, %r, 
-		tranaction end, u( f.transaction.end )
+		tranaction end, u( f.transaction.end ), %r, 
 
 		type of experiences:, 
 		setr( z, 
