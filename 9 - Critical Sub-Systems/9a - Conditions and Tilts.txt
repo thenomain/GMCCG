@@ -571,9 +571,6 @@ I'm stealing this from Reno (with permission).
 			
 			t( setr( l, lattr( %qp/_%3.* ))), 
 			u( .msg, %3, No [%qz]s set on %qn ), 
-			
-			t( %qp ), 
-			u( .msg, %3, Player not found ), 
 
 			lte( %1, words( %ql )), 
 			u( .msg, %3, %qz #%1 not found for %qn ), 
