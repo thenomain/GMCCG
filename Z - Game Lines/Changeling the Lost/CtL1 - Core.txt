@@ -151,7 +151,7 @@ is a lot simpler, and has deep impact on the Chronicle.
 
 // anchors: needle/thread, replace virtue/vice
 &bio.needle [v( d.dd )]=
-	Bon Vivant.Chess Master.Commander.Composer.Councelor.Daredevil.Dynamo.
+	Bon Vivant.Chess Master.Commander.Composer.Counselor.Daredevil.Dynamo.
 	Protector.Provider.Scholar.Storyteller.Teacher.Traditionalist.Visionary
 &tags.bio.needle [v( d.dd )]=changeling
 
