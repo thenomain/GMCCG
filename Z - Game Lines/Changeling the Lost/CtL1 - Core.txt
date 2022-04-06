@@ -2721,7 +2721,7 @@ Will trigger 'amt.spend.numeric.default' and 'amt.gain.numeric.default'
 
 	think e: 
 		[setr( e, 
-			u( display.number, %0, %1, glamour, regain, %qa, %qm, %4 )
+			u( display.number, %0, %1, goblin_debt, regain, %qa, %qm, %4 )
 		)]; 
 	@eval u( f.announcement, %0, %1, regain, %qe ); 
 
