@@ -360,8 +360,9 @@ The fun of Proximi taking spells as 'Blessings'.
 &tags.merit.high_speech [v( d.dt )]=mage.supernatural
 
 &merit.lex_magica [v( d.dd )]=2
-&prerequisite.merit.lex_magica [v( d.dd )]=Belongs to Silver Ladder
-&prereq-text.merit.lex_magica [v( d.dd )]=u( .is, %0, bio.order, Silver Ladder )
+&prerequisite.merit.lex_magica [v( d.dd )]=
+	u( .is, %0, bio.order, Silver Ladder )
+&prereq-text.merit.lex_magica [v( d.dd )]=Belongs to Silver Ladder
 &tags.merit.lex_magica [v( d.dt )]=mage.supernatural
 
 &merit.mana_sensitivity [v( d.dd )]=1
