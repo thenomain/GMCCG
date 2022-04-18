@@ -80,6 +80,7 @@ Level 3 for very minor items
 
 // CODP prefixes
 &prefix.changeling_-_contracts [v( d.dd )]=contract.
+&prefix.changeling_-_contracts [v( d.dt )]=tags.contract.
 
 
 // add to templates
