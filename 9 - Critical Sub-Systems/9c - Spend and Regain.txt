@@ -203,7 +203,7 @@ Passed to all of these:
 &f.announcement [v( d.psrs )]=
 	case( 1, 
 		cand( u( .be_quiet, %0 ), strmatch( %0, %1 )), 
-		pemit( %0, u( .msg, %2, %3 %(not announced%) ))
+		pemit( %0, u( .msg, %2, %3 %(not announced%) )), 
 
 		strmatch( %0, %1 ), 
 		remit( loc( %0 ), u( .msg, %2, %3 )), 
