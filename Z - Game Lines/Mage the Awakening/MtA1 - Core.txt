@@ -415,7 +415,7 @@ The fun of Proximi taking spells as 'Blessings'.
 &prereq-text.merit.demesne_() [v( d.dd )]=Sanctum (<place name>) 1+
 &tags.merit.demesne_() [v( d.dt )]=mage.supernatural.location
 
-&merit.techne_() [v( d.dd )]=2
+&merit.techne_() [v( d.dd )]=2|*
 &prerequisite.merit.techne_() [v( d.dd )]=u( .is, %0, bio.order, Free Council )
 &prereq-text.merit.techne_() [v( d.dd )]=
 	Belongs to Free Council, Order of Study must be reasonable
