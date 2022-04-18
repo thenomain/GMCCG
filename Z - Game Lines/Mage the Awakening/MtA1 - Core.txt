@@ -222,7 +222,7 @@ The fun of Proximi taking spells as 'Blessings'.
 &tags.bio.order [v( d.dt )]=mage.proximus
 
 &bio.legacy [v( d.dd )]=x.x.x.x.x.x.x.x
-&tags.bio.legacy [v( d.dd )]=mage
+&tags.bio.legacy [v( d.dt )]=mage
 &class.bio.legacy [v( d.dd )]=string
 // restrict this stat to staff only, so players can't mess with it in chargen
 // -- why?
