@@ -2082,7 +2082,7 @@ Wyrd: 5
 			setq( x, 
 				sub( 
 					%qb, 
-					t( setinter( %qt, %qf.%qs, . ))
+					t( setinter( %qt, lcstr( %qf.%qs ), . ))
 				)
 			), 
 
