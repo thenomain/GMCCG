@@ -1778,7 +1778,7 @@ Character should have no Scales
 &xp.advantage.blood_potency [v( d.xpcd )]=
 	u( cost.standard, 5, %1, %2 )
 	
-// discipline matches clan or bloodline: 3xp, else 4xp
+// discipline matches clan or bloodline: 3xp, else 4xp 
 
 
 &xp.discipline [v( d.xpcd )]=
