@@ -472,7 +472,25 @@ All of them get access to the following:
 
 .
 
+================================================================================
+== APPENDIX ONE ================================================================
 
-
+--------------------------------------------------------------------------------
+-- Appendix One: Merits --------------------------------------------------------
 
 */
+
+// Trigger Discipline - p143
+&merit.trigger_discipline [v( d.dd )]=1
+&prerequisite.merit.trigger_discipline [v( d.dd )]=
+	u( .at_least_all, %0, attribute.wits:2 skill.firearms:2 )
+&prereq-text.merit.trigger_discipline [v( d.dd )]=
+	Wits 2+, Firearms 2+
+&tags.merit.trigger_discipline [v( d.dt )]=fighting
+
+// Loaded for Bear -- p143
+&merit.loaded_for_bear [v( d.dd )]=1.2
+&prerequisite.merit.loaded_for_bear [v( d.dd )]=
+	u( .at_least_all, %0, skill.athletics:1 skill.survival:1 )
+&prereq-text.merit.loaded_for_bear [v( d.dd )]=Athletics 1+, Survival 1+
+&tags.merit.loaded_for_bear [v( d.dt )]=fighting
