@@ -369,7 +369,7 @@ contributes dots to the total has access to the full, combined amount.
 	Elemental Weapon or Primal Glory (Contracts) or Elemental seeming
 &tags.merit.elemental_warrior_() [v( d.dt )]=changeling.style.fighting
 &notes.merit.elemental_warrior_() [v( d.dt )]='Type' must be a physical element 
-	used by this merit.
+	used by this merit.|May only be taken once.
 
 &merit.enchanting_performance [v( d.dd )]=1.2.3
 &prerequisite.merit.enchanting_performance [v( d.dd )]=
