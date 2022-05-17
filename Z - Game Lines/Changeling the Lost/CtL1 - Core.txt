@@ -530,7 +530,7 @@ contributes dots to the total has access to the full, combined amount.
 	this merit
 &tags.merit.warded_dreams [v( d.dt )]=changeling
 
-&merit.workshop [v( d.dd )]=
+&merit.workshop [v( d.dd )]=1.2.3.4.5
 &prerequisite.merit.workshop [v( d.dd )]=u( .has, %0, merit.hollow )
 &prereq-text.merit.workshop [v( d.dd )]=Hollow 1+
 &tags.merit.workshop [v( d.dt )]=changeling.motley
