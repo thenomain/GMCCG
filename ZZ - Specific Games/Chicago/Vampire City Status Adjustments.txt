@@ -1,0 +1,135 @@
+/*
+
+PRAXIS aka City Status -> GAME SPECIFIC 
+
+
+================================================================================
+== CODE ========================================================================
+
+This is the code to check for praxis merits.
+
+*/
+
+&.has_praxis [v( d.dd )]=
+	cor( 
+		u( .has, %0, status (north praxis) ), 
+		u( .has, %0, status (south praxis) ), 
+		u( .has, %0, status (underworld) )
+	)
+
+&.at_least_praxis [v( d.dd )]=
+	cor( 
+		u( .at_least, %0, status (north praxis), %1 ), 
+		u( .at_least, %0, status (south praxis), %1 ), 
+		u( .at_least, %0, status (underworld), %1 )
+	)
+
+/*
+
+================================================================================
+== DATA DICTIONARY =============================================================
+
+--------------------------------------------------------------------------------
+-- DD: Vampire Core ------------------------------------------------------------
+
+*/
+
+
+&prerequisite.merit.cacophony_savvy [v( d.dd )]=u( .has_praxis, %0 )
+&prereq-text.merit.cacophony_savvy [v( d.dd )]=Status (<city praxis>) 1+
+
+&prerequisite.merit.right_of_return [v( d.dd )]=
+	cand( 
+		u( .at_least, %0, merit.status_(carthian_movement), 2 ), 
+		u( .has_praxis, %0 )
+	)
+&prereq-text.merit.right_of_return [v( d.dd )]=
+	Status (Carthian Movement) 2+, Status (<city praxis>) 1+
+
+/*
+--------------------------------------------------------------------------------
+-- DD: Secrets of the Covenants ------------------------------------------------
+*/
+
+&prerequisite.merit.court_jester [v( d.dd )]=
+	cand( 
+		u( .has, %0, merit.status_(carthian_movement) ), 
+		u( .at_least, %0, skill.politics, 2 ), 
+		u( .at_least_praxis, %0, 2 )
+	)
+&prereq-text.merit.court_jester [v( d.dd )]=
+	Status (Carthian Movement) 1+, 
+	Status (<city praxis>) 2+, Politics 2+
+
+// -- 
+
+&prerequisite.merit.jack-booted_thug [v( d.dd )]=
+	cand( 
+		u( .at_least_all, %0, 
+			merit.status_(carthian_movement):2 
+			skill.intimidation:3 
+		), 
+		u( .has_praxis, %0 )
+	)
+&prereq-text.merit.jack-booted_thug [v( d.dd )]=
+	Status (Carthian Movement) 2+, 
+	Status (<city praxis>) 1+, Intimidation 3+
+
+// -- 
+
+&prerequisite.merit.sell_out [v( d.dd )]=
+	cand(
+		u( .at_least_all, %0, 
+			merit.status_(carthian_movement):4 
+			merit.status_(praxis):4 skill.politics:3 
+		), 
+		u( .at_least_praxis, %0, 4 )
+	)
+&prereq-text.merit.sell_out [v( d.dd )]=
+	Status (Carthian Movement) 4+, 
+	Status (<city praxis>) 4+, Politics 3+
+
+// -- 
+
+&prerequisite.merit.noblesse_oblige [v( d.dd )]=
+	cand( 
+		u( .has, %0, merit.status_(invictus) ), 
+		u( .at_least_praxis, %0, 3 )
+	)
+&prereq-text.merit.noblesse_oblige [v( d.dd )]=
+	Status (Invictus) 1+, 
+	Status (<city praxis>) 3+
+
+// -- 
+
+&prerequisite.merit.oath_of_office [v( d.dd )]=
+	cor( 
+		u( .at_least, %0, merit.status_(invictus), 3 ), 
+		u( .at_least_praxis, %0, 3 ), 
+	)
+&prereq-text.merit.oath_of_office [v( d.dd )]=
+	Status (<city praxis>) 3+ or Status (Invictus) 3+
+
+// --
+
+&prerequisite.merit.oath_of_the_righteous_kill [v( d.dd )]=
+	cand( 
+		u( .at_least, %0, skill.empathy, 3 )
+		u( .at_least_praxis, %0, 3 )
+	)
+&prereq-text.merit.oath_of_the_righteous_kill [v( d.dd )]=
+	Status (<city praxis>) 3+, Empathy 3+
+
+// -- 
+
+&prerequisite.merit.sanctuary_() [v( d.dd )]=
+	cand( 
+		u( .has, %0, merit.safe_place_(%1) ), 
+		u( .at_least, %0, merit.status_(invictus), 2 ), 
+		u( .at_least_praxis, %0, 2 )
+	)
+&prereq-text.merit.sanctuary_() [v( d.dd )]=
+	Status (Lancea et Sanctum) 2+, 
+	Status (<city praxis>) 2+, 
+	Safe Place (<this one>) 1+
+
