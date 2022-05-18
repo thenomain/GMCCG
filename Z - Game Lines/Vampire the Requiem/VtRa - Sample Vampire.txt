@@ -1,0 +1,106 @@
+@@ SAMPLE VAMPIRE
+@@ This is the vampire from EldritchMUX (the book doesn't have a sample sheet)
+
+@create Vampire Chargen Sheet <cs:vtr>
+@fo me=&_special.sheet_location me=num( Vampire Chargen Sheet <cs:vtr> )
+
+
+&_bio.template cs:vtr=Vampire
+&_bio.sphere cs:vtr=derived
+
+
+&_bio.full_name cs:vtr=Jay Rasheed Bolton
+&_bio.concept cs:vtr=Black Hat Revolutionary Hacker
+
+&_bio.clan cs:vtr=Mekhet
+&_bio.mask cs:vtr=Conspirator
+&_bio.dirge cs:vtr=Rebel
+&_bio.covenant cs:vtr=Carthian Movement
+&_bio.birthdate cs:vtr=January 9 1991
+&_bio.embrace_date cs:vtr=June 3 2013
+
+
+&_advantage.willpower cs:vtr=derived
+&_advantage.willpower_maximum cs:vtr=derived
+&_advantage.defense cs:vtr=derived
+&_advantage.weaponry_defense cs:vtr=derived
+&_advantage.brawl_defense cs:vtr=derived
+&_advantage.size cs:vtr=derived
+&_advantage.speed cs:vtr=derived
+&_advantage.initiative cs:vtr=derived
+&_advantage.perception cs:vtr=derived
+
+&_advantage.humanity cs:vtr=7
+&_advantage.blood_potency cs:vtr=1
+&_advantage.vitae cs:vtr=derived
+&_advantage.vitae_maximum cs:vtr=derived
+
+
+&_special.size cs:vtr=5
+&_special.species_factor cs:vtr=5
+
+
+&_health.maximum cs:vtr=derived
+&_health.damage cs:vtr=derived
+&_health.penalty cs:vtr=derived
+
+
+&_attribute.intelligence cs:vtr=4
+&_attribute.intelligence.favored cs:vtr=1
+&_attribute.wits cs:vtr=2
+&_attribute.resolve cs:vtr=3
+
+&_attribute.strength cs:vtr=2
+&_attribute.dexterity cs:vtr=2
+&_attribute.stamina cs:vtr=2
+
+&_attribute.presence cs:vtr=2
+&_attribute.manipulation cs:vtr=2
+&_attribute.composure cs:vtr=3
+
+
+&_skill.academics cs:vtr=2
+&_skill.computer cs:vtr=4
+&_skill.computer.hacking cs:vtr=1
+&_skill.crafts cs:vtr=1
+&_skill.crafts.electronics cs:vtr=1
+&_skill.investigation cs:vtr=1
+&_skill.medicine cs:vtr=
+&_skill.occult cs:vtr=2
+&_skill.politics cs:vtr=1
+&_skill.science cs:vtr=
+
+&_skill.athletics cs:vtr=1
+&_skill.brawl cs:vtr=1
+&_skill.drive cs:vtr=
+&_skill.firearms cs:vtr=1
+&_skill.larceny cs:vtr=2
+&_skill.stealth cs:vtr=2
+&_skill.survival cs:vtr=
+&_skill.weaponry cs:vtr=
+
+&_skill.animal_ken cs:vtr=
+&_skill.empathy cs:vtr=1
+&_skill.expression cs:vtr=
+&_skill.intimidation cs:vtr=
+&_skill.persuasion cs:vtr=
+&_skill.socialize cs:vtr=1
+&_skill.streetwise cs:vtr=1
+&_skill.streetwise.informants cs:vtr=1
+&_skill.subterfuge cs:vtr=1
+
+
+&_merit.patient cs:vtr=1
+&_merit.status_(carthian_movement) cs:vtr=2
+&_merit.resources cs:vtr=2
+&_merit.allies_(street_crime) cs:vtr=3
+&_merit.i_know_a_guy cs:vtr=1
+&_merit.carthian_pull cs:vtr=1
+
+
+&_discipline.auspex cs:vtr=1
+&_discipline.obfuscate cs:vtr=1
+&_discipline.celerity cs:vtr=1
+
+
+@@ &_devotion.quicken_sight cs:vtr=-
