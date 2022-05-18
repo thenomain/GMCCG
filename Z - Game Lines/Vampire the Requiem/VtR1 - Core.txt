@@ -1055,13 +1055,13 @@ If you also have Werewolf, you may need this:
 			discipline.theban_sorcery, 
 			v( miracle.blood_scourge )
 		), 
-		u( .at_least, %0, advantage.integrity, v( rite.blood_scourge ))
+		u( .at_least, %0, advantage.integrity, v( miracle.blood_scourge ))
 	)
 &prereq-text.miracle.blood_scourge [v( d.dd )]=
 	Lancea et Sanctum, 
 	Theban Sorcery at this level or higher, 
 	Humanity at this level or higher
-&tags.miracle.feeding_the_crone [v( d.dt )]=vampire.lancea et sanctum
+&tags.miracle.blood_scourge [v( d.dt )]=vampire.lancea et sanctum
 
 
 &miracle.vitae_reliquary [v( d.dd )]=1
