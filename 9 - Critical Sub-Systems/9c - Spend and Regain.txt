@@ -77,42 +77,52 @@ system.
 ================================================================================
 == COMMAND: SPEND ==============================================================
 
-	spend[/<switches>] [<target>/]<stat>[=<input>] [for <reason>]
+    spend[/<switches>] [<target>/]<stat>[=<input>] [for <reason>]
 
-	s: /switches 
-	t: target
-	p: target dbref
-	w: what stat
-	i: input 
-	r: reason 
+    s: /switches 
+    t: target
+    p: target dbref
+    w: what stat
+    i: input 
+    r: reason 
 */
 
 &c.spend [v( d.psrs )]=$(?s)^\+?spend(/[^\s]+)*( .*)$:
-	@assert isapproved( %# )={ 
-		@pemit %#=u( .msg, spend, You must be approved ); 
-	}; 
+    @assert isapproved( %# )={ 
+        @pemit %#=u( .msg, spend, You must be approved ); 
+    }; 
 
-	think u( f.registers.extract, %1, trim( %2 )); 
+    think u( f.registers.extract, %1, trim( %2 )); 
 
-	@assert t( %qp )={ 
-		@pemit %#=u( .msg, spend, I don't know '%qt' ); 
-	}; 
+    @assert t( %qp )={ 
+        @pemit %#=u( .msg, spend, I don't know '%qt' ); 
+    }; 
 
-	@assert cor( isstaff( %# ), strmatch( %#, %qp ))={ 
-		@pemit %#=u( .msg, spend, Only staff may spend for someone else ); 
-	}; 
+    @assert cor( isstaff( %# ), strmatch( %#, %qp ))={ 
+        @pemit %#=u( .msg, spend, Only staff may spend for someone else ); 
+    }; 
 
-	@assert hasattr( %!, spend.trigger.%qw )={ 
-		@pemit %#=u( .msg, spend, 
-			I don't know how to spend '[edit( %qw, _, %b )]'. 
-			I know: 
-			[itemize( 
-				edit( lcstr( lattr( %!/spend.trigger.* )), spend.trigger., )
-			)]
-		); 
-	}; 
-	
-	@trigger %!/spend.trigger.%qw=%#, %qp, %qi, %qs, %qr; 
+    think 
+        x: [setr( x, lattr( %!/spend.trigger.* ))]%r
+        y: [setr( y, grabi( %qx, spend.trigger.%qw* )]; 
+
+    @assert eq( words( %qy ), 1 )={ 
+        @pemit %#=u( .msg, spend, 
+            Too many matches: [edit( itemize( lcstr( %qy )), spend.trigger., , _, %b )] 
+        )
+    }; 
+
+    @assert hasattr( %!, spend.trigger.%qw )={ 
+        @pemit %#=u( .msg, spend, 
+            I don't know how to spend '[edit( %qw, _, %b )]'. 
+            I know: 
+            [itemize( 
+                edit( lcstr( lattr( %!/spend.trigger.* )), spend.trigger., )
+            )]
+        ); 
+    }; 
+    
+    @trigger %!/spend.trigger.%qw=%#, %qp, %qi, %qs, %qr; 
 
 // -- 
 
@@ -124,42 +134,54 @@ system.
 ================================================================================
 == COMMAND: REGAIN =============================================================
 
-	regain[/<switches>] <stat>[=<input>] [for <reason>]
+    regain[/<switches>] <stat>[=<input>] [for <reason>]
 
-	(see 'COMMAND:SPEND' for registers)
+    (see 'COMMAND:SPEND' for registers)
 
 */
 
 &c.regain [v( d.psrs )]=$(?s)^\+?regain(/[^\s]+)*( .*)$:
-	@assert isapproved( %# )={ 
-		@pemit %#=u( .msg, regain, You must be approved ); 
-	}; 
+    @assert isapproved( %# )={ 
+        @pemit %#=u( .msg, regain, You must be approved ); 
+    }; 
 
-	think u( f.registers.extract, %1, trim( %2 )); 
+    think u( f.registers.extract, %1, trim( %2 )); 
 
-	@assert t( %qp )={ 
-		@pemit %#=u( .msg, regain, I don't know '%qt' ); 
-	}; 
+    @assert t( %qp )={ 
+        @pemit %#=u( .msg, regain, I don't know '%qt' ); 
+    }; 
 
-	@assert cor( isstaff( %# ), strmatch( %#, %qp ))={ 
-		@pemit %#=u( .msg, regain, Only staff may regain for someone else ); 
-	}; 
+    @assert cor( isstaff( %# ), strmatch( %#, %qp ))={ 
+        @pemit %#=u( .msg, regain, Only staff may regain for someone else ); 
+    }; 
 
-	@assert hasattr( %!, regain.trigger.%qw )={ 
-		@pemit %#=u( .msg, regain, 
-			I don't know how to regain '[edit( %qw, _, %b )]'. 
-			I know: 
-			[itemize( 
-				edit( lcstr( lattr( %!/regain.trigger.* )), regain.trigger., )
-			)]
-		); 
-	}; 
-	
-	@trigger %!/regain.trigger.%qw=%#, %qp, %qi, %qs, %qr; 
+    think 
+        x: [setr( x, lattr( %!/regain.trigger.* ))]%r
+        y: [setr( y, grabi( %qx, retain.trigger.%qw* )]; 
+
+    @assert eq( words( %qy ), 1 )={ 
+        @pemit %#=u( .msg, regain, 
+            Too many matches: [edit( itemize( lcstr( %qy )), regain.trigger., , _, %b )] 
+        )
+    }; 
+
+    @assert hasattr( %!, regain.trigger.%qw )={ 
+        @pemit %#=u( .msg, regain, 
+            I don't know how to regain '[edit( %qw, _, %b )]'. 
+            I know: 
+            [edit( 
+                itemize( lcstr( %qx )), 
+                regain.trigger., , _, %b 
+            )]
+        ); 
+    }; 
+    
+    @trigger %!/regain.trigger.%qw=%#, %qp, %qi, %qs, %qr; 
 
 // -- 
 
 @set v( d.psrs )/c.regain=regexp
+
 
 
 
@@ -393,28 +415,32 @@ Vera spends/regains 1 point of
 
 COMMAND[/<switches>] [<target>/]<stat>[=<input>] [for <reason>]
 
-	0: /list/of/switches
-	1: everything else
+    0: /list/of/switches
+    1: everything else
 
-	s: /switches 
-	t: target
-	w: what stat
-	i: input 
-	r: reason 
+    s: /switches 
+    t: target
+    w: what stat
+    i: input 
+    r: reason 
 */
 
 &f.registers.extract [v( d.psrs )]=
-	strcat( 
-		s:, %b, setr( s, trim( %0 )), %r, 
-		i:, %b, setr( i, trim( before( after( %1, = ), %bfor%b ))), %r, 
-		r:, %b, setr( r, trim( after( %1, %bfor%b ))), %r, 
-		setq( w, edit( trim( before( before( %1, %bfor%b ), = )), %b, _ )), 
-		t:, %b, setr( t, if( strlen( rest( %qw, / )), first( %qw, / ), %# )), 
-		%r, 
-		p:, %b, setr( p, pmatch( %qt )), %r, 
-		w:, %b, setr( w, if( strlen( rest( %qw, / )), rest( %qw, / ), %qw )), 
-		%r, 
-	)
+    s: [setr( s, trim( %0 ))]%r
+    i: [setr( i, trim( before( after( %1, = ), %bfor%b )))]%r
+    r: [setr( r, trim( after( %1, %bfor%b )))]%r
+    w: [setr( w, edit( trim( before( before( %1, %bfor%b ), = )), %b, _ ))]
+    %r
+    t: [setr( t, if( strlen( rest( %qw, / )), first( %qw, / ), %# ))]%r 
+    p: [setr( p, pmatch( %qt ))]%r 
+    w: 
+    [setr( w, 
+        edit( 
+            if( strlen( rest( %qw, / )), rest( %qw, / ), %qw ), 
+            %b, _ 
+        )
+    )]%r
+
 
 
 /*
