@@ -2486,8 +2486,8 @@ regain methods (not coded):
 		if( 
 			lte( %2, 
 				elements( 
-					1 2 3 4 5 6 7 8 10 15, 
-					getstat( %0/Wyrd )
+					1 1 2 3 4 5 6 7 8 10 15, 
+					inc( getstat( %0/Wyrd ))
 				)
 			), 
 			mul( %2, -1 ), 
