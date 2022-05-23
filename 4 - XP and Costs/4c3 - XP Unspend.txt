@@ -66,7 +66,9 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 
 	@assert sql( select 1 )={ 
 		@pemit %#=
-			u( .msg, xp/unspend, SQL connection is down%; unspend not processed )
+			u( .msg, xp/unspend, 
+				SQL connection is down%; unspend not processed 
+			)
 	}; 
 
 	think strcat( 
@@ -183,6 +185,7 @@ m: modified value (%ql, trait_value_old, '!<added thing>' for list types)
 	@break strmatch( %q3, #-* )={ 
 		@pemit %#=u( .msg, xp/unspend, 
 			Error logging unspend%; unspend canceled 
+			%(does this have an apostrophe in stat name?%) 
 		)
 	}; 
 
@@ -321,8 +324,8 @@ list:
 // &display.xp/unspend.numeric [v( d.xpas )]=%0
 
 &f.xp/unspend.list [v( d.xpas )]=
- 	if( t( match( %0, %1, . )), 
-		!%1, 
+ 	if( t( match( %1, %2, . )), 
+		![setdiff( %1, %2, . )], 
 		#-1 Added value does not exist in current list 
 	)
 
