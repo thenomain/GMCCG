@@ -586,7 +586,7 @@ Effective Rank.
 &tags.merit.pack_dynamics [v( d.dt )]=werewolf.pack.social
 
 &merit.residential_area [v( d.dd )]=1.2.3.4.5
-&tags.merit.residential_area [v( d.dt )]=werewolf.social
+&tags.merit.residential_area [v( d.dt )]=werewolf.social.location
 
 &merit.resonance_shaper [v( d.dd )]=3
 &prerequisite.merit.resonance_shaper [v( d.dd )]=
