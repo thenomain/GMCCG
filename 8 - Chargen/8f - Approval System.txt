@@ -573,6 +573,139 @@ r: resulting log entry (may be added to _approval.frozen or *.dead)
 
 	@trig %!/trig.approval.switch/%2=%0, %qp, %qr; 
 
+/*
+  -- triggers for sphere-specific settings and other systems --
+  for games that want, e.g., "on approval, add to faction/bboard/channel",
+  etc.
+  
+  template: for each template - 'default' is a panic case
+  system: for systems with their own maintenance, like Facations
+  
+  trigger needs to know what switch you're using, generally for 
+  approve or unapprove actions.
+  
+  0: enactor dbref (%#)
+  p: target dbref
+  2: switch name
+  t: target's template
+*/
+
+	@trigger %!/trig.approval.template/
+		[edit( setr( s, default( %qp/_bio.template, default )), %b, _ )]=
+		%0, %qp, %2; 
+
+	@dolist lattr( trig.approval.system/* )=
+		@trigger ##=%0, %qp, %2, %qt;
+
+
+/*
+--------------------------------------------------------------------------------
+-- Trigger: Template Trigger: Default ------------------------------------------
+
+This should never be triggered, but is here in case someone makes it this far 
+without a Template.
+
+--
+
+0: enactor dbref (%#)
+1: target dbref
+2: switch name
+
+*/
+
+&trig.approval.template/default [v( d.cg )]=
+	@pemit %0=u( .msg, cg/%2, 
+		Error: Somehow you got to template trigger code for '[name( %1 )]'%, 
+		who has no Template. 
+	)
+
+
+/*
+--------------------------------------------------------------------------------
+-- Template Trigger: Changeling (sample)  --------------------------------------
+
+Change things here as fits your game.
+
+--
+
+&trig.approval.template/changeling [v( d.cg )]=
+	@switch/first 1=
+// .. approve: set reality levels & add to factions
+		t( match( approve npc storyteller, %2 )), 
+		{
+			@rxlevel %1=Fae; 
+			@txlevel %1=Fae; 
+			@dolist 
+				Changeling 
+				[get( [u( v( d.sfp )/f.find-sheet, %# )]/_bio.court )]=
+			{ 
+				@pemit %0=
+					[u( v( d.afo )/c.faction/add, 
+						##=[name( %1 )] 
+					)];
+			}; 
+		}, 
+		
+// .. unapprove: unset reality levels - but be careful of someone with 'all'.
+		t( match( unapprove freeze kill chargen, %2 )), 
+		{ 
+			@rxlevel %1=!Fae [setdiff( rxlevel( %1 ), Fae )]; 
+			@txlevel %1=!Fae [setdiff( txlevel( %1 ), Fae )]; 
+			@@ remove *all* factions on system/faction; 
+		}, 
+
+// .. else: do nothing
+		think <trig changeling: do nothing>; 
+
+*/
+
+
+/*
+--------------------------------------------------------------------------------
+-- Trigger: Example System Trigger: Factions -----------------------------------
+
+If you have the Aether Factions system installed, this should work.
+"Should." Be careful about your game setup.
+
+_FACTION-MEMBER
+MEMBER-<dbref>
+
+
+--
+
+0: enactor dbref (%#)
+1: target dbref
+2: switch name
+3: target's Template -- 'default' is error case and should never happen
+
+--
+
+@fo me=&d.afo [v( d.cg )]=[search( name=Aether's Faction Object <afo> )]
+
+// --
+
+&trig.approval.system/factions [v( d.cg )]=
+	@switch/first 1=
+// .. approve: add to factions: handle in 'template/<template_name>'
+		t( match( approve npc storyteller, %2 )), 
+		think 
+		<add things - should that depend on template should go there>, 
+	
+// .. unapprove: remove from all factions
+		t( match( unapprove freeze kill chargen, %2 )), 
+		{ 
+			@dolist/delim | [get( %1/_faction-member )]=
+				{ 
+					@wipe [rest( ##, ! )]/*-%1; 
+				}; 
+			&_faction-member %1=
+		}, 
+
+// .. else: do nothing
+		think <trig factions: do nothing>; 
+
+*/
+
 
 
 // =============================================================================
