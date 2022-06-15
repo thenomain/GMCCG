@@ -43,7 +43,7 @@ We're going to know where the sheet code is for this.
 
 */
 
-@fo me=&d.nsc Stat System <ss>=[search( name=Newest Sheet Code <nsc> )]
+@fo me=&d.nsc [v( d.ss )]=[search( name=Newest Sheet Code <nsc> )]
 
 
 /* 
@@ -77,7 +77,7 @@ Save the formatted sheet to an attribute.
 1: enactor
 
 */
-&f.save_sheet Stat System <ss>=
+&f.save_sheet [v( d.ss )]=
 	set( %0, 
 		[u( f.save_sheet.attr, %0, %1 )]:[u( f.save_sheet.format, %0, %1 )]
 	)
@@ -101,7 +101,7 @@ a: sheet display object (where the sheet display lives)
 
 */
 
-&f.save_sheet.format Stat System <ss>=
+&f.save_sheet.format [v( d.ss )]=
 	strcat( 
 		setq( s, u( f.find-sheet, %0 )), 
 		setq( w, default( %0/.sheet.display, rows )), 
@@ -125,10 +125,13 @@ What attribute should we save the sheet to?
 
 */
 
-&f.save_sheet.attr Stat System <ss>=
+&f.save_sheet.attr [v( d.ss )]=
 	strcat( 
 		_note~sheets~, 
-		edit( default( %0/_bio.full_name, no_name ), %b, _ ), 
+		edit( 
+			default( [u( f.find-sheet, %0 )]/_bio.full_name, no_name ), 
+			%b, _ 
+		), 
 		_, 
 		secs( )
 	)
