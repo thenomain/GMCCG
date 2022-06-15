@@ -142,7 +142,7 @@ We have notes!
 &tags.merit.pusher [v( d.dt )]=social
 &tags.merit.resources [v( d.dt )]=social
 &tags.merit.retainer_() [v( d.dt )]=social
-&tags.merit.safe_place_() [v( d.dt )]=social
+&tags.merit.safe_place_() [v( d.dt )]=social.location
 &tags.merit.small_unit_tactics [v( d.dt )]=social
 &tags.merit.spin_doctor [v( d.dt )]=social
 &tags.merit.staff_() [v( d.dt )]=social
