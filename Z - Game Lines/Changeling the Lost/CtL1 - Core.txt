@@ -2108,7 +2108,7 @@ Wyrd: 5
 
 &bio.default.fae-touched [v( d.nsc )]=
 	birthdate concept [if( hasattr( %0, _bio.motley ), motley )] 
-	template virtue vice
+	promise template virtue vice
 
 &bio.default.changeling [v( d.nsc )]=
 	birthdate concept needle thread template 
