@@ -750,8 +750,8 @@ only for a specific stat.
 	 0: sheet dbref
 	 1: trait statpath [optional]
 
-think u( dd/.max_trait, num( eric russell))
-think u( dd/.max_trait, num( *thenomain ), attribute.intelligence )
+think u( v( d.dd )/.max_trait, num( *thenomain ))
+think u( v( d.dd )/.max_trait, num( *thenomain ), attribute.intelligence )
 
 -- max trait --
 */
@@ -769,7 +769,7 @@ think u( dd/.max_trait, num( *thenomain ), attribute.intelligence )
 		), 
 		ladd( 
 			iter( 
-				lattr( %!/.max.trait.[u( .value_full, %0, bio.template )].* ), 
+				lattr( %!/.max_trait.[u( .value_full, %0, bio.template )].* ), 
 				u( %!/%i0, %0, %1 )
 			)
 		)
@@ -785,7 +785,7 @@ think u( dd/.max_trait, num( *thenomain ), attribute.intelligence )
 &.max_trait.Skinthief [v( d.dd )]=advantage.supernatural_tolerance
 
 &.max_trait.Werewolf.Embodiment [v( d.dd )]=
-	u( .has, %0, merit.embodiment_of_the_firstborn_([rest( %1, . )]) )
+	u( .has, %0, merit.embodiment_of_the_firstborn_([rest( %1, . )]))
 
 
 /* 
