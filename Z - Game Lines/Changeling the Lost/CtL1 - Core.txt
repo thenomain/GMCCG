@@ -2111,10 +2111,18 @@ Wyrd: 5
 	promise template virtue vice
 
 &bio.default.changeling [v( d.nsc )]=
-	birthdate concept needle thread template 
-	court seeming kith 
-	[if( hasattr( %0, _bio.motley ), motley )] 
+	full_name concept birthdate 
+	needle thread 
+	template court seeming kith 
+	[if( hasattr( %0, _bio.motley ), motley, %r )] 
 
+/* 
+&bio.default.changeling [v( d.nsc )]=
+	concept birthdate 
+	needle thread 
+	template court seeming kith 
+	[if( hasattr( %0, _bio.motley ), motley )] 
+*/
 
 /*
 --------------------------------------------------------------------------------
