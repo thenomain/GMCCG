@@ -528,7 +528,7 @@ Effective Rank.
 &prereq-text.merit.favored_form_() [v( d.dd )]=
 	Primal Urge 1 higher than Merit rating, Cannot take any other Favored Forms 
 &tags.merit.favored_form_() [v( d.dt )]=werewolf.physical
-&note.merit.favored_form_() [v( d.dt )]=
+&notes.merit.favored_form_() [v( d.dt )]=
 	For each dot, set a substat with the name of the stat affected and the value 
 	of Favored Form it was gained at. 
 	e.g.: stat/set <name>/favored form (urhan).stealth=1
