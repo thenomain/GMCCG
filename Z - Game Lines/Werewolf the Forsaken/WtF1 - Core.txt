@@ -505,6 +505,10 @@ Effective Rank.
 &prereq-text.merit.embodiment_of_the_firstborn_() [v( d.dd )]=
 	May not be taken if Tribe is Ghost Wolf, may only be taken once
 &tags.merit.embodiment_of_the_firstborn_() [v( d.dt )]=werewolf.physical
+&notes.merit.embodiment_of_the_firstborn_() [v( d.dt )]=
+    Chargen: Increased stat must be set manually with: stat/set <stat> + 1|
+    After: Staff must use: xp/freebie <name>/<stat> for Embodiment of the 
+    Firstborn
 
 &merit.fading [v( d.dd )]=3
 &prerequisite.merit.fading [v( d.dd )]=u( .at_least, %0, renown.cunning, 2 )
