@@ -123,9 +123,10 @@ is a lot simpler, and has deep impact on the Chronicle.
 
 &bio.kith [v( d.dd )]=
 	Artist.Bright One.Chatelaine.Gristlegrinder.Helldiver.Hunterheart.
-	Leechfinger.Mirrorskin.Nightsinger.Notary.Playmate.Snowskin
+	Leechfinger.Mirrorskin.Nightsinger.Notary.Playmate.Snowskin.
+	Kithless
+&default.bio.kith [v( d.dd )]=Kithless
 &tags.bio.kith [v( d.dt )]=changeling
-
 
 // Changelings get two Favored Regalia: One from Seeming and one from choice
 // Fae-Touched only get one.
