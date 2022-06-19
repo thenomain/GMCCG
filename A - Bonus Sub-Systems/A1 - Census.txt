@@ -1033,7 +1033,7 @@ x:
 				[setr( g, 
 					words( filter( 
 						fil.attr.list.contains, 
-						%qa, , , _bio.seeming, %i0 
+						%qa, , , _bio.kith, %i0 
 					))
 				)]
 				[setq( z, add( %qz, %qg ))]
@@ -1041,7 +1041,7 @@ x:
 					t( setr( x, 
 						filter( 
 							fil.attr.list.contains, 
-							%qu, , , _bio.seeming, %i0 
+							%qu, , , _bio.kith, %i0 
 						)
 					)), 
 					ansi( xh, %b%(+[words( %qx )]%) )
@@ -1053,7 +1053,7 @@ x:
 		), 
 		if( 
 			t( %qz ), 
-			[footer( changeling: seeming )]%r
+			[footer( changeling: kith )]%r
 			[columns( %ql, 25, |, 2 )]
 		), 
 
