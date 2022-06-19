@@ -977,19 +977,42 @@ w: number of words of whichever list ( %qa/%qu ) we're looking at the time.
 
 Here only as an example.
 
+a: approved
+u: unapproved
+
+--
+
+z: count for current segment
+l: 
+g: 
+x: 
+
 --
 
 &display.census.template.changeling [v( d.cs )]=
-localize( 
-	strcat( 
+    localize( strcat( 
+// .. seeming
 		setq( z, 0 ), 
 		setq( l, 
 			iter( 
-				get( u( d.dd )/bio.seeming ), 
+				get( v( d.dd )/bio.seeming ), 
 				%i0: 
-				[setr( g, words( filter( fil.attr.list.contains, %qa, , , _bio.seeming, %i0 )))]
+				[setr( g, 
+					words( filter( 
+						fil.attr.list.contains, 
+						%qa, , , _bio.seeming, %i0 
+					))
+				)]
 				[setq( z, add( %qz, %qg ))]
-				[if( t( setr( x, filter( fil.attr.list.contains, %qu, , , _bio.seeming, %i0 ))), ansi( xh, %b%(+[words( %qx )]%) ))]
+				[if( 
+					t( setr( x, 
+						filter( 
+							fil.attr.list.contains, 
+							%qu, , , _bio.seeming, %i0 
+						)
+					)), 
+					ansi( xh, %b%(+[words( %qx )]%) )
+				)]
 				[setq( z, add( %qz, words( %qx ) ))], 
 				., 
 				|
@@ -1001,27 +1024,76 @@ localize(
 			[columns( %ql, 25, |, 2 )]
 		), 
 
+// .. kith
 		setq( z, 0 ), 
 		setq( l, 
 			iter( 
-				get( u( d.dd )/bio.court ), 
+				get( v( d.dd )/bio.kith ), 
 				%i0: 
-				[setr( g, words( filter( fil.attr.list.contains, %qa, , , _bio.court, %i0 )))]
+				[setr( g, 
+					words( filter( 
+						fil.attr.list.contains, 
+						%qa, , , _bio.seeming, %i0 
+					))
+				)]
 				[setq( z, add( %qz, %qg ))]
-				[if( t( setr( x, filter( fil.attr.list.contains, %qu, , , _bio.court, %i0 ))), ansi( xh, %b%(+[words( %qx )]%) ))] 
+				[if( 
+					t( setr( x, 
+						filter( 
+							fil.attr.list.contains, 
+							%qu, , , _bio.seeming, %i0 
+						)
+					)), 
+					ansi( xh, %b%(+[words( %qx )]%) )
+				)]
 				[setq( z, add( %qz, words( %qx ) ))], 
 				., 
 				|
 			)
 		), 
+		if( 
+			t( %qz ), 
+			[footer( changeling: seeming )]%r
+			[columns( %ql, 25, |, 2 )]
+		), 
 
+// .. court
+		setq( z, 0 ), 
+		setq( l, 
+			iter( 
+				get( v( d.dd )/bio.court ), 
+				%i0: 
+				[setr( g, 
+					words( 
+						filter( 
+							fil.attr.list.contains, 
+							%qa, , , _bio.court, %i0 
+						)
+					)
+				)]
+				[setq( z, add( %qz, %qg ))]
+				[if( 
+					t( 
+						setr( x, 
+							filter( 
+								fil.attr.list.contains, 
+								%qu, , , _bio.court, %i0 
+							)
+						)
+					), 
+					ansi( xh, %b%(+[words( %qx )]%) )
+				)] 
+				[setq( z, add( %qz, words( %qx ) ))], 
+				., 
+				|
+			)
+		), 
 		if( 
 			t( %qz ), 
 			[footer( changeling: court )]%r
 			[columns( %ql, 25, |, 2 )]
 		)
-	)
-)
+	))
 
 
 --------------------------------------------------------------------------------
