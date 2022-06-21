@@ -21,7 +21,7 @@ On unapprovals, remove from all factions.
 On approval, do nothing; leave that up to the template triggers.
 */
 
-@fo me=&d.afo [v( d.cg )]=[search( name=Aether's Faction Object <afo> )]
+@fo me=&d.afo [v( d.cg )]=[search( name=Aether Faction Object <afo> )]
 
 // --
 
@@ -68,7 +68,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 // .. approve: set reality levels & add to factions
 		t( match( approve npc storyteller, %2 )), 
 		{
-			@dolist 
+			@dolist/delim | 
 				Mortal/+=
 			{ 
 				@pemit %0=
@@ -101,9 +101,9 @@ One 'template/<target_template>' is run, passed the following arguments:
 		{
 			@rxlevel %1=Fae; 
 			@txlevel %1=Fae; 
-			@dolist 
-				Changeling 
-				[get( [u( v( d.sfp )/f.find-sheet, %# )]/_bio.court )]=
+			@dolist/delim | 
+				Changeling|
+				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.court )]=
 			{ 
 				@pemit %0=
 					[u( v( d.afo )/c.faction/add, 
@@ -139,7 +139,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 		{
 			@rxlevel %1=Fae; 
 			@txlevel %1=Fae; 
-			@dolist 
+			@dolist/delim | 
 				Fae-Touched=
 			{ 
 				@pemit %0=
@@ -171,10 +171,10 @@ One 'template/<target_template>' is run, passed the following arguments:
 // .. approve: set reality levels & add to factions
 		t( match( approve npc storyteller, %2 )), 
 		{
-			@dolist 
-				Werewolf 
-				[get( [u( v( d.sfp )/f.find-sheet, %# )]/_bio.tribe )] 
-				[get( [u( v( d.sfp )/f.find-sheet, %# )]/_bio.auspice )]=
+			@dolist/delim | 
+				Werewolf|
+				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.tribe )]|
+				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.auspice )]=
 			{ 
 				@pemit %0=
 					[u( v( d.afo )/c.faction/add, 
@@ -204,7 +204,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 // .. approve: set reality levels & add to factions
 		t( match( approve npc storyteller, %2 )), 
 		{
-			@dolist 
+			@dolist/delim | 
 				Wolf-Blooded=
 			{ 
 				@pemit %0=
@@ -234,10 +234,10 @@ One 'template/<target_template>' is run, passed the following arguments:
 // .. approve: set reality levels & add to factions
 		t( match( approve npc storyteller, %2 )), 
 		{
-			@dolist 
-				Vampire  
-				[get( [u( v( d.sfp )/f.find-sheet, %# )]/_bio.clan )] 
-				[get( [u( v( d.sfp )/f.find-sheet, %# )]/_bio.covenant )]=
+			@dolist/delim | 
+				Vampire|
+				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.clan )]|
+				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.covenant )]=
 			{ 
 				@pemit %0=
 					[u( v( d.afo )/c.faction/add, 
@@ -267,9 +267,9 @@ One 'template/<target_template>' is run, passed the following arguments:
 // .. approve: set reality levels & add to factions
 		t( match( approve npc storyteller, %2 )), 
 		{
-			@dolist 
-				Ghoul 
-				[get( [u( v( d.sfp )/f.find-sheet, %# )]/_bio.clan )]=
+			@dolist/delim | 
+				Ghoul|
+				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.clan )]=
 			{ 
 				@pemit %0=
 					[u( v( d.afo )/c.faction/add, 

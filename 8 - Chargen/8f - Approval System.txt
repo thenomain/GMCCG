@@ -635,8 +635,8 @@ Change things here as fits your game.
 		{
 			@rxlevel %1=Fae; 
 			@txlevel %1=Fae; 
-			@dolist 
-				Changeling 
+			@dolist/delim | 
+				Changeling|
 				[get( [u( v( d.sfp )/f.find-sheet, %# )]/_bio.court )]=
 			{ 
 				@pemit %0=
