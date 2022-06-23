@@ -594,8 +594,8 @@ r: resulting log entry (may be added to _approval.frozen or *.dead)
 		[edit( setr( s, default( %qp/_bio.template, default )), %b, _ )]=
 		%0, %qp, %2; 
 
-	@dolist lattr( trig.approval.system/* )=
-		@trigger ##=%0, %qp, %2, %qt;
+	@dolist lattr( %!/trig.approval.system/* )=
+		@trigger %!/##=%0, %qp, %2, %qt;
 
 
 /*
