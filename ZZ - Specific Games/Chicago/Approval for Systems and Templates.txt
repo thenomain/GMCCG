@@ -38,6 +38,7 @@ On approval, do nothing; leave that up to the template triggers.
 			@dolist/delim | [get( %1/_faction-member )]=
 				{ 
 					@wipe [rest( ##, ! )]/*-%1; 
+					@wipe [rest( ##, ! )]/*-%1-*; 
 				}; 
 			&_faction-member %1=
 		}, 
@@ -93,23 +94,33 @@ Do not do anything on unapprove.
 // .. approve: give 2 coins if they have 0 & are !human
 		t( match( approve, %2 )), 
 		{ 
-			@ifelse 
-				cand( 
+// .. .. no log: do something
+			@ifelse not( lattr( %1/_favor.log.* ))=
+			{ 
+// .. .. .. and is !Human: Give coins. Else, leave it up to the approver.
+				@ifelse 
 					not( strmatch( 
 						get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.template ), 
 						Human 
-					)), 
-					neq( get( %1/_favor ), 0 )
-				)=
-				@pemit %0=
-					u( v( d.fc )/f.favor/give.staff, 
-						%0, 
-						%1, 
-						2, 
-						Chargen 
+					))=
+				{
+					@pemit %0=
+						u( v( d.fc )/f.favor/give.staff, 
+							%0, 
+							%1, 
+							2, 
+							Free Favor Coins from Chargen. Welcome aboard!
+						)
+				}, 
+				{ 
+					@pemit %0=u( .msg, cg/approve, 
+						Target is Human and may get 2 Favor Coins. 
+						That's up to you. 
 					)
+				}
+			}
 		}, 
-	
+
 // .. everything else: do nothing
 		think <trig starting xp: do nothing>; 
 
@@ -140,7 +151,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 				Mortal/+=
 			{ 
 				@pemit %0=
-					[u( v( d.afo )/c.faction/add, 
+					[ulocal( v( d.afo )/c.faction/add, 
 						##=[name( %1 )] 
 					)];
 			}; 
@@ -174,7 +185,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.court )]=
 			{ 
 				@pemit %0=
-					[u( v( d.afo )/c.faction/add, 
+					[ulocal( v( d.afo )/c.faction/add, 
 						##=[name( %1 )] 
 					)];
 			}; 
@@ -211,7 +222,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 				Fae-Touched=
 			{ 
 				@pemit %0=
-					[u( v( d.afo )/c.faction/add, 
+					[ulocal( v( d.afo )/c.faction/add, 
 						##=[name( %1 )] 
 					)];
 			}; 
@@ -245,7 +256,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.auspice )]=
 			{ 
 				@pemit %0=
-					[u( v( d.afo )/c.faction/add, 
+					[ulocal( v( d.afo )/c.faction/add, 
 						##=[name( %1 )] 
 					)];
 			}; 
@@ -276,7 +287,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 				Wolf-Blooded=
 			{ 
 				@pemit %0=
-					[u( v( d.afo )/c.faction/add, 
+					[ulocal( v( d.afo )/c.faction/add, 
 						##=[name( %1 )] 
 					)];
 			}; 
@@ -308,7 +319,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.covenant )]=
 			{ 
 				@pemit %0=
-					[u( v( d.afo )/c.faction/add, 
+					[ulocal( v( d.afo )/c.faction/add, 
 						##=[name( %1 )] 
 					)];
 			}; 
@@ -340,7 +351,7 @@ One 'template/<target_template>' is run, passed the following arguments:
 				[get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.clan )]=
 			{ 
 				@pemit %0=
-					[u( v( d.afo )/c.faction/add, 
+					[ulocal( v( d.afo )/c.faction/add, 
 						##=[name( %1 )] 
 					)];
 			}; 
