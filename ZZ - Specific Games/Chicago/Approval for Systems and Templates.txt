@@ -48,6 +48,74 @@ On approval, do nothing; leave that up to the template triggers.
 
 // @fo me=@trig [v( d.cg )]/trig.approval.system/factions=%#, %#, unapprove
 
+
+
+/*
+--------------------------------------------------------------------------------
+-- System: Starting XP ---------------------------------------------------------
+
+Only give people starting XP if they don't already have any.
+Do not do anything on unapprove.
+
+*/
+
+&trig.approval.system/starting_xp [v( d.cg )]=
+	@switch/first 1=
+// .. approve: give 50 beats only if they have 0.
+		t( match( approve, %2 )), { 
+			@switch/first 1=
+				not( hasattr( %1, _special.beats.normal )), 
+				{ 
+					&_special.beats.normal %1=50 0; 
+				}, 
+				eq( first( setr( x, get( %1/_special.beats.normal )), 0 )), 
+				{ 
+					&_special.beats.normal %1=50 [rest( %qx )]; 
+				}
+		}, 
+	
+// .. everything else: do nothing
+		think <trig starting xp: do nothing>; 
+
+
+/*
+--------------------------------------------------------------------------------
+-- System: Starting Coins ------------------------------------------------------
+
+2 Starting Coins (Favor)
+
+*/
+
+@fo me=&d.fc [v( d.cg )]=search( name=Favor Coins <fc> )
+
+&trig.approval.system/starting_coins [v( d.cg )]=
+	@switch/first 1=
+// .. approve: give 2 coins if they have 0 & are !human
+		t( match( approve, %2 )), 
+		{ 
+			@ifelse 
+				cand( 
+					not( strmatch( 
+						get( [u( v( d.sfp )/f.find-sheet, %1 )]/_bio.template ), 
+						Human 
+					)), 
+					neq( get( %1/_favor ), 0 )
+				)=
+				@pemit %0=
+					u( v( d.fc )/f.favor/give.staff, 
+						%0, 
+						%1, 
+						2, 
+						Chargen 
+					)
+		}, 
+	
+// .. everything else: do nothing
+		think <trig starting xp: do nothing>; 
+
+
+
+
 /*
 ================================================================================
 == TEMPLATES ===================================================================
