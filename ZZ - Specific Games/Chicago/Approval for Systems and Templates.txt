@@ -67,17 +67,22 @@ Do not do anything on unapprove.
 			@switch/first 1=
 				not( hasattr( %1, _special.beats.normal )), 
 				{ 
-					&_special.beats.normal %1=50 0; 
-				}, 
-				eq( first( setr( x, get( %1/_special.beats.normal )), 0 )), 
-				{ 
-					&_special.beats.normal %1=50 [rest( %qx )]; 
+					@fo %0=+xp/award %1=50 for CG XP;
+				}, { 
+					@pemit %0=u( .msg, cg/approve, 
+						Target had XP already\; 
+						didn't add any more
+					)
 				}
 		}, 
 	
 // .. everything else: do nothing
-		think <trig starting xp: do nothing>; 
+		{
+			@pemit %0=<trig starting xp: do nothing - switch: %2 >; 
+		}; 
 
+
+// @trig [v( d.cg )]/trig.approval.system/starting_xp=#197, #1573, approve
 
 /*
 --------------------------------------------------------------------------------
