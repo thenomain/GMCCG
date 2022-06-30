@@ -381,26 +381,6 @@ One 'template/<target_template>' is run, passed the following arguments:
 					)];
 			}; 
 
-// .. .. add praxis
-			@dolist/delim | 
-				North Praxis|
-				South Praxis|
-				Underworld=
-			{ 
-				@ifelse 
-					[t( setr( p, 
-						get( 
-						[u( v( d.sfp )/f.find-sheet, %1 )]/
-						_merit.status_(##) 
-						)
-					))]=
-					@pemit %0=[ulocal( 
-						v( d.afo )/c.faction/add, 
-						[first( ## )] Praxis=[name( %1 )] 
-					)]
-				{ 
-				}; 
-			}; 
 		}, 
 		
 // .. unapprove: do nothing
