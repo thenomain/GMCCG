@@ -509,10 +509,10 @@ Level 3 for very minor items
 
 &merit.watch_dog [v( d.dd )]=2
 &tags.merit.watch_dog [v( d.dt )]=ghoul
-&prerequisite.merit.watch_dog [v( d.dd )]=0
+&prerequisite.merit.watch_dog [v( d.dd )]=1
 &prereq-text.merit.watch_dog [v( d.dd )]=Regnant with Auspex
 // There is absolutely no way for code to determine this; 
-// with 'prereq' set to 0 it must be set by staff using the /override switch
+// Added to 'd.restricted.stats.ghoul', staff can xp/spend for them.
 
 
 // -- Human Merits -------------------------------------------------------------
@@ -1794,7 +1794,10 @@ Character should have no Scales
 
 &d.restricted.types.vampire [v( d.xpas )]=discipline
 &d.restricted.stats.vampire [v( d.xpas )]=
-	advantage.blood_potency
+	advantage.blood_potency 
+
+&d.restricted.stats.ghoul [v( d.xpas )]=
+	merit.watch_dog
 
 
 
