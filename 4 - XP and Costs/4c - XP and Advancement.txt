@@ -254,11 +254,15 @@ UPDATE xp_log
 
 */
 
-&c.xp/cost [v( d.xpas )]=$xp/cost *:@pemit %#=[u( f.xp/cost, %0 )]
+&c.xp/cost [v( d.xpas )]=$^\+?xp/cost (.+)$:@pemit %#=[u( f.xp/cost, %1 )]
+@set [v( d.xpas )]/c.xp/cost=regexp
 
-&c.xp/spend [v( d.xpas )]=$xp/spend *:@pemit %#=[u( f.xp/spend, %0 )]
+&c.xp/spend [v( d.xpas )]=$^\+?xp/spend (.+)$:@pemit %#=[u( f.xp/spend, %1 )]
+@set [v( d.xpas )]/c.xp/spend=regexp
 
-&c.xp/freebie [v( d.xpas )]=$xp/freebie *:@pemit %#=[u( f.xp/freebie, %0 )]
+&c.xp/freebie [v( d.xpas )]=$^\+?xp/freebie (.+)$:
+	@pemit %#=[u( f.xp/freebie, %1 )]
+@set [v( d.xpas )]/c.xp/spend=regexp
 
 
 
