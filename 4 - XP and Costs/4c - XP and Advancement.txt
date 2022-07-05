@@ -2190,9 +2190,21 @@ returns: <null> if ok, otherwise error message
 
 &validate.value [v( d.xpas )]=
 	localize( strcat( 
+// .. get class
 		setq( c, ulocal( v( d.sfp )/f.get-class, %0 )), 
-		setq( v, lcstr( first( get( v( d.dd )/%0 ), | ))), 
 
+// .. remove instance if it's there
+		setq( i, 
+			if( regmatch( %0, %(.*%)%\(%(.*%)%\), z a b ), 
+				[trim( %qa, b, _ )]_%(%), 
+				%0 
+			)
+		), 
+
+// .. pull valid values
+		setq( v, lcstr( first( get( v( d.dd )/%qi ), | ))), 
+
+// .. check if value passed is value based on data dictionary
 		case( %qc, 
 			list, 
 			case( 0, 
