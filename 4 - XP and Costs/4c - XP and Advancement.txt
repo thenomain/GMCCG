@@ -2214,6 +2214,9 @@ returns: <null> if ok, otherwise error message
 				t( %2 ), 
 				capstr( lcstr( rest( %2 ))), 
 
+				t( match( %qv, %2, . )), 
+				Value not in the list of values I can set, 
+
 				isint( %2 ), 
 				Raise must be numeric, 
 
