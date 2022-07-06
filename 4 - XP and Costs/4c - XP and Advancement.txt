@@ -262,7 +262,7 @@ UPDATE xp_log
 
 &c.xp/freebie [v( d.xpas )]=$^\+?xp/freebie (.+)$:
 	@pemit %#=[u( f.xp/freebie, %1 )]
-@set [v( d.xpas )]/c.xp/spend=regexp
+@set [v( d.xpas )]/c.xp/freebie=regexp
 
 
 
