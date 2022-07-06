@@ -99,7 +99,7 @@ This hits the iteration limit and hits it hard.
 		wheader( Census: [words( %qa )] Approved ), %r, 
 
 /* if you care about character gender, uncomment this section
-		iter( m f, 
+		iter( m f p, 
 			setq( %i0, 
 				[filter( fil.attr.string.is, %qa, , , sex, %i0* )]:
 				[filter( fil.attr.string.is, %qu, , , sex, %i0* )]
@@ -114,6 +114,11 @@ This hits the iteration limit and hits it hard.
 			Female: [words( first( %qf, : ))]
 				[if( 
 					t( setr( t, rest( %qf, : ))), 
+					ansi( xh, %b%(+[words( %qt )]%) )
+				)], 
+			Neither: [words( first( %qp, : ))]
+				[if( 
+					t( setr( t, rest( %qp, : ))), 
 					ansi( xh, %b%(+[words( %qt )]%) )
 				)], 
 			25, |, 2
