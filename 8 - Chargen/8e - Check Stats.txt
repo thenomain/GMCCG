@@ -62,7 +62,7 @@ t: temp validation results, used here and there
 				ulocal( f.statcheck.normal, %1, %qs, %qv, %2 )
 			)
 		), 
-		if( strlen( %qt ), 1, %qt ), ., 
+		if( t( %qt ), 1, %qt ), ., 
 
 // >> <prereq>
 		iter( 

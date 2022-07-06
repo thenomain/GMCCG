@@ -2205,6 +2205,7 @@ returns: <null> if ok, otherwise error message
 		setq( v, lcstr( first( get( v( d.dd )/%qi ), | ))), 
 
 // .. check if value passed is value based on data dictionary
+// .. (this really should be done with stat's check)
 		case( %qc, 
 			list, 
 			case( 0, 
@@ -2225,9 +2226,6 @@ returns: <null> if ok, otherwise error message
 			case( 0, 
 				t( %2 ), 
 				capstr( lcstr( rest( %2 ))), 
-
-				t( match( %qv, %2, . )), 
-				Value not in the list of values I can set, 
 
 				isint( %2 ), 
 				Raise must be numeric, 
