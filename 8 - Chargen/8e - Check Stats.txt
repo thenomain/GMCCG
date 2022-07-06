@@ -504,7 +504,7 @@ uses: vcolumns(), our vertical-column system
 		strcat( 
 				ansi( h, Gender ), :, %b, 
 					setr( g, get( %0/sex )), %b, 
-					u( display.check.ok-no, match( f m, strtrunc( %qg, 1 ))), 
+					u( display.check.ok-no, match( f m p, strtrunc( %qg, 1 ))), 
 					`, 
 				ansi( h, Concept ), :, %b, 
 					if( 
