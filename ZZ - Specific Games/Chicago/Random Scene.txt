@@ -245,82 +245,202 @@ Random Scene
     +rs/approve <name> to approve someone's claim on the person this week and give both a beat.
 
 
+// -----------------------------------------------------------------------------
 
+&c.randomscene/help [v( d.rsh )]=
+    [header(+rs help)]%r+rs or +randomscene with or without + can be used.%r%r
+    +rs - Shows your randomscene info including your random scene partners and 
+    the current people under two weeks approved that are claimable.%r%r
+    +rs <name> - Staff only view other randomscene info%r%r
+    +rs/pending - Shows anyone who has claimed you that is waiting for 
+    +rs/approve%r%r
+    +rs/pending <name> - Staff only view other's pending approvals%r%r
+    +rs/history - Shows history list of claimed scenes and descriptions%r%r
+    +rs/history <name> - Staff only, shows history list of claimed scenes and 
+    descriptions for <name>%r%r+rs/byhistory - Shows history list of people 
+    who claimed you, with descriptions%r%r
+    +rs/byhistory <name> - Staff only, shows history list of people that 
+    claimed <name>, with descriptions%r%r
+    +rs/here - Shows if anyone in current scene is claimable%r%r
+    +rs/claim <name>=<scene description> - Claims <name> for <scene> described 
+    randomscene if they are claimable%r%r
+    +rs/approve <name> - Approves <name>'s randomscene claim on you, 
+    indicating you did a scene together, giving you and the other a beat up 
+    to the limit currently shown in the +rs per week.%r%r
+    &RS_LOGIN me=0 if you want to disable the login +rs popup.%r%r
+    Made by sombranox/Bubonic@TDM%r
+    [footer()]
 
-
-
-&c.randomscene/HELP [v( d.rsh )]=[header(+rs help)]%r+rs or +randomscene with or without + can be used.%r%r+rs - Shows your randomscene info including your random scene partners and the current people under two weeks approved that are claimable.%r%r+rs <name> - Staff only view other randomscene info%r%r+rs/pending - Shows anyone who has claimed you that is waiting for +rs/approve%r%r+rs/pending <name> - Staff only view other's pending approvals%r%r+rs/history - Shows history list of claimed scenes and descriptions%r%r+rs/history <name> - Staff only, shows history list of claimed scenes and descriptions for <name>%r%r+rs/byhistory - Shows history list of people who claimed you, with descriptions%r%r+rs/byhistory <name> - Staff only, shows history list of people that claimed <name>, with descriptions%r%r+rs/here - Shows if anyone in current scene is claimable%r%r+rs/claim <name>=<scene description> - Claims <name> for <scene> described randomscene if they are claimable%r%r+rs/approve <name> - Approves <name>'s randomscene claim on you, indicating you did a scene together, giving you and the other a beat up to the limit currently shown in the +rs per week.%r%r&RS_LOGIN me=0 if you want to disable the login +rs popup.%r%rMade by sombranox/Bubonic@TDM%r[footer()]
-
-&cmt.c.randomscene/HELP [v( d.rsh )]=Simple help for this in case there's no proper +help set up
+&cmt.c.randomscene/help [v( d.rsh )]=Simple help for this in case there's no proper +help set up
 
 
 
 /*
-DATA
+================================================================================
+== DATA ========================================================================
 */
 
-&D.MAX_RS_BEATS_PER_WEEK [v( d.rsh )]=7
-&cmt.D.MAX_RS_BEATS_PER_WEEK [v( d.rsh )]=Maximum beats per week able to be gotten from RS
+&d.max_beats_per_week [v( d.rsh )]=7
+&cmt.d.max_beats_per_week [v( d.rsh )]=
+    Maximum beats per week able to be gotten from RS
 
-&D.MAX_APPROVED_DAYS [v( d.rsh )]=14
-&cmt.D.MAX_APPROVED_DAYS [v( d.rsh )]=Maximum number of days approved before player isn't added to D.NEW_PLAYER_LIST
+&d.max_approved_days [v( d.rsh )]=14
+&cmt.d.max_approved_days [v( d.rsh )]=
+    Maximum number of days approved before player isn't added to 
+    D.NEW_PLAYER_LIST
 
-&D.MAX_DISCONNECTED_DAYS [v( d.rsh )]=14
-&cmt.D.MAX_DISCONNECTED_DAYS [v( d.rsh )]=Maximum number of days disconnected before the player is removed from the list of possible random matches
+&d.max_disconnected_days [v( d.rsh )]=14
+&cmt.d.max_disconnected_days [v( d.rsh )]=
+    Maximum number of days disconnected before the player is removed from the 
+    list of possible random matches
 
-&D.NUM_RS_AVAILABLE [v( d.rsh )]=3
-&cmt.D.NUM_RS_AVAILABLE [v( d.rsh )]=Number of random available scene partners per week
+&d.num_rs_available [v( d.rsh )]=3
+&cmt.d.num_rs_available [v( d.rsh )]=
+    Number of random available scene partners per week
 
-&D.MAX_DESC_ENTRIES [v( d.rsh )]=50
-&cmt.D.MAX_DESC_ENTRIES [v( d.rsh )]=Maximum entries in the _desc entries for history fo claimed and claimed_by. Since stored in a single attr, it's limited by text size of that.
+&d.max_desc_entries [v( d.rsh )]=50
+&cmt.d.max_desc_entries [v( d.rsh )]=
+    Maximum entries in the _desc entries for history fo claimed and 
+    claimed_by. Since stored in a single attr, it's limited by text size 
+    of that.
 
-&D.MAX_DESC_LENGTH [v( d.rsh )]=250
-&cmt.D.MAX_DESC_LENGTH [v( d.rsh )]=Maximum length of description text
+&d.max_desc_length [v( d.rsh )]=250
+&cmt.d.max_desc_length [v( d.rsh )]=Maximum length of description text
 
-&D.SKIP_MAIL [v( d.rsh )]=1
-&cmt.D.SKIP_MAIL [v( d.rsh )]=If 1 it won't mail people on approve
+// -- PREFERENCES ------
+
+&pref.skip_mail [v( d.rsh )]=1
+&cmt.pref.skip_mail [v( d.rsh )]=If 1 it won't mail people on approve
 
 
 /*
-FORMAT
+================================================================================
+== FORMAT ======================================================================
 */
 
 &f.display.randomscene.player [v( d.rsh )]=
-    [header([name(%0)]'s randomscene info)]%r
-    [ansi( hw, Randomscenes Available:)] 
+    [header( [name( %0 )]'s randomscene info )]%r
+    [ansi( hw, Randomscenes Available: )] 
     [u( f.format.player_list, get( %0/_rs.available ))]%r%r
     
-    [ansi(hw, People Seeking You:)] [u(f.format.player_list, get(%0/_rs.others))]%r%r[ansi(hw, New Players Available:)] [u(f.format.player_list, setdiff(u( f.new_player_list_sans_alts, %0 ), get(%0/_rs.claimed)))][if(t(get(%0/_rs.claimed)), %r%r[ansi(hw, Players Claimed:)] [u(f.format.player_list, get(%0/_rs.claimed), %0)][if(t(get(%0/_rs.claimed_waiting)), %b%([ansi(hw, *)] pending approval%))])][if(t(setr(w, get(%0/_rs.claimed_by))), %r%r[ansi(hw, Players Claiming You:)] [u(f.format.player_list, get(%0/_rs.claimed_by))])][if(t(setr(w, get(%0/_rs.claimed_by_waiting))), %r%r[ansi(hw, Pending +rs/approve From You:)] [u(f.format.player_list, %qw)])]%r%r[ansi(hw, RS Beats This Week:)] [if(not(t(setr(b, get(%0/_rs.week_beats)))), setq(b, 0))]%qb/[v(d.max_rs_beats_per_week)]%r[footer()]
+    [ansi( hw, People Seeking You: )] 
+    [u( f.format.player_list, get(%0/_rs.others ))]%r%r
+
+    [ansi( hw, New Players Available: )] 
+    [u( 
+        f.format.player_list, 
+        setdiff( u( f.new_player_list_sans_alts, %0 ), get( %0/_rs.claimed ))
+    )]
+    [if( 
+        t( get( %0/_rs.claimed )), 
+        %r%r[ansi( hw, Players Claimed: )] 
+        [u( f.format.player_list, get( %0/_rs.claimed ), %0 )]
+        [if( t( get( %0/_rs.claimed_waiting )), %b\([ansi( hw, * )] pending approval\) )] 
+    )]
+    [if( 
+        t( setr( w, get( %0/_rs.claimed_by ))), 
+        %r%r[ansi( hw, Players Claiming You: )] 
+        [u( f.format.player_list, get( %0/_rs.claimed_by ))] 
+    )]
+    [if( 
+        t( setr( w, get( %0/_rs.claimed_by_waiting ))), 
+        %r%r[ansi( hw, Pending +rs/approve From You: )] 
+        [u( f.format.player_list, %qw )] 
+    )]%r%r
+    [ansi( hw, RS Beats This Week: )] 
+    [if( not( t( setr( b, get( %0/_rs.week_beats )))), setq( b, 0 ))]%qb/
+    [v( d.max_beats_per_week )]%r
+    [footer()]
 
 &cmt.f.display.randomscene.player [v( d.rsh )]=
     Display %0's randomscene info.
 
 
-&f.display.randomscene.player/PENDING [v( d.rsh )]=[header([name(%0)]'s randomscene/pending info)]%r[ansi(hw, Pending +rs/approve From You:)] [u(f.format.player_list, get(%0/_rs.claimed_by_waiting))]%r[footer()]
-&cmt.f.display.randomscene.player/PENDING [v( d.rsh )]=Display %0's randomscene/pending info.
+&f.display.randomscene.player/PENDING [v( d.rsh )]=
+    [header( [name( %0 )]'s randomscene/pending info )]%r
+    [ansi( hw, Pending +rs/approve From You: )] 
+    [u( f.format.player_list, get( %0/_rs.claimed_by_waiting ))]%r
+    [footer()]
+&cmt.f.display.randomscene.player/PENDING [v( d.rsh )]=
+    Display %0's randomscene/pending info.
 
 
-&f.format.player_list [v( d.rsh )]=if(t(%0), sort(iter(%0, [name(itext(0))][if(t(%1), if(strmatch(get(%1/_rs.claimed_waiting), *[itext(0)]*), [ansi(hw,*)]))], %b, |), a, |, %,%b), none found)
-&cmt.f.format.player_list [v( d.rsh )]=Displays %0 list of space separated dbrefs as comma-delimited list of names, or none. %1 is optional dbref of the caller to indicate it should check their _rs.claimed_waiting list to add * next to ones still pending
+&f.format.player_list [v( d.rsh )]=
+    if( t( %0 ), 
+        sort( 
+            iter( %0, 
+                [name( %i0 )]
+                [if( 
+                    cand( 
+                        t( %1 ), 
+                        strmatch( get( %1/_rs.claimed_waiting ), *%i0* ), 
+                    ), 
+                    ansi( hw, * )
+                )], 
+                %b, | 
+            ), 
+            a, |, %,%b 
+        ), 
+        none found 
+    )
+&cmt.f.format.player_list [v( d.rsh )]=
+    Displays %0 list of space separated dbrefs as comma-delimited list of 
+    names, or none. %1 is optional dbref of the caller to indicate it should 
+    check their _rs.claimed_waiting list to add * next to ones still pending
 
 /*
 FUNCTIONS
 */
 
-&f.display.randomscene.claimed_history [v( d.rsh )]=ifelse(t(setr(l, get(%0/_rs.claimed_desc))), [list(strcat(header([name(%0)] rs/claim history), |, [ljust(Date,12)][ljust(Name,20)]Desc, |, footer(), |, %ql, |, [footer()]), ifelse(isdbref(first(itext(), `)), [u(f.show_date, elements(itext(), 2, `))]%b[ljust(strtrunc(name(first(itext(), `)), 19), 20)][wrap(elements(itext(), 3, `), sub( width( %# ), 32 ), left,,, 32)], itext()), |)], [alert(+rs/claimed)] No claimed history found.)
-&cmt.f.display.randomscene.claimed_history [v( d.rsh )]=Shows %0's claimed history
+&f.display.randomscene.claimed_history [v( d.rsh )]=
+    ifelse( 
+        t( setr( l, get( %0/_rs.claimed_desc ))), 
+        list( 
+            strcat( 
+                header( [name(%0)] rs/claim history ), |, 
+                [ljust( Date, 12 )] [ljust( Name, 20 )]
+                Desc, |, footer(), |, %ql, |, footer() 
+            ), 
+            ifelse( 
+                isdbref( first( %i0, ` )), 
+                [u( f.format.date, elements( %i0, 2, ` ))] 
+                [ljust( strtrunc( name( first( %i0, ` )), 19 ), 20 )]
+                [wrap( 
+                    elements( %i0, 3, ` ), 
+                    sub( width( %# ), 32 ), 
+                    left,,, 32 
+                )], 
+                %i0 
+            ), 
+            | 
+        ), 
+        [alert( rs/claimed )] No claimed history found. 
+    )
+&cmt.f.display.randomscene.claimed_history [v( d.rsh )]=
+    Shows %0's claimed history
 
-&F.SHOW_DATE [v( d.rsh )]=[setq(t, convsecs(%0))][elements(%qt, 2)]%b[elements(%qt, 3)]%b[elements(%qt, 5)]
-&cmt.F.SHOW_DATE [v( d.rsh )]=Function to show only MMM DD YYYY date from timestamp
+// -----------------------------------------------------------------------------
 
 
-&f.display.randomscene.claimed_by_history [v( d.rsh )]=ifelse(t(setr(l, get(%0/_rs.claimed_by_desc))), [list(strcat(header([name(%0)] claimed by history), |, [ljust(Date,12)][ljust(Name,20)]Desc, |, footer(), |, %ql, |, footer()), ifelse(isdbref(first(itext(), `)), [u(f.show_date, elements(itext(), 2, `))]%b[ljust(strtrunc(name(first(itext(), `)), 19), 20)][wrap(elements(itext(), 3, `), sub( width( %# ), 32 ), left,,, 32)], itext()), |)], [alert(+rs/claimedby)] No claimed by history found.)
+&f.format.date [v( d.rsh )]=
+    [setq( t, convsecs( %0 ))]
+    [elements( %qt, 2 )]
+    [elements(%qt, 3)]%b[elements(%qt, 5)]
+&cmt.f.format.date [v( d.rsh )]=Function to show only MMM DD YYYY date from timestamp
+
+
+&f.display.randomscene.claimed_by_history [v( d.rsh )]=
+    ifelse( 
+        t( setr( l, get( %0/_rs.claimed_by_desc ))), 
+        [list(strcat(header([name(%0)] claimed by history), |, [ljust(Date,12)][ljust(Name,20)]Desc, |, footer(), |, %ql, |, footer()), ifelse(isdbref(first(itext(), `)), [u(f.format.date, elements(itext(), 2, `))]%b[ljust(strtrunc(name(first(itext(), `)), 19), 20)][wrap(elements(itext(), 3, `), sub( width( %# ), 32 ), left,,, 32)], itext()), |)], 
+        [alert( rs/claimedby )] No claimed by history found. 
+    )
 &cmt.f.display.randomscene.claimed_by_history [v( d.rsh )]=Shows %0's claimed by history
 
 &F.RANDOMSCENE_CHECK_CLAIM_AVAILABLE [v( d.rsh )]=cor( strmatch( get( %0/_rs.available ), *%1* ), strmatch( setdiff( u( f.new_player_list_sans_alts, %0 ), get( %0/_rs.claimed )), *%1* ))
 &cmt.F.RANDOMSCENE_CHECK_CLAIM_AVAILABLE [v( d.rsh )]=Checks if %1 is claimable by %0
 
-&F.RANDOMSCENE_CLAIM [v( d.rsh )]=[@@(remove from %0/_rs.available)][set(%0, _RS.AVAILABLE:[setdiff(get(%0/_RS.AVAILABLE),%1)])][@@(append to %0/_rs.claimed)][set(%0, _RS.CLAIMED:[setunion(get(%0/_RS.CLAIMED),%1)])][@@(append to %0/_rs.claimed_waiting)][set(%0, _RS.CLAIMED_WAITING:[setunion(get(%0/_RS.CLAIMED_WAITING),%1)])][@@(append to %1/_rs.claimed_by)][set(%1, _RS.CLAIMED_BY:[setunion(get(%1/_RS.CLAIMED_BY),%0)])][@@(append to %1/_rs.claimed_by_waiting)][set(%1, _RS.CLAIMED_BY_WAITING:[setunion(get(%1/_RS.CLAIMED_BY_WAITING),%0)])][@@(append %1`timestamp`%2 to %0/_rs.claimed_desc)][if(gt(words(setr(c, get(%0/_RS.CLAIMED_DESC))), v(d.max_desc_entries)), [set(%0, _RS.CLAIMED_DESC:[rest(%qc, |)])])][set(%0, _RS.CLAIMED_DESC:[setunion(%qc,%1`[secs()]`[strtrunc(%2, v(d.max_desc_length))],|)])][@@(append %0`timestamp`desc to %1/_rs.claimed_by_desc)][if(gt(words(setr(c, get(%1/_RS.CLAIMED_BY_DESC))), v(d.max_desc_entries)), [set(%1, _RS.CLAIMED_BY_DESC:[rest(%qc, |)])])][set(%1, _RS.CLAIMED_BY_DESC:[setunion(%qc,%0`[secs()]`[strtrunc(%2, v(d.max_desc_length))],|)])][@@(pemit %1 they were claimed)][pemit(%1, [alert(+rs)] [name(%0)] has claimed you as a randomscene with description of '%2'. Use [ansi(hw, +rs/approve [name(%0)])] if you wish to validate this scene occurred and give both of you a beat.)][@@(mail %1 they were claimed)][if(not(or(t(get(%1/RS.SKIP_MAIL)), v(d.skip_mail))), trigger(%!/TR.MAIL_CLAIM, %0, %1))][@@(return the claim message for %0)][alert(+rs)] You have claimed [name(%1)] as a randomscene with description of '%2'. You will both receive a beat if they +rs/approve your claim.
+&F.RANDOMSCENE_CLAIM [v( d.rsh )]=[@@(remove from %0/_rs.available)][set(%0, _RS.AVAILABLE:[setdiff(get(%0/_RS.AVAILABLE),%1)])][@@(append to %0/_rs.claimed)][set(%0, _RS.CLAIMED:[setunion(get(%0/_RS.CLAIMED),%1)])][@@(append to %0/_rs.claimed_waiting)][set(%0, _RS.CLAIMED_WAITING:[setunion(get(%0/_RS.CLAIMED_WAITING),%1)])][@@(append to %1/_rs.claimed_by)][set(%1, _RS.CLAIMED_BY:[setunion(get(%1/_RS.CLAIMED_BY),%0)])][@@(append to %1/_rs.claimed_by_waiting)][set(%1, _RS.CLAIMED_BY_WAITING:[setunion(get(%1/_RS.CLAIMED_BY_WAITING),%0)])][@@(append %1`timestamp`%2 to %0/_rs.claimed_desc)][if(gt(words(setr(c, get(%0/_RS.CLAIMED_DESC))), v(d.max_desc_entries)), [set(%0, _RS.CLAIMED_DESC:[rest(%qc, |)])])][set(%0, _RS.CLAIMED_DESC:[setunion(%qc,%1`[secs()]`[strtrunc(%2, v(d.max_desc_length))],|)])][@@(append %0`timestamp`desc to %1/_rs.claimed_by_desc)][if(gt(words(setr(c, get(%1/_RS.CLAIMED_BY_DESC))), v(d.max_desc_entries)), [set(%1, _RS.CLAIMED_BY_DESC:[rest(%qc, |)])])][set(%1, _RS.CLAIMED_BY_DESC:[setunion(%qc,%0`[secs()]`[strtrunc(%2, v(d.max_desc_length))],|)])][@@(pemit %1 they were claimed)][pemit(%1, [alert(+rs)] [name(%0)] has claimed you as a randomscene with description of '%2'. Use [ansi(hw, +rs/approve [name(%0)])] if you wish to validate this scene occurred and give both of you a beat.)][@@(mail %1 they were claimed)][if(not(or(t(get(%1/RS.SKIP_MAIL)), v(pref.skip_mail))), trigger(%!/TR.MAIL_CLAIM, %0, %1))][@@(return the claim message for %0)][alert(+rs)] You have claimed [name(%1)] as a randomscene with description of '%2'. You will both receive a beat if they +rs/approve your claim.
 
 &cmt.F.RANDOMSCENE_CLAIM [v( d.rsh )]=Initiates the sets to claim randomscene a player %1 for %0 with description %2.%r%rappend to %0/_rs.claimed, append to %0/_rs.claimed_waiting, append to %1/_rs.claimed_by, append to %1/_rs.claimed_by_waiting, append %1`timestamp`%2 to %0/_rs.claimed_desc, append %0`timestamp`desc to %1/_rs.claimed_by_desc, remove from %0/_rs.available, pemit %1 they were claimed, mail %1 they were claimed, return the claim message for %0%r%r%0 is claiming player dbref, %1 is claimed dbref, %2 is description
 
