@@ -111,6 +111,11 @@ Level 3 for very minor items
 &tags.bio.dirge [v( d.dt )]=vampire
 
 
+// -- Ghoul Bio ----------------------------------------------------------------
+
+&bio.regnant [v( d.dd )]=*
+&tags.bio.regnant [v( d.dt )]=ghoul
+
 /*
 ================================================================================
 == VAMPIRE ADVANTAGES ==========================================================
@@ -1481,7 +1486,7 @@ disciplines`in-clan disciplines`in-bloodline disciplines
 
 */
 
-&check.bio.ghoul [v( d.cg )]=virtue vice clan
+&check.bio.ghoul [v( d.cg )]=virtue vice clan regnant
 &check.bio.vampire [v( d.cg )]=embrace_date mask dirge clan 
 	[if( u( v( d.dd )/.is_full, %0, bio.covenant, Ordo Dracul ), mystery_coil )]
 
@@ -1809,7 +1814,7 @@ Character should have no Scales
 // -- Bio ----------------------------------------------------------------------
 
 &bio.default.ghoul [v( d.nsc )]=
-	birthdate concept clan coterie template virtue vice 
+	birthdate concept clan coterie template regnant virtue vice 
 
 &bio.default.vampire [v( d.nsc )]=
 	localize( 
@@ -2068,6 +2073,9 @@ first.)
 Blood Potency: Your character gains the Blood Potency trait at 0, allowing him 
 to store and spend Vitae. This trait cannot be increased with Experiences or 
 time.
+
+
+Regnant: 
 
 */
 
