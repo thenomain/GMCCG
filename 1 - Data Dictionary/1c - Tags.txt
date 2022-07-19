@@ -222,23 +222,3 @@ We have notes!
 
 &tags.bio.sphere [v( d.dt )]=derived
 
-
-
-/*
-// == CONDITIONS ===============================================================
-
-&tags.condition.addicted_() [v( d.dt )]=persistent
-&tags.condition.amnesia [v( d.dt )]=persistent
-&tags.condition.blind [v( d.dt )]=persistent
-&tags.condition.broken [v( d.dt )]=persistent
-&tags.condition.connected_() [v( d.dt )]=persistent
-&tags.condition.disabled_() [v( d.dt )]=persistent
-&tags.condition.fugue [v( d.dt )]=persistent
-&tags.condition.madness_() [v( d.dt )]=persistent
-&tags.condition.broken [v( d.dt )]=persistent
-&tags.condition.obsession_() [v( d.dt )]=persistent
-&tags.condition.soulless [v( d.dt )]=persistent.soul_loss
-&tags.condition.enervated [v( d.dt )]=persistent.soul_loss
-&tags.condition.thrall [v( d.dt )]=persistent.soul_loss
-
-*/
