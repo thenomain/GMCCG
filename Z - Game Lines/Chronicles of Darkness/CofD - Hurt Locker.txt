@@ -520,13 +520,14 @@ addition of Muay Thai
 */
 
 &prerequisite.merit.iron_skin [v( d.dd )]=
-	cand( 
-		cor( 
-			u( .list_at_least, %0, merit.martial_arts, 2 ), 
-			u( .list_at_least, %0, merit.muay_thai, 2 )
-		), 
-		u( .at_least, %0, merit.street_fighting, 2 )
-	)
+    cand( 
+        u( .at_least, %0, attribute.stamina, 3 ), 
+        cor( 
+            u( .list_at_least, %0, merit.martial_arts, 2 ), 
+            u( .list_at_least, %0, merit.muay_thai, 2 ), 
+            u( .at_least, %0, merit.street_fighting, 2 )
+        )
+    )
 &prereq-text.merit.iron_skin [v( d.dd )]=
 	Stamina 3+ and either Martial Arts 2+, Muay Thai 2+, or Street Fighting 2+
 
