@@ -1403,7 +1403,7 @@ y: temp number of renown allowed
         ), %r, 
 
 // Ghost Wolves don't get a renown dot for Tribe.
-        %b%b, ansi( h, Points Spent ), : %qt/[sub( 3, %qg )]], 
+        %b%b, ansi( h, Points Spent ), : %qt/[sub( 3, %qg )], 
         %b, u( display.check.ok-no, eq( %qt, sub( 3, %qg ))), 
         %r, 
     )
