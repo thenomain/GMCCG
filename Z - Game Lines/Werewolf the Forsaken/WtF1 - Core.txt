@@ -1382,7 +1382,7 @@ y: temp number of renown allowed
             )
         ), 
         setq( c, edit( lattr( %0/_renown.* ), _RENOWN., )), 
-        setq( g, strmatch( get( %0/_bio.tribe ), Ghost Tribe )), 
+        setq( g, strmatch( get( %0/_bio.tribe ), Ghost Wolves )), 
         setq( t, 0 ), 
 
         divider( Chargen Levels: Renown ), %r, 
