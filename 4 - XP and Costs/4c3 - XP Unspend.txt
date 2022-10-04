@@ -312,6 +312,9 @@ list:
 	of order. it would be up to the enactor to make sure that this doesn't 
 	invalidate something else.
 
+flag:
+	remove stat entirely, so treat like a numeric to 'null'.
+
 */
 
 
@@ -331,6 +334,10 @@ list:
 
 &display.xp/unspend.list [v( d.xpas )]=
 	ldelete( %0, match( %0, rest( %1, ! ), . ), . ) 
+
+&f.xp/unspend.flag [v( d.xpas )]=#-1 Cannot yet unspend flag-type traits
+
+	
 
 
 /*
