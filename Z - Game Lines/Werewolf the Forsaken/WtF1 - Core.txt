@@ -1347,49 +1347,66 @@ Check that each renown's tags == (auspice + tribe) + 1
 This stuff should be in some 'f.allocated.renown' or whatnot, but this 
 will do.
 
+--
+
+WtF2E p83
+
+By this stage, you should already have two dots of Renown; one for your
+character’s auspice, and one for her tribe. Choose another dot in a Renown of
+your choice, but note that you cannot take a third dot in a single Renown at
+this point. Ghost Wolves receive this dot of Renown, for a total of two.
+
+--
+
 r: renown available (dd)
 a: renown for auspice & tribe
 c: character's current renown
+g: is character tribe Ghost Wolves (aka tribeless)?
+t: total renown so far
+
 x: temp sheet renown
 y: temp number of renown allowed
 
 */
 
 &check.renown [v( d.cg )]=
-	strcat( 
-		setq( r, lattr( v( d.dd )/renown.* )), 
-		setq( a, 
-			edit( 
-				filter( 
-					v( d.sfp )/fil.list-stats-tags, %qr, , , 
-					[get( %0/_bio.auspice )].[get( %0/_bio.tribe )] 
-				), 
-				RENOWN., 
-			)
-		), 
-		setq( c, edit( lattr( %0/_renown.* ), _RENOWN., )), 
-		setq( t, 0 ), 
+    strcat( 
+        setq( r, lattr( v( d.dd )/renown.* )), 
+        setq( a, 
+            edit( 
+                filter( 
+                    v( d.sfp )/fil.list-stats-tags, %qr, , , 
+                    [get( %0/_bio.auspice )].[get( %0/_bio.tribe )] 
+                ), 
+                RENOWN., 
+            )
+        ), 
+        setq( c, edit( lattr( %0/_renown.* ), _RENOWN., )), 
+        setq( g, strmatch( get( %0/_bio.tribe ), Ghost Wolves )), 
+        setq( t, 0 ), 
 
-		divider( Chargen Levels: Renown ), %r, 
-		iter( setunion( %qc, %qa ), 
-			strcat( 
-				%b%b, 
-				ansi( h, titlestr( %i0 )), :, %b, 
-				setr( x, default( %0/_renown.%i0, 0 )), 
-				setq( t, add( %qt, %qx )), 
-				if( 
-					cand( 
-						t( match( %qa, %i0 )), 
-						lt( %qx, 1 )
-					), 
-					ansi( n, %b%[, r, must exist, n, %] )
-				), 
-			), , %r 
-		), %r, 
-		%b%b, ansi( h, Points Spent ), : %qt/3, 
-		%b, u( display.check.ok-no, eq( %qt, 3 )), 
-		%r, 
-	)
+        divider( Chargen Levels: Renown ), %r, 
+        iter( setunion( %qc, %qa ), 
+            strcat( 
+                %b%b, 
+                ansi( h, titlestr( %i0 )), :, %b, 
+                setr( x, default( %0/_renown.%i0, 0 )), 
+                setq( t, add( %qt, %qx )), 
+                if( 
+                    cand( 
+                        t( match( %qa, %i0 )), 
+                        lt( %qx, 1 )
+                    ), 
+                    ansi( n, %b%[, r, must exist, n, %] )
+                ), 
+            ), , %r 
+        ), %r, 
+
+// Ghost Wolves don't get a renown dot for Tribe.
+        %b%b, ansi( h, Points Spent ), : %qt/[sub( 3, %qg )], 
+        %b, u( display.check.ok-no, eq( %qt, sub( 3, %qg ))), 
+        %r, 
+    )
 
 /*
 --------------------------------------------------------------------------------
