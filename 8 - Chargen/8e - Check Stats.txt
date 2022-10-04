@@ -62,16 +62,20 @@ t: temp validation results, used here and there
 // .. WHY? f.statvalidate.workhorse sends back the value of a flag stat
 // .. even if the value passed to it is different, making it appear valid
 // .. when it is not.
-				strmatch( %qc, flag ),
+				strmatch( %qc, flag ), 
 				if( 
-					cand( 
+					cand(
 						t( setr( t, 
 							ulocal( f.statcheck.normal, %1, %qs, %qv, %2 )
 						)), 
-						not( member( %qt, %2 ))
+// .. .. checks value if set, not if no value to check against is passed
+						xor( 
+							not( member( %qt, %2 )), 
+							comp( %2, )
+						)
 					), 
-					#-1 VALUE NOT FOUND, 
-					%qt 
+					%qt, 
+					#-1 VALUE NOT FOUND 
 				), 
 
 // .. normal: anything else: validate stat as usual ( name then value )
