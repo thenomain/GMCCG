@@ -114,7 +114,7 @@ qr: results of f.statpath
 */
 
 @fo me=&ufunc/privileged.statname [v( d.sfp )]=
-	u\\( [num( sfp )]/f.statname, \\\%0 \\)
+	u\\( [v( d.sfp )]/f.statname, \\\%0 \\)
 
 // -----------------------------------------------------------------------------
 
