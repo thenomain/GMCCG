@@ -39,7 +39,7 @@ qs: Stat to check.
 */
 
 @fo me=&ufunc/privileged.statpath [v( d.sfp )]=
-	u\\( [num( sfp )]/f.statpath, \\\%0 \\)
+	u\\( [v( d.sfp )]/f.statpath, \\\%0 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -442,7 +442,7 @@ qs: stat path
 */
 
 @fo me=&ufunc/privileged.hastag? [v( d.sfp )]=
-	u\\( [num( sfp )]/f.hastag?, \\\%0, \\\%1, \\\%2 \\)
+	u\\( [v( d.sfp )]/f.hastag?, \\\%0, \\\%1, \\\%2 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -523,7 +523,7 @@ class.<statpath>: list
 */
 
 @fo me=&ufunc/privileged.statvalidate [v( d.sfp )]=
-	u\\( [num( sfp )]/f.statvalidate, \\\%0, \\\%1 \\)
+	u\\( [v( d.sfp )]/f.statvalidate, \\\%0, \\\%1 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -677,7 +677,7 @@ Probably not needed
 */
 
 @fo me=&ufunc/privileged.statvalidate? [v( d.sfp )]=
-	u\\( [num( sfp )]/f.statvalidate?, \\\%0, \\\%1 \\)
+	u\\( [v( d.sfp )]/f.statvalidate?, \\\%0, \\\%1 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -724,7 +724,7 @@ qr: prerequisite checks
 */
 
 @fo me=&ufunc/privileged.setstat [v( d.sfp )]=
-	u\\( [num( sfp )]/f.setstat, \\\%0, \\\%1, \\\%2 \\)
+	u\\( [v( d.sfp )]/f.setstat, \\\%0, \\\%1, \\\%2 \\)
 
 // --
 
@@ -1099,7 +1099,7 @@ qr: prerequisites check, 'template' and 'other' only
 */
 
 @fo me=&ufunc/privileged.shiftstat [v( d.sfp )]=
-	u\\( [num( sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
+	u\\( [v( d.sfp )]/f.shiftstat, \\\%0, \\\%1, \\\%2 \\)
 
 // -----------------------------------------------------------------------------
 
@@ -1299,7 +1299,7 @@ s: statpath (if appropriate)
 */
 
 @fo me=&ufunc/privileged.getsheet [v( d.sfp )]=
-	u\\( [num( sfp )]/f.getsheet, \\\%0, \\\%1  \\)
+	u\\( [v( d.sfp )]/f.getsheet, \\\%0, \\\%1  \\)
 
 // --
 
